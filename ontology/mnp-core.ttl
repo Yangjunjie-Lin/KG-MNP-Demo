@@ -1,0 +1,405 @@
+@prefix mnp: <http://example.org/kg-mnp#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+
+#################################################################
+# KG-MNP Core Ontology — domain concepts for MNP eligibility
+# Runtime ontology. Does NOT import GPL CTO OWL files.
+#################################################################
+
+<http://example.org/kg-mnp/core> a owl:Ontology ;
+    dcterms:title "KG-MNP Core Ontology"@en ;
+    dcterms:description "Domain ontology for Mobile Number Portability eligibility assessment with evidence-rule-clause-action traceability."@en ;
+    owl:versionInfo "0.1.0" ;
+    rdfs:comment "OWL 2 concepts and stable cardinality constraints. Amount/date rules are executed in Python."@en .
+
+#################################################################
+# Classes
+#################################################################
+
+mnp:Subscriber a owl:Class ;
+    rdfs:label "Subscriber"@en ;
+    rdfs:comment "A person or party that holds a telecom subscription and may request number portability."@en .
+
+mnp:PhoneNumber a owl:Class ;
+    rdfs:label "Phone Number"@en ;
+    rdfs:comment "A telephone number that is the subject of an MNP case."@en .
+
+mnp:TelecomAccount a owl:Class ;
+    rdfs:label "Telecom Account"@en ;
+    rdfs:comment "A billing or customer account through which services are charged."@en .
+
+mnp:TelecomService a owl:Class ;
+    rdfs:label "Telecom Service"@en ;
+    rdfs:comment "A catalogued telecom service or product offering/specification."@en .
+
+mnp:ServiceSubscription a owl:Class ;
+    rdfs:label "Service Subscription"@en ;
+    rdfs:comment "An instantiated subscription linking a subscriber to a telecom service."@en .
+
+mnp:ServiceContract a owl:Class ;
+    rdfs:label "Service Contract"@en ;
+    rdfs:comment "A contractual commitment that may restrict portability until end time."@en .
+
+mnp:MNPCase a owl:Class ;
+    rdfs:label "MNP Case"@en ;
+    rdfs:comment "A mobile number portability request case."@en .
+
+mnp:EligibilityAssessment a owl:Class ;
+    rdfs:label "Eligibility Assessment"@en ;
+    rdfs:comment "A deterministic evaluation of an MNP case against eligibility rules and evidence."@en .
+
+mnp:EligibilityDecision a owl:Class ;
+    rdfs:label "Eligibility Decision"@en ;
+    rdfs:comment "Abstract decision outcome of an eligibility assessment."@en .
+
+mnp:EligibleDecision a owl:Class ;
+    rdfs:label "Eligible Decision"@en ;
+    rdfs:subClassOf mnp:EligibilityDecision ;
+    owl:disjointWith mnp:BlockingDecision, mnp:ConditionalDecision, mnp:ManualReviewDecision .
+
+mnp:BlockingDecision a owl:Class ;
+    rdfs:label "Blocking Decision"@en ;
+    rdfs:subClassOf mnp:EligibilityDecision ;
+    owl:disjointWith mnp:EligibleDecision, mnp:ConditionalDecision, mnp:ManualReviewDecision .
+
+mnp:ConditionalDecision a owl:Class ;
+    rdfs:label "Conditional Decision"@en ;
+    rdfs:subClassOf mnp:EligibilityDecision ;
+    owl:disjointWith mnp:EligibleDecision, mnp:BlockingDecision, mnp:ManualReviewDecision .
+
+mnp:ManualReviewDecision a owl:Class ;
+    rdfs:label "Manual Review Decision"@en ;
+    rdfs:subClassOf mnp:EligibilityDecision ;
+    owl:disjointWith mnp:EligibleDecision, mnp:BlockingDecision, mnp:ConditionalDecision .
+
+mnp:EvidenceRecord a owl:Class ;
+    rdfs:label "Evidence Record"@en ;
+    rdfs:comment "A dated observation used as evidence in eligibility assessment."@en .
+
+mnp:SystemObservation a owl:Class ;
+    rdfs:label "System Observation"@en ;
+    rdfs:subClassOf mnp:EvidenceRecord ;
+    rdfs:comment "Evidence produced by an information system observation."@en .
+
+mnp:EligibilityRule a owl:Class ;
+    rdfs:label "Eligibility Rule"@en ;
+    rdfs:comment "A versioned eligibility rule operationalizing regulatory clauses."@en .
+
+mnp:BlockingReason a owl:Class ;
+    rdfs:label "Blocking Reason"@en ;
+    rdfs:comment "An independent reason that contributes to a blocking or review outcome."@en .
+
+mnp:RemediationAction a owl:Class ;
+    rdfs:label "Remediation Action"@en ;
+    rdfs:comment "A recommended action a user or operator should take."@en .
+
+mnp:RegulatoryClause a owl:Class ;
+    rdfs:label "Regulatory Clause"@en ;
+    rdfs:comment "A specific clause within a regulatory document."@en .
+
+mnp:RegulatoryDocument a owl:Class ;
+    rdfs:label "Regulatory Document"@en ;
+    rdfs:comment "A regulatory or policy document containing clauses."@en .
+
+mnp:InformationSystem a owl:Class ;
+    rdfs:label "Information System"@en ;
+    rdfs:comment "A source system that generates evidence observations."@en .
+
+mnp:RuleVersion a owl:Class ;
+    rdfs:label "Rule Version"@en ;
+    rdfs:comment "A concrete version of an eligibility rule with effective dates."@en .
+
+mnp:AssessmentDependency a owl:Class ;
+    rdfs:label "Assessment Dependency"@en ;
+    rdfs:comment "A dependency link from an assessment to a rule version or evidence set used."@en .
+
+mnp:MappingRecord a owl:Class ;
+    rdfs:label "Mapping Record"@en ;
+    rdfs:comment "A documented mapping from an external API field to an MNP term."@en .
+
+#################################################################
+# Object properties
+#################################################################
+
+mnp:ownsPhoneNumber a owl:ObjectProperty ;
+    rdfs:domain mnp:Subscriber ;
+    rdfs:range mnp:PhoneNumber .
+
+mnp:billedThrough a owl:ObjectProperty ;
+    rdfs:domain mnp:Subscriber ;
+    rdfs:range mnp:TelecomAccount .
+
+mnp:hasSubscription a owl:ObjectProperty ;
+    rdfs:domain mnp:Subscriber ;
+    rdfs:range mnp:ServiceSubscription .
+
+mnp:subscribesToService a owl:ObjectProperty ;
+    rdfs:domain mnp:ServiceSubscription ;
+    rdfs:range mnp:TelecomService .
+
+mnp:governedByContract a owl:ObjectProperty ;
+    rdfs:domain mnp:ServiceSubscription ;
+    rdfs:range mnp:ServiceContract .
+
+mnp:concernsNumber a owl:ObjectProperty ;
+    rdfs:domain mnp:MNPCase ;
+    rdfs:range mnp:PhoneNumber .
+
+mnp:requestedBy a owl:ObjectProperty ;
+    rdfs:domain mnp:MNPCase ;
+    rdfs:range mnp:Subscriber .
+
+mnp:hasEligibilityAssessment a owl:ObjectProperty ;
+    rdfs:domain mnp:MNPCase ;
+    rdfs:range mnp:EligibilityAssessment .
+
+mnp:usesEvidence a owl:ObjectProperty ;
+    rdfs:domain mnp:EligibilityAssessment ;
+    rdfs:range mnp:EvidenceRecord .
+
+mnp:evaluatedByRule a owl:ObjectProperty ;
+    rdfs:domain mnp:EligibilityAssessment ;
+    rdfs:range mnp:EligibilityRule .
+
+mnp:usesRuleVersion a owl:ObjectProperty ;
+    rdfs:domain mnp:EligibilityAssessment ;
+    rdfs:range mnp:RuleVersion .
+
+mnp:producesDecision a owl:ObjectProperty ;
+    rdfs:domain mnp:EligibilityAssessment ;
+    rdfs:range mnp:EligibilityDecision .
+
+mnp:producesBlockingReason a owl:ObjectProperty ;
+    rdfs:domain mnp:EligibilityAssessment ;
+    rdfs:range mnp:BlockingReason .
+
+mnp:recommendsAction a owl:ObjectProperty ;
+    rdfs:domain mnp:BlockingReason ;
+    rdfs:range mnp:RemediationAction .
+
+mnp:operationalizesClause a owl:ObjectProperty ;
+    rdfs:domain mnp:EligibilityRule ;
+    rdfs:range mnp:RegulatoryClause .
+
+mnp:partOfDocument a owl:ObjectProperty ;
+    rdfs:domain mnp:RegulatoryClause ;
+    rdfs:range mnp:RegulatoryDocument .
+
+mnp:hasSourceSystem a owl:ObjectProperty ;
+    rdfs:domain mnp:EvidenceRecord ;
+    rdfs:range mnp:InformationSystem .
+
+mnp:dependsOn a owl:ObjectProperty ;
+    rdfs:domain mnp:EligibilityAssessment ;
+    rdfs:range mnp:AssessmentDependency .
+
+mnp:affectsAssessment a owl:ObjectProperty ;
+    rdfs:domain mnp:RuleVersion ;
+    rdfs:range mnp:EligibilityAssessment .
+
+mnp:hasRuleVersion a owl:ObjectProperty ;
+    rdfs:domain mnp:EligibilityRule ;
+    rdfs:range mnp:RuleVersion .
+
+mnp:supportedByEvidence a owl:ObjectProperty ;
+    rdfs:domain mnp:BlockingReason ;
+    rdfs:range mnp:EvidenceRecord .
+
+mnp:triggeredByRule a owl:ObjectProperty ;
+    rdfs:domain mnp:BlockingReason ;
+    rdfs:range mnp:EligibilityRule .
+
+mnp:triggeredByRuleVersion a owl:ObjectProperty ;
+    rdfs:domain mnp:BlockingReason ;
+    rdfs:range mnp:RuleVersion .
+
+mnp:citesClause a owl:ObjectProperty ;
+    rdfs:domain mnp:BlockingReason ;
+    rdfs:range mnp:RegulatoryClause .
+
+mnp:dependsOnRuleVersion a owl:ObjectProperty ;
+    rdfs:domain mnp:AssessmentDependency ;
+    rdfs:range mnp:RuleVersion .
+
+mnp:dependsOnEvidence a owl:ObjectProperty ;
+    rdfs:domain mnp:AssessmentDependency ;
+    rdfs:range mnp:EvidenceRecord .
+
+mnp:aboutCase a owl:ObjectProperty ;
+    rdfs:domain mnp:EligibilityAssessment ;
+    rdfs:range mnp:MNPCase .
+
+mnp:relatedAccount a owl:ObjectProperty ;
+    rdfs:domain mnp:Subscriber ;
+    rdfs:range mnp:TelecomAccount .
+
+#################################################################
+# Datatype properties
+#################################################################
+
+mnp:caseIdentifier a owl:DatatypeProperty ;
+    rdfs:domain mnp:MNPCase ;
+    rdfs:range xsd:string .
+
+mnp:maskedPhoneNumber a owl:DatatypeProperty ;
+    rdfs:domain mnp:PhoneNumber ;
+    rdfs:range xsd:string .
+
+mnp:observedAmount a owl:DatatypeProperty ;
+    rdfs:domain mnp:EvidenceRecord ;
+    rdfs:range xsd:decimal .
+
+mnp:currencyCode a owl:DatatypeProperty ;
+    rdfs:domain mnp:EvidenceRecord ;
+    rdfs:range xsd:string .
+
+mnp:evidenceGeneratedAt a owl:DatatypeProperty ;
+    rdfs:domain mnp:EvidenceRecord ;
+    rdfs:range xsd:dateTime .
+
+mnp:evidenceValidUntil a owl:DatatypeProperty ;
+    rdfs:domain mnp:EvidenceRecord ;
+    rdfs:range xsd:dateTime .
+
+mnp:evidenceStatus a owl:DatatypeProperty ;
+    rdfs:domain mnp:EvidenceRecord ;
+    rdfs:range xsd:string .
+
+mnp:evidenceType a owl:DatatypeProperty ;
+    rdfs:domain mnp:EvidenceRecord ;
+    rdfs:range xsd:string .
+
+mnp:contractStatusCode a owl:DatatypeProperty ;
+    rdfs:domain mnp:ServiceContract ;
+    rdfs:range xsd:string .
+
+mnp:contractEndTime a owl:DatatypeProperty ;
+    rdfs:domain mnp:ServiceContract ;
+    rdfs:range xsd:dateTime .
+
+mnp:ruleIdentifier a owl:DatatypeProperty ;
+    rdfs:domain mnp:EligibilityRule ;
+    rdfs:range xsd:string .
+
+mnp:ruleVersion a owl:DatatypeProperty ;
+    rdfs:range xsd:string .
+
+mnp:effectiveFrom a owl:DatatypeProperty ;
+    rdfs:range xsd:dateTime .
+
+mnp:effectiveTo a owl:DatatypeProperty ;
+    rdfs:range xsd:dateTime .
+
+mnp:decisionCode a owl:DatatypeProperty ;
+    rdfs:domain mnp:EligibilityDecision ;
+    rdfs:range xsd:string .
+
+mnp:reasonCode a owl:DatatypeProperty ;
+    rdfs:domain mnp:BlockingReason ;
+    rdfs:range xsd:string .
+
+mnp:actionCode a owl:DatatypeProperty ;
+    rdfs:domain mnp:RemediationAction ;
+    rdfs:range xsd:string .
+
+mnp:sourceApi a owl:DatatypeProperty ;
+    rdfs:domain mnp:MappingRecord ;
+    rdfs:range xsd:string .
+
+mnp:sourceFieldPath a owl:DatatypeProperty ;
+    rdfs:domain mnp:MappingRecord ;
+    rdfs:range xsd:string .
+
+mnp:subscriptionStatusCode a owl:DatatypeProperty ;
+    rdfs:domain mnp:ServiceSubscription ;
+    rdfs:range xsd:string .
+
+mnp:identityMatchFlag a owl:DatatypeProperty ;
+    rdfs:domain mnp:EvidenceRecord ;
+    rdfs:range xsd:boolean .
+
+mnp:numberStatusCode a owl:DatatypeProperty ;
+    rdfs:domain mnp:EvidenceRecord ;
+    rdfs:range xsd:string .
+
+mnp:daysSinceLastPort a owl:DatatypeProperty ;
+    rdfs:domain mnp:EvidenceRecord ;
+    rdfs:range xsd:integer .
+
+mnp:hasPaymentArrangement a owl:DatatypeProperty ;
+    rdfs:domain mnp:EvidenceRecord ;
+    rdfs:range xsd:boolean .
+
+mnp:alignmentStatus a owl:AnnotationProperty ;
+    rdfs:label "Alignment Status"@en ;
+    rdfs:comment "VERIFIED, PARTIAL, or LOCAL_ONLY."@en .
+
+mnp:assessmentIdentifier a owl:DatatypeProperty ;
+    rdfs:domain mnp:EligibilityAssessment ;
+    rdfs:range xsd:string .
+
+mnp:requiresReassessment a owl:DatatypeProperty ;
+    rdfs:domain mnp:EligibilityAssessment ;
+    rdfs:range xsd:boolean .
+
+mnp:clauseIdentifier a owl:DatatypeProperty ;
+    rdfs:domain mnp:RegulatoryClause ;
+    rdfs:range xsd:string .
+
+mnp:documentIdentifier a owl:DatatypeProperty ;
+    rdfs:domain mnp:RegulatoryDocument ;
+    rdfs:range xsd:string .
+
+mnp:systemIdentifier a owl:DatatypeProperty ;
+    rdfs:domain mnp:InformationSystem ;
+    rdfs:range xsd:string .
+
+mnp:targetTerm a owl:DatatypeProperty ;
+    rdfs:domain mnp:MappingRecord ;
+    rdfs:range xsd:string .
+
+mnp:mappingReviewStatus a owl:DatatypeProperty ;
+    rdfs:domain mnp:MappingRecord ;
+    rdfs:range xsd:string .
+
+#################################################################
+# OWL cardinality / integrity constraints (stable logic)
+#################################################################
+
+mnp:MNPCase rdfs:subClassOf [
+    a owl:Restriction ;
+    owl:onProperty mnp:concernsNumber ;
+    owl:cardinality "1"^^xsd:nonNegativeInteger
+] , [
+    a owl:Restriction ;
+    owl:onProperty mnp:requestedBy ;
+    owl:cardinality "1"^^xsd:nonNegativeInteger
+] .
+
+mnp:EligibilityAssessment rdfs:subClassOf [
+    a owl:Restriction ;
+    owl:onProperty mnp:usesEvidence ;
+    owl:minCardinality "1"^^xsd:nonNegativeInteger
+] , [
+    a owl:Restriction ;
+    owl:onProperty mnp:evaluatedByRule ;
+    owl:minCardinality "1"^^xsd:nonNegativeInteger
+] , [
+    a owl:Restriction ;
+    owl:onProperty mnp:producesDecision ;
+    owl:cardinality "1"^^xsd:nonNegativeInteger
+] , [
+    a owl:Restriction ;
+    owl:onProperty mnp:dependsOn ;
+    owl:minCardinality "1"^^xsd:nonNegativeInteger
+] .
+
+mnp:EligibilityRule rdfs:subClassOf [
+    a owl:Restriction ;
+    owl:onProperty mnp:operationalizesClause ;
+    owl:minCardinality "1"^^xsd:nonNegativeInteger
+] .

@@ -1,0 +1,128 @@
+# MNP eligibility rules — amounts/dates evaluated in Python.
+# missing_evidence_action is always MANUAL_REVIEW for critical inputs.
+
+rules:
+  - rule_id: MNP-ELIG-001
+    version: "1.0"
+    name: Real-name consistency
+    effective_from: "2024-01-01T00:00:00Z"
+    effective_to: null
+    inputs:
+      - evidence_type: IDENTITY_MATCH
+        required: true
+        fields: [identityMatchFlag, evidenceStatus, evidenceGeneratedAt, evidenceValidUntil]
+    decision_when_pass: ELIGIBLE
+    decision_when_fail: BLOCKED
+    missing_evidence_action: MANUAL_REVIEW
+    reason_code: REAL_NAME_MISMATCH
+    action_code: VERIFY_IDENTITY
+    regulatory_clause: REG-MNP-CLAUSE-01
+    check:
+      type: boolean_equals
+      field: identityMatchFlag
+      expected: true
+
+  - rule_id: MNP-ELIG-002
+    version: "1.0"
+    name: Number status active
+    effective_from: "2024-01-01T00:00:00Z"
+    effective_to: null
+    inputs:
+      - evidence_type: NUMBER_STATUS
+        required: true
+        fields: [numberStatusCode, evidenceStatus, evidenceGeneratedAt, evidenceValidUntil]
+    decision_when_pass: ELIGIBLE
+    decision_when_fail: BLOCKED
+    missing_evidence_action: MANUAL_REVIEW
+    reason_code: NUMBER_STATUS_INVALID
+    action_code: RESTORE_NUMBER_STATUS
+    regulatory_clause: REG-MNP-CLAUSE-02
+    check:
+      type: string_in
+      field: numberStatusCode
+      expected: ["ACTIVE", "NORMAL"]
+
+  - rule_id: MNP-ELIG-003
+    version: "1.0"
+    name: Billing cleared
+    effective_from: "2024-01-01T00:00:00Z"
+    effective_to: null
+    inputs:
+      - evidence_type: BILLING_BALANCE
+        required: true
+        fields: [observedAmount, currencyCode, hasPaymentArrangement, evidenceStatus, evidenceGeneratedAt, evidenceValidUntil]
+    decision_when_pass: ELIGIBLE
+    decision_when_fail: BLOCKED
+    missing_evidence_action: MANUAL_REVIEW
+    reason_code: OUTSTANDING_BALANCE
+    action_code: SETTLE_OUTSTANDING_FEES
+    regulatory_clause: REG-MNP-CLAUSE-03
+    check:
+      type: billing_cleared
+      amount_field: observedAmount
+      arrangement_field: hasPaymentArrangement
+      max_outstanding: 0
+
+  - rule_id: MNP-ELIG-004
+    version: "1.0"
+    name: Contract restriction
+    effective_from: "2024-01-01T00:00:00Z"
+    effective_to: null
+    inputs:
+      - evidence_type: CONTRACT_STATUS
+        required: true
+        fields: [contractStatusCode, contractEndTime, evidenceStatus, evidenceGeneratedAt, evidenceValidUntil]
+    decision_when_pass: ELIGIBLE
+    decision_when_fail: BLOCKED
+    missing_evidence_action: MANUAL_REVIEW
+    reason_code: ACTIVE_CONTRACT_RESTRICTION
+    action_code: WAIT_OR_TERMINATE_CONTRACT
+    regulatory_clause: REG-MNP-CLAUSE-04
+    check:
+      type: contract_not_blocking
+      status_field: contractStatusCode
+      end_time_field: contractEndTime
+      assessment_time: "2026-07-01T00:00:00Z"
+
+  - rule_id: MNP-ELIG-005
+    version: "1.0"
+    name: Porting interval
+    effective_from: "2024-01-01T00:00:00Z"
+    effective_to: null
+    inputs:
+      - evidence_type: PORTING_HISTORY
+        required: true
+        fields: [daysSinceLastPort, evidenceStatus, evidenceGeneratedAt, evidenceValidUntil]
+    decision_when_pass: ELIGIBLE
+    decision_when_fail: BLOCKED
+    missing_evidence_action: MANUAL_REVIEW
+    reason_code: PORTING_INTERVAL_TOO_SHORT
+    action_code: WAIT_PORTING_INTERVAL
+    regulatory_clause: REG-MNP-CLAUSE-05
+    check:
+      type: min_integer
+      field: daysSinceLastPort
+      minimum: 120
+
+# CASE-06 demonstrates rule update impact: same rule_id, newer version.
+rule_updates:
+  - rule_id: MNP-ELIG-005
+    version: "1.1"
+    name: Porting interval (tightened)
+    effective_from: "2026-06-01T00:00:00Z"
+    effective_to: null
+    supersedes_version: "1.0"
+    inputs:
+      - evidence_type: PORTING_HISTORY
+        required: true
+        fields: [daysSinceLastPort, evidenceStatus, evidenceGeneratedAt, evidenceValidUntil]
+    decision_when_pass: ELIGIBLE
+    decision_when_fail: BLOCKED
+    missing_evidence_action: MANUAL_REVIEW
+    reason_code: PORTING_INTERVAL_TOO_SHORT
+    action_code: WAIT_PORTING_INTERVAL
+    regulatory_clause: REG-MNP-CLAUSE-05
+    check:
+      type: min_integer
+      field: daysSinceLastPort
+      minimum: 180

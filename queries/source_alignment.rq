@@ -1,0 +1,32 @@
+PREFIX mnp: <http://example.org/kg-mnp#>
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+
+# Ontology term sources, alignment status, and TM Forum mapping records.
+
+SELECT ?term ?alignmentStatus ?source ?seeAlso ?closeMatch
+       ?mapApi ?mapField ?mapTarget ?mapReview
+WHERE {
+  {
+    ?term mnp:alignmentStatus ?alignmentStatus .
+    OPTIONAL { ?term dcterms:source ?source }
+    OPTIONAL { ?term rdfs:seeAlso ?seeAlso }
+    OPTIONAL { ?term skos:closeMatch ?closeMatch }
+    BIND("" AS ?mapApi)
+    BIND("" AS ?mapField)
+    BIND("" AS ?mapTarget)
+    BIND("" AS ?mapReview)
+  }
+  UNION
+  {
+    ?map a mnp:MappingRecord ;
+         mnp:sourceApi ?mapApi ;
+         mnp:sourceFieldPath ?mapField ;
+         mnp:targetTerm ?mapTarget ;
+         mnp:mappingReviewStatus ?mapReview .
+    BIND(?map AS ?term)
+    BIND("MAPPING" AS ?alignmentStatus)
+  }
+}
+ORDER BY ?alignmentStatus ?term

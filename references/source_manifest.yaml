@@ -1,0 +1,110 @@
+sources:
+  - name: Point-Topic/cto-ontology
+    repository_url: https://github.com/Point-Topic/cto-ontology
+    purpose: Conceptual reference for telecom organization/service/resource naming
+    license: GPL-3.0
+    version_or_commit: "1.1.0 / reviewed resource/cto_core.ttl and cto_extended.ttl on 2026-07-30 (commit not pinned; UNVERIFIED exact SHA)"
+    retrieved_at: "2026-07-30"
+    local_path: null
+    runtime_dependency: false
+    reuse_mode: conceptual_reference
+
+  - name: tmforum-apis/TMF629_CustomerManagement
+    repository_url: https://github.com/tmforum-apis/TMF629_CustomerManagement
+    purpose: Customer/account field basis for Subscriber and TelecomAccount mappings
+    license: Apache-2.0
+    version_or_commit: "v5.0.1 OAS (UNVERIFIED commit SHA)"
+    retrieved_at: "2026-07-30"
+    local_path: null
+    runtime_dependency: false
+    reuse_mode: schema_mapping
+
+  - name: tmforum-apis/TMF637_ProductInventory
+    repository_url: https://github.com/tmforum-apis/TMF637_ProductInventory
+    purpose: Product/status field basis for ServiceSubscription mappings
+    license: Apache-2.0
+    version_or_commit: "v5.0.0 (UNVERIFIED commit SHA)"
+    retrieved_at: "2026-07-30"
+    local_path: null
+    runtime_dependency: false
+    reuse_mode: schema_mapping
+
+  - name: tmforum-apis/TMF620_ProductCatalog
+    repository_url: https://github.com/tmforum-apis/TMF620_ProductCatalog
+    purpose: ProductOffering/ProductSpecification field basis for TelecomService
+    license: Apache-2.0
+    version_or_commit: "v5.0.0 (UNVERIFIED commit SHA)"
+    retrieved_at: "2026-07-30"
+    local_path: null
+    runtime_dependency: false
+    reuse_mode: schema_mapping
+
+  - name: RDFLib/rdflib
+    repository_url: https://github.com/RDFLib/rdflib
+    purpose: RDF load/merge/serialize and SPARQL
+    license: BSD-3-Clause
+    version_or_commit: ">=7.0.0,<8.0.0"
+    retrieved_at: "2026-07-30"
+    local_path: null
+    runtime_dependency: true
+    reuse_mode: dependency
+
+  - name: RDFLib/pySHACL
+    repository_url: https://github.com/RDFLib/pySHACL
+    purpose: SHACL validation
+    license: Apache-2.0
+    version_or_commit: ">=0.26.0,<1.0.0"
+    retrieved_at: "2026-07-30"
+    local_path: null
+    runtime_dependency: true
+    reuse_mode: dependency
+
+  - name: RDFLib/OWL-RL
+    repository_url: https://github.com/RDFLib/OWL-RL
+    purpose: OWL 2 RL inference expansion
+    license: W3C Software and Document Notice and License / BSD-style (see package)
+    version_or_commit: ">=6.0.2,<7.0.0"
+    retrieved_at: "2026-07-30"
+    local_path: null
+    runtime_dependency: true
+    reuse_mode: dependency
+
+  - name: protegeproject/protege
+    repository_url: https://github.com/protegeproject/protege
+    purpose: Manual OWL inspection (Protégé 5.6.x)
+    license: BSD-2-Clause
+    version_or_commit: "5.6.x"
+    retrieved_at: "2026-07-30"
+    local_path: null
+    runtime_dependency: false
+    reuse_mode: development_tool
+
+  - name: dgarijo/WIDOCO
+    repository_url: https://github.com/dgarijo/Widoco
+    purpose: Ontology HTML documentation generation
+    license: MIT OR Apache-2.0 (see upstream release notes)
+    version_or_commit: "v1.4.25 (pinned in scripts/generate_docs.sh)"
+    retrieved_at: "2026-07-30"
+    local_path: null
+    runtime_dependency: false
+    reuse_mode: documentation_tool
+
+  - name: neo4j/neo4j-python-driver
+    repository_url: https://github.com/neo4j/neo4j-python-driver
+    purpose: Bolt client for Neo4j evaluate/trace/load CLI backend
+    license: Apache-2.0
+    version_or_commit: ">=5.14.0,<6.0.0"
+    retrieved_at: "2026-07-30"
+    local_path: null
+    runtime_dependency: false
+    reuse_mode: dependency
+
+  - name: neo4j-labs/neosemantics
+    repository_url: https://github.com/neo4j-labs/neosemantics
+    purpose: RDF import into Neo4j via n10s (Docker NEO4J_PLUGINS); Cypher overlay for assessment traces
+    license: Apache-2.0
+    version_or_commit: "bundled via Neo4j Docker NEO4J_PLUGINS n10s (UNVERIFIED exact plugin SHA)"
+    retrieved_at: "2026-07-30"
+    local_path: null
+    runtime_dependency: false
+    reuse_mode: dependency

@@ -1,0 +1,101 @@
+# TM Forum Open API field mappings → KG-MNP terms
+# TM Forum provides OpenAPI/JSON schemas, NOT OWL classes.
+# mapping_type: exact | broader | narrower | related
+# Never claim OWL equivalence for JSON schema objects.
+
+mappings:
+  - id: TMF629-Customer-to-Subscriber
+    source_api: TMF629_CustomerManagement
+    source_version: "5.0.1"
+    source_path: components.schemas.Customer
+    target_term: mnp:Subscriber
+    mapping_type: related
+    transformation: "Map Customer.id/name/engagedParty to Subscriber identity; synthetic demo uses local IRIs."
+    confidence: medium
+    review_status: reviewed
+    in_mvp: true
+    notes: "Customer is commercial party; Subscriber is MNP request party. Related, not exact."
+
+  - id: TMF629-relatedParty-to-TelecomAccount-link
+    source_api: TMF629_CustomerManagement
+    source_version: "5.0.1"
+    source_path: components.schemas.Customer.relatedParty
+    target_term: mnp:relatedAccount
+    mapping_type: related
+    transformation: "relatedParty / account associations become mnp:relatedAccount or mnp:billedThrough links."
+    confidence: medium
+    review_status: reviewed
+    in_mvp: true
+    notes: "TMF relatedParty is polymorphic; MVP only uses account-related parties."
+
+  - id: TMF629-relatedAccount-to-TelecomAccount
+    source_api: TMF629_CustomerManagement
+    source_version: "5.0.1"
+    source_path: components.schemas.Customer.account
+    target_term: mnp:TelecomAccount
+    mapping_type: broader
+    transformation: "Customer.account[] → TelecomAccount instances; billing evidence attaches separately."
+    confidence: medium
+    review_status: reviewed
+    in_mvp: true
+    notes: "TMF account model is broader than MNP billing account used for eligibility."
+
+  - id: TMF637-Product-to-ServiceSubscription
+    source_api: TMF637_ProductInventory
+    source_version: "5.0.0"
+    source_path: components.schemas.Product
+    target_term: mnp:ServiceSubscription
+    mapping_type: related
+    transformation: "Product inventory instance → ServiceSubscription; productOffering ref retained as service link."
+    confidence: medium
+    review_status: reviewed
+    in_mvp: true
+    notes: "Product covers goods/services; MVP only mobile subscription products."
+
+  - id: TMF637-productOffering-to-TelecomService
+    source_api: TMF637_ProductInventory
+    source_version: "5.0.0"
+    source_path: components.schemas.Product.productOffering
+    target_term: mnp:TelecomService
+    mapping_type: related
+    transformation: "productOffering.href/id → TelecomService IRI reference."
+    confidence: medium
+    review_status: reviewed
+    in_mvp: true
+    notes: "Offering reference is catalog pointer; full offering details come from TMF620."
+
+  - id: TMF637-status-to-subscriptionStatusCode
+    source_api: TMF637_ProductInventory
+    source_version: "5.0.0"
+    source_path: components.schemas.Product.status
+    target_term: mnp:subscriptionStatusCode
+    mapping_type: narrower
+    transformation: "Normalize Product.status string into subscriptionStatusCode; eligibility uses NUMBER_STATUS evidence primarily."
+    confidence: high
+    review_status: reviewed
+    in_mvp: true
+    notes: "MVP eligibility uses dedicated NUMBER_STATUS evidence rather than raw Product.status alone."
+
+  - id: TMF620-ProductOffering-to-TelecomService
+    source_api: TMF620_ProductCatalog
+    source_version: "5.0.0"
+    source_path: components.schemas.ProductOffering
+    target_term: mnp:TelecomService
+    mapping_type: related
+    transformation: "Catalog ProductOffering → TelecomService catalog concept."
+    confidence: medium
+    review_status: reviewed
+    in_mvp: true
+    notes: "Catalog offering is commercial sellable entity; MNP uses it as service type reference."
+
+  - id: TMF620-ProductSpecification-to-TelecomService
+    source_api: TMF620_ProductCatalog
+    source_version: "5.0.0"
+    source_path: components.schemas.ProductSpecification
+    target_term: mnp:TelecomService
+    mapping_type: broader
+    transformation: "ProductSpecification technical definition may refine TelecomService; MVP flattens to single TelecomService class."
+    confidence: low
+    review_status: reviewed
+    in_mvp: false
+    notes: "Simplified: specification vs offering distinction collapsed for MVP."

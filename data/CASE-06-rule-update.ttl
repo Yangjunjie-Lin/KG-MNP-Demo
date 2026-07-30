@@ -1,0 +1,95 @@
+@prefix mnp: <http://example.org/kg-mnp#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+# CASE-06: historical assessment used rule MNP-ELIG-005 v1.0;
+# after update to 1.1, query must locate affected assessments.
+
+mnp:Sub-06 a mnp:Subscriber ;
+    mnp:ownsPhoneNumber mnp:Phone-06 ;
+    mnp:billedThrough mnp:Acct-06 ;
+    mnp:hasSubscription mnp:Subscr-06 ;
+    mnp:relatedAccount mnp:Acct-06 .
+
+mnp:Phone-06 a mnp:PhoneNumber ;
+    mnp:maskedPhoneNumber "138****0006" .
+
+mnp:Acct-06 a mnp:TelecomAccount .
+
+mnp:Subscr-06 a mnp:ServiceSubscription ;
+    mnp:subscribesToService mnp:Svc-Mobile-Basic ;
+    mnp:subscriptionStatusCode "ACTIVE" ;
+    mnp:governedByContract mnp:Contract-06 .
+
+mnp:Contract-06 a mnp:ServiceContract ;
+    mnp:contractStatusCode "EXPIRED" ;
+    mnp:contractEndTime "2025-03-01T00:00:00Z"^^xsd:dateTime .
+
+mnp:CASE-06 a mnp:MNPCase ;
+    mnp:caseIdentifier "CASE-06" ;
+    mnp:concernsNumber mnp:Phone-06 ;
+    mnp:requestedBy mnp:Sub-06 .
+
+mnp:Ev-06-ID a mnp:SystemObservation ;
+    mnp:evidenceType "IDENTITY_MATCH" ;
+    mnp:identityMatchFlag true ;
+    mnp:evidenceStatus "VALID" ;
+    mnp:evidenceGeneratedAt "2026-05-15T10:00:00Z"^^xsd:dateTime ;
+    mnp:evidenceValidUntil "2026-12-31T23:59:59Z"^^xsd:dateTime ;
+    mnp:hasSourceSystem mnp:SYS-CRM .
+
+mnp:Ev-06-NUM a mnp:SystemObservation ;
+    mnp:evidenceType "NUMBER_STATUS" ;
+    mnp:numberStatusCode "ACTIVE" ;
+    mnp:evidenceStatus "VALID" ;
+    mnp:evidenceGeneratedAt "2026-05-15T10:05:00Z"^^xsd:dateTime ;
+    mnp:evidenceValidUntil "2026-12-31T23:59:59Z"^^xsd:dateTime ;
+    mnp:hasSourceSystem mnp:SYS-HLR .
+
+mnp:Ev-06-BILL a mnp:SystemObservation ;
+    mnp:evidenceType "BILLING_BALANCE" ;
+    mnp:observedAmount "0.00"^^xsd:decimal ;
+    mnp:currencyCode "CNY" ;
+    mnp:hasPaymentArrangement false ;
+    mnp:evidenceStatus "VALID" ;
+    mnp:evidenceGeneratedAt "2026-05-15T10:10:00Z"^^xsd:dateTime ;
+    mnp:evidenceValidUntil "2026-12-31T23:59:59Z"^^xsd:dateTime ;
+    mnp:hasSourceSystem mnp:SYS-BILLING .
+
+mnp:Ev-06-CTR a mnp:SystemObservation ;
+    mnp:evidenceType "CONTRACT_STATUS" ;
+    mnp:contractStatusCode "EXPIRED" ;
+    mnp:contractEndTime "2025-03-01T00:00:00Z"^^xsd:dateTime ;
+    mnp:evidenceStatus "VALID" ;
+    mnp:evidenceGeneratedAt "2026-05-15T10:15:00Z"^^xsd:dateTime ;
+    mnp:evidenceValidUntil "2026-12-31T23:59:59Z"^^xsd:dateTime ;
+    mnp:hasSourceSystem mnp:SYS-CONTRACT .
+
+# 150 days: passes v1.0 (min 120) but fails v1.1 (min 180)
+mnp:Ev-06-PORT a mnp:SystemObservation ;
+    mnp:evidenceType "PORTING_HISTORY" ;
+    mnp:daysSinceLastPort 150 ;
+    mnp:evidenceStatus "VALID" ;
+    mnp:evidenceGeneratedAt "2026-05-15T10:20:00Z"^^xsd:dateTime ;
+    mnp:evidenceValidUntil "2026-12-31T23:59:59Z"^^xsd:dateTime ;
+    mnp:hasSourceSystem mnp:SYS-MNP .
+
+# Pre-seeded historical assessment using rule version 1.0
+mnp:Assessment-CASE-06-HIST a mnp:EligibilityAssessment ;
+    mnp:assessmentIdentifier "ASSESS-CASE-06-HIST" ;
+    mnp:aboutCase mnp:CASE-06 ;
+    mnp:usesEvidence mnp:Ev-06-ID , mnp:Ev-06-NUM , mnp:Ev-06-BILL , mnp:Ev-06-CTR , mnp:Ev-06-PORT ;
+    mnp:evaluatedByRule mnp:Rule-MNP-ELIG-001 , mnp:Rule-MNP-ELIG-002 , mnp:Rule-MNP-ELIG-003 , mnp:Rule-MNP-ELIG-004 , mnp:Rule-MNP-ELIG-005 ;
+    mnp:usesRuleVersion mnp:RuleVersion-MNP-ELIG-005-1-0 ;
+    mnp:dependsOn mnp:Dep-CASE-06-HIST ;
+    mnp:producesDecision mnp:Decision-CASE-06-HIST ;
+    mnp:requiresReassessment false .
+
+mnp:Dep-CASE-06-HIST a mnp:AssessmentDependency ;
+    mnp:dependsOnRuleVersion mnp:RuleVersion-MNP-ELIG-005-1-0 ;
+    mnp:dependsOnEvidence mnp:Ev-06-PORT .
+
+mnp:Decision-CASE-06-HIST a mnp:EligibleDecision ;
+    mnp:decisionCode "ELIGIBLE" .
+
+mnp:CASE-06 mnp:hasEligibilityAssessment mnp:Assessment-CASE-06-HIST .

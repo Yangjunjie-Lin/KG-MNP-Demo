@@ -1,0 +1,37 @@
+PREFIX mnp: <http://example.org/kg-mnp#>
+
+# Full decision trace for a case.
+# Bind ?caseId externally as plain string, e.g. "CASE-03"
+
+SELECT ?caseId ?assessment ?evidence ?evidenceStatus ?sourceSystem
+       ?ruleId ?ruleVersion ?effectiveFrom
+       ?clauseId ?decisionCode ?reasonCode ?actionCode
+WHERE {
+  ?case a mnp:MNPCase ;
+        mnp:caseIdentifier ?caseId ;
+        mnp:hasEligibilityAssessment ?assessment .
+  FILTER(STR(?caseId) = "__CASE_ID__")
+  ?assessment mnp:producesDecision ?decision .
+  ?decision mnp:decisionCode ?decisionCode .
+  OPTIONAL {
+    ?assessment mnp:producesBlockingReason ?reason .
+    ?reason mnp:reasonCode ?reasonCode .
+    OPTIONAL { ?reason mnp:supportedByEvidence ?evidence }
+    OPTIONAL { ?reason mnp:triggeredByRule ?rule }
+    OPTIONAL { ?reason mnp:triggeredByRuleVersion ?rv }
+    OPTIONAL { ?reason mnp:citesClause ?clause }
+    OPTIONAL { ?reason mnp:recommendsAction ?action }
+  }
+  OPTIONAL { ?assessment mnp:usesEvidence ?evidence }
+  OPTIONAL { ?evidence mnp:evidenceStatus ?evidenceStatus }
+  OPTIONAL {
+    ?evidence mnp:hasSourceSystem ?sys .
+    ?sys mnp:systemIdentifier ?sourceSystem .
+  }
+  OPTIONAL { ?rule mnp:ruleIdentifier ?ruleId }
+  OPTIONAL { ?rv mnp:ruleVersion ?ruleVersion }
+  OPTIONAL { ?rv mnp:effectiveFrom ?effectiveFrom }
+  OPTIONAL { ?clause mnp:clauseIdentifier ?clauseId }
+  OPTIONAL { ?action mnp:actionCode ?actionCode }
+}
+ORDER BY ?reasonCode ?ruleId

@@ -1,0 +1,42 @@
+PREFIX mnp: <http://example.org/kg-mnp#>
+
+# All independent blocking reasons for a case.
+
+SELECT ?caseId ?reasonCode ?evidence ?evidenceStatus ?sourceSystem
+       ?generatedAt ?ruleId ?ruleVersion ?effectiveFrom
+       ?clauseId ?clauseText ?actionCode ?actionDescription
+WHERE {
+  ?case a mnp:MNPCase ;
+        mnp:caseIdentifier ?caseId ;
+        mnp:hasEligibilityAssessment ?assessment .
+  FILTER(STR(?caseId) = "__CASE_ID__")
+  ?assessment mnp:producesBlockingReason ?reason .
+  ?reason mnp:reasonCode ?reasonCode .
+  OPTIONAL {
+    ?reason mnp:supportedByEvidence ?evidence .
+    ?evidence mnp:evidenceStatus ?evidenceStatus ;
+              mnp:evidenceGeneratedAt ?generatedAt ;
+              mnp:hasSourceSystem ?sys .
+    OPTIONAL { ?sys mnp:systemIdentifier ?sourceSystem }
+  }
+  OPTIONAL {
+    ?reason mnp:triggeredByRule ?rule .
+    ?rule mnp:ruleIdentifier ?ruleId .
+  }
+  OPTIONAL {
+    ?reason mnp:triggeredByRuleVersion ?rv .
+    ?rv mnp:ruleVersion ?ruleVersion .
+    OPTIONAL { ?rv mnp:effectiveFrom ?effectiveFrom }
+  }
+  OPTIONAL {
+    ?reason mnp:citesClause ?clause .
+    ?clause mnp:clauseIdentifier ?clauseId .
+    OPTIONAL { ?clause mnp:clauseText ?clauseText }
+  }
+  OPTIONAL {
+    ?reason mnp:recommendsAction ?action .
+    ?action mnp:actionCode ?actionCode .
+    OPTIONAL { ?action mnp:actionDescription ?actionDescription }
+  }
+}
+ORDER BY ?reasonCode

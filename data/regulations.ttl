@@ -1,0 +1,136 @@
+@prefix mnp: <http://example.org/kg-mnp#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+#################################################################
+# Synthetic regulatory corpus (desensitized demo clauses)
+#################################################################
+
+mnp:Doc-MNP-Regulation-2024 a mnp:RegulatoryDocument ;
+    mnp:documentIdentifier "REG-MNP-2024" ;
+    rdfs:label "Demo MNP Eligibility Regulation 2024" .
+
+mnp:Clause-01 a mnp:RegulatoryClause ;
+    mnp:clauseIdentifier "REG-MNP-CLAUSE-01" ;
+    mnp:partOfDocument mnp:Doc-MNP-Regulation-2024 ;
+    mnp:clauseText "申请人实名信息须与号码登记实名信息一致方可办理携号转网。" ;
+    rdfs:label "Real-name consistency clause" .
+
+mnp:Clause-02 a mnp:RegulatoryClause ;
+    mnp:clauseIdentifier "REG-MNP-CLAUSE-02" ;
+    mnp:partOfDocument mnp:Doc-MNP-Regulation-2024 ;
+    mnp:clauseText "申请携转的号码须处于正常可用状态。" ;
+    rdfs:label "Number status clause" .
+
+mnp:Clause-03 a mnp:RegulatoryClause ;
+    mnp:clauseIdentifier "REG-MNP-CLAUSE-03" ;
+    mnp:partOfDocument mnp:Doc-MNP-Regulation-2024 ;
+    mnp:clauseText "申请携转前须结清相关费用，或存在有效缴费约定。" ;
+    rdfs:label "Billing clearance clause" .
+
+mnp:Clause-04 a mnp:RegulatoryClause ;
+    mnp:clauseIdentifier "REG-MNP-CLAUSE-04" ;
+    mnp:partOfDocument mnp:Doc-MNP-Regulation-2024 ;
+    mnp:clauseText "在有效协议期内且协议限制携转的，不得办理携号转网。" ;
+    rdfs:label "Contract restriction clause" .
+
+mnp:Clause-05 a mnp:RegulatoryClause ;
+    mnp:clauseIdentifier "REG-MNP-CLAUSE-05" ;
+    mnp:partOfDocument mnp:Doc-MNP-Regulation-2024 ;
+    mnp:clauseText "距上次成功携转须满足最短间隔要求。" ;
+    rdfs:label "Porting interval clause" .
+
+# Rule individuals (version 1.0 set)
+mnp:Rule-MNP-ELIG-001 a mnp:EligibilityRule ;
+    mnp:ruleIdentifier "MNP-ELIG-001" ;
+    mnp:ruleVersion "1.0" ;
+    mnp:effectiveFrom "2024-01-01T00:00:00Z"^^xsd:dateTime ;
+    mnp:operationalizesClause mnp:Clause-01 ;
+    mnp:hasRuleVersion mnp:RuleVersion-MNP-ELIG-001-1-0 .
+
+mnp:RuleVersion-MNP-ELIG-001-1-0 a mnp:RuleVersion ;
+    mnp:ruleVersion "1.0" ;
+    mnp:effectiveFrom "2024-01-01T00:00:00Z"^^xsd:dateTime .
+
+mnp:Rule-MNP-ELIG-002 a mnp:EligibilityRule ;
+    mnp:ruleIdentifier "MNP-ELIG-002" ;
+    mnp:ruleVersion "1.0" ;
+    mnp:effectiveFrom "2024-01-01T00:00:00Z"^^xsd:dateTime ;
+    mnp:operationalizesClause mnp:Clause-02 ;
+    mnp:hasRuleVersion mnp:RuleVersion-MNP-ELIG-002-1-0 .
+
+mnp:RuleVersion-MNP-ELIG-002-1-0 a mnp:RuleVersion ;
+    mnp:ruleVersion "1.0" ;
+    mnp:effectiveFrom "2024-01-01T00:00:00Z"^^xsd:dateTime .
+
+mnp:Rule-MNP-ELIG-003 a mnp:EligibilityRule ;
+    mnp:ruleIdentifier "MNP-ELIG-003" ;
+    mnp:ruleVersion "1.0" ;
+    mnp:effectiveFrom "2024-01-01T00:00:00Z"^^xsd:dateTime ;
+    mnp:operationalizesClause mnp:Clause-03 ;
+    mnp:hasRuleVersion mnp:RuleVersion-MNP-ELIG-003-1-0 .
+
+mnp:RuleVersion-MNP-ELIG-003-1-0 a mnp:RuleVersion ;
+    mnp:ruleVersion "1.0" ;
+    mnp:effectiveFrom "2024-01-01T00:00:00Z"^^xsd:dateTime .
+
+mnp:Rule-MNP-ELIG-004 a mnp:EligibilityRule ;
+    mnp:ruleIdentifier "MNP-ELIG-004" ;
+    mnp:ruleVersion "1.0" ;
+    mnp:effectiveFrom "2024-01-01T00:00:00Z"^^xsd:dateTime ;
+    mnp:operationalizesClause mnp:Clause-04 ;
+    mnp:hasRuleVersion mnp:RuleVersion-MNP-ELIG-004-1-0 .
+
+mnp:RuleVersion-MNP-ELIG-004-1-0 a mnp:RuleVersion ;
+    mnp:ruleVersion "1.0" ;
+    mnp:effectiveFrom "2024-01-01T00:00:00Z"^^xsd:dateTime .
+
+mnp:Rule-MNP-ELIG-005 a mnp:EligibilityRule ;
+    mnp:ruleIdentifier "MNP-ELIG-005" ;
+    mnp:ruleVersion "1.0" ;
+    mnp:effectiveFrom "2024-01-01T00:00:00Z"^^xsd:dateTime ;
+    mnp:operationalizesClause mnp:Clause-05 ;
+    mnp:hasRuleVersion mnp:RuleVersion-MNP-ELIG-005-1-0 .
+
+mnp:RuleVersion-MNP-ELIG-005-1-0 a mnp:RuleVersion ;
+    mnp:ruleVersion "1.0" ;
+    mnp:effectiveFrom "2024-01-01T00:00:00Z"^^xsd:dateTime ;
+    mnp:effectiveTo "2026-05-31T23:59:59Z"^^xsd:dateTime .
+
+# Updated rule version 1.1 for CASE-06
+mnp:Rule-MNP-ELIG-005-v1-1 a mnp:EligibilityRule ;
+    mnp:ruleIdentifier "MNP-ELIG-005" ;
+    mnp:ruleVersion "1.1" ;
+    mnp:effectiveFrom "2026-06-01T00:00:00Z"^^xsd:dateTime ;
+    mnp:operationalizesClause mnp:Clause-05 ;
+    mnp:hasRuleVersion mnp:RuleVersion-MNP-ELIG-005-1-1 .
+
+mnp:RuleVersion-MNP-ELIG-005-1-1 a mnp:RuleVersion ;
+    mnp:ruleVersion "1.1" ;
+    mnp:effectiveFrom "2026-06-01T00:00:00Z"^^xsd:dateTime ;
+    mnp:supersedesRuleVersion mnp:RuleVersion-MNP-ELIG-005-1-0 .
+
+# Remediation action catalogue
+mnp:Action-VERIFY_IDENTITY a mnp:RemediationAction ;
+    mnp:actionCode "VERIFY_IDENTITY" ;
+    mnp:actionDescription "请核对并更新实名登记信息后重新申请。" .
+
+mnp:Action-RESTORE_NUMBER_STATUS a mnp:RemediationAction ;
+    mnp:actionCode "RESTORE_NUMBER_STATUS" ;
+    mnp:actionDescription "请先恢复号码至正常可用状态。" .
+
+mnp:Action-SETTLE_OUTSTANDING_FEES a mnp:RemediationAction ;
+    mnp:actionCode "SETTLE_OUTSTANDING_FEES" ;
+    mnp:actionDescription "请结清欠费，或办理有效缴费约定后再申请。" .
+
+mnp:Action-WAIT_OR_TERMINATE_CONTRACT a mnp:RemediationAction ;
+    mnp:actionCode "WAIT_OR_TERMINATE_CONTRACT" ;
+    mnp:actionDescription "请等待合约到期，或按约定办理解约后再申请。" .
+
+mnp:Action-WAIT_PORTING_INTERVAL a mnp:RemediationAction ;
+    mnp:actionCode "WAIT_PORTING_INTERVAL" ;
+    mnp:actionDescription "请等待满足最短携转间隔后再申请。" .
+
+mnp:Action-SUPPLY_MISSING_EVIDENCE a mnp:RemediationAction ;
+    mnp:actionCode "SUPPLY_MISSING_EVIDENCE" ;
+    mnp:actionDescription "请补充缺失或过期的关键证据后由人工复核。" .

@@ -1,0 +1,44 @@
+@prefix mnp: <http://example.org/kg-mnp#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+
+#################################################################
+# KG-MNP Compliance ontology — rule/clause/action helpers
+#################################################################
+
+<http://example.org/kg-mnp/compliance> a owl:Ontology ;
+    dcterms:title "KG-MNP Compliance Ontology"@en ;
+    owl:versionInfo "0.1.0" ;
+    owl:imports <http://example.org/kg-mnp/core> ;
+    rdfs:comment "Compliance-oriented extensions for regulatory operationalization and reassessment."@en .
+
+mnp:ReassessmentMarker a owl:Class ;
+    rdfs:label "Reassessment Marker"@en ;
+    rdfs:comment "Marks an assessment that used a superseded rule version and requires re-evaluation."@en .
+
+mnp:supersedesRuleVersion a owl:ObjectProperty ;
+    rdfs:domain mnp:RuleVersion ;
+    rdfs:range mnp:RuleVersion ;
+    rdfs:comment "Links a newer rule version to the older version it supersedes."@en .
+
+mnp:markedForReassessment a owl:ObjectProperty ;
+    rdfs:domain mnp:EligibilityAssessment ;
+    rdfs:range mnp:ReassessmentMarker .
+
+mnp:reassessmentReason a owl:DatatypeProperty ;
+    rdfs:domain mnp:ReassessmentMarker ;
+    rdfs:range xsd:string .
+
+mnp:clauseText a owl:DatatypeProperty ;
+    rdfs:domain mnp:RegulatoryClause ;
+    rdfs:range xsd:string .
+
+mnp:actionDescription a owl:DatatypeProperty ;
+    rdfs:domain mnp:RemediationAction ;
+    rdfs:range xsd:string .
+
+mnp:reasonDescription a owl:DatatypeProperty ;
+    rdfs:domain mnp:BlockingReason ;
+    rdfs:range xsd:string .

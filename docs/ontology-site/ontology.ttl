@@ -1,0 +1,680 @@
+@prefix : <http://example.org/kg-mnp/alignments#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix xml: <http://www.w3.org/XML/1998/namespace> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@base <http://example.org/kg-mnp/alignments#> .
+
+<http://example.org/kg-mnp/alignments> rdf:type owl:Ontology ;
+                                        owl:imports <http://example.org/kg-mnp/core> ;
+                                        <http://purl.org/dc/terms/description> "Domain ontology for Mobile Number Portability eligibility assessment with evidence-rule-clause-action traceability."@en ;
+                                        <http://purl.org/dc/terms/title> "KG-MNP Alignments"@en ,
+                                                                         "KG-MNP Compliance Ontology"@en ,
+                                                                         "KG-MNP Core Ontology"@en ;
+                                        rdfs:comment "Compliance-oriented extensions for regulatory operationalization and reassessment."@en ,
+                                                     "Human-reviewed source and alignment annotations. Runtime loaders may skip this file."@en ,
+                                                     "OWL 2 concepts and stable cardinality constraints. Amount/date rules are executed in Python."@en ;
+                                        owl:versionInfo "0.1.0" .
+
+#################################################################
+#    Annotation properties
+#################################################################
+
+###  http://example.org/kg-mnp#alignmentStatus
+<http://example.org/kg-mnp#alignmentStatus> rdf:type owl:AnnotationProperty ;
+                                            rdfs:comment "VERIFIED, PARTIAL, or LOCAL_ONLY."@en ;
+                                            rdfs:label "Alignment Status"@en .
+
+
+###  http://purl.org/dc/terms/description
+<http://purl.org/dc/terms/description> rdf:type owl:AnnotationProperty .
+
+
+###  http://purl.org/dc/terms/source
+<http://purl.org/dc/terms/source> rdf:type owl:AnnotationProperty .
+
+
+###  http://purl.org/dc/terms/title
+<http://purl.org/dc/terms/title> rdf:type owl:AnnotationProperty .
+
+
+###  http://www.w3.org/2004/02/skos/core#closeMatch
+<http://www.w3.org/2004/02/skos/core#closeMatch> rdf:type owl:AnnotationProperty .
+
+
+#################################################################
+#    Object Properties
+#################################################################
+
+###  http://example.org/kg-mnp#aboutCase
+<http://example.org/kg-mnp#aboutCase> rdf:type owl:ObjectProperty ;
+                                      rdfs:domain <http://example.org/kg-mnp#EligibilityAssessment> ;
+                                      rdfs:range <http://example.org/kg-mnp#MNPCase> .
+
+
+###  http://example.org/kg-mnp#affectsAssessment
+<http://example.org/kg-mnp#affectsAssessment> rdf:type owl:ObjectProperty ;
+                                              rdfs:domain <http://example.org/kg-mnp#RuleVersion> ;
+                                              rdfs:range <http://example.org/kg-mnp#EligibilityAssessment> .
+
+
+###  http://example.org/kg-mnp#billedThrough
+<http://example.org/kg-mnp#billedThrough> rdf:type owl:ObjectProperty ;
+                                          rdfs:domain <http://example.org/kg-mnp#Subscriber> ;
+                                          rdfs:range <http://example.org/kg-mnp#TelecomAccount> .
+
+
+###  http://example.org/kg-mnp#citesClause
+<http://example.org/kg-mnp#citesClause> rdf:type owl:ObjectProperty ;
+                                        rdfs:domain <http://example.org/kg-mnp#BlockingReason> ;
+                                        rdfs:range <http://example.org/kg-mnp#RegulatoryClause> .
+
+
+###  http://example.org/kg-mnp#concernsNumber
+<http://example.org/kg-mnp#concernsNumber> rdf:type owl:ObjectProperty ;
+                                           rdfs:domain <http://example.org/kg-mnp#MNPCase> ;
+                                           rdfs:range <http://example.org/kg-mnp#PhoneNumber> .
+
+
+###  http://example.org/kg-mnp#dependsOn
+<http://example.org/kg-mnp#dependsOn> rdf:type owl:ObjectProperty ;
+                                      rdfs:domain <http://example.org/kg-mnp#EligibilityAssessment> ;
+                                      rdfs:range <http://example.org/kg-mnp#AssessmentDependency> .
+
+
+###  http://example.org/kg-mnp#dependsOnEvidence
+<http://example.org/kg-mnp#dependsOnEvidence> rdf:type owl:ObjectProperty ;
+                                              rdfs:domain <http://example.org/kg-mnp#AssessmentDependency> ;
+                                              rdfs:range <http://example.org/kg-mnp#EvidenceRecord> .
+
+
+###  http://example.org/kg-mnp#dependsOnRuleVersion
+<http://example.org/kg-mnp#dependsOnRuleVersion> rdf:type owl:ObjectProperty ;
+                                                 rdfs:domain <http://example.org/kg-mnp#AssessmentDependency> ;
+                                                 rdfs:range <http://example.org/kg-mnp#RuleVersion> .
+
+
+###  http://example.org/kg-mnp#evaluatedByRule
+<http://example.org/kg-mnp#evaluatedByRule> rdf:type owl:ObjectProperty ;
+                                            rdfs:domain <http://example.org/kg-mnp#EligibilityAssessment> ;
+                                            rdfs:range <http://example.org/kg-mnp#EligibilityRule> .
+
+
+###  http://example.org/kg-mnp#governedByContract
+<http://example.org/kg-mnp#governedByContract> rdf:type owl:ObjectProperty ;
+                                               rdfs:domain <http://example.org/kg-mnp#ServiceSubscription> ;
+                                               rdfs:range <http://example.org/kg-mnp#ServiceContract> .
+
+
+###  http://example.org/kg-mnp#hasEligibilityAssessment
+<http://example.org/kg-mnp#hasEligibilityAssessment> rdf:type owl:ObjectProperty ;
+                                                     rdfs:domain <http://example.org/kg-mnp#MNPCase> ;
+                                                     rdfs:range <http://example.org/kg-mnp#EligibilityAssessment> .
+
+
+###  http://example.org/kg-mnp#hasRuleVersion
+<http://example.org/kg-mnp#hasRuleVersion> rdf:type owl:ObjectProperty ;
+                                           rdfs:domain <http://example.org/kg-mnp#EligibilityRule> ;
+                                           rdfs:range <http://example.org/kg-mnp#RuleVersion> .
+
+
+###  http://example.org/kg-mnp#hasSourceSystem
+<http://example.org/kg-mnp#hasSourceSystem> rdf:type owl:ObjectProperty ;
+                                            rdfs:domain <http://example.org/kg-mnp#EvidenceRecord> ;
+                                            rdfs:range <http://example.org/kg-mnp#InformationSystem> .
+
+
+###  http://example.org/kg-mnp#hasSubscription
+<http://example.org/kg-mnp#hasSubscription> rdf:type owl:ObjectProperty ;
+                                            rdfs:domain <http://example.org/kg-mnp#Subscriber> ;
+                                            rdfs:range <http://example.org/kg-mnp#ServiceSubscription> .
+
+
+###  http://example.org/kg-mnp#markedForReassessment
+<http://example.org/kg-mnp#markedForReassessment> rdf:type owl:ObjectProperty ;
+                                                  rdfs:domain <http://example.org/kg-mnp#EligibilityAssessment> ;
+                                                  rdfs:range <http://example.org/kg-mnp#ReassessmentMarker> .
+
+
+###  http://example.org/kg-mnp#operationalizesClause
+<http://example.org/kg-mnp#operationalizesClause> rdf:type owl:ObjectProperty ;
+                                                  rdfs:domain <http://example.org/kg-mnp#EligibilityRule> ;
+                                                  rdfs:range <http://example.org/kg-mnp#RegulatoryClause> .
+
+
+###  http://example.org/kg-mnp#ownsPhoneNumber
+<http://example.org/kg-mnp#ownsPhoneNumber> rdf:type owl:ObjectProperty ;
+                                            rdfs:domain <http://example.org/kg-mnp#Subscriber> ;
+                                            rdfs:range <http://example.org/kg-mnp#PhoneNumber> .
+
+
+###  http://example.org/kg-mnp#partOfDocument
+<http://example.org/kg-mnp#partOfDocument> rdf:type owl:ObjectProperty ;
+                                           rdfs:domain <http://example.org/kg-mnp#RegulatoryClause> ;
+                                           rdfs:range <http://example.org/kg-mnp#RegulatoryDocument> .
+
+
+###  http://example.org/kg-mnp#producesBlockingReason
+<http://example.org/kg-mnp#producesBlockingReason> rdf:type owl:ObjectProperty ;
+                                                   rdfs:domain <http://example.org/kg-mnp#EligibilityAssessment> ;
+                                                   rdfs:range <http://example.org/kg-mnp#BlockingReason> .
+
+
+###  http://example.org/kg-mnp#producesDecision
+<http://example.org/kg-mnp#producesDecision> rdf:type owl:ObjectProperty ;
+                                             rdfs:domain <http://example.org/kg-mnp#EligibilityAssessment> ;
+                                             rdfs:range <http://example.org/kg-mnp#EligibilityDecision> .
+
+
+###  http://example.org/kg-mnp#recommendsAction
+<http://example.org/kg-mnp#recommendsAction> rdf:type owl:ObjectProperty ;
+                                             rdfs:domain <http://example.org/kg-mnp#BlockingReason> ;
+                                             rdfs:range <http://example.org/kg-mnp#RemediationAction> .
+
+
+###  http://example.org/kg-mnp#relatedAccount
+<http://example.org/kg-mnp#relatedAccount> rdf:type owl:ObjectProperty ;
+                                           rdfs:domain <http://example.org/kg-mnp#Subscriber> ;
+                                           rdfs:range <http://example.org/kg-mnp#TelecomAccount> .
+
+
+###  http://example.org/kg-mnp#requestedBy
+<http://example.org/kg-mnp#requestedBy> rdf:type owl:ObjectProperty ;
+                                        rdfs:domain <http://example.org/kg-mnp#MNPCase> ;
+                                        rdfs:range <http://example.org/kg-mnp#Subscriber> .
+
+
+###  http://example.org/kg-mnp#subscribesToService
+<http://example.org/kg-mnp#subscribesToService> rdf:type owl:ObjectProperty ;
+                                                rdfs:domain <http://example.org/kg-mnp#ServiceSubscription> ;
+                                                rdfs:range <http://example.org/kg-mnp#TelecomService> .
+
+
+###  http://example.org/kg-mnp#supersedesRuleVersion
+<http://example.org/kg-mnp#supersedesRuleVersion> rdf:type owl:ObjectProperty ;
+                                                  rdfs:domain <http://example.org/kg-mnp#RuleVersion> ;
+                                                  rdfs:range <http://example.org/kg-mnp#RuleVersion> ;
+                                                  rdfs:comment "Links a newer rule version to the older version it supersedes."@en .
+
+
+###  http://example.org/kg-mnp#supportedByEvidence
+<http://example.org/kg-mnp#supportedByEvidence> rdf:type owl:ObjectProperty ;
+                                                rdfs:domain <http://example.org/kg-mnp#BlockingReason> ;
+                                                rdfs:range <http://example.org/kg-mnp#EvidenceRecord> .
+
+
+###  http://example.org/kg-mnp#triggeredByRule
+<http://example.org/kg-mnp#triggeredByRule> rdf:type owl:ObjectProperty ;
+                                            rdfs:domain <http://example.org/kg-mnp#BlockingReason> ;
+                                            rdfs:range <http://example.org/kg-mnp#EligibilityRule> .
+
+
+###  http://example.org/kg-mnp#triggeredByRuleVersion
+<http://example.org/kg-mnp#triggeredByRuleVersion> rdf:type owl:ObjectProperty ;
+                                                   rdfs:domain <http://example.org/kg-mnp#BlockingReason> ;
+                                                   rdfs:range <http://example.org/kg-mnp#RuleVersion> .
+
+
+###  http://example.org/kg-mnp#usesEvidence
+<http://example.org/kg-mnp#usesEvidence> rdf:type owl:ObjectProperty ;
+                                         rdfs:domain <http://example.org/kg-mnp#EligibilityAssessment> ;
+                                         rdfs:range <http://example.org/kg-mnp#EvidenceRecord> .
+
+
+###  http://example.org/kg-mnp#usesRuleVersion
+<http://example.org/kg-mnp#usesRuleVersion> rdf:type owl:ObjectProperty ;
+                                            rdfs:domain <http://example.org/kg-mnp#EligibilityAssessment> ;
+                                            rdfs:range <http://example.org/kg-mnp#RuleVersion> .
+
+
+#################################################################
+#    Data properties
+#################################################################
+
+###  http://example.org/kg-mnp#actionCode
+<http://example.org/kg-mnp#actionCode> rdf:type owl:DatatypeProperty ;
+                                       rdfs:domain <http://example.org/kg-mnp#RemediationAction> ;
+                                       rdfs:range xsd:string .
+
+
+###  http://example.org/kg-mnp#actionDescription
+<http://example.org/kg-mnp#actionDescription> rdf:type owl:DatatypeProperty ;
+                                              rdfs:domain <http://example.org/kg-mnp#RemediationAction> ;
+                                              rdfs:range xsd:string .
+
+
+###  http://example.org/kg-mnp#assessmentIdentifier
+<http://example.org/kg-mnp#assessmentIdentifier> rdf:type owl:DatatypeProperty ;
+                                                 rdfs:domain <http://example.org/kg-mnp#EligibilityAssessment> ;
+                                                 rdfs:range xsd:string .
+
+
+###  http://example.org/kg-mnp#caseIdentifier
+<http://example.org/kg-mnp#caseIdentifier> rdf:type owl:DatatypeProperty ;
+                                           rdfs:domain <http://example.org/kg-mnp#MNPCase> ;
+                                           rdfs:range xsd:string .
+
+
+###  http://example.org/kg-mnp#clauseIdentifier
+<http://example.org/kg-mnp#clauseIdentifier> rdf:type owl:DatatypeProperty ;
+                                             rdfs:domain <http://example.org/kg-mnp#RegulatoryClause> ;
+                                             rdfs:range xsd:string .
+
+
+###  http://example.org/kg-mnp#clauseText
+<http://example.org/kg-mnp#clauseText> rdf:type owl:DatatypeProperty ;
+                                       rdfs:domain <http://example.org/kg-mnp#RegulatoryClause> ;
+                                       rdfs:range xsd:string .
+
+
+###  http://example.org/kg-mnp#contractEndTime
+<http://example.org/kg-mnp#contractEndTime> rdf:type owl:DatatypeProperty ;
+                                            rdfs:domain <http://example.org/kg-mnp#ServiceContract> ;
+                                            rdfs:range xsd:dateTime .
+
+
+###  http://example.org/kg-mnp#contractStatusCode
+<http://example.org/kg-mnp#contractStatusCode> rdf:type owl:DatatypeProperty ;
+                                               rdfs:domain <http://example.org/kg-mnp#ServiceContract> ;
+                                               rdfs:range xsd:string .
+
+
+###  http://example.org/kg-mnp#currencyCode
+<http://example.org/kg-mnp#currencyCode> rdf:type owl:DatatypeProperty ;
+                                         rdfs:domain <http://example.org/kg-mnp#EvidenceRecord> ;
+                                         rdfs:range xsd:string .
+
+
+###  http://example.org/kg-mnp#daysSinceLastPort
+<http://example.org/kg-mnp#daysSinceLastPort> rdf:type owl:DatatypeProperty ;
+                                              rdfs:domain <http://example.org/kg-mnp#EvidenceRecord> ;
+                                              rdfs:range xsd:integer .
+
+
+###  http://example.org/kg-mnp#decisionCode
+<http://example.org/kg-mnp#decisionCode> rdf:type owl:DatatypeProperty ;
+                                         rdfs:domain <http://example.org/kg-mnp#EligibilityDecision> ;
+                                         rdfs:range xsd:string .
+
+
+###  http://example.org/kg-mnp#documentIdentifier
+<http://example.org/kg-mnp#documentIdentifier> rdf:type owl:DatatypeProperty ;
+                                               rdfs:domain <http://example.org/kg-mnp#RegulatoryDocument> ;
+                                               rdfs:range xsd:string .
+
+
+###  http://example.org/kg-mnp#effectiveFrom
+<http://example.org/kg-mnp#effectiveFrom> rdf:type owl:DatatypeProperty ;
+                                          rdfs:range xsd:dateTime .
+
+
+###  http://example.org/kg-mnp#effectiveTo
+<http://example.org/kg-mnp#effectiveTo> rdf:type owl:DatatypeProperty ;
+                                        rdfs:range xsd:dateTime .
+
+
+###  http://example.org/kg-mnp#evidenceGeneratedAt
+<http://example.org/kg-mnp#evidenceGeneratedAt> rdf:type owl:DatatypeProperty ;
+                                                rdfs:domain <http://example.org/kg-mnp#EvidenceRecord> ;
+                                                rdfs:range xsd:dateTime .
+
+
+###  http://example.org/kg-mnp#evidenceStatus
+<http://example.org/kg-mnp#evidenceStatus> rdf:type owl:DatatypeProperty ;
+                                           rdfs:domain <http://example.org/kg-mnp#EvidenceRecord> ;
+                                           rdfs:range xsd:string .
+
+
+###  http://example.org/kg-mnp#evidenceType
+<http://example.org/kg-mnp#evidenceType> rdf:type owl:DatatypeProperty ;
+                                         rdfs:domain <http://example.org/kg-mnp#EvidenceRecord> ;
+                                         rdfs:range xsd:string .
+
+
+###  http://example.org/kg-mnp#evidenceValidUntil
+<http://example.org/kg-mnp#evidenceValidUntil> rdf:type owl:DatatypeProperty ;
+                                               rdfs:domain <http://example.org/kg-mnp#EvidenceRecord> ;
+                                               rdfs:range xsd:dateTime .
+
+
+###  http://example.org/kg-mnp#hasPaymentArrangement
+<http://example.org/kg-mnp#hasPaymentArrangement> rdf:type owl:DatatypeProperty ;
+                                                  rdfs:domain <http://example.org/kg-mnp#EvidenceRecord> ;
+                                                  rdfs:range xsd:boolean .
+
+
+###  http://example.org/kg-mnp#identityMatchFlag
+<http://example.org/kg-mnp#identityMatchFlag> rdf:type owl:DatatypeProperty ;
+                                              rdfs:domain <http://example.org/kg-mnp#EvidenceRecord> ;
+                                              rdfs:range xsd:boolean .
+
+
+###  http://example.org/kg-mnp#mappingReviewStatus
+<http://example.org/kg-mnp#mappingReviewStatus> rdf:type owl:DatatypeProperty ;
+                                                rdfs:domain <http://example.org/kg-mnp#MappingRecord> ;
+                                                rdfs:range xsd:string .
+
+
+###  http://example.org/kg-mnp#maskedPhoneNumber
+<http://example.org/kg-mnp#maskedPhoneNumber> rdf:type owl:DatatypeProperty ;
+                                              rdfs:domain <http://example.org/kg-mnp#PhoneNumber> ;
+                                              rdfs:range xsd:string .
+
+
+###  http://example.org/kg-mnp#numberStatusCode
+<http://example.org/kg-mnp#numberStatusCode> rdf:type owl:DatatypeProperty ;
+                                             rdfs:domain <http://example.org/kg-mnp#EvidenceRecord> ;
+                                             rdfs:range xsd:string .
+
+
+###  http://example.org/kg-mnp#observedAmount
+<http://example.org/kg-mnp#observedAmount> rdf:type owl:DatatypeProperty ;
+                                           rdfs:domain <http://example.org/kg-mnp#EvidenceRecord> ;
+                                           rdfs:range xsd:decimal .
+
+
+###  http://example.org/kg-mnp#reasonCode
+<http://example.org/kg-mnp#reasonCode> rdf:type owl:DatatypeProperty ;
+                                       rdfs:domain <http://example.org/kg-mnp#BlockingReason> ;
+                                       rdfs:range xsd:string .
+
+
+###  http://example.org/kg-mnp#reasonDescription
+<http://example.org/kg-mnp#reasonDescription> rdf:type owl:DatatypeProperty ;
+                                              rdfs:domain <http://example.org/kg-mnp#BlockingReason> ;
+                                              rdfs:range xsd:string .
+
+
+###  http://example.org/kg-mnp#reassessmentReason
+<http://example.org/kg-mnp#reassessmentReason> rdf:type owl:DatatypeProperty ;
+                                               rdfs:domain <http://example.org/kg-mnp#ReassessmentMarker> ;
+                                               rdfs:range xsd:string .
+
+
+###  http://example.org/kg-mnp#requiresReassessment
+<http://example.org/kg-mnp#requiresReassessment> rdf:type owl:DatatypeProperty ;
+                                                 rdfs:domain <http://example.org/kg-mnp#EligibilityAssessment> ;
+                                                 rdfs:range xsd:boolean .
+
+
+###  http://example.org/kg-mnp#ruleIdentifier
+<http://example.org/kg-mnp#ruleIdentifier> rdf:type owl:DatatypeProperty ;
+                                           rdfs:domain <http://example.org/kg-mnp#EligibilityRule> ;
+                                           rdfs:range xsd:string .
+
+
+###  http://example.org/kg-mnp#ruleVersion
+<http://example.org/kg-mnp#ruleVersion> rdf:type owl:DatatypeProperty ;
+                                        rdfs:range xsd:string .
+
+
+###  http://example.org/kg-mnp#sourceApi
+<http://example.org/kg-mnp#sourceApi> rdf:type owl:DatatypeProperty ;
+                                      rdfs:domain <http://example.org/kg-mnp#MappingRecord> ;
+                                      rdfs:range xsd:string .
+
+
+###  http://example.org/kg-mnp#sourceFieldPath
+<http://example.org/kg-mnp#sourceFieldPath> rdf:type owl:DatatypeProperty ;
+                                            rdfs:domain <http://example.org/kg-mnp#MappingRecord> ;
+                                            rdfs:range xsd:string .
+
+
+###  http://example.org/kg-mnp#subscriptionStatusCode
+<http://example.org/kg-mnp#subscriptionStatusCode> rdf:type owl:DatatypeProperty ;
+                                                   rdfs:domain <http://example.org/kg-mnp#ServiceSubscription> ;
+                                                   rdfs:range xsd:string .
+
+
+###  http://example.org/kg-mnp#systemIdentifier
+<http://example.org/kg-mnp#systemIdentifier> rdf:type owl:DatatypeProperty ;
+                                             rdfs:domain <http://example.org/kg-mnp#InformationSystem> ;
+                                             rdfs:range xsd:string .
+
+
+###  http://example.org/kg-mnp#targetTerm
+<http://example.org/kg-mnp#targetTerm> rdf:type owl:DatatypeProperty ;
+                                       rdfs:domain <http://example.org/kg-mnp#MappingRecord> ;
+                                       rdfs:range xsd:string .
+
+
+#################################################################
+#    Classes
+#################################################################
+
+###  http://example.org/kg-mnp#AssessmentDependency
+<http://example.org/kg-mnp#AssessmentDependency> rdf:type owl:Class ;
+                                                 <http://example.org/kg-mnp#alignmentStatus> "LOCAL_ONLY" ;
+                                                 rdfs:comment "A dependency link from an assessment to a rule version or evidence set used."@en ;
+                                                 rdfs:label "Assessment Dependency"@en .
+
+
+###  http://example.org/kg-mnp#BlockingDecision
+<http://example.org/kg-mnp#BlockingDecision> rdf:type owl:Class ;
+                                             rdfs:subClassOf <http://example.org/kg-mnp#EligibilityDecision> ;
+                                             owl:disjointWith <http://example.org/kg-mnp#ConditionalDecision> ,
+                                                              <http://example.org/kg-mnp#EligibleDecision> ,
+                                                              <http://example.org/kg-mnp#ManualReviewDecision> ;
+                                             <http://example.org/kg-mnp#alignmentStatus> "LOCAL_ONLY" ;
+                                             rdfs:label "Blocking Decision"@en .
+
+
+###  http://example.org/kg-mnp#BlockingReason
+<http://example.org/kg-mnp#BlockingReason> rdf:type owl:Class ;
+                                           <http://example.org/kg-mnp#alignmentStatus> "LOCAL_ONLY" ;
+                                           rdfs:comment "An independent reason that contributes to a blocking or review outcome."@en ;
+                                           rdfs:label "Blocking Reason"@en .
+
+
+###  http://example.org/kg-mnp#ConditionalDecision
+<http://example.org/kg-mnp#ConditionalDecision> rdf:type owl:Class ;
+                                                rdfs:subClassOf <http://example.org/kg-mnp#EligibilityDecision> ;
+                                                owl:disjointWith <http://example.org/kg-mnp#EligibleDecision> ,
+                                                                 <http://example.org/kg-mnp#ManualReviewDecision> ;
+                                                <http://example.org/kg-mnp#alignmentStatus> "LOCAL_ONLY" ;
+                                                rdfs:label "Conditional Decision"@en .
+
+
+###  http://example.org/kg-mnp#EligibilityAssessment
+<http://example.org/kg-mnp#EligibilityAssessment> rdf:type owl:Class ;
+                                                  rdfs:subClassOf [ rdf:type owl:Restriction ;
+                                                                    owl:onProperty <http://example.org/kg-mnp#dependsOn> ;
+                                                                    owl:minCardinality "1"^^xsd:nonNegativeInteger
+                                                                  ] ,
+                                                                  [ rdf:type owl:Restriction ;
+                                                                    owl:onProperty <http://example.org/kg-mnp#evaluatedByRule> ;
+                                                                    owl:minCardinality "1"^^xsd:nonNegativeInteger
+                                                                  ] ,
+                                                                  [ rdf:type owl:Restriction ;
+                                                                    owl:onProperty <http://example.org/kg-mnp#usesEvidence> ;
+                                                                    owl:minCardinality "1"^^xsd:nonNegativeInteger
+                                                                  ] ,
+                                                                  [ rdf:type owl:Restriction ;
+                                                                    owl:onProperty <http://example.org/kg-mnp#producesDecision> ;
+                                                                    owl:cardinality "1"^^xsd:nonNegativeInteger
+                                                                  ] ;
+                                                  <http://example.org/kg-mnp#alignmentStatus> "LOCAL_ONLY" ;
+                                                  <http://purl.org/dc/terms/source> "Local evidence-rule-decision assessment concept." ;
+                                                  rdfs:comment "A deterministic evaluation of an MNP case against eligibility rules and evidence."@en ;
+                                                  rdfs:label "Eligibility Assessment"@en .
+
+
+###  http://example.org/kg-mnp#EligibilityDecision
+<http://example.org/kg-mnp#EligibilityDecision> rdf:type owl:Class ;
+                                                <http://example.org/kg-mnp#alignmentStatus> "LOCAL_ONLY" ;
+                                                <http://purl.org/dc/terms/source> "Local decision taxonomy." ;
+                                                rdfs:comment "Abstract decision outcome of an eligibility assessment."@en ;
+                                                rdfs:label "Eligibility Decision"@en .
+
+
+###  http://example.org/kg-mnp#EligibilityRule
+<http://example.org/kg-mnp#EligibilityRule> rdf:type owl:Class ;
+                                            rdfs:subClassOf [ rdf:type owl:Restriction ;
+                                                              owl:onProperty <http://example.org/kg-mnp#operationalizesClause> ;
+                                                              owl:minCardinality "1"^^xsd:nonNegativeInteger
+                                                            ] ;
+                                            <http://example.org/kg-mnp#alignmentStatus> "LOCAL_ONLY" ;
+                                            rdfs:comment "A versioned eligibility rule operationalizing regulatory clauses."@en ;
+                                            rdfs:label "Eligibility Rule"@en .
+
+
+###  http://example.org/kg-mnp#EligibleDecision
+<http://example.org/kg-mnp#EligibleDecision> rdf:type owl:Class ;
+                                             rdfs:subClassOf <http://example.org/kg-mnp#EligibilityDecision> ;
+                                             owl:disjointWith <http://example.org/kg-mnp#ManualReviewDecision> ;
+                                             <http://example.org/kg-mnp#alignmentStatus> "LOCAL_ONLY" ;
+                                             rdfs:label "Eligible Decision"@en .
+
+
+###  http://example.org/kg-mnp#EvidenceRecord
+<http://example.org/kg-mnp#EvidenceRecord> rdf:type owl:Class ;
+                                           <http://example.org/kg-mnp#alignmentStatus> "PARTIAL" ;
+                                           <http://purl.org/dc/terms/source> "Conceptually compared with CTO MeasurementRecord (observation with magnitude/aspect). Different purpose: MNP evidence includes provenance, validity window, and status." ;
+                                           rdfs:comment "A dated observation used as evidence in eligibility assessment."@en ,
+                                                        "Not skos:closeMatch — MeasurementRecord is quantitative measurement; EvidenceRecord is eligibility provenance."@en ;
+                                           rdfs:label "Evidence Record"@en ;
+                                           rdfs:seeAlso <https://github.com/Point-Topic/cto-ontology/blob/main/resource/cto_core.ttl> .
+
+
+###  http://example.org/kg-mnp#InformationSystem
+<http://example.org/kg-mnp#InformationSystem> rdf:type owl:Class ;
+                                              <http://example.org/kg-mnp#alignmentStatus> "PARTIAL" ;
+                                              <http://purl.org/dc/terms/source> "Compared with CTO WholesaleAccessPlatform / dcat:DataService as information channels; not equivalent." ;
+                                              rdfs:comment "A source system that generates evidence observations."@en ;
+                                              rdfs:label "Information System"@en ;
+                                              rdfs:seeAlso <https://github.com/Point-Topic/cto-ontology/blob/main/resource/cto_extended.ttl> .
+
+
+###  http://example.org/kg-mnp#MNPCase
+<http://example.org/kg-mnp#MNPCase> rdf:type owl:Class ;
+                                    rdfs:subClassOf [ rdf:type owl:Restriction ;
+                                                      owl:onProperty <http://example.org/kg-mnp#concernsNumber> ;
+                                                      owl:cardinality "1"^^xsd:nonNegativeInteger
+                                                    ] ,
+                                                    [ rdf:type owl:Restriction ;
+                                                      owl:onProperty <http://example.org/kg-mnp#requestedBy> ;
+                                                      owl:cardinality "1"^^xsd:nonNegativeInteger
+                                                    ] ;
+                                    <http://example.org/kg-mnp#alignmentStatus> "LOCAL_ONLY" ;
+                                    <http://purl.org/dc/terms/source> "Local MNP case concept; not present in CTO or TM Forum as OWL class." ;
+                                    rdfs:comment "A mobile number portability request case."@en ;
+                                    rdfs:label "MNP Case"@en .
+
+
+###  http://example.org/kg-mnp#ManualReviewDecision
+<http://example.org/kg-mnp#ManualReviewDecision> rdf:type owl:Class ;
+                                                 rdfs:subClassOf <http://example.org/kg-mnp#EligibilityDecision> ;
+                                                 <http://example.org/kg-mnp#alignmentStatus> "LOCAL_ONLY" ;
+                                                 rdfs:label "Manual Review Decision"@en .
+
+
+###  http://example.org/kg-mnp#MappingRecord
+<http://example.org/kg-mnp#MappingRecord> rdf:type owl:Class ;
+                                          <http://example.org/kg-mnp#alignmentStatus> "LOCAL_ONLY" ;
+                                          rdfs:comment "A documented mapping from an external API field to an MNP term."@en ;
+                                          rdfs:label "Mapping Record"@en .
+
+
+###  http://example.org/kg-mnp#PhoneNumber
+<http://example.org/kg-mnp#PhoneNumber> rdf:type owl:Class ;
+                                        <http://example.org/kg-mnp#alignmentStatus> "LOCAL_ONLY" ;
+                                        <http://purl.org/dc/terms/source> "Local MNP domain concept; no direct CTO PhoneNumber class found in cto_core.ttl / cto_extended.ttl (reviewed 2026-07-30)." ;
+                                        rdfs:comment "A telephone number that is the subject of an MNP case."@en ;
+                                        rdfs:label "Phone Number"@en ;
+                                        rdfs:seeAlso <https://github.com/Point-Topic/cto-ontology/blob/main/resource/cto_core.ttl> .
+
+
+###  http://example.org/kg-mnp#ReassessmentMarker
+<http://example.org/kg-mnp#ReassessmentMarker> rdf:type owl:Class ;
+                                               rdfs:comment "Marks an assessment that used a superseded rule version and requires re-evaluation."@en ;
+                                               rdfs:label "Reassessment Marker"@en .
+
+
+###  http://example.org/kg-mnp#RegulatoryClause
+<http://example.org/kg-mnp#RegulatoryClause> rdf:type owl:Class ;
+                                             <http://example.org/kg-mnp#alignmentStatus> "LOCAL_ONLY" ;
+                                             rdfs:comment "A specific clause within a regulatory document."@en ;
+                                             rdfs:label "Regulatory Clause"@en .
+
+
+###  http://example.org/kg-mnp#RegulatoryDocument
+<http://example.org/kg-mnp#RegulatoryDocument> rdf:type owl:Class ;
+                                               <http://example.org/kg-mnp#alignmentStatus> "LOCAL_ONLY" ;
+                                               rdfs:comment "A regulatory or policy document containing clauses."@en ;
+                                               rdfs:label "Regulatory Document"@en .
+
+
+###  http://example.org/kg-mnp#RemediationAction
+<http://example.org/kg-mnp#RemediationAction> rdf:type owl:Class ;
+                                              <http://example.org/kg-mnp#alignmentStatus> "LOCAL_ONLY" ;
+                                              rdfs:comment "A recommended action a user or operator should take."@en ;
+                                              rdfs:label "Remediation Action"@en .
+
+
+###  http://example.org/kg-mnp#RuleVersion
+<http://example.org/kg-mnp#RuleVersion> rdf:type owl:Class ;
+                                        <http://example.org/kg-mnp#alignmentStatus> "LOCAL_ONLY" ;
+                                        rdfs:comment "A concrete version of an eligibility rule with effective dates."@en ;
+                                        rdfs:label "Rule Version"@en .
+
+
+###  http://example.org/kg-mnp#ServiceContract
+<http://example.org/kg-mnp#ServiceContract> rdf:type owl:Class ;
+                                            <http://example.org/kg-mnp#alignmentStatus> "LOCAL_ONLY" ;
+                                            <http://purl.org/dc/terms/source> "Local MNP eligibility concept. CTO has hasContractLength on BroadbandService (data property), not a first-class ServiceContract class." ;
+                                            rdfs:comment "A contractual commitment that may restrict portability until end time."@en ;
+                                            rdfs:label "Service Contract"@en ;
+                                            rdfs:seeAlso <https://github.com/Point-Topic/cto-ontology/blob/main/resource/cto_extended.ttl> .
+
+
+###  http://example.org/kg-mnp#ServiceSubscription
+<http://example.org/kg-mnp#ServiceSubscription> rdf:type owl:Class ;
+                                                <http://example.org/kg-mnp#alignmentStatus> "PARTIAL" ;
+                                                <http://purl.org/dc/terms/source> "TM Forum TMF637 Product Inventory Product instance and status fields." ;
+                                                rdfs:comment "An instantiated subscription linking a subscriber to a telecom service."@en ;
+                                                rdfs:label "Service Subscription"@en ;
+                                                rdfs:seeAlso <https://github.com/tmforum-apis/TMF637_ProductInventory> .
+
+
+###  http://example.org/kg-mnp#Subscriber
+<http://example.org/kg-mnp#Subscriber> rdf:type owl:Class ;
+                                       <http://example.org/kg-mnp#alignmentStatus> "PARTIAL" ;
+                                       <http://purl.org/dc/terms/source> "TM Forum TMF629 Customer Management — Customer object provides industry field basis; mapped via mappings/tmf_to_mnp.yaml" ;
+                                       rdfs:comment "A person or party that holds a telecom subscription and may request number portability."@en ,
+                                                    "Compared with foaf:Person in CTO (person/party layer). Subscriber is a telecom-role specialization; not claimed equivalent."@en ;
+                                       rdfs:label "Subscriber"@en ;
+                                       rdfs:seeAlso <https://github.com/Point-Topic/cto-ontology> ,
+                                                    <https://github.com/tmforum-apis/TMF629_CustomerManagement> .
+
+
+###  http://example.org/kg-mnp#SystemObservation
+<http://example.org/kg-mnp#SystemObservation> rdf:type owl:Class ;
+                                              rdfs:subClassOf <http://example.org/kg-mnp#EvidenceRecord> ;
+                                              <http://example.org/kg-mnp#alignmentStatus> "LOCAL_ONLY" ;
+                                              rdfs:comment "Evidence produced by an information system observation."@en ;
+                                              rdfs:label "System Observation"@en .
+
+
+###  http://example.org/kg-mnp#TelecomAccount
+<http://example.org/kg-mnp#TelecomAccount> rdf:type owl:Class ;
+                                           <http://example.org/kg-mnp#alignmentStatus> "PARTIAL" ;
+                                           <http://purl.org/dc/terms/source> "TM Forum TMF629 relatedParty / relatedAccount and CustomerAccount patterns (schema mapping layer)." ;
+                                           rdfs:comment "A billing or customer account through which services are charged."@en ;
+                                           rdfs:label "Telecom Account"@en ;
+                                           rdfs:seeAlso <https://github.com/tmforum-apis/TMF629_CustomerManagement> .
+
+
+###  http://example.org/kg-mnp#TelecomService
+<http://example.org/kg-mnp#TelecomService> rdf:type owl:Class ;
+                                           <http://example.org/kg-mnp#alignmentStatus> "PARTIAL" ;
+                                           <http://purl.org/dc/terms/source> "TM Forum TMF620 ProductOffering / ProductSpecification; conceptually compared with CTO Service / CellularService." ;
+                                           rdfs:comment "A catalogued telecom service or product offering/specification."@en ,
+                                                        "CTO Service (and CellularService subclass) describe telecom services. closeMatch only — CTO Service also covers broadband market catalogue semantics; MNP term is operational/catalog for portability."@en ;
+                                           rdfs:label "Telecom Service"@en ;
+                                           rdfs:seeAlso <https://github.com/Point-Topic/cto-ontology/blob/main/resource/cto_extended.ttl> ,
+                                                        <https://github.com/tmforum-apis/TMF620_ProductCatalog> ;
+                                           <http://www.w3.org/2004/02/skos/core#closeMatch> <https://github.com/Point-Topic/cto-ontology/#Service> .
+
+
+###  Generated by the OWL API (version 5.1.18) https://github.com/owlcs/owlapi/

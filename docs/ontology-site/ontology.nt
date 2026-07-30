@@ -1,0 +1,596 @@
+<http://example.org/kg-mnp/alignments> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Ontology> .
+<http://example.org/kg-mnp/alignments> <http://www.w3.org/2002/07/owl#imports> <http://example.org/kg-mnp/core> .
+<http://example.org/kg-mnp/alignments> <http://purl.org/dc/terms/description> "Domain ontology for Mobile Number Portability eligibility assessment with evidence-rule-clause-action traceability."@en .
+<http://example.org/kg-mnp/alignments> <http://purl.org/dc/terms/title> "KG-MNP Alignments"@en .
+<http://example.org/kg-mnp/alignments> <http://purl.org/dc/terms/title> "KG-MNP Compliance Ontology"@en .
+<http://example.org/kg-mnp/alignments> <http://purl.org/dc/terms/title> "KG-MNP Core Ontology"@en .
+<http://example.org/kg-mnp/alignments> <http://www.w3.org/2000/01/rdf-schema#comment> "Compliance-oriented extensions for regulatory operationalization and reassessment."@en .
+<http://example.org/kg-mnp/alignments> <http://www.w3.org/2000/01/rdf-schema#comment> "Human-reviewed source and alignment annotations. Runtime loaders may skip this file."@en .
+<http://example.org/kg-mnp/alignments> <http://www.w3.org/2000/01/rdf-schema#comment> "OWL 2 concepts and stable cardinality constraints. Amount/date rules are executed in Python."@en .
+<http://example.org/kg-mnp/alignments> <http://www.w3.org/2002/07/owl#versionInfo> "0.1.0" .
+# 
+# 
+# #################################################################
+# #
+# #    Annotation properties
+# #
+# #################################################################
+# 
+# 
+# http://example.org/kg-mnp#alignmentStatus
+<http://example.org/kg-mnp#alignmentStatus> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#AnnotationProperty> .
+<http://example.org/kg-mnp#alignmentStatus> <http://www.w3.org/2000/01/rdf-schema#comment> "VERIFIED, PARTIAL, or LOCAL_ONLY."@en .
+<http://example.org/kg-mnp#alignmentStatus> <http://www.w3.org/2000/01/rdf-schema#label> "Alignment Status"@en .
+# 
+# http://purl.org/dc/terms/description
+<http://purl.org/dc/terms/description> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#AnnotationProperty> .
+# 
+# http://purl.org/dc/terms/source
+<http://purl.org/dc/terms/source> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#AnnotationProperty> .
+# 
+# http://purl.org/dc/terms/title
+<http://purl.org/dc/terms/title> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#AnnotationProperty> .
+# 
+# http://www.w3.org/2004/02/skos/core#closeMatch
+<http://www.w3.org/2004/02/skos/core#closeMatch> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#AnnotationProperty> .
+# 
+# 
+# 
+# #################################################################
+# #
+# #    Object Properties
+# #
+# #################################################################
+# 
+# 
+# http://example.org/kg-mnp#aboutCase
+<http://example.org/kg-mnp#aboutCase> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://example.org/kg-mnp#aboutCase> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/kg-mnp#EligibilityAssessment> .
+<http://example.org/kg-mnp#aboutCase> <http://www.w3.org/2000/01/rdf-schema#range> <http://example.org/kg-mnp#MNPCase> .
+# 
+# http://example.org/kg-mnp#affectsAssessment
+<http://example.org/kg-mnp#affectsAssessment> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://example.org/kg-mnp#affectsAssessment> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/kg-mnp#RuleVersion> .
+<http://example.org/kg-mnp#affectsAssessment> <http://www.w3.org/2000/01/rdf-schema#range> <http://example.org/kg-mnp#EligibilityAssessment> .
+# 
+# http://example.org/kg-mnp#billedThrough
+<http://example.org/kg-mnp#billedThrough> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://example.org/kg-mnp#billedThrough> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/kg-mnp#Subscriber> .
+<http://example.org/kg-mnp#billedThrough> <http://www.w3.org/2000/01/rdf-schema#range> <http://example.org/kg-mnp#TelecomAccount> .
+# 
+# http://example.org/kg-mnp#citesClause
+<http://example.org/kg-mnp#citesClause> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://example.org/kg-mnp#citesClause> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/kg-mnp#BlockingReason> .
+<http://example.org/kg-mnp#citesClause> <http://www.w3.org/2000/01/rdf-schema#range> <http://example.org/kg-mnp#RegulatoryClause> .
+# 
+# http://example.org/kg-mnp#concernsNumber
+<http://example.org/kg-mnp#concernsNumber> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://example.org/kg-mnp#concernsNumber> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/kg-mnp#MNPCase> .
+<http://example.org/kg-mnp#concernsNumber> <http://www.w3.org/2000/01/rdf-schema#range> <http://example.org/kg-mnp#PhoneNumber> .
+# 
+# http://example.org/kg-mnp#dependsOn
+<http://example.org/kg-mnp#dependsOn> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://example.org/kg-mnp#dependsOn> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/kg-mnp#EligibilityAssessment> .
+<http://example.org/kg-mnp#dependsOn> <http://www.w3.org/2000/01/rdf-schema#range> <http://example.org/kg-mnp#AssessmentDependency> .
+# 
+# http://example.org/kg-mnp#dependsOnEvidence
+<http://example.org/kg-mnp#dependsOnEvidence> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://example.org/kg-mnp#dependsOnEvidence> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/kg-mnp#AssessmentDependency> .
+<http://example.org/kg-mnp#dependsOnEvidence> <http://www.w3.org/2000/01/rdf-schema#range> <http://example.org/kg-mnp#EvidenceRecord> .
+# 
+# http://example.org/kg-mnp#dependsOnRuleVersion
+<http://example.org/kg-mnp#dependsOnRuleVersion> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://example.org/kg-mnp#dependsOnRuleVersion> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/kg-mnp#AssessmentDependency> .
+<http://example.org/kg-mnp#dependsOnRuleVersion> <http://www.w3.org/2000/01/rdf-schema#range> <http://example.org/kg-mnp#RuleVersion> .
+# 
+# http://example.org/kg-mnp#evaluatedByRule
+<http://example.org/kg-mnp#evaluatedByRule> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://example.org/kg-mnp#evaluatedByRule> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/kg-mnp#EligibilityAssessment> .
+<http://example.org/kg-mnp#evaluatedByRule> <http://www.w3.org/2000/01/rdf-schema#range> <http://example.org/kg-mnp#EligibilityRule> .
+# 
+# http://example.org/kg-mnp#governedByContract
+<http://example.org/kg-mnp#governedByContract> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://example.org/kg-mnp#governedByContract> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/kg-mnp#ServiceSubscription> .
+<http://example.org/kg-mnp#governedByContract> <http://www.w3.org/2000/01/rdf-schema#range> <http://example.org/kg-mnp#ServiceContract> .
+# 
+# http://example.org/kg-mnp#hasEligibilityAssessment
+<http://example.org/kg-mnp#hasEligibilityAssessment> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://example.org/kg-mnp#hasEligibilityAssessment> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/kg-mnp#MNPCase> .
+<http://example.org/kg-mnp#hasEligibilityAssessment> <http://www.w3.org/2000/01/rdf-schema#range> <http://example.org/kg-mnp#EligibilityAssessment> .
+# 
+# http://example.org/kg-mnp#hasRuleVersion
+<http://example.org/kg-mnp#hasRuleVersion> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://example.org/kg-mnp#hasRuleVersion> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/kg-mnp#EligibilityRule> .
+<http://example.org/kg-mnp#hasRuleVersion> <http://www.w3.org/2000/01/rdf-schema#range> <http://example.org/kg-mnp#RuleVersion> .
+# 
+# http://example.org/kg-mnp#hasSourceSystem
+<http://example.org/kg-mnp#hasSourceSystem> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://example.org/kg-mnp#hasSourceSystem> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/kg-mnp#EvidenceRecord> .
+<http://example.org/kg-mnp#hasSourceSystem> <http://www.w3.org/2000/01/rdf-schema#range> <http://example.org/kg-mnp#InformationSystem> .
+# 
+# http://example.org/kg-mnp#hasSubscription
+<http://example.org/kg-mnp#hasSubscription> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://example.org/kg-mnp#hasSubscription> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/kg-mnp#Subscriber> .
+<http://example.org/kg-mnp#hasSubscription> <http://www.w3.org/2000/01/rdf-schema#range> <http://example.org/kg-mnp#ServiceSubscription> .
+# 
+# http://example.org/kg-mnp#markedForReassessment
+<http://example.org/kg-mnp#markedForReassessment> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://example.org/kg-mnp#markedForReassessment> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/kg-mnp#EligibilityAssessment> .
+<http://example.org/kg-mnp#markedForReassessment> <http://www.w3.org/2000/01/rdf-schema#range> <http://example.org/kg-mnp#ReassessmentMarker> .
+# 
+# http://example.org/kg-mnp#operationalizesClause
+<http://example.org/kg-mnp#operationalizesClause> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://example.org/kg-mnp#operationalizesClause> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/kg-mnp#EligibilityRule> .
+<http://example.org/kg-mnp#operationalizesClause> <http://www.w3.org/2000/01/rdf-schema#range> <http://example.org/kg-mnp#RegulatoryClause> .
+# 
+# http://example.org/kg-mnp#ownsPhoneNumber
+<http://example.org/kg-mnp#ownsPhoneNumber> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://example.org/kg-mnp#ownsPhoneNumber> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/kg-mnp#Subscriber> .
+<http://example.org/kg-mnp#ownsPhoneNumber> <http://www.w3.org/2000/01/rdf-schema#range> <http://example.org/kg-mnp#PhoneNumber> .
+# 
+# http://example.org/kg-mnp#partOfDocument
+<http://example.org/kg-mnp#partOfDocument> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://example.org/kg-mnp#partOfDocument> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/kg-mnp#RegulatoryClause> .
+<http://example.org/kg-mnp#partOfDocument> <http://www.w3.org/2000/01/rdf-schema#range> <http://example.org/kg-mnp#RegulatoryDocument> .
+# 
+# http://example.org/kg-mnp#producesBlockingReason
+<http://example.org/kg-mnp#producesBlockingReason> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://example.org/kg-mnp#producesBlockingReason> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/kg-mnp#EligibilityAssessment> .
+<http://example.org/kg-mnp#producesBlockingReason> <http://www.w3.org/2000/01/rdf-schema#range> <http://example.org/kg-mnp#BlockingReason> .
+# 
+# http://example.org/kg-mnp#producesDecision
+<http://example.org/kg-mnp#producesDecision> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://example.org/kg-mnp#producesDecision> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/kg-mnp#EligibilityAssessment> .
+<http://example.org/kg-mnp#producesDecision> <http://www.w3.org/2000/01/rdf-schema#range> <http://example.org/kg-mnp#EligibilityDecision> .
+# 
+# http://example.org/kg-mnp#recommendsAction
+<http://example.org/kg-mnp#recommendsAction> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://example.org/kg-mnp#recommendsAction> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/kg-mnp#BlockingReason> .
+<http://example.org/kg-mnp#recommendsAction> <http://www.w3.org/2000/01/rdf-schema#range> <http://example.org/kg-mnp#RemediationAction> .
+# 
+# http://example.org/kg-mnp#relatedAccount
+<http://example.org/kg-mnp#relatedAccount> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://example.org/kg-mnp#relatedAccount> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/kg-mnp#Subscriber> .
+<http://example.org/kg-mnp#relatedAccount> <http://www.w3.org/2000/01/rdf-schema#range> <http://example.org/kg-mnp#TelecomAccount> .
+# 
+# http://example.org/kg-mnp#requestedBy
+<http://example.org/kg-mnp#requestedBy> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://example.org/kg-mnp#requestedBy> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/kg-mnp#MNPCase> .
+<http://example.org/kg-mnp#requestedBy> <http://www.w3.org/2000/01/rdf-schema#range> <http://example.org/kg-mnp#Subscriber> .
+# 
+# http://example.org/kg-mnp#subscribesToService
+<http://example.org/kg-mnp#subscribesToService> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://example.org/kg-mnp#subscribesToService> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/kg-mnp#ServiceSubscription> .
+<http://example.org/kg-mnp#subscribesToService> <http://www.w3.org/2000/01/rdf-schema#range> <http://example.org/kg-mnp#TelecomService> .
+# 
+# http://example.org/kg-mnp#supersedesRuleVersion
+<http://example.org/kg-mnp#supersedesRuleVersion> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://example.org/kg-mnp#supersedesRuleVersion> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/kg-mnp#RuleVersion> .
+<http://example.org/kg-mnp#supersedesRuleVersion> <http://www.w3.org/2000/01/rdf-schema#range> <http://example.org/kg-mnp#RuleVersion> .
+<http://example.org/kg-mnp#supersedesRuleVersion> <http://www.w3.org/2000/01/rdf-schema#comment> "Links a newer rule version to the older version it supersedes."@en .
+# 
+# http://example.org/kg-mnp#supportedByEvidence
+<http://example.org/kg-mnp#supportedByEvidence> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://example.org/kg-mnp#supportedByEvidence> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/kg-mnp#BlockingReason> .
+<http://example.org/kg-mnp#supportedByEvidence> <http://www.w3.org/2000/01/rdf-schema#range> <http://example.org/kg-mnp#EvidenceRecord> .
+# 
+# http://example.org/kg-mnp#triggeredByRule
+<http://example.org/kg-mnp#triggeredByRule> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://example.org/kg-mnp#triggeredByRule> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/kg-mnp#BlockingReason> .
+<http://example.org/kg-mnp#triggeredByRule> <http://www.w3.org/2000/01/rdf-schema#range> <http://example.org/kg-mnp#EligibilityRule> .
+# 
+# http://example.org/kg-mnp#triggeredByRuleVersion
+<http://example.org/kg-mnp#triggeredByRuleVersion> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://example.org/kg-mnp#triggeredByRuleVersion> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/kg-mnp#BlockingReason> .
+<http://example.org/kg-mnp#triggeredByRuleVersion> <http://www.w3.org/2000/01/rdf-schema#range> <http://example.org/kg-mnp#RuleVersion> .
+# 
+# http://example.org/kg-mnp#usesEvidence
+<http://example.org/kg-mnp#usesEvidence> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://example.org/kg-mnp#usesEvidence> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/kg-mnp#EligibilityAssessment> .
+<http://example.org/kg-mnp#usesEvidence> <http://www.w3.org/2000/01/rdf-schema#range> <http://example.org/kg-mnp#EvidenceRecord> .
+# 
+# http://example.org/kg-mnp#usesRuleVersion
+<http://example.org/kg-mnp#usesRuleVersion> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> .
+<http://example.org/kg-mnp#usesRuleVersion> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/kg-mnp#EligibilityAssessment> .
+<http://example.org/kg-mnp#usesRuleVersion> <http://www.w3.org/2000/01/rdf-schema#range> <http://example.org/kg-mnp#RuleVersion> .
+# 
+# 
+# 
+# #################################################################
+# #
+# #    Data properties
+# #
+# #################################################################
+# 
+# 
+# http://example.org/kg-mnp#actionCode
+<http://example.org/kg-mnp#actionCode> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#DatatypeProperty> .
+<http://example.org/kg-mnp#actionCode> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/kg-mnp#RemediationAction> .
+<http://example.org/kg-mnp#actionCode> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.w3.org/2001/XMLSchema#string> .
+# 
+# http://example.org/kg-mnp#actionDescription
+<http://example.org/kg-mnp#actionDescription> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#DatatypeProperty> .
+<http://example.org/kg-mnp#actionDescription> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/kg-mnp#RemediationAction> .
+<http://example.org/kg-mnp#actionDescription> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.w3.org/2001/XMLSchema#string> .
+# 
+# http://example.org/kg-mnp#assessmentIdentifier
+<http://example.org/kg-mnp#assessmentIdentifier> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#DatatypeProperty> .
+<http://example.org/kg-mnp#assessmentIdentifier> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/kg-mnp#EligibilityAssessment> .
+<http://example.org/kg-mnp#assessmentIdentifier> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.w3.org/2001/XMLSchema#string> .
+# 
+# http://example.org/kg-mnp#caseIdentifier
+<http://example.org/kg-mnp#caseIdentifier> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#DatatypeProperty> .
+<http://example.org/kg-mnp#caseIdentifier> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/kg-mnp#MNPCase> .
+<http://example.org/kg-mnp#caseIdentifier> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.w3.org/2001/XMLSchema#string> .
+# 
+# http://example.org/kg-mnp#clauseIdentifier
+<http://example.org/kg-mnp#clauseIdentifier> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#DatatypeProperty> .
+<http://example.org/kg-mnp#clauseIdentifier> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/kg-mnp#RegulatoryClause> .
+<http://example.org/kg-mnp#clauseIdentifier> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.w3.org/2001/XMLSchema#string> .
+# 
+# http://example.org/kg-mnp#clauseText
+<http://example.org/kg-mnp#clauseText> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#DatatypeProperty> .
+<http://example.org/kg-mnp#clauseText> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/kg-mnp#RegulatoryClause> .
+<http://example.org/kg-mnp#clauseText> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.w3.org/2001/XMLSchema#string> .
+# 
+# http://example.org/kg-mnp#contractEndTime
+<http://example.org/kg-mnp#contractEndTime> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#DatatypeProperty> .
+<http://example.org/kg-mnp#contractEndTime> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/kg-mnp#ServiceContract> .
+<http://example.org/kg-mnp#contractEndTime> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.w3.org/2001/XMLSchema#dateTime> .
+# 
+# http://example.org/kg-mnp#contractStatusCode
+<http://example.org/kg-mnp#contractStatusCode> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#DatatypeProperty> .
+<http://example.org/kg-mnp#contractStatusCode> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/kg-mnp#ServiceContract> .
+<http://example.org/kg-mnp#contractStatusCode> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.w3.org/2001/XMLSchema#string> .
+# 
+# http://example.org/kg-mnp#currencyCode
+<http://example.org/kg-mnp#currencyCode> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#DatatypeProperty> .
+<http://example.org/kg-mnp#currencyCode> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/kg-mnp#EvidenceRecord> .
+<http://example.org/kg-mnp#currencyCode> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.w3.org/2001/XMLSchema#string> .
+# 
+# http://example.org/kg-mnp#daysSinceLastPort
+<http://example.org/kg-mnp#daysSinceLastPort> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#DatatypeProperty> .
+<http://example.org/kg-mnp#daysSinceLastPort> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/kg-mnp#EvidenceRecord> .
+<http://example.org/kg-mnp#daysSinceLastPort> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.w3.org/2001/XMLSchema#integer> .
+# 
+# http://example.org/kg-mnp#decisionCode
+<http://example.org/kg-mnp#decisionCode> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#DatatypeProperty> .
+<http://example.org/kg-mnp#decisionCode> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/kg-mnp#EligibilityDecision> .
+<http://example.org/kg-mnp#decisionCode> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.w3.org/2001/XMLSchema#string> .
+# 
+# http://example.org/kg-mnp#documentIdentifier
+<http://example.org/kg-mnp#documentIdentifier> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#DatatypeProperty> .
+<http://example.org/kg-mnp#documentIdentifier> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/kg-mnp#RegulatoryDocument> .
+<http://example.org/kg-mnp#documentIdentifier> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.w3.org/2001/XMLSchema#string> .
+# 
+# http://example.org/kg-mnp#effectiveFrom
+<http://example.org/kg-mnp#effectiveFrom> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#DatatypeProperty> .
+<http://example.org/kg-mnp#effectiveFrom> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.w3.org/2001/XMLSchema#dateTime> .
+# 
+# http://example.org/kg-mnp#effectiveTo
+<http://example.org/kg-mnp#effectiveTo> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#DatatypeProperty> .
+<http://example.org/kg-mnp#effectiveTo> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.w3.org/2001/XMLSchema#dateTime> .
+# 
+# http://example.org/kg-mnp#evidenceGeneratedAt
+<http://example.org/kg-mnp#evidenceGeneratedAt> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#DatatypeProperty> .
+<http://example.org/kg-mnp#evidenceGeneratedAt> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/kg-mnp#EvidenceRecord> .
+<http://example.org/kg-mnp#evidenceGeneratedAt> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.w3.org/2001/XMLSchema#dateTime> .
+# 
+# http://example.org/kg-mnp#evidenceStatus
+<http://example.org/kg-mnp#evidenceStatus> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#DatatypeProperty> .
+<http://example.org/kg-mnp#evidenceStatus> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/kg-mnp#EvidenceRecord> .
+<http://example.org/kg-mnp#evidenceStatus> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.w3.org/2001/XMLSchema#string> .
+# 
+# http://example.org/kg-mnp#evidenceType
+<http://example.org/kg-mnp#evidenceType> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#DatatypeProperty> .
+<http://example.org/kg-mnp#evidenceType> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/kg-mnp#EvidenceRecord> .
+<http://example.org/kg-mnp#evidenceType> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.w3.org/2001/XMLSchema#string> .
+# 
+# http://example.org/kg-mnp#evidenceValidUntil
+<http://example.org/kg-mnp#evidenceValidUntil> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#DatatypeProperty> .
+<http://example.org/kg-mnp#evidenceValidUntil> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/kg-mnp#EvidenceRecord> .
+<http://example.org/kg-mnp#evidenceValidUntil> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.w3.org/2001/XMLSchema#dateTime> .
+# 
+# http://example.org/kg-mnp#hasPaymentArrangement
+<http://example.org/kg-mnp#hasPaymentArrangement> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#DatatypeProperty> .
+<http://example.org/kg-mnp#hasPaymentArrangement> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/kg-mnp#EvidenceRecord> .
+<http://example.org/kg-mnp#hasPaymentArrangement> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.w3.org/2001/XMLSchema#boolean> .
+# 
+# http://example.org/kg-mnp#identityMatchFlag
+<http://example.org/kg-mnp#identityMatchFlag> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#DatatypeProperty> .
+<http://example.org/kg-mnp#identityMatchFlag> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/kg-mnp#EvidenceRecord> .
+<http://example.org/kg-mnp#identityMatchFlag> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.w3.org/2001/XMLSchema#boolean> .
+# 
+# http://example.org/kg-mnp#mappingReviewStatus
+<http://example.org/kg-mnp#mappingReviewStatus> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#DatatypeProperty> .
+<http://example.org/kg-mnp#mappingReviewStatus> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/kg-mnp#MappingRecord> .
+<http://example.org/kg-mnp#mappingReviewStatus> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.w3.org/2001/XMLSchema#string> .
+# 
+# http://example.org/kg-mnp#maskedPhoneNumber
+<http://example.org/kg-mnp#maskedPhoneNumber> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#DatatypeProperty> .
+<http://example.org/kg-mnp#maskedPhoneNumber> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/kg-mnp#PhoneNumber> .
+<http://example.org/kg-mnp#maskedPhoneNumber> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.w3.org/2001/XMLSchema#string> .
+# 
+# http://example.org/kg-mnp#numberStatusCode
+<http://example.org/kg-mnp#numberStatusCode> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#DatatypeProperty> .
+<http://example.org/kg-mnp#numberStatusCode> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/kg-mnp#EvidenceRecord> .
+<http://example.org/kg-mnp#numberStatusCode> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.w3.org/2001/XMLSchema#string> .
+# 
+# http://example.org/kg-mnp#observedAmount
+<http://example.org/kg-mnp#observedAmount> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#DatatypeProperty> .
+<http://example.org/kg-mnp#observedAmount> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/kg-mnp#EvidenceRecord> .
+<http://example.org/kg-mnp#observedAmount> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.w3.org/2001/XMLSchema#decimal> .
+# 
+# http://example.org/kg-mnp#reasonCode
+<http://example.org/kg-mnp#reasonCode> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#DatatypeProperty> .
+<http://example.org/kg-mnp#reasonCode> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/kg-mnp#BlockingReason> .
+<http://example.org/kg-mnp#reasonCode> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.w3.org/2001/XMLSchema#string> .
+# 
+# http://example.org/kg-mnp#reasonDescription
+<http://example.org/kg-mnp#reasonDescription> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#DatatypeProperty> .
+<http://example.org/kg-mnp#reasonDescription> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/kg-mnp#BlockingReason> .
+<http://example.org/kg-mnp#reasonDescription> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.w3.org/2001/XMLSchema#string> .
+# 
+# http://example.org/kg-mnp#reassessmentReason
+<http://example.org/kg-mnp#reassessmentReason> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#DatatypeProperty> .
+<http://example.org/kg-mnp#reassessmentReason> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/kg-mnp#ReassessmentMarker> .
+<http://example.org/kg-mnp#reassessmentReason> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.w3.org/2001/XMLSchema#string> .
+# 
+# http://example.org/kg-mnp#requiresReassessment
+<http://example.org/kg-mnp#requiresReassessment> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#DatatypeProperty> .
+<http://example.org/kg-mnp#requiresReassessment> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/kg-mnp#EligibilityAssessment> .
+<http://example.org/kg-mnp#requiresReassessment> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.w3.org/2001/XMLSchema#boolean> .
+# 
+# http://example.org/kg-mnp#ruleIdentifier
+<http://example.org/kg-mnp#ruleIdentifier> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#DatatypeProperty> .
+<http://example.org/kg-mnp#ruleIdentifier> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/kg-mnp#EligibilityRule> .
+<http://example.org/kg-mnp#ruleIdentifier> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.w3.org/2001/XMLSchema#string> .
+# 
+# http://example.org/kg-mnp#ruleVersion
+<http://example.org/kg-mnp#ruleVersion> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#DatatypeProperty> .
+<http://example.org/kg-mnp#ruleVersion> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.w3.org/2001/XMLSchema#string> .
+# 
+# http://example.org/kg-mnp#sourceApi
+<http://example.org/kg-mnp#sourceApi> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#DatatypeProperty> .
+<http://example.org/kg-mnp#sourceApi> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/kg-mnp#MappingRecord> .
+<http://example.org/kg-mnp#sourceApi> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.w3.org/2001/XMLSchema#string> .
+# 
+# http://example.org/kg-mnp#sourceFieldPath
+<http://example.org/kg-mnp#sourceFieldPath> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#DatatypeProperty> .
+<http://example.org/kg-mnp#sourceFieldPath> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/kg-mnp#MappingRecord> .
+<http://example.org/kg-mnp#sourceFieldPath> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.w3.org/2001/XMLSchema#string> .
+# 
+# http://example.org/kg-mnp#subscriptionStatusCode
+<http://example.org/kg-mnp#subscriptionStatusCode> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#DatatypeProperty> .
+<http://example.org/kg-mnp#subscriptionStatusCode> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/kg-mnp#ServiceSubscription> .
+<http://example.org/kg-mnp#subscriptionStatusCode> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.w3.org/2001/XMLSchema#string> .
+# 
+# http://example.org/kg-mnp#systemIdentifier
+<http://example.org/kg-mnp#systemIdentifier> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#DatatypeProperty> .
+<http://example.org/kg-mnp#systemIdentifier> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/kg-mnp#InformationSystem> .
+<http://example.org/kg-mnp#systemIdentifier> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.w3.org/2001/XMLSchema#string> .
+# 
+# http://example.org/kg-mnp#targetTerm
+<http://example.org/kg-mnp#targetTerm> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#DatatypeProperty> .
+<http://example.org/kg-mnp#targetTerm> <http://www.w3.org/2000/01/rdf-schema#domain> <http://example.org/kg-mnp#MappingRecord> .
+<http://example.org/kg-mnp#targetTerm> <http://www.w3.org/2000/01/rdf-schema#range> <http://www.w3.org/2001/XMLSchema#string> .
+# 
+# 
+# 
+# #################################################################
+# #
+# #    Classes
+# #
+# #################################################################
+# 
+# 
+# http://example.org/kg-mnp#AssessmentDependency
+<http://example.org/kg-mnp#AssessmentDependency> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://example.org/kg-mnp#AssessmentDependency> <http://example.org/kg-mnp#alignmentStatus> "LOCAL_ONLY" .
+<http://example.org/kg-mnp#AssessmentDependency> <http://www.w3.org/2000/01/rdf-schema#comment> "A dependency link from an assessment to a rule version or evidence set used."@en .
+<http://example.org/kg-mnp#AssessmentDependency> <http://www.w3.org/2000/01/rdf-schema#label> "Assessment Dependency"@en .
+# 
+# http://example.org/kg-mnp#BlockingDecision
+<http://example.org/kg-mnp#BlockingDecision> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://example.org/kg-mnp#BlockingDecision> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://example.org/kg-mnp#EligibilityDecision> .
+<http://example.org/kg-mnp#BlockingDecision> <http://www.w3.org/2002/07/owl#disjointWith> <http://example.org/kg-mnp#ConditionalDecision> .
+<http://example.org/kg-mnp#BlockingDecision> <http://www.w3.org/2002/07/owl#disjointWith> <http://example.org/kg-mnp#EligibleDecision> .
+<http://example.org/kg-mnp#BlockingDecision> <http://www.w3.org/2002/07/owl#disjointWith> <http://example.org/kg-mnp#ManualReviewDecision> .
+<http://example.org/kg-mnp#BlockingDecision> <http://example.org/kg-mnp#alignmentStatus> "LOCAL_ONLY" .
+<http://example.org/kg-mnp#BlockingDecision> <http://www.w3.org/2000/01/rdf-schema#label> "Blocking Decision"@en .
+# 
+# http://example.org/kg-mnp#BlockingReason
+<http://example.org/kg-mnp#BlockingReason> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://example.org/kg-mnp#BlockingReason> <http://example.org/kg-mnp#alignmentStatus> "LOCAL_ONLY" .
+<http://example.org/kg-mnp#BlockingReason> <http://www.w3.org/2000/01/rdf-schema#comment> "An independent reason that contributes to a blocking or review outcome."@en .
+<http://example.org/kg-mnp#BlockingReason> <http://www.w3.org/2000/01/rdf-schema#label> "Blocking Reason"@en .
+# 
+# http://example.org/kg-mnp#ConditionalDecision
+<http://example.org/kg-mnp#ConditionalDecision> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://example.org/kg-mnp#ConditionalDecision> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://example.org/kg-mnp#EligibilityDecision> .
+<http://example.org/kg-mnp#ConditionalDecision> <http://www.w3.org/2002/07/owl#disjointWith> <http://example.org/kg-mnp#EligibleDecision> .
+<http://example.org/kg-mnp#ConditionalDecision> <http://www.w3.org/2002/07/owl#disjointWith> <http://example.org/kg-mnp#ManualReviewDecision> .
+<http://example.org/kg-mnp#ConditionalDecision> <http://example.org/kg-mnp#alignmentStatus> "LOCAL_ONLY" .
+<http://example.org/kg-mnp#ConditionalDecision> <http://www.w3.org/2000/01/rdf-schema#label> "Conditional Decision"@en .
+# 
+# http://example.org/kg-mnp#EligibilityAssessment
+<http://example.org/kg-mnp#EligibilityAssessment> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://example.org/kg-mnp#EligibilityAssessment> <http://www.w3.org/2000/01/rdf-schema#subClassOf> _:genid1 .
+_:genid1 <http://www.w3.org/2002/07/owl#minCardinality> "1"^^<http://www.w3.org/2001/XMLSchema#nonNegativeInteger> .
+_:genid1 <http://www.w3.org/2002/07/owl#onProperty> <http://example.org/kg-mnp#dependsOn> .
+_:genid1 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Restriction> .
+<http://example.org/kg-mnp#EligibilityAssessment> <http://www.w3.org/2000/01/rdf-schema#subClassOf> _:genid2 .
+_:genid2 <http://www.w3.org/2002/07/owl#minCardinality> "1"^^<http://www.w3.org/2001/XMLSchema#nonNegativeInteger> .
+_:genid2 <http://www.w3.org/2002/07/owl#onProperty> <http://example.org/kg-mnp#evaluatedByRule> .
+_:genid2 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Restriction> .
+<http://example.org/kg-mnp#EligibilityAssessment> <http://www.w3.org/2000/01/rdf-schema#subClassOf> _:genid3 .
+_:genid3 <http://www.w3.org/2002/07/owl#minCardinality> "1"^^<http://www.w3.org/2001/XMLSchema#nonNegativeInteger> .
+_:genid3 <http://www.w3.org/2002/07/owl#onProperty> <http://example.org/kg-mnp#usesEvidence> .
+_:genid3 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Restriction> .
+<http://example.org/kg-mnp#EligibilityAssessment> <http://www.w3.org/2000/01/rdf-schema#subClassOf> _:genid4 .
+_:genid4 <http://www.w3.org/2002/07/owl#cardinality> "1"^^<http://www.w3.org/2001/XMLSchema#nonNegativeInteger> .
+_:genid4 <http://www.w3.org/2002/07/owl#onProperty> <http://example.org/kg-mnp#producesDecision> .
+_:genid4 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Restriction> .
+<http://example.org/kg-mnp#EligibilityAssessment> <http://example.org/kg-mnp#alignmentStatus> "LOCAL_ONLY" .
+<http://example.org/kg-mnp#EligibilityAssessment> <http://purl.org/dc/terms/source> "Local evidence-rule-decision assessment concept." .
+<http://example.org/kg-mnp#EligibilityAssessment> <http://www.w3.org/2000/01/rdf-schema#comment> "A deterministic evaluation of an MNP case against eligibility rules and evidence."@en .
+<http://example.org/kg-mnp#EligibilityAssessment> <http://www.w3.org/2000/01/rdf-schema#label> "Eligibility Assessment"@en .
+# 
+# http://example.org/kg-mnp#EligibilityDecision
+<http://example.org/kg-mnp#EligibilityDecision> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://example.org/kg-mnp#EligibilityDecision> <http://example.org/kg-mnp#alignmentStatus> "LOCAL_ONLY" .
+<http://example.org/kg-mnp#EligibilityDecision> <http://purl.org/dc/terms/source> "Local decision taxonomy." .
+<http://example.org/kg-mnp#EligibilityDecision> <http://www.w3.org/2000/01/rdf-schema#comment> "Abstract decision outcome of an eligibility assessment."@en .
+<http://example.org/kg-mnp#EligibilityDecision> <http://www.w3.org/2000/01/rdf-schema#label> "Eligibility Decision"@en .
+# 
+# http://example.org/kg-mnp#EligibilityRule
+<http://example.org/kg-mnp#EligibilityRule> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://example.org/kg-mnp#EligibilityRule> <http://www.w3.org/2000/01/rdf-schema#subClassOf> _:genid5 .
+_:genid5 <http://www.w3.org/2002/07/owl#minCardinality> "1"^^<http://www.w3.org/2001/XMLSchema#nonNegativeInteger> .
+_:genid5 <http://www.w3.org/2002/07/owl#onProperty> <http://example.org/kg-mnp#operationalizesClause> .
+_:genid5 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Restriction> .
+<http://example.org/kg-mnp#EligibilityRule> <http://example.org/kg-mnp#alignmentStatus> "LOCAL_ONLY" .
+<http://example.org/kg-mnp#EligibilityRule> <http://www.w3.org/2000/01/rdf-schema#comment> "A versioned eligibility rule operationalizing regulatory clauses."@en .
+<http://example.org/kg-mnp#EligibilityRule> <http://www.w3.org/2000/01/rdf-schema#label> "Eligibility Rule"@en .
+# 
+# http://example.org/kg-mnp#EligibleDecision
+<http://example.org/kg-mnp#EligibleDecision> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://example.org/kg-mnp#EligibleDecision> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://example.org/kg-mnp#EligibilityDecision> .
+<http://example.org/kg-mnp#EligibleDecision> <http://www.w3.org/2002/07/owl#disjointWith> <http://example.org/kg-mnp#ManualReviewDecision> .
+<http://example.org/kg-mnp#EligibleDecision> <http://example.org/kg-mnp#alignmentStatus> "LOCAL_ONLY" .
+<http://example.org/kg-mnp#EligibleDecision> <http://www.w3.org/2000/01/rdf-schema#label> "Eligible Decision"@en .
+# 
+# http://example.org/kg-mnp#EvidenceRecord
+<http://example.org/kg-mnp#EvidenceRecord> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://example.org/kg-mnp#EvidenceRecord> <http://example.org/kg-mnp#alignmentStatus> "PARTIAL" .
+<http://example.org/kg-mnp#EvidenceRecord> <http://purl.org/dc/terms/source> "Conceptually compared with CTO MeasurementRecord (observation with magnitude/aspect). Different purpose: MNP evidence includes provenance, validity window, and status." .
+<http://example.org/kg-mnp#EvidenceRecord> <http://www.w3.org/2000/01/rdf-schema#comment> "A dated observation used as evidence in eligibility assessment."@en .
+<http://example.org/kg-mnp#EvidenceRecord> <http://www.w3.org/2000/01/rdf-schema#comment> "Not skos:closeMatch — MeasurementRecord is quantitative measurement; EvidenceRecord is eligibility provenance."@en .
+<http://example.org/kg-mnp#EvidenceRecord> <http://www.w3.org/2000/01/rdf-schema#label> "Evidence Record"@en .
+<http://example.org/kg-mnp#EvidenceRecord> <http://www.w3.org/2000/01/rdf-schema#seeAlso> <https://github.com/Point-Topic/cto-ontology/blob/main/resource/cto_core.ttl> .
+# 
+# http://example.org/kg-mnp#InformationSystem
+<http://example.org/kg-mnp#InformationSystem> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://example.org/kg-mnp#InformationSystem> <http://example.org/kg-mnp#alignmentStatus> "PARTIAL" .
+<http://example.org/kg-mnp#InformationSystem> <http://purl.org/dc/terms/source> "Compared with CTO WholesaleAccessPlatform / dcat:DataService as information channels; not equivalent." .
+<http://example.org/kg-mnp#InformationSystem> <http://www.w3.org/2000/01/rdf-schema#comment> "A source system that generates evidence observations."@en .
+<http://example.org/kg-mnp#InformationSystem> <http://www.w3.org/2000/01/rdf-schema#label> "Information System"@en .
+<http://example.org/kg-mnp#InformationSystem> <http://www.w3.org/2000/01/rdf-schema#seeAlso> <https://github.com/Point-Topic/cto-ontology/blob/main/resource/cto_extended.ttl> .
+# 
+# http://example.org/kg-mnp#MNPCase
+<http://example.org/kg-mnp#MNPCase> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://example.org/kg-mnp#MNPCase> <http://www.w3.org/2000/01/rdf-schema#subClassOf> _:genid6 .
+_:genid6 <http://www.w3.org/2002/07/owl#cardinality> "1"^^<http://www.w3.org/2001/XMLSchema#nonNegativeInteger> .
+_:genid6 <http://www.w3.org/2002/07/owl#onProperty> <http://example.org/kg-mnp#concernsNumber> .
+_:genid6 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Restriction> .
+<http://example.org/kg-mnp#MNPCase> <http://www.w3.org/2000/01/rdf-schema#subClassOf> _:genid7 .
+_:genid7 <http://www.w3.org/2002/07/owl#cardinality> "1"^^<http://www.w3.org/2001/XMLSchema#nonNegativeInteger> .
+_:genid7 <http://www.w3.org/2002/07/owl#onProperty> <http://example.org/kg-mnp#requestedBy> .
+_:genid7 <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Restriction> .
+<http://example.org/kg-mnp#MNPCase> <http://example.org/kg-mnp#alignmentStatus> "LOCAL_ONLY" .
+<http://example.org/kg-mnp#MNPCase> <http://purl.org/dc/terms/source> "Local MNP case concept; not present in CTO or TM Forum as OWL class." .
+<http://example.org/kg-mnp#MNPCase> <http://www.w3.org/2000/01/rdf-schema#comment> "A mobile number portability request case."@en .
+<http://example.org/kg-mnp#MNPCase> <http://www.w3.org/2000/01/rdf-schema#label> "MNP Case"@en .
+# 
+# http://example.org/kg-mnp#ManualReviewDecision
+<http://example.org/kg-mnp#ManualReviewDecision> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://example.org/kg-mnp#ManualReviewDecision> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://example.org/kg-mnp#EligibilityDecision> .
+<http://example.org/kg-mnp#ManualReviewDecision> <http://example.org/kg-mnp#alignmentStatus> "LOCAL_ONLY" .
+<http://example.org/kg-mnp#ManualReviewDecision> <http://www.w3.org/2000/01/rdf-schema#label> "Manual Review Decision"@en .
+# 
+# http://example.org/kg-mnp#MappingRecord
+<http://example.org/kg-mnp#MappingRecord> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://example.org/kg-mnp#MappingRecord> <http://example.org/kg-mnp#alignmentStatus> "LOCAL_ONLY" .
+<http://example.org/kg-mnp#MappingRecord> <http://www.w3.org/2000/01/rdf-schema#comment> "A documented mapping from an external API field to an MNP term."@en .
+<http://example.org/kg-mnp#MappingRecord> <http://www.w3.org/2000/01/rdf-schema#label> "Mapping Record"@en .
+# 
+# http://example.org/kg-mnp#PhoneNumber
+<http://example.org/kg-mnp#PhoneNumber> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://example.org/kg-mnp#PhoneNumber> <http://example.org/kg-mnp#alignmentStatus> "LOCAL_ONLY" .
+<http://example.org/kg-mnp#PhoneNumber> <http://purl.org/dc/terms/source> "Local MNP domain concept; no direct CTO PhoneNumber class found in cto_core.ttl / cto_extended.ttl (reviewed 2026-07-30)." .
+<http://example.org/kg-mnp#PhoneNumber> <http://www.w3.org/2000/01/rdf-schema#comment> "A telephone number that is the subject of an MNP case."@en .
+<http://example.org/kg-mnp#PhoneNumber> <http://www.w3.org/2000/01/rdf-schema#label> "Phone Number"@en .
+<http://example.org/kg-mnp#PhoneNumber> <http://www.w3.org/2000/01/rdf-schema#seeAlso> <https://github.com/Point-Topic/cto-ontology/blob/main/resource/cto_core.ttl> .
+# 
+# http://example.org/kg-mnp#ReassessmentMarker
+<http://example.org/kg-mnp#ReassessmentMarker> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://example.org/kg-mnp#ReassessmentMarker> <http://www.w3.org/2000/01/rdf-schema#comment> "Marks an assessment that used a superseded rule version and requires re-evaluation."@en .
+<http://example.org/kg-mnp#ReassessmentMarker> <http://www.w3.org/2000/01/rdf-schema#label> "Reassessment Marker"@en .
+# 
+# http://example.org/kg-mnp#RegulatoryClause
+<http://example.org/kg-mnp#RegulatoryClause> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://example.org/kg-mnp#RegulatoryClause> <http://example.org/kg-mnp#alignmentStatus> "LOCAL_ONLY" .
+<http://example.org/kg-mnp#RegulatoryClause> <http://www.w3.org/2000/01/rdf-schema#comment> "A specific clause within a regulatory document."@en .
+<http://example.org/kg-mnp#RegulatoryClause> <http://www.w3.org/2000/01/rdf-schema#label> "Regulatory Clause"@en .
+# 
+# http://example.org/kg-mnp#RegulatoryDocument
+<http://example.org/kg-mnp#RegulatoryDocument> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://example.org/kg-mnp#RegulatoryDocument> <http://example.org/kg-mnp#alignmentStatus> "LOCAL_ONLY" .
+<http://example.org/kg-mnp#RegulatoryDocument> <http://www.w3.org/2000/01/rdf-schema#comment> "A regulatory or policy document containing clauses."@en .
+<http://example.org/kg-mnp#RegulatoryDocument> <http://www.w3.org/2000/01/rdf-schema#label> "Regulatory Document"@en .
+# 
+# http://example.org/kg-mnp#RemediationAction
+<http://example.org/kg-mnp#RemediationAction> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://example.org/kg-mnp#RemediationAction> <http://example.org/kg-mnp#alignmentStatus> "LOCAL_ONLY" .
+<http://example.org/kg-mnp#RemediationAction> <http://www.w3.org/2000/01/rdf-schema#comment> "A recommended action a user or operator should take."@en .
+<http://example.org/kg-mnp#RemediationAction> <http://www.w3.org/2000/01/rdf-schema#label> "Remediation Action"@en .
+# 
+# http://example.org/kg-mnp#RuleVersion
+<http://example.org/kg-mnp#RuleVersion> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://example.org/kg-mnp#RuleVersion> <http://example.org/kg-mnp#alignmentStatus> "LOCAL_ONLY" .
+<http://example.org/kg-mnp#RuleVersion> <http://www.w3.org/2000/01/rdf-schema#comment> "A concrete version of an eligibility rule with effective dates."@en .
+<http://example.org/kg-mnp#RuleVersion> <http://www.w3.org/2000/01/rdf-schema#label> "Rule Version"@en .
+# 
+# http://example.org/kg-mnp#ServiceContract
+<http://example.org/kg-mnp#ServiceContract> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://example.org/kg-mnp#ServiceContract> <http://example.org/kg-mnp#alignmentStatus> "LOCAL_ONLY" .
+<http://example.org/kg-mnp#ServiceContract> <http://purl.org/dc/terms/source> "Local MNP eligibility concept. CTO has hasContractLength on BroadbandService (data property), not a first-class ServiceContract class." .
+<http://example.org/kg-mnp#ServiceContract> <http://www.w3.org/2000/01/rdf-schema#comment> "A contractual commitment that may restrict portability until end time."@en .
+<http://example.org/kg-mnp#ServiceContract> <http://www.w3.org/2000/01/rdf-schema#label> "Service Contract"@en .
+<http://example.org/kg-mnp#ServiceContract> <http://www.w3.org/2000/01/rdf-schema#seeAlso> <https://github.com/Point-Topic/cto-ontology/blob/main/resource/cto_extended.ttl> .
+# 
+# http://example.org/kg-mnp#ServiceSubscription
+<http://example.org/kg-mnp#ServiceSubscription> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://example.org/kg-mnp#ServiceSubscription> <http://example.org/kg-mnp#alignmentStatus> "PARTIAL" .
+<http://example.org/kg-mnp#ServiceSubscription> <http://purl.org/dc/terms/source> "TM Forum TMF637 Product Inventory Product instance and status fields." .
+<http://example.org/kg-mnp#ServiceSubscription> <http://www.w3.org/2000/01/rdf-schema#comment> "An instantiated subscription linking a subscriber to a telecom service."@en .
+<http://example.org/kg-mnp#ServiceSubscription> <http://www.w3.org/2000/01/rdf-schema#label> "Service Subscription"@en .
+<http://example.org/kg-mnp#ServiceSubscription> <http://www.w3.org/2000/01/rdf-schema#seeAlso> <https://github.com/tmforum-apis/TMF637_ProductInventory> .
+# 
+# http://example.org/kg-mnp#Subscriber
+<http://example.org/kg-mnp#Subscriber> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://example.org/kg-mnp#Subscriber> <http://example.org/kg-mnp#alignmentStatus> "PARTIAL" .
+<http://example.org/kg-mnp#Subscriber> <http://purl.org/dc/terms/source> "TM Forum TMF629 Customer Management — Customer object provides industry field basis; mapped via mappings/tmf_to_mnp.yaml" .
+<http://example.org/kg-mnp#Subscriber> <http://www.w3.org/2000/01/rdf-schema#comment> "A person or party that holds a telecom subscription and may request number portability."@en .
+<http://example.org/kg-mnp#Subscriber> <http://www.w3.org/2000/01/rdf-schema#comment> "Compared with foaf:Person in CTO (person/party layer). Subscriber is a telecom-role specialization; not claimed equivalent."@en .
+<http://example.org/kg-mnp#Subscriber> <http://www.w3.org/2000/01/rdf-schema#label> "Subscriber"@en .
+<http://example.org/kg-mnp#Subscriber> <http://www.w3.org/2000/01/rdf-schema#seeAlso> <https://github.com/Point-Topic/cto-ontology> .
+<http://example.org/kg-mnp#Subscriber> <http://www.w3.org/2000/01/rdf-schema#seeAlso> <https://github.com/tmforum-apis/TMF629_CustomerManagement> .
+# 
+# http://example.org/kg-mnp#SystemObservation
+<http://example.org/kg-mnp#SystemObservation> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://example.org/kg-mnp#SystemObservation> <http://www.w3.org/2000/01/rdf-schema#subClassOf> <http://example.org/kg-mnp#EvidenceRecord> .
+<http://example.org/kg-mnp#SystemObservation> <http://example.org/kg-mnp#alignmentStatus> "LOCAL_ONLY" .
+<http://example.org/kg-mnp#SystemObservation> <http://www.w3.org/2000/01/rdf-schema#comment> "Evidence produced by an information system observation."@en .
+<http://example.org/kg-mnp#SystemObservation> <http://www.w3.org/2000/01/rdf-schema#label> "System Observation"@en .
+# 
+# http://example.org/kg-mnp#TelecomAccount
+<http://example.org/kg-mnp#TelecomAccount> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://example.org/kg-mnp#TelecomAccount> <http://example.org/kg-mnp#alignmentStatus> "PARTIAL" .
+<http://example.org/kg-mnp#TelecomAccount> <http://purl.org/dc/terms/source> "TM Forum TMF629 relatedParty / relatedAccount and CustomerAccount patterns (schema mapping layer)." .
+<http://example.org/kg-mnp#TelecomAccount> <http://www.w3.org/2000/01/rdf-schema#comment> "A billing or customer account through which services are charged."@en .
+<http://example.org/kg-mnp#TelecomAccount> <http://www.w3.org/2000/01/rdf-schema#label> "Telecom Account"@en .
+<http://example.org/kg-mnp#TelecomAccount> <http://www.w3.org/2000/01/rdf-schema#seeAlso> <https://github.com/tmforum-apis/TMF629_CustomerManagement> .
+# 
+# http://example.org/kg-mnp#TelecomService
+<http://example.org/kg-mnp#TelecomService> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Class> .
+<http://example.org/kg-mnp#TelecomService> <http://example.org/kg-mnp#alignmentStatus> "PARTIAL" .
+<http://example.org/kg-mnp#TelecomService> <http://purl.org/dc/terms/source> "TM Forum TMF620 ProductOffering / ProductSpecification; conceptually compared with CTO Service / CellularService." .
+<http://example.org/kg-mnp#TelecomService> <http://www.w3.org/2000/01/rdf-schema#comment> "A catalogued telecom service or product offering/specification."@en .
+<http://example.org/kg-mnp#TelecomService> <http://www.w3.org/2000/01/rdf-schema#comment> "CTO Service (and CellularService subclass) describe telecom services. closeMatch only — CTO Service also covers broadband market catalogue semantics; MNP term is operational/catalog for portability."@en .
+<http://example.org/kg-mnp#TelecomService> <http://www.w3.org/2000/01/rdf-schema#label> "Telecom Service"@en .
+<http://example.org/kg-mnp#TelecomService> <http://www.w3.org/2000/01/rdf-schema#seeAlso> <https://github.com/Point-Topic/cto-ontology/blob/main/resource/cto_extended.ttl> .
+<http://example.org/kg-mnp#TelecomService> <http://www.w3.org/2000/01/rdf-schema#seeAlso> <https://github.com/tmforum-apis/TMF620_ProductCatalog> .
+<http://example.org/kg-mnp#TelecomService> <http://www.w3.org/2004/02/skos/core#closeMatch> <https://github.com/Point-Topic/cto-ontology/#Service> .
+# 
+# Generated by the OWL API (version 5.1.18) https://github.com/owlcs/owlapi/

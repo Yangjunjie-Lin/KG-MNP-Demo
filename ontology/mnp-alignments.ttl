@@ -1,0 +1,94 @@
+@prefix mnp: <http://example.org/kg-mnp#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+
+#################################################################
+# Alignment annotations ONLY — NOT a runtime dependency.
+# No owl:equivalentClass for TM Forum JSON schema objects.
+# No owl:equivalentClass for unverified CTO classes.
+#################################################################
+
+<http://example.org/kg-mnp/alignments> a owl:Ontology ;
+    dcterms:title "KG-MNP Alignments"@en ;
+    owl:versionInfo "0.1.0" ;
+    rdfs:comment "Human-reviewed source and alignment annotations. Runtime loaders may skip this file."@en .
+
+# --- Subscriber ---
+mnp:Subscriber
+    mnp:alignmentStatus "PARTIAL" ;
+    dcterms:source "TM Forum TMF629 Customer Management — Customer object provides industry field basis; mapped via mappings/tmf_to_mnp.yaml" ;
+    rdfs:seeAlso <https://github.com/tmforum-apis/TMF629_CustomerManagement> ;
+    rdfs:seeAlso <https://github.com/Point-Topic/cto-ontology> ;
+    rdfs:comment "Compared with foaf:Person in CTO (person/party layer). Subscriber is a telecom-role specialization; not claimed equivalent."@en .
+
+# --- PhoneNumber ---
+mnp:PhoneNumber
+    mnp:alignmentStatus "LOCAL_ONLY" ;
+    dcterms:source "Local MNP domain concept; no direct CTO PhoneNumber class found in cto_core.ttl / cto_extended.ttl (reviewed 2026-07-30)." ;
+    rdfs:seeAlso <https://github.com/Point-Topic/cto-ontology/blob/main/resource/cto_core.ttl> .
+
+# --- TelecomAccount ---
+mnp:TelecomAccount
+    mnp:alignmentStatus "PARTIAL" ;
+    dcterms:source "TM Forum TMF629 relatedParty / relatedAccount and CustomerAccount patterns (schema mapping layer)." ;
+    rdfs:seeAlso <https://github.com/tmforum-apis/TMF629_CustomerManagement> .
+
+# --- TelecomService ---
+mnp:TelecomService
+    mnp:alignmentStatus "PARTIAL" ;
+    dcterms:source "TM Forum TMF620 ProductOffering / ProductSpecification; conceptually compared with CTO Service / CellularService." ;
+    rdfs:seeAlso <https://github.com/tmforum-apis/TMF620_ProductCatalog> ;
+    rdfs:seeAlso <https://github.com/Point-Topic/cto-ontology/blob/main/resource/cto_extended.ttl> ;
+    skos:closeMatch <https://github.com/Point-Topic/cto-ontology/#Service> ;
+    rdfs:comment "CTO Service (and CellularService subclass) describe telecom services. closeMatch only — CTO Service also covers broadband market catalogue semantics; MNP term is operational/catalog for portability."@en .
+
+# --- ServiceSubscription ---
+mnp:ServiceSubscription
+    mnp:alignmentStatus "PARTIAL" ;
+    dcterms:source "TM Forum TMF637 Product Inventory Product instance and status fields." ;
+    rdfs:seeAlso <https://github.com/tmforum-apis/TMF637_ProductInventory> .
+
+# --- ServiceContract ---
+mnp:ServiceContract
+    mnp:alignmentStatus "LOCAL_ONLY" ;
+    dcterms:source "Local MNP eligibility concept. CTO has hasContractLength on BroadbandService (data property), not a first-class ServiceContract class." ;
+    rdfs:seeAlso <https://github.com/Point-Topic/cto-ontology/blob/main/resource/cto_extended.ttl> .
+
+# --- MNPCase and eligibility stack (local innovation layer) ---
+mnp:MNPCase mnp:alignmentStatus "LOCAL_ONLY" ;
+    dcterms:source "Local MNP case concept; not present in CTO or TM Forum as OWL class." .
+
+mnp:EligibilityAssessment mnp:alignmentStatus "LOCAL_ONLY" ;
+    dcterms:source "Local evidence-rule-decision assessment concept." .
+
+mnp:EligibilityDecision mnp:alignmentStatus "LOCAL_ONLY" ;
+    dcterms:source "Local decision taxonomy." .
+
+mnp:EligibleDecision mnp:alignmentStatus "LOCAL_ONLY" .
+mnp:BlockingDecision mnp:alignmentStatus "LOCAL_ONLY" .
+mnp:ConditionalDecision mnp:alignmentStatus "LOCAL_ONLY" .
+mnp:ManualReviewDecision mnp:alignmentStatus "LOCAL_ONLY" .
+
+mnp:EvidenceRecord
+    mnp:alignmentStatus "PARTIAL" ;
+    dcterms:source "Conceptually compared with CTO MeasurementRecord (observation with magnitude/aspect). Different purpose: MNP evidence includes provenance, validity window, and status." ;
+    rdfs:seeAlso <https://github.com/Point-Topic/cto-ontology/blob/main/resource/cto_core.ttl> ;
+    rdfs:comment "Not skos:closeMatch — MeasurementRecord is quantitative measurement; EvidenceRecord is eligibility provenance."@en .
+
+mnp:SystemObservation mnp:alignmentStatus "LOCAL_ONLY" .
+mnp:EligibilityRule mnp:alignmentStatus "LOCAL_ONLY" .
+mnp:BlockingReason mnp:alignmentStatus "LOCAL_ONLY" .
+mnp:RemediationAction mnp:alignmentStatus "LOCAL_ONLY" .
+mnp:RegulatoryClause mnp:alignmentStatus "LOCAL_ONLY" .
+mnp:RegulatoryDocument mnp:alignmentStatus "LOCAL_ONLY" .
+
+mnp:InformationSystem
+    mnp:alignmentStatus "PARTIAL" ;
+    dcterms:source "Compared with CTO WholesaleAccessPlatform / dcat:DataService as information channels; not equivalent." ;
+    rdfs:seeAlso <https://github.com/Point-Topic/cto-ontology/blob/main/resource/cto_extended.ttl> .
+
+mnp:RuleVersion mnp:alignmentStatus "LOCAL_ONLY" .
+mnp:AssessmentDependency mnp:alignmentStatus "LOCAL_ONLY" .
+mnp:MappingRecord mnp:alignmentStatus "LOCAL_ONLY" .

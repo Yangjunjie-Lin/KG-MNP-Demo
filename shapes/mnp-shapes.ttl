@@ -1,0 +1,169 @@
+@prefix mnp: <http://example.org/kg-mnp#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+#################################################################
+# SHACL shapes for MNP instance integrity
+#################################################################
+
+mnp:MNPCaseShape a sh:NodeShape ;
+    sh:targetClass mnp:MNPCase ;
+    sh:property [
+        sh:path mnp:caseIdentifier ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "每个携号转网案件必须恰好有一个案件编号 (caseIdentifier)。" ;
+    ] ;
+    sh:property [
+        sh:path mnp:concernsNumber ;
+        sh:class mnp:PhoneNumber ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "每个携号转网案件必须恰好关联一个号码 (concernsNumber)。" ;
+    ] ;
+    sh:property [
+        sh:path mnp:requestedBy ;
+        sh:class mnp:Subscriber ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "每个携号转网案件必须恰好有一个申请人 (requestedBy)。" ;
+    ] .
+
+mnp:EvidenceRecordShape a sh:NodeShape ;
+    sh:targetClass mnp:EvidenceRecord ;
+    sh:property [
+        sh:path mnp:hasSourceSystem ;
+        sh:class mnp:InformationSystem ;
+        sh:minCount 1 ;
+        sh:message "证据记录必须标明来源系统 (hasSourceSystem)。" ;
+    ] ;
+    sh:property [
+        sh:path mnp:evidenceGeneratedAt ;
+        sh:datatype xsd:dateTime ;
+        sh:minCount 1 ;
+        sh:message "证据记录必须有生成时间 (evidenceGeneratedAt)。" ;
+    ] ;
+    sh:property [
+        sh:path mnp:evidenceStatus ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+        sh:in ( "VALID" "EXPIRED" "REVOKED" "UNKNOWN" ) ;
+        sh:message "证据记录必须有有效状态 (VALID/EXPIRED/REVOKED/UNKNOWN)。" ;
+    ] .
+
+mnp:EligibilityAssessmentShape a sh:NodeShape ;
+    sh:targetClass mnp:EligibilityAssessment ;
+    sh:property [
+        sh:path mnp:usesEvidence ;
+        sh:class mnp:EvidenceRecord ;
+        sh:minCount 1 ;
+        sh:message "资格评估必须至少使用一条证据 (usesEvidence)。" ;
+    ] ;
+    sh:property [
+        sh:path mnp:evaluatedByRule ;
+        sh:class mnp:EligibilityRule ;
+        sh:minCount 1 ;
+        sh:message "资格评估必须至少引用一条规则 (evaluatedByRule)。" ;
+    ] ;
+    sh:property [
+        sh:path mnp:dependsOn ;
+        sh:class mnp:AssessmentDependency ;
+        sh:minCount 1 ;
+        sh:message "资格评估必须至少有一个评估依赖 (dependsOn)。" ;
+    ] ;
+    sh:property [
+        sh:path mnp:producesDecision ;
+        sh:class mnp:EligibilityDecision ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "资格评估必须恰好产生一个决定 (producesDecision)。" ;
+    ] .
+
+mnp:BlockingDecisionShape a sh:NodeShape ;
+    sh:targetClass mnp:BlockingDecision ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "阻塞决定所在评估必须至少有一个阻塞原因，且每个原因必须有处理动作。" ;
+        sh:select """
+            PREFIX mnp: <http://example.org/kg-mnp#>
+            SELECT $this WHERE {
+                ?assessment mnp:producesDecision $this .
+                FILTER NOT EXISTS {
+                    ?assessment mnp:producesBlockingReason ?reason .
+                    ?reason mnp:recommendsAction ?action .
+                }
+            }
+        """ ;
+    ] .
+
+mnp:EligibilityRuleShape a sh:NodeShape ;
+    sh:targetClass mnp:EligibilityRule ;
+    sh:property [
+        sh:path mnp:ruleIdentifier ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+        sh:message "资格规则必须有规则编号 (ruleIdentifier)。" ;
+    ] ;
+    sh:property [
+        sh:path mnp:ruleVersion ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+        sh:message "资格规则必须有规则版本 (ruleVersion)。" ;
+    ] ;
+    sh:property [
+        sh:path mnp:effectiveFrom ;
+        sh:datatype xsd:dateTime ;
+        sh:minCount 1 ;
+        sh:message "资格规则必须有生效时间 (effectiveFrom)。" ;
+    ] ;
+    sh:property [
+        sh:path mnp:operationalizesClause ;
+        sh:class mnp:RegulatoryClause ;
+        sh:minCount 1 ;
+        sh:message "资格规则必须至少关联一条监管条款 (operationalizesClause)。" ;
+    ] .
+
+mnp:ServiceContractShape a sh:NodeShape ;
+    sh:targetClass mnp:ServiceContract ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "状态为 ACTIVE 的有效合约必须提供截止时间 (contractEndTime)。" ;
+        sh:select """
+            PREFIX mnp: <http://example.org/kg-mnp#>
+            SELECT $this WHERE {
+                $this mnp:contractStatusCode ?status .
+                FILTER(STR(?status) = "ACTIVE")
+                FILTER NOT EXISTS { $this mnp:contractEndTime ?end }
+            }
+        """ ;
+    ] .
+
+mnp:MappingRecordShape a sh:NodeShape ;
+    sh:targetClass mnp:MappingRecord ;
+    sh:property [
+        sh:path mnp:sourceApi ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+        sh:message "映射记录必须包含源 API (sourceApi)。" ;
+    ] ;
+    sh:property [
+        sh:path mnp:sourceFieldPath ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+        sh:message "映射记录必须包含源字段路径 (sourceFieldPath)。" ;
+    ] ;
+    sh:property [
+        sh:path mnp:targetTerm ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+        sh:message "映射记录必须包含目标术语 (targetTerm)。" ;
+    ] ;
+    sh:property [
+        sh:path mnp:mappingReviewStatus ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+        sh:message "映射记录必须包含审查状态 (mappingReviewStatus)。" ;
+    ] .

@@ -1,0 +1,42 @@
+@prefix mnp: <http://example.org/kg-mnp#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+mnp:SYS-CRM a mnp:InformationSystem ;
+    mnp:systemIdentifier "CRM" ;
+    rdfs:label "Customer Relationship Management" .
+
+mnp:SYS-HLR a mnp:InformationSystem ;
+    mnp:systemIdentifier "HLR" ;
+    rdfs:label "Home Location Register / Number Status" .
+
+mnp:SYS-BILLING a mnp:InformationSystem ;
+    mnp:systemIdentifier "BILLING" ;
+    rdfs:label "Billing System" .
+
+mnp:SYS-CONTRACT a mnp:InformationSystem ;
+    mnp:systemIdentifier "CONTRACT" ;
+    rdfs:label "Contract Management System" .
+
+mnp:SYS-MNP a mnp:InformationSystem ;
+    mnp:systemIdentifier "MNP_HISTORY" ;
+    rdfs:label "MNP History Platform" .
+
+# Mapping records (for SHACL MappingRecordShape and source_alignment query)
+mnp:Map-TMF629-Customer a mnp:MappingRecord ;
+    mnp:sourceApi "TMF629_CustomerManagement" ;
+    mnp:sourceFieldPath "components.schemas.Customer" ;
+    mnp:targetTerm "mnp:Subscriber" ;
+    mnp:mappingReviewStatus "reviewed" .
+
+mnp:Map-TMF637-Product a mnp:MappingRecord ;
+    mnp:sourceApi "TMF637_ProductInventory" ;
+    mnp:sourceFieldPath "components.schemas.Product" ;
+    mnp:targetTerm "mnp:ServiceSubscription" ;
+    mnp:mappingReviewStatus "reviewed" .
+
+mnp:Map-TMF620-Offering a mnp:MappingRecord ;
+    mnp:sourceApi "TMF620_ProductCatalog" ;
+    mnp:sourceFieldPath "components.schemas.ProductOffering" ;
+    mnp:targetTerm "mnp:TelecomService" ;
+    mnp:mappingReviewStatus "reviewed" .
