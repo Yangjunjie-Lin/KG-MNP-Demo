@@ -112,9 +112,14 @@ JSON 模式使用输入中的 `assessment_time`。两者都不使用系统当前
 
 ## 输出文件
 
-预置案例：见 [`demo_outputs/README.md`](../demo_outputs/README.md)。
+| 目录 | 定位 |
+|------|------|
+| `demo_outputs/` | 可版本控制的确认演示快照 |
+| `runtime_outputs/` | 用户本地运行时生成，不进入 Git |
 
-JSON 流水线：
+预置案例快照：见 [`demo_outputs/README.md`](../demo_outputs/README.md)。
+
+JSON 流水线会在本地写出（目录可自定，以下仅为示例路径）：
 
 ```text
 runtime_outputs/case03/
@@ -128,6 +133,8 @@ runtime_outputs/case03/
 ├── trace_subgraph.json
 └── report.html
 ```
+
+这些文件不会被提交；重新运行命令即可复现。
 
 ## 本地验收命令
 

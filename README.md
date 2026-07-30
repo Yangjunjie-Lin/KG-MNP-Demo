@@ -79,8 +79,15 @@ python -m kg_mnp_demo.pipeline --input inputs/case03.json --output-dir runtime_o
 输出位置：
 
 ```text
+demo_outputs/          # 可版本控制的确认演示快照（见 demo_outputs/README.md）
+runtime_outputs/       # 本地运行时生成，已被 .gitignore 忽略，不进入 Git
+```
+
+示例：
+
+```text
 demo_outputs/demo_report.html
-runtime_outputs/case03/report.html
+runtime_outputs/case03/report.html   # 本地命令生成，仓库中不存在
 ```
 
 详细说明见 [`docs/local_showcase.md`](docs/local_showcase.md)。

@@ -73,16 +73,11 @@
   table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
   th, td { border-bottom: 1px solid var(--line); padding: 0.55rem 0.4rem; text-align: left; vertical-align: top; }
   th { color: var(--muted); font-weight: 600; }
-  .chain {
-    display: flex; flex-wrap: wrap; gap: 0.4rem; align-items: center; margin: 0.6rem 0 1rem;
-  }
-  .card {
-    background: #f8fafc; border: 1px solid var(--line); border-radius: 10px;
-    padding: 0.55rem 0.75rem; min-width: 110px;
-  }
-  .card .k { font-size: 0.75rem; color: var(--muted); }
-  .card .v { font-weight: 600; }
-  .arrow { color: var(--muted); }
+  .subgraph ul.tree { list-style: none; padding-left: 1rem; }
+  .subgraph .pred { color: var(--accent); font-family: ui-monospace, Consolas, monospace; font-size: 0.9rem; margin-right: 0.35rem; }
+  .subgraph .node { display: inline-block; margin: 0.15rem 0; padding: 0.2rem 0.45rem; background: #f8fafc; border: 1px solid var(--line); border-radius: 6px; }
+  .subgraph .ntype { color: var(--muted); font-size: 0.78rem; margin-right: 0.35rem; }
+  .subgraph .nlabel, .subgraph .leaf { font-weight: 600; }
   .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.5rem; }
   .pill {
     border: 1px solid var(--line); border-radius: 8px; padding: 0.45rem 0.65rem;
@@ -126,11 +121,11 @@
   <h2>处理流程</h2>
   <div class="flow">
     <span>输入案例</span>→
-    <span>SHACL 验证（PASSED）</span>→
-    <span>OWL-RL 推理（+928）</span>→
+    <span>输入图 SHACL（PASSED）</span>→
+    <span>OWL-RL 推理（+973）</span>→
     <span>资格规则判断</span>→
-    <span>评估对象生成</span>→
-    <span>SPARQL 追溯</span>→
+    <span>评估结果图 SHACL（PASSED）</span>→
+    <span>SPARQL 追溯子图</span>→
     <span>结构化输出</span>
   </div>
   <ul><li>SystemObservation → 推导为 EvidenceRecord（实例 Ev-03-ID）</li><li>BlockingDecision → 推导为 EligibilityDecision（实例 Decision-CASE-03）</li></ul>
@@ -142,12 +137,13 @@
     <div class="badge ">BLOCKED</div>
     <div style="flex:1"><div class='reason'>ACTIVE_CONTRACT_RESTRICTION</div></div>
   </div>
-  <p class="note">验证状态：PASSED</p>
+  <p class="note">输入图 SHACL：PASSED · 评估结果图 SHACL：PASSED · 发布状态：PUBLISHABLE</p>
 </section>
 
 <section>
-  <h2>完整追溯链</h2>
-  <div class="chain"><div class="card"><div class="k">案件</div><div class="v">CASE-03</div></div><div class="arrow">→</div><div class="card"><div class="k">资格评估</div><div class="v">ASSESS-CASE-03</div></div><div class="arrow">→</div><div class="card"><div class="k">证据</div><div class="v">Ev-03-CTR</div></div><div class="arrow">→</div><div class="card"><div class="k">规则</div><div class="v">MNP-ELIG-004 v1.0</div></div><div class="arrow">→</div><div class="card"><div class="k">监管条款</div><div class="v">REG-MNP-CLAUSE-04</div></div><div class="arrow">→</div><div class="card"><div class="k">结论</div><div class="v">BLOCKED</div></div><div class="arrow">→</div><div class="card"><div class="k">阻塞原因</div><div class="v">ACTIVE_CONTRACT_RESTRICTION</div></div><div class="arrow">→</div><div class="card"><div class="k">处理动作</div><div class="v">WAIT_OR_TERMINATE_CONTRACT</div></div></div>
+  <h2>资格判断追溯子图</h2>
+  <p class="muted">箭头均为真实 RDF 对象属性；非线性伪链。</p>
+  <div class="subgraph"><div class="node root"><span class="ntype">MNPCase</span> <span class="nlabel">CASE-03</span></div><ul class='tree'><li><span class='pred'>hasEligibilityAssessment</span><div class='node'><span class='ntype'>EligibilityAssessment</span> <span class='nlabel'>ASSESS-CASE-03</span></div><ul><li><span class='pred'>usesEvidence</span><ul><li><div class='node'>EvidenceRecord: Ev-03-BILL</div></li><li><div class='node'>EvidenceRecord: Ev-03-CTR</div></li><li><div class='node'>EvidenceRecord: Ev-03-ID</div></li><li><div class='node'>EvidenceRecord: Ev-03-NUM</div></li><li><div class='node'>EvidenceRecord: Ev-03-PORT</div></li></ul></li><li><span class='pred'>evaluatedByRule</span><ul><li><div class='node'>EligibilityRule: MNP-ELIG-001</div><ul><li><span class='pred'>operationalizesClause</span><div class='node'>RegulatoryClause: REG-MNP-CLAUSE-01</div></li></ul></li><li><div class='node'>EligibilityRule: MNP-ELIG-002</div><ul><li><span class='pred'>operationalizesClause</span><div class='node'>RegulatoryClause: REG-MNP-CLAUSE-02</div></li></ul></li><li><div class='node'>EligibilityRule: MNP-ELIG-003</div><ul><li><span class='pred'>operationalizesClause</span><div class='node'>RegulatoryClause: REG-MNP-CLAUSE-03</div></li></ul></li><li><div class='node'>EligibilityRule: MNP-ELIG-004</div><ul><li><span class='pred'>operationalizesClause</span><div class='node'>RegulatoryClause: REG-MNP-CLAUSE-04</div></li></ul></li><li><div class='node'>EligibilityRule: MNP-ELIG-005</div><ul><li><span class='pred'>operationalizesClause</span><div class='node'>RegulatoryClause: REG-MNP-CLAUSE-05</div></li></ul></li></ul></li><li><span class='pred'>usesRuleVersion</span><ul><li><div class='node'>RuleVersion: 1.0</div></li><li><div class='node'>RuleVersion: 1.0</div></li><li><div class='node'>RuleVersion: 1.0</div></li><li><div class='node'>RuleVersion: 1.0</div></li><li><div class='node'>RuleVersion: 1.1</div></li></ul></li><li><span class='pred'>producesDecision</span><ul><li><div class='node'>BlockingDecision: BLOCKED</div></li></ul></li><li><span class='pred'>producesBlockingReason</span><ul><li><div class='node'>BlockingReason: ACTIVE_CONTRACT_RESTRICTION</div><ul><li><span class='pred'>citesClause</span> → <span class='leaf'>REG-MNP-CLAUSE-04</span></li><li><span class='pred'>recommendsAction</span> → <span class='leaf'>WAIT_OR_TERMINATE_CONTRACT</span></li><li><span class='pred'>supportedByEvidence</span> → <span class='leaf'>Ev-03-CTR</span></li><li><span class='pred'>triggeredByRule</span> → <span class='leaf'>MNP-ELIG-004</span></li><li><span class='pred'>triggeredByRuleVersion</span> → <span class='leaf'>1.0</span></li></ul></li></ul></li><li><span class='pred'>dependsOn</span><ul><li><div class='node'>AssessmentDependency: AssessmentDependency</div><ul><li><span class='pred'>dependsOnEvidence</span> → <span class='leaf'>Ev-03-BILL</span></li><li><span class='pred'>dependsOnEvidence</span> → <span class='leaf'>Ev-03-CTR</span></li><li><span class='pred'>dependsOnEvidence</span> → <span class='leaf'>Ev-03-ID</span></li><li><span class='pred'>dependsOnEvidence</span> → <span class='leaf'>Ev-03-NUM</span></li><li><span class='pred'>dependsOnEvidence</span> → <span class='leaf'>Ev-03-PORT</span></li><li><span class='pred'>dependsOnRuleVersion</span> → <span class='leaf'>1.0</span></li><li><span class='pred'>dependsOnRuleVersion</span> → <span class='leaf'>1.0</span></li><li><span class='pred'>dependsOnRuleVersion</span> → <span class='leaf'>1.0</span></li><li><span class='pred'>dependsOnRuleVersion</span> → <span class='leaf'>1.0</span></li><li><span class='pred'>dependsOnRuleVersion</span> → <span class='leaf'>1.1</span></li></ul></li></ul></li></ul></li></ul></div>
 </section>
 
 <section>
@@ -158,6 +154,14 @@
   </table>
 </section>
 
+
+<section>
+  <h2>输入变化演示（what-if）</h2>
+  <p>场景：<code>contract-expired</code></p>
+  <p>原始结论：<strong>BLOCKED</strong></p>
+  <p>变化后结论：<strong>ELIGIBLE</strong></p>
+  <p>原始 TTL 未被修改：True</p>
+</section>
 
 
 <section>
@@ -170,7 +174,7 @@
 <section>
   <h2>本体核心关系</h2>
   <div class="grid">
-    <div class="pill">hasEligibilityAssessment</div><div class="pill">usesEvidence</div><div class="pill">usesRuleVersion</div><div class="pill">producesDecision</div><div class="pill">producesBlockingReason</div><div class="pill">supportedByEvidence</div><div class="pill">triggeredByRule</div><div class="pill">citesClause</div><div class="pill">recommendsAction</div><div class="pill">dependsOn</div>
+    <div class="pill">hasCaseEvidence</div><div class="pill">hasEligibilityAssessment</div><div class="pill">usesEvidence</div><div class="pill">usesRuleVersion</div><div class="pill">evaluatedByRule</div><div class="pill">producesDecision</div><div class="pill">producesBlockingReason</div><div class="pill">supportedByEvidence</div><div class="pill">triggeredByRule</div><div class="pill">citesClause</div><div class="pill">recommendsAction</div><div class="pill">dependsOn</div>
   </div>
 </section>
 

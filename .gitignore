@@ -1,11 +1,23 @@
-third_party/widoco/*.jar
+# Python
 __pycache__/
-*.pyc
-.pytest_cache/
+*.py[cod]
 *.egg-info/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Virtual environments
 .venv/
-dist/
+venv/
+
+# Build
 build/
+dist/
+
+# Runtime-generated outputs (local runs only; not versioned)
+runtime_outputs/
+
+# Generated ontology/documentation artifacts
+third_party/widoco/*.jar
 docs/ontology-site/doc/
 docs/demo_results.json
-runtime_outputs/

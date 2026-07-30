@@ -1,30 +1,21 @@
 # demo_outputs
 
-本目录存放本地一键演示的自动生成结果。
+本目录保存一套经过确认的离线演示快照，便于仓库访问者直接查看。
 
-## 生成方式
-
-```bash
-python scripts/showcase_demo.py
-```
-
-或指定输出目录：
+这些文件由以下命令生成：
 
 ```bash
-python scripts/showcase_demo.py --output-dir demo_outputs
+python scripts/showcase_demo.py \
+  --case CASE-03 \
+  --what-if contract-expired \
+  --output-dir demo_outputs
 ```
 
-## 文件说明
+请勿手工修改 JSON 或 HTML。
 
-| 文件 | 说明 |
+日常运行结果应写入 `runtime_outputs/`。该目录已被 `.gitignore` 忽略，不纳入版本控制。
+
+| 目录 | 定位 |
 |------|------|
-| `case03_input_summary.json` | CASE-03 输入摘要（从 RDF 解析） |
-| `case03_validation.json` | SHACL 验证结果 |
-| `case03_inference.json` | OWL-RL 推理前后三元组与示例推导 |
-| `case03_evaluation.json` | 资格判断完整机器可读结果 |
-| `case03_trace.json` | SPARQL 追溯与人类可读追溯链 |
-| `all_cases_summary.json` | 六个案例汇总 |
-| `demo_report.html` | 可双击打开的 HTML 演示报告 |
-| `case03_what_if.json` | 仅在使用 `--what-if` 时生成 |
-
-**请勿手工编辑 JSON / HTML 结果文件。** 重复运行脚本会覆盖生成内容。
+| `demo_outputs/` | 可版本控制的确认演示快照 |
+| `runtime_outputs/` | 用户本地运行时生成，不进入 Git |
