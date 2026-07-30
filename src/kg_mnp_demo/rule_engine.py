@@ -8,8 +8,7 @@ from decimal import Decimal
 from typing import Any
 
 import yaml
-from rdflib import Graph, Literal, URIRef
-from rdflib.namespace import RDF, XSD
+from rdflib import Graph, URIRef
 
 from kg_mnp_demo.loader import rules_path
 from kg_mnp_demo.namespaces import MNP
@@ -24,6 +23,21 @@ def _parse_dt(value: Any) -> datetime | None:
         return value if value.tzinfo else value.replace(tzinfo=timezone.utc)
     text = str(value).replace("Z", "+00:00")
     return datetime.fromisoformat(text)
+
+
+def resolve_case_uri(graph: Graph, case_id: str) -> URIRef | None:
+    """Resolve the MNPCase node by caseIdentifier (not by IRI local-name convention)."""
+    q = """
+    PREFIX mnp: <http://example.org/kg-mnp#>
+    SELECT ?case WHERE {
+      ?case a mnp:MNPCase ;
+            mnp:caseIdentifier ?caseId .
+      FILTER(STR(?caseId) = %s)
+    }
+    """ % f'"{case_id}"'
+    for row in graph.query(q):
+        return row.case
+    return None
 
 
 def load_rules(*, include_updates: bool = True) -> list[dict[str, Any]]:
@@ -77,21 +91,19 @@ class RuleOutcome:
 
 
 def collect_evidence(graph: Graph, case_id: str) -> dict[str, list[EvidenceView]]:
-    """Collect evidence linked to the case's subscriber/number context.
-
-    For the demo, evidence for a case is all SystemObservation/EvidenceRecord
-    individuals whose local name starts with Ev-<case-num>- or that are otherwise
-    present in the case file. We scope by case number suffix.
-    """
-    case_num = int(case_id.split("-")[-1])
-    prefix = f"Ev-{case_num:02d}-"
+    """Collect evidence via MNPCase hasCaseEvidence (not IRI naming conventions)."""
     q = """
     PREFIX mnp: <http://example.org/kg-mnp#>
     SELECT ?ev ?type ?status ?gen ?until ?idMatch ?numStatus ?amount ?currency
            ?arrangement ?ctrStatus ?ctrEnd ?days ?sys ?sysId
     WHERE {
-      ?ev a ?cls .
-      FILTER(?cls = mnp:EvidenceRecord || ?cls = mnp:SystemObservation)
+      ?case a mnp:MNPCase ;
+            mnp:caseIdentifier ?caseId ;
+            mnp:hasCaseEvidence ?ev .
+      FILTER(STR(?caseId) = %s)
+
+      ?ev a ?evidenceClass .
+      VALUES ?evidenceClass { mnp:EvidenceRecord mnp:SystemObservation }
       ?ev mnp:evidenceType ?type ;
           mnp:evidenceStatus ?status ;
           mnp:evidenceGeneratedAt ?gen ;
@@ -107,13 +119,14 @@ def collect_evidence(graph: Graph, case_id: str) -> dict[str, list[EvidenceView]
       OPTIONAL { ?ev mnp:daysSinceLastPort ?days }
       OPTIONAL { ?sys mnp:systemIdentifier ?sysId }
     }
-    """
+    """ % f'"{case_id}"'
     by_type: dict[str, list[EvidenceView]] = {}
+    seen: set[str] = set()
     for row in graph.query(q):
         iri = str(row.ev)
-        local = iri.rsplit("#", 1)[-1]
-        if not local.startswith(prefix):
+        if iri in seen:
             continue
+        seen.add(iri)
         fields = {
             "identityMatchFlag": (
                 bool(row.idMatch) if row.idMatch is not None else None
@@ -144,7 +157,12 @@ def collect_evidence(graph: Graph, case_id: str) -> dict[str, list[EvidenceView]
     return by_type
 
 
-def _eval_check(check: dict[str, Any], evidence: EvidenceView) -> bool:
+def _eval_check(
+    check: dict[str, Any],
+    evidence: EvidenceView,
+    *,
+    assessment_time: datetime,
+) -> bool:
     ctype = check["type"]
     fields = evidence.fields
     if ctype == "boolean_equals":
@@ -162,7 +180,7 @@ def _eval_check(check: dict[str, Any], evidence: EvidenceView) -> bool:
     if ctype == "contract_not_blocking":
         status = fields.get(check["status_field"])
         end_time = fields.get(check["end_time_field"])
-        as_of = _parse_dt(check.get("assessment_time")) or ASSESSMENT_TIME
+        as_of = assessment_time
         if status in (None, "EXPIRED", "TERMINATED", "NONE"):
             return True
         if status == "ACTIVE":
@@ -183,14 +201,16 @@ def evaluate_rules(
     case_id: str,
     *,
     use_updated_rules: bool = True,
+    assessment_time: datetime | None = None,
 ) -> list[RuleOutcome]:
+    as_of = assessment_time or ASSESSMENT_TIME
     evidence = collect_evidence(graph, case_id)
     rules = load_rules(include_updates=use_updated_rules)
     outcomes: list[RuleOutcome] = []
     for rule in rules:
         etype = rule["inputs"][0]["evidence_type"]
         candidates = evidence.get(etype, [])
-        usable = [e for e in candidates if e.is_usable()]
+        usable = [e for e in candidates if e.is_usable(as_of)]
         if not usable:
             outcomes.append(
                 RuleOutcome(
@@ -208,7 +228,7 @@ def evaluate_rules(
             continue
         # Deterministic: pick lexicographically smallest IRI
         chosen = sorted(usable, key=lambda e: e.iri)[0]
-        passed = _eval_check(rule["check"], chosen)
+        passed = _eval_check(rule["check"], chosen, assessment_time=as_of)
         if passed:
             outcomes.append(
                 RuleOutcome(

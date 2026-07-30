@@ -1,0 +1,189 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/kg-mnp/schemas/mnp_case_input.schema.json",
+  "title": "MNP Case Input",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "case_id",
+    "assessment_time",
+    "subscriber",
+    "phone_number",
+    "account",
+    "evidence"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "1.0"
+    },
+    "case_id": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9_-]*$"
+    },
+    "assessment_time": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "subscriber": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["subscriber_id"],
+      "properties": {
+        "subscriber_id": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "phone_number": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["masked_number"],
+      "properties": {
+        "masked_number": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "account": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["account_id"],
+      "properties": {
+        "account_id": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "identity",
+        "number_status",
+        "billing",
+        "contract",
+        "porting_history"
+      ],
+      "properties": {
+        "identity": {
+          "$ref": "#/$defs/identityEvidence"
+        },
+        "number_status": {
+          "$ref": "#/$defs/numberStatusEvidence"
+        },
+        "billing": {
+          "$ref": "#/$defs/billingEvidence"
+        },
+        "contract": {
+          "$ref": "#/$defs/contractEvidence"
+        },
+        "porting_history": {
+          "$ref": "#/$defs/portingEvidence"
+        }
+      }
+    }
+  },
+  "$defs": {
+    "evidenceBase": {
+      "type": "object",
+      "required": [
+        "source_system",
+        "generated_at",
+        "valid_until",
+        "status"
+      ],
+      "properties": {
+        "source_system": {
+          "type": "string",
+          "minLength": 1
+        },
+        "generated_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "valid_until": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["VALID", "EXPIRED", "REVOKED", "UNKNOWN"]
+        }
+      }
+    },
+    "identityEvidence": {
+      "allOf": [
+        { "$ref": "#/$defs/evidenceBase" },
+        {
+          "type": "object",
+          "required": ["matched"],
+          "properties": {
+            "matched": { "type": "boolean" }
+          }
+        }
+      ]
+    },
+    "numberStatusEvidence": {
+      "allOf": [
+        { "$ref": "#/$defs/evidenceBase" },
+        {
+          "type": "object",
+          "required": ["status_code"],
+          "properties": {
+            "status_code": { "type": "string", "minLength": 1 }
+          }
+        }
+      ]
+    },
+    "billingEvidence": {
+      "allOf": [
+        { "$ref": "#/$defs/evidenceBase" },
+        {
+          "type": "object",
+          "required": ["outstanding_amount", "currency", "has_payment_arrangement"],
+          "properties": {
+            "outstanding_amount": {
+              "type": ["number", "string"]
+            },
+            "currency": { "type": "string", "minLength": 1 },
+            "has_payment_arrangement": { "type": "boolean" }
+          }
+        }
+      ]
+    },
+    "contractEvidence": {
+      "allOf": [
+        { "$ref": "#/$defs/evidenceBase" },
+        {
+          "type": "object",
+          "required": ["contract_status"],
+          "properties": {
+            "contract_status": { "type": "string", "minLength": 1 },
+            "contract_end_time": {
+              "type": ["string", "null"],
+              "format": "date-time"
+            }
+          }
+        }
+      ]
+    },
+    "portingEvidence": {
+      "allOf": [
+        { "$ref": "#/$defs/evidenceBase" },
+        {
+          "type": "object",
+          "required": ["days_since_last_port"],
+          "properties": {
+            "days_since_last_port": { "type": "integer", "minimum": 0 }
+          }
+        }
+      ]
+    }
+  }
+}

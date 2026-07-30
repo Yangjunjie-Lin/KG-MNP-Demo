@@ -12,6 +12,8 @@
 | EligibilityAssessment | Deterministic evaluation episode |
 | EligibilityDecision | ELIGIBLE / BLOCKED / CONDITIONAL / MANUAL_REVIEW |
 | EvidenceRecord / SystemObservation | Provenanced observation with validity window |
+| hasCaseEvidence | MNPCase → evidence available for that case |
+| usesEvidence | EligibilityAssessment → evidence snapshot used in that evaluation |
 | EligibilityRule / RuleVersion | Versioned operational rule |
 | BlockingReason | Independent failure/review reason |
 | RemediationAction | Recommended next step |

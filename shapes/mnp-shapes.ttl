@@ -30,6 +30,12 @@ mnp:MNPCaseShape a sh:NodeShape ;
         sh:minCount 1 ;
         sh:maxCount 1 ;
         sh:message "每个携号转网案件必须恰好有一个申请人 (requestedBy)。" ;
+    ] ;
+    sh:property [
+        sh:path mnp:hasCaseEvidence ;
+        sh:class mnp:EvidenceRecord ;
+        sh:minCount 1 ;
+        sh:message "每个携号转网案件必须至少关联一条案件证据 (hasCaseEvidence)。" ;
     ] .
 
 mnp:EvidenceRecordShape a sh:NodeShape ;
@@ -80,6 +86,21 @@ mnp:EligibilityAssessmentShape a sh:NodeShape ;
         sh:minCount 1 ;
         sh:maxCount 1 ;
         sh:message "资格评估必须恰好产生一个决定 (producesDecision)。" ;
+    ] ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "资格评估使用的证据不属于其对应案件的证据集合。" ;
+        sh:select """
+            PREFIX mnp: <http://example.org/kg-mnp#>
+            SELECT $this ?evidence
+            WHERE {
+              $this mnp:aboutCase ?case ;
+                    mnp:usesEvidence ?evidence .
+              FILTER NOT EXISTS {
+                ?case mnp:hasCaseEvidence ?evidence .
+              }
+            }
+        """ ;
     ] .
 
 mnp:BlockingDecisionShape a sh:NodeShape ;

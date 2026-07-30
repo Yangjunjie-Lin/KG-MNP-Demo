@@ -5,7 +5,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import Any
 
-from rdflib import Graph, Literal
+from rdflib import Graph
 
 from kg_mnp_demo.loader import query_path
 
@@ -52,7 +52,16 @@ def blocking_reasons(graph: Graph, case_id: str) -> list[dict[str, Any]]:
 
 
 def affected_assessments(graph: Graph) -> list[dict[str, Any]]:
-    return run_query(graph, "affected_assessments.rq")
+    rows = run_query(graph, "affected_assessments.rq")
+    deduped: list[dict[str, Any]] = []
+    seen: set[tuple[str | None, str | None, str | None]] = set()
+    for row in rows:
+        key = (row.get("assessment"), row.get("oldVersion"), row.get("newVersion"))
+        if key in seen:
+            continue
+        seen.add(key)
+        deduped.append(row)
+    return deduped
 
 
 def source_alignment(graph: Graph) -> list[dict[str, Any]]:

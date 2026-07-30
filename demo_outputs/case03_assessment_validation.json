@@ -1,0 +1,9 @@
+{
+  "backend": "rdf",
+  "case_id": "CASE-03",
+  "conforms": true,
+  "detail": "",
+  "label": "Assessment Graph Validation",
+  "status": "PASSED",
+  "validation_status": "PASSED"
+}

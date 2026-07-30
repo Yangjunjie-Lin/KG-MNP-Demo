@@ -55,12 +55,36 @@ def test_case03_contract_block_and_trace(showcase, tmp_path):
     assert row["clauseId"]
     assert row["actionCode"]
 
+    subgraph = trace["subgraph"]
+    preds = {e["predicate"] for e in subgraph["edges"]}
+    assert "usesEvidence" in preds
+    assert "producesBlockingReason" in preds
+    assert "recommendsAction" in preds
+    assert "triggeredByRuleVersion" in preds
+    # No fabricated Evidence→triggeredByRuleVersion edge
+    for e in subgraph["edges"]:
+        if e["predicate"] == "triggeredByRuleVersion":
+            assert "Reason-" in e["source_local"] or "Blocking" in (
+                next(
+                    (
+                        n["type"]
+                        for n in subgraph["nodes"]
+                        if n["id"] == e["source"]
+                    ),
+                    "",
+                )
+                or ""
+            )
+
     chain = trace["human_chains"][0]
     assert chain["evidence_id"]
     assert chain["rule_id"]
     assert chain["rule_version"]
     assert chain["clause_id"]
     assert chain["action_code"]
+
+    assert primary["input_validation"]["status"] == "PASSED"
+    assert primary["assessment_validation"]["status"] == "PASSED"
 
 
 def test_all_cases_summary(showcase):
@@ -104,6 +128,10 @@ def test_html_generated(showcase, tmp_path):
     assert "KG-MNP 携号转网资格判断领域本体演示" in text
     assert "BLOCKED" in text
     assert "ACTIVE_CONTRACT_RESTRICTION" in text
+    assert "资格判断追溯子图" in text
+    assert "producesBlockingReason" in text or "usesEvidence" in text
+    assert "triggeredByRuleVersion" in text  # real predicate on BlockingReason
+    assert "完整追溯链" not in text
 
 
 def test_what_if_does_not_modify_ttl(showcase):

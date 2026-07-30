@@ -10,6 +10,41 @@
 
 演示脚本 `scripts/showcase_demo.py` **强制** `backend = rdf`，即使设置了 `KG_MNP_BACKEND=neo4j` 也不会切换。
 
+## 两类证据关系
+
+| 关系 | 含义 |
+|------|------|
+| `MNPCase hasCaseEvidence EvidenceRecord` | 该案件可使用 / 已收集的证据集合 |
+| `EligibilityAssessment usesEvidence EvidenceRecord` | 某一次评估实际选用的证据快照 |
+
+规则引擎与输入摘要**仅**通过 `hasCaseEvidence` 选择证据，不再依赖 `Ev-03-*` 等 IRI 前缀。
+
+## 真实追溯子图
+
+追溯展示为以 `EligibilityAssessment` / `BlockingReason` 为中心的**依赖子图**，每条箭头对应真实 RDF 对象属性。  
+不再展示伪造的线性链（例如 `Evidence → triggeredByRuleVersion → Rule → …`）。
+
+## 两次 SHACL 验证
+
+1. **Input Graph Validation**：判断前的输入实例完整性（含 `hasCaseEvidence`）。失败则不生成正式资格结论，非零退出。
+2. **Assessment Graph Validation**：物化评估/决定/原因/依赖后的结果图。失败则标记 `NOT_PUBLISHABLE`，非零退出。
+
+## JSON 外部输入
+
+合成业务 JSON（非运营商真实接口）可直接进入完整流水线：
+
+```bash
+python scripts/showcase_demo.py --input inputs/case03.json --output-dir runtime_outputs/case03
+
+python -m kg_mnp_demo.pipeline \
+  --input inputs/case03.json \
+  --output-dir runtime_outputs/pipeline-case03
+```
+
+输入样例见 `inputs/case03.json`；Schema 见 `schemas/mnp_case_input.schema.json`。
+
+评估时间取自 JSON 的 `assessment_time`（不使用系统当前时间）。
+
 ## 为什么不依赖 GitHub CI
 
 当前环境无法使用 GitHub Actions。请在本地执行安装、测试与演示命令；以本机 `pytest` 与 `showcase_demo.py` 输出为准。
@@ -18,43 +53,24 @@
 
 需要 Python 3.11+。
 
-### Windows PowerShell
-
 ```powershell
 cd KG-MNP-Demo
 python -m pip install -e ".[dev]"
 ```
 
-可选 Neo4j 客户端（演示本身不需要）：
-
-```powershell
-python -m pip install -e ".[dev,neo4j]"
-```
-
-### macOS / Linux
+## 一键演示（预置 TTL 案例）
 
 ```bash
-cd KG-MNP-Demo
-python -m pip install -e ".[dev]"
-# optional: python -m pip install -e ".[dev,neo4j]"
-```
-
-## 一键演示
-
-```bash
-python scripts/showcase_demo.py
+python scripts/showcase_demo.py --case CASE-03
 ```
 
 默认行为：
 
 1. 展示 CASE-03 输入摘要
-2. SHACL 验证
-3. OWL-RL 推理
-4. 确定性资格判断
-5. 完整本体追溯链
-6. 六个案例汇总
-7. 写出 `demo_outputs/*.json`
-8. 生成 `demo_outputs/demo_report.html`
+2. 输入图 SHACL → OWL-RL → 资格判断 → 评估结果图 SHACL
+3. 真实 RDF 追溯子图
+4. 六个案例汇总
+5. 写出 `demo_outputs/*.json` 与 `demo_report.html`
 
 ### 常用参数
 
@@ -63,6 +79,7 @@ python scripts/showcase_demo.py --case CASE-03
 python scripts/showcase_demo.py --all
 python scripts/showcase_demo.py --output-dir demo_outputs
 python scripts/showcase_demo.py --no-html
+python scripts/showcase_demo.py --input inputs/case03.json --output-dir runtime_outputs/case03
 ```
 
 ### What-if（内存中改输入，不改 TTL）
@@ -73,23 +90,36 @@ python scripts/showcase_demo.py --what-if add-debt
 python scripts/showcase_demo.py --what-if expire-evidence
 ```
 
-`contract-expired`：将 CASE-03 合约改为已到期，再重新判断。原始 TTL 文件保持不变。
+What-if 通过 `hasCaseEvidence` + `evidenceType` 定位目标证据，不依赖 IRI 前缀。
 
 ## 固定评估时间
 
-规则引擎使用固定时间：
+预置案例模式使用固定时间：
 
 ```text
 2026-07-01T00:00:00Z
 ```
 
-终端、JSON 与 HTML 都会提示：本次演示使用固定评估时间，以保证结果可重复。不要误以为系统使用当前实时日期。
+JSON 模式使用输入中的 `assessment_time`。两者都不使用系统当前时间。
 
 ## 输出文件
 
-见 [`demo_outputs/README.md`](../demo_outputs/README.md)。
+预置案例：见 [`demo_outputs/README.md`](../demo_outputs/README.md)。
 
-HTML 报告可直接双击打开，无需启动 Web 服务器。
+JSON 流水线：
+
+```text
+runtime_outputs/case03/
+├── normalized_input.json
+├── input_graph.ttl
+├── input_validation.json
+├── inference.json
+├── evaluation.json
+├── assessment_graph.ttl
+├── assessment_validation.json
+├── trace_subgraph.json
+└── report.html
+```
 
 ## 本地验收命令
 
@@ -97,48 +127,33 @@ HTML 报告可直接双击打开，无需启动 Web 服务器。
 python -m pip install -e ".[dev]"
 pytest
 python scripts/check_references.py
-python scripts/showcase_demo.py
+python scripts/showcase_demo.py --case CASE-03
+python scripts/showcase_demo.py --input inputs/case03.json --output-dir runtime_outputs/case03
+python -m kg_mnp_demo.pipeline --input inputs/case03.json --output-dir runtime_outputs/pipeline-case03
 ```
 
 离线 CLI（显式 RDF）：
 
 ```bash
-python -m kg_mnp_demo.cli validate --case CASE-03
-python -m kg_mnp_demo.cli infer --case CASE-03
 python -m kg_mnp_demo.cli evaluate --case CASE-03 --backend rdf
 python -m kg_mnp_demo.cli trace --case CASE-03 --backend rdf
 python -m kg_mnp_demo.cli run-all --backend rdf
 ```
 
-## 常见错误
+## 当前边界
 
-| 现象 | 处理 |
-|------|------|
-| `ModuleNotFoundError: kg_mnp_demo` | 先执行 `python -m pip install -e ".[dev]"` |
-| Neo4j 连接失败 | 演示不需要 Neo4j；使用 `showcase_demo.py` 或 `--backend rdf` |
-| HTML 打不开 / 乱码 | 用浏览器打开 `demo_outputs/demo_report.html`（UTF-8） |
-| 结果与预期不一致 | 确认未改 `data/*.ttl` 与 `rules/eligibility_rules.yaml`；确认评估时间为固定值 |
-| `pytest` 中 neo4j 测试 skipped | 正常；无数据库时应 skip，不影响离线验收 |
-
-## 如何恢复环境
-
-```bash
-git status
-git checkout -- data/ ontology/ rules/ shapes/ queries/
-python -m pip install -e ".[dev]"
-python scripts/showcase_demo.py
-```
-
-What-if 模式不会写入 TTL；若仍担心，可用 `git checkout -- data/` 恢复案例文件。
+* JSON 是合成业务输入；
+* 监管条款是演示条款，不是正式法律条文；
+* 不是生产运营商系统；
+* 不包含真实外部接口、大模型、Web 前端或 Neo4j 必选依赖。
 
 ## 演示脚本如何复用现有代码
 
 | 步骤 | 复用模块 |
 |------|----------|
-| 加载 | `load_case_graph` |
-| 验证 | `validate_graph` |
+| 加载 | `load_case_graph` / `rdf_builder` |
+| 验证 | `validate_graph`（两次） |
 | 推理 | `apply_owlrl` |
 | 判断 | `evaluate_case` / `materialize_assessment` |
-| 追溯 | `decision_trace` / `blocking_reasons` / `affected_assessments` |
-
-脚本不重新实现资格规则，也不硬编码六个案例的最终答案。
+| 追溯 | `trace_graph.build_assessment_subgraph` |
+| JSON | `input_adapter` → `pipeline` |

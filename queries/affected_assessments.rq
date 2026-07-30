@@ -2,7 +2,7 @@ PREFIX mnp: <http://example.org/kg-mnp#>
 
 # Locate assessments affected by superseded rule versions.
 
-SELECT ?assessment ?assessmentId ?oldVersion ?newVersion ?caseId ?requiresReassessment
+SELECT DISTINCT ?assessment ?assessmentId ?oldVersion ?newVersion ?caseId ?requiresReassessment
 WHERE {
   ?newRv mnp:supersedesRuleVersion ?oldRv .
   ?oldRv mnp:ruleVersion ?oldVersion .
@@ -16,6 +16,5 @@ WHERE {
   OPTIONAL { ?assessment mnp:aboutCase ?case .
              ?case mnp:caseIdentifier ?caseId }
   OPTIONAL { ?assessment mnp:requiresReassessment ?requiresReassessment }
-  OPTIONAL { ?assessment mnp:markedForReassessment ?marker }
 }
-ORDER BY ?assessmentId
+ORDER BY ?assessmentId ?oldVersion ?newVersion

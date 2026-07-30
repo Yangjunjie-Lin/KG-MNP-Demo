@@ -82,6 +82,8 @@
       "runtime_dependency": false
     }
   ],
+  "publication_status": "PUBLISHABLE",
+  "publishable": true,
   "regulatory_clauses": [
     {
       "clause_id": "REG-MNP-CLAUSE-04",

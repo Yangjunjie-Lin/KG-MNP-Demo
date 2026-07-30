@@ -20,7 +20,7 @@
 |------|------|
 | **CTO**（GPL-3.0） | 仅概念参考与对齐说明；**不复制** OWL 文件；运行时不依赖 |
 | **TM Forum** TMF629/637/620（Apache-2.0） | 通过 `mappings/tmf_to_mnp.yaml` 做字段映射；**不当作 OWL** |
-| **RDFLib / pySHACL / owlrl** | MVP 运行依赖 |
+| **RDFLib / pySHACL / owlrl / jsonschema** | MVP 运行依赖 |
 | **Protégé** | 人工打开/检查本体 |
 | **WIDOCO** | 可选 HTML 文档（失败不影响核心测试） |
 | **neosemantics / Neo4j** | Docker Compose 实际图存储与 Cypher 追溯（可选；离线测试不依赖） |
@@ -55,23 +55,32 @@ python -m pip install -e ".[dev]"
 ## 本地一键演示
 
 ```bash
-python scripts/showcase_demo.py
+python scripts/showcase_demo.py --case CASE-03
 ```
 
 演示内容：
 
-* CASE-03 输入摘要；
-* SHACL 验证；
-* OWL-RL 推理；
-* 确定性资格判断；
-* 证据—规则版本—监管条款—结论—动作追溯；
+* CASE-03 输入摘要（证据经 `hasCaseEvidence` 关联）；
+* **输入图** SHACL 验证 → OWL-RL → 资格判断 → **评估结果图** SHACL 验证；
+* 真实 RDF 依赖子图追溯（非伪线性链）；
 * 六个案例汇总；
 * HTML 演示报告。
+
+### JSON 外部输入
+
+```bash
+python scripts/showcase_demo.py --input inputs/case03.json --output-dir runtime_outputs/case03
+# 或
+python -m kg_mnp_demo.pipeline --input inputs/case03.json --output-dir runtime_outputs/case03
+```
+
+流程：JSON Schema → 规范化 → RDF 实例（含 `hasCaseEvidence`）→ 输入图 SHACL → OWL-RL → 规则判断 → 评估结果图 SHACL → SPARQL 追溯子图 → TTL/JSON/HTML。
 
 输出位置：
 
 ```text
 demo_outputs/demo_report.html
+runtime_outputs/case03/report.html
 ```
 
 详细说明见 [`docs/local_showcase.md`](docs/local_showcase.md)。

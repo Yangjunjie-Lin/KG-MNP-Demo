@@ -2,17 +2,20 @@
 
 from __future__ import annotations
 
+from datetime import datetime
 from typing import Any
 
 from rdflib import Graph, Literal, URIRef
-from rdflib.namespace import RDF, XSD
+from rdflib.namespace import RDF
 
-from kg_mnp_demo.mappings import load_mappings, mappings_used_for_case
+from kg_mnp_demo.mappings import mappings_used_for_case
 from kg_mnp_demo.namespaces import MNP
 from kg_mnp_demo.rule_engine import (
+    ASSESSMENT_TIME,
     action_iri,
     clause_iri,
     evaluate_rules,
+    resolve_case_uri,
     rule_iri,
     rule_version_iri,
     summarize_decision,
@@ -31,7 +34,6 @@ DECISION_CLASS = {
 def _evidence_snapshot(graph: Graph, evidence_iri: str | None) -> dict[str, Any] | None:
     if not evidence_iri:
         return None
-    ev = URIRef(evidence_iri)
     q = """
     PREFIX mnp: <http://example.org/kg-mnp#>
     SELECT ?status ?gen ?until ?sysId ?type WHERE {
@@ -65,19 +67,22 @@ def materialize_assessment(
     case_id: str,
     *,
     use_updated_rules: bool = True,
+    assessment_time: datetime | None = None,
+    validate: bool = True,
 ) -> tuple[Graph, dict[str, Any]]:
-    outcomes = evaluate_rules(graph, case_id, use_updated_rules=use_updated_rules)
+    as_of = assessment_time or ASSESSMENT_TIME
+    outcomes = evaluate_rules(
+        graph,
+        case_id,
+        use_updated_rules=use_updated_rules,
+        assessment_time=as_of,
+    )
     decision = summarize_decision(outcomes)
 
     assessment = MNP[f"Assessment-{case_id}"]
     decision_node = MNP[f"Decision-{case_id}"]
     dependency = MNP[f"Dep-{case_id}"]
-    case_uri = MNP[case_id]
-
-    # Clear prior generated assessment for this case (keep CASE-06 historical)
-    if case_id != "CASE-06" or True:
-        # Always write fresh runtime assessment node Assessment-CASE-XX
-        pass
+    case_uri = resolve_case_uri(graph, case_id) or MNP[case_id]
 
     graph.add((assessment, RDF.type, MNP.EligibilityAssessment))
     graph.add((assessment, MNP.assessmentIdentifier, Literal(f"ASSESS-{case_id}")))
@@ -204,7 +209,8 @@ def materialize_assessment(
                 }
             )
 
-    validation = validate_graph(graph)
+    assessment_time_str = as_of.strftime("%Y-%m-%dT%H:%M:%SZ")
+    validation = validate_graph(graph) if validate else None
     result = {
         "case_id": case_id,
         "decision": decision,
@@ -214,8 +220,15 @@ def materialize_assessment(
         "regulatory_clauses": clauses,
         "remediation_actions": actions,
         "trace_paths": trace_paths,
-        "validation_status": "PASSED" if validation.conforms else "FAILED",
-        "validation_detail": validation.text if not validation.conforms else "",
+        "assessment_time": assessment_time_str,
+        "validation_status": (
+            ("PASSED" if validation.conforms else "FAILED") if validation else None
+        ),
+        "validation_detail": (
+            (validation.text if validation and not validation.conforms else "")
+            if validation
+            else ""
+        ),
         "tmf_mappings_used": mappings_used_for_case(),
         "ontology_sources": [
             {
@@ -262,8 +275,14 @@ def evaluate_case(
     case_id: str,
     *,
     use_updated_rules: bool = True,
+    assessment_time: datetime | None = None,
+    validate: bool = True,
 ) -> dict[str, Any]:
     _, result = materialize_assessment(
-        graph, case_id, use_updated_rules=use_updated_rules
+        graph,
+        case_id,
+        use_updated_rules=use_updated_rules,
+        assessment_time=assessment_time,
+        validate=validate,
     )
     return result

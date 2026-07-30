@@ -82,7 +82,6 @@ rules:
       type: contract_not_blocking
       status_field: contractStatusCode
       end_time_field: contractEndTime
-      assessment_time: "2026-07-01T00:00:00Z"
 
   - rule_id: MNP-ELIG-005
     version: "1.0"

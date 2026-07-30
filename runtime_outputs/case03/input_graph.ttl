@@ -1,0 +1,86 @@
+@prefix mnp: <http://example.org/kg-mnp#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+mnp:Evidence-CASE-03-BILLING a mnp:SystemObservation ;
+    mnp:currencyCode "CNY" ;
+    mnp:evidenceForCase mnp:Case-CASE-03 ;
+    mnp:evidenceGeneratedAt "2026-06-20T10:10:00+00:00"^^xsd:dateTime ;
+    mnp:evidenceStatus "VALID" ;
+    mnp:evidenceType "BILLING_BALANCE" ;
+    mnp:evidenceValidUntil "2026-12-31T23:59:59+00:00"^^xsd:dateTime ;
+    mnp:hasPaymentArrangement false ;
+    mnp:hasSourceSystem mnp:SYS-BILLING ;
+    mnp:observedAmount 0.0 .
+
+mnp:Evidence-CASE-03-CONTRACT a mnp:SystemObservation ;
+    mnp:contractEndTime "2027-01-01T00:00:00+00:00"^^xsd:dateTime ;
+    mnp:contractStatusCode "ACTIVE" ;
+    mnp:evidenceForCase mnp:Case-CASE-03 ;
+    mnp:evidenceGeneratedAt "2026-06-20T10:15:00+00:00"^^xsd:dateTime ;
+    mnp:evidenceStatus "VALID" ;
+    mnp:evidenceType "CONTRACT_STATUS" ;
+    mnp:evidenceValidUntil "2026-12-31T23:59:59+00:00"^^xsd:dateTime ;
+    mnp:hasSourceSystem mnp:SYS-CONTRACT .
+
+mnp:Evidence-CASE-03-IDENTITY a mnp:SystemObservation ;
+    mnp:evidenceForCase mnp:Case-CASE-03 ;
+    mnp:evidenceGeneratedAt "2026-06-20T10:00:00+00:00"^^xsd:dateTime ;
+    mnp:evidenceStatus "VALID" ;
+    mnp:evidenceType "IDENTITY_MATCH" ;
+    mnp:evidenceValidUntil "2026-12-31T23:59:59+00:00"^^xsd:dateTime ;
+    mnp:hasSourceSystem mnp:SYS-CRM ;
+    mnp:identityMatchFlag true .
+
+mnp:Evidence-CASE-03-NUMBER a mnp:SystemObservation ;
+    mnp:evidenceForCase mnp:Case-CASE-03 ;
+    mnp:evidenceGeneratedAt "2026-06-20T10:05:00+00:00"^^xsd:dateTime ;
+    mnp:evidenceStatus "VALID" ;
+    mnp:evidenceType "NUMBER_STATUS" ;
+    mnp:evidenceValidUntil "2026-12-31T23:59:59+00:00"^^xsd:dateTime ;
+    mnp:hasSourceSystem mnp:SYS-HLR ;
+    mnp:numberStatusCode "ACTIVE" .
+
+mnp:Evidence-CASE-03-PORTING a mnp:SystemObservation ;
+    mnp:daysSinceLastPort 250 ;
+    mnp:evidenceForCase mnp:Case-CASE-03 ;
+    mnp:evidenceGeneratedAt "2026-06-20T10:20:00+00:00"^^xsd:dateTime ;
+    mnp:evidenceStatus "VALID" ;
+    mnp:evidenceType "PORTING_HISTORY" ;
+    mnp:evidenceValidUntil "2026-12-31T23:59:59+00:00"^^xsd:dateTime ;
+    mnp:hasSourceSystem mnp:SYS-MNP .
+
+mnp:SYS-BILLING a mnp:InformationSystem ;
+    mnp:systemIdentifier "BILLING" .
+
+mnp:SYS-CONTRACT a mnp:InformationSystem ;
+    mnp:systemIdentifier "CONTRACT" .
+
+mnp:SYS-CRM a mnp:InformationSystem ;
+    mnp:systemIdentifier "CRM" .
+
+mnp:SYS-HLR a mnp:InformationSystem ;
+    mnp:systemIdentifier "HLR" .
+
+mnp:SYS-MNP a mnp:InformationSystem ;
+    mnp:systemIdentifier "MNP_HISTORY" .
+
+mnp:Subscriber-SUB-03 a mnp:Subscriber ;
+    mnp:billedThrough mnp:Account-ACC-03 ;
+    mnp:ownsPhoneNumber mnp:Phone-CASE-03 ;
+    mnp:relatedAccount mnp:Account-ACC-03 .
+
+mnp:Account-ACC-03 a mnp:TelecomAccount .
+
+mnp:Phone-CASE-03 a mnp:PhoneNumber ;
+    mnp:maskedPhoneNumber "138****0003" .
+
+mnp:Case-CASE-03 a mnp:MNPCase ;
+    mnp:caseIdentifier "CASE-03" ;
+    mnp:concernsNumber mnp:Phone-CASE-03 ;
+    mnp:hasCaseEvidence mnp:Evidence-CASE-03-BILLING,
+        mnp:Evidence-CASE-03-CONTRACT,
+        mnp:Evidence-CASE-03-IDENTITY,
+        mnp:Evidence-CASE-03-NUMBER,
+        mnp:Evidence-CASE-03-PORTING ;
+    mnp:requestedBy mnp:Subscriber-SUB-03 .
+

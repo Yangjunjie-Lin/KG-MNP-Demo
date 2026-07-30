@@ -27,8 +27,13 @@ from kg_mnp_demo.evaluator import evaluate_case
 from kg_mnp_demo.inference import apply_owlrl
 from kg_mnp_demo.loader import case_path, load_case_graph
 from kg_mnp_demo.namespaces import CASE_FILES, MNP
-from kg_mnp_demo.rule_engine import ASSESSMENT_TIME, collect_evidence
+from kg_mnp_demo.rule_engine import ASSESSMENT_TIME, collect_evidence, resolve_case_uri
 from kg_mnp_demo.trace import affected_assessments, blocking_reasons, decision_trace
+from kg_mnp_demo.trace_graph import (
+    build_assessment_subgraph,
+    format_subgraph_tree,
+    render_subgraph_html,
+)
 from kg_mnp_demo.validator import validate_graph
 
 BACKEND = "rdf"
@@ -55,6 +60,7 @@ REASON_LABELS = {
 SHACL_CHECKLIST = [
     "案件包含申请人",
     "案件包含唯一携转号码",
+    "案件至少关联一条 hasCaseEvidence",
     "证据包含来源系统",
     "证据包含生成时间",
     "证据包含有效状态",
@@ -75,9 +81,11 @@ CORE_CLASSES = [
 ]
 
 CORE_RELATIONS = [
+    "hasCaseEvidence",
     "hasEligibilityAssessment",
     "usesEvidence",
     "usesRuleVersion",
+    "evaluatedByRule",
     "producesDecision",
     "producesBlockingReason",
     "supportedByEvidence",
@@ -124,7 +132,7 @@ def extract_case_input_summary(graph: Graph, case_id: str) -> dict[str, Any]:
     q = """
     PREFIX mnp: <http://example.org/kg-mnp#>
     SELECT ?caseId ?masked ?applicant ?numStatus ?idMatch ?amount ?arrangement
-           ?ctrStatus ?ctrEnd ?days ?assessTime
+           ?ctrStatus ?ctrEnd ?days
     WHERE {
       ?case a mnp:MNPCase ;
             mnp:caseIdentifier ?caseId ;
@@ -133,46 +141,34 @@ def extract_case_input_summary(graph: Graph, case_id: str) -> dict[str, Any]:
       FILTER(STR(?caseId) = %s)
       OPTIONAL { ?phone mnp:maskedPhoneNumber ?masked }
       OPTIONAL {
-        ?evNum a ?cls1 ;
-               mnp:evidenceType "NUMBER_STATUS" ;
+        ?case mnp:hasCaseEvidence ?evNum .
+        ?evNum mnp:evidenceType "NUMBER_STATUS" ;
                mnp:numberStatusCode ?numStatus .
-        FILTER(CONTAINS(STR(?evNum), %s))
       }
       OPTIONAL {
-        ?evId a ?cls2 ;
-              mnp:evidenceType "IDENTITY_MATCH" ;
+        ?case mnp:hasCaseEvidence ?evId .
+        ?evId mnp:evidenceType "IDENTITY_MATCH" ;
               mnp:identityMatchFlag ?idMatch .
-        FILTER(CONTAINS(STR(?evId), %s))
       }
       OPTIONAL {
-        ?evBill a ?cls3 ;
-                mnp:evidenceType "BILLING_BALANCE" ;
+        ?case mnp:hasCaseEvidence ?evBill .
+        ?evBill mnp:evidenceType "BILLING_BALANCE" ;
                 mnp:observedAmount ?amount .
         OPTIONAL { ?evBill mnp:hasPaymentArrangement ?arrangement }
-        FILTER(CONTAINS(STR(?evBill), %s))
       }
       OPTIONAL {
-        ?evCtr a ?cls4 ;
-               mnp:evidenceType "CONTRACT_STATUS" ;
+        ?case mnp:hasCaseEvidence ?evCtr .
+        ?evCtr mnp:evidenceType "CONTRACT_STATUS" ;
                mnp:contractStatusCode ?ctrStatus .
         OPTIONAL { ?evCtr mnp:contractEndTime ?ctrEnd }
-        FILTER(CONTAINS(STR(?evCtr), %s))
       }
       OPTIONAL {
-        ?evPort a ?cls5 ;
-                mnp:evidenceType "PORTING_HISTORY" ;
+        ?case mnp:hasCaseEvidence ?evPort .
+        ?evPort mnp:evidenceType "PORTING_HISTORY" ;
                 mnp:daysSinceLastPort ?days .
-        FILTER(CONTAINS(STR(?evPort), %s))
       }
     }
-    """ % (
-        f'"{case_id}"',
-        f'"Ev-{int(case_id.split("-")[-1]):02d}-"',
-        f'"Ev-{int(case_id.split("-")[-1]):02d}-"',
-        f'"Ev-{int(case_id.split("-")[-1]):02d}-"',
-        f'"Ev-{int(case_id.split("-")[-1]):02d}-"',
-        f'"Ev-{int(case_id.split("-")[-1]):02d}-"',
-    )
+    """ % f'"{case_id}"'
 
     row = next(iter(graph.query(q)), None)
     evidence_by_type = collect_evidence(graph, case_id)
@@ -303,144 +299,102 @@ def build_human_trace(
     case_id: str,
     evaluation: dict[str, Any],
 ) -> dict[str, Any]:
-    """Build a human-readable trace chain from SPARQL + evaluation results."""
+    """Build a real RDF dependency subgraph (not a fabricated linear chain)."""
     br_rows = blocking_reasons(graph, case_id)
     dt_rows = decision_trace(graph, case_id)
     affected = affected_assessments(graph) if case_id == "CASE-06" else []
+    subgraph = build_assessment_subgraph(graph, case_id)
 
-    chains: list[dict[str, Any]] = []
-    if br_rows:
-        for row in br_rows:
-            assessment_id = None
-            for dt in dt_rows:
-                if dt.get("reasonCode") == row.get("reasonCode"):
-                    assessment_id = _local(dt.get("assessment"))
-                    break
-            if not assessment_id and dt_rows:
-                assessment_id = _local(dt_rows[0].get("assessment"))
-
-            # Prefer assessmentIdentifier from graph
-            assess_q = """
-            PREFIX mnp: <http://example.org/kg-mnp#>
-            SELECT ?aid WHERE {
-              ?case mnp:caseIdentifier %s ;
-                    mnp:hasEligibilityAssessment ?a .
-              ?a mnp:assessmentIdentifier ?aid .
-            }
-            """ % f'"{case_id}"'
-            for arow in graph.query(assess_q):
-                assessment_id = str(arow.aid)
-                break
-
-            action_desc = row.get("actionDescription") or ""
-            reason_code = row.get("reasonCode") or ""
-            chains.append(
-                {
-                    "case_id": case_id,
-                    "assessment_id": assessment_id or f"ASSESS-{case_id}",
-                    "evidence_id": _local(row.get("evidence")),
-                    "evidence_source": row.get("sourceSystem"),
-                    "evidence_status": row.get("evidenceStatus"),
-                    "rule_id": row.get("ruleId"),
-                    "rule_version": row.get("ruleVersion"),
-                    "clause_id": row.get("clauseId"),
-                    "decision": evaluation.get("decision"),
-                    "reason_code": reason_code,
-                    "reason_label": REASON_LABELS.get(reason_code, reason_code),
-                    "action_code": row.get("actionCode"),
-                    "action_description": action_desc,
-                }
-            )
-    else:
-        # Eligible / no blocking reason path from decision_trace
-        assessment_id = f"ASSESS-{case_id}"
-        assess_q = """
-        PREFIX mnp: <http://example.org/kg-mnp#>
-        SELECT ?aid WHERE {
-          ?case mnp:caseIdentifier %s ;
-                mnp:hasEligibilityAssessment ?a .
-          ?a mnp:assessmentIdentifier ?aid .
+    human_chains = [
+        {
+            "case_id": case_id,
+            "assessment_id": f"ASSESS-{case_id}",
+            "evidence_id": _local(row.get("evidence")),
+            "evidence_source": row.get("sourceSystem"),
+            "evidence_status": row.get("evidenceStatus"),
+            "rule_id": row.get("ruleId"),
+            "rule_version": row.get("ruleVersion"),
+            "clause_id": row.get("clauseId"),
+            "decision": evaluation.get("decision"),
+            "reason_code": row.get("reasonCode"),
+            "reason_label": REASON_LABELS.get(row.get("reasonCode") or "", row.get("reasonCode")),
+            "action_code": row.get("actionCode"),
+            "action_description": row.get("actionDescription"),
         }
-        """ % f'"{case_id}"'
-        for arow in graph.query(assess_q):
-            assessment_id = str(arow.aid)
-            break
-        evidence_id = None
-        rule_id = None
-        rule_version = None
-        clause_id = None
-        if evaluation.get("trace_paths"):
-            tp = evaluation["trace_paths"][0]
-            evidence_id = _local(tp.get("evidence"))
-            rule_id = tp.get("rule")
-            rule_version = tp.get("rule_version")
-            clause_id = tp.get("clause")
-        elif dt_rows:
-            evidence_id = _local(dt_rows[0].get("evidence"))
-            rule_id = dt_rows[0].get("ruleId")
-            rule_version = dt_rows[0].get("ruleVersion")
-            clause_id = dt_rows[0].get("clauseId")
-        chains.append(
+        for row in br_rows
+    ]
+    if not human_chains:
+        human_chains = [
             {
                 "case_id": case_id,
-                "assessment_id": assessment_id,
-                "evidence_id": evidence_id,
-                "evidence_source": None,
-                "evidence_status": None,
-                "rule_id": rule_id,
-                "rule_version": rule_version,
-                "clause_id": clause_id,
+                "assessment_id": f"ASSESS-{case_id}",
+                "evidence_id": None,
+                "rule_id": None,
+                "rule_version": None,
+                "clause_id": None,
                 "decision": evaluation.get("decision"),
                 "reason_code": None,
-                "reason_label": None,
                 "action_code": None,
-                "action_description": None,
             }
-        )
+        ]
 
     return {
         "case_id": case_id,
         "decision_trace": dt_rows,
         "blocking_reasons": br_rows,
-        "human_chains": chains,
+        "subgraph": subgraph,
+        "tree_text": format_subgraph_tree(subgraph),
+        "human_chains": human_chains,
         "affected_assessments": affected,
         "backend": BACKEND,
     }
 
 
+def _case_evidence_nodes(graph: Graph, case_id: str, evidence_type: str | None = None):
+    """Yield evidence IRIs linked via hasCaseEvidence (optionally filtered by type)."""
+    case_uri = resolve_case_uri(graph, case_id)
+    if case_uri is None:
+        return
+    for ev in graph.objects(case_uri, MNP.hasCaseEvidence):
+        if evidence_type is None:
+            yield ev
+            continue
+        et = graph.value(ev, MNP.evidenceType)
+        if et is not None and str(et) == evidence_type:
+            yield ev
+
+
 def apply_what_if(graph: Graph, case_id: str, scenario: str) -> dict[str, Any]:
     """Mutate an in-memory copy of the case graph. Never writes TTL files."""
-    case_num = int(case_id.split("-")[-1])
-    prefix = f"Ev-{case_num:02d}-"
     notes: list[str] = []
+    case_uri = resolve_case_uri(graph, case_id)
 
     if scenario == "contract-expired":
         expired_end = Literal("2026-01-01T00:00:00Z", datatype=XSD.dateTime)
-        for s, p, o in list(graph.triples((None, MNP.contractStatusCode, None))):
-            local = _local(s)
-            if local.startswith(prefix) or local.startswith(f"Contract-{case_num:02d}"):
-                graph.set((s, MNP.contractStatusCode, Literal("EXPIRED")))
-                notes.append(f"set {local} contractStatusCode=EXPIRED")
-        for s, p, o in list(graph.triples((None, MNP.contractEndTime, None))):
-            local = _local(s)
-            if local.startswith(prefix) or local.startswith(f"Contract-{case_num:02d}"):
-                graph.set((s, MNP.contractEndTime, expired_end))
-                notes.append(f"set {local} contractEndTime={expired_end}")
+        for ev in _case_evidence_nodes(graph, case_id, "CONTRACT_STATUS"):
+            graph.set((ev, MNP.contractStatusCode, Literal("EXPIRED")))
+            graph.set((ev, MNP.contractEndTime, expired_end))
+            notes.append(f"set {_local(ev)} contractStatusCode=EXPIRED")
+            notes.append(f"set {_local(ev)} contractEndTime={expired_end}")
+        if case_uri is not None:
+            for sub in graph.objects(case_uri, MNP.requestedBy):
+                for subscription in graph.objects(sub, MNP.hasSubscription):
+                    for contract in graph.objects(subscription, MNP.governedByContract):
+                        graph.set((contract, MNP.contractStatusCode, Literal("EXPIRED")))
+                        graph.set((contract, MNP.contractEndTime, expired_end))
+                        notes.append(f"set {_local(contract)} contractStatusCode=EXPIRED")
         notes.append("合约已经到期")
     elif scenario == "add-debt":
-        for s, p, o in list(graph.triples((None, MNP.evidenceType, Literal("BILLING_BALANCE")))):
-            if not _local(s).startswith(prefix):
-                continue
-            graph.set((s, MNP.observedAmount, Literal("128.50", datatype=XSD.decimal)))
-            graph.set((s, MNP.hasPaymentArrangement, Literal(False)))
-            notes.append(f"set {_local(s)} outstanding amount=128.50, arrangement=false")
+        for ev in _case_evidence_nodes(graph, case_id, "BILLING_BALANCE"):
+            graph.set((ev, MNP.observedAmount, Literal("128.50", datatype=XSD.decimal)))
+            graph.set((ev, MNP.hasPaymentArrangement, Literal(False)))
+            notes.append(f"set {_local(ev)} outstanding amount=128.50, arrangement=false")
         notes.append("增加欠费")
     elif scenario == "expire-evidence":
         expired = Literal("2026-01-01T00:00:00Z", datatype=XSD.dateTime)
-        for s, p, o in list(graph.triples((None, MNP.evidenceValidUntil, None))):
-            if _local(s).startswith(prefix):
-                graph.set((s, MNP.evidenceValidUntil, expired))
-                notes.append(f"set {_local(s)} evidenceValidUntil={expired}")
+        for ev in _case_evidence_nodes(graph, case_id):
+            graph.set((ev, MNP.evidenceValidUntil, expired))
+            notes.append(f"set {_local(ev)} evidenceValidUntil={expired}")
         notes.append("证据已过期")
     else:
         raise ValueError(f"Unknown what-if scenario: {scenario}")
@@ -453,7 +407,7 @@ def evaluate_pipeline(
     *,
     what_if: str | None = None,
 ) -> dict[str, Any]:
-    """Full RDF offline pipeline for one case."""
+    """Full RDF offline pipeline for one case with dual SHACL validation."""
     graph = load_case_graph(case_id)
     original_ttl_hash = hashlib.sha256(case_path(case_id).read_bytes()).hexdigest()
 
@@ -462,29 +416,27 @@ def evaluate_pipeline(
         what_if_info = apply_what_if(graph, case_id, what_if)
 
     input_summary = extract_case_input_summary(graph, case_id)
-    validation = validate_graph(graph)
-    validation_payload = {
+    input_validation = validate_graph(graph)
+    input_payload = {
         "case_id": case_id,
-        "validation_status": "PASSED" if validation.conforms else "FAILED",
-        "conforms": validation.conforms,
+        "label": "Input Graph Validation",
+        "validation_status": "PASSED" if input_validation.conforms else "FAILED",
+        "status": "PASSED" if input_validation.conforms else "FAILED",
+        "conforms": input_validation.conforms,
         "checklist": SHACL_CHECKLIST,
-        "detail": validation.text,
+        "detail": input_validation.text,
         "backend": BACKEND,
     }
+    # Backward-compatible single validation field mirrors input validation.
+    validation_payload = dict(input_payload)
 
     inference = run_inference(graph, case_id)
 
     evaluation: dict[str, Any] | None = None
     trace_payload: dict[str, Any] | None = None
-    if validation.conforms:
-        evaluation = evaluate_case(graph, case_id, use_updated_rules=True)
-        evaluation["backend"] = BACKEND
-        evaluation["assessment_time"] = ASSESSMENT_TIME.strftime("%Y-%m-%dT%H:%M:%SZ")
-        evaluation["assessment_time_note"] = _assessment_time_note()
-        enrich_inference_after_assessment(graph, inference)
-        trace_payload = build_human_trace(graph, case_id, evaluation)
-    else:
-        # Still materialize nothing formal; keep empty evaluation marker
+    assessment_payload: dict[str, Any] | None = None
+
+    if not input_validation.conforms:
         evaluation = {
             "case_id": case_id,
             "decision": None,
@@ -495,10 +447,53 @@ def evaluate_pipeline(
             "remediation_actions": [],
             "trace_paths": [],
             "validation_status": "FAILED",
-            "validation_detail": validation.text,
+            "validation_detail": input_validation.text,
+            "publishable": False,
+            "publication_status": "NOT_PUBLISHABLE",
             "backend": BACKEND,
-            "skipped_reason": "SHACL validation failed; formal eligibility conclusion not produced",
+            "skipped_reason": "Input graph SHACL failed; formal eligibility conclusion not produced",
         }
+        assessment_payload = {
+            "case_id": case_id,
+            "label": "Assessment Graph Validation",
+            "validation_status": "SKIPPED",
+            "status": "SKIPPED",
+            "conforms": False,
+            "detail": "Skipped because input graph validation failed",
+            "backend": BACKEND,
+        }
+    else:
+        evaluation = evaluate_case(
+            graph, case_id, use_updated_rules=True, validate=False
+        )
+        evaluation["backend"] = BACKEND
+        evaluation["assessment_time"] = ASSESSMENT_TIME.strftime("%Y-%m-%dT%H:%M:%SZ")
+        evaluation["assessment_time_note"] = _assessment_time_note()
+        enrich_inference_after_assessment(graph, inference)
+
+        assessment_validation = validate_graph(graph)
+        assessment_payload = {
+            "case_id": case_id,
+            "label": "Assessment Graph Validation",
+            "validation_status": "PASSED" if assessment_validation.conforms else "FAILED",
+            "status": "PASSED" if assessment_validation.conforms else "FAILED",
+            "conforms": assessment_validation.conforms,
+            "detail": assessment_validation.text if not assessment_validation.conforms else "",
+            "backend": BACKEND,
+        }
+        if assessment_validation.conforms:
+            evaluation["validation_status"] = "PASSED"
+            evaluation["validation_detail"] = ""
+            evaluation["publishable"] = True
+            evaluation["publication_status"] = "PUBLISHABLE"
+        else:
+            evaluation["validation_status"] = "FAILED"
+            evaluation["validation_detail"] = assessment_validation.text
+            evaluation["publishable"] = False
+            evaluation["publication_status"] = "NOT_PUBLISHABLE"
+
+        # Keep internal results for debugging even if not publishable.
+        trace_payload = build_human_trace(graph, case_id, evaluation)
 
     after_ttl_hash = hashlib.sha256(case_path(case_id).read_bytes()).hexdigest()
     return {
@@ -506,6 +501,8 @@ def evaluate_pipeline(
         "backend": BACKEND,
         "input_summary": input_summary,
         "validation": validation_payload,
+        "input_validation": input_payload,
+        "assessment_validation": assessment_payload,
         "inference": inference,
         "evaluation": evaluation,
         "trace": trace_payload,
@@ -579,24 +576,38 @@ def print_input_section(summary: dict[str, Any]) -> None:
     print()
 
 
-def print_validation_section(validation: dict[str, Any]) -> None:
+def print_validation_section(
+    validation: dict[str, Any],
+    *,
+    assessment_validation: dict[str, Any] | None = None,
+) -> None:
     print("[2/6] SHACL 数据完整性验证")
     print()
-    status = validation["validation_status"]
-    print(f"验证结果：{status}")
+    input_status = validation.get("status") or validation.get("validation_status")
+    print(f"输入图 SHACL：{input_status}")
+    if assessment_validation:
+        print(
+            f"评估结果图 SHACL：{assessment_validation.get('status') or assessment_validation.get('validation_status')}"
+        )
     print()
-    if status == "PASSED":
+    if input_status == "PASSED":
         print("已检查：")
         for item in validation.get("checklist", SHACL_CHECKLIST):
             print(f"✓ {item}")
     else:
-        print("错误摘要：")
+        print("输入图错误摘要：")
         detail = validation.get("detail") or ""
-        # Keep terminal readable: first meaningful lines only
         lines = [ln for ln in detail.splitlines() if ln.strip()][:12]
         for ln in lines:
             print(f"  {ln}")
         print("完整报告已写入 JSON。")
+    if assessment_validation and assessment_validation.get("status") == "FAILED":
+        print()
+        print("评估结果图未通过验证 → NOT_PUBLISHABLE")
+        detail = assessment_validation.get("detail") or ""
+        lines = [ln for ln in detail.splitlines() if ln.strip()][:8]
+        for ln in lines:
+            print(f"  {ln}")
     print()
 
 
@@ -626,6 +637,8 @@ def print_evaluation_section(evaluation: dict[str, Any]) -> None:
         print()
         return
     print(f"资格结论：{evaluation['decision']}")
+    if evaluation.get("publication_status") == "NOT_PUBLISHABLE":
+        print("发布状态：NOT_PUBLISHABLE（评估结果图验证失败，非正式可发布结论）")
     reasons = evaluation.get("blocking_reasons") or []
     print(f"独立阻塞原因数量：{len(reasons)}")
     print()
@@ -653,58 +666,18 @@ def print_evaluation_section(evaluation: dict[str, Any]) -> None:
 
 
 def print_trace_section(trace: dict[str, Any] | None, evaluation: dict[str, Any]) -> None:
-    print("[5/6] 本体追溯链")
+    print("[5/6] 本体追溯子图")
     print()
-    if not trace or not trace.get("human_chains"):
-        print("追溯链未生成（验证失败或无评估对象）。")
+    if evaluation.get("publication_status") == "NOT_PUBLISHABLE" and evaluation.get("decision"):
+        print("注意：评估结果图未通过验证，以下追溯仅供调试，非正式可发布结论。")
+        print()
+    if not trace or not (trace.get("tree_text") or trace.get("subgraph")):
+        print("追溯子图未生成（验证失败或无评估对象）。")
         print()
         return
 
-    for idx, chain in enumerate(trace["human_chains"], start=1):
-        if len(trace["human_chains"]) > 1:
-            print(f"—— 追溯链 {idx} ——")
-        print("案件")
-        print(chain["case_id"])
-        print("  ↓ hasEligibilityAssessment")
-        print()
-        print("资格评估")
-        print(chain.get("assessment_id") or "—")
-        print("  ↓ usesEvidence")
-        print()
-        print("证据")
-        print(chain.get("evidence_id") or "—")
-        if chain.get("evidence_source") or chain.get("evidence_status"):
-            print(
-                f"来源：{chain.get('evidence_source') or '—'}"
-                f"\n状态：{chain.get('evidence_status') or '—'}"
-            )
-        print("  ↓ triggeredByRuleVersion")
-        print()
-        print("资格规则")
-        print(chain.get("rule_id") or "—")
-        print(f"版本：{chain.get('rule_version') or '—'}")
-        print("  ↓ operationalizesClause")
-        print()
-        print("监管条款")
-        print(chain.get("clause_id") or "—")
-        print("  ↓ producesDecision")
-        print()
-        print("资格结论")
-        print(chain.get("decision") or evaluation.get("decision") or "—")
-        if chain.get("reason_code"):
-            print("  ↓ producesBlockingReason")
-            print()
-            print("阻塞原因")
-            print(chain["reason_code"])
-            if chain.get("reason_label"):
-                print(chain["reason_label"])
-            print("  ↓ recommendsAction")
-            print()
-            print("处理动作")
-            print(chain.get("action_code") or "—")
-            if chain.get("action_description"):
-                print(chain["action_description"])
-        print()
+    print(trace.get("tree_text") or format_subgraph_tree(trace["subgraph"]))
+    print()
 
     if trace.get("affected_assessments"):
         print("规则更新影响：")
@@ -795,7 +768,8 @@ def render_html_report(
     what_if_result: dict[str, Any] | None = None,
 ) -> str:
     summary = primary["input_summary"]
-    validation = primary["validation"]
+    validation = primary.get("input_validation") or primary["validation"]
+    assessment_validation = primary.get("assessment_validation") or {}
     inference = primary["inference"]
     evaluation = primary["evaluation"]
     trace = primary.get("trace") or {}
@@ -810,31 +784,8 @@ def render_html_report(
         for e in summary.get("evidence", [])
     )
 
-    chain_html = ""
-    for chain in chains:
-        steps = [
-            ("案件", chain.get("case_id")),
-            ("资格评估", chain.get("assessment_id")),
-            ("证据", chain.get("evidence_id")),
-            (
-                "规则",
-                f"{chain.get('rule_id') or '—'} v{chain.get('rule_version') or '—'}",
-            ),
-            ("监管条款", chain.get("clause_id")),
-            ("结论", chain.get("decision")),
-        ]
-        if chain.get("reason_code"):
-            steps.append(("阻塞原因", chain.get("reason_code")))
-            steps.append(("处理动作", chain.get("action_code")))
-        cards = "".join(
-            f'<div class="card"><div class="k">{esc(k)}</div><div class="v">{esc(v)}</div></div>'
-            f'<div class="arrow">→</div>'
-            for k, v in steps
-        )
-        # drop trailing arrow
-        if cards.endswith('<div class="arrow">→</div>'):
-            cards = cards[: -len('<div class="arrow">→</div>')]
-        chain_html += f'<div class="chain">{cards}</div>'
+    subgraph = trace.get("subgraph") or {}
+    chain_html = render_subgraph_html(subgraph) if subgraph.get("edges") else ""
 
     case_rows = ""
     for case_id in ALL_CASES:
@@ -945,16 +896,11 @@ def render_html_report(
   table {{ width: 100%; border-collapse: collapse; font-size: 0.95rem; }}
   th, td {{ border-bottom: 1px solid var(--line); padding: 0.55rem 0.4rem; text-align: left; vertical-align: top; }}
   th {{ color: var(--muted); font-weight: 600; }}
-  .chain {{
-    display: flex; flex-wrap: wrap; gap: 0.4rem; align-items: center; margin: 0.6rem 0 1rem;
-  }}
-  .card {{
-    background: #f8fafc; border: 1px solid var(--line); border-radius: 10px;
-    padding: 0.55rem 0.75rem; min-width: 110px;
-  }}
-  .card .k {{ font-size: 0.75rem; color: var(--muted); }}
-  .card .v {{ font-weight: 600; }}
-  .arrow {{ color: var(--muted); }}
+  .subgraph ul.tree {{ list-style: none; padding-left: 1rem; }}
+  .subgraph .pred {{ color: var(--accent); font-family: ui-monospace, Consolas, monospace; font-size: 0.9rem; margin-right: 0.35rem; }}
+  .subgraph .node {{ display: inline-block; margin: 0.15rem 0; padding: 0.2rem 0.45rem; background: #f8fafc; border: 1px solid var(--line); border-radius: 6px; }}
+  .subgraph .ntype {{ color: var(--muted); font-size: 0.78rem; margin-right: 0.35rem; }}
+  .subgraph .nlabel, .subgraph .leaf {{ font-weight: 600; }}
   .grid {{ display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.5rem; }}
   .pill {{
     border: 1px solid var(--line); border-radius: 8px; padding: 0.45rem 0.65rem;
@@ -998,11 +944,11 @@ def render_html_report(
   <h2>处理流程</h2>
   <div class="flow">
     <span>输入案例</span>→
-    <span>SHACL 验证（{esc(validation['validation_status'])}）</span>→
+    <span>输入图 SHACL（{esc(validation.get('status') or validation.get('validation_status'))}）</span>→
     <span>OWL-RL 推理（+{esc(inference['triples_added'])}）</span>→
     <span>资格规则判断</span>→
-    <span>评估对象生成</span>→
-    <span>SPARQL 追溯</span>→
+    <span>评估结果图 SHACL（{esc(assessment_validation.get('status') or evaluation.get('validation_status'))}）</span>→
+    <span>SPARQL 追溯子图</span>→
     <span>结构化输出</span>
   </div>
   <ul>{samples or '<li class="muted">无示例推理</li>'}</ul>
@@ -1014,12 +960,13 @@ def render_html_report(
     <div class="badge {'ok' if decision == 'ELIGIBLE' else ''}">{esc(decision)}</div>
     <div style="flex:1">{reason_block}</div>
   </div>
-  <p class="note">验证状态：{esc(validation['validation_status'])}</p>
+  <p class="note">输入图 SHACL：{esc(validation.get('status') or validation.get('validation_status'))} · 评估结果图 SHACL：{esc(assessment_validation.get('status') or evaluation.get('validation_status'))} · 发布状态：{esc(evaluation.get('publication_status'))}</p>
 </section>
 
 <section>
-  <h2>完整追溯链</h2>
-  {chain_html or '<p class="muted">无追溯链</p>'}
+  <h2>资格判断追溯子图</h2>
+  <p class="muted">箭头均为真实 RDF 对象属性；非线性伪链。</p>
+  {chain_html or '<p class="muted">无追溯子图</p>'}
 </section>
 
 <section>
@@ -1077,9 +1024,15 @@ def write_outputs(
     mapping = {
         f"{prefix}_input_summary.json": primary["input_summary"],
         f"{prefix}_validation.json": primary["validation"],
+        f"{prefix}_input_validation.json": primary.get("input_validation")
+        or primary["validation"],
+        f"{prefix}_assessment_validation.json": primary.get("assessment_validation")
+        or {},
         f"{prefix}_inference.json": primary["inference"],
         f"{prefix}_evaluation.json": primary["evaluation"],
         f"{prefix}_trace.json": primary.get("trace")
+        or {"case_id": primary["case_id"], "skipped": True},
+        f"{prefix}_trace_subgraph.json": (primary.get("trace") or {}).get("subgraph")
         or {"case_id": primary["case_id"], "skipped": True},
         "all_cases_summary.json": all_summary,
     }
@@ -1129,12 +1082,18 @@ def build_parser() -> argparse.ArgumentParser:
     )
     p.add_argument("--case", default=DEFAULT_CASE, choices=ALL_CASES)
     p.add_argument(
+        "--input",
+        default=None,
+        help="External JSON case input (delegates to kg_mnp_demo.pipeline)",
+    )
+    p.add_argument(
         "--all",
         action="store_true",
         help="Run all six cases as the primary focus (still writes summary)",
     )
     p.add_argument("--output-dir", default=str(ROOT / "demo_outputs"))
     p.add_argument("--no-html", action="store_true")
+    p.add_argument("--print-rdf", action="store_true")
     p.add_argument(
         "--what-if",
         choices=["contract-expired", "add-debt", "expire-evidence"],
@@ -1151,6 +1110,16 @@ def main(argv: list[str] | None = None) -> int:
     if not output_dir.is_absolute():
         output_dir = ROOT / output_dir
 
+    if args.input:
+        from kg_mnp_demo.pipeline import main as pipeline_main
+
+        pipeline_argv = ["--input", args.input, "--output-dir", str(output_dir)]
+        if args.no_html:
+            pipeline_argv.append("--no-html")
+        if args.print_rdf:
+            pipeline_argv.append("--print-rdf")
+        return pipeline_main(pipeline_argv)
+
     print("=" * 60)
     print("KG-MNP 携号转网资格判断本体演示")
     print("=" * 60)
@@ -1161,10 +1130,19 @@ def main(argv: list[str] | None = None) -> int:
 
     focus_case = args.case
     primary = evaluate_pipeline(focus_case)
-    exit_code = 0 if primary["validation"]["conforms"] else 1
+    exit_code = 0
+    if not primary["input_validation"]["conforms"]:
+        exit_code = 1
+    elif primary.get("assessment_validation") and not primary["assessment_validation"].get("conforms", True):
+        exit_code = 1
+    elif primary["evaluation"] and not primary["evaluation"].get("publishable", True):
+        exit_code = 1
 
     print_input_section(primary["input_summary"])
-    print_validation_section(primary["validation"])
+    print_validation_section(
+        primary["input_validation"],
+        assessment_validation=primary.get("assessment_validation"),
+    )
     print_inference_section(primary["inference"])
     print_evaluation_section(primary["evaluation"])
     print_trace_section(primary.get("trace"), primary["evaluation"])

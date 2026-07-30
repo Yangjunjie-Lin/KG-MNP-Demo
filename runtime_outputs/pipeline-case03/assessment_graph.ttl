@@ -1,0 +1,1889 @@
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix mnp: <http://example.org/kg-mnp#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+mnp:Action-RESTORE_NUMBER_STATUS a mnp:RemediationAction,
+        owl:Thing ;
+    mnp:actionCode "RESTORE_NUMBER_STATUS" ;
+    mnp:actionDescription "请先恢复号码至正常可用状态。" ;
+    owl:sameAs mnp:Action-RESTORE_NUMBER_STATUS .
+
+mnp:Action-SETTLE_OUTSTANDING_FEES a mnp:RemediationAction,
+        owl:Thing ;
+    mnp:actionCode "SETTLE_OUTSTANDING_FEES" ;
+    mnp:actionDescription "请结清欠费，或办理有效缴费约定后再申请。" ;
+    owl:sameAs mnp:Action-SETTLE_OUTSTANDING_FEES .
+
+mnp:Action-SUPPLY_MISSING_EVIDENCE a mnp:RemediationAction,
+        owl:Thing ;
+    mnp:actionCode "SUPPLY_MISSING_EVIDENCE" ;
+    mnp:actionDescription "请补充缺失或过期的关键证据后由人工复核。" ;
+    owl:sameAs mnp:Action-SUPPLY_MISSING_EVIDENCE .
+
+mnp:Action-VERIFY_IDENTITY a mnp:RemediationAction,
+        owl:Thing ;
+    mnp:actionCode "VERIFY_IDENTITY" ;
+    mnp:actionDescription "请核对并更新实名登记信息后重新申请。" ;
+    owl:sameAs mnp:Action-VERIFY_IDENTITY .
+
+mnp:Action-WAIT_PORTING_INTERVAL a mnp:RemediationAction,
+        owl:Thing ;
+    mnp:actionCode "WAIT_PORTING_INTERVAL" ;
+    mnp:actionDescription "请等待满足最短携转间隔后再申请。" ;
+    owl:sameAs mnp:Action-WAIT_PORTING_INTERVAL .
+
+mnp:Assessment-CASE-03 a mnp:EligibilityAssessment ;
+    mnp:aboutCase mnp:Case-CASE-03 ;
+    mnp:assessmentIdentifier "ASSESS-CASE-03" ;
+    mnp:dependsOn mnp:Dep-CASE-03 ;
+    mnp:evaluatedByRule mnp:Rule-MNP-ELIG-001,
+        mnp:Rule-MNP-ELIG-002,
+        mnp:Rule-MNP-ELIG-003,
+        mnp:Rule-MNP-ELIG-004,
+        mnp:Rule-MNP-ELIG-005-v1-1 ;
+    mnp:producesBlockingReason mnp:Reason-CASE-03-ACTIVE_CONTRACT_RESTRICTION ;
+    mnp:producesDecision mnp:Decision-CASE-03 ;
+    mnp:usesEvidence mnp:Evidence-CASE-03-BILLING,
+        mnp:Evidence-CASE-03-CONTRACT,
+        mnp:Evidence-CASE-03-IDENTITY,
+        mnp:Evidence-CASE-03-NUMBER,
+        mnp:Evidence-CASE-03-PORTING ;
+    mnp:usesRuleVersion mnp:RuleVersion-MNP-ELIG-001-1-0,
+        mnp:RuleVersion-MNP-ELIG-002-1-0,
+        mnp:RuleVersion-MNP-ELIG-003-1-0,
+        mnp:RuleVersion-MNP-ELIG-004-1-0,
+        mnp:RuleVersion-MNP-ELIG-005-1-1 .
+
+mnp:Decision-CASE-03 a mnp:BlockingDecision ;
+    mnp:decisionCode "BLOCKED" .
+
+mnp:Dep-CASE-03 a mnp:AssessmentDependency ;
+    mnp:dependsOnEvidence mnp:Evidence-CASE-03-BILLING,
+        mnp:Evidence-CASE-03-CONTRACT,
+        mnp:Evidence-CASE-03-IDENTITY,
+        mnp:Evidence-CASE-03-NUMBER,
+        mnp:Evidence-CASE-03-PORTING ;
+    mnp:dependsOnRuleVersion mnp:RuleVersion-MNP-ELIG-001-1-0,
+        mnp:RuleVersion-MNP-ELIG-002-1-0,
+        mnp:RuleVersion-MNP-ELIG-003-1-0,
+        mnp:RuleVersion-MNP-ELIG-004-1-0,
+        mnp:RuleVersion-MNP-ELIG-005-1-1 .
+
+mnp:Map-TMF620-Offering a mnp:MappingRecord,
+        owl:Thing ;
+    mnp:mappingReviewStatus "reviewed" ;
+    mnp:sourceApi "TMF620_ProductCatalog" ;
+    mnp:sourceFieldPath "components.schemas.ProductOffering" ;
+    mnp:targetTerm "mnp:TelecomService" ;
+    owl:sameAs mnp:Map-TMF620-Offering .
+
+mnp:Map-TMF629-Customer a mnp:MappingRecord,
+        owl:Thing ;
+    mnp:mappingReviewStatus "reviewed" ;
+    mnp:sourceApi "TMF629_CustomerManagement" ;
+    mnp:sourceFieldPath "components.schemas.Customer" ;
+    mnp:targetTerm "mnp:Subscriber" ;
+    owl:sameAs mnp:Map-TMF629-Customer .
+
+mnp:Map-TMF637-Product a mnp:MappingRecord,
+        owl:Thing ;
+    mnp:mappingReviewStatus "reviewed" ;
+    mnp:sourceApi "TMF637_ProductInventory" ;
+    mnp:sourceFieldPath "components.schemas.Product" ;
+    mnp:targetTerm "mnp:ServiceSubscription" ;
+    owl:sameAs mnp:Map-TMF637-Product .
+
+mnp:Reason-CASE-03-ACTIVE_CONTRACT_RESTRICTION a mnp:BlockingReason ;
+    mnp:citesClause mnp:Clause-04 ;
+    mnp:reasonCode "ACTIVE_CONTRACT_RESTRICTION" ;
+    mnp:reasonDescription "failed check for CONTRACT_STATUS" ;
+    mnp:recommendsAction mnp:Action-WAIT_OR_TERMINATE_CONTRACT ;
+    mnp:supportedByEvidence mnp:Evidence-CASE-03-CONTRACT ;
+    mnp:triggeredByRule mnp:Rule-MNP-ELIG-004 ;
+    mnp:triggeredByRuleVersion mnp:RuleVersion-MNP-ELIG-004-1-0 .
+
+mnp:Rule-MNP-ELIG-005 a _:n4900baee74a0413ea0227d839d593993b8,
+        mnp:EligibilityRule,
+        owl:Thing ;
+    mnp:effectiveFrom "2024-01-01T00:00:00+00:00"^^xsd:dateTime ;
+    mnp:hasRuleVersion mnp:RuleVersion-MNP-ELIG-005-1-0 ;
+    mnp:operationalizesClause mnp:Clause-05 ;
+    mnp:ruleIdentifier "MNP-ELIG-005" ;
+    mnp:ruleVersion "1.0" ;
+    owl:sameAs mnp:Rule-MNP-ELIG-005 .
+
+mnp:alignmentStatus a owl:AnnotationProperty ;
+    rdfs:label "Alignment Status"@en ;
+    rdfs:comment "VERIFIED, PARTIAL, or LOCAL_ONLY."@en ;
+    owl:sameAs mnp:alignmentStatus .
+
+<http://example.org/kg-mnp/compliance> a owl:Ontology ;
+    dcterms:title "KG-MNP Compliance Ontology"@en ;
+    rdfs:comment "Compliance-oriented extensions for regulatory operationalization and reassessment."@en ;
+    owl:imports <http://example.org/kg-mnp/core> ;
+    owl:sameAs <http://example.org/kg-mnp/compliance> ;
+    owl:versionInfo "0.1.0" .
+
+dcterms:description owl:sameAs dcterms:description .
+
+dcterms:title owl:sameAs dcterms:title .
+
+rdf:HTML a rdfs:Datatype ;
+    owl:sameAs rdf:HTML .
+
+rdf:PlainLiteral a rdfs:Datatype ;
+    owl:sameAs rdf:PlainLiteral .
+
+rdf:XMLLiteral a rdfs:Datatype ;
+    owl:sameAs rdf:XMLLiteral .
+
+rdf:langString a rdfs:Datatype ;
+    owl:sameAs rdf:langString .
+
+rdf:type owl:sameAs rdf:type .
+
+rdfs:Literal a rdfs:Datatype ;
+    owl:sameAs rdfs:Literal .
+
+rdfs:comment a owl:AnnotationProperty ;
+    owl:sameAs rdfs:comment .
+
+rdfs:domain owl:sameAs rdfs:domain .
+
+rdfs:isDefinedBy a owl:AnnotationProperty ;
+    owl:sameAs rdfs:isDefinedBy .
+
+rdfs:label a owl:AnnotationProperty ;
+    owl:sameAs rdfs:label .
+
+rdfs:range owl:sameAs rdfs:range .
+
+rdfs:seeAlso a owl:AnnotationProperty ;
+    owl:sameAs rdfs:seeAlso .
+
+rdfs:subClassOf owl:sameAs rdfs:subClassOf .
+
+rdfs:subPropertyOf owl:sameAs rdfs:subPropertyOf .
+
+xsd:NCName a rdfs:Datatype ;
+    owl:sameAs xsd:NCName .
+
+xsd:NMTOKEN a rdfs:Datatype ;
+    owl:sameAs xsd:NMTOKEN .
+
+xsd:Name a rdfs:Datatype ;
+    owl:sameAs xsd:Name .
+
+xsd:anyURI a rdfs:Datatype ;
+    owl:sameAs xsd:anyURI .
+
+xsd:base64Binary a rdfs:Datatype ;
+    owl:sameAs xsd:base64Binary .
+
+xsd:byte a rdfs:Datatype ;
+    owl:sameAs xsd:byte .
+
+xsd:date a rdfs:Datatype ;
+    owl:sameAs xsd:date .
+
+xsd:dateTimeStamp a rdfs:Datatype ;
+    owl:sameAs xsd:dateTimeStamp .
+
+xsd:double a rdfs:Datatype ;
+    owl:sameAs xsd:double .
+
+xsd:float a rdfs:Datatype ;
+    owl:sameAs xsd:float .
+
+xsd:hexBinary a rdfs:Datatype ;
+    owl:sameAs xsd:hexBinary .
+
+xsd:int a rdfs:Datatype ;
+    owl:sameAs xsd:int .
+
+xsd:language a rdfs:Datatype ;
+    owl:sameAs xsd:language .
+
+xsd:long a rdfs:Datatype ;
+    owl:sameAs xsd:long .
+
+xsd:negativeInteger a rdfs:Datatype ;
+    owl:sameAs xsd:negativeInteger .
+
+xsd:nonPositiveInteger a rdfs:Datatype ;
+    owl:sameAs xsd:nonPositiveInteger .
+
+xsd:normalizedString a rdfs:Datatype ;
+    owl:sameAs xsd:normalizedString .
+
+xsd:positiveInteger a rdfs:Datatype ;
+    owl:sameAs xsd:positiveInteger .
+
+xsd:short a rdfs:Datatype ;
+    owl:sameAs xsd:short .
+
+xsd:time a rdfs:Datatype ;
+    owl:sameAs xsd:time .
+
+xsd:token a rdfs:Datatype ;
+    owl:sameAs xsd:token .
+
+xsd:unsignedByte a rdfs:Datatype ;
+    owl:sameAs xsd:unsignedByte .
+
+xsd:unsignedInt a rdfs:Datatype ;
+    owl:sameAs xsd:unsignedInt .
+
+xsd:unsignedLong a rdfs:Datatype ;
+    owl:sameAs xsd:unsignedLong .
+
+xsd:unsignedShort a rdfs:Datatype ;
+    owl:sameAs xsd:unsignedShort .
+
+owl:backwardCompatibleWith a owl:AnnotationProperty ;
+    owl:sameAs owl:backwardCompatibleWith .
+
+owl:cardinality owl:sameAs owl:cardinality .
+
+owl:deprecated a owl:AnnotationProperty ;
+    owl:sameAs owl:deprecated .
+
+owl:disjointWith owl:sameAs owl:disjointWith .
+
+owl:equivalentClass owl:sameAs owl:equivalentClass .
+
+owl:equivalentProperty owl:sameAs owl:equivalentProperty .
+
+owl:imports owl:sameAs owl:imports .
+
+owl:incompatibleWith a owl:AnnotationProperty ;
+    owl:sameAs owl:incompatibleWith .
+
+owl:inverseOf owl:sameAs owl:inverseOf .
+
+owl:minCardinality owl:sameAs owl:minCardinality .
+
+owl:onProperty owl:sameAs owl:onProperty .
+
+owl:priorVersion a owl:AnnotationProperty ;
+    owl:sameAs owl:priorVersion .
+
+owl:sameAs owl:sameAs owl:sameAs .
+
+owl:versionInfo a owl:AnnotationProperty ;
+    owl:sameAs owl:versionInfo .
+
+mnp:Action-WAIT_OR_TERMINATE_CONTRACT a mnp:RemediationAction,
+        owl:Thing ;
+    mnp:actionCode "WAIT_OR_TERMINATE_CONTRACT" ;
+    mnp:actionDescription "请等待合约到期，或按约定办理解约后再申请。" ;
+    owl:sameAs mnp:Action-WAIT_OR_TERMINATE_CONTRACT .
+
+mnp:Clause-01 a mnp:RegulatoryClause,
+        owl:Thing ;
+    rdfs:label "Real-name consistency clause" ;
+    mnp:clauseIdentifier "REG-MNP-CLAUSE-01" ;
+    mnp:clauseText "申请人实名信息须与号码登记实名信息一致方可办理携号转网。" ;
+    mnp:partOfDocument mnp:Doc-MNP-Regulation-2024 ;
+    owl:sameAs mnp:Clause-01 .
+
+mnp:Clause-02 a mnp:RegulatoryClause,
+        owl:Thing ;
+    rdfs:label "Number status clause" ;
+    mnp:clauseIdentifier "REG-MNP-CLAUSE-02" ;
+    mnp:clauseText "申请携转的号码须处于正常可用状态。" ;
+    mnp:partOfDocument mnp:Doc-MNP-Regulation-2024 ;
+    owl:sameAs mnp:Clause-02 .
+
+mnp:Clause-03 a mnp:RegulatoryClause,
+        owl:Thing ;
+    rdfs:label "Billing clearance clause" ;
+    mnp:clauseIdentifier "REG-MNP-CLAUSE-03" ;
+    mnp:clauseText "申请携转前须结清相关费用，或存在有效缴费约定。" ;
+    mnp:partOfDocument mnp:Doc-MNP-Regulation-2024 ;
+    owl:sameAs mnp:Clause-03 .
+
+mnp:Rule-MNP-ELIG-001 a _:n4900baee74a0413ea0227d839d593993b8,
+        mnp:EligibilityRule,
+        owl:Thing ;
+    mnp:effectiveFrom "2024-01-01T00:00:00+00:00"^^xsd:dateTime ;
+    mnp:hasRuleVersion mnp:RuleVersion-MNP-ELIG-001-1-0 ;
+    mnp:operationalizesClause mnp:Clause-01 ;
+    mnp:ruleIdentifier "MNP-ELIG-001" ;
+    mnp:ruleVersion "1.0" ;
+    owl:sameAs mnp:Rule-MNP-ELIG-001 .
+
+mnp:Rule-MNP-ELIG-002 a _:n4900baee74a0413ea0227d839d593993b8,
+        mnp:EligibilityRule,
+        owl:Thing ;
+    mnp:effectiveFrom "2024-01-01T00:00:00+00:00"^^xsd:dateTime ;
+    mnp:hasRuleVersion mnp:RuleVersion-MNP-ELIG-002-1-0 ;
+    mnp:operationalizesClause mnp:Clause-02 ;
+    mnp:ruleIdentifier "MNP-ELIG-002" ;
+    mnp:ruleVersion "1.0" ;
+    owl:sameAs mnp:Rule-MNP-ELIG-002 .
+
+mnp:Rule-MNP-ELIG-003 a _:n4900baee74a0413ea0227d839d593993b8,
+        mnp:EligibilityRule,
+        owl:Thing ;
+    mnp:effectiveFrom "2024-01-01T00:00:00+00:00"^^xsd:dateTime ;
+    mnp:hasRuleVersion mnp:RuleVersion-MNP-ELIG-003-1-0 ;
+    mnp:operationalizesClause mnp:Clause-03 ;
+    mnp:ruleIdentifier "MNP-ELIG-003" ;
+    mnp:ruleVersion "1.0" ;
+    owl:sameAs mnp:Rule-MNP-ELIG-003 .
+
+mnp:Rule-MNP-ELIG-005-v1-1 a _:n4900baee74a0413ea0227d839d593993b8,
+        mnp:EligibilityRule,
+        owl:Thing ;
+    mnp:effectiveFrom "2026-06-01T00:00:00+00:00"^^xsd:dateTime ;
+    mnp:hasRuleVersion mnp:RuleVersion-MNP-ELIG-005-1-1 ;
+    mnp:operationalizesClause mnp:Clause-05 ;
+    mnp:ruleIdentifier "MNP-ELIG-005" ;
+    mnp:ruleVersion "1.1" ;
+    owl:sameAs mnp:Rule-MNP-ELIG-005-v1-1 .
+
+mnp:SYS-BILLING a mnp:InformationSystem,
+        owl:Thing ;
+    rdfs:label "Billing System" ;
+    mnp:systemIdentifier "BILLING" ;
+    owl:sameAs mnp:SYS-BILLING .
+
+mnp:SYS-CONTRACT a mnp:InformationSystem,
+        owl:Thing ;
+    rdfs:label "Contract Management System" ;
+    mnp:systemIdentifier "CONTRACT" ;
+    owl:sameAs mnp:SYS-CONTRACT .
+
+mnp:SYS-CRM a mnp:InformationSystem,
+        owl:Thing ;
+    rdfs:label "Customer Relationship Management" ;
+    mnp:systemIdentifier "CRM" ;
+    owl:sameAs mnp:SYS-CRM .
+
+mnp:SYS-HLR a mnp:InformationSystem,
+        owl:Thing ;
+    rdfs:label "Home Location Register / Number Status" ;
+    mnp:systemIdentifier "HLR" ;
+    owl:sameAs mnp:SYS-HLR .
+
+mnp:SYS-MNP a mnp:InformationSystem,
+        owl:Thing ;
+    rdfs:label "MNP History Platform" ;
+    mnp:systemIdentifier "MNP_HISTORY" ;
+    owl:sameAs mnp:SYS-MNP .
+
+mnp:Subscriber-SUB-03 a mnp:Subscriber,
+        owl:Thing ;
+    mnp:billedThrough mnp:Account-ACC-03 ;
+    mnp:ownsPhoneNumber mnp:Phone-CASE-03 ;
+    mnp:relatedAccount mnp:Account-ACC-03 ;
+    owl:sameAs mnp:Subscriber-SUB-03 .
+
+<http://example.org/kg-mnp/core> a owl:Ontology ;
+    dcterms:description "Domain ontology for Mobile Number Portability eligibility assessment with evidence-rule-clause-action traceability."@en ;
+    dcterms:title "KG-MNP Core Ontology"@en ;
+    rdfs:comment "OWL 2 concepts and stable cardinality constraints. Amount/date rules are executed in Python."@en ;
+    owl:sameAs <http://example.org/kg-mnp/core> ;
+    owl:versionInfo "0.1.0" .
+
+xsd:nonNegativeInteger a rdfs:Datatype ;
+    owl:sameAs xsd:nonNegativeInteger .
+
+false a xsd:boolean ;
+    owl:sameAs false .
+
+true a xsd:boolean ;
+    owl:sameAs true .
+
+"2026-05-31T23:59:59+00:00"^^xsd:dateTime a xsd:dateTime ;
+    owl:sameAs "2026-05-31T23:59:59+00:00"^^xsd:dateTime .
+
+"2026-06-20T10:00:00+00:00"^^xsd:dateTime a xsd:dateTime ;
+    owl:sameAs "2026-06-20T10:00:00+00:00"^^xsd:dateTime .
+
+"2026-06-20T10:05:00+00:00"^^xsd:dateTime a xsd:dateTime ;
+    owl:sameAs "2026-06-20T10:05:00+00:00"^^xsd:dateTime .
+
+"2026-06-20T10:10:00+00:00"^^xsd:dateTime a xsd:dateTime ;
+    owl:sameAs "2026-06-20T10:10:00+00:00"^^xsd:dateTime .
+
+"2026-06-20T10:15:00+00:00"^^xsd:dateTime a xsd:dateTime ;
+    owl:sameAs "2026-06-20T10:15:00+00:00"^^xsd:dateTime .
+
+"2026-06-20T10:20:00+00:00"^^xsd:dateTime a xsd:dateTime ;
+    owl:sameAs "2026-06-20T10:20:00+00:00"^^xsd:dateTime .
+
+"2027-01-01T00:00:00+00:00"^^xsd:dateTime a xsd:dateTime ;
+    owl:sameAs "2027-01-01T00:00:00+00:00"^^xsd:dateTime .
+
+0.0 a xsd:decimal ;
+    owl:sameAs 0.0 .
+
+250 a xsd:decimal,
+        xsd:integer ;
+    owl:sameAs 250 .
+
+"138****0003" a xsd:string ;
+    owl:sameAs "138****0003" .
+
+"BILLING" a xsd:string ;
+    owl:sameAs "BILLING" .
+
+"BILLING_BALANCE" a xsd:string ;
+    owl:sameAs "BILLING_BALANCE" .
+
+"Billing System" owl:sameAs "Billing System" .
+
+"Billing clearance clause" owl:sameAs "Billing clearance clause" .
+
+"CASE-03" a xsd:string ;
+    owl:sameAs "CASE-03" .
+
+"CNY" a xsd:string ;
+    owl:sameAs "CNY" .
+
+"CONTRACT" a xsd:string ;
+    owl:sameAs "CONTRACT" .
+
+"CONTRACT_STATUS" a xsd:string ;
+    owl:sameAs "CONTRACT_STATUS" .
+
+"CRM" a xsd:string ;
+    owl:sameAs "CRM" .
+
+"Contract Management System" owl:sameAs "Contract Management System" .
+
+"Contract restriction clause" owl:sameAs "Contract restriction clause" .
+
+"Customer Relationship Management" owl:sameAs "Customer Relationship Management" .
+
+"Demo MNP Eligibility Regulation 2024" owl:sameAs "Demo MNP Eligibility Regulation 2024" .
+
+"HLR" a xsd:string ;
+    owl:sameAs "HLR" .
+
+"Home Location Register / Number Status" owl:sameAs "Home Location Register / Number Status" .
+
+"IDENTITY_MATCH" a xsd:string ;
+    owl:sameAs "IDENTITY_MATCH" .
+
+"MNP History Platform" owl:sameAs "MNP History Platform" .
+
+"MNP-ELIG-001" a xsd:string ;
+    owl:sameAs "MNP-ELIG-001" .
+
+"MNP-ELIG-002" a xsd:string ;
+    owl:sameAs "MNP-ELIG-002" .
+
+"MNP-ELIG-003" a xsd:string ;
+    owl:sameAs "MNP-ELIG-003" .
+
+"MNP-ELIG-004" a xsd:string ;
+    owl:sameAs "MNP-ELIG-004" .
+
+"MNP_HISTORY" a xsd:string ;
+    owl:sameAs "MNP_HISTORY" .
+
+"NUMBER_STATUS" a xsd:string ;
+    owl:sameAs "NUMBER_STATUS" .
+
+"Number status clause" owl:sameAs "Number status clause" .
+
+"PORTING_HISTORY" a xsd:string ;
+    owl:sameAs "PORTING_HISTORY" .
+
+"Porting interval clause" owl:sameAs "Porting interval clause" .
+
+"REG-MNP-2024" a xsd:string ;
+    owl:sameAs "REG-MNP-2024" .
+
+"REG-MNP-CLAUSE-01" a xsd:string ;
+    owl:sameAs "REG-MNP-CLAUSE-01" .
+
+"REG-MNP-CLAUSE-02" a xsd:string ;
+    owl:sameAs "REG-MNP-CLAUSE-02" .
+
+"REG-MNP-CLAUSE-03" a xsd:string ;
+    owl:sameAs "REG-MNP-CLAUSE-03" .
+
+"REG-MNP-CLAUSE-04" a xsd:string ;
+    owl:sameAs "REG-MNP-CLAUSE-04" .
+
+"REG-MNP-CLAUSE-05" a xsd:string ;
+    owl:sameAs "REG-MNP-CLAUSE-05" .
+
+"RESTORE_NUMBER_STATUS" a xsd:string ;
+    owl:sameAs "RESTORE_NUMBER_STATUS" .
+
+"Real-name consistency clause" owl:sameAs "Real-name consistency clause" .
+
+"SETTLE_OUTSTANDING_FEES" a xsd:string ;
+    owl:sameAs "SETTLE_OUTSTANDING_FEES" .
+
+"SUPPLY_MISSING_EVIDENCE" a xsd:string ;
+    owl:sameAs "SUPPLY_MISSING_EVIDENCE" .
+
+"TMF620_ProductCatalog" a xsd:string ;
+    owl:sameAs "TMF620_ProductCatalog" .
+
+"TMF629_CustomerManagement" a xsd:string ;
+    owl:sameAs "TMF629_CustomerManagement" .
+
+"TMF637_ProductInventory" a xsd:string ;
+    owl:sameAs "TMF637_ProductInventory" .
+
+"VERIFY_IDENTITY" a xsd:string ;
+    owl:sameAs "VERIFY_IDENTITY" .
+
+"WAIT_OR_TERMINATE_CONTRACT" a xsd:string ;
+    owl:sameAs "WAIT_OR_TERMINATE_CONTRACT" .
+
+"WAIT_PORTING_INTERVAL" a xsd:string ;
+    owl:sameAs "WAIT_PORTING_INTERVAL" .
+
+"components.schemas.Customer" a xsd:string ;
+    owl:sameAs "components.schemas.Customer" .
+
+"components.schemas.Product" a xsd:string ;
+    owl:sameAs "components.schemas.Product" .
+
+"components.schemas.ProductOffering" a xsd:string ;
+    owl:sameAs "components.schemas.ProductOffering" .
+
+"mnp:ServiceSubscription" a xsd:string ;
+    owl:sameAs "mnp:ServiceSubscription" .
+
+"mnp:Subscriber" a xsd:string ;
+    owl:sameAs "mnp:Subscriber" .
+
+"mnp:TelecomService" a xsd:string ;
+    owl:sameAs "mnp:TelecomService" .
+
+"在有效协议期内且协议限制携转的，不得办理携号转网。" a xsd:string ;
+    owl:sameAs "在有效协议期内且协议限制携转的，不得办理携号转网。" .
+
+"申请人实名信息须与号码登记实名信息一致方可办理携号转网。" a xsd:string ;
+    owl:sameAs "申请人实名信息须与号码登记实名信息一致方可办理携号转网。" .
+
+"申请携转前须结清相关费用，或存在有效缴费约定。" a xsd:string ;
+    owl:sameAs "申请携转前须结清相关费用，或存在有效缴费约定。" .
+
+"申请携转的号码须处于正常可用状态。" a xsd:string ;
+    owl:sameAs "申请携转的号码须处于正常可用状态。" .
+
+"请先恢复号码至正常可用状态。" a xsd:string ;
+    owl:sameAs "请先恢复号码至正常可用状态。" .
+
+"请核对并更新实名登记信息后重新申请。" a xsd:string ;
+    owl:sameAs "请核对并更新实名登记信息后重新申请。" .
+
+"请等待合约到期，或按约定办理解约后再申请。" a xsd:string ;
+    owl:sameAs "请等待合约到期，或按约定办理解约后再申请。" .
+
+"请等待满足最短携转间隔后再申请。" a xsd:string ;
+    owl:sameAs "请等待满足最短携转间隔后再申请。" .
+
+"请结清欠费，或办理有效缴费约定后再申请。" a xsd:string ;
+    owl:sameAs "请结清欠费，或办理有效缴费约定后再申请。" .
+
+"请补充缺失或过期的关键证据后由人工复核。" a xsd:string ;
+    owl:sameAs "请补充缺失或过期的关键证据后由人工复核。" .
+
+"距上次成功携转须满足最短间隔要求。" a xsd:string ;
+    owl:sameAs "距上次成功携转须满足最短间隔要求。" .
+
+"A billing or customer account through which services are charged."@en owl:sameAs "A billing or customer account through which services are charged."@en .
+
+"A catalogued telecom service or product offering/specification."@en owl:sameAs "A catalogued telecom service or product offering/specification."@en .
+
+"A concrete version of an eligibility rule with effective dates."@en owl:sameAs "A concrete version of an eligibility rule with effective dates."@en .
+
+"A contractual commitment that may restrict portability until end time."@en owl:sameAs "A contractual commitment that may restrict portability until end time."@en .
+
+"A dated observation used as evidence in eligibility assessment."@en owl:sameAs "A dated observation used as evidence in eligibility assessment."@en .
+
+"A dependency link from an assessment to a rule version or evidence set used."@en owl:sameAs "A dependency link from an assessment to a rule version or evidence set used."@en .
+
+"A deterministic evaluation of an MNP case against eligibility rules and evidence."@en owl:sameAs "A deterministic evaluation of an MNP case against eligibility rules and evidence."@en .
+
+"A documented mapping from an external API field to an MNP term."@en owl:sameAs "A documented mapping from an external API field to an MNP term."@en .
+
+"A mobile number portability request case."@en owl:sameAs "A mobile number portability request case."@en .
+
+"A person or party that holds a telecom subscription and may request number portability."@en owl:sameAs "A person or party that holds a telecom subscription and may request number portability."@en .
+
+"A recommended action a user or operator should take."@en owl:sameAs "A recommended action a user or operator should take."@en .
+
+"A regulatory or policy document containing clauses."@en owl:sameAs "A regulatory or policy document containing clauses."@en .
+
+"A source system that generates evidence observations."@en owl:sameAs "A source system that generates evidence observations."@en .
+
+"A specific clause within a regulatory document."@en owl:sameAs "A specific clause within a regulatory document."@en .
+
+"A telephone number that is the subject of an MNP case."@en owl:sameAs "A telephone number that is the subject of an MNP case."@en .
+
+"A versioned eligibility rule operationalizing regulatory clauses."@en owl:sameAs "A versioned eligibility rule operationalizing regulatory clauses."@en .
+
+"Abstract decision outcome of an eligibility assessment."@en owl:sameAs "Abstract decision outcome of an eligibility assessment."@en .
+
+"Alignment Status"@en owl:sameAs "Alignment Status"@en .
+
+"An independent reason that contributes to a blocking or review outcome."@en owl:sameAs "An independent reason that contributes to a blocking or review outcome."@en .
+
+"An instantiated subscription linking a subscriber to a telecom service."@en owl:sameAs "An instantiated subscription linking a subscriber to a telecom service."@en .
+
+"Assessment Dependency"@en owl:sameAs "Assessment Dependency"@en .
+
+"Blocking Decision"@en owl:sameAs "Blocking Decision"@en .
+
+"Blocking Reason"@en owl:sameAs "Blocking Reason"@en .
+
+"Compliance-oriented extensions for regulatory operationalization and reassessment."@en owl:sameAs "Compliance-oriented extensions for regulatory operationalization and reassessment."@en .
+
+"Conditional Decision"@en owl:sameAs "Conditional Decision"@en .
+
+"Domain ontology for Mobile Number Portability eligibility assessment with evidence-rule-clause-action traceability."@en owl:sameAs "Domain ontology for Mobile Number Portability eligibility assessment with evidence-rule-clause-action traceability."@en .
+
+"Eligibility Assessment"@en owl:sameAs "Eligibility Assessment"@en .
+
+"Eligibility Decision"@en owl:sameAs "Eligibility Decision"@en .
+
+"Eligibility Rule"@en owl:sameAs "Eligibility Rule"@en .
+
+"Eligible Decision"@en owl:sameAs "Eligible Decision"@en .
+
+"Evidence Record"@en owl:sameAs "Evidence Record"@en .
+
+"Evidence produced by an information system observation."@en owl:sameAs "Evidence produced by an information system observation."@en .
+
+"Information System"@en owl:sameAs "Information System"@en .
+
+"Inverse of hasCaseEvidence; links an evidence record to the case it belongs to."@en owl:sameAs "Inverse of hasCaseEvidence; links an evidence record to the case it belongs to."@en .
+
+"KG-MNP Compliance Ontology"@en owl:sameAs "KG-MNP Compliance Ontology"@en .
+
+"KG-MNP Core Ontology"@en owl:sameAs "KG-MNP Core Ontology"@en .
+
+"Links a newer rule version to the older version it supersedes."@en owl:sameAs "Links a newer rule version to the older version it supersedes."@en .
+
+"Links an MNP case to evidence records available for evaluating that case."@en owl:sameAs "Links an MNP case to evidence records available for evaluating that case."@en .
+
+"Links an eligibility assessment to the evidence snapshot actually used in that assessment. Distinct from MNPCase hasCaseEvidence."@en owl:sameAs "Links an eligibility assessment to the evidence snapshot actually used in that assessment. Distinct from MNPCase hasCaseEvidence."@en .
+
+"MNP Case"@en owl:sameAs "MNP Case"@en .
+
+"Manual Review Decision"@en owl:sameAs "Manual Review Decision"@en .
+
+"Mapping Record"@en owl:sameAs "Mapping Record"@en .
+
+"Marks an assessment that used a superseded rule version and requires re-evaluation."@en owl:sameAs "Marks an assessment that used a superseded rule version and requires re-evaluation."@en .
+
+"OWL 2 concepts and stable cardinality constraints. Amount/date rules are executed in Python."@en owl:sameAs "OWL 2 concepts and stable cardinality constraints. Amount/date rules are executed in Python."@en .
+
+"Phone Number"@en owl:sameAs "Phone Number"@en .
+
+"Reassessment Marker"@en owl:sameAs "Reassessment Marker"@en .
+
+"Regulatory Clause"@en owl:sameAs "Regulatory Clause"@en .
+
+"Regulatory Document"@en owl:sameAs "Regulatory Document"@en .
+
+"Remediation Action"@en owl:sameAs "Remediation Action"@en .
+
+"Rule Version"@en owl:sameAs "Rule Version"@en .
+
+"Service Contract"@en owl:sameAs "Service Contract"@en .
+
+"Service Subscription"@en owl:sameAs "Service Subscription"@en .
+
+"Subscriber"@en owl:sameAs "Subscriber"@en .
+
+"System Observation"@en owl:sameAs "System Observation"@en .
+
+"Telecom Account"@en owl:sameAs "Telecom Account"@en .
+
+"Telecom Service"@en owl:sameAs "Telecom Service"@en .
+
+"VERIFIED, PARTIAL, or LOCAL_ONLY."@en owl:sameAs "VERIFIED, PARTIAL, or LOCAL_ONLY."@en .
+
+"evidence for case"@en owl:sameAs "evidence for case"@en .
+
+"has case evidence"@en owl:sameAs "has case evidence"@en .
+
+mnp:Account-ACC-03 a mnp:TelecomAccount,
+        owl:Thing ;
+    owl:sameAs mnp:Account-ACC-03 .
+
+mnp:Clause-04 a mnp:RegulatoryClause,
+        owl:Thing ;
+    rdfs:label "Contract restriction clause" ;
+    mnp:clauseIdentifier "REG-MNP-CLAUSE-04" ;
+    mnp:clauseText "在有效协议期内且协议限制携转的，不得办理携号转网。" ;
+    mnp:partOfDocument mnp:Doc-MNP-Regulation-2024 ;
+    owl:sameAs mnp:Clause-04 .
+
+mnp:Clause-05 a mnp:RegulatoryClause,
+        owl:Thing ;
+    rdfs:label "Porting interval clause" ;
+    mnp:clauseIdentifier "REG-MNP-CLAUSE-05" ;
+    mnp:clauseText "距上次成功携转须满足最短间隔要求。" ;
+    mnp:partOfDocument mnp:Doc-MNP-Regulation-2024 ;
+    owl:sameAs mnp:Clause-05 .
+
+mnp:Phone-CASE-03 a mnp:PhoneNumber,
+        owl:Thing ;
+    mnp:maskedPhoneNumber "138****0003" ;
+    owl:sameAs mnp:Phone-CASE-03 .
+
+mnp:Rule-MNP-ELIG-004 a _:n4900baee74a0413ea0227d839d593993b8,
+        mnp:EligibilityRule,
+        owl:Thing ;
+    mnp:effectiveFrom "2024-01-01T00:00:00+00:00"^^xsd:dateTime ;
+    mnp:hasRuleVersion mnp:RuleVersion-MNP-ELIG-004-1-0 ;
+    mnp:operationalizesClause mnp:Clause-04 ;
+    mnp:ruleIdentifier "MNP-ELIG-004" ;
+    mnp:ruleVersion "1.0" ;
+    owl:sameAs mnp:Rule-MNP-ELIG-004 .
+
+mnp:RuleVersion-MNP-ELIG-005-1-0 a mnp:RuleVersion,
+        owl:Thing ;
+    mnp:effectiveFrom "2024-01-01T00:00:00+00:00"^^xsd:dateTime ;
+    mnp:effectiveTo "2026-05-31T23:59:59+00:00"^^xsd:dateTime ;
+    mnp:ruleVersion "1.0" ;
+    owl:sameAs mnp:RuleVersion-MNP-ELIG-005-1-0 .
+
+mnp:aboutCase a owl:ObjectProperty ;
+    rdfs:domain _:n4900baee74a0413ea0227d839d593993b4,
+        _:n4900baee74a0413ea0227d839d593993b5,
+        _:n4900baee74a0413ea0227d839d593993b6,
+        _:n4900baee74a0413ea0227d839d593993b7,
+        mnp:EligibilityAssessment,
+        owl:Thing ;
+    rdfs:range _:n4900baee74a0413ea0227d839d593993b1,
+        _:n4900baee74a0413ea0227d839d593993b2,
+        _:n4900baee74a0413ea0227d839d593993b3,
+        mnp:MNPCase,
+        owl:Thing ;
+    rdfs:subPropertyOf mnp:aboutCase ;
+    owl:equivalentProperty mnp:aboutCase ;
+    owl:sameAs mnp:aboutCase .
+
+mnp:actionCode a owl:DatatypeProperty ;
+    rdfs:domain mnp:RemediationAction,
+        owl:Thing ;
+    rdfs:range xsd:string ;
+    rdfs:subPropertyOf mnp:actionCode ;
+    owl:equivalentProperty mnp:actionCode ;
+    owl:sameAs mnp:actionCode .
+
+mnp:actionDescription a owl:DatatypeProperty ;
+    rdfs:domain mnp:RemediationAction,
+        owl:Thing ;
+    rdfs:range xsd:string ;
+    rdfs:subPropertyOf mnp:actionDescription ;
+    owl:equivalentProperty mnp:actionDescription ;
+    owl:sameAs mnp:actionDescription .
+
+mnp:affectsAssessment a owl:ObjectProperty ;
+    rdfs:domain mnp:RuleVersion,
+        owl:Thing ;
+    rdfs:range _:n4900baee74a0413ea0227d839d593993b4,
+        _:n4900baee74a0413ea0227d839d593993b5,
+        _:n4900baee74a0413ea0227d839d593993b6,
+        _:n4900baee74a0413ea0227d839d593993b7,
+        mnp:EligibilityAssessment,
+        owl:Thing ;
+    rdfs:subPropertyOf mnp:affectsAssessment ;
+    owl:equivalentProperty mnp:affectsAssessment ;
+    owl:sameAs mnp:affectsAssessment .
+
+mnp:assessmentIdentifier a owl:DatatypeProperty ;
+    rdfs:domain _:n4900baee74a0413ea0227d839d593993b4,
+        _:n4900baee74a0413ea0227d839d593993b5,
+        _:n4900baee74a0413ea0227d839d593993b6,
+        _:n4900baee74a0413ea0227d839d593993b7,
+        mnp:EligibilityAssessment,
+        owl:Thing ;
+    rdfs:range xsd:string ;
+    rdfs:subPropertyOf mnp:assessmentIdentifier ;
+    owl:equivalentProperty mnp:assessmentIdentifier ;
+    owl:sameAs mnp:assessmentIdentifier .
+
+mnp:billedThrough a owl:ObjectProperty ;
+    rdfs:domain mnp:Subscriber,
+        owl:Thing ;
+    rdfs:range mnp:TelecomAccount,
+        owl:Thing ;
+    rdfs:subPropertyOf mnp:billedThrough ;
+    owl:equivalentProperty mnp:billedThrough ;
+    owl:sameAs mnp:billedThrough .
+
+mnp:caseIdentifier a owl:DatatypeProperty ;
+    rdfs:domain _:n4900baee74a0413ea0227d839d593993b1,
+        _:n4900baee74a0413ea0227d839d593993b2,
+        _:n4900baee74a0413ea0227d839d593993b3,
+        mnp:MNPCase,
+        owl:Thing ;
+    rdfs:range xsd:string ;
+    rdfs:subPropertyOf mnp:caseIdentifier ;
+    owl:equivalentProperty mnp:caseIdentifier ;
+    owl:sameAs mnp:caseIdentifier .
+
+mnp:citesClause a owl:ObjectProperty ;
+    rdfs:domain mnp:BlockingReason,
+        owl:Thing ;
+    rdfs:range mnp:RegulatoryClause,
+        owl:Thing ;
+    rdfs:subPropertyOf mnp:citesClause ;
+    owl:equivalentProperty mnp:citesClause ;
+    owl:sameAs mnp:citesClause .
+
+mnp:clauseIdentifier a owl:DatatypeProperty ;
+    rdfs:domain mnp:RegulatoryClause,
+        owl:Thing ;
+    rdfs:range xsd:string ;
+    rdfs:subPropertyOf mnp:clauseIdentifier ;
+    owl:equivalentProperty mnp:clauseIdentifier ;
+    owl:sameAs mnp:clauseIdentifier .
+
+mnp:clauseText a owl:DatatypeProperty ;
+    rdfs:domain mnp:RegulatoryClause,
+        owl:Thing ;
+    rdfs:range xsd:string ;
+    rdfs:subPropertyOf mnp:clauseText ;
+    owl:equivalentProperty mnp:clauseText ;
+    owl:sameAs mnp:clauseText .
+
+mnp:contractEndTime a owl:DatatypeProperty ;
+    rdfs:domain mnp:ServiceContract,
+        owl:Thing ;
+    rdfs:range xsd:dateTime ;
+    rdfs:subPropertyOf mnp:contractEndTime ;
+    owl:equivalentProperty mnp:contractEndTime ;
+    owl:sameAs mnp:contractEndTime .
+
+mnp:contractStatusCode a owl:DatatypeProperty ;
+    rdfs:domain mnp:ServiceContract,
+        owl:Thing ;
+    rdfs:range xsd:string ;
+    rdfs:subPropertyOf mnp:contractStatusCode ;
+    owl:equivalentProperty mnp:contractStatusCode ;
+    owl:sameAs mnp:contractStatusCode .
+
+mnp:currencyCode a owl:DatatypeProperty ;
+    rdfs:domain mnp:EvidenceRecord,
+        owl:Thing ;
+    rdfs:range xsd:string ;
+    rdfs:subPropertyOf mnp:currencyCode ;
+    owl:equivalentProperty mnp:currencyCode ;
+    owl:sameAs mnp:currencyCode .
+
+mnp:daysSinceLastPort a owl:DatatypeProperty ;
+    rdfs:domain mnp:EvidenceRecord,
+        owl:Thing ;
+    rdfs:range xsd:integer ;
+    rdfs:subPropertyOf mnp:daysSinceLastPort ;
+    owl:equivalentProperty mnp:daysSinceLastPort ;
+    owl:sameAs mnp:daysSinceLastPort .
+
+mnp:decisionCode a owl:DatatypeProperty ;
+    rdfs:domain mnp:EligibilityDecision,
+        owl:Thing ;
+    rdfs:range xsd:string ;
+    rdfs:subPropertyOf mnp:decisionCode ;
+    owl:equivalentProperty mnp:decisionCode ;
+    owl:sameAs mnp:decisionCode .
+
+mnp:dependsOnEvidence a owl:ObjectProperty ;
+    rdfs:domain mnp:AssessmentDependency,
+        owl:Thing ;
+    rdfs:range mnp:EvidenceRecord,
+        owl:Thing ;
+    rdfs:subPropertyOf mnp:dependsOnEvidence ;
+    owl:equivalentProperty mnp:dependsOnEvidence ;
+    owl:sameAs mnp:dependsOnEvidence .
+
+mnp:dependsOnRuleVersion a owl:ObjectProperty ;
+    rdfs:domain mnp:AssessmentDependency,
+        owl:Thing ;
+    rdfs:range mnp:RuleVersion,
+        owl:Thing ;
+    rdfs:subPropertyOf mnp:dependsOnRuleVersion ;
+    owl:equivalentProperty mnp:dependsOnRuleVersion ;
+    owl:sameAs mnp:dependsOnRuleVersion .
+
+mnp:documentIdentifier a owl:DatatypeProperty ;
+    rdfs:domain mnp:RegulatoryDocument,
+        owl:Thing ;
+    rdfs:range xsd:string ;
+    rdfs:subPropertyOf mnp:documentIdentifier ;
+    owl:equivalentProperty mnp:documentIdentifier ;
+    owl:sameAs mnp:documentIdentifier .
+
+mnp:effectiveFrom a owl:DatatypeProperty ;
+    rdfs:range xsd:dateTime ;
+    rdfs:subPropertyOf mnp:effectiveFrom ;
+    owl:equivalentProperty mnp:effectiveFrom ;
+    owl:sameAs mnp:effectiveFrom .
+
+mnp:effectiveTo a owl:DatatypeProperty ;
+    rdfs:range xsd:dateTime ;
+    rdfs:subPropertyOf mnp:effectiveTo ;
+    owl:equivalentProperty mnp:effectiveTo ;
+    owl:sameAs mnp:effectiveTo .
+
+mnp:evidenceForCase a owl:ObjectProperty ;
+    rdfs:label "evidence for case"@en ;
+    rdfs:comment "Inverse of hasCaseEvidence; links an evidence record to the case it belongs to."@en ;
+    rdfs:domain mnp:EvidenceRecord,
+        owl:Thing ;
+    rdfs:range _:n4900baee74a0413ea0227d839d593993b1,
+        _:n4900baee74a0413ea0227d839d593993b2,
+        _:n4900baee74a0413ea0227d839d593993b3,
+        mnp:MNPCase,
+        owl:Thing ;
+    rdfs:subPropertyOf mnp:evidenceForCase ;
+    owl:equivalentProperty mnp:evidenceForCase ;
+    owl:inverseOf mnp:hasCaseEvidence ;
+    owl:sameAs mnp:evidenceForCase .
+
+mnp:evidenceGeneratedAt a owl:DatatypeProperty ;
+    rdfs:domain mnp:EvidenceRecord,
+        owl:Thing ;
+    rdfs:range xsd:dateTime ;
+    rdfs:subPropertyOf mnp:evidenceGeneratedAt ;
+    owl:equivalentProperty mnp:evidenceGeneratedAt ;
+    owl:sameAs mnp:evidenceGeneratedAt .
+
+mnp:evidenceStatus a owl:DatatypeProperty ;
+    rdfs:domain mnp:EvidenceRecord,
+        owl:Thing ;
+    rdfs:range xsd:string ;
+    rdfs:subPropertyOf mnp:evidenceStatus ;
+    owl:equivalentProperty mnp:evidenceStatus ;
+    owl:sameAs mnp:evidenceStatus .
+
+mnp:evidenceType a owl:DatatypeProperty ;
+    rdfs:domain mnp:EvidenceRecord,
+        owl:Thing ;
+    rdfs:range xsd:string ;
+    rdfs:subPropertyOf mnp:evidenceType ;
+    owl:equivalentProperty mnp:evidenceType ;
+    owl:sameAs mnp:evidenceType .
+
+mnp:evidenceValidUntil a owl:DatatypeProperty ;
+    rdfs:domain mnp:EvidenceRecord,
+        owl:Thing ;
+    rdfs:range xsd:dateTime ;
+    rdfs:subPropertyOf mnp:evidenceValidUntil ;
+    owl:equivalentProperty mnp:evidenceValidUntil ;
+    owl:sameAs mnp:evidenceValidUntil .
+
+mnp:governedByContract a owl:ObjectProperty ;
+    rdfs:domain mnp:ServiceSubscription,
+        owl:Thing ;
+    rdfs:range mnp:ServiceContract,
+        owl:Thing ;
+    rdfs:subPropertyOf mnp:governedByContract ;
+    owl:equivalentProperty mnp:governedByContract ;
+    owl:sameAs mnp:governedByContract .
+
+mnp:hasEligibilityAssessment a owl:ObjectProperty ;
+    rdfs:domain _:n4900baee74a0413ea0227d839d593993b1,
+        _:n4900baee74a0413ea0227d839d593993b2,
+        _:n4900baee74a0413ea0227d839d593993b3,
+        mnp:MNPCase,
+        owl:Thing ;
+    rdfs:range _:n4900baee74a0413ea0227d839d593993b4,
+        _:n4900baee74a0413ea0227d839d593993b5,
+        _:n4900baee74a0413ea0227d839d593993b6,
+        _:n4900baee74a0413ea0227d839d593993b7,
+        mnp:EligibilityAssessment,
+        owl:Thing ;
+    rdfs:subPropertyOf mnp:hasEligibilityAssessment ;
+    owl:equivalentProperty mnp:hasEligibilityAssessment ;
+    owl:sameAs mnp:hasEligibilityAssessment .
+
+mnp:hasPaymentArrangement a owl:DatatypeProperty ;
+    rdfs:domain mnp:EvidenceRecord,
+        owl:Thing ;
+    rdfs:range xsd:boolean ;
+    rdfs:subPropertyOf mnp:hasPaymentArrangement ;
+    owl:equivalentProperty mnp:hasPaymentArrangement ;
+    owl:sameAs mnp:hasPaymentArrangement .
+
+mnp:hasRuleVersion a owl:ObjectProperty ;
+    rdfs:domain _:n4900baee74a0413ea0227d839d593993b8,
+        mnp:EligibilityRule,
+        owl:Thing ;
+    rdfs:range mnp:RuleVersion,
+        owl:Thing ;
+    rdfs:subPropertyOf mnp:hasRuleVersion ;
+    owl:equivalentProperty mnp:hasRuleVersion ;
+    owl:sameAs mnp:hasRuleVersion .
+
+mnp:hasSourceSystem a owl:ObjectProperty ;
+    rdfs:domain mnp:EvidenceRecord,
+        owl:Thing ;
+    rdfs:range mnp:InformationSystem,
+        owl:Thing ;
+    rdfs:subPropertyOf mnp:hasSourceSystem ;
+    owl:equivalentProperty mnp:hasSourceSystem ;
+    owl:sameAs mnp:hasSourceSystem .
+
+mnp:hasSubscription a owl:ObjectProperty ;
+    rdfs:domain mnp:Subscriber,
+        owl:Thing ;
+    rdfs:range mnp:ServiceSubscription,
+        owl:Thing ;
+    rdfs:subPropertyOf mnp:hasSubscription ;
+    owl:equivalentProperty mnp:hasSubscription ;
+    owl:sameAs mnp:hasSubscription .
+
+mnp:identityMatchFlag a owl:DatatypeProperty ;
+    rdfs:domain mnp:EvidenceRecord,
+        owl:Thing ;
+    rdfs:range xsd:boolean ;
+    rdfs:subPropertyOf mnp:identityMatchFlag ;
+    owl:equivalentProperty mnp:identityMatchFlag ;
+    owl:sameAs mnp:identityMatchFlag .
+
+mnp:mappingReviewStatus a owl:DatatypeProperty ;
+    rdfs:domain mnp:MappingRecord,
+        owl:Thing ;
+    rdfs:range xsd:string ;
+    rdfs:subPropertyOf mnp:mappingReviewStatus ;
+    owl:equivalentProperty mnp:mappingReviewStatus ;
+    owl:sameAs mnp:mappingReviewStatus .
+
+mnp:markedForReassessment a owl:ObjectProperty ;
+    rdfs:domain _:n4900baee74a0413ea0227d839d593993b4,
+        _:n4900baee74a0413ea0227d839d593993b5,
+        _:n4900baee74a0413ea0227d839d593993b6,
+        _:n4900baee74a0413ea0227d839d593993b7,
+        mnp:EligibilityAssessment,
+        owl:Thing ;
+    rdfs:range mnp:ReassessmentMarker,
+        owl:Thing ;
+    rdfs:subPropertyOf mnp:markedForReassessment ;
+    owl:equivalentProperty mnp:markedForReassessment ;
+    owl:sameAs mnp:markedForReassessment .
+
+mnp:maskedPhoneNumber a owl:DatatypeProperty ;
+    rdfs:domain mnp:PhoneNumber,
+        owl:Thing ;
+    rdfs:range xsd:string ;
+    rdfs:subPropertyOf mnp:maskedPhoneNumber ;
+    owl:equivalentProperty mnp:maskedPhoneNumber ;
+    owl:sameAs mnp:maskedPhoneNumber .
+
+mnp:numberStatusCode a owl:DatatypeProperty ;
+    rdfs:domain mnp:EvidenceRecord,
+        owl:Thing ;
+    rdfs:range xsd:string ;
+    rdfs:subPropertyOf mnp:numberStatusCode ;
+    owl:equivalentProperty mnp:numberStatusCode ;
+    owl:sameAs mnp:numberStatusCode .
+
+mnp:observedAmount a owl:DatatypeProperty ;
+    rdfs:domain mnp:EvidenceRecord,
+        owl:Thing ;
+    rdfs:range xsd:decimal ;
+    rdfs:subPropertyOf mnp:observedAmount ;
+    owl:equivalentProperty mnp:observedAmount ;
+    owl:sameAs mnp:observedAmount .
+
+mnp:ownsPhoneNumber a owl:ObjectProperty ;
+    rdfs:domain mnp:Subscriber,
+        owl:Thing ;
+    rdfs:range mnp:PhoneNumber,
+        owl:Thing ;
+    rdfs:subPropertyOf mnp:ownsPhoneNumber ;
+    owl:equivalentProperty mnp:ownsPhoneNumber ;
+    owl:sameAs mnp:ownsPhoneNumber .
+
+mnp:partOfDocument a owl:ObjectProperty ;
+    rdfs:domain mnp:RegulatoryClause,
+        owl:Thing ;
+    rdfs:range mnp:RegulatoryDocument,
+        owl:Thing ;
+    rdfs:subPropertyOf mnp:partOfDocument ;
+    owl:equivalentProperty mnp:partOfDocument ;
+    owl:sameAs mnp:partOfDocument .
+
+mnp:producesBlockingReason a owl:ObjectProperty ;
+    rdfs:domain _:n4900baee74a0413ea0227d839d593993b4,
+        _:n4900baee74a0413ea0227d839d593993b5,
+        _:n4900baee74a0413ea0227d839d593993b6,
+        _:n4900baee74a0413ea0227d839d593993b7,
+        mnp:EligibilityAssessment,
+        owl:Thing ;
+    rdfs:range mnp:BlockingReason,
+        owl:Thing ;
+    rdfs:subPropertyOf mnp:producesBlockingReason ;
+    owl:equivalentProperty mnp:producesBlockingReason ;
+    owl:sameAs mnp:producesBlockingReason .
+
+mnp:reasonCode a owl:DatatypeProperty ;
+    rdfs:domain mnp:BlockingReason,
+        owl:Thing ;
+    rdfs:range xsd:string ;
+    rdfs:subPropertyOf mnp:reasonCode ;
+    owl:equivalentProperty mnp:reasonCode ;
+    owl:sameAs mnp:reasonCode .
+
+mnp:reasonDescription a owl:DatatypeProperty ;
+    rdfs:domain mnp:BlockingReason,
+        owl:Thing ;
+    rdfs:range xsd:string ;
+    rdfs:subPropertyOf mnp:reasonDescription ;
+    owl:equivalentProperty mnp:reasonDescription ;
+    owl:sameAs mnp:reasonDescription .
+
+mnp:reassessmentReason a owl:DatatypeProperty ;
+    rdfs:domain mnp:ReassessmentMarker,
+        owl:Thing ;
+    rdfs:range xsd:string ;
+    rdfs:subPropertyOf mnp:reassessmentReason ;
+    owl:equivalentProperty mnp:reassessmentReason ;
+    owl:sameAs mnp:reassessmentReason .
+
+mnp:recommendsAction a owl:ObjectProperty ;
+    rdfs:domain mnp:BlockingReason,
+        owl:Thing ;
+    rdfs:range mnp:RemediationAction,
+        owl:Thing ;
+    rdfs:subPropertyOf mnp:recommendsAction ;
+    owl:equivalentProperty mnp:recommendsAction ;
+    owl:sameAs mnp:recommendsAction .
+
+mnp:relatedAccount a owl:ObjectProperty ;
+    rdfs:domain mnp:Subscriber,
+        owl:Thing ;
+    rdfs:range mnp:TelecomAccount,
+        owl:Thing ;
+    rdfs:subPropertyOf mnp:relatedAccount ;
+    owl:equivalentProperty mnp:relatedAccount ;
+    owl:sameAs mnp:relatedAccount .
+
+mnp:requiresReassessment a owl:DatatypeProperty ;
+    rdfs:domain _:n4900baee74a0413ea0227d839d593993b4,
+        _:n4900baee74a0413ea0227d839d593993b5,
+        _:n4900baee74a0413ea0227d839d593993b6,
+        _:n4900baee74a0413ea0227d839d593993b7,
+        mnp:EligibilityAssessment,
+        owl:Thing ;
+    rdfs:range xsd:boolean ;
+    rdfs:subPropertyOf mnp:requiresReassessment ;
+    owl:equivalentProperty mnp:requiresReassessment ;
+    owl:sameAs mnp:requiresReassessment .
+
+mnp:ruleIdentifier a owl:DatatypeProperty ;
+    rdfs:domain _:n4900baee74a0413ea0227d839d593993b8,
+        mnp:EligibilityRule,
+        owl:Thing ;
+    rdfs:range xsd:string ;
+    rdfs:subPropertyOf mnp:ruleIdentifier ;
+    owl:equivalentProperty mnp:ruleIdentifier ;
+    owl:sameAs mnp:ruleIdentifier .
+
+mnp:ruleVersion a owl:DatatypeProperty ;
+    rdfs:range xsd:string ;
+    rdfs:subPropertyOf mnp:ruleVersion ;
+    owl:equivalentProperty mnp:ruleVersion ;
+    owl:sameAs mnp:ruleVersion .
+
+mnp:sourceApi a owl:DatatypeProperty ;
+    rdfs:domain mnp:MappingRecord,
+        owl:Thing ;
+    rdfs:range xsd:string ;
+    rdfs:subPropertyOf mnp:sourceApi ;
+    owl:equivalentProperty mnp:sourceApi ;
+    owl:sameAs mnp:sourceApi .
+
+mnp:sourceFieldPath a owl:DatatypeProperty ;
+    rdfs:domain mnp:MappingRecord,
+        owl:Thing ;
+    rdfs:range xsd:string ;
+    rdfs:subPropertyOf mnp:sourceFieldPath ;
+    owl:equivalentProperty mnp:sourceFieldPath ;
+    owl:sameAs mnp:sourceFieldPath .
+
+mnp:subscribesToService a owl:ObjectProperty ;
+    rdfs:domain mnp:ServiceSubscription,
+        owl:Thing ;
+    rdfs:range mnp:TelecomService,
+        owl:Thing ;
+    rdfs:subPropertyOf mnp:subscribesToService ;
+    owl:equivalentProperty mnp:subscribesToService ;
+    owl:sameAs mnp:subscribesToService .
+
+mnp:subscriptionStatusCode a owl:DatatypeProperty ;
+    rdfs:domain mnp:ServiceSubscription,
+        owl:Thing ;
+    rdfs:range xsd:string ;
+    rdfs:subPropertyOf mnp:subscriptionStatusCode ;
+    owl:equivalentProperty mnp:subscriptionStatusCode ;
+    owl:sameAs mnp:subscriptionStatusCode .
+
+mnp:supersedesRuleVersion a owl:ObjectProperty ;
+    rdfs:comment "Links a newer rule version to the older version it supersedes."@en ;
+    rdfs:domain mnp:RuleVersion,
+        owl:Thing ;
+    rdfs:range mnp:RuleVersion,
+        owl:Thing ;
+    rdfs:subPropertyOf mnp:supersedesRuleVersion ;
+    owl:equivalentProperty mnp:supersedesRuleVersion ;
+    owl:sameAs mnp:supersedesRuleVersion .
+
+mnp:supportedByEvidence a owl:ObjectProperty ;
+    rdfs:domain mnp:BlockingReason,
+        owl:Thing ;
+    rdfs:range mnp:EvidenceRecord,
+        owl:Thing ;
+    rdfs:subPropertyOf mnp:supportedByEvidence ;
+    owl:equivalentProperty mnp:supportedByEvidence ;
+    owl:sameAs mnp:supportedByEvidence .
+
+mnp:systemIdentifier a owl:DatatypeProperty ;
+    rdfs:domain mnp:InformationSystem,
+        owl:Thing ;
+    rdfs:range xsd:string ;
+    rdfs:subPropertyOf mnp:systemIdentifier ;
+    owl:equivalentProperty mnp:systemIdentifier ;
+    owl:sameAs mnp:systemIdentifier .
+
+mnp:targetTerm a owl:DatatypeProperty ;
+    rdfs:domain mnp:MappingRecord,
+        owl:Thing ;
+    rdfs:range xsd:string ;
+    rdfs:subPropertyOf mnp:targetTerm ;
+    owl:equivalentProperty mnp:targetTerm ;
+    owl:sameAs mnp:targetTerm .
+
+mnp:triggeredByRule a owl:ObjectProperty ;
+    rdfs:domain mnp:BlockingReason,
+        owl:Thing ;
+    rdfs:range _:n4900baee74a0413ea0227d839d593993b8,
+        mnp:EligibilityRule,
+        owl:Thing ;
+    rdfs:subPropertyOf mnp:triggeredByRule ;
+    owl:equivalentProperty mnp:triggeredByRule ;
+    owl:sameAs mnp:triggeredByRule .
+
+mnp:triggeredByRuleVersion a owl:ObjectProperty ;
+    rdfs:domain mnp:BlockingReason,
+        owl:Thing ;
+    rdfs:range mnp:RuleVersion,
+        owl:Thing ;
+    rdfs:subPropertyOf mnp:triggeredByRuleVersion ;
+    owl:equivalentProperty mnp:triggeredByRuleVersion ;
+    owl:sameAs mnp:triggeredByRuleVersion .
+
+mnp:usesRuleVersion a owl:ObjectProperty ;
+    rdfs:domain _:n4900baee74a0413ea0227d839d593993b4,
+        _:n4900baee74a0413ea0227d839d593993b5,
+        _:n4900baee74a0413ea0227d839d593993b6,
+        _:n4900baee74a0413ea0227d839d593993b7,
+        mnp:EligibilityAssessment,
+        owl:Thing ;
+    rdfs:range mnp:RuleVersion,
+        owl:Thing ;
+    rdfs:subPropertyOf mnp:usesRuleVersion ;
+    owl:equivalentProperty mnp:usesRuleVersion ;
+    owl:sameAs mnp:usesRuleVersion .
+
+owl:Nothing a owl:Class ;
+    rdfs:subClassOf _:n4900baee74a0413ea0227d839d593993b1,
+        _:n4900baee74a0413ea0227d839d593993b2,
+        _:n4900baee74a0413ea0227d839d593993b3,
+        _:n4900baee74a0413ea0227d839d593993b4,
+        _:n4900baee74a0413ea0227d839d593993b5,
+        _:n4900baee74a0413ea0227d839d593993b6,
+        _:n4900baee74a0413ea0227d839d593993b7,
+        _:n4900baee74a0413ea0227d839d593993b8,
+        mnp:AssessmentDependency,
+        mnp:BlockingDecision,
+        mnp:BlockingReason,
+        mnp:ConditionalDecision,
+        mnp:EligibilityAssessment,
+        mnp:EligibilityDecision,
+        mnp:EligibilityRule,
+        mnp:EligibleDecision,
+        mnp:EvidenceRecord,
+        mnp:InformationSystem,
+        mnp:MNPCase,
+        mnp:ManualReviewDecision,
+        mnp:MappingRecord,
+        mnp:PhoneNumber,
+        mnp:ReassessmentMarker,
+        mnp:RegulatoryClause,
+        mnp:RegulatoryDocument,
+        mnp:RemediationAction,
+        mnp:RuleVersion,
+        mnp:ServiceContract,
+        mnp:ServiceSubscription,
+        mnp:Subscriber,
+        mnp:SystemObservation,
+        mnp:TelecomAccount,
+        mnp:TelecomService,
+        owl:Nothing,
+        owl:Thing ;
+    owl:equivalentClass owl:Nothing ;
+    owl:sameAs owl:Nothing .
+
+owl:Ontology owl:sameAs owl:Ontology .
+
+"2026-06-01T00:00:00+00:00"^^xsd:dateTime a xsd:dateTime ;
+    owl:sameAs "2026-06-01T00:00:00+00:00"^^xsd:dateTime .
+
+"0.1.0" owl:sameAs "0.1.0" .
+
+"1.1" a xsd:string ;
+    owl:sameAs "1.1" .
+
+"ACTIVE" a xsd:string ;
+    owl:sameAs "ACTIVE" .
+
+"MNP-ELIG-005" a xsd:string ;
+    owl:sameAs "MNP-ELIG-005" .
+
+mnp:Evidence-CASE-03-BILLING a mnp:EvidenceRecord,
+        mnp:SystemObservation,
+        owl:Thing ;
+    mnp:currencyCode "CNY" ;
+    mnp:evidenceForCase mnp:Case-CASE-03 ;
+    mnp:evidenceGeneratedAt "2026-06-20T10:10:00+00:00"^^xsd:dateTime ;
+    mnp:evidenceStatus "VALID" ;
+    mnp:evidenceType "BILLING_BALANCE" ;
+    mnp:evidenceValidUntil "2026-12-31T23:59:59+00:00"^^xsd:dateTime ;
+    mnp:hasPaymentArrangement false ;
+    mnp:hasSourceSystem mnp:SYS-BILLING ;
+    mnp:observedAmount 0.0 ;
+    owl:sameAs mnp:Evidence-CASE-03-BILLING .
+
+mnp:Evidence-CASE-03-IDENTITY a mnp:EvidenceRecord,
+        mnp:SystemObservation,
+        owl:Thing ;
+    mnp:evidenceForCase mnp:Case-CASE-03 ;
+    mnp:evidenceGeneratedAt "2026-06-20T10:00:00+00:00"^^xsd:dateTime ;
+    mnp:evidenceStatus "VALID" ;
+    mnp:evidenceType "IDENTITY_MATCH" ;
+    mnp:evidenceValidUntil "2026-12-31T23:59:59+00:00"^^xsd:dateTime ;
+    mnp:hasSourceSystem mnp:SYS-CRM ;
+    mnp:identityMatchFlag true ;
+    owl:sameAs mnp:Evidence-CASE-03-IDENTITY .
+
+mnp:Evidence-CASE-03-NUMBER a mnp:EvidenceRecord,
+        mnp:SystemObservation,
+        owl:Thing ;
+    mnp:evidenceForCase mnp:Case-CASE-03 ;
+    mnp:evidenceGeneratedAt "2026-06-20T10:05:00+00:00"^^xsd:dateTime ;
+    mnp:evidenceStatus "VALID" ;
+    mnp:evidenceType "NUMBER_STATUS" ;
+    mnp:evidenceValidUntil "2026-12-31T23:59:59+00:00"^^xsd:dateTime ;
+    mnp:hasSourceSystem mnp:SYS-HLR ;
+    mnp:numberStatusCode "ACTIVE" ;
+    owl:sameAs mnp:Evidence-CASE-03-NUMBER .
+
+mnp:Evidence-CASE-03-PORTING a mnp:EvidenceRecord,
+        mnp:SystemObservation,
+        owl:Thing ;
+    mnp:daysSinceLastPort 250 ;
+    mnp:evidenceForCase mnp:Case-CASE-03 ;
+    mnp:evidenceGeneratedAt "2026-06-20T10:20:00+00:00"^^xsd:dateTime ;
+    mnp:evidenceStatus "VALID" ;
+    mnp:evidenceType "PORTING_HISTORY" ;
+    mnp:evidenceValidUntil "2026-12-31T23:59:59+00:00"^^xsd:dateTime ;
+    mnp:hasSourceSystem mnp:SYS-MNP ;
+    owl:sameAs mnp:Evidence-CASE-03-PORTING .
+
+mnp:RuleVersion-MNP-ELIG-001-1-0 a mnp:RuleVersion,
+        owl:Thing ;
+    mnp:effectiveFrom "2024-01-01T00:00:00+00:00"^^xsd:dateTime ;
+    mnp:ruleVersion "1.0" ;
+    owl:sameAs mnp:RuleVersion-MNP-ELIG-001-1-0 .
+
+mnp:RuleVersion-MNP-ELIG-002-1-0 a mnp:RuleVersion,
+        owl:Thing ;
+    mnp:effectiveFrom "2024-01-01T00:00:00+00:00"^^xsd:dateTime ;
+    mnp:ruleVersion "1.0" ;
+    owl:sameAs mnp:RuleVersion-MNP-ELIG-002-1-0 .
+
+mnp:RuleVersion-MNP-ELIG-003-1-0 a mnp:RuleVersion,
+        owl:Thing ;
+    mnp:effectiveFrom "2024-01-01T00:00:00+00:00"^^xsd:dateTime ;
+    mnp:ruleVersion "1.0" ;
+    owl:sameAs mnp:RuleVersion-MNP-ELIG-003-1-0 .
+
+mnp:RuleVersion-MNP-ELIG-005-1-1 a mnp:RuleVersion,
+        owl:Thing ;
+    mnp:effectiveFrom "2026-06-01T00:00:00+00:00"^^xsd:dateTime ;
+    mnp:ruleVersion "1.1" ;
+    mnp:supersedesRuleVersion mnp:RuleVersion-MNP-ELIG-005-1-0 ;
+    owl:sameAs mnp:RuleVersion-MNP-ELIG-005-1-1 .
+
+mnp:concernsNumber a owl:ObjectProperty ;
+    rdfs:domain _:n4900baee74a0413ea0227d839d593993b1,
+        _:n4900baee74a0413ea0227d839d593993b2,
+        _:n4900baee74a0413ea0227d839d593993b3,
+        mnp:MNPCase,
+        owl:Thing ;
+    rdfs:range mnp:PhoneNumber,
+        owl:Thing ;
+    rdfs:subPropertyOf mnp:concernsNumber ;
+    owl:equivalentProperty mnp:concernsNumber ;
+    owl:sameAs mnp:concernsNumber .
+
+mnp:dependsOn a owl:ObjectProperty ;
+    rdfs:domain _:n4900baee74a0413ea0227d839d593993b4,
+        _:n4900baee74a0413ea0227d839d593993b5,
+        _:n4900baee74a0413ea0227d839d593993b6,
+        _:n4900baee74a0413ea0227d839d593993b7,
+        mnp:EligibilityAssessment,
+        owl:Thing ;
+    rdfs:range mnp:AssessmentDependency,
+        owl:Thing ;
+    rdfs:subPropertyOf mnp:dependsOn ;
+    owl:equivalentProperty mnp:dependsOn ;
+    owl:sameAs mnp:dependsOn .
+
+mnp:evaluatedByRule a owl:ObjectProperty ;
+    rdfs:domain _:n4900baee74a0413ea0227d839d593993b4,
+        _:n4900baee74a0413ea0227d839d593993b5,
+        _:n4900baee74a0413ea0227d839d593993b6,
+        _:n4900baee74a0413ea0227d839d593993b7,
+        mnp:EligibilityAssessment,
+        owl:Thing ;
+    rdfs:range _:n4900baee74a0413ea0227d839d593993b8,
+        mnp:EligibilityRule,
+        owl:Thing ;
+    rdfs:subPropertyOf mnp:evaluatedByRule ;
+    owl:equivalentProperty mnp:evaluatedByRule ;
+    owl:sameAs mnp:evaluatedByRule .
+
+mnp:operationalizesClause a owl:ObjectProperty ;
+    rdfs:domain _:n4900baee74a0413ea0227d839d593993b8,
+        mnp:EligibilityRule,
+        owl:Thing ;
+    rdfs:range mnp:RegulatoryClause,
+        owl:Thing ;
+    rdfs:subPropertyOf mnp:operationalizesClause ;
+    owl:equivalentProperty mnp:operationalizesClause ;
+    owl:sameAs mnp:operationalizesClause .
+
+mnp:producesDecision a owl:ObjectProperty ;
+    rdfs:domain _:n4900baee74a0413ea0227d839d593993b4,
+        _:n4900baee74a0413ea0227d839d593993b5,
+        _:n4900baee74a0413ea0227d839d593993b6,
+        _:n4900baee74a0413ea0227d839d593993b7,
+        mnp:EligibilityAssessment,
+        owl:Thing ;
+    rdfs:range mnp:EligibilityDecision,
+        owl:Thing ;
+    rdfs:subPropertyOf mnp:producesDecision ;
+    owl:equivalentProperty mnp:producesDecision ;
+    owl:sameAs mnp:producesDecision .
+
+mnp:requestedBy a owl:ObjectProperty ;
+    rdfs:domain _:n4900baee74a0413ea0227d839d593993b1,
+        _:n4900baee74a0413ea0227d839d593993b2,
+        _:n4900baee74a0413ea0227d839d593993b3,
+        mnp:MNPCase,
+        owl:Thing ;
+    rdfs:range mnp:Subscriber,
+        owl:Thing ;
+    rdfs:subPropertyOf mnp:requestedBy ;
+    owl:equivalentProperty mnp:requestedBy ;
+    owl:sameAs mnp:requestedBy .
+
+mnp:usesEvidence a owl:ObjectProperty ;
+    rdfs:comment "Links an eligibility assessment to the evidence snapshot actually used in that assessment. Distinct from MNPCase hasCaseEvidence."@en ;
+    rdfs:domain _:n4900baee74a0413ea0227d839d593993b4,
+        _:n4900baee74a0413ea0227d839d593993b5,
+        _:n4900baee74a0413ea0227d839d593993b6,
+        _:n4900baee74a0413ea0227d839d593993b7,
+        mnp:EligibilityAssessment,
+        owl:Thing ;
+    rdfs:range mnp:EvidenceRecord,
+        owl:Thing ;
+    rdfs:subPropertyOf mnp:usesEvidence ;
+    owl:equivalentProperty mnp:usesEvidence ;
+    owl:sameAs mnp:usesEvidence .
+
+xsd:integer a rdfs:Datatype ;
+    owl:sameAs xsd:integer .
+
+"reviewed" a xsd:string ;
+    owl:sameAs "reviewed" .
+
+mnp:Evidence-CASE-03-CONTRACT a mnp:EvidenceRecord,
+        mnp:ServiceContract,
+        mnp:SystemObservation,
+        owl:Thing ;
+    mnp:contractEndTime "2027-01-01T00:00:00+00:00"^^xsd:dateTime ;
+    mnp:contractStatusCode "ACTIVE" ;
+    mnp:evidenceForCase mnp:Case-CASE-03 ;
+    mnp:evidenceGeneratedAt "2026-06-20T10:15:00+00:00"^^xsd:dateTime ;
+    mnp:evidenceStatus "VALID" ;
+    mnp:evidenceType "CONTRACT_STATUS" ;
+    mnp:evidenceValidUntil "2026-12-31T23:59:59+00:00"^^xsd:dateTime ;
+    mnp:hasSourceSystem mnp:SYS-CONTRACT ;
+    owl:sameAs mnp:Evidence-CASE-03-CONTRACT .
+
+mnp:RuleVersion-MNP-ELIG-004-1-0 a mnp:RuleVersion,
+        owl:Thing ;
+    mnp:effectiveFrom "2024-01-01T00:00:00+00:00"^^xsd:dateTime ;
+    mnp:ruleVersion "1.0" ;
+    owl:sameAs mnp:RuleVersion-MNP-ELIG-004-1-0 .
+
+mnp:TelecomService a owl:Class ;
+    rdfs:label "Telecom Service"@en ;
+    rdfs:comment "A catalogued telecom service or product offering/specification."@en ;
+    rdfs:subClassOf mnp:TelecomService,
+        owl:Thing ;
+    owl:equivalentClass mnp:TelecomService ;
+    owl:sameAs mnp:TelecomService .
+
+mnp:hasCaseEvidence a owl:ObjectProperty ;
+    rdfs:label "has case evidence"@en ;
+    rdfs:comment "Links an MNP case to evidence records available for evaluating that case."@en ;
+    rdfs:domain _:n4900baee74a0413ea0227d839d593993b1,
+        _:n4900baee74a0413ea0227d839d593993b2,
+        _:n4900baee74a0413ea0227d839d593993b3,
+        mnp:MNPCase,
+        owl:Thing ;
+    rdfs:range mnp:EvidenceRecord,
+        owl:Thing ;
+    rdfs:subPropertyOf mnp:hasCaseEvidence ;
+    owl:equivalentProperty mnp:hasCaseEvidence ;
+    owl:sameAs mnp:hasCaseEvidence .
+
+mnp:Doc-MNP-Regulation-2024 a mnp:RegulatoryDocument,
+        owl:Thing ;
+    rdfs:label "Demo MNP Eligibility Regulation 2024" ;
+    mnp:documentIdentifier "REG-MNP-2024" ;
+    owl:sameAs mnp:Doc-MNP-Regulation-2024 .
+
+mnp:ReassessmentMarker a owl:Class ;
+    rdfs:label "Reassessment Marker"@en ;
+    rdfs:comment "Marks an assessment that used a superseded rule version and requires re-evaluation."@en ;
+    rdfs:subClassOf mnp:ReassessmentMarker,
+        owl:Thing ;
+    owl:equivalentClass mnp:ReassessmentMarker ;
+    owl:sameAs mnp:ReassessmentMarker .
+
+xsd:boolean a rdfs:Datatype ;
+    owl:disjointWith xsd:dateTime,
+        xsd:decimal ;
+    owl:sameAs xsd:boolean .
+
+"2026-12-31T23:59:59+00:00"^^xsd:dateTime a xsd:dateTime ;
+    owl:sameAs "2026-12-31T23:59:59+00:00"^^xsd:dateTime .
+
+"VALID" a xsd:string ;
+    owl:sameAs "VALID" .
+
+mnp:Case-CASE-03 a _:n4900baee74a0413ea0227d839d593993b1,
+        _:n4900baee74a0413ea0227d839d593993b2,
+        _:n4900baee74a0413ea0227d839d593993b3,
+        mnp:MNPCase,
+        owl:Thing ;
+    mnp:caseIdentifier "CASE-03" ;
+    mnp:concernsNumber mnp:Phone-CASE-03 ;
+    mnp:hasCaseEvidence mnp:Evidence-CASE-03-BILLING,
+        mnp:Evidence-CASE-03-CONTRACT,
+        mnp:Evidence-CASE-03-IDENTITY,
+        mnp:Evidence-CASE-03-NUMBER,
+        mnp:Evidence-CASE-03-PORTING ;
+    mnp:hasEligibilityAssessment mnp:Assessment-CASE-03 ;
+    mnp:requestedBy mnp:Subscriber-SUB-03 ;
+    owl:sameAs mnp:Case-CASE-03 .
+
+mnp:ConditionalDecision a owl:Class ;
+    rdfs:label "Conditional Decision"@en ;
+    rdfs:subClassOf mnp:ConditionalDecision,
+        mnp:EligibilityDecision,
+        owl:Thing ;
+    owl:disjointWith mnp:BlockingDecision,
+        mnp:EligibleDecision,
+        mnp:ManualReviewDecision ;
+    owl:equivalentClass mnp:ConditionalDecision ;
+    owl:sameAs mnp:ConditionalDecision .
+
+mnp:EligibleDecision a owl:Class ;
+    rdfs:label "Eligible Decision"@en ;
+    rdfs:subClassOf mnp:EligibilityDecision,
+        mnp:EligibleDecision,
+        owl:Thing ;
+    owl:disjointWith mnp:BlockingDecision,
+        mnp:ConditionalDecision,
+        mnp:ManualReviewDecision ;
+    owl:equivalentClass mnp:EligibleDecision ;
+    owl:sameAs mnp:EligibleDecision .
+
+mnp:ManualReviewDecision a owl:Class ;
+    rdfs:label "Manual Review Decision"@en ;
+    rdfs:subClassOf mnp:EligibilityDecision,
+        mnp:ManualReviewDecision,
+        owl:Thing ;
+    owl:disjointWith mnp:BlockingDecision,
+        mnp:ConditionalDecision,
+        mnp:EligibleDecision ;
+    owl:equivalentClass mnp:ManualReviewDecision ;
+    owl:sameAs mnp:ManualReviewDecision .
+
+mnp:RegulatoryDocument a owl:Class ;
+    rdfs:label "Regulatory Document"@en ;
+    rdfs:comment "A regulatory or policy document containing clauses."@en ;
+    rdfs:subClassOf mnp:RegulatoryDocument,
+        owl:Thing ;
+    owl:equivalentClass mnp:RegulatoryDocument ;
+    owl:sameAs mnp:RegulatoryDocument .
+
+mnp:TelecomAccount a owl:Class ;
+    rdfs:label "Telecom Account"@en ;
+    rdfs:comment "A billing or customer account through which services are charged."@en ;
+    rdfs:subClassOf mnp:TelecomAccount,
+        owl:Thing ;
+    owl:equivalentClass mnp:TelecomAccount ;
+    owl:sameAs mnp:TelecomAccount .
+
+xsd:decimal a rdfs:Datatype ;
+    owl:sameAs xsd:decimal .
+
+mnp:AssessmentDependency a owl:Class ;
+    rdfs:label "Assessment Dependency"@en ;
+    rdfs:comment "A dependency link from an assessment to a rule version or evidence set used."@en ;
+    rdfs:subClassOf mnp:AssessmentDependency,
+        owl:Thing ;
+    owl:equivalentClass mnp:AssessmentDependency ;
+    owl:sameAs mnp:AssessmentDependency .
+
+mnp:BlockingDecision a owl:Class ;
+    rdfs:label "Blocking Decision"@en ;
+    rdfs:subClassOf mnp:BlockingDecision,
+        mnp:EligibilityDecision,
+        owl:Thing ;
+    owl:disjointWith mnp:ConditionalDecision,
+        mnp:EligibleDecision,
+        mnp:ManualReviewDecision ;
+    owl:equivalentClass mnp:BlockingDecision ;
+    owl:sameAs mnp:BlockingDecision .
+
+mnp:PhoneNumber a owl:Class ;
+    rdfs:label "Phone Number"@en ;
+    rdfs:comment "A telephone number that is the subject of an MNP case."@en ;
+    rdfs:subClassOf mnp:PhoneNumber,
+        owl:Thing ;
+    owl:equivalentClass mnp:PhoneNumber ;
+    owl:sameAs mnp:PhoneNumber .
+
+mnp:ServiceContract a owl:Class ;
+    rdfs:label "Service Contract"@en ;
+    rdfs:comment "A contractual commitment that may restrict portability until end time."@en ;
+    rdfs:subClassOf mnp:ServiceContract,
+        owl:Thing ;
+    owl:equivalentClass mnp:ServiceContract ;
+    owl:sameAs mnp:ServiceContract .
+
+mnp:ServiceSubscription a owl:Class ;
+    rdfs:label "Service Subscription"@en ;
+    rdfs:comment "An instantiated subscription linking a subscriber to a telecom service."@en ;
+    rdfs:subClassOf mnp:ServiceSubscription,
+        owl:Thing ;
+    owl:equivalentClass mnp:ServiceSubscription ;
+    owl:sameAs mnp:ServiceSubscription .
+
+mnp:SystemObservation a owl:Class ;
+    rdfs:label "System Observation"@en ;
+    rdfs:comment "Evidence produced by an information system observation."@en ;
+    rdfs:subClassOf mnp:EvidenceRecord,
+        mnp:SystemObservation,
+        owl:Thing ;
+    owl:equivalentClass mnp:SystemObservation ;
+    owl:sameAs mnp:SystemObservation .
+
+owl:Restriction owl:sameAs owl:Restriction .
+
+"1"^^xsd:nonNegativeInteger a xsd:decimal,
+        xsd:integer,
+        xsd:nonNegativeInteger ;
+    owl:sameAs "1"^^xsd:nonNegativeInteger .
+
+mnp:EligibilityDecision a owl:Class ;
+    rdfs:label "Eligibility Decision"@en ;
+    rdfs:comment "Abstract decision outcome of an eligibility assessment."@en ;
+    rdfs:subClassOf mnp:EligibilityDecision,
+        owl:Thing ;
+    owl:equivalentClass mnp:EligibilityDecision ;
+    owl:sameAs mnp:EligibilityDecision .
+
+mnp:Subscriber a owl:Class ;
+    rdfs:label "Subscriber"@en ;
+    rdfs:comment "A person or party that holds a telecom subscription and may request number portability."@en ;
+    rdfs:subClassOf mnp:Subscriber,
+        owl:Thing ;
+    owl:equivalentClass mnp:Subscriber ;
+    owl:sameAs mnp:Subscriber .
+
+mnp:InformationSystem a owl:Class ;
+    rdfs:label "Information System"@en ;
+    rdfs:comment "A source system that generates evidence observations."@en ;
+    rdfs:subClassOf mnp:InformationSystem,
+        owl:Thing ;
+    owl:equivalentClass mnp:InformationSystem ;
+    owl:sameAs mnp:InformationSystem .
+
+mnp:MappingRecord a owl:Class ;
+    rdfs:label "Mapping Record"@en ;
+    rdfs:comment "A documented mapping from an external API field to an MNP term."@en ;
+    rdfs:subClassOf mnp:MappingRecord,
+        owl:Thing ;
+    owl:equivalentClass mnp:MappingRecord ;
+    owl:sameAs mnp:MappingRecord .
+
+owl:AnnotationProperty owl:sameAs owl:AnnotationProperty .
+
+"2024-01-01T00:00:00+00:00"^^xsd:dateTime a xsd:dateTime ;
+    owl:sameAs "2024-01-01T00:00:00+00:00"^^xsd:dateTime .
+
+"1.0" a xsd:string ;
+    owl:sameAs "1.0" .
+
+mnp:MNPCase a owl:Class ;
+    rdfs:label "MNP Case"@en ;
+    rdfs:comment "A mobile number portability request case."@en ;
+    rdfs:subClassOf _:n4900baee74a0413ea0227d839d593993b1,
+        _:n4900baee74a0413ea0227d839d593993b2,
+        _:n4900baee74a0413ea0227d839d593993b3,
+        mnp:MNPCase,
+        owl:Thing ;
+    owl:equivalentClass mnp:MNPCase ;
+    owl:sameAs mnp:MNPCase .
+
+mnp:BlockingReason a owl:Class ;
+    rdfs:label "Blocking Reason"@en ;
+    rdfs:comment "An independent reason that contributes to a blocking or review outcome."@en ;
+    rdfs:subClassOf mnp:BlockingReason,
+        owl:Thing ;
+    owl:equivalentClass mnp:BlockingReason ;
+    owl:sameAs mnp:BlockingReason .
+
+mnp:RemediationAction a owl:Class ;
+    rdfs:label "Remediation Action"@en ;
+    rdfs:comment "A recommended action a user or operator should take."@en ;
+    rdfs:subClassOf mnp:RemediationAction,
+        owl:Thing ;
+    owl:equivalentClass mnp:RemediationAction ;
+    owl:sameAs mnp:RemediationAction .
+
+mnp:RegulatoryClause a owl:Class ;
+    rdfs:label "Regulatory Clause"@en ;
+    rdfs:comment "A specific clause within a regulatory document."@en ;
+    rdfs:subClassOf mnp:RegulatoryClause,
+        owl:Thing ;
+    owl:equivalentClass mnp:RegulatoryClause ;
+    owl:sameAs mnp:RegulatoryClause .
+
+mnp:EligibilityRule a owl:Class ;
+    rdfs:label "Eligibility Rule"@en ;
+    rdfs:comment "A versioned eligibility rule operationalizing regulatory clauses."@en ;
+    rdfs:subClassOf _:n4900baee74a0413ea0227d839d593993b8,
+        mnp:EligibilityRule,
+        owl:Thing ;
+    owl:equivalentClass mnp:EligibilityRule ;
+    owl:sameAs mnp:EligibilityRule .
+
+mnp:EligibilityAssessment a owl:Class ;
+    rdfs:label "Eligibility Assessment"@en ;
+    rdfs:comment "A deterministic evaluation of an MNP case against eligibility rules and evidence."@en ;
+    rdfs:subClassOf _:n4900baee74a0413ea0227d839d593993b4,
+        _:n4900baee74a0413ea0227d839d593993b5,
+        _:n4900baee74a0413ea0227d839d593993b6,
+        _:n4900baee74a0413ea0227d839d593993b7,
+        mnp:EligibilityAssessment,
+        owl:Thing ;
+    owl:equivalentClass mnp:EligibilityAssessment ;
+    owl:sameAs mnp:EligibilityAssessment .
+
+mnp:RuleVersion a owl:Class ;
+    rdfs:label "Rule Version"@en ;
+    rdfs:comment "A concrete version of an eligibility rule with effective dates."@en ;
+    rdfs:subClassOf mnp:RuleVersion,
+        owl:Thing ;
+    owl:equivalentClass mnp:RuleVersion ;
+    owl:sameAs mnp:RuleVersion .
+
+xsd:dateTime a rdfs:Datatype ;
+    owl:disjointWith xsd:decimal ;
+    owl:sameAs xsd:dateTime .
+
+mnp:EvidenceRecord a owl:Class ;
+    rdfs:label "Evidence Record"@en ;
+    rdfs:comment "A dated observation used as evidence in eligibility assessment."@en ;
+    rdfs:subClassOf mnp:EvidenceRecord,
+        owl:Thing ;
+    owl:equivalentClass mnp:EvidenceRecord ;
+    owl:sameAs mnp:EvidenceRecord .
+
+owl:Class owl:sameAs owl:Class .
+
+owl:ObjectProperty owl:sameAs owl:ObjectProperty .
+
+owl:DatatypeProperty owl:sameAs owl:DatatypeProperty .
+
+rdfs:Datatype owl:sameAs rdfs:Datatype .
+
+xsd:string a rdfs:Datatype ;
+    owl:sameAs xsd:string .
+
+owl:Thing a owl:Class ;
+    rdfs:subClassOf owl:Thing ;
+    owl:equivalentClass owl:Thing ;
+    owl:sameAs owl:Thing .
+
+_:n4900baee74a0413ea0227d839d593993b1 a owl:Restriction ;
+    owl:cardinality "1"^^xsd:nonNegativeInteger ;
+    owl:onProperty mnp:concernsNumber ;
+    owl:sameAs _:n4900baee74a0413ea0227d839d593993b1 .
+
+_:n4900baee74a0413ea0227d839d593993b2 a owl:Restriction ;
+    owl:cardinality "1"^^xsd:nonNegativeInteger ;
+    owl:onProperty mnp:requestedBy ;
+    owl:sameAs _:n4900baee74a0413ea0227d839d593993b2 .
+
+_:n4900baee74a0413ea0227d839d593993b3 a owl:Restriction ;
+    owl:minCardinality "1"^^xsd:nonNegativeInteger ;
+    owl:onProperty mnp:hasCaseEvidence ;
+    owl:sameAs _:n4900baee74a0413ea0227d839d593993b3 .
+
+_:n4900baee74a0413ea0227d839d593993b8 a owl:Restriction ;
+    owl:minCardinality "1"^^xsd:nonNegativeInteger ;
+    owl:onProperty mnp:operationalizesClause ;
+    owl:sameAs _:n4900baee74a0413ea0227d839d593993b8 .
+
+_:n4900baee74a0413ea0227d839d593993b4 a owl:Restriction ;
+    owl:minCardinality "1"^^xsd:nonNegativeInteger ;
+    owl:onProperty mnp:usesEvidence ;
+    owl:sameAs _:n4900baee74a0413ea0227d839d593993b4 .
+
+_:n4900baee74a0413ea0227d839d593993b5 a owl:Restriction ;
+    owl:minCardinality "1"^^xsd:nonNegativeInteger ;
+    owl:onProperty mnp:evaluatedByRule ;
+    owl:sameAs _:n4900baee74a0413ea0227d839d593993b5 .
+
+_:n4900baee74a0413ea0227d839d593993b6 a owl:Restriction ;
+    owl:cardinality "1"^^xsd:nonNegativeInteger ;
+    owl:onProperty mnp:producesDecision ;
+    owl:sameAs _:n4900baee74a0413ea0227d839d593993b6 .
+
+_:n4900baee74a0413ea0227d839d593993b7 a owl:Restriction ;
+    owl:minCardinality "1"^^xsd:nonNegativeInteger ;
+    owl:onProperty mnp:dependsOn ;
+    owl:sameAs _:n4900baee74a0413ea0227d839d593993b7 .
+

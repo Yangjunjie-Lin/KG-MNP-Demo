@@ -1,0 +1,181 @@
+"""Convert normalized JSON case input into an RDF instance graph."""
+
+from __future__ import annotations
+
+import re
+
+from rdflib import Graph, Literal, URIRef
+from rdflib.namespace import RDF, XSD
+
+from kg_mnp_demo.input_adapter import EvidenceInput, NormalizedCaseInput
+from kg_mnp_demo.namespaces import BASE, MNP
+
+
+SOURCE_SYSTEM_IRIS = {
+    "CRM": MNP["SYS-CRM"],
+    "HLR": MNP["SYS-HLR"],
+    "BILLING": MNP["SYS-BILLING"],
+    "CONTRACT": MNP["SYS-CONTRACT"],
+    "MNP_HISTORY": MNP["SYS-MNP"],
+}
+
+
+def sanitize_iri_fragment(value: str) -> str:
+    """Deterministic IRI-safe fragment (no random UUIDs)."""
+    cleaned = re.sub(r"[^A-Za-z0-9_-]+", "-", value.strip())
+    cleaned = re.sub(r"-{2,}", "-", cleaned).strip("-_")
+    if not cleaned:
+        raise ValueError(f"Cannot build IRI fragment from empty value: {value!r}")
+    return cleaned
+
+
+def case_iri(case_id: str) -> URIRef:
+    return URIRef(f"{BASE}Case-{sanitize_iri_fragment(case_id)}")
+
+
+def subscriber_iri(subscriber_id: str) -> URIRef:
+    return URIRef(f"{BASE}Subscriber-{sanitize_iri_fragment(subscriber_id)}")
+
+
+def phone_iri(case_id: str) -> URIRef:
+    return URIRef(f"{BASE}Phone-{sanitize_iri_fragment(case_id)}")
+
+
+def account_iri(account_id: str) -> URIRef:
+    return URIRef(f"{BASE}Account-{sanitize_iri_fragment(account_id)}")
+
+
+def evidence_iri(case_id: str, kind: str) -> URIRef:
+    return URIRef(
+        f"{BASE}Evidence-{sanitize_iri_fragment(case_id)}-{sanitize_iri_fragment(kind)}"
+    )
+
+
+def source_system_iri(system_id: str) -> URIRef:
+    if system_id in SOURCE_SYSTEM_IRIS:
+        return SOURCE_SYSTEM_IRIS[system_id]
+    return URIRef(f"{BASE}SYS-{sanitize_iri_fragment(system_id)}")
+
+
+def _dt(literal_dt) -> Literal:
+    return Literal(literal_dt.strftime("%Y-%m-%dT%H:%M:%SZ"), datatype=XSD.dateTime)
+
+
+def _add_evidence_base(
+    g: Graph,
+    ev_uri: URIRef,
+    *,
+    evidence_type: str,
+    evidence: EvidenceInput,
+) -> None:
+    g.add((ev_uri, RDF.type, MNP.SystemObservation))
+    g.add((ev_uri, MNP.evidenceType, Literal(evidence_type)))
+    g.add((ev_uri, MNP.evidenceStatus, Literal(evidence.status)))
+    g.add((ev_uri, MNP.evidenceGeneratedAt, _dt(evidence.generated_at)))
+    g.add((ev_uri, MNP.evidenceValidUntil, _dt(evidence.valid_until)))
+    sys_uri = source_system_iri(evidence.source_system)
+    g.add((ev_uri, MNP.hasSourceSystem, sys_uri))
+    # Ensure source system node exists even if reference data is later merged
+    g.add((sys_uri, RDF.type, MNP.InformationSystem))
+    g.add((sys_uri, MNP.systemIdentifier, Literal(evidence.source_system)))
+
+
+def build_case_graph(normalized: NormalizedCaseInput) -> Graph:
+    """Build instance RDF only (no assessment, no eligibility conclusion)."""
+    g = Graph()
+    g.bind("mnp", MNP)
+
+    case_id = normalized.case_id
+    case = case_iri(case_id)
+    subscriber = subscriber_iri(normalized.subscriber_id)
+    phone = phone_iri(case_id)
+    account = account_iri(normalized.account_id)
+
+    g.add((subscriber, RDF.type, MNP.Subscriber))
+    g.add((subscriber, MNP.ownsPhoneNumber, phone))
+    g.add((subscriber, MNP.billedThrough, account))
+    g.add((subscriber, MNP.relatedAccount, account))
+
+    g.add((phone, RDF.type, MNP.PhoneNumber))
+    g.add((phone, MNP.maskedPhoneNumber, Literal(normalized.masked_number)))
+
+    g.add((account, RDF.type, MNP.TelecomAccount))
+
+    g.add((case, RDF.type, MNP.MNPCase))
+    g.add((case, MNP.caseIdentifier, Literal(case_id)))
+    g.add((case, MNP.requestedBy, subscriber))
+    g.add((case, MNP.concernsNumber, phone))
+
+    ev_id = evidence_iri(case_id, "IDENTITY")
+    ev_num = evidence_iri(case_id, "NUMBER")
+    ev_bill = evidence_iri(case_id, "BILLING")
+    ev_ctr = evidence_iri(case_id, "CONTRACT")
+    ev_port = evidence_iri(case_id, "PORTING")
+
+    _add_evidence_base(
+        g, ev_id, evidence_type="IDENTITY_MATCH", evidence=normalized.identity
+    )
+    g.add((ev_id, MNP.identityMatchFlag, Literal(normalized.identity.matched)))
+
+    _add_evidence_base(
+        g, ev_num, evidence_type="NUMBER_STATUS", evidence=normalized.number_status
+    )
+    g.add(
+        (
+            ev_num,
+            MNP.numberStatusCode,
+            Literal(normalized.number_status.status_code),
+        )
+    )
+
+    _add_evidence_base(
+        g, ev_bill, evidence_type="BILLING_BALANCE", evidence=normalized.billing
+    )
+    g.add(
+        (
+            ev_bill,
+            MNP.observedAmount,
+            Literal(normalized.billing.outstanding_amount, datatype=XSD.decimal),
+        )
+    )
+    g.add((ev_bill, MNP.currencyCode, Literal(normalized.billing.currency)))
+    g.add(
+        (
+            ev_bill,
+            MNP.hasPaymentArrangement,
+            Literal(normalized.billing.has_payment_arrangement),
+        )
+    )
+
+    _add_evidence_base(
+        g, ev_ctr, evidence_type="CONTRACT_STATUS", evidence=normalized.contract
+    )
+    g.add(
+        (
+            ev_ctr,
+            MNP.contractStatusCode,
+            Literal(normalized.contract.contract_status),
+        )
+    )
+    if normalized.contract.contract_end_time is not None:
+        g.add((ev_ctr, MNP.contractEndTime, _dt(normalized.contract.contract_end_time)))
+
+    _add_evidence_base(
+        g,
+        ev_port,
+        evidence_type="PORTING_HISTORY",
+        evidence=normalized.porting_history,
+    )
+    g.add(
+        (
+            ev_port,
+            MNP.daysSinceLastPort,
+            Literal(normalized.porting_history.days_since_last_port),
+        )
+    )
+
+    for ev in (ev_id, ev_num, ev_bill, ev_ctr, ev_port):
+        g.add((case, MNP.hasCaseEvidence, ev))
+        g.add((ev, MNP.evidenceForCase, case))
+
+    return g

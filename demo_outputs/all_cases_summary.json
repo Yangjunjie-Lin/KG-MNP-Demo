@@ -216,14 +216,6 @@
           "newVersion": "1.1",
           "oldVersion": "1.0",
           "requiresReassessment": "true"
-        },
-        {
-          "assessment": "http://example.org/kg-mnp#Assessment-CASE-06-HIST",
-          "assessmentId": "ASSESS-CASE-06-HIST",
-          "caseId": "CASE-06",
-          "newVersion": "1.1",
-          "oldVersion": "1.0",
-          "requiresReassessment": "true"
         }
       ],
       "backend": "rdf",

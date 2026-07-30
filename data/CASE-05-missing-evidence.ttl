@@ -27,7 +27,13 @@ mnp:Contract-05 a mnp:ServiceContract ;
 mnp:CASE-05 a mnp:MNPCase ;
     mnp:caseIdentifier "CASE-05" ;
     mnp:concernsNumber mnp:Phone-05 ;
-    mnp:requestedBy mnp:Sub-05 .
+    mnp:requestedBy mnp:Sub-05 ;
+    mnp:hasCaseEvidence
+        mnp:Ev-05-ID ,
+        mnp:Ev-05-NUM ,
+        mnp:Ev-05-BILL ,
+        mnp:Ev-05-CTR ,
+        mnp:Ev-05-PORT .
 
 mnp:Ev-05-ID a mnp:SystemObservation ;
     mnp:evidenceType "IDENTITY_MATCH" ;
