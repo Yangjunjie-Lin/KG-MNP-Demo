@@ -1,6 +1,6 @@
 # Neo4j + neosemantics (n10s) — practical graph backend
 
-MVP offline RDF tests still do **not** require Neo4j. Practical evaluate/trace defaults to Neo4j when available.
+MVP offline RDF tests still do **not** require Neo4j. CLI defaults to **rdf**; Neo4j must be selected with `--backend neo4j`.
 
 ## Start Neo4j
 
@@ -35,6 +35,7 @@ Offline (no Neo4j):
 
 ```bash
 python -m kg_mnp_demo.cli evaluate --case CASE-03 --backend rdf
+python scripts/showcase_demo.py
 pytest   # core suite; neo4j tests skip if DB down
 pytest -m neo4j
 ```

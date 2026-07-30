@@ -28,7 +28,8 @@ def _json_print(payload: Any) -> None:
 
 
 def _default_backend() -> str:
-    return os.environ.get("KG_MNP_BACKEND", "neo4j").strip().lower()
+    # Offline-first: RDF is the default. Neo4j must be selected explicitly.
+    return os.environ.get("KG_MNP_BACKEND", "rdf").strip().lower() or "rdf"
 
 
 def cmd_validate(case_id: str) -> int:
@@ -226,7 +227,7 @@ def build_parser() -> argparse.ArgumentParser:
             "--backend",
             choices=["neo4j", "rdf"],
             default=_default_backend(),
-            help="neo4j (default) persists/traces in Neo4j; rdf is offline in-memory",
+            help="rdf (default) is offline in-memory; neo4j requires Docker and --backend neo4j",
         )
 
     sp_run = sub.add_parser("run-all")
@@ -234,6 +235,7 @@ def build_parser() -> argparse.ArgumentParser:
         "--backend",
         choices=["neo4j", "rdf"],
         default=_default_backend(),
+        help="rdf (default) is offline in-memory; neo4j requires Docker and --backend neo4j",
     )
 
     sub.add_parser("mappings")

@@ -39,7 +39,7 @@
 | OWL-RL | 确定类型/关系扩展 |
 | Python 规则引擎 | 金额、日期、有效期、资格规则 |
 | SPARQL | 离线追溯查询 |
-| Neo4j + Cypher | 实际持久化与路径追溯（默认 CLI backend） |
+| Neo4j + Cypher | 可选实际持久化与路径追溯（需显式 `--backend neo4j`） |
 
 ## 安装
 
@@ -47,10 +47,36 @@
 
 ```bash
 cd kg-mnp-demo
-python -m pip install -e ".[dev,neo4j]"
+python -m pip install -e ".[dev]"
 ```
 
-## 运行（离线 RDF）
+可选 Neo4j 驱动：`python -m pip install -e ".[dev,neo4j]"`。
+
+## 本地一键演示
+
+```bash
+python scripts/showcase_demo.py
+```
+
+演示内容：
+
+* CASE-03 输入摘要；
+* SHACL 验证；
+* OWL-RL 推理；
+* 确定性资格判断；
+* 证据—规则版本—监管条款—结论—动作追溯；
+* 六个案例汇总；
+* HTML 演示报告。
+
+输出位置：
+
+```text
+demo_outputs/demo_report.html
+```
+
+详细说明见 [`docs/local_showcase.md`](docs/local_showcase.md)。
+
+## 运行（离线 RDF，默认 backend）
 
 ```bash
 python -m kg_mnp_demo.cli validate --case CASE-03
@@ -62,7 +88,9 @@ python -m kg_mnp_demo.cli sources
 python -m kg_mnp_demo.cli run-all --backend rdf
 ```
 
-## 运行（Neo4j 实际化，默认 backend）
+默认 backend 为 `rdf`。可通过环境变量 `KG_MNP_BACKEND` 覆盖，但本地演示与验收应明确使用 `--backend rdf`。
+
+## 运行（Neo4j 实际化，需显式启用）
 
 ```bash
 docker compose up -d

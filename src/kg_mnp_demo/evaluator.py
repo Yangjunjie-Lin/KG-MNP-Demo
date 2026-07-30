@@ -252,7 +252,8 @@ def _mark_reassessments(graph: Graph) -> None:
             )
         )
         graph.add((row.assessment, MNP.markedForReassessment, marker))
-        graph.add((row.assessment, MNP.requiresReassessment, Literal(True)))
+        # Replace any pre-seeded false so SPARQL sees a single authoritative flag.
+        graph.set((row.assessment, MNP.requiresReassessment, Literal(True)))
         graph.add((row.new, MNP.affectsAssessment, row.assessment))
 
 

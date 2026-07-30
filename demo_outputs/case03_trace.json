@@ -1,0 +1,55 @@
+{
+  "affected_assessments": [],
+  "backend": "rdf",
+  "blocking_reasons": [
+    {
+      "actionCode": "WAIT_OR_TERMINATE_CONTRACT",
+      "actionDescription": "请等待合约到期，或按约定办理解约后再申请。",
+      "caseId": "CASE-03",
+      "clauseId": "REG-MNP-CLAUSE-04",
+      "clauseText": "在有效协议期内且协议限制携转的，不得办理携号转网。",
+      "effectiveFrom": "2024-01-01T00:00:00+00:00",
+      "evidence": "http://example.org/kg-mnp#Ev-03-CTR",
+      "evidenceStatus": "VALID",
+      "generatedAt": "2026-06-20T10:15:00+00:00",
+      "reasonCode": "ACTIVE_CONTRACT_RESTRICTION",
+      "ruleId": "MNP-ELIG-004",
+      "ruleVersion": "1.0",
+      "sourceSystem": "CONTRACT"
+    }
+  ],
+  "case_id": "CASE-03",
+  "decision_trace": [
+    {
+      "actionCode": "WAIT_OR_TERMINATE_CONTRACT",
+      "assessment": "http://example.org/kg-mnp#Assessment-CASE-03",
+      "caseId": "CASE-03",
+      "clauseId": "REG-MNP-CLAUSE-04",
+      "decisionCode": "BLOCKED",
+      "effectiveFrom": "2024-01-01T00:00:00+00:00",
+      "evidence": "http://example.org/kg-mnp#Ev-03-CTR",
+      "evidenceStatus": "VALID",
+      "reasonCode": "ACTIVE_CONTRACT_RESTRICTION",
+      "ruleId": "MNP-ELIG-004",
+      "ruleVersion": "1.0",
+      "sourceSystem": "CONTRACT"
+    }
+  ],
+  "human_chains": [
+    {
+      "action_code": "WAIT_OR_TERMINATE_CONTRACT",
+      "action_description": "请等待合约到期，或按约定办理解约后再申请。",
+      "assessment_id": "ASSESS-CASE-03",
+      "case_id": "CASE-03",
+      "clause_id": "REG-MNP-CLAUSE-04",
+      "decision": "BLOCKED",
+      "evidence_id": "Ev-03-CTR",
+      "evidence_source": "CONTRACT",
+      "evidence_status": "VALID",
+      "reason_code": "ACTIVE_CONTRACT_RESTRICTION",
+      "reason_label": "当前业务仍受有效合约约束",
+      "rule_id": "MNP-ELIG-004",
+      "rule_version": "1.0"
+    }
+  ]
+}

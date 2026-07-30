@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>KG-MNP 携号转网资格判断领域本体演示</title>
+<style>
+  :root {
+    --ink: #1c2430;
+    --muted: #5b6777;
+    --line: #d7dde6;
+    --bg: #f3f6fa;
+    --panel: #ffffff;
+    --accent: #0b6e4f;
+    --warn: #9b2c2c;
+    --ok: #276749;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    color: var(--ink);
+    background:
+      radial-gradient(1200px 500px at 10% -10%, #dceee6 0%, transparent 55%),
+      radial-gradient(900px 400px at 100% 0%, #e7eef8 0%, transparent 50%),
+      var(--bg);
+    line-height: 1.55;
+  }
+  header {
+    padding: 2.5rem 1.5rem 1.5rem;
+    max-width: 980px;
+    margin: 0 auto;
+  }
+  h1 { margin: 0 0 0.75rem; font-size: 1.85rem; letter-spacing: 0.01em; }
+  .question {
+    font-size: 1.05rem;
+    color: var(--muted);
+    border-left: 4px solid var(--accent);
+    padding-left: 1rem;
+    margin: 1rem 0 0;
+  }
+  main { max-width: 980px; margin: 0 auto; padding: 0 1.5rem 3rem; }
+  section {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 1.25rem 1.35rem;
+    margin: 1rem 0;
+  }
+  h2 { margin: 0 0 0.85rem; font-size: 1.2rem; }
+  .flow {
+    display: flex; flex-wrap: wrap; gap: 0.4rem; align-items: center;
+    font-size: 0.95rem;
+  }
+  .flow span {
+    background: #eef5f1; border: 1px solid #cfe0d7; border-radius: 999px;
+    padding: 0.25rem 0.7rem;
+  }
+  .decision-box {
+    display: flex; gap: 1rem; flex-wrap: wrap; align-items: stretch;
+  }
+  .badge {
+    min-width: 160px; padding: 1rem; border-radius: 10px;
+    background: #fff5f5; border: 1px solid #f0c2c2; color: var(--warn);
+    font-size: 1.4rem; font-weight: 700; text-align: center;
+  }
+  .badge.ok { background: #f0fff4; border-color: #c6f6d5; color: var(--ok); }
+  .reason {
+    padding: 0.75rem 1rem; border-radius: 8px; background: #f7fafc;
+    border: 1px solid var(--line); margin: 0.35rem 0;
+  }
+  .muted { color: var(--muted); }
+  table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+  th, td { border-bottom: 1px solid var(--line); padding: 0.55rem 0.4rem; text-align: left; vertical-align: top; }
+  th { color: var(--muted); font-weight: 600; }
+  .chain {
+    display: flex; flex-wrap: wrap; gap: 0.4rem; align-items: center; margin: 0.6rem 0 1rem;
+  }
+  .card {
+    background: #f8fafc; border: 1px solid var(--line); border-radius: 10px;
+    padding: 0.55rem 0.75rem; min-width: 110px;
+  }
+  .card .k { font-size: 0.75rem; color: var(--muted); }
+  .card .v { font-weight: 600; }
+  .arrow { color: var(--muted); }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.5rem; }
+  .pill {
+    border: 1px solid var(--line); border-radius: 8px; padding: 0.45rem 0.65rem;
+    background: #fcfdff; font-family: ui-monospace, Consolas, monospace; font-size: 0.88rem;
+  }
+  .note { color: var(--muted); font-size: 0.92rem; }
+  footer { max-width: 980px; margin: 0 auto; padding: 0 1.5rem 2rem; color: var(--muted); font-size: 0.9rem; }
+</style>
+</head>
+<body>
+<header>
+  <h1>KG-MNP 携号转网资格判断领域本体演示</h1>
+  <p class="question">如何使用领域本体，把携号转网资格判断中的案件、证据、规则版本、监管条款、资格结论、阻塞原因和处理动作组织成可检查、可追溯和可复核的语义结构？</p>
+  <p class="note">本次演示使用固定评估时间，以保证结果可重复。（ASSESSMENT_TIME = 2026-07-01T00:00:00Z） · backend=rdf</p>
+</header>
+<main>
+<section>
+  <h2>输入摘要（CASE-03）</h2>
+  <table>
+    <tr><th>字段</th><th>值</th></tr>
+    <tr><td>案件编号</td><td>CASE-03</td></tr>
+    <tr><td>申请人</td><td>Sub-03</td></tr>
+    <tr><td>脱敏号码</td><td>138****0003</td></tr>
+    <tr><td>号码状态</td><td>ACTIVE</td></tr>
+    <tr><td>实名是否一致</td><td>True</td></tr>
+    <tr><td>欠费金额</td><td>0.00</td></tr>
+    <tr><td>缴费安排</td><td>False</td></tr>
+    <tr><td>合约状态</td><td>ACTIVE</td></tr>
+    <tr><td>合约截止时间</td><td>2027-01-01T00:00:00+00:00</td></tr>
+    <tr><td>距上次携转天数</td><td>250</td></tr>
+    <tr><td>资格评估时间</td><td>2026-07-01T00:00:00Z</td></tr>
+  </table>
+  <h3>证据</h3>
+  <table>
+    <tr><th>类型</th><th>证据 ID</th><th>状态</th><th>来源系统</th></tr>
+    <tr><td>身份核验证据</td><td>Ev-03-ID</td><td>VALID</td><td>CRM</td></tr><tr><td>号码状态证据</td><td>Ev-03-NUM</td><td>VALID</td><td>HLR</td></tr><tr><td>计费证据</td><td>Ev-03-BILL</td><td>VALID</td><td>BILLING</td></tr><tr><td>合约证据</td><td>Ev-03-CTR</td><td>VALID</td><td>CONTRACT</td></tr><tr><td>携转历史证据</td><td>Ev-03-PORT</td><td>VALID</td><td>MNP_HISTORY</td></tr>
+  </table>
+</section>
+
+<section>
+  <h2>处理流程</h2>
+  <div class="flow">
+    <span>输入案例</span>→
+    <span>SHACL 验证（PASSED）</span>→
+    <span>OWL-RL 推理（+928）</span>→
+    <span>资格规则判断</span>→
+    <span>评估对象生成</span>→
+    <span>SPARQL 追溯</span>→
+    <span>结构化输出</span>
+  </div>
+  <ul><li>SystemObservation → 推导为 EvidenceRecord（实例 Ev-03-ID）</li><li>BlockingDecision → 推导为 EligibilityDecision（实例 Decision-CASE-03）</li></ul>
+</section>
+
+<section>
+  <h2>资格结论</h2>
+  <div class="decision-box">
+    <div class="badge ">BLOCKED</div>
+    <div style="flex:1"><div class='reason'>ACTIVE_CONTRACT_RESTRICTION</div></div>
+  </div>
+  <p class="note">验证状态：PASSED</p>
+</section>
+
+<section>
+  <h2>完整追溯链</h2>
+  <div class="chain"><div class="card"><div class="k">案件</div><div class="v">CASE-03</div></div><div class="arrow">→</div><div class="card"><div class="k">资格评估</div><div class="v">ASSESS-CASE-03</div></div><div class="arrow">→</div><div class="card"><div class="k">证据</div><div class="v">Ev-03-CTR</div></div><div class="arrow">→</div><div class="card"><div class="k">规则</div><div class="v">MNP-ELIG-004 v1.0</div></div><div class="arrow">→</div><div class="card"><div class="k">监管条款</div><div class="v">REG-MNP-CLAUSE-04</div></div><div class="arrow">→</div><div class="card"><div class="k">结论</div><div class="v">BLOCKED</div></div><div class="arrow">→</div><div class="card"><div class="k">阻塞原因</div><div class="v">ACTIVE_CONTRACT_RESTRICTION</div></div><div class="arrow">→</div><div class="card"><div class="k">处理动作</div><div class="v">WAIT_OR_TERMINATE_CONTRACT</div></div></div>
+</section>
+
+<section>
+  <h2>六个案例汇总</h2>
+  <table>
+    <tr><th>案例</th><th>结论</th><th>阻塞原因</th></tr>
+    <tr><td>CASE-01</td><td><strong>ELIGIBLE</strong></td><td>无</td></tr><tr><td>CASE-02</td><td><strong>BLOCKED</strong></td><td>OUTSTANDING_BALANCE</td></tr><tr><td>CASE-03</td><td><strong>BLOCKED</strong></td><td>ACTIVE_CONTRACT_RESTRICTION</td></tr><tr><td>CASE-04</td><td><strong>BLOCKED</strong></td><td>OUTSTANDING_BALANCE<br/>ACTIVE_CONTRACT_RESTRICTION</td></tr><tr><td>CASE-05</td><td><strong>MANUAL_REVIEW</strong></td><td>MISSING_OR_EXPIRED_EVIDENCE</td></tr><tr><td>CASE-06</td><td><strong>BLOCKED</strong></td><td>PORTING_INTERVAL_TOO_SHORT</td></tr>
+  </table>
+</section>
+
+
+
+<section>
+  <h2>本体核心类</h2>
+  <div class="grid">
+    <div class="pill">MNPCase</div><div class="pill">EligibilityAssessment</div><div class="pill">EvidenceRecord</div><div class="pill">EligibilityRule</div><div class="pill">RuleVersion</div><div class="pill">RegulatoryClause</div><div class="pill">EligibilityDecision</div><div class="pill">BlockingReason</div><div class="pill">RemediationAction</div><div class="pill">AssessmentDependency</div>
+  </div>
+</section>
+
+<section>
+  <h2>本体核心关系</h2>
+  <div class="grid">
+    <div class="pill">hasEligibilityAssessment</div><div class="pill">usesEvidence</div><div class="pill">usesRuleVersion</div><div class="pill">producesDecision</div><div class="pill">producesBlockingReason</div><div class="pill">supportedByEvidence</div><div class="pill">triggeredByRule</div><div class="pill">citesClause</div><div class="pill">recommendsAction</div><div class="pill">dependsOn</div>
+  </div>
+</section>
+
+<section>
+  <h2>研究边界</h2>
+  <p>OWL、RDFLib、SHACL、OWL-RL 和知识图谱工具本身不是创新。</p>
+  <p>本项目当前验证的是面向携号转网资格判断的领域本体结构，包括资格评估对象化、证据与规则版本联合追溯、多阻塞原因语义分解、证据缺失安全处理和规则更新影响定位。</p>
+  <p>当前使用合成数据，不代表真实运营商正式业务结论。</p>
+</section>
+</main>
+<footer>
+  由 <code>python scripts/showcase_demo.py</code> 自动生成 · 可直接双击打开 · 无需启动服务器
+</footer>
+</body>
+</html>
