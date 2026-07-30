@@ -8,3 +8,4 @@ dist/
 build/
 docs/ontology-site/doc/
 docs/demo_results.json
+runtime_outputs/

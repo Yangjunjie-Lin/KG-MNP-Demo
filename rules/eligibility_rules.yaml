@@ -87,7 +87,7 @@ rules:
     version: "1.0"
     name: Porting interval
     effective_from: "2024-01-01T00:00:00Z"
-    effective_to: null
+    effective_to: "2026-05-31T23:59:59Z"
     inputs:
       - evidence_type: PORTING_HISTORY
         required: true
@@ -104,6 +104,7 @@ rules:
       minimum: 120
 
 # CASE-06 demonstrates rule update impact: same rule_id, newer version.
+# Validity windows must not overlap (closed interval on both ends).
 rule_updates:
   - rule_id: MNP-ELIG-005
     version: "1.1"

@@ -11,31 +11,41 @@
       "rules": [
         {
           "effective_from": "2024-01-01T00:00:00Z",
+          "effective_to": null,
           "rule_id": "MNP-ELIG-001",
+          "selected_for_assessment_time": "2026-07-01T00:00:00Z",
           "status": "PASS",
           "version": "1.0"
         },
         {
           "effective_from": "2024-01-01T00:00:00Z",
+          "effective_to": null,
           "rule_id": "MNP-ELIG-002",
+          "selected_for_assessment_time": "2026-07-01T00:00:00Z",
           "status": "PASS",
           "version": "1.0"
         },
         {
           "effective_from": "2024-01-01T00:00:00Z",
+          "effective_to": null,
           "rule_id": "MNP-ELIG-003",
+          "selected_for_assessment_time": "2026-07-01T00:00:00Z",
           "status": "PASS",
           "version": "1.0"
         },
         {
           "effective_from": "2024-01-01T00:00:00Z",
+          "effective_to": null,
           "rule_id": "MNP-ELIG-004",
+          "selected_for_assessment_time": "2026-07-01T00:00:00Z",
           "status": "PASS",
           "version": "1.0"
         },
         {
           "effective_from": "2026-06-01T00:00:00Z",
+          "effective_to": null,
           "rule_id": "MNP-ELIG-005",
+          "selected_for_assessment_time": "2026-07-01T00:00:00Z",
           "status": "PASS",
           "version": "1.1"
         }
@@ -52,31 +62,41 @@
       "rules": [
         {
           "effective_from": "2024-01-01T00:00:00Z",
+          "effective_to": null,
           "rule_id": "MNP-ELIG-001",
+          "selected_for_assessment_time": "2026-07-01T00:00:00Z",
           "status": "PASS",
           "version": "1.0"
         },
         {
           "effective_from": "2024-01-01T00:00:00Z",
+          "effective_to": null,
           "rule_id": "MNP-ELIG-002",
+          "selected_for_assessment_time": "2026-07-01T00:00:00Z",
           "status": "PASS",
           "version": "1.0"
         },
         {
           "effective_from": "2024-01-01T00:00:00Z",
+          "effective_to": null,
           "rule_id": "MNP-ELIG-003",
+          "selected_for_assessment_time": "2026-07-01T00:00:00Z",
           "status": "FAIL",
           "version": "1.0"
         },
         {
           "effective_from": "2024-01-01T00:00:00Z",
+          "effective_to": null,
           "rule_id": "MNP-ELIG-004",
+          "selected_for_assessment_time": "2026-07-01T00:00:00Z",
           "status": "PASS",
           "version": "1.0"
         },
         {
           "effective_from": "2026-06-01T00:00:00Z",
+          "effective_to": null,
           "rule_id": "MNP-ELIG-005",
+          "selected_for_assessment_time": "2026-07-01T00:00:00Z",
           "status": "PASS",
           "version": "1.1"
         }
@@ -93,31 +113,41 @@
       "rules": [
         {
           "effective_from": "2024-01-01T00:00:00Z",
+          "effective_to": null,
           "rule_id": "MNP-ELIG-001",
+          "selected_for_assessment_time": "2026-07-01T00:00:00Z",
           "status": "PASS",
           "version": "1.0"
         },
         {
           "effective_from": "2024-01-01T00:00:00Z",
+          "effective_to": null,
           "rule_id": "MNP-ELIG-002",
+          "selected_for_assessment_time": "2026-07-01T00:00:00Z",
           "status": "PASS",
           "version": "1.0"
         },
         {
           "effective_from": "2024-01-01T00:00:00Z",
+          "effective_to": null,
           "rule_id": "MNP-ELIG-003",
+          "selected_for_assessment_time": "2026-07-01T00:00:00Z",
           "status": "PASS",
           "version": "1.0"
         },
         {
           "effective_from": "2024-01-01T00:00:00Z",
+          "effective_to": null,
           "rule_id": "MNP-ELIG-004",
+          "selected_for_assessment_time": "2026-07-01T00:00:00Z",
           "status": "FAIL",
           "version": "1.0"
         },
         {
           "effective_from": "2026-06-01T00:00:00Z",
+          "effective_to": null,
           "rule_id": "MNP-ELIG-005",
+          "selected_for_assessment_time": "2026-07-01T00:00:00Z",
           "status": "PASS",
           "version": "1.1"
         }
@@ -135,31 +165,41 @@
       "rules": [
         {
           "effective_from": "2024-01-01T00:00:00Z",
+          "effective_to": null,
           "rule_id": "MNP-ELIG-001",
+          "selected_for_assessment_time": "2026-07-01T00:00:00Z",
           "status": "PASS",
           "version": "1.0"
         },
         {
           "effective_from": "2024-01-01T00:00:00Z",
+          "effective_to": null,
           "rule_id": "MNP-ELIG-002",
+          "selected_for_assessment_time": "2026-07-01T00:00:00Z",
           "status": "PASS",
           "version": "1.0"
         },
         {
           "effective_from": "2024-01-01T00:00:00Z",
+          "effective_to": null,
           "rule_id": "MNP-ELIG-003",
+          "selected_for_assessment_time": "2026-07-01T00:00:00Z",
           "status": "FAIL",
           "version": "1.0"
         },
         {
           "effective_from": "2024-01-01T00:00:00Z",
+          "effective_to": null,
           "rule_id": "MNP-ELIG-004",
+          "selected_for_assessment_time": "2026-07-01T00:00:00Z",
           "status": "FAIL",
           "version": "1.0"
         },
         {
           "effective_from": "2026-06-01T00:00:00Z",
+          "effective_to": null,
           "rule_id": "MNP-ELIG-005",
+          "selected_for_assessment_time": "2026-07-01T00:00:00Z",
           "status": "PASS",
           "version": "1.1"
         }
@@ -176,31 +216,41 @@
       "rules": [
         {
           "effective_from": "2024-01-01T00:00:00Z",
+          "effective_to": null,
           "rule_id": "MNP-ELIG-001",
+          "selected_for_assessment_time": "2026-07-01T00:00:00Z",
           "status": "PASS",
           "version": "1.0"
         },
         {
           "effective_from": "2024-01-01T00:00:00Z",
+          "effective_to": null,
           "rule_id": "MNP-ELIG-002",
+          "selected_for_assessment_time": "2026-07-01T00:00:00Z",
           "status": "PASS",
           "version": "1.0"
         },
         {
           "effective_from": "2024-01-01T00:00:00Z",
+          "effective_to": null,
           "rule_id": "MNP-ELIG-003",
+          "selected_for_assessment_time": "2026-07-01T00:00:00Z",
           "status": "MISSING",
           "version": "1.0"
         },
         {
           "effective_from": "2024-01-01T00:00:00Z",
+          "effective_to": null,
           "rule_id": "MNP-ELIG-004",
+          "selected_for_assessment_time": "2026-07-01T00:00:00Z",
           "status": "PASS",
           "version": "1.0"
         },
         {
           "effective_from": "2026-06-01T00:00:00Z",
+          "effective_to": null,
           "rule_id": "MNP-ELIG-005",
+          "selected_for_assessment_time": "2026-07-01T00:00:00Z",
           "status": "PASS",
           "version": "1.1"
         }
@@ -226,31 +276,41 @@
       "rules": [
         {
           "effective_from": "2024-01-01T00:00:00Z",
+          "effective_to": null,
           "rule_id": "MNP-ELIG-001",
+          "selected_for_assessment_time": "2026-07-01T00:00:00Z",
           "status": "PASS",
           "version": "1.0"
         },
         {
           "effective_from": "2024-01-01T00:00:00Z",
+          "effective_to": null,
           "rule_id": "MNP-ELIG-002",
+          "selected_for_assessment_time": "2026-07-01T00:00:00Z",
           "status": "PASS",
           "version": "1.0"
         },
         {
           "effective_from": "2024-01-01T00:00:00Z",
+          "effective_to": null,
           "rule_id": "MNP-ELIG-003",
+          "selected_for_assessment_time": "2026-07-01T00:00:00Z",
           "status": "PASS",
           "version": "1.0"
         },
         {
           "effective_from": "2024-01-01T00:00:00Z",
+          "effective_to": null,
           "rule_id": "MNP-ELIG-004",
+          "selected_for_assessment_time": "2026-07-01T00:00:00Z",
           "status": "PASS",
           "version": "1.0"
         },
         {
           "effective_from": "2026-06-01T00:00:00Z",
+          "effective_to": null,
           "rule_id": "MNP-ELIG-005",
+          "selected_for_assessment_time": "2026-07-01T00:00:00Z",
           "status": "FAIL",
           "version": "1.1"
         }

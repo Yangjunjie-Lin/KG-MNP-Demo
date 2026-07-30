@@ -183,7 +183,7 @@ def upsert_evaluation_result(session, case_id: str, result: dict[str, Any]) -> d
         )
 
     # Mapping records for source_alignment
-    for m in result.get("tmf_mappings_used", []):
+    for m in result.get("declared_tmf_mappings") or result.get("tmf_mappings_used", []):
         run_write(
             session,
             """

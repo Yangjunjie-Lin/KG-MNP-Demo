@@ -5,7 +5,9 @@
   "blocking_reasons": [
     {
       "action_code": "WAIT_OR_TERMINATE_CONTRACT",
+      "assessment_time": "2026-07-01T00:00:00Z",
       "effective_from": "2024-01-01T00:00:00Z",
+      "effective_to": null,
       "evidence": {
         "evidence_id": "Ev-03-CTR",
         "evidence_iri": "http://example.org/kg-mnp#Ev-03-CTR",
@@ -23,6 +25,64 @@
   ],
   "case_id": "CASE-03",
   "decision": "BLOCKED",
+  "declared_tmf_mappings": [
+    {
+      "id": "TMF629-Customer-to-Subscriber",
+      "mapping_type": "related",
+      "review_status": "reviewed",
+      "source_api": "TMF629_CustomerManagement",
+      "source_path": "components.schemas.Customer",
+      "target_term": "mnp:Subscriber"
+    },
+    {
+      "id": "TMF629-relatedParty-to-TelecomAccount-link",
+      "mapping_type": "related",
+      "review_status": "reviewed",
+      "source_api": "TMF629_CustomerManagement",
+      "source_path": "components.schemas.Customer.relatedParty",
+      "target_term": "mnp:relatedAccount"
+    },
+    {
+      "id": "TMF629-relatedAccount-to-TelecomAccount",
+      "mapping_type": "broader",
+      "review_status": "reviewed",
+      "source_api": "TMF629_CustomerManagement",
+      "source_path": "components.schemas.Customer.account",
+      "target_term": "mnp:TelecomAccount"
+    },
+    {
+      "id": "TMF637-Product-to-ServiceSubscription",
+      "mapping_type": "related",
+      "review_status": "reviewed",
+      "source_api": "TMF637_ProductInventory",
+      "source_path": "components.schemas.Product",
+      "target_term": "mnp:ServiceSubscription"
+    },
+    {
+      "id": "TMF637-productOffering-to-TelecomService",
+      "mapping_type": "related",
+      "review_status": "reviewed",
+      "source_api": "TMF637_ProductInventory",
+      "source_path": "components.schemas.Product.productOffering",
+      "target_term": "mnp:TelecomService"
+    },
+    {
+      "id": "TMF637-status-to-subscriptionStatusCode",
+      "mapping_type": "narrower",
+      "review_status": "reviewed",
+      "source_api": "TMF637_ProductInventory",
+      "source_path": "components.schemas.Product.status",
+      "target_term": "mnp:subscriptionStatusCode"
+    },
+    {
+      "id": "TMF620-ProductOffering-to-TelecomService",
+      "mapping_type": "related",
+      "review_status": "reviewed",
+      "source_api": "TMF620_ProductCatalog",
+      "source_path": "components.schemas.ProductOffering",
+      "target_term": "mnp:TelecomService"
+    }
+  ],
   "evidence": [
     {
       "evidence_id": "Ev-03-ID",
@@ -99,91 +159,43 @@
   "rules": [
     {
       "effective_from": "2024-01-01T00:00:00Z",
+      "effective_to": null,
       "rule_id": "MNP-ELIG-001",
+      "selected_for_assessment_time": "2026-07-01T00:00:00Z",
       "status": "PASS",
       "version": "1.0"
     },
     {
       "effective_from": "2024-01-01T00:00:00Z",
+      "effective_to": null,
       "rule_id": "MNP-ELIG-002",
+      "selected_for_assessment_time": "2026-07-01T00:00:00Z",
       "status": "PASS",
       "version": "1.0"
     },
     {
       "effective_from": "2024-01-01T00:00:00Z",
+      "effective_to": null,
       "rule_id": "MNP-ELIG-003",
+      "selected_for_assessment_time": "2026-07-01T00:00:00Z",
       "status": "PASS",
       "version": "1.0"
     },
     {
       "effective_from": "2024-01-01T00:00:00Z",
+      "effective_to": null,
       "rule_id": "MNP-ELIG-004",
+      "selected_for_assessment_time": "2026-07-01T00:00:00Z",
       "status": "FAIL",
       "version": "1.0"
     },
     {
       "effective_from": "2026-06-01T00:00:00Z",
+      "effective_to": null,
       "rule_id": "MNP-ELIG-005",
+      "selected_for_assessment_time": "2026-07-01T00:00:00Z",
       "status": "PASS",
       "version": "1.1"
-    }
-  ],
-  "tmf_mappings_used": [
-    {
-      "id": "TMF629-Customer-to-Subscriber",
-      "mapping_type": "related",
-      "review_status": "reviewed",
-      "source_api": "TMF629_CustomerManagement",
-      "source_path": "components.schemas.Customer",
-      "target_term": "mnp:Subscriber"
-    },
-    {
-      "id": "TMF629-relatedParty-to-TelecomAccount-link",
-      "mapping_type": "related",
-      "review_status": "reviewed",
-      "source_api": "TMF629_CustomerManagement",
-      "source_path": "components.schemas.Customer.relatedParty",
-      "target_term": "mnp:relatedAccount"
-    },
-    {
-      "id": "TMF629-relatedAccount-to-TelecomAccount",
-      "mapping_type": "broader",
-      "review_status": "reviewed",
-      "source_api": "TMF629_CustomerManagement",
-      "source_path": "components.schemas.Customer.account",
-      "target_term": "mnp:TelecomAccount"
-    },
-    {
-      "id": "TMF637-Product-to-ServiceSubscription",
-      "mapping_type": "related",
-      "review_status": "reviewed",
-      "source_api": "TMF637_ProductInventory",
-      "source_path": "components.schemas.Product",
-      "target_term": "mnp:ServiceSubscription"
-    },
-    {
-      "id": "TMF637-productOffering-to-TelecomService",
-      "mapping_type": "related",
-      "review_status": "reviewed",
-      "source_api": "TMF637_ProductInventory",
-      "source_path": "components.schemas.Product.productOffering",
-      "target_term": "mnp:TelecomService"
-    },
-    {
-      "id": "TMF637-status-to-subscriptionStatusCode",
-      "mapping_type": "narrower",
-      "review_status": "reviewed",
-      "source_api": "TMF637_ProductInventory",
-      "source_path": "components.schemas.Product.status",
-      "target_term": "mnp:subscriptionStatusCode"
-    },
-    {
-      "id": "TMF620-ProductOffering-to-TelecomService",
-      "mapping_type": "related",
-      "review_status": "reviewed",
-      "source_api": "TMF620_ProductCatalog",
-      "source_path": "components.schemas.ProductOffering",
-      "target_term": "mnp:TelecomService"
     }
   ],
   "trace_paths": [

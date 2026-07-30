@@ -87,6 +87,13 @@ mnp:EligibilityAssessmentShape a sh:NodeShape ;
         sh:maxCount 1 ;
         sh:message "资格评估必须恰好产生一个决定 (producesDecision)。" ;
     ] ;
+    sh:property [
+        sh:path mnp:assessmentTime ;
+        sh:datatype xsd:dateTime ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "资格评估必须恰好有一个评估时间 (assessmentTime)。" ;
+    ] ;
     sh:sparql [
         a sh:SPARQLConstraint ;
         sh:message "资格评估使用的证据不属于其对应案件的证据集合。" ;
@@ -107,15 +114,116 @@ mnp:BlockingDecisionShape a sh:NodeShape ;
     sh:targetClass mnp:BlockingDecision ;
     sh:sparql [
         a sh:SPARQLConstraint ;
-        sh:message "阻塞决定所在评估必须至少有一个阻塞原因，且每个原因必须有处理动作。" ;
+        sh:message "阻塞决定所在评估必须至少产生一个阻塞原因 (producesBlockingReason)。" ;
         sh:select """
             PREFIX mnp: <http://example.org/kg-mnp#>
             SELECT $this WHERE {
                 ?assessment mnp:producesDecision $this .
                 FILTER NOT EXISTS {
                     ?assessment mnp:producesBlockingReason ?reason .
-                    ?reason mnp:recommendsAction ?action .
                 }
+            }
+        """ ;
+    ] .
+
+mnp:BlockingReasonShape a sh:NodeShape ;
+    sh:targetClass mnp:BlockingReason ;
+    sh:property [
+        sh:path mnp:reasonCode ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "每个阻塞原因必须具有唯一原因编号 (reasonCode)。" ;
+    ] ;
+    sh:property [
+        sh:path mnp:supportedByEvidence ;
+        sh:class mnp:EvidenceRecord ;
+        sh:minCount 1 ;
+        sh:message "每个阻塞原因必须至少关联一条支持证据 (supportedByEvidence)。" ;
+    ] ;
+    sh:property [
+        sh:path mnp:triggeredByRule ;
+        sh:class mnp:EligibilityRule ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "每个阻塞原因必须关联一条触发规则 (triggeredByRule)。" ;
+    ] ;
+    sh:property [
+        sh:path mnp:triggeredByRuleVersion ;
+        sh:class mnp:RuleVersion ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "每个阻塞原因必须关联一个实际使用的规则版本 (triggeredByRuleVersion)。" ;
+    ] ;
+    sh:property [
+        sh:path mnp:citesClause ;
+        sh:class mnp:RegulatoryClause ;
+        sh:minCount 1 ;
+        sh:message "每个阻塞原因必须关联监管条款 (citesClause)。" ;
+    ] ;
+    sh:property [
+        sh:path mnp:recommendsAction ;
+        sh:class mnp:RemediationAction ;
+        sh:minCount 1 ;
+        sh:message "每个阻塞原因必须具有处理动作 (recommendsAction)。" ;
+    ] ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "阻塞原因引用的证据不是所属资格评估实际使用的证据。" ;
+        sh:select """
+            PREFIX mnp: <http://example.org/kg-mnp#>
+            SELECT $this ?evidence
+            WHERE {
+              $this mnp:supportedByEvidence ?evidence .
+              FILTER NOT EXISTS {
+                ?assessment mnp:producesBlockingReason $this ;
+                            mnp:usesEvidence ?evidence .
+              }
+            }
+        """ ;
+    ] ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "阻塞原因引用的规则不是所属资格评估实际使用的规则。" ;
+        sh:select """
+            PREFIX mnp: <http://example.org/kg-mnp#>
+            SELECT $this ?rule
+            WHERE {
+              $this mnp:triggeredByRule ?rule .
+              FILTER NOT EXISTS {
+                ?assessment mnp:producesBlockingReason $this ;
+                            mnp:evaluatedByRule ?rule .
+              }
+            }
+        """ ;
+    ] ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "阻塞原因引用的规则版本不是所属资格评估实际使用的规则版本。" ;
+        sh:select """
+            PREFIX mnp: <http://example.org/kg-mnp#>
+            SELECT $this ?rv
+            WHERE {
+              $this mnp:triggeredByRuleVersion ?rv .
+              FILTER NOT EXISTS {
+                ?assessment mnp:producesBlockingReason $this ;
+                            mnp:usesRuleVersion ?rv .
+              }
+            }
+        """ ;
+    ] ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "阻塞原因引用的监管条款与其触发规则所执行的条款不一致。" ;
+        sh:select """
+            PREFIX mnp: <http://example.org/kg-mnp#>
+            SELECT $this ?clause
+            WHERE {
+              $this mnp:triggeredByRule ?rule ;
+                    mnp:citesClause ?clause .
+              FILTER NOT EXISTS {
+                ?rule mnp:operationalizesClause ?clause .
+              }
             }
         """ ;
     ] .

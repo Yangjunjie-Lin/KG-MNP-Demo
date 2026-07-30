@@ -3,6 +3,7 @@
   "edges": [
     {
       "predicate": "aboutCase",
+      "predicate_iri": "http://example.org/kg-mnp#aboutCase",
       "source": "http://example.org/kg-mnp#Assessment-CASE-03",
       "source_local": "Assessment-CASE-03",
       "target": "http://example.org/kg-mnp#CASE-03",
@@ -10,6 +11,7 @@
     },
     {
       "predicate": "dependsOn",
+      "predicate_iri": "http://example.org/kg-mnp#dependsOn",
       "source": "http://example.org/kg-mnp#Assessment-CASE-03",
       "source_local": "Assessment-CASE-03",
       "target": "http://example.org/kg-mnp#Dep-CASE-03",
@@ -17,6 +19,7 @@
     },
     {
       "predicate": "evaluatedByRule",
+      "predicate_iri": "http://example.org/kg-mnp#evaluatedByRule",
       "source": "http://example.org/kg-mnp#Assessment-CASE-03",
       "source_local": "Assessment-CASE-03",
       "target": "http://example.org/kg-mnp#Rule-MNP-ELIG-001",
@@ -24,6 +27,7 @@
     },
     {
       "predicate": "evaluatedByRule",
+      "predicate_iri": "http://example.org/kg-mnp#evaluatedByRule",
       "source": "http://example.org/kg-mnp#Assessment-CASE-03",
       "source_local": "Assessment-CASE-03",
       "target": "http://example.org/kg-mnp#Rule-MNP-ELIG-002",
@@ -31,6 +35,7 @@
     },
     {
       "predicate": "evaluatedByRule",
+      "predicate_iri": "http://example.org/kg-mnp#evaluatedByRule",
       "source": "http://example.org/kg-mnp#Assessment-CASE-03",
       "source_local": "Assessment-CASE-03",
       "target": "http://example.org/kg-mnp#Rule-MNP-ELIG-003",
@@ -38,6 +43,7 @@
     },
     {
       "predicate": "evaluatedByRule",
+      "predicate_iri": "http://example.org/kg-mnp#evaluatedByRule",
       "source": "http://example.org/kg-mnp#Assessment-CASE-03",
       "source_local": "Assessment-CASE-03",
       "target": "http://example.org/kg-mnp#Rule-MNP-ELIG-004",
@@ -45,6 +51,7 @@
     },
     {
       "predicate": "evaluatedByRule",
+      "predicate_iri": "http://example.org/kg-mnp#evaluatedByRule",
       "source": "http://example.org/kg-mnp#Assessment-CASE-03",
       "source_local": "Assessment-CASE-03",
       "target": "http://example.org/kg-mnp#Rule-MNP-ELIG-005-v1-1",
@@ -52,6 +59,7 @@
     },
     {
       "predicate": "producesBlockingReason",
+      "predicate_iri": "http://example.org/kg-mnp#producesBlockingReason",
       "source": "http://example.org/kg-mnp#Assessment-CASE-03",
       "source_local": "Assessment-CASE-03",
       "target": "http://example.org/kg-mnp#Reason-CASE-03-ACTIVE_CONTRACT_RESTRICTION",
@@ -59,6 +67,7 @@
     },
     {
       "predicate": "producesDecision",
+      "predicate_iri": "http://example.org/kg-mnp#producesDecision",
       "source": "http://example.org/kg-mnp#Assessment-CASE-03",
       "source_local": "Assessment-CASE-03",
       "target": "http://example.org/kg-mnp#Decision-CASE-03",
@@ -66,6 +75,7 @@
     },
     {
       "predicate": "usesEvidence",
+      "predicate_iri": "http://example.org/kg-mnp#usesEvidence",
       "source": "http://example.org/kg-mnp#Assessment-CASE-03",
       "source_local": "Assessment-CASE-03",
       "target": "http://example.org/kg-mnp#Ev-03-BILL",
@@ -73,6 +83,7 @@
     },
     {
       "predicate": "usesEvidence",
+      "predicate_iri": "http://example.org/kg-mnp#usesEvidence",
       "source": "http://example.org/kg-mnp#Assessment-CASE-03",
       "source_local": "Assessment-CASE-03",
       "target": "http://example.org/kg-mnp#Ev-03-CTR",
@@ -80,6 +91,7 @@
     },
     {
       "predicate": "usesEvidence",
+      "predicate_iri": "http://example.org/kg-mnp#usesEvidence",
       "source": "http://example.org/kg-mnp#Assessment-CASE-03",
       "source_local": "Assessment-CASE-03",
       "target": "http://example.org/kg-mnp#Ev-03-ID",
@@ -87,6 +99,7 @@
     },
     {
       "predicate": "usesEvidence",
+      "predicate_iri": "http://example.org/kg-mnp#usesEvidence",
       "source": "http://example.org/kg-mnp#Assessment-CASE-03",
       "source_local": "Assessment-CASE-03",
       "target": "http://example.org/kg-mnp#Ev-03-NUM",
@@ -94,6 +107,7 @@
     },
     {
       "predicate": "usesEvidence",
+      "predicate_iri": "http://example.org/kg-mnp#usesEvidence",
       "source": "http://example.org/kg-mnp#Assessment-CASE-03",
       "source_local": "Assessment-CASE-03",
       "target": "http://example.org/kg-mnp#Ev-03-PORT",
@@ -101,6 +115,7 @@
     },
     {
       "predicate": "usesRuleVersion",
+      "predicate_iri": "http://example.org/kg-mnp#usesRuleVersion",
       "source": "http://example.org/kg-mnp#Assessment-CASE-03",
       "source_local": "Assessment-CASE-03",
       "target": "http://example.org/kg-mnp#RuleVersion-MNP-ELIG-001-1-0",
@@ -108,6 +123,7 @@
     },
     {
       "predicate": "usesRuleVersion",
+      "predicate_iri": "http://example.org/kg-mnp#usesRuleVersion",
       "source": "http://example.org/kg-mnp#Assessment-CASE-03",
       "source_local": "Assessment-CASE-03",
       "target": "http://example.org/kg-mnp#RuleVersion-MNP-ELIG-002-1-0",
@@ -115,6 +131,7 @@
     },
     {
       "predicate": "usesRuleVersion",
+      "predicate_iri": "http://example.org/kg-mnp#usesRuleVersion",
       "source": "http://example.org/kg-mnp#Assessment-CASE-03",
       "source_local": "Assessment-CASE-03",
       "target": "http://example.org/kg-mnp#RuleVersion-MNP-ELIG-003-1-0",
@@ -122,6 +139,7 @@
     },
     {
       "predicate": "usesRuleVersion",
+      "predicate_iri": "http://example.org/kg-mnp#usesRuleVersion",
       "source": "http://example.org/kg-mnp#Assessment-CASE-03",
       "source_local": "Assessment-CASE-03",
       "target": "http://example.org/kg-mnp#RuleVersion-MNP-ELIG-004-1-0",
@@ -129,6 +147,7 @@
     },
     {
       "predicate": "usesRuleVersion",
+      "predicate_iri": "http://example.org/kg-mnp#usesRuleVersion",
       "source": "http://example.org/kg-mnp#Assessment-CASE-03",
       "source_local": "Assessment-CASE-03",
       "target": "http://example.org/kg-mnp#RuleVersion-MNP-ELIG-005-1-1",
@@ -136,6 +155,7 @@
     },
     {
       "predicate": "hasEligibilityAssessment",
+      "predicate_iri": "http://example.org/kg-mnp#hasEligibilityAssessment",
       "source": "http://example.org/kg-mnp#CASE-03",
       "source_local": "CASE-03",
       "target": "http://example.org/kg-mnp#Assessment-CASE-03",
@@ -143,6 +163,7 @@
     },
     {
       "predicate": "partOfDocument",
+      "predicate_iri": "http://example.org/kg-mnp#partOfDocument",
       "source": "http://example.org/kg-mnp#Clause-01",
       "source_local": "Clause-01",
       "target": "http://example.org/kg-mnp#Doc-MNP-Regulation-2024",
@@ -150,6 +171,7 @@
     },
     {
       "predicate": "partOfDocument",
+      "predicate_iri": "http://example.org/kg-mnp#partOfDocument",
       "source": "http://example.org/kg-mnp#Clause-02",
       "source_local": "Clause-02",
       "target": "http://example.org/kg-mnp#Doc-MNP-Regulation-2024",
@@ -157,6 +179,7 @@
     },
     {
       "predicate": "partOfDocument",
+      "predicate_iri": "http://example.org/kg-mnp#partOfDocument",
       "source": "http://example.org/kg-mnp#Clause-03",
       "source_local": "Clause-03",
       "target": "http://example.org/kg-mnp#Doc-MNP-Regulation-2024",
@@ -164,6 +187,7 @@
     },
     {
       "predicate": "partOfDocument",
+      "predicate_iri": "http://example.org/kg-mnp#partOfDocument",
       "source": "http://example.org/kg-mnp#Clause-04",
       "source_local": "Clause-04",
       "target": "http://example.org/kg-mnp#Doc-MNP-Regulation-2024",
@@ -171,6 +195,7 @@
     },
     {
       "predicate": "partOfDocument",
+      "predicate_iri": "http://example.org/kg-mnp#partOfDocument",
       "source": "http://example.org/kg-mnp#Clause-05",
       "source_local": "Clause-05",
       "target": "http://example.org/kg-mnp#Doc-MNP-Regulation-2024",
@@ -178,6 +203,7 @@
     },
     {
       "predicate": "dependsOnEvidence",
+      "predicate_iri": "http://example.org/kg-mnp#dependsOnEvidence",
       "source": "http://example.org/kg-mnp#Dep-CASE-03",
       "source_local": "Dep-CASE-03",
       "target": "http://example.org/kg-mnp#Ev-03-BILL",
@@ -185,6 +211,7 @@
     },
     {
       "predicate": "dependsOnEvidence",
+      "predicate_iri": "http://example.org/kg-mnp#dependsOnEvidence",
       "source": "http://example.org/kg-mnp#Dep-CASE-03",
       "source_local": "Dep-CASE-03",
       "target": "http://example.org/kg-mnp#Ev-03-CTR",
@@ -192,6 +219,7 @@
     },
     {
       "predicate": "dependsOnEvidence",
+      "predicate_iri": "http://example.org/kg-mnp#dependsOnEvidence",
       "source": "http://example.org/kg-mnp#Dep-CASE-03",
       "source_local": "Dep-CASE-03",
       "target": "http://example.org/kg-mnp#Ev-03-ID",
@@ -199,6 +227,7 @@
     },
     {
       "predicate": "dependsOnEvidence",
+      "predicate_iri": "http://example.org/kg-mnp#dependsOnEvidence",
       "source": "http://example.org/kg-mnp#Dep-CASE-03",
       "source_local": "Dep-CASE-03",
       "target": "http://example.org/kg-mnp#Ev-03-NUM",
@@ -206,6 +235,7 @@
     },
     {
       "predicate": "dependsOnEvidence",
+      "predicate_iri": "http://example.org/kg-mnp#dependsOnEvidence",
       "source": "http://example.org/kg-mnp#Dep-CASE-03",
       "source_local": "Dep-CASE-03",
       "target": "http://example.org/kg-mnp#Ev-03-PORT",
@@ -213,6 +243,7 @@
     },
     {
       "predicate": "dependsOnRuleVersion",
+      "predicate_iri": "http://example.org/kg-mnp#dependsOnRuleVersion",
       "source": "http://example.org/kg-mnp#Dep-CASE-03",
       "source_local": "Dep-CASE-03",
       "target": "http://example.org/kg-mnp#RuleVersion-MNP-ELIG-001-1-0",
@@ -220,6 +251,7 @@
     },
     {
       "predicate": "dependsOnRuleVersion",
+      "predicate_iri": "http://example.org/kg-mnp#dependsOnRuleVersion",
       "source": "http://example.org/kg-mnp#Dep-CASE-03",
       "source_local": "Dep-CASE-03",
       "target": "http://example.org/kg-mnp#RuleVersion-MNP-ELIG-002-1-0",
@@ -227,6 +259,7 @@
     },
     {
       "predicate": "dependsOnRuleVersion",
+      "predicate_iri": "http://example.org/kg-mnp#dependsOnRuleVersion",
       "source": "http://example.org/kg-mnp#Dep-CASE-03",
       "source_local": "Dep-CASE-03",
       "target": "http://example.org/kg-mnp#RuleVersion-MNP-ELIG-003-1-0",
@@ -234,6 +267,7 @@
     },
     {
       "predicate": "dependsOnRuleVersion",
+      "predicate_iri": "http://example.org/kg-mnp#dependsOnRuleVersion",
       "source": "http://example.org/kg-mnp#Dep-CASE-03",
       "source_local": "Dep-CASE-03",
       "target": "http://example.org/kg-mnp#RuleVersion-MNP-ELIG-004-1-0",
@@ -241,6 +275,7 @@
     },
     {
       "predicate": "dependsOnRuleVersion",
+      "predicate_iri": "http://example.org/kg-mnp#dependsOnRuleVersion",
       "source": "http://example.org/kg-mnp#Dep-CASE-03",
       "source_local": "Dep-CASE-03",
       "target": "http://example.org/kg-mnp#RuleVersion-MNP-ELIG-005-1-1",
@@ -248,6 +283,7 @@
     },
     {
       "predicate": "citesClause",
+      "predicate_iri": "http://example.org/kg-mnp#citesClause",
       "source": "http://example.org/kg-mnp#Reason-CASE-03-ACTIVE_CONTRACT_RESTRICTION",
       "source_local": "Reason-CASE-03-ACTIVE_CONTRACT_RESTRICTION",
       "target": "http://example.org/kg-mnp#Clause-04",
@@ -255,6 +291,7 @@
     },
     {
       "predicate": "recommendsAction",
+      "predicate_iri": "http://example.org/kg-mnp#recommendsAction",
       "source": "http://example.org/kg-mnp#Reason-CASE-03-ACTIVE_CONTRACT_RESTRICTION",
       "source_local": "Reason-CASE-03-ACTIVE_CONTRACT_RESTRICTION",
       "target": "http://example.org/kg-mnp#Action-WAIT_OR_TERMINATE_CONTRACT",
@@ -262,6 +299,7 @@
     },
     {
       "predicate": "supportedByEvidence",
+      "predicate_iri": "http://example.org/kg-mnp#supportedByEvidence",
       "source": "http://example.org/kg-mnp#Reason-CASE-03-ACTIVE_CONTRACT_RESTRICTION",
       "source_local": "Reason-CASE-03-ACTIVE_CONTRACT_RESTRICTION",
       "target": "http://example.org/kg-mnp#Ev-03-CTR",
@@ -269,6 +307,7 @@
     },
     {
       "predicate": "triggeredByRule",
+      "predicate_iri": "http://example.org/kg-mnp#triggeredByRule",
       "source": "http://example.org/kg-mnp#Reason-CASE-03-ACTIVE_CONTRACT_RESTRICTION",
       "source_local": "Reason-CASE-03-ACTIVE_CONTRACT_RESTRICTION",
       "target": "http://example.org/kg-mnp#Rule-MNP-ELIG-004",
@@ -276,6 +315,7 @@
     },
     {
       "predicate": "triggeredByRuleVersion",
+      "predicate_iri": "http://example.org/kg-mnp#triggeredByRuleVersion",
       "source": "http://example.org/kg-mnp#Reason-CASE-03-ACTIVE_CONTRACT_RESTRICTION",
       "source_local": "Reason-CASE-03-ACTIVE_CONTRACT_RESTRICTION",
       "target": "http://example.org/kg-mnp#RuleVersion-MNP-ELIG-004-1-0",
@@ -283,6 +323,7 @@
     },
     {
       "predicate": "operationalizesClause",
+      "predicate_iri": "http://example.org/kg-mnp#operationalizesClause",
       "source": "http://example.org/kg-mnp#Rule-MNP-ELIG-001",
       "source_local": "Rule-MNP-ELIG-001",
       "target": "http://example.org/kg-mnp#Clause-01",
@@ -290,6 +331,7 @@
     },
     {
       "predicate": "operationalizesClause",
+      "predicate_iri": "http://example.org/kg-mnp#operationalizesClause",
       "source": "http://example.org/kg-mnp#Rule-MNP-ELIG-002",
       "source_local": "Rule-MNP-ELIG-002",
       "target": "http://example.org/kg-mnp#Clause-02",
@@ -297,6 +339,7 @@
     },
     {
       "predicate": "operationalizesClause",
+      "predicate_iri": "http://example.org/kg-mnp#operationalizesClause",
       "source": "http://example.org/kg-mnp#Rule-MNP-ELIG-003",
       "source_local": "Rule-MNP-ELIG-003",
       "target": "http://example.org/kg-mnp#Clause-03",
@@ -304,6 +347,7 @@
     },
     {
       "predicate": "operationalizesClause",
+      "predicate_iri": "http://example.org/kg-mnp#operationalizesClause",
       "source": "http://example.org/kg-mnp#Rule-MNP-ELIG-004",
       "source_local": "Rule-MNP-ELIG-004",
       "target": "http://example.org/kg-mnp#Clause-04",
@@ -311,6 +355,7 @@
     },
     {
       "predicate": "operationalizesClause",
+      "predicate_iri": "http://example.org/kg-mnp#operationalizesClause",
       "source": "http://example.org/kg-mnp#Rule-MNP-ELIG-005-v1-1",
       "source_local": "Rule-MNP-ELIG-005-v1-1",
       "target": "http://example.org/kg-mnp#Clause-05",
@@ -481,6 +526,7 @@
       "type": "RuleVersion"
     }
   ],
+  "query_file": "assessment_subgraph.rq",
   "root": "http://example.org/kg-mnp#CASE-03",
   "root_local": "CASE-03"
 }

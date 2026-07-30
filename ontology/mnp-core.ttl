@@ -356,6 +356,12 @@ mnp:assessmentIdentifier a owl:DatatypeProperty ;
     rdfs:domain mnp:EligibilityAssessment ;
     rdfs:range xsd:string .
 
+mnp:assessmentTime a owl:DatatypeProperty ;
+    rdfs:domain mnp:EligibilityAssessment ;
+    rdfs:range xsd:dateTime ;
+    rdfs:label "assessment time"@en ;
+    rdfs:comment "The as-of datetime used when selecting applicable rule versions and evaluating evidence validity for this assessment."@en .
+
 mnp:requiresReassessment a owl:DatatypeProperty ;
     rdfs:domain mnp:EligibilityAssessment ;
     rdfs:range xsd:boolean .

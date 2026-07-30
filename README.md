@@ -62,7 +62,7 @@ python scripts/showcase_demo.py --case CASE-03
 
 * CASE-03 输入摘要（证据经 `hasCaseEvidence` 关联）；
 * **输入图** SHACL 验证 → OWL-RL → 资格判断 → **评估结果图** SHACL 验证；
-* 真实 RDF 依赖子图追溯（非伪线性链）；
+追溯子图由 `queries/assessment_subgraph.rq` 运行生成，Python（`trace_graph.py`）仅负责将 SPARQL 结果转换为稳定的 nodes/edges，并校验每条边确实存在于 RDF 图中。
 * 六个案例汇总；
 * HTML 演示报告。
 

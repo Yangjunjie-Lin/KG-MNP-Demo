@@ -68,10 +68,18 @@ def test_case_06_updated_rule_blocks_port_interval():
 
 
 def test_case_06_old_rules_would_pass():
-    g = load_case_graph("CASE-06")
-    outcomes = evaluate_rules(g, "CASE-06", use_updated_rules=False)
-    assert summarize_decision(outcomes) == "ELIGIBLE"
+    from datetime import datetime, timezone
 
+    g = load_case_graph("CASE-06")
+    # Historical window: MNP-ELIG-005 v1.0 still applicable (min 120 days).
+    outcomes = evaluate_rules(
+        g,
+        "CASE-06",
+        assessment_time=datetime(2026, 5, 15, 12, 0, 0, tzinfo=timezone.utc),
+    )
+    assert summarize_decision(outcomes) == "ELIGIBLE"
+    port = next(o for o in outcomes if o.rule_id == "MNP-ELIG-005")
+    assert port.version == "1.0"
 
 def test_rules_metadata_complete():
     for rule in load_rules(include_updates=False):

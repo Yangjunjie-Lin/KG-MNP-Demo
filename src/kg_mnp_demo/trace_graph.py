@@ -1,12 +1,18 @@
-"""Build real RDF dependency subgraphs for eligibility assessments."""
+"""Build real RDF dependency subgraphs for eligibility assessments.
+
+Edge selection is defined solely by ``queries/assessment_subgraph.rq``.
+Python converts SPARQL rows into stable nodes/edges and validates integrity.
+"""
 
 from __future__ import annotations
 
+from pathlib import Path
 from typing import Any
 
-from rdflib import Graph, URIRef
-from rdflib.namespace import RDF
+from rdflib import Graph, Literal, URIRef
+from rdflib.namespace import RDF, XSD
 
+from kg_mnp_demo.loader import query_path
 from kg_mnp_demo.namespaces import MNP
 from kg_mnp_demo.rule_engine import resolve_case_uri
 
@@ -30,28 +36,11 @@ PREFERRED_TYPES = [
     "ReassessmentMarker",
 ]
 
-ASSESSMENT_PREDICATES = [
-    MNP.aboutCase,
-    MNP.usesEvidence,
-    MNP.evaluatedByRule,
-    MNP.usesRuleVersion,
-    MNP.producesDecision,
-    MNP.producesBlockingReason,
-    MNP.dependsOn,
-]
+SUBGRAPH_QUERY_FILE = "assessment_subgraph.rq"
 
-REASON_PREDICATES = [
-    MNP.supportedByEvidence,
-    MNP.triggeredByRule,
-    MNP.triggeredByRuleVersion,
-    MNP.citesClause,
-    MNP.recommendsAction,
-]
 
-DEPENDENCY_PREDICATES = [
-    MNP.dependsOnEvidence,
-    MNP.dependsOnRuleVersion,
-]
+class TraceSubgraphIntegrityError(RuntimeError):
+    """Raised when the SPARQL subgraph contains edges absent from the RDF graph."""
 
 
 def _local(iri: str | None) -> str:
@@ -103,134 +92,36 @@ def _types_of(graph: Graph, node: URIRef) -> set[str]:
     return {str(t) for t in graph.objects(node, RDF.type)}
 
 
-def _add_edge(
-    edges: list[dict[str, str]],
-    edge_keys: set[tuple[str, str, str]],
-    node_types: dict[str, set[str]],
-    graph: Graph,
-    subject: URIRef,
-    predicate: URIRef,
-    obj: URIRef,
-) -> None:
-    if not isinstance(obj, URIRef):
-        return
-    s, p, o = str(subject), _local(str(predicate)), str(obj)
-    key = (s, p, o)
-    if key in edge_keys:
-        return
-    edge_keys.add(key)
-    node_types.setdefault(s, set()).update(_types_of(graph, subject))
-    node_types.setdefault(o, set()).update(_types_of(graph, obj))
-    edges.append(
-        {
-            "source": s,
-            "predicate": p,
-            "target": o,
-            "source_local": _local(s),
-            "target_local": _local(o),
-        }
+def _load_subgraph_query() -> str:
+    path = Path(query_path(SUBGRAPH_QUERY_FILE))
+    if not path.exists():
+        raise FileNotFoundError(f"Missing subgraph query file: {path}")
+    return path.read_text(encoding="utf-8")
+
+
+def _run_subgraph_query(graph: Graph, case_id: str) -> list[tuple[URIRef, URIRef, URIRef]]:
+    query = _load_subgraph_query()
+    rows = graph.query(
+        query,
+        initBindings={"requestedCaseId": Literal(case_id, datatype=XSD.string)},
     )
-
-
-def build_assessment_subgraph(graph: Graph, case_id: str) -> dict[str, Any]:
-    """Walk real RDF edges from the case assessment(s). No fabricated predicates."""
-    case_uri = resolve_case_uri(graph, case_id)
-    edges: list[dict[str, str]] = []
-    edge_keys: set[tuple[str, str, str]] = set()
-    node_types: dict[str, set[str]] = {}
-
-    if case_uri is None:
-        return {
-            "case_id": case_id,
-            "root": case_id,
-            "root_local": case_id,
-            "nodes": [],
-            "edges": [],
-        }
-
-    node_types[str(case_uri)] = _types_of(graph, case_uri)
-
-    assessments = sorted(
-        (a for a in graph.objects(case_uri, MNP.hasEligibilityAssessment) if isinstance(a, URIRef)),
-        key=str,
-    )
-    for assessment in assessments:
-        _add_edge(
-            edges,
-            edge_keys,
-            node_types,
-            graph,
-            case_uri,
-            MNP.hasEligibilityAssessment,
-            assessment,
-        )
-        for pred in ASSESSMENT_PREDICATES:
-            for obj in sorted(graph.objects(assessment, pred), key=str):
-                if isinstance(obj, URIRef):
-                    _add_edge(edges, edge_keys, node_types, graph, assessment, pred, obj)
-
-        for rule in sorted(graph.objects(assessment, MNP.evaluatedByRule), key=str):
-            if not isinstance(rule, URIRef):
-                continue
-            for clause in sorted(graph.objects(rule, MNP.operationalizesClause), key=str):
-                if isinstance(clause, URIRef):
-                    _add_edge(
-                        edges,
-                        edge_keys,
-                        node_types,
-                        graph,
-                        rule,
-                        MNP.operationalizesClause,
-                        clause,
-                    )
-                    for doc in sorted(graph.objects(clause, MNP.partOfDocument), key=str):
-                        if isinstance(doc, URIRef):
-                            _add_edge(
-                                edges,
-                                edge_keys,
-                                node_types,
-                                graph,
-                                clause,
-                                MNP.partOfDocument,
-                                doc,
-                            )
-
-        for reason in sorted(graph.objects(assessment, MNP.producesBlockingReason), key=str):
-            if not isinstance(reason, URIRef):
-                continue
-            for pred in REASON_PREDICATES:
-                for obj in sorted(graph.objects(reason, pred), key=str):
-                    if isinstance(obj, URIRef):
-                        _add_edge(edges, edge_keys, node_types, graph, reason, pred, obj)
-
-        for dep in sorted(graph.objects(assessment, MNP.dependsOn), key=str):
-            if not isinstance(dep, URIRef):
-                continue
-            for pred in DEPENDENCY_PREDICATES:
-                for obj in sorted(graph.objects(dep, pred), key=str):
-                    if isinstance(obj, URIRef):
-                        _add_edge(edges, edge_keys, node_types, graph, dep, pred, obj)
-
-    nodes: list[dict[str, Any]] = []
-    for iri, types in sorted(node_types.items(), key=lambda x: _local(x[0])):
-        ntype = _pick_type(types)
-        nodes.append(
-            {
-                "id": iri,
-                "local_id": _local(iri),
-                "type": ntype,
-                "label": _node_label(graph, URIRef(iri), ntype),
-            }
-        )
-
-    edges.sort(key=lambda e: (e["source_local"], e["predicate"], e["target_local"]))
-    return {
-        "case_id": case_id,
-        "root": str(case_uri),
-        "root_local": _local(str(case_uri)),
-        "nodes": nodes,
-        "edges": edges,
-    }
+    triples: list[tuple[URIRef, URIRef, URIRef]] = []
+    for row in rows:
+        subject, predicate, obj = row.subject, row.predicate, row.object
+        if not isinstance(subject, URIRef):
+            raise TraceSubgraphIntegrityError(
+                f"Subgraph subject is not a URIRef: {subject!r}"
+            )
+        if not isinstance(predicate, URIRef):
+            raise TraceSubgraphIntegrityError(
+                f"Subgraph predicate is not a URIRef: {predicate!r}"
+            )
+        if not isinstance(obj, URIRef):
+            raise TraceSubgraphIntegrityError(
+                f"Subgraph object is not a URIRef: {obj!r}"
+            )
+        triples.append((subject, predicate, obj))
+    return triples
 
 
 def edges_exist_in_graph(graph: Graph, subgraph: dict[str, Any]) -> list[dict[str, str]]:
@@ -238,11 +129,86 @@ def edges_exist_in_graph(graph: Graph, subgraph: dict[str, Any]) -> list[dict[st
     missing: list[dict[str, str]] = []
     for edge in subgraph.get("edges", []):
         s = URIRef(edge["source"])
-        p = MNP[edge["predicate"]]
+        p = URIRef(edge.get("predicate_iri") or str(MNP[edge["predicate"]]))
         o = URIRef(edge["target"])
         if (s, p, o) not in graph:
             missing.append(edge)
     return missing
+
+
+def build_assessment_subgraph(graph: Graph, case_id: str) -> dict[str, Any]:
+    """Execute assessment_subgraph.rq and convert rows to nodes/edges."""
+    case_uri = resolve_case_uri(graph, case_id)
+    triples = _run_subgraph_query(graph, case_id)
+
+    edge_keys: set[tuple[str, str, str]] = set()
+    edges: list[dict[str, str]] = []
+    node_iris: set[str] = set()
+
+    if case_uri is not None:
+        node_iris.add(str(case_uri))
+
+    for subject, predicate, obj in triples:
+        s, p_iri, o = str(subject), str(predicate), str(obj)
+        pred_local = _local(p_iri)
+        key = (s, p_iri, o)
+        if key in edge_keys:
+            continue
+        edge_keys.add(key)
+        node_iris.add(s)
+        node_iris.add(o)
+        edges.append(
+            {
+                "source": s,
+                "predicate": pred_local,
+                "predicate_iri": p_iri,
+                "target": o,
+                "source_local": _local(s),
+                "target_local": _local(o),
+            }
+        )
+
+    nodes: list[dict[str, Any]] = []
+    for iri in sorted(node_iris, key=_local):
+        uri = URIRef(iri)
+        ntype = _pick_type(_types_of(graph, uri))
+        nodes.append(
+            {
+                "id": iri,
+                "local_id": _local(iri),
+                "type": ntype,
+                "label": _node_label(graph, uri, ntype),
+            }
+        )
+
+    edges.sort(key=lambda e: (e["source_local"], e["predicate"], e["target_local"]))
+    subgraph = {
+        "case_id": case_id,
+        "root": str(case_uri) if case_uri is not None else case_id,
+        "root_local": _local(str(case_uri)) if case_uri is not None else case_id,
+        "nodes": nodes,
+        "edges": edges,
+        "query_file": SUBGRAPH_QUERY_FILE,
+    }
+
+    missing = edges_exist_in_graph(graph, subgraph)
+    if missing:
+        sample = missing[0]
+        raise TraceSubgraphIntegrityError(
+            f"Subgraph edge missing from RDF graph: "
+            f"{sample['source_local']} -{sample['predicate']}-> {sample['target_local']} "
+            f"({len(missing)} missing)"
+        )
+
+    # Every edge endpoint must appear in nodes
+    node_ids = {n["id"] for n in nodes}
+    for edge in edges:
+        if edge["source"] not in node_ids or edge["target"] not in node_ids:
+            raise TraceSubgraphIntegrityError(
+                "Subgraph nodes incomplete relative to edges"
+            )
+
+    return subgraph
 
 
 def format_subgraph_tree(subgraph: dict[str, Any]) -> str:
@@ -289,6 +255,7 @@ def format_subgraph_tree(subgraph: dict[str, Any]) -> str:
             "producesBlockingReason",
             "dependsOn",
             "aboutCase",
+            "markedForReassessment",
         ]
         a_children = children(assessment)
         by_pred: dict[str, list[str]] = {}

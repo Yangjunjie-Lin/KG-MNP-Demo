@@ -22,7 +22,15 @@
 ## 真实追溯子图
 
 追溯展示为以 `EligibilityAssessment` / `BlockingReason` 为中心的**依赖子图**，每条箭头对应真实 RDF 对象属性。  
-不再展示伪造的线性链（例如 `Evidence → triggeredByRuleVersion → Rule → …`）。
+边选择的唯一来源是 `queries/assessment_subgraph.rq`；`trace_graph.py` 只做 SPARQL 结果 → nodes/edges 转换与完整性校验，不再维护第二套 predicate 清单。
+
+## 时间感知规则版本
+
+规则按 `assessment_time` 落在 `effective_from`/`effective_to` 闭区间内选择唯一版本。重叠或无适用版本会抛出 `RuleConfigurationError`。
+
+```bash
+python scripts/check_rule_versions.py
+```
 
 ## 两次 SHACL 验证
 

@@ -54,7 +54,8 @@ def neo4j_load_case(
         "remediation_actions": result.get("remediation_actions"),
         "trace_paths": result.get("trace_paths"),
         "validation_status": result["validation_status"],
-        "tmf_mappings_used": result.get("tmf_mappings_used"),
+        "declared_tmf_mappings": result.get("declared_tmf_mappings")
+        or result.get("tmf_mappings_used"),
         "ontology_sources": result.get("ontology_sources"),
         "backend": "neo4j",
         "neo4j_load": load_info,

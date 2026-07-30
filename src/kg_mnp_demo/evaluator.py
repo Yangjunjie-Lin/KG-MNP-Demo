@@ -6,7 +6,7 @@ from datetime import datetime
 from typing import Any
 
 from rdflib import Graph, Literal, URIRef
-from rdflib.namespace import RDF
+from rdflib.namespace import RDF, XSD
 
 from kg_mnp_demo.mappings import mappings_used_for_case
 from kg_mnp_demo.namespaces import MNP
@@ -66,9 +66,10 @@ def materialize_assessment(
     graph: Graph,
     case_id: str,
     *,
-    use_updated_rules: bool = True,
+    use_updated_rules: bool | None = True,
     assessment_time: datetime | None = None,
     validate: bool = True,
+    rule_version_overrides: dict[str, str] | None = None,
 ) -> tuple[Graph, dict[str, Any]]:
     as_of = assessment_time or ASSESSMENT_TIME
     outcomes = evaluate_rules(
@@ -76,6 +77,7 @@ def materialize_assessment(
         case_id,
         use_updated_rules=use_updated_rules,
         assessment_time=as_of,
+        rule_version_overrides=rule_version_overrides,
     )
     decision = summarize_decision(outcomes)
 
@@ -83,9 +85,17 @@ def materialize_assessment(
     decision_node = MNP[f"Decision-{case_id}"]
     dependency = MNP[f"Dep-{case_id}"]
     case_uri = resolve_case_uri(graph, case_id) or MNP[case_id]
+    assessment_time_str = as_of.strftime("%Y-%m-%dT%H:%M:%SZ")
 
     graph.add((assessment, RDF.type, MNP.EligibilityAssessment))
     graph.add((assessment, MNP.assessmentIdentifier, Literal(f"ASSESS-{case_id}")))
+    graph.add(
+        (
+            assessment,
+            MNP.assessmentTime,
+            Literal(assessment_time_str, datatype=XSD.dateTime),
+        )
+    )
     graph.add((assessment, MNP.aboutCase, case_uri))
     graph.add((case_uri, MNP.hasEligibilityAssessment, assessment))
     graph.add((assessment, MNP.dependsOn, dependency))
@@ -116,6 +126,9 @@ def materialize_assessment(
                 "rule_id": outcome.rule_id,
                 "version": outcome.version,
                 "effective_from": outcome.effective_from,
+                "effective_to": outcome.effective_to,
+                "selected_for_assessment_time": outcome.selected_for_assessment_time
+                or assessment_time_str,
                 "status": outcome.status,
             }
         )
@@ -133,13 +146,7 @@ def materialize_assessment(
             reason = MNP[f"Reason-{case_id}-{outcome.reason_code}"]
             graph.add((reason, RDF.type, MNP.BlockingReason))
             graph.add((reason, MNP.reasonCode, Literal(outcome.reason_code)))
-            graph.add(
-                (
-                    reason,
-                    MNP.reasonDescription,
-                    Literal(outcome.message),
-                )
-            )
+            graph.add((reason, MNP.reasonDescription, Literal(outcome.message)))
             graph.add((assessment, MNP.producesBlockingReason, reason))
             if outcome.evidence_iri:
                 graph.add((reason, MNP.supportedByEvidence, URIRef(outcome.evidence_iri)))
@@ -169,6 +176,9 @@ def materialize_assessment(
                 "rule_id": outcome.rule_id,
                 "rule_version": outcome.version,
                 "effective_from": outcome.effective_from,
+                "effective_to": outcome.effective_to,
+                "assessment_time": outcome.selected_for_assessment_time
+                or assessment_time_str,
                 "regulatory_clause": outcome.regulatory_clause,
                 "action_code": outcome.action_code,
                 "evidence": _evidence_snapshot(graph, outcome.evidence_iri),
@@ -188,11 +198,9 @@ def materialize_assessment(
                 }
             )
 
-    # CASE-06: mark historical assessments that used superseded rule versions
     if case_id == "CASE-06":
         _mark_reassessments(graph)
 
-    # Eligible path still has a trace
     if decision == "ELIGIBLE":
         for outcome in outcomes:
             trace_paths.append(
@@ -209,7 +217,6 @@ def materialize_assessment(
                 }
             )
 
-    assessment_time_str = as_of.strftime("%Y-%m-%dT%H:%M:%SZ")
     validation = validate_graph(graph) if validate else None
     result = {
         "case_id": case_id,
@@ -229,7 +236,7 @@ def materialize_assessment(
             if validation
             else ""
         ),
-        "tmf_mappings_used": mappings_used_for_case(),
+        "declared_tmf_mappings": mappings_used_for_case(),
         "ontology_sources": [
             {
                 "name": "Point-Topic/cto-ontology",
@@ -265,7 +272,6 @@ def _mark_reassessments(graph: Graph) -> None:
             )
         )
         graph.add((row.assessment, MNP.markedForReassessment, marker))
-        # Replace any pre-seeded false so SPARQL sees a single authoritative flag.
         graph.set((row.assessment, MNP.requiresReassessment, Literal(True)))
         graph.add((row.new, MNP.affectsAssessment, row.assessment))
 
@@ -274,9 +280,10 @@ def evaluate_case(
     graph: Graph,
     case_id: str,
     *,
-    use_updated_rules: bool = True,
+    use_updated_rules: bool | None = True,
     assessment_time: datetime | None = None,
     validate: bool = True,
+    rule_version_overrides: dict[str, str] | None = None,
 ) -> dict[str, Any]:
     _, result = materialize_assessment(
         graph,
@@ -284,5 +291,6 @@ def evaluate_case(
         use_updated_rules=use_updated_rules,
         assessment_time=assessment_time,
         validate=validate,
+        rule_version_overrides=rule_version_overrides,
     )
     return result

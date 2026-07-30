@@ -41,7 +41,15 @@ Evidence selection is relation-based. IRI naming prefixes such as `Ev-03-` are d
 
 ## Trace structure
 
-Audit output is a **dependency subgraph** rooted at the case assessment, not a fabricated linear chain. Edges must exist as RDF triples (`producesBlockingReason`, `supportedByEvidence`, `triggeredByRule`, …).
+Audit output is a **dependency subgraph** rooted at the case assessment.
+Edge selection is defined solely by `queries/assessment_subgraph.rq`.
+Python (`trace_graph.py`) converts SPARQL rows into stable `nodes`/`edges` and verifies every edge exists in the RDF graph. Display layers must not invent predicates.
+
+## Rule version selection
+
+Applicable rule versions are chosen by `assessment_time` against closed
+`effective_from`/`effective_to` windows. Overlaps or gaps raise
+`RuleConfigurationError` (see `scripts/check_rule_versions.py`).
 
 ## Responsibility split
 

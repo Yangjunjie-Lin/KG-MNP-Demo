@@ -12,7 +12,7 @@ def test_cli_evaluate_case_03(capsys):
     assert out["case_id"] == "CASE-03"
     assert out["decision"] == "BLOCKED"
     assert out["backend"] == "rdf"
-    assert "tmf_mappings_used" in out
+    assert "declared_tmf_mappings" in out or "tmf_mappings_used" in out
     assert "ontology_sources" in out
 
 
