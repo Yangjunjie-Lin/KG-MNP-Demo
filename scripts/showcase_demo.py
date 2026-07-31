@@ -1023,7 +1023,6 @@ def write_outputs(
 
     mapping = {
         f"{prefix}_input_summary.json": primary["input_summary"],
-        f"{prefix}_validation.json": primary["validation"],
         f"{prefix}_input_validation.json": primary.get("input_validation")
         or primary["validation"],
         f"{prefix}_assessment_validation.json": primary.get("assessment_validation")

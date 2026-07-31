@@ -38,6 +38,16 @@ def test_showcase_runs_rdf_offline(showcase, tmp_path):
     assert payload["decision"] == "BLOCKED"
 
 
+def test_showcase_writes_only_dual_validation_files(showcase, tmp_path):
+    code = showcase.main(
+        ["--case", "CASE-03", "--output-dir", str(tmp_path), "--no-html"]
+    )
+    assert code == 0
+    assert (tmp_path / "case03_input_validation.json").exists()
+    assert (tmp_path / "case03_assessment_validation.json").exists()
+    assert not (tmp_path / "case03_validation.json").exists()
+
+
 def test_case03_contract_block_and_trace(showcase, tmp_path):
     primary = showcase.evaluate_pipeline("CASE-03")
     assert primary["backend"] == "rdf"

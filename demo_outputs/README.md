@@ -19,3 +19,12 @@ python scripts/showcase_demo.py \
 |------|------|
 | `demo_outputs/` | 可版本控制的确认演示快照 |
 | `runtime_outputs/` | 用户本地运行时生成，不进入 Git |
+
+## 双 SHACL 验证快照
+
+| 文件 | 含义 |
+|------|------|
+| `case03_input_validation.json` | 输入 RDF 图的 SHACL 验证结果 |
+| `case03_assessment_validation.json` | 资格判断物化后评估图的 SHACL 验证结果 |
+
+不再生成旧兼容文件 `case03_validation.json`（内容与 `case03_input_validation.json` 重复）。
