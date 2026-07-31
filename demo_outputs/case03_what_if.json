@@ -1,0 +1,15 @@
+{
+  "baseline_decision": "BLOCKED",
+  "blocking_reasons": [],
+  "decision": "ELIGIBLE",
+  "ttl_unchanged": true,
+  "what_if": {
+    "mutations": [
+      "set Ev-03-CTR contractStatusCode=EXPIRED",
+      "set Ev-03-CTR contractEndTime=2026-01-01T00:00:00+00:00",
+      "set Contract-03 contractStatusCode=EXPIRED",
+      "合约已经到期"
+    ],
+    "scenario": "contract-expired"
+  }
+}

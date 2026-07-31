@@ -14,11 +14,14 @@
 ## Commands
 
 ```bash
-python -m kg_mnp_demo.cli evaluate --case CASE-03
-python -m kg_mnp_demo.cli trace --case CASE-03
-python -m kg_mnp_demo.cli run-all
+python scripts/showcase_demo.py
+python -m kg_mnp_demo.cli evaluate --case CASE-03 --backend rdf
+python -m kg_mnp_demo.cli trace --case CASE-03 --backend rdf
+python -m kg_mnp_demo.cli run-all --backend rdf
 pytest
 ```
+
+离线演示默认使用 RDF。详见 `docs/local_showcase.md`。
 
 ## Protégé
 

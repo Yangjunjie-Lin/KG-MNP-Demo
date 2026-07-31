@@ -1,0 +1,54 @@
+{
+  "schema_version": "1.0",
+  "case_id": "CASE-01",
+  "assessment_time": "2026-07-01T00:00:00Z",
+  "subscriber": {
+    "subscriber_id": "SUB-01"
+  },
+  "phone_number": {
+    "masked_number": "138****0001"
+  },
+  "account": {
+    "account_id": "ACC-01"
+  },
+  "evidence": {
+    "identity": {
+      "matched": true,
+      "source_system": "CRM",
+      "generated_at": "2026-06-20T10:00:00Z",
+      "valid_until": "2026-12-31T23:59:59Z",
+      "status": "VALID"
+    },
+    "number_status": {
+      "status_code": "ACTIVE",
+      "source_system": "HLR",
+      "generated_at": "2026-06-20T10:05:00Z",
+      "valid_until": "2026-12-31T23:59:59Z",
+      "status": "VALID"
+    },
+    "billing": {
+      "outstanding_amount": 0,
+      "currency": "CNY",
+      "has_payment_arrangement": false,
+      "source_system": "BILLING",
+      "generated_at": "2026-06-20T10:10:00Z",
+      "valid_until": "2026-12-31T23:59:59Z",
+      "status": "VALID"
+    },
+    "contract": {
+      "contract_status": "EXPIRED",
+      "contract_end_time": "2025-01-01T00:00:00Z",
+      "source_system": "CONTRACT",
+      "generated_at": "2026-06-20T10:15:00Z",
+      "valid_until": "2026-12-31T23:59:59Z",
+      "status": "VALID"
+    },
+    "porting_history": {
+      "days_since_last_port": 400,
+      "source_system": "MNP_HISTORY",
+      "generated_at": "2026-06-20T10:20:00Z",
+      "valid_until": "2026-12-31T23:59:59Z",
+      "status": "VALID"
+    }
+  }
+}

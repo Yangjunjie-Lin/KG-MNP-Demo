@@ -1,0 +1,22 @@
+{
+  "backend": "rdf",
+  "case_id": "CASE-03",
+  "sample_inferences": [
+    {
+      "display": "SystemObservation → 推导为 EvidenceRecord",
+      "from_type": "SystemObservation",
+      "subject": "Ev-03-ID",
+      "to_type": "EvidenceRecord"
+    },
+    {
+      "display": "BlockingDecision → 推导为 EligibilityDecision",
+      "from_type": "BlockingDecision",
+      "subject": "Decision-CASE-03",
+      "to_type": "EligibilityDecision"
+    }
+  ],
+  "triples_added": 973,
+  "triples_after": 1510,
+  "triples_after_assessment": 1650,
+  "triples_before": 537
+}

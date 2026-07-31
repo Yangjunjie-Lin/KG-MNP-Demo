@@ -1,0 +1,92 @@
+PREFIX mnp: <http://example.org/kg-mnp#>
+
+# Sole runtime source of assessment dependency edges.
+# Bind ?requestedCaseId via RDFLib initBindings (xsd:string literal).
+
+SELECT DISTINCT ?subject ?predicate ?object
+WHERE {
+  ?case mnp:caseIdentifier ?caseId ;
+        mnp:hasEligibilityAssessment ?assessment .
+  FILTER(STR(?caseId) = STR(?requestedCaseId))
+
+  {
+    ?case mnp:hasEligibilityAssessment ?assessment .
+    BIND(?case AS ?subject)
+    BIND(mnp:hasEligibilityAssessment AS ?predicate)
+    BIND(?assessment AS ?object)
+  }
+  UNION
+  {
+    ?assessment ?predicate ?object .
+    FILTER(?predicate IN (
+      mnp:aboutCase,
+      mnp:usesEvidence,
+      mnp:evaluatedByRule,
+      mnp:usesRuleVersion,
+      mnp:producesDecision,
+      mnp:producesBlockingReason,
+      mnp:dependsOn,
+      mnp:markedForReassessment
+    ))
+    BIND(?assessment AS ?subject)
+  }
+  UNION
+  {
+    ?reason a mnp:BlockingReason .
+    ?assessment mnp:producesBlockingReason ?reason .
+    ?reason ?predicate ?object .
+    FILTER(?predicate IN (
+      mnp:supportedByEvidence,
+      mnp:triggeredByRule,
+      mnp:triggeredByRuleVersion,
+      mnp:citesClause,
+      mnp:recommendsAction
+    ))
+    BIND(?reason AS ?subject)
+  }
+  UNION
+  {
+    ?assessment mnp:evaluatedByRule ?rule .
+    ?rule mnp:operationalizesClause ?clause .
+    BIND(?rule AS ?subject)
+    BIND(mnp:operationalizesClause AS ?predicate)
+    BIND(?clause AS ?object)
+  }
+  UNION
+  {
+    ?assessment mnp:evaluatedByRule ?rule .
+    ?rule mnp:operationalizesClause ?clause .
+    ?clause mnp:partOfDocument ?doc .
+    BIND(?clause AS ?subject)
+    BIND(mnp:partOfDocument AS ?predicate)
+    BIND(?doc AS ?object)
+  }
+  UNION
+  {
+    ?assessment mnp:dependsOn ?dependency .
+    ?dependency ?predicate ?object .
+    FILTER(?predicate IN (
+      mnp:dependsOnEvidence,
+      mnp:dependsOnRuleVersion
+    ))
+    BIND(?dependency AS ?subject)
+  }
+  UNION
+  {
+    ?assessment mnp:usesRuleVersion ?oldRv .
+    ?newRv mnp:supersedesRuleVersion ?oldRv .
+    BIND(?newRv AS ?subject)
+    BIND(mnp:supersedesRuleVersion AS ?predicate)
+    BIND(?oldRv AS ?object)
+  }
+  UNION
+  {
+    ?newRv mnp:affectsAssessment ?assessment .
+    BIND(?newRv AS ?subject)
+    BIND(mnp:affectsAssessment AS ?predicate)
+    BIND(?assessment AS ?object)
+  }
+
+  FILTER(isIRI(?subject) && isIRI(?predicate) && isIRI(?object))
+}
+ORDER BY ?subject ?predicate ?object

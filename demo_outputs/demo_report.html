@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>KG-MNP 携号转网资格判断领域本体演示</title>
+<style>
+  :root {
+    --ink: #1c2430;
+    --muted: #5b6777;
+    --line: #d7dde6;
+    --bg: #f3f6fa;
+    --panel: #ffffff;
+    --accent: #0b6e4f;
+    --warn: #9b2c2c;
+    --ok: #276749;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    color: var(--ink);
+    background:
+      radial-gradient(1200px 500px at 10% -10%, #dceee6 0%, transparent 55%),
+      radial-gradient(900px 400px at 100% 0%, #e7eef8 0%, transparent 50%),
+      var(--bg);
+    line-height: 1.55;
+  }
+  header {
+    padding: 2.5rem 1.5rem 1.5rem;
+    max-width: 980px;
+    margin: 0 auto;
+  }
+  h1 { margin: 0 0 0.75rem; font-size: 1.85rem; letter-spacing: 0.01em; }
+  .question {
+    font-size: 1.05rem;
+    color: var(--muted);
+    border-left: 4px solid var(--accent);
+    padding-left: 1rem;
+    margin: 1rem 0 0;
+  }
+  main { max-width: 980px; margin: 0 auto; padding: 0 1.5rem 3rem; }
+  section {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 1.25rem 1.35rem;
+    margin: 1rem 0;
+  }
+  h2 { margin: 0 0 0.85rem; font-size: 1.2rem; }
+  .flow {
+    display: flex; flex-wrap: wrap; gap: 0.4rem; align-items: center;
+    font-size: 0.95rem;
+  }
+  .flow span {
+    background: #eef5f1; border: 1px solid #cfe0d7; border-radius: 999px;
+    padding: 0.25rem 0.7rem;
+  }
+  .decision-box {
+    display: flex; gap: 1rem; flex-wrap: wrap; align-items: stretch;
+  }
+  .badge {
+    min-width: 160px; padding: 1rem; border-radius: 10px;
+    background: #fff5f5; border: 1px solid #f0c2c2; color: var(--warn);
+    font-size: 1.4rem; font-weight: 700; text-align: center;
+  }
+  .badge.ok { background: #f0fff4; border-color: #c6f6d5; color: var(--ok); }
+  .reason {
+    padding: 0.75rem 1rem; border-radius: 8px; background: #f7fafc;
+    border: 1px solid var(--line); margin: 0.35rem 0;
+  }
+  .muted { color: var(--muted); }
+  table { width: 100%; border-collapse: collapse; font-size: 0.95rem; }
+  th, td { border-bottom: 1px solid var(--line); padding: 0.55rem 0.4rem; text-align: left; vertical-align: top; }
+  th { color: var(--muted); font-weight: 600; }
+  .subgraph ul.tree { list-style: none; padding-left: 1rem; }
+  .subgraph .pred { color: var(--accent); font-family: ui-monospace, Consolas, monospace; font-size: 0.9rem; margin-right: 0.35rem; }
+  .subgraph .node { display: inline-block; margin: 0.15rem 0; padding: 0.2rem 0.45rem; background: #f8fafc; border: 1px solid var(--line); border-radius: 6px; }
+  .subgraph .ntype { color: var(--muted); font-size: 0.78rem; margin-right: 0.35rem; }
+  .subgraph .nlabel, .subgraph .leaf { font-weight: 600; }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 0.5rem; }
+  .pill {
+    border: 1px solid var(--line); border-radius: 8px; padding: 0.45rem 0.65rem;
+    background: #fcfdff; font-family: ui-monospace, Consolas, monospace; font-size: 0.88rem;
+  }
+  .note { color: var(--muted); font-size: 0.92rem; }
+  footer { max-width: 980px; margin: 0 auto; padding: 0 1.5rem 2rem; color: var(--muted); font-size: 0.9rem; }
+</style>
+</head>
+<body>
+<header>
+  <h1>KG-MNP 携号转网资格判断领域本体演示</h1>
+  <p class="question">如何使用领域本体，把携号转网资格判断中的案件、证据、规则版本、监管条款、资格结论、阻塞原因和处理动作组织成可检查、可追溯和可复核的语义结构？</p>
+  <p class="note">本次演示使用固定评估时间，以保证结果可重复。（ASSESSMENT_TIME = 2026-07-01T00:00:00Z） · backend=rdf</p>
+</header>
+<main>
+<section>
+  <h2>输入摘要（CASE-03）</h2>
+  <table>
+    <tr><th>字段</th><th>值</th></tr>
+    <tr><td>案件编号</td><td>CASE-03</td></tr>
+    <tr><td>申请人</td><td>Sub-03</td></tr>
+    <tr><td>脱敏号码</td><td>138****0003</td></tr>
+    <tr><td>号码状态</td><td>ACTIVE</td></tr>
+    <tr><td>实名是否一致</td><td>True</td></tr>
+    <tr><td>欠费金额</td><td>0.00</td></tr>
+    <tr><td>缴费安排</td><td>False</td></tr>
+    <tr><td>合约状态</td><td>ACTIVE</td></tr>
+    <tr><td>合约截止时间</td><td>2027-01-01T00:00:00+00:00</td></tr>
+    <tr><td>距上次携转天数</td><td>250</td></tr>
+    <tr><td>资格评估时间</td><td>2026-07-01T00:00:00Z</td></tr>
+  </table>
+  <h3>证据</h3>
+  <table>
+    <tr><th>类型</th><th>证据 ID</th><th>状态</th><th>来源系统</th></tr>
+    <tr><td>身份核验证据</td><td>Ev-03-ID</td><td>VALID</td><td>CRM</td></tr><tr><td>号码状态证据</td><td>Ev-03-NUM</td><td>VALID</td><td>HLR</td></tr><tr><td>计费证据</td><td>Ev-03-BILL</td><td>VALID</td><td>BILLING</td></tr><tr><td>合约证据</td><td>Ev-03-CTR</td><td>VALID</td><td>CONTRACT</td></tr><tr><td>携转历史证据</td><td>Ev-03-PORT</td><td>VALID</td><td>MNP_HISTORY</td></tr>
+  </table>
+</section>
+
+<section>
+  <h2>处理流程</h2>
+  <div class="flow">
+    <span>输入案例</span>→
+    <span>输入图 SHACL（PASSED）</span>→
+    <span>OWL-RL 推理（+973）</span>→
+    <span>资格规则判断</span>→
+    <span>评估结果图 SHACL（PASSED）</span>→
+    <span>SPARQL 追溯子图</span>→
+    <span>结构化输出</span>
+  </div>
+  <ul><li>SystemObservation → 推导为 EvidenceRecord（实例 Ev-03-ID）</li><li>BlockingDecision → 推导为 EligibilityDecision（实例 Decision-CASE-03）</li></ul>
+</section>
+
+<section>
+  <h2>资格结论</h2>
+  <div class="decision-box">
+    <div class="badge ">BLOCKED</div>
+    <div style="flex:1"><div class='reason'>ACTIVE_CONTRACT_RESTRICTION</div></div>
+  </div>
+  <p class="note">输入图 SHACL：PASSED · 评估结果图 SHACL：PASSED · 发布状态：PUBLISHABLE</p>
+</section>
+
+<section>
+  <h2>资格判断追溯子图</h2>
+  <p class="muted">箭头均为真实 RDF 对象属性；非线性伪链。</p>
+  <div class="subgraph"><div class="node root"><span class="ntype">MNPCase</span> <span class="nlabel">CASE-03</span></div><ul class='tree'><li><span class='pred'>hasEligibilityAssessment</span><div class='node'><span class='ntype'>EligibilityAssessment</span> <span class='nlabel'>ASSESS-CASE-03</span></div><ul><li><span class='pred'>usesEvidence</span><ul><li><div class='node'>EvidenceRecord: Ev-03-BILL</div></li><li><div class='node'>EvidenceRecord: Ev-03-CTR</div></li><li><div class='node'>EvidenceRecord: Ev-03-ID</div></li><li><div class='node'>EvidenceRecord: Ev-03-NUM</div></li><li><div class='node'>EvidenceRecord: Ev-03-PORT</div></li></ul></li><li><span class='pred'>evaluatedByRule</span><ul><li><div class='node'>EligibilityRule: MNP-ELIG-001</div><ul><li><span class='pred'>operationalizesClause</span><div class='node'>RegulatoryClause: REG-MNP-CLAUSE-01</div></li></ul></li><li><div class='node'>EligibilityRule: MNP-ELIG-002</div><ul><li><span class='pred'>operationalizesClause</span><div class='node'>RegulatoryClause: REG-MNP-CLAUSE-02</div></li></ul></li><li><div class='node'>EligibilityRule: MNP-ELIG-003</div><ul><li><span class='pred'>operationalizesClause</span><div class='node'>RegulatoryClause: REG-MNP-CLAUSE-03</div></li></ul></li><li><div class='node'>EligibilityRule: MNP-ELIG-004</div><ul><li><span class='pred'>operationalizesClause</span><div class='node'>RegulatoryClause: REG-MNP-CLAUSE-04</div></li></ul></li><li><div class='node'>EligibilityRule: MNP-ELIG-005</div><ul><li><span class='pred'>operationalizesClause</span><div class='node'>RegulatoryClause: REG-MNP-CLAUSE-05</div></li></ul></li></ul></li><li><span class='pred'>usesRuleVersion</span><ul><li><div class='node'>RuleVersion: 1.0</div></li><li><div class='node'>RuleVersion: 1.0</div></li><li><div class='node'>RuleVersion: 1.0</div></li><li><div class='node'>RuleVersion: 1.0</div></li><li><div class='node'>RuleVersion: 1.1</div></li></ul></li><li><span class='pred'>producesDecision</span><ul><li><div class='node'>BlockingDecision: BLOCKED</div></li></ul></li><li><span class='pred'>producesBlockingReason</span><ul><li><div class='node'>BlockingReason: ACTIVE_CONTRACT_RESTRICTION</div><ul><li><span class='pred'>citesClause</span> → <span class='leaf'>REG-MNP-CLAUSE-04</span></li><li><span class='pred'>recommendsAction</span> → <span class='leaf'>WAIT_OR_TERMINATE_CONTRACT</span></li><li><span class='pred'>supportedByEvidence</span> → <span class='leaf'>Ev-03-CTR</span></li><li><span class='pred'>triggeredByRule</span> → <span class='leaf'>MNP-ELIG-004</span></li><li><span class='pred'>triggeredByRuleVersion</span> → <span class='leaf'>1.0</span></li></ul></li></ul></li><li><span class='pred'>dependsOn</span><ul><li><div class='node'>AssessmentDependency: AssessmentDependency</div><ul><li><span class='pred'>dependsOnEvidence</span> → <span class='leaf'>Ev-03-BILL</span></li><li><span class='pred'>dependsOnEvidence</span> → <span class='leaf'>Ev-03-CTR</span></li><li><span class='pred'>dependsOnEvidence</span> → <span class='leaf'>Ev-03-ID</span></li><li><span class='pred'>dependsOnEvidence</span> → <span class='leaf'>Ev-03-NUM</span></li><li><span class='pred'>dependsOnEvidence</span> → <span class='leaf'>Ev-03-PORT</span></li><li><span class='pred'>dependsOnRuleVersion</span> → <span class='leaf'>1.0</span></li><li><span class='pred'>dependsOnRuleVersion</span> → <span class='leaf'>1.0</span></li><li><span class='pred'>dependsOnRuleVersion</span> → <span class='leaf'>1.0</span></li><li><span class='pred'>dependsOnRuleVersion</span> → <span class='leaf'>1.0</span></li><li><span class='pred'>dependsOnRuleVersion</span> → <span class='leaf'>1.1</span></li></ul></li></ul></li></ul></li></ul></div>
+</section>
+
+<section>
+  <h2>六个案例汇总</h2>
+  <table>
+    <tr><th>案例</th><th>结论</th><th>阻塞原因</th></tr>
+    <tr><td>CASE-01</td><td><strong>ELIGIBLE</strong></td><td>无</td></tr><tr><td>CASE-02</td><td><strong>BLOCKED</strong></td><td>OUTSTANDING_BALANCE</td></tr><tr><td>CASE-03</td><td><strong>BLOCKED</strong></td><td>ACTIVE_CONTRACT_RESTRICTION</td></tr><tr><td>CASE-04</td><td><strong>BLOCKED</strong></td><td>OUTSTANDING_BALANCE<br/>ACTIVE_CONTRACT_RESTRICTION</td></tr><tr><td>CASE-05</td><td><strong>MANUAL_REVIEW</strong></td><td>MISSING_OR_EXPIRED_EVIDENCE</td></tr><tr><td>CASE-06</td><td><strong>BLOCKED</strong></td><td>PORTING_INTERVAL_TOO_SHORT</td></tr>
+  </table>
+</section>
+
+
+<section>
+  <h2>输入变化演示（what-if）</h2>
+  <p>场景：<code>contract-expired</code></p>
+  <p>原始结论：<strong>BLOCKED</strong></p>
+  <p>变化后结论：<strong>ELIGIBLE</strong></p>
+  <p>原始 TTL 未被修改：True</p>
+</section>
+
+
+<section>
+  <h2>本体核心类</h2>
+  <div class="grid">
+    <div class="pill">MNPCase</div><div class="pill">EligibilityAssessment</div><div class="pill">EvidenceRecord</div><div class="pill">EligibilityRule</div><div class="pill">RuleVersion</div><div class="pill">RegulatoryClause</div><div class="pill">EligibilityDecision</div><div class="pill">BlockingReason</div><div class="pill">RemediationAction</div><div class="pill">AssessmentDependency</div>
+  </div>
+</section>
+
+<section>
+  <h2>本体核心关系</h2>
+  <div class="grid">
+    <div class="pill">hasCaseEvidence</div><div class="pill">hasEligibilityAssessment</div><div class="pill">usesEvidence</div><div class="pill">usesRuleVersion</div><div class="pill">evaluatedByRule</div><div class="pill">producesDecision</div><div class="pill">producesBlockingReason</div><div class="pill">supportedByEvidence</div><div class="pill">triggeredByRule</div><div class="pill">citesClause</div><div class="pill">recommendsAction</div><div class="pill">dependsOn</div>
+  </div>
+</section>
+
+<section>
+  <h2>研究边界</h2>
+  <p>OWL、RDFLib、SHACL、OWL-RL 和知识图谱工具本身不是创新。</p>
+  <p>本项目当前验证的是面向携号转网资格判断的领域本体结构，包括资格评估对象化、证据与规则版本联合追溯、多阻塞原因语义分解、证据缺失安全处理和规则更新影响定位。</p>
+  <p>当前使用合成数据，不代表真实运营商正式业务结论。</p>
+</section>
+</main>
+<footer>
+  由 <code>python scripts/showcase_demo.py</code> 自动生成 · 可直接双击打开 · 无需启动服务器
+</footer>
+</body>
+</html>

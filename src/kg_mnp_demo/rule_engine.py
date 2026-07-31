@@ -8,13 +8,16 @@ from decimal import Decimal
 from typing import Any
 
 import yaml
-from rdflib import Graph, Literal, URIRef
-from rdflib.namespace import RDF, XSD
+from rdflib import Graph, URIRef
 
 from kg_mnp_demo.loader import rules_path
 from kg_mnp_demo.namespaces import MNP
 
 ASSESSMENT_TIME = datetime(2026, 7, 1, 0, 0, 0, tzinfo=timezone.utc)
+
+
+class RuleConfigurationError(ValueError):
+    """Raised when rule YAML validity windows or metadata are invalid."""
 
 
 def _parse_dt(value: Any) -> datetime | None:
@@ -26,24 +29,162 @@ def _parse_dt(value: Any) -> datetime | None:
     return datetime.fromisoformat(text)
 
 
+def _fmt_dt(value: datetime | None) -> str | None:
+    if value is None:
+        return None
+    return value.astimezone(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ")
+
+
+def resolve_case_uri(graph: Graph, case_id: str) -> URIRef | None:
+    """Resolve the MNPCase node by caseIdentifier (not by IRI local-name convention)."""
+    from rdflib import Literal
+    from rdflib.namespace import XSD
+
+    q = """
+    PREFIX mnp: <http://example.org/kg-mnp#>
+    SELECT ?case WHERE {
+      ?case a mnp:MNPCase ;
+            mnp:caseIdentifier ?caseId .
+      FILTER(STR(?caseId) = STR(?requestedCaseId))
+    }
+    """
+    for row in graph.query(
+        q, initBindings={"requestedCaseId": Literal(case_id, datatype=XSD.string)}
+    ):
+        return row.case
+    return None
+
+
+def _raw_rule_catalog() -> list[dict[str, Any]]:
+    with open(rules_path(), encoding="utf-8") as f:
+        raw = yaml.safe_load(f)
+    return list(raw.get("rules", [])) + list(raw.get("rule_updates", []))
+
+
+def load_all_rule_versions() -> list[dict[str, Any]]:
+    return _raw_rule_catalog()
+
+
 def load_rules(*, include_updates: bool = True) -> list[dict[str, Any]]:
+    """Legacy loader kept for metadata/tests.
+
+    Prefer ``load_applicable_rules(assessment_time)`` for evaluation.
+    """
     with open(rules_path(), encoding="utf-8") as f:
         raw = yaml.safe_load(f)
     rules = list(raw.get("rules", []))
     if include_updates:
-        # Prefer updated versions by replacing same rule_id
         updates = {r["rule_id"]: r for r in raw.get("rule_updates", [])}
         merged: dict[str, dict] = {r["rule_id"]: r for r in rules}
         merged.update(updates)
-        # Keep stable order by rule_id
         return [merged[k] for k in sorted(merged.keys())]
     return rules
 
 
-def load_all_rule_versions() -> list[dict[str, Any]]:
-    with open(rules_path(), encoding="utf-8") as f:
-        raw = yaml.safe_load(f)
-    return list(raw.get("rules", [])) + list(raw.get("rule_updates", []))
+def validate_rule_configuration(catalog: list[dict[str, Any]] | None = None) -> None:
+    """Validate rule metadata and non-overlapping effective windows."""
+    rules = catalog if catalog is not None else _raw_rule_catalog()
+    by_id: dict[str, list[dict[str, Any]]] = {}
+    for rule in rules:
+        for key in ("rule_id", "version", "effective_from", "reason_code", "action_code", "regulatory_clause"):
+            if key not in rule or rule[key] in (None, ""):
+                raise RuleConfigurationError(f"Rule missing required field '{key}': {rule}")
+        start = _parse_dt(rule["effective_from"])
+        if start is None:
+            raise RuleConfigurationError(
+                f"Invalid effective_from for {rule['rule_id']} v{rule['version']}"
+            )
+        end = _parse_dt(rule.get("effective_to"))
+        if end is not None and end < start:
+            raise RuleConfigurationError(
+                f"effective_to < effective_from for {rule['rule_id']} v{rule['version']}"
+            )
+        by_id.setdefault(str(rule["rule_id"]), []).append(rule)
+
+    for rule_id, versions in by_id.items():
+        seen_versions: set[str] = set()
+        intervals: list[tuple[datetime, datetime | None, str]] = []
+        for rule in versions:
+            ver = str(rule["version"])
+            if ver in seen_versions:
+                raise RuleConfigurationError(f"Duplicate version {rule_id} v{ver}")
+            seen_versions.add(ver)
+            start = _parse_dt(rule["effective_from"])
+            assert start is not None
+            end = _parse_dt(rule.get("effective_to"))
+            intervals.append((start, end, ver))
+
+        intervals.sort(key=lambda x: x[0])
+        for i in range(len(intervals)):
+            s1, e1, v1 = intervals[i]
+            for j in range(i + 1, len(intervals)):
+                s2, e2, v2 = intervals[j]
+                # Closed intervals overlap if each starts before/at the other's end
+                end1 = e1 or datetime.max.replace(tzinfo=timezone.utc)
+                end2 = e2 or datetime.max.replace(tzinfo=timezone.utc)
+                if s1 <= end2 and s2 <= end1:
+                    raise RuleConfigurationError(
+                        f"Overlapping validity for {rule_id}: v{v1} and v{v2}"
+                    )
+
+
+def _is_applicable(rule: dict[str, Any], assessment_time: datetime) -> bool:
+    start = _parse_dt(rule["effective_from"])
+    end = _parse_dt(rule.get("effective_to"))
+    if start is None:
+        return False
+    if assessment_time < start:
+        return False
+    if end is not None and assessment_time > end:
+        return False
+    return True
+
+
+def load_applicable_rules(
+    assessment_time: datetime,
+    *,
+    rule_version_overrides: dict[str, str] | None = None,
+) -> list[dict[str, Any]]:
+    """Select exactly one applicable version per rule_id for assessment_time.
+
+    Closed interval: effective_from <= assessment_time <= effective_to
+    (or open-ended when effective_to is null).
+    """
+    validate_rule_configuration()
+    as_of = assessment_time if assessment_time.tzinfo else assessment_time.replace(
+        tzinfo=timezone.utc
+    )
+    catalog = _raw_rule_catalog()
+    overrides = rule_version_overrides or {}
+
+    by_id: dict[str, list[dict[str, Any]]] = {}
+    for rule in catalog:
+        by_id.setdefault(str(rule["rule_id"]), []).append(rule)
+
+    selected: list[dict[str, Any]] = []
+    for rule_id in sorted(by_id.keys()):
+        if rule_id in overrides:
+            wanted = str(overrides[rule_id])
+            matches = [r for r in by_id[rule_id] if str(r["version"]) == wanted]
+            if len(matches) != 1:
+                raise RuleConfigurationError(
+                    f"Override version {rule_id} v{wanted} not found uniquely"
+                )
+            selected.append(matches[0])
+            continue
+
+        applicable = [r for r in by_id[rule_id] if _is_applicable(r, as_of)]
+        if not applicable:
+            raise RuleConfigurationError(
+                f"No applicable rule version for {rule_id} at {_fmt_dt(as_of)}"
+            )
+        if len(applicable) > 1:
+            versions = ", ".join(sorted(str(r["version"]) for r in applicable))
+            raise RuleConfigurationError(
+                f"Multiple applicable versions for {rule_id} at {_fmt_dt(as_of)}: {versions}"
+            )
+        selected.append(applicable[0])
+    return selected
 
 
 @dataclass
@@ -74,24 +215,24 @@ class RuleOutcome:
     regulatory_clause: str | None = None
     evidence_iri: str | None = None
     message: str = ""
+    effective_to: str | None = None
+    selected_for_assessment_time: str | None = None
 
 
 def collect_evidence(graph: Graph, case_id: str) -> dict[str, list[EvidenceView]]:
-    """Collect evidence linked to the case's subscriber/number context.
-
-    For the demo, evidence for a case is all SystemObservation/EvidenceRecord
-    individuals whose local name starts with Ev-<case-num>- or that are otherwise
-    present in the case file. We scope by case number suffix.
-    """
-    case_num = int(case_id.split("-")[-1])
-    prefix = f"Ev-{case_num:02d}-"
+    """Collect evidence via MNPCase hasCaseEvidence (not IRI naming conventions)."""
     q = """
     PREFIX mnp: <http://example.org/kg-mnp#>
     SELECT ?ev ?type ?status ?gen ?until ?idMatch ?numStatus ?amount ?currency
            ?arrangement ?ctrStatus ?ctrEnd ?days ?sys ?sysId
     WHERE {
-      ?ev a ?cls .
-      FILTER(?cls = mnp:EvidenceRecord || ?cls = mnp:SystemObservation)
+      ?case a mnp:MNPCase ;
+            mnp:caseIdentifier ?caseId ;
+            mnp:hasCaseEvidence ?ev .
+      FILTER(STR(?caseId) = %s)
+
+      ?ev a ?evidenceClass .
+      VALUES ?evidenceClass { mnp:EvidenceRecord mnp:SystemObservation }
       ?ev mnp:evidenceType ?type ;
           mnp:evidenceStatus ?status ;
           mnp:evidenceGeneratedAt ?gen ;
@@ -107,13 +248,14 @@ def collect_evidence(graph: Graph, case_id: str) -> dict[str, list[EvidenceView]
       OPTIONAL { ?ev mnp:daysSinceLastPort ?days }
       OPTIONAL { ?sys mnp:systemIdentifier ?sysId }
     }
-    """
+    """ % f'"{case_id}"'
     by_type: dict[str, list[EvidenceView]] = {}
+    seen: set[str] = set()
     for row in graph.query(q):
         iri = str(row.ev)
-        local = iri.rsplit("#", 1)[-1]
-        if not local.startswith(prefix):
+        if iri in seen:
             continue
+        seen.add(iri)
         fields = {
             "identityMatchFlag": (
                 bool(row.idMatch) if row.idMatch is not None else None
@@ -144,7 +286,12 @@ def collect_evidence(graph: Graph, case_id: str) -> dict[str, list[EvidenceView]
     return by_type
 
 
-def _eval_check(check: dict[str, Any], evidence: EvidenceView) -> bool:
+def _eval_check(
+    check: dict[str, Any],
+    evidence: EvidenceView,
+    *,
+    assessment_time: datetime,
+) -> bool:
     ctype = check["type"]
     fields = evidence.fields
     if ctype == "boolean_equals":
@@ -162,7 +309,7 @@ def _eval_check(check: dict[str, Any], evidence: EvidenceView) -> bool:
     if ctype == "contract_not_blocking":
         status = fields.get(check["status_field"])
         end_time = fields.get(check["end_time_field"])
-        as_of = _parse_dt(check.get("assessment_time")) or ASSESSMENT_TIME
+        as_of = assessment_time
         if status in (None, "EXPIRED", "TERMINATED", "NONE"):
             return True
         if status == "ACTIVE":
@@ -182,41 +329,60 @@ def evaluate_rules(
     graph: Graph,
     case_id: str,
     *,
-    use_updated_rules: bool = True,
+    assessment_time: datetime | None = None,
+    use_updated_rules: bool | None = None,
+    rule_version_overrides: dict[str, str] | None = None,
 ) -> list[RuleOutcome]:
+    """Evaluate eligibility rules as of assessment_time.
+
+    ``use_updated_rules`` is retained for legacy callers:
+    - True / None: select by assessment_time (normal path)
+    - False: force base ``rules:`` entries only (test / replay override)
+    """
+    as_of = assessment_time or ASSESSMENT_TIME
+    as_of_str = _fmt_dt(as_of)
     evidence = collect_evidence(graph, case_id)
-    rules = load_rules(include_updates=use_updated_rules)
+
+    if use_updated_rules is False and not rule_version_overrides:
+        rules = load_rules(include_updates=False)
+    else:
+        rules = load_applicable_rules(
+            as_of, rule_version_overrides=rule_version_overrides
+        )
+
     outcomes: list[RuleOutcome] = []
     for rule in rules:
         etype = rule["inputs"][0]["evidence_type"]
         candidates = evidence.get(etype, [])
-        usable = [e for e in candidates if e.is_usable()]
+        usable = [e for e in candidates if e.is_usable(as_of)]
+        eff_to = _fmt_dt(_parse_dt(rule.get("effective_to")))
+        common = dict(
+            rule_id=rule["rule_id"],
+            version=str(rule["version"]),
+            effective_from=str(rule["effective_from"]),
+            effective_to=eff_to,
+            selected_for_assessment_time=as_of_str,
+            regulatory_clause=rule.get("regulatory_clause"),
+        )
         if not usable:
             outcomes.append(
                 RuleOutcome(
-                    rule_id=rule["rule_id"],
-                    version=str(rule["version"]),
-                    effective_from=str(rule["effective_from"]),
+                    **common,
                     status="MISSING",
                     reason_code="MISSING_OR_EXPIRED_EVIDENCE",
                     action_code="SUPPLY_MISSING_EVIDENCE",
-                    regulatory_clause=rule.get("regulatory_clause"),
                     evidence_iri=candidates[0].iri if candidates else None,
                     message=f"Critical evidence {etype} missing or expired",
                 )
             )
             continue
-        # Deterministic: pick lexicographically smallest IRI
         chosen = sorted(usable, key=lambda e: e.iri)[0]
-        passed = _eval_check(rule["check"], chosen)
+        passed = _eval_check(rule["check"], chosen, assessment_time=as_of)
         if passed:
             outcomes.append(
                 RuleOutcome(
-                    rule_id=rule["rule_id"],
-                    version=str(rule["version"]),
-                    effective_from=str(rule["effective_from"]),
+                    **common,
                     status="PASS",
-                    regulatory_clause=rule.get("regulatory_clause"),
                     evidence_iri=chosen.iri,
                     message="passed",
                 )
@@ -224,13 +390,10 @@ def evaluate_rules(
         else:
             outcomes.append(
                 RuleOutcome(
-                    rule_id=rule["rule_id"],
-                    version=str(rule["version"]),
-                    effective_from=str(rule["effective_from"]),
+                    **common,
                     status="FAIL",
                     reason_code=rule["reason_code"],
                     action_code=rule["action_code"],
-                    regulatory_clause=rule.get("regulatory_clause"),
                     evidence_iri=chosen.iri,
                     message=f"failed check for {etype}",
                 )
@@ -248,7 +411,6 @@ def summarize_decision(outcomes: list[RuleOutcome]) -> str:
 
 
 def clause_iri(clause_id: str) -> URIRef:
-    # REG-MNP-CLAUSE-01 → Clause-01
     suffix = clause_id.replace("REG-MNP-CLAUSE-", "")
     return MNP[f"Clause-{suffix}"]
 

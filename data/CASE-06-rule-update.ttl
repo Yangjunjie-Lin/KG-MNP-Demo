@@ -28,7 +28,13 @@ mnp:Contract-06 a mnp:ServiceContract ;
 mnp:CASE-06 a mnp:MNPCase ;
     mnp:caseIdentifier "CASE-06" ;
     mnp:concernsNumber mnp:Phone-06 ;
-    mnp:requestedBy mnp:Sub-06 .
+    mnp:requestedBy mnp:Sub-06 ;
+    mnp:hasCaseEvidence
+        mnp:Ev-06-ID ,
+        mnp:Ev-06-NUM ,
+        mnp:Ev-06-BILL ,
+        mnp:Ev-06-CTR ,
+        mnp:Ev-06-PORT .
 
 mnp:Ev-06-ID a mnp:SystemObservation ;
     mnp:evidenceType "IDENTITY_MATCH" ;
@@ -75,8 +81,10 @@ mnp:Ev-06-PORT a mnp:SystemObservation ;
     mnp:hasSourceSystem mnp:SYS-MNP .
 
 # Pre-seeded historical assessment using rule version 1.0
+# assessmentTime falls in MNP-ELIG-005 v1.0 window (before 2026-06-01).
 mnp:Assessment-CASE-06-HIST a mnp:EligibilityAssessment ;
     mnp:assessmentIdentifier "ASSESS-CASE-06-HIST" ;
+    mnp:assessmentTime "2026-05-15T12:00:00Z"^^xsd:dateTime ;
     mnp:aboutCase mnp:CASE-06 ;
     mnp:usesEvidence mnp:Ev-06-ID , mnp:Ev-06-NUM , mnp:Ev-06-BILL , mnp:Ev-06-CTR , mnp:Ev-06-PORT ;
     mnp:evaluatedByRule mnp:Rule-MNP-ELIG-001 , mnp:Rule-MNP-ELIG-002 , mnp:Rule-MNP-ELIG-003 , mnp:Rule-MNP-ELIG-004 , mnp:Rule-MNP-ELIG-005 ;

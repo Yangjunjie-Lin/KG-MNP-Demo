@@ -157,9 +157,23 @@ mnp:hasEligibilityAssessment a owl:ObjectProperty ;
     rdfs:domain mnp:MNPCase ;
     rdfs:range mnp:EligibilityAssessment .
 
+mnp:hasCaseEvidence a owl:ObjectProperty ;
+    rdfs:domain mnp:MNPCase ;
+    rdfs:range mnp:EvidenceRecord ;
+    rdfs:label "has case evidence"@en ;
+    rdfs:comment "Links an MNP case to evidence records available for evaluating that case."@en .
+
+mnp:evidenceForCase a owl:ObjectProperty ;
+    owl:inverseOf mnp:hasCaseEvidence ;
+    rdfs:domain mnp:EvidenceRecord ;
+    rdfs:range mnp:MNPCase ;
+    rdfs:label "evidence for case"@en ;
+    rdfs:comment "Inverse of hasCaseEvidence; links an evidence record to the case it belongs to."@en .
+
 mnp:usesEvidence a owl:ObjectProperty ;
     rdfs:domain mnp:EligibilityAssessment ;
-    rdfs:range mnp:EvidenceRecord .
+    rdfs:range mnp:EvidenceRecord ;
+    rdfs:comment "Links an eligibility assessment to the evidence snapshot actually used in that assessment. Distinct from MNPCase hasCaseEvidence."@en .
 
 mnp:evaluatedByRule a owl:ObjectProperty ;
     rdfs:domain mnp:EligibilityAssessment ;
@@ -342,6 +356,12 @@ mnp:assessmentIdentifier a owl:DatatypeProperty ;
     rdfs:domain mnp:EligibilityAssessment ;
     rdfs:range xsd:string .
 
+mnp:assessmentTime a owl:DatatypeProperty ;
+    rdfs:domain mnp:EligibilityAssessment ;
+    rdfs:range xsd:dateTime ;
+    rdfs:label "assessment time"@en ;
+    rdfs:comment "The as-of datetime used when selecting applicable rule versions and evaluating evidence validity for this assessment."@en .
+
 mnp:requiresReassessment a owl:DatatypeProperty ;
     rdfs:domain mnp:EligibilityAssessment ;
     rdfs:range xsd:boolean .
@@ -378,6 +398,10 @@ mnp:MNPCase rdfs:subClassOf [
     a owl:Restriction ;
     owl:onProperty mnp:requestedBy ;
     owl:cardinality "1"^^xsd:nonNegativeInteger
+] , [
+    a owl:Restriction ;
+    owl:onProperty mnp:hasCaseEvidence ;
+    owl:minCardinality "1"^^xsd:nonNegativeInteger
 ] .
 
 mnp:EligibilityAssessment rdfs:subClassOf [

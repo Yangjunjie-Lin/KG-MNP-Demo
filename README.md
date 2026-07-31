@@ -20,7 +20,7 @@
 |------|------|
 | **CTO**（GPL-3.0） | 仅概念参考与对齐说明；**不复制** OWL 文件；运行时不依赖 |
 | **TM Forum** TMF629/637/620（Apache-2.0） | 通过 `mappings/tmf_to_mnp.yaml` 做字段映射；**不当作 OWL** |
-| **RDFLib / pySHACL / owlrl** | MVP 运行依赖 |
+| **RDFLib / pySHACL / owlrl / jsonschema** | MVP 运行依赖 |
 | **Protégé** | 人工打开/检查本体 |
 | **WIDOCO** | 可选 HTML 文档（失败不影响核心测试） |
 | **neosemantics / Neo4j** | Docker Compose 实际图存储与 Cypher 追溯（可选；离线测试不依赖） |
@@ -39,7 +39,7 @@
 | OWL-RL | 确定类型/关系扩展 |
 | Python 规则引擎 | 金额、日期、有效期、资格规则 |
 | SPARQL | 离线追溯查询 |
-| Neo4j + Cypher | 实际持久化与路径追溯（默认 CLI backend） |
+| Neo4j + Cypher | 可选实际持久化与路径追溯（需显式 `--backend neo4j`） |
 
 ## 安装
 
@@ -47,10 +47,52 @@
 
 ```bash
 cd kg-mnp-demo
-python -m pip install -e ".[dev,neo4j]"
+python -m pip install -e ".[dev]"
 ```
 
-## 运行（离线 RDF）
+可选 Neo4j 驱动：`python -m pip install -e ".[dev,neo4j]"`。
+
+## 本地一键演示
+
+```bash
+python scripts/showcase_demo.py --case CASE-03
+```
+
+演示内容：
+
+* CASE-03 输入摘要（证据经 `hasCaseEvidence` 关联）；
+* **输入图** SHACL 验证 → OWL-RL → 资格判断 → **评估结果图** SHACL 验证；
+追溯子图由 `queries/assessment_subgraph.rq` 运行生成，Python（`trace_graph.py`）仅负责将 SPARQL 结果转换为稳定的 nodes/edges，并校验每条边确实存在于 RDF 图中。
+* 六个案例汇总；
+* HTML 演示报告。
+
+### JSON 外部输入
+
+```bash
+python scripts/showcase_demo.py --input inputs/case03.json --output-dir runtime_outputs/case03
+# 或
+python -m kg_mnp_demo.pipeline --input inputs/case03.json --output-dir runtime_outputs/case03
+```
+
+流程：JSON Schema → 规范化 → RDF 实例（含 `hasCaseEvidence`）→ 输入图 SHACL → OWL-RL → 规则判断 → 评估结果图 SHACL → SPARQL 追溯子图 → TTL/JSON/HTML。
+
+输出位置：
+
+```text
+demo_outputs/          # 可版本控制的确认演示快照（见 demo_outputs/README.md）
+runtime_outputs/       # 本地运行时生成，已被 .gitignore 忽略，不进入 Git
+```
+
+示例：
+
+```text
+demo_outputs/demo_report.html
+runtime_outputs/case03/report.html   # 本地命令生成，仓库中不存在
+```
+
+详细说明见 [`docs/local_showcase.md`](docs/local_showcase.md)。
+
+## 运行（离线 RDF，默认 backend）
 
 ```bash
 python -m kg_mnp_demo.cli validate --case CASE-03
@@ -62,7 +104,9 @@ python -m kg_mnp_demo.cli sources
 python -m kg_mnp_demo.cli run-all --backend rdf
 ```
 
-## 运行（Neo4j 实际化，默认 backend）
+默认 backend 为 `rdf`。可通过环境变量 `KG_MNP_BACKEND` 覆盖，但本地演示与验收应明确使用 `--backend rdf`。
+
+## 运行（Neo4j 实际化，需显式启用）
 
 ```bash
 docker compose up -d
