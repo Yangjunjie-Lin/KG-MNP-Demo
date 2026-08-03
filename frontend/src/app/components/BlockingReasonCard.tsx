@@ -5,7 +5,7 @@ import {
   remediationActionLabels,
   regulatoryClauseLabels,
   ruleLabels,
-  t,
+  translateOrUnknown,
   ui,
 } from "../i18n/zh-CN";
 
@@ -16,7 +16,7 @@ function evidenceDisplayLabel(raw: string): string {
   if (upper.includes("BILLING")) return evidenceTypeLabels.BILLING_BALANCE;
   if (upper.includes("CONTRACT")) return evidenceTypeLabels.CONTRACT_STATUS;
   if (upper.includes("PORTING")) return evidenceTypeLabels.PORTING_HISTORY;
-  return t(evidenceTypeLabels, raw, raw);
+  return translateOrUnknown(evidenceTypeLabels, raw, ui.unknownEvidence);
 }
 
 export function BlockingReasonCard({
@@ -36,10 +36,10 @@ export function BlockingReasonCard({
   clause: string;
   action: string;
 }) {
-  const reasonLabel = t(blockingReasonLabels, code, code);
-  const ruleLabel = t(ruleLabels, ruleId, ruleId);
-  const actionLabel = t(remediationActionLabels, action, action);
-  const clauseLabel = t(regulatoryClauseLabels, clause, clause);
+  const reasonLabel = translateOrUnknown(blockingReasonLabels, code, ui.unknownStatus);
+  const ruleLabel = translateOrUnknown(ruleLabels, ruleId, ui.unknownRule);
+  const actionLabel = translateOrUnknown(remediationActionLabels, action, ui.unknownAction);
+  const clauseLabel = translateOrUnknown(regulatoryClauseLabels, clause, ui.unknownClause);
 
   return (
     <div className="bg-white border border-red-200 rounded-lg overflow-hidden">

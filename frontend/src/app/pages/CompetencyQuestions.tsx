@@ -9,7 +9,7 @@ import {
   processStepLabels,
   remediationActionLabels,
   ruleLabels,
-  t,
+  translateOrUnknown,
   ui,
 } from "../i18n/zh-CN";
 import { getCompetencyQuestions, getAssessmentDetail } from "../services/assessmentService";
@@ -19,8 +19,25 @@ import type { AssessmentDetail, CaseSummary } from "../types/assessment";
 
 function cqOrdinal(id: string): string {
   const n = Number(id.replace("CQ-", ""));
-  const map = ["", "一", "二", "三", "四", "五", "六", "七", "八", "九", "十", "十一", "十二", "十三", "十四", "十五"];
-  return map[n] ? `问题${map[n]}` : id;
+  const map = [
+    "",
+    "一",
+    "二",
+    "三",
+    "四",
+    "五",
+    "六",
+    "七",
+    "八",
+    "九",
+    "十",
+    "十一",
+    "十二",
+    "十三",
+    "十四",
+    "十五",
+  ];
+  return map[n] ? `问题${map[n]}` : "未识别问题";
 }
 
 function ResultPanel({
@@ -32,7 +49,7 @@ function ResultPanel({
   caseId: string;
   detail: AssessmentDetail | null;
 }) {
-  const caseLabel = t(caseLabels, caseId, caseId);
+  const caseLabel = translateOrUnknown(caseLabels, caseId, ui.unknownCase);
   if (!detail) {
     return <div className="text-xs text-slate-400 py-4 text-center">{ui.empty}</div>;
   }
@@ -68,7 +85,8 @@ function ResultPanel({
           </div>
         </div>
         <div className="text-slate-600 bg-slate-50 rounded p-2">
-          {caseLabel} 当前结论为「{t(decisionLabels, detail.decision)}」。
+          {caseLabel} 当前结论为「
+          {translateOrUnknown(decisionLabels, detail.decision, ui.unknownStatus)}」。
         </div>
       </div>
     );
@@ -83,12 +101,17 @@ function ResultPanel({
           detail.blockingReasonDetails.map((br) => (
             <div key={br.reasonCode} className="bg-white border border-slate-200 rounded-lg p-3">
               <div className="font-medium text-red-700 mb-1">
-                {t(blockingReasonLabels, br.reasonCode)}
+                {translateOrUnknown(blockingReasonLabels, br.reasonCode, ui.unknownStatus)}
               </div>
               <div className="text-slate-600">{br.description}</div>
               {cq.id === "CQ-14" && (
                 <div className="mt-1 text-emerald-700">
-                  处理动作：{t(remediationActionLabels, br.actionCode)}
+                  处理动作：
+                  {translateOrUnknown(
+                    remediationActionLabels,
+                    br.actionCode,
+                    ui.unknownAction,
+                  )}
                 </div>
               )}
             </div>
@@ -114,13 +137,17 @@ function ResultPanel({
           <tbody>
             {detail.ruleResults.map((r) => (
               <tr key={`${r.ruleId}-${r.version}`} className="border-t border-slate-100">
-                <td className="px-3 py-2 text-violet-700">{t(ruleLabels, r.ruleId)}</td>
+                <td className="px-3 py-2 text-violet-700">
+                  {translateOrUnknown(ruleLabels, r.ruleId, ui.unknownRule)}
+                </td>
                 <td className="px-3 py-2 text-slate-500">{r.version}</td>
                 <td className="px-3 py-2">
                   <StatusBadge status={r.status} />
                 </td>
                 <td className="px-3 py-2 text-slate-400">
-                  {r.reasonCode ? t(blockingReasonLabels, r.reasonCode) : "—"}
+                  {r.reasonCode
+                    ? translateOrUnknown(blockingReasonLabels, r.reasonCode, ui.unknownStatus)
+                    : "—"}
                 </td>
               </tr>
             ))}
@@ -136,7 +163,7 @@ function ResultPanel({
       <div className="text-xs space-y-2 bg-white border border-slate-200 rounded-lg p-3">
         <div>
           当前步骤：
-          {t(processStepLabels, process?.currentStep ?? "", String(process?.currentStep ?? "—"))}
+          {translateOrUnknown(processStepLabels, process?.currentStep, ui.unknownStatus)}
         </div>
         <div>
           能否继续：
@@ -144,7 +171,8 @@ function ResultPanel({
         </div>
         {process?.processBlockingReasons?.map((p) => (
           <div key={p.code} className="text-red-600">
-            {t(blockingReasonLabels, p.code, p.message)}
+            {p.message ||
+              translateOrUnknown(blockingReasonLabels, p.code, ui.unknownStatus)}
           </div>
         ))}
         {process?.authorizationCode && (
@@ -161,7 +189,7 @@ function ResultPanel({
     return (
       <div className="text-xs bg-white border border-slate-200 rounded-lg p-3 space-y-2">
         <div>
-          受影响案例：{t(caseLabels, "CASE-06")}
+          受影响案例：{translateOrUnknown(caseLabels, "CASE-06", ui.unknownCase)}
         </div>
         <div className="flex items-center gap-2">
           <DecisionBadge decision="ELIGIBLE" />
@@ -239,7 +267,9 @@ export function CompetencyQuestions() {
               <span className="text-[10px] text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded">
                 {cqOrdinal(cq.id)}
               </span>
-              <span className="text-[9px] text-slate-400">{cq.exampleCaseLabel}</span>
+              <span className="text-[9px] text-slate-400">
+                {translateOrUnknown(caseLabels, cq.exampleCase, ui.unknownCase)}
+              </span>
             </div>
             <div className="text-xs text-slate-700 leading-relaxed">{cq.titleZh}</div>
           </button>
@@ -275,7 +305,9 @@ export function CompetencyQuestions() {
                 </div>
                 <div>
                   <div className="text-[10px] text-slate-400 mb-1">示例案例</div>
-                  <span className="text-blue-600">{selectedCQ.exampleCaseLabel}</span>
+                  <span className="text-blue-600">
+                    {translateOrUnknown(caseLabels, selectedCQ.exampleCase, ui.unknownCase)}
+                  </span>
                 </div>
               </div>
             </div>
@@ -292,7 +324,7 @@ export function CompetencyQuestions() {
                 >
                   {cases.map((c) => (
                     <option key={c.id} value={c.id}>
-                      {t(caseLabels, c.id)} — {c.title}
+                      {translateOrUnknown(caseLabels, c.id, ui.unknownCase)} — {c.title}
                     </option>
                   ))}
                 </select>

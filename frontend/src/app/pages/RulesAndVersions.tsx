@@ -1,22 +1,21 @@
 import { useEffect, useMemo, useState } from "react";
 import { ArrowRight } from "lucide-react";
 import { SectionHeader } from "../components/SectionHeader";
-import { DecisionBadge, StatusBadge } from "../components/StatusBadges";
+import { DecisionBadge, RuleLifecycleBadge } from "../components/StatusBadges";
 import { cn } from "../utils/cn";
 import {
+  assessmentLabels,
   blockingReasonLabels,
   caseLabels,
   evidenceTypeLabels,
   remediationActionLabels,
   regulatoryClauseLabels,
   ruleLabels,
-  t,
+  translateOrUnknown,
   ui,
 } from "../i18n/zh-CN";
 import { listRules } from "../services/ruleService";
-import { getHistoricalAssessment } from "../services/assessmentService";
 import type { EligibilityRule } from "../types/rules";
-import type { AssessmentDetail } from "../types/assessment";
 
 function formatDate(iso: string | null): string {
   if (!iso) return "—";
@@ -26,7 +25,6 @@ function formatDate(iso: string | null): string {
 export function RulesAndVersions() {
   const [rules, setRules] = useState<EligibilityRule[]>([]);
   const [selected, setSelected] = useState<EligibilityRule | null>(null);
-  const [hist, setHist] = useState<AssessmentDetail | null>(null);
 
   useEffect(() => {
     void (async () => {
@@ -37,13 +35,15 @@ export function RulesAndVersions() {
         list[0] ??
         null;
       setSelected(prefer);
-      setHist(await getHistoricalAssessment("CASE-06"));
     })();
   }, []);
 
   const isMnp005 = selected?.ruleId === "MNP-ELIG-005";
   const versions005 = useMemo(
-    () => rules.filter((r) => r.ruleId === "MNP-ELIG-005").sort((a, b) => a.version.localeCompare(b.version)),
+    () =>
+      rules
+        .filter((r) => r.ruleId === "MNP-ELIG-005")
+        .sort((a, b) => a.version.localeCompare(b.version)),
     [rules],
   );
 
@@ -67,7 +67,7 @@ export function RulesAndVersions() {
           >
             <div className="flex items-center gap-2 mb-1 flex-wrap">
               <span className="text-[10px] text-violet-700">
-                {t(ruleLabels, r.ruleId)}
+                {translateOrUnknown(ruleLabels, r.ruleId, ui.unknownRule)}
               </span>
               <span className="text-[10px] text-slate-400">版本 {r.version}</span>
               {r.effectiveTo && (
@@ -87,12 +87,16 @@ export function RulesAndVersions() {
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-3 mb-1">
                     <span className="text-lg text-violet-700 font-bold">
-                      {t(ruleLabels, `${selected.ruleId}@${selected.version}`, selected.name)}
+                      {translateOrUnknown(
+                        ruleLabels,
+                        `${selected.ruleId}@${selected.version}`,
+                        ui.unknownRule,
+                      )}
                     </span>
-                    <StatusBadge status={selected.effectiveTo ? "EXPIRED" : "ACTIVE"} />
+                    <RuleLifecycleBadge historical={!!selected.effectiveTo} />
                   </div>
                   <div className="text-base font-semibold text-slate-700">
-                    {t(ruleLabels, selected.ruleId)}
+                    {translateOrUnknown(ruleLabels, selected.ruleId, ui.unknownRule)}
                   </div>
                 </div>
                 <div className="text-left sm:text-right text-xs space-y-1 flex-shrink-0">
@@ -122,7 +126,9 @@ export function RulesAndVersions() {
                 {
                   label: "输入证据",
                   value: selected.inputEvidenceTypes
-                    .map((e) => t(evidenceTypeLabels, e, e))
+                    .map((e) =>
+                      translateOrUnknown(evidenceTypeLabels, e, ui.unknownEvidence),
+                    )
                     .join("、"),
                   color: "text-cyan-700",
                 },
@@ -133,17 +139,29 @@ export function RulesAndVersions() {
                 },
                 {
                   label: "失败原因",
-                  value: t(blockingReasonLabels, selected.reasonCode),
+                  value: translateOrUnknown(
+                    blockingReasonLabels,
+                    selected.reasonCode,
+                    ui.unknownStatus,
+                  ),
                   color: "text-red-700",
                 },
                 {
                   label: "处理动作",
-                  value: t(remediationActionLabels, selected.actionCode),
+                  value: translateOrUnknown(
+                    remediationActionLabels,
+                    selected.actionCode,
+                    ui.unknownAction,
+                  ),
                   color: "text-emerald-700",
                 },
                 {
                   label: "监管条款",
-                  value: t(regulatoryClauseLabels, selected.regulatoryClause),
+                  value: translateOrUnknown(
+                    regulatoryClauseLabels,
+                    selected.regulatoryClause,
+                    ui.unknownClause,
+                  ),
                   color: "text-indigo-800",
                 },
                 {
@@ -167,7 +185,7 @@ export function RulesAndVersions() {
                 <SectionHeader title="规则版本时间线" sub="规则五：携转间隔检查" />
                 <div className="space-y-3">
                   {versions005.map((v, idx) => {
-                    const isHist = v.version === "1.0";
+                    const isHist = !!v.effectiveTo;
                     return (
                       <div key={v.version}>
                         <div
@@ -192,7 +210,7 @@ export function RulesAndVersions() {
                                 ? `${formatDate(v.effectiveFrom)} 至 ${formatDate(v.effectiveTo)}`
                                 : `${formatDate(v.effectiveFrom)} 起`}
                             </span>
-                            <StatusBadge status={isHist ? "EXPIRED" : "ACTIVE"} />
+                            <RuleLifecycleBadge historical={isHist} />
                           </div>
                           <div className="text-xs text-slate-600 mb-2">
                             最少间隔{" "}
@@ -201,11 +219,17 @@ export function RulesAndVersions() {
                             </span>
                           </div>
                           <div className="text-xs text-slate-500 mb-2">
-                            监管条款：{v.regulatoryClause}
+                            监管条款：
+                            {translateOrUnknown(
+                              regulatoryClauseLabels,
+                              v.regulatoryClause,
+                              ui.unknownClause,
+                            )}
                           </div>
                           <div className="mt-2 flex flex-wrap items-center gap-2">
                             <span className="text-[10px] text-slate-400">
-                              {t(caseLabels, "CASE-06")} 在此版本下的结果：
+                              {translateOrUnknown(caseLabels, "CASE-06", ui.unknownCase)}{" "}
+                              在此版本下的结果：
                             </span>
                             {isHist ? (
                               <span className="text-[10px] font-semibold text-emerald-700 bg-emerald-50 px-1.5 py-0.5 rounded">
@@ -239,9 +263,15 @@ export function RulesAndVersions() {
                   <div className="space-y-1">
                     <div className="flex flex-wrap items-center gap-3 bg-white border border-slate-100 rounded px-3 py-2 text-xs">
                       <span className="text-slate-500">
-                        {hist?.executionId ?? "历史评估-案例六"}
+                        {translateOrUnknown(
+                          assessmentLabels,
+                          "CASE-06-HIST",
+                          ui.case06HistoricalAssessment,
+                        )}
                       </span>
-                      <span className="text-slate-600">{t(caseLabels, "CASE-06")}</span>
+                      <span className="text-slate-600">
+                        {translateOrUnknown(caseLabels, "CASE-06", ui.unknownCase)}
+                      </span>
                       <div className="ml-auto flex items-center gap-2">
                         <DecisionBadge decision="ELIGIBLE" />
                         <ArrowRight size={10} className="text-slate-300" />

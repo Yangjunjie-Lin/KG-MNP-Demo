@@ -1,4 +1,4 @@
-import { caseLabels, t } from "../i18n/zh-CN";
+import { caseLabels, translateOrUnknown, ui } from "../i18n/zh-CN";
 
 export interface CompetencyQuestion {
   id: string;
@@ -112,7 +112,7 @@ export const mockCompetencyQuestions: CompetencyQuestion[] = Object.keys(titles)
       expected: expectedMap[id],
       requiredInputs: inputs[id],
       exampleCase,
-      exampleCaseLabel: t(caseLabels, exampleCase, exampleCase),
+      exampleCaseLabel: translateOrUnknown(caseLabels, exampleCase, ui.unknownCase),
     };
   },
 );

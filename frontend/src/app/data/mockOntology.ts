@@ -3,7 +3,8 @@ import {
   moduleLabels,
   ontologyClassLabels,
   ontologyRelationLabels,
-  t,
+  translateOrUnknown,
+  ui,
 } from "../i18n/zh-CN";
 
 export const mockOntologyModules: OntologyModule[] = [
@@ -29,7 +30,7 @@ function node(
   return {
     id,
     localName,
-    label: t(ontologyClassLabels, localName, localName),
+    label: translateOrUnknown(ontologyClassLabels, localName, ui.unknownOntologyClass),
     module,
     type: "Class",
     x,
@@ -64,7 +65,11 @@ function edge(from: string, to: string, relation: string): OntologyEdge {
     from,
     to,
     relation,
-    label: t(ontologyRelationLabels, relation, relation),
+    label: translateOrUnknown(
+      ontologyRelationLabels,
+      relation,
+      ui.unknownOntologyRelation,
+    ),
   };
 }
 

@@ -7,7 +7,7 @@ import {
   caseLabels,
   decisionLabels,
   publicationStatusLabels,
-  t,
+  translateOrUnknown,
   ui,
 } from "../i18n/zh-CN";
 import { listCases } from "../services/caseService";
@@ -35,7 +35,7 @@ export function CaseHistory({
   const filtered = useMemo(
     () =>
       cases.filter((c) => {
-        const label = t(caseLabels, c.id, c.id);
+        const label = translateOrUnknown(caseLabels, c.id, ui.unknownCase);
         const matchSearch =
           !search ||
           label.includes(search) ||
@@ -124,7 +124,7 @@ export function CaseHistory({
               >
                 <td className="px-4 py-3">
                   <div className="text-slate-800 font-medium">
-                    {t(caseLabels, c.id, c.id)}
+                    {translateOrUnknown(caseLabels, c.id, ui.unknownCase)}
                   </div>
                   <div className="text-[10px] text-slate-400 mt-0.5">{c.title}</div>
                 </td>
@@ -143,7 +143,11 @@ export function CaseHistory({
                         : "text-amber-600 bg-amber-50",
                     )}
                   >
-                    {t(publicationStatusLabels, c.publicationStatus)}
+                    {translateOrUnknown(
+                      publicationStatusLabels,
+                      c.publicationStatus,
+                      ui.unknownStatus,
+                    )}
                   </span>
                 </td>
                 <td className="px-4 py-3">
@@ -156,7 +160,7 @@ export function CaseHistory({
                           key={r}
                           className="text-[10px] bg-red-50 text-red-600 px-1 py-0.5 rounded"
                         >
-                          {t(blockingReasonLabels, r, r)}
+                          {translateOrUnknown(blockingReasonLabels, r, ui.unknownStatus)}
                         </span>
                       ))
                     )}

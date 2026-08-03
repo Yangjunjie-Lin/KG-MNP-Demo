@@ -2,6 +2,28 @@ export function t(map: Record<string, string>, key: string, fallback?: string): 
   return map[key] ?? fallback ?? key;
 }
 
+/**
+ * 安全中文映射：找不到映射时返回中文未知提示，绝不回退渲染原始英文值。
+ * 原始值仅写入 console.warn，便于开发排查。
+ */
+export function translateOrUnknown(
+  map: Record<string, string>,
+  key: string | null | undefined,
+  unknownLabel = "未识别信息",
+): string {
+  if (key == null || String(key).trim() === "") {
+    return "暂无信息";
+  }
+  const resolved = map[key];
+  if (resolved != null && resolved !== "") {
+    return resolved;
+  }
+  if (typeof console !== "undefined" && typeof console.warn === "function") {
+    console.warn(`[i18n] 未登记映射值: ${key}`);
+  }
+  return unknownLabel;
+}
+
 export const decisionLabels: Record<string, string> = {
   ELIGIBLE: "可携转",
   BLOCKED: "不可携转",
@@ -18,6 +40,7 @@ export const stepStatusLabels: Record<string, string> = {
   SKIPPED: "已跳过",
   SKIP: "已跳过",
   PENDING: "待处理",
+  NOT_EVALUATED: "尚未评估",
 };
 
 export const evidenceStatusLabels: Record<string, string> = {
@@ -127,6 +150,14 @@ export const caseLabels: Record<string, string> = {
   "CASE-09": "案例九",
 };
 
+export const assessmentLabels: Record<string, string> = {
+  "CASE-06-HIST": "案例六历史评估",
+  "CASE-06-CURRENT": "案例六当前评估",
+  "EXEC-CASE-06-HIST": "案例六历史评估",
+  "ASSESS-CASE-06-HIST": "案例六历史评估",
+  "EXEC-CASE-06": "案例六当前评估",
+};
+
 export const ruleLabels: Record<string, string> = {
   "MNP-ELIG-001": "规则一：实名信息一致性",
   "MNP-ELIG-002": "规则二：号码状态正常",
@@ -167,6 +198,15 @@ export const ontologyClassLabels: Record<string, string> = {
   IdentityDocument: "身份证件",
   Invoice: "账单",
   ProcessStep: "流程步骤",
+};
+
+export const ontologyTypeLabels: Record<string, string> = {
+  Class: "类",
+  ObjectProperty: "对象属性",
+  DatatypeProperty: "数据属性",
+  Individual: "实例",
+  NodeShape: "节点约束",
+  PropertyShape: "属性约束",
 };
 
 export const ontologyRelationLabels: Record<string, string> = {
@@ -219,14 +259,16 @@ export const contractStatusLabels: Record<string, string> = {
   EXPIRED: "已到期",
   TERMINATED: "已解除",
   PENDING: "待生效",
-  SIGNED_PENDING_EFFECTIVE: "已签未生效",
+  CLOSED: "已关闭",
+  SIGNED_PENDING_EFFECTIVE: "已签署但尚未生效",
 };
 
 export const numberStatusLabels: Record<string, string> = {
   ACTIVE: "正常",
   NORMAL: "正常",
-  SUSPENDED: "停机",
-  CANCELLED: "已销户",
+  SUSPENDED: "已停用",
+  CANCELLED: "已注销",
+  CLOSED: "已关闭",
 };
 
 export const authCodeStatusLabels: Record<string, string> = {
@@ -240,6 +282,34 @@ export const serviceStatusLabels: Record<string, string> = {
   ONLINE: "运行正常",
   DEGRADED: "性能降级",
   OFFLINE: "已离线",
+};
+
+export const ruleLifecycleLabels: Record<string, string> = {
+  ACTIVE: "当前有效",
+  EXPIRED: "历史版本",
+  CURRENT: "当前有效",
+  HISTORICAL: "历史版本",
+};
+
+export const requestTypeLabels: Record<string, string> = {
+  PORT_OUT: "携出",
+  PORT_IN: "携入",
+};
+
+export const priorityLabels: Record<string, string> = {
+  NORMAL: "普通",
+  URGENT: "紧急",
+  BATCH: "批量",
+};
+
+export const currencyLabels: Record<string, string> = {
+  CNY: "人民币",
+};
+
+export const identityTypeLabels: Record<string, string> = {
+  ID_CARD: "居民身份证",
+  PASSPORT: "护照",
+  RESIDENCE: "居住证",
 };
 
 export const ui = {
@@ -284,4 +354,19 @@ export const ui = {
   historicalVersion: "历史规则版本",
   currentVersion: "当前规则版本",
   eligibilityVsProcessNote: "资格结论与流程状态是分开的。",
+  formEntry: "表单录入",
+  technicalDebug: "技术调试",
+  technicalDebugHint: "此功能仅供开发调试，不属于正式演示界面。",
+  unknownStatus: "状态未识别",
+  unknownRule: "规则名称未识别",
+  unknownEvidence: "证据类型未识别",
+  unknownOntologyClass: "本体概念未识别",
+  unknownOntologyRelation: "本体关系未识别",
+  unknownDataSource: "数据来源未识别",
+  unknownClause: "监管条款未识别",
+  unknownAction: "处理动作未识别",
+  unknownCase: "案例名称未识别",
+  unknownModule: "模块未识别",
+  case06HistoricalAssessment: "案例六历史评估",
+  case06CurrentAssessment: "案例六当前评估",
 };

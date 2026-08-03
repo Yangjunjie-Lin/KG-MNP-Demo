@@ -10,8 +10,12 @@ import {
 import { FormField } from "../components/FormField";
 import { cn } from "../utils/cn";
 import {
+  authCodeStatusLabels,
   contractStatusLabels,
+  identityTypeLabels,
   numberStatusLabels,
+  priorityLabels,
+  requestTypeLabels,
   ui,
 } from "../i18n/zh-CN";
 
@@ -24,6 +28,7 @@ const STEP_LABELS = [
   "提交预览",
 ];
 
+/** 仅供技术调试模式使用，正式演示界面不展示此内容。 */
 const EXAMPLE_JSON = {
   schema_version: "1.0",
   case_id: "CASE-03",
@@ -49,6 +54,13 @@ const EXAMPLE_JSON = {
   },
 };
 
+const technicalViewEnabled =
+  import.meta.env.DEV && import.meta.env.VITE_ENABLE_TECHNICAL_VIEW === "true";
+
+function optionsFrom(map: Record<string, string>) {
+  return Object.entries(map).map(([value, label]) => ({ value, label }));
+}
+
 export function NewAssessment() {
   const [step, setStep] = useState(1);
   const [mode, setMode] = useState<"form" | "json">("form");
@@ -58,9 +70,13 @@ export function NewAssessment() {
   const [contractStatus, setContractStatus] = useState("ACTIVE");
   const [authStatus, setAuthStatus] = useState("VALID");
   const totalSteps = STEP_LABELS.length;
+  const showForm = !technicalViewEnabled || mode === "form";
+  const showTechnical = technicalViewEnabled && mode === "json";
 
   const loadExample = () => {
-    setJsonText(JSON.stringify(EXAMPLE_JSON, null, 2));
+    if (technicalViewEnabled) {
+      setJsonText(JSON.stringify(EXAMPLE_JSON, null, 2));
+    }
     setPriority("NORMAL");
     setNumberStatus("ACTIVE");
     setContractStatus("ACTIVE");
@@ -71,23 +87,34 @@ export function NewAssessment() {
   return (
     <div className="p-6 max-w-3xl space-y-5 min-w-0 overflow-x-hidden">
       <div className="flex flex-wrap items-center gap-3">
-        <div className="bg-white border border-slate-200 rounded-lg p-0.5 flex">
-          {(["form", "json"] as const).map((m) => (
-            <button
-              key={m}
-              type="button"
-              onClick={() => setMode(m)}
-              className={cn(
-                "px-4 py-1.5 rounded-md text-xs font-medium transition-colors",
-                mode === m
-                  ? "bg-blue-600 text-white"
-                  : "text-slate-600 hover:text-slate-800",
-              )}
-            >
-              {m === "form" ? "表单模式" : "数据规范输入"}
-            </button>
-          ))}
-        </div>
+        {technicalViewEnabled ? (
+          <div className="bg-white border border-slate-200 rounded-lg p-0.5 flex">
+            {(
+              [
+                { id: "form" as const, label: ui.formEntry },
+                { id: "json" as const, label: ui.technicalDebug },
+              ] as const
+            ).map((m) => (
+              <button
+                key={m.id}
+                type="button"
+                onClick={() => setMode(m.id)}
+                className={cn(
+                  "px-4 py-1.5 rounded-md text-xs font-medium transition-colors",
+                  mode === m.id
+                    ? "bg-blue-600 text-white"
+                    : "text-slate-600 hover:text-slate-800",
+                )}
+              >
+                {m.label}
+              </button>
+            ))}
+          </div>
+        ) : (
+          <div className="bg-white border border-slate-200 rounded-lg px-4 py-1.5 text-xs font-medium text-slate-700">
+            {ui.formEntry}
+          </div>
+        )}
         <button
           type="button"
           onClick={loadExample}
@@ -97,7 +124,13 @@ export function NewAssessment() {
         </button>
       </div>
 
-      {mode === "form" && (
+      {technicalViewEnabled && showTechnical && (
+        <div className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
+          {ui.technicalDebugHint}
+        </div>
+      )}
+
+      {showForm && (
         <>
           <div className="bg-white border border-slate-200 rounded-lg p-4 overflow-x-auto">
             <div className="flex items-center gap-1 min-w-[520px]">
@@ -155,10 +188,7 @@ export function NewAssessment() {
                 <FormField
                   label="申请类型"
                   type="select"
-                  options={[
-                    { value: "PORT_OUT", label: "携出" },
-                    { value: "PORT_IN", label: "携入" },
-                  ]}
+                  options={optionsFrom(requestTypeLabels)}
                 />
                 <FormField label="提交时间" type="datetime" />
                 <FormField label="来源系统" placeholder="客户关系系统" />
@@ -168,11 +198,7 @@ export function NewAssessment() {
                   type="select"
                   value={priority}
                   onChange={setPriority}
-                  options={[
-                    { value: "NORMAL", label: "正常" },
-                    { value: "URGENT", label: "紧急" },
-                    { value: "BATCH", label: "批量" },
-                  ]}
+                  options={optionsFrom(priorityLabels)}
                 />
               </div>
             )}
@@ -185,9 +211,9 @@ export function NewAssessment() {
                   label="账户状态"
                   type="select"
                   options={[
-                    { value: "ACTIVE", label: "正常" },
-                    { value: "SUSPENDED", label: "停机" },
-                    { value: "CLOSED", label: "已销户" },
+                    { value: "ACTIVE", label: numberStatusLabels.ACTIVE },
+                    { value: "SUSPENDED", label: numberStatusLabels.SUSPENDED },
+                    { value: "CLOSED", label: numberStatusLabels.CLOSED },
                   ]}
                 />
               </div>
@@ -197,11 +223,7 @@ export function NewAssessment() {
                 <FormField
                   label="证件类型"
                   type="select"
-                  options={[
-                    { value: "ID_CARD", label: "居民身份证" },
-                    { value: "PASSPORT", label: "护照" },
-                    { value: "RESIDENCE", label: "居住证" },
-                  ]}
+                  options={optionsFrom(identityTypeLabels)}
                 />
                 <FormField label="证件号码" placeholder="已脱敏" />
                 <FormField label="证件有效期至" type="date" />
@@ -210,10 +232,7 @@ export function NewAssessment() {
                   type="select"
                   value={numberStatus}
                   onChange={setNumberStatus}
-                  options={Object.entries(numberStatusLabels).map(([value, label]) => ({
-                    value,
-                    label,
-                  }))}
+                  options={optionsFrom(numberStatusLabels)}
                 />
                 <FormField label="号码注册时间" type="datetime" />
                 <FormField label="距上次携转天数" placeholder="400" type="number" />
@@ -228,10 +247,7 @@ export function NewAssessment() {
                   type="select"
                   value={contractStatus}
                   onChange={setContractStatus}
-                  options={Object.entries(contractStatusLabels).map(([value, label]) => ({
-                    value,
-                    label,
-                  }))}
+                  options={optionsFrom(contractStatusLabels)}
                 />
                 <FormField label="合约到期时间" type="date" />
                 <FormField label="合约编号" placeholder="合约三" />
@@ -247,11 +263,7 @@ export function NewAssessment() {
                   type="select"
                   value={authStatus}
                   onChange={setAuthStatus}
-                  options={[
-                    { value: "VALID", label: "有效" },
-                    { value: "EXPIRED", label: "已到期" },
-                    { value: "MISSING", label: "缺失" },
-                  ]}
+                  options={optionsFrom(authCodeStatusLabels)}
                 />
                 <FormField label="原运营商" placeholder="运营商甲" />
                 <FormField label="目标运营商" placeholder="运营商乙" />
@@ -303,10 +315,10 @@ export function NewAssessment() {
         </>
       )}
 
-      {mode === "json" && (
+      {showTechnical && (
         <div className="bg-white border border-slate-200 rounded-lg p-4">
           <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-semibold text-slate-600">结构化数据输入</span>
+            <span className="text-xs font-semibold text-slate-600">{ui.technicalDebug}</span>
             <span className="text-[10px] text-slate-400">
               数据规范：{ui.schemaVersion}
             </span>

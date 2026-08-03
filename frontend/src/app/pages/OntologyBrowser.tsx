@@ -2,7 +2,14 @@ import { useEffect, useMemo, useState } from "react";
 import { Network, Search, X } from "lucide-react";
 import { ModuleTag } from "../components/StatusBadges";
 import { cn } from "../utils/cn";
-import { moduleLabels, t, ui } from "../i18n/zh-CN";
+import {
+  moduleLabels,
+  ontologyClassLabels,
+  ontologyRelationLabels,
+  ontologyTypeLabels,
+  translateOrUnknown,
+  ui,
+} from "../i18n/zh-CN";
 import { getEdges, getModules, getNodes } from "../services/ontologyService";
 import type { OntologyEdge, OntologyModule, OntologyNode } from "../types/ontology";
 
@@ -30,6 +37,26 @@ const MODULE_BG: Record<string, string> = {
   Regulatory: "#e0e7ff",
 };
 
+function nodeDisplayLabel(n: OntologyNode): string {
+  return translateOrUnknown(
+    ontologyClassLabels,
+    n.localName || n.id,
+    ui.unknownOntologyClass,
+  );
+}
+
+function edgeDisplayLabel(e: OntologyEdge): string {
+  return translateOrUnknown(
+    ontologyRelationLabels,
+    e.relation,
+    ui.unknownOntologyRelation,
+  );
+}
+
+function moduleDisplayLabel(moduleId: string): string {
+  return translateOrUnknown(moduleLabels, moduleId, ui.unknownModule);
+}
+
 export function OntologyBrowser() {
   const [nodes, setNodes] = useState<OntologyNode[]>([]);
   const [edges, setEdges] = useState<OntologyEdge[]>([]);
@@ -49,13 +76,16 @@ export function OntologyBrowser() {
 
   const visibleNodes = useMemo(
     () =>
-      nodes.filter(
-        (n) =>
+      nodes.filter((n) => {
+        const label = nodeDisplayLabel(n);
+        const moduleLabel = moduleDisplayLabel(n.module);
+        return (
           (!selectedModule || n.module === selectedModule) &&
           (!searchTerm ||
-            n.label.includes(searchTerm) ||
-            t(moduleLabels, n.module, n.module).includes(searchTerm)),
-      ),
+            label.includes(searchTerm) ||
+            moduleLabel.includes(searchTerm))
+        );
+      }),
     [nodes, selectedModule, searchTerm],
   );
 
@@ -98,7 +128,7 @@ export function OntologyBrowser() {
               className="w-2 h-2 rounded-full flex-shrink-0"
               style={{ backgroundColor: MODULE_COLORS[m.id] || "#94a3b8" }}
             />
-            {m.label}
+            {moduleDisplayLabel(m.id)}
           </button>
         ))}
         <div className="mt-4 border-t border-slate-100 pt-3">
@@ -140,7 +170,7 @@ export function OntologyBrowser() {
                   className="w-2 h-2 rounded-full"
                   style={{ backgroundColor: MODULE_COLORS[m.id] }}
                 />
-                {m.label}
+                {moduleDisplayLabel(m.id)}
               </div>
             ))}
           </div>
@@ -160,21 +190,25 @@ export function OntologyBrowser() {
               from.module === selectedModule ||
               to.module === selectedModule;
             if (!fromVisible) return null;
-            const mx = (from.x + to.x) / 2;
+            const fromLabel = nodeDisplayLabel(from);
+            const toLabel = nodeDisplayLabel(to);
+            const fromWidth = Math.max(110, fromLabel.length * 13 + 16);
+            const toWidth = Math.max(110, toLabel.length * 13 + 16);
+            const mx = (from.x + fromWidth / 2 + to.x + toWidth / 2) / 2;
             const my = (from.y + to.y) / 2;
             return (
               <g key={i}>
                 <line
-                  x1={from.x + 60}
+                  x1={from.x + fromWidth}
                   y1={from.y + 14}
-                  x2={to.x + 60}
+                  x2={to.x}
                   y2={to.y + 14}
                   stroke="#e2e8f0"
                   strokeWidth="1.5"
                   markerEnd="url(#arrow-onto)"
                 />
-                <text x={mx + 60} y={my + 8} fontSize="8" fill="#94a3b8" textAnchor="middle">
-                  {e.label}
+                <text x={mx} y={my + 8} fontSize="8" fill="#94a3b8" textAnchor="middle">
+                  {edgeDisplayLabel(e)}
                 </text>
               </g>
             );
@@ -182,7 +216,8 @@ export function OntologyBrowser() {
           {nodes.map((n) => {
             const visible = visibleNodes.some((v) => v.id === n.id);
             const isSelected = selectedNode?.id === n.id;
-            const nodeWidth = Math.max(110, n.label.length * 13 + 16);
+            const label = nodeDisplayLabel(n);
+            const nodeWidth = Math.max(110, label.length * 13 + 16);
             return (
               <g
                 key={n.id}
@@ -208,7 +243,7 @@ export function OntologyBrowser() {
                   fill={MODULE_COLORS[n.module] || "#475569"}
                   textAnchor="middle"
                 >
-                  {n.label}
+                  {label}
                 </text>
               </g>
             );
@@ -222,7 +257,7 @@ export function OntologyBrowser() {
             <div className="flex items-start justify-between gap-2">
               <div className="min-w-0">
                 <div className="font-semibold text-slate-800 text-sm mb-1 break-words">
-                  {selectedNode.label}
+                  {nodeDisplayLabel(selectedNode)}
                 </div>
                 <ModuleTag module={selectedNode.module} />
               </div>
@@ -236,9 +271,22 @@ export function OntologyBrowser() {
             </div>
             <div className="space-y-2 border-t border-slate-100 pt-3">
               {[
-                { label: "类型", value: selectedNode.type === "Class" ? "类" : selectedNode.type },
-                { label: "模块", value: t(moduleLabels, selectedNode.module, selectedNode.module) },
-                { label: "本地名称", value: selectedNode.label },
+                {
+                  label: "类型",
+                  value: translateOrUnknown(
+                    ontologyTypeLabels,
+                    selectedNode.type,
+                    ui.unknownOntologyClass,
+                  ),
+                },
+                {
+                  label: "模块",
+                  value: moduleDisplayLabel(selectedNode.module),
+                },
+                {
+                  label: "本地名称",
+                  value: nodeDisplayLabel(selectedNode),
+                },
               ].map((f) => (
                 <div key={f.label}>
                   <div className="text-[10px] text-slate-400 tracking-wide mb-0.5">{f.label}</div>
@@ -254,8 +302,11 @@ export function OntologyBrowser() {
                 {edges
                   .filter((e) => e.from === selectedNode.id || e.to === selectedNode.id)
                   .map((e) => (
-                    <div key={e.relation + e.from + e.to} className="text-[10px] text-blue-600 py-0.5">
-                      {e.label}
+                    <div
+                      key={e.relation + e.from + e.to}
+                      className="text-[10px] text-blue-600 py-0.5"
+                    >
+                      {edgeDisplayLabel(e)}
                     </div>
                   ))}
               </div>

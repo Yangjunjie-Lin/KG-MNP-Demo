@@ -6,12 +6,14 @@ import {
   evidenceStatusLabels,
   moduleLabels,
   stepStatusLabels,
-  t,
   authCodeStatusLabels,
   contractStatusLabels,
   numberStatusLabels,
   publicationStatusLabels,
   serviceStatusLabels,
+  ruleLifecycleLabels,
+  translateOrUnknown,
+  ui,
 } from "../i18n/zh-CN";
 import type { Decision } from "../types/common";
 
@@ -36,7 +38,7 @@ const decisionStyles: Record<Decision, { bg: string; icon: ReactNode }> = {
 
 export function DecisionBadge({ decision }: { decision: Decision }) {
   const style = decisionStyles[decision] ?? decisionStyles.MANUAL_REVIEW;
-  const label = t(decisionLabels, decision);
+  const label = translateOrUnknown(decisionLabels, decision, ui.unknownStatus);
   return (
     <span
       className={cn(
@@ -71,19 +73,29 @@ const statusColorMap: Record<string, string> = {
   NOT_PUBLISHABLE: "bg-slate-50 text-slate-600 ring-1 ring-slate-200",
   REVOKED: "bg-red-50 text-red-600 ring-1 ring-red-200",
   UNKNOWN: "bg-slate-50 text-slate-500 ring-1 ring-slate-200",
+  NOT_EVALUATED: "bg-slate-50 text-slate-500 ring-1 ring-slate-200",
+  CLOSED: "bg-slate-50 text-slate-600 ring-1 ring-slate-200",
+  SUSPENDED: "bg-amber-50 text-amber-700 ring-1 ring-amber-200",
+  CANCELLED: "bg-slate-50 text-slate-600 ring-1 ring-slate-200",
+  ISSUED: "bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200",
+  SIGNED_PENDING_EFFECTIVE: "bg-amber-50 text-amber-700 ring-1 ring-amber-200",
 };
 
 function resolveStatusLabel(status: string): string {
-  return (
-    t(stepStatusLabels, status, "") ||
-    t(evidenceStatusLabels, status, "") ||
-    t(publicationStatusLabels, status, "") ||
-    t(authCodeStatusLabels, status, "") ||
-    t(contractStatusLabels, status, "") ||
-    t(numberStatusLabels, status, "") ||
-    t(serviceStatusLabels, status, "") ||
-    status
-  );
+  const maps = [
+    stepStatusLabels,
+    evidenceStatusLabels,
+    publicationStatusLabels,
+    authCodeStatusLabels,
+    contractStatusLabels,
+    numberStatusLabels,
+    serviceStatusLabels,
+    ruleLifecycleLabels,
+  ];
+  for (const map of maps) {
+    if (map[status]) return map[status];
+  }
+  return translateOrUnknown({}, status, ui.unknownStatus);
 }
 
 export function StatusBadge({ status }: { status: string }) {
@@ -93,6 +105,23 @@ export function StatusBadge({ status }: { status: string }) {
       className={cn(
         "inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium",
         statusColorMap[status] || "bg-slate-50 text-slate-500 ring-1 ring-slate-200",
+      )}
+    >
+      {label}
+    </span>
+  );
+}
+
+/** 规则生命周期专用：当前有效 / 历史版本 */
+export function RuleLifecycleBadge({ historical }: { historical: boolean }) {
+  const label = historical ? ruleLifecycleLabels.HISTORICAL : ruleLifecycleLabels.CURRENT;
+  return (
+    <span
+      className={cn(
+        "inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium",
+        historical
+          ? "bg-slate-50 text-slate-500 ring-1 ring-slate-200"
+          : "bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200",
       )}
     >
       {label}
@@ -113,7 +142,7 @@ const moduleColorMap: Record<string, string> = {
 };
 
 export function ModuleTag({ module }: { module: string }) {
-  const label = t(moduleLabels, module, module);
+  const label = translateOrUnknown(moduleLabels, module, ui.unknownModule);
   return (
     <span
       className={cn(

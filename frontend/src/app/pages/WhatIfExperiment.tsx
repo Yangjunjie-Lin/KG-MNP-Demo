@@ -6,7 +6,7 @@ import {
   caseLabels,
   contractStatusLabels,
   ruleLabels,
-  t,
+  translateOrUnknown,
   ui,
 } from "../i18n/zh-CN";
 import { getAssessmentDetail } from "../services/assessmentService";
@@ -46,7 +46,7 @@ export function WhatIfExperiment() {
         <div>
           <h2 className="text-base font-semibold text-slate-700">{ui.navWhatIf}</h2>
           <div className="text-xs text-slate-500">
-            基于{t(caseLabels, "CASE-03")}，修改条件字段，对比结果变化
+            基于{translateOrUnknown(caseLabels, "CASE-03", ui.unknownCase)}，修改条件字段，对比结果变化
           </div>
         </div>
       </div>
@@ -56,7 +56,7 @@ export function WhatIfExperiment() {
           <div className="flex items-center gap-2 mb-3">
             <span className="w-2 h-2 rounded-full bg-slate-400" />
             <span className="text-xs font-semibold text-slate-500">
-              {ui.baseline} — {t(caseLabels, "CASE-03")}
+              {ui.baseline} — {translateOrUnknown(caseLabels, "CASE-03", ui.unknownCase)}
             </span>
           </div>
           <DecisionBadge decision={baselineDecision} />
@@ -235,7 +235,9 @@ export function WhatIfExperiment() {
                   const ruleChanged = baselineStatus !== scenarioStatus;
                   return (
                     <tr key={`${r.ruleId}-${r.version}`} className="border-b border-slate-50">
-                      <td className="py-2 text-violet-700">{t(ruleLabels, r.ruleId)}</td>
+                      <td className="py-2 text-violet-700">
+                        {translateOrUnknown(ruleLabels, r.ruleId, ui.unknownRule)}
+                      </td>
                       <td className="py-2">
                         <StatusBadge status={baselineStatus} />
                       </td>

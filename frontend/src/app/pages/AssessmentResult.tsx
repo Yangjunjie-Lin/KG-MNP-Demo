@@ -21,9 +21,10 @@ import {
   ontologyRelationLabels,
   processStepLabels,
   publicationStatusLabels,
+  regulatoryClauseLabels,
   remediationActionLabels,
   ruleLabels,
-  t,
+  translateOrUnknown,
   ui,
 } from "../i18n/zh-CN";
 import {
@@ -35,6 +36,17 @@ import type { Decision, StepStatus } from "../types/common";
 
 function formatTime(iso: string): string {
   return iso.replace("T", " ").replace("Z", "").slice(0, 19);
+}
+
+/** 按字符边界温和截断，避免截断中文中间语义。 */
+function softTruncate(label: string, maxChars: number): string {
+  if (label.length <= maxChars) return label;
+  return `${label.slice(0, maxChars)}…`;
+}
+
+function estimateBoxWidth(label: string, typeLabel: string): number {
+  const longest = Math.max(label.length, typeLabel.length);
+  return Math.min(220, Math.max(140, longest * 12 + 24));
 }
 
 const TABS = [
@@ -49,30 +61,78 @@ const TABS = [
 
 function TraceGraph({ detail }: { detail: AssessmentDetail }) {
   const [selectedNode, setSelectedNode] = useState<string | null>(null);
-  const caseLabel = t(caseLabels, detail.caseId, detail.caseId);
+  const caseLabel = translateOrUnknown(caseLabels, detail.caseId, ui.unknownCase);
   const firstBlock = detail.blockingReasonDetails[0];
   const brLabel = firstBlock
-    ? t(blockingReasonLabels, firstBlock.reasonCode, firstBlock.reasonCode)
+    ? translateOrUnknown(blockingReasonLabels, firstBlock.reasonCode, ui.unknownStatus)
     : "无阻塞";
   const ruleLabel = firstBlock
-    ? t(ruleLabels, firstBlock.ruleId, firstBlock.ruleId)
-    : t(ruleLabels, "MNP-ELIG-001");
+    ? translateOrUnknown(ruleLabels, firstBlock.ruleId, ui.unknownRule)
+    : translateOrUnknown(ruleLabels, "MNP-ELIG-001", ui.unknownRule);
   const actionLabel = firstBlock
-    ? t(remediationActionLabels, firstBlock.actionCode, firstBlock.actionCode)
+    ? translateOrUnknown(remediationActionLabels, firstBlock.actionCode, ui.unknownAction)
     : "—";
+  const clauseLabel = firstBlock
+    ? translateOrUnknown(
+        regulatoryClauseLabels,
+        firstBlock.regulatoryClause,
+        ui.unknownClause,
+      )
+    : "监管条款";
 
   const nodes = [
-    { id: "case", label: caseLabel, type: "MNPCase", x: 40, y: 160, color: "#2563eb" },
+    { id: "case", label: caseLabel, type: "MNPCase", x: 20, y: 160, color: "#2563eb" },
     { id: "assessment", label: "资格评估", type: "EligibilityAssessment", x: 200, y: 160, color: "#7c3aed" },
-    { id: "ev1", label: t(evidenceTypeLabels, "CONTRACT_STATUS"), type: "EvidenceRecord", x: 360, y: 80, color: "#0891b2" },
-    { id: "ev2", label: t(evidenceTypeLabels, "BILLING_BALANCE"), type: "EvidenceRecord", x: 360, y: 160, color: "#0891b2" },
-    { id: "ev3", label: t(evidenceTypeLabels, "IDENTITY_MATCH"), type: "EvidenceRecord", x: 360, y: 240, color: "#0891b2" },
-    { id: "br1", label: brLabel, type: "BlockingReason", x: 530, y: 80, color: "#dc2626" },
-    { id: "rule", label: ruleLabel, type: "EligibilityRule", x: 690, y: 40, color: "#7c3aed" },
-    { id: "rv", label: firstBlock ? `版本 ${firstBlock.ruleVersion}` : "版本 1.0", type: "RuleVersion", x: 830, y: 40, color: "#5b21b6" },
-    { id: "rc", label: firstBlock?.regulatoryClause ?? "监管条款", type: "RegulatoryClause", x: 830, y: 130, color: "#1e3a8a" },
-    { id: "ra", label: actionLabel, type: "RemediationAction", x: 690, y: 150, color: "#059669" },
-  ];
+    {
+      id: "ev1",
+      label: translateOrUnknown(evidenceTypeLabels, "CONTRACT_STATUS", ui.unknownEvidence),
+      type: "EvidenceRecord",
+      x: 380,
+      y: 70,
+      color: "#0891b2",
+    },
+    {
+      id: "ev2",
+      label: translateOrUnknown(evidenceTypeLabels, "BILLING_BALANCE", ui.unknownEvidence),
+      type: "EvidenceRecord",
+      x: 380,
+      y: 160,
+      color: "#0891b2",
+    },
+    {
+      id: "ev3",
+      label: translateOrUnknown(evidenceTypeLabels, "IDENTITY_MATCH", ui.unknownEvidence),
+      type: "EvidenceRecord",
+      x: 380,
+      y: 250,
+      color: "#0891b2",
+    },
+    { id: "br1", label: brLabel, type: "BlockingReason", x: 580, y: 70, color: "#dc2626" },
+    { id: "rule", label: ruleLabel, type: "EligibilityRule", x: 780, y: 30, color: "#7c3aed" },
+    {
+      id: "rv",
+      label: firstBlock ? `版本 ${firstBlock.ruleVersion}` : "版本 1.0",
+      type: "RuleVersion",
+      x: 980,
+      y: 30,
+      color: "#5b21b6",
+    },
+    { id: "rc", label: clauseLabel, type: "RegulatoryClause", x: 980, y: 130, color: "#1e3a8a" },
+    { id: "ra", label: actionLabel, type: "RemediationAction", x: 780, y: 160, color: "#059669" },
+  ].map((n) => {
+    const typeLabel = translateOrUnknown(
+      ontologyClassLabels,
+      n.type,
+      ui.unknownOntologyClass,
+    );
+    const displayLabel = softTruncate(n.label, 18);
+    return {
+      ...n,
+      typeLabel,
+      displayLabel,
+      width: estimateBoxWidth(displayLabel, typeLabel),
+    };
+  });
 
   const edges = [
     { from: "case", to: "assessment", label: ontologyRelationLabels.hasAssessment },
@@ -102,7 +162,7 @@ function TraceGraph({ detail }: { detail: AssessmentDetail }) {
   return (
     <div className="flex flex-col lg:flex-row gap-4 min-w-0">
       <div className="flex-1 bg-white border border-slate-200 rounded-lg overflow-x-auto min-w-0">
-        <svg viewBox="0 0 980 320" className="w-full min-w-[720px]" style={{ height: 320 }}>
+        <svg viewBox="0 0 1220 340" className="w-full min-w-[900px]" style={{ height: 340 }}>
           <defs>
             <marker id="arrow-trace" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
               <path d="M0,0 L0,6 L8,3 z" fill="#94a3b8" />
@@ -112,20 +172,20 @@ function TraceGraph({ detail }: { detail: AssessmentDetail }) {
             const from = nodeMap[e.from];
             const to = nodeMap[e.to];
             if (!from || !to) return null;
-            const mx = (from.x + to.x) / 2;
+            const mx = (from.x + from.width / 2 + to.x + to.width / 2) / 2;
             const my = (from.y + to.y) / 2;
             return (
               <g key={i}>
                 <line
-                  x1={from.x + 70}
-                  y1={from.y + 14}
+                  x1={from.x + from.width}
+                  y1={from.y + 16}
                   x2={to.x}
-                  y2={to.y + 14}
+                  y2={to.y + 16}
                   stroke="#cbd5e1"
                   strokeWidth="1.5"
                   markerEnd="url(#arrow-trace)"
                 />
-                <text x={mx + 35} y={my + 10} fontSize="9" fill="#94a3b8" textAnchor="middle">
+                <text x={mx} y={my + 10} fontSize="9" fill="#94a3b8" textAnchor="middle">
                   {e.label}
                 </text>
               </g>
@@ -141,25 +201,25 @@ function TraceGraph({ detail }: { detail: AssessmentDetail }) {
               <rect
                 x={n.x}
                 y={n.y}
-                width={140}
-                height={28}
+                width={n.width}
+                height={32}
                 rx={5}
                 fill={typeColors[n.type] || "#f8fafc"}
                 stroke={selectedNode === n.id ? n.color : "#e2e8f0"}
                 strokeWidth={selectedNode === n.id ? 2 : 1}
               />
               <text
-                x={n.x + 70}
-                y={n.y + 12}
+                x={n.x + n.width / 2}
+                y={n.y + 13}
                 fontSize="9"
                 fill={n.color}
                 fontWeight="600"
                 textAnchor="middle"
               >
-                {t(ontologyClassLabels, n.type, n.type)}
+                {n.typeLabel}
               </text>
-              <text x={n.x + 70} y={n.y + 22} fontSize="8" fill="#475569" textAnchor="middle">
-                {n.label.length > 14 ? `${n.label.slice(0, 14)}…` : n.label}
+              <text x={n.x + n.width / 2} y={n.y + 25} fontSize="8" fill="#475569" textAnchor="middle">
+                {n.displayLabel}
               </text>
             </g>
           ))}
@@ -167,9 +227,7 @@ function TraceGraph({ detail }: { detail: AssessmentDetail }) {
       </div>
       {selected && (
         <div className="w-full lg:w-56 bg-white border border-slate-200 rounded-lg p-4 text-xs flex-shrink-0">
-          <div className="font-semibold text-slate-700 mb-3">
-            {t(ontologyClassLabels, selected.type, selected.type)}
-          </div>
+          <div className="font-semibold text-slate-700 mb-3">{selected.typeLabel}</div>
           <div className="space-y-2">
             <div>
               <span className="text-slate-400">名称：</span>
@@ -177,9 +235,7 @@ function TraceGraph({ detail }: { detail: AssessmentDetail }) {
             </div>
             <div>
               <span className="text-slate-400">类型：</span>
-              <span className="text-slate-700">
-                {t(ontologyClassLabels, selected.type, selected.type)}
-              </span>
+              <span className="text-slate-700">{selected.typeLabel}</span>
             </div>
           </div>
           <button
@@ -227,7 +283,8 @@ export function AssessmentResult({
   const isBlocked = detail.decision === "BLOCKED";
   const isCase06 = detail.caseId === "CASE-06";
   const isCase07 = detail.caseId === "CASE-07";
-  const decisionZh = t(decisionLabels, detail.decision);
+  const decisionZh = translateOrUnknown(decisionLabels, detail.decision, ui.unknownStatus);
+  const caseName = translateOrUnknown(caseLabels, detail.caseId, ui.unknownCase);
 
   const timelineSteps = detail.pipelineSteps.map((step) => {
     let status: StepStatus = step.status ?? "PASSED";
@@ -248,7 +305,7 @@ export function AssessmentResult({
           <ChevronLeft size={14} /> 返回案件列表
         </button>
         <div className="w-px h-4 bg-slate-200" />
-        <span className="text-xs text-slate-500">{t(caseLabels, detail.caseId)}</span>
+        <span className="text-xs text-slate-500">{caseName}</span>
         <ArrowRight size={12} className="text-slate-300" />
         <span className="text-xs text-slate-600 font-medium truncate">{detail.title}</span>
       </div>
@@ -303,7 +360,7 @@ export function AssessmentResult({
             </div>
             <div className="grid grid-cols-2 gap-x-6 gap-y-1 text-xs text-left lg:text-right flex-shrink-0">
               <span className="text-slate-400">案例编号</span>
-              <span className="text-slate-700">{t(caseLabels, detail.caseId)}</span>
+              <span className="text-slate-700">{caseName}</span>
               <span className="text-slate-400">{ui.assessmentTime}</span>
               <span className="text-slate-700">{formatTime(detail.assessmentTime)}</span>
               <span className="text-slate-400">{ui.executionCount}</span>
@@ -316,7 +373,11 @@ export function AssessmentResult({
                     : "text-amber-600",
                 )}
               >
-                {t(publicationStatusLabels, detail.publicationStatus)}
+                {translateOrUnknown(
+                  publicationStatusLabels,
+                  detail.publicationStatus,
+                  ui.unknownStatus,
+                )}
               </span>
             </div>
           </div>
@@ -326,7 +387,7 @@ export function AssessmentResult({
           <div className="px-6 pt-4 space-y-3">
             <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-4">
               <div className="text-xs font-semibold text-emerald-800 mb-1">
-                {ui.historicalVersion}（120 天）
+                {ui.case06HistoricalAssessment}（{ui.historicalVersion} · 120 天）
               </div>
               <div className="text-sm text-emerald-700">
                 {detail.historicalAssessment?.note ??
@@ -347,7 +408,7 @@ export function AssessmentResult({
             </div>
             <div className="bg-red-50 border border-red-200 rounded-lg p-4">
               <div className="text-xs font-semibold text-red-800 mb-1">
-                {ui.currentVersion}（180 天）
+                {ui.case06CurrentAssessment}（{ui.currentVersion} · 180 天）
               </div>
               <div className="text-sm text-red-700">
                 {detail.currentAssessmentNote ?? "当前规则版本要求 180 天，结论为不可携转。"}
@@ -507,13 +568,26 @@ export function AssessmentResult({
                         )}
                       >
                         <td className="px-4 py-2.5 text-slate-600">
-                          {t(evidenceTypeLabels, ev.evidenceType)}-{i + 1}
+                          {translateOrUnknown(
+                            evidenceTypeLabels,
+                            ev.evidenceType,
+                            ui.unknownEvidence,
+                          )}
+                          -{i + 1}
                         </td>
                         <td className="px-4 py-2.5 text-violet-700">
-                          {t(evidenceTypeLabels, ev.evidenceType)}
+                          {translateOrUnknown(
+                            evidenceTypeLabels,
+                            ev.evidenceType,
+                            ui.unknownEvidence,
+                          )}
                         </td>
                         <td className="px-4 py-2.5 text-slate-500">
-                          {t(dataSourceLabels, ev.sourceSystem, ev.sourceSystem)}
+                          {translateOrUnknown(
+                            dataSourceLabels,
+                            ev.sourceSystem,
+                            ui.unknownDataSource,
+                          )}
                         </td>
                         <td className="px-4 py-2.5">
                           <StatusBadge status={ev.status} />
@@ -564,7 +638,7 @@ export function AssessmentResult({
                         )}
                       >
                         <td className="px-4 py-2.5 text-violet-700">
-                          {t(ruleLabels, r.ruleId)}
+                          {translateOrUnknown(ruleLabels, r.ruleId, ui.unknownRule)}
                         </td>
                         <td className="px-4 py-2.5 text-slate-500">{r.version}</td>
                         <td className="px-4 py-2.5">
@@ -578,7 +652,11 @@ export function AssessmentResult({
                         </td>
                         <td className="px-4 py-2.5 text-slate-500">
                           {r.reasonCode
-                            ? t(blockingReasonLabels, r.reasonCode, r.reasonCode)
+                            ? translateOrUnknown(
+                                blockingReasonLabels,
+                                r.reasonCode,
+                                ui.unknownStatus,
+                              )
                             : "—"}
                         </td>
                       </tr>
@@ -657,10 +735,10 @@ export function AssessmentResult({
                     <div className="flex justify-between text-xs gap-2">
                       <span className="text-slate-500">当前步骤</span>
                       <span className="text-slate-700 text-right">
-                        {t(
+                        {translateOrUnknown(
                           processStepLabels,
-                          detail.process?.currentStep ?? "",
-                          String(detail.process?.currentStep ?? "—"),
+                          detail.process?.currentStep,
+                          ui.unknownStatus,
                         )}
                       </span>
                     </div>
@@ -668,7 +746,11 @@ export function AssessmentResult({
                       <span className="text-slate-500">下一步骤</span>
                       <span className="text-slate-700 text-right">
                         {detail.process?.nextStep
-                          ? t(processStepLabels, detail.process.nextStep, String(detail.process.nextStep))
+                          ? translateOrUnknown(
+                              processStepLabels,
+                              detail.process.nextStep,
+                              ui.unknownStatus,
+                            )
                           : "—"}
                       </span>
                     </div>
@@ -697,7 +779,8 @@ export function AssessmentResult({
                       key={p.code}
                       className="text-xs bg-red-50 border border-red-100 rounded p-2 text-red-700"
                     >
-                      {p.message || t(blockingReasonLabels, p.code, p.code)}
+                      {p.message ||
+                        translateOrUnknown(blockingReasonLabels, p.code, ui.unknownStatus)}
                     </div>
                   ))}
                 </div>
@@ -711,9 +794,10 @@ export function AssessmentResult({
                       <strong>注意：</strong>
                       {ui.eligibilityVsProcessNote}
                       当前资格结论为「{decisionZh}」，但授权码状态为「
-                      {t(
+                      {translateOrUnknown(
                         authCodeStatusLabels,
                         detail.process?.authorizationCode?.status ?? "EXPIRED",
+                        ui.unknownStatus,
                       )}
                       」，流程「{ui.cannotAdvance}」。资格通过并不等于流程可以继续。
                     </div>

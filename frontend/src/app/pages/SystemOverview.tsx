@@ -19,7 +19,8 @@ import { cn } from "../utils/cn";
 import {
   blockingReasonLabels,
   caseLabels,
-  t,
+  translateOrUnknown,
+  ui,
 } from "../i18n/zh-CN";
 import { listCases } from "../services/caseService";
 import { getPipelineSteps } from "../services/assessmentService";
@@ -187,7 +188,7 @@ export function SystemOverview({
             >
               <div className="flex items-start justify-between mb-2 gap-2">
                 <span className="text-xs text-slate-500 bg-slate-50 px-1.5 py-0.5 rounded">
-                  {t(caseLabels, c.id, c.id)}
+                  {translateOrUnknown(caseLabels, c.id, ui.unknownCase)}
                 </span>
                 <DecisionBadge decision={c.decision} />
               </div>
@@ -200,7 +201,7 @@ export function SystemOverview({
                       key={r}
                       className="text-[10px] bg-red-50 text-red-600 px-1.5 py-0.5 rounded border border-red-100"
                     >
-                      {t(blockingReasonLabels, r, r)}
+                      {translateOrUnknown(blockingReasonLabels, r, ui.unknownStatus)}
                     </span>
                   ))}
                 </div>
