@@ -6,6 +6,7 @@ from kg_mnp_demo.api.dependencies import AppState, get_state
 from kg_mnp_demo.api.schemas.common import ERROR_RESPONSES
 from kg_mnp_demo.api.schemas.ontology import (
     OntologyClassListResponse,
+    OntologyClassResponse,
     OntologyGraphResponse,
     OntologyModuleListResponse,
     OntologyPropertiesResponse,
@@ -43,7 +44,11 @@ def ontology_classes(state: AppState = Depends(get_state)):
     return {"items": state.ontology_service.list_classes()}
 
 
-@router.get("/ontology/classes/{name}", responses=ERROR_RESPONSES)
+@router.get(
+    "/ontology/classes/{name}",
+    response_model=OntologyClassResponse,
+    responses=ERROR_RESPONSES,
+)
 def ontology_class_detail(name: str, state: AppState = Depends(get_state)):
     detail = state.ontology_service.get_class_detail(name)
     if not detail:

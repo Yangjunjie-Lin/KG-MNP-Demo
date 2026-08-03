@@ -37,6 +37,13 @@ uvicorn kg_mnp_demo.api.app:app --reload
 
 `POST /assessments` with `persist=true` and `force_recompute=false` reuses an existing row for the same `case_id` + `assessment_time` + `input_hash` and does not create orphan artifact directories.
 
+`force_recompute=true` replaces that row and deletes the previous artifact directory only after the new DB write succeeds.
+
+### CASE-06
+
+- History (`inputs/case06_history.json`, 2026-05-15): MNP-ELIG-005 **v1.0 PASS** → **ELIGIBLE**
+- Current (`inputs/case06.json`, 2026-07-01): MNP-ELIG-005 **v1.1 FAIL** → **BLOCKED**
+
 ### Examples
 
 All nine cases are runnable via `GET/POST /api/v1/examples/...` using JSON under `inputs/`.

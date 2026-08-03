@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "WhatIfResponse",
   "type": "object",
-  "additionalProperties": true,
+  "additionalProperties": false,
   "required": [
     "baseline",
     "scenario",
@@ -13,11 +13,14 @@
     "trace_changes"
   ],
   "properties": {
+    "schema_version": { "type": "string" },
     "baseline": { "type": "object" },
     "scenario": { "type": "object" },
     "changes": { "type": "object" },
+    "decision_changed": { "type": "boolean" },
     "decision_change": {
       "type": "object",
+      "additionalProperties": false,
       "required": ["changed", "from", "to"],
       "properties": {
         "changed": { "type": "boolean" },
@@ -36,12 +39,14 @@
           "version_after": { "type": ["string", "null"] },
           "status_before": { "type": ["string", "null"] },
           "status_after": { "type": ["string", "null"] },
-          "changed": { "type": "boolean" }
+          "changed": { "type": "boolean" },
+          "change_kind": { "type": "string" }
         }
       }
     },
     "reason_changes": {
       "type": "object",
+      "additionalProperties": false,
       "required": ["added", "removed"],
       "properties": {
         "added": { "type": "array", "items": { "type": "string" } },
@@ -50,8 +55,24 @@
     },
     "evidence_changes": {
       "type": "object",
-      "required": ["added", "removed", "modified"]
+      "additionalProperties": false,
+      "required": ["added", "removed", "modified"],
+      "properties": {
+        "added": { "type": "array" },
+        "removed": { "type": "array" },
+        "modified": { "type": "array" }
+      }
     },
-    "trace_changes": { "type": "object" }
+    "trace_changes": {
+      "type": "object",
+      "properties": {
+        "baseline_edge_count": { "type": "integer" },
+        "scenario_edge_count": { "type": "integer" },
+        "baseline_node_count": { "type": "integer" },
+        "scenario_node_count": { "type": "integer" },
+        "edge_count_delta": { "type": "integer" },
+        "node_count_delta": { "type": "integer" }
+      }
+    }
   }
 }

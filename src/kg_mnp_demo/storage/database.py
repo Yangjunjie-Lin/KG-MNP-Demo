@@ -439,20 +439,68 @@ class AssessmentRepository:
 
 class ArtifactRepository:
     def __init__(self, root: Path | None = None) -> None:
-        self.root = root or default_artifact_root()
+        self.root = (root or default_artifact_root()).resolve()
 
     def execution_dir(self, execution_id: str) -> Path:
-        path = self.root / execution_id
+        path = self._safe_execution_path(execution_id)
         path.mkdir(parents=True, exist_ok=True)
         return path
 
+    def _safe_execution_path(self, execution_id: str) -> Path:
+        """Resolve an execution artifact path with traversal / root guards."""
+        import os
+        import re
+
+        eid = str(execution_id or "").strip()
+        if not eid or eid in {".", ".."} or "/" in eid or "\\" in eid:
+            raise ApplicationError(
+                ErrorCode.STORAGE_ERROR,
+                message="非法 artifact execution_id。",
+                details=[eid],
+            )
+        if not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9._-]{0,127}", eid):
+            raise ApplicationError(
+                ErrorCode.STORAGE_ERROR,
+                message="非法 artifact execution_id。",
+                details=[eid],
+            )
+        root = self.root.resolve()
+        path = (root / eid).resolve()
+        try:
+            path.relative_to(root)
+        except ValueError as exc:
+            raise ApplicationError(
+                ErrorCode.STORAGE_ERROR,
+                message="拒绝删除项目根或 runtime_data 根目录。",
+                details=[str(path)],
+            ) from exc
+        if path == root:
+            raise ApplicationError(
+                ErrorCode.STORAGE_ERROR,
+                message="拒绝删除项目根或 runtime_data 根目录。",
+                details=[str(path)],
+            )
+        forbidden = {
+            project_root().resolve(),
+            (project_root() / "runtime_data").resolve(),
+        }
+        if path in forbidden:
+            raise ApplicationError(
+                ErrorCode.STORAGE_ERROR,
+                message="拒绝删除项目根或 runtime_data 根目录。",
+                details=[str(path)],
+            )
+        # Ensure separator boundary (Windows-safe via relative_to above)
+        _ = os.sep
+        return path
+
     def cleanup_execution_dir(self, execution_id: str) -> None:
-        """Remove a newly created artifact directory for a failed/orphaned write."""
+        """Remove an execution artifact directory after safety checks."""
         import shutil
 
-        path = self.root / execution_id
+        path = self._safe_execution_path(execution_id)
         if path.exists() and path.is_dir():
-            shutil.rmtree(path, ignore_errors=True)
+            shutil.rmtree(path)
 
     def relative_artifacts(self, names: dict[str, str]) -> dict[str, str]:
         return {k: Path(v).name for k, v in names.items()}

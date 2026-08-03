@@ -1,4 +1,4 @@
-"""Validate all frozen API response JSON Schemas against real payloads."""
+"""Validate all frozen API response JSON Schemas against real payloads + Pydantic."""
 
 from __future__ import annotations
 
@@ -7,6 +7,8 @@ from pathlib import Path
 
 from jsonschema import Draft202012Validator
 
+from kg_mnp_demo.api.schemas.assessment import AssessmentResponse, WhatIfResponse
+from kg_mnp_demo.api.schemas.views import CaseViewResponse, DashboardViewResponse
 from kg_mnp_demo.application.assessment_service import AssessmentService
 from kg_mnp_demo.application.errors import ApplicationError, ErrorCode
 from kg_mnp_demo.application.ontology_service import OntologyService
@@ -32,6 +34,7 @@ def test_all_contract_schemas():
     svc = AssessmentService()
     payload = json.loads((ROOT / "inputs" / "case03.json").read_text(encoding="utf-8"))
     assessment = svc.assess_dict(payload)
+    AssessmentResponse.model_validate(assessment)
     _validate("AssessmentResponse.json", assessment)
 
     err = ApplicationError(ErrorCode.INPUT_SCHEMA_ERROR, details=["x"]).to_dict()
@@ -43,11 +46,12 @@ def test_all_contract_schemas():
     _validate("TraceGraphResponse.json", assessment["trace_subgraph"])
 
     dash = DashboardView().build(ontology=OntologyService(), repository=None)
-    # Ensure required keys for frozen schema
+    DashboardViewResponse.model_validate(dash)
     assert "example_cases" in dash
     _validate("DashboardViewResponse.json", dash)
 
     case_view = {"case": payload, "latest_assessment": None}
+    CaseViewResponse.model_validate(case_view)
     _validate("CaseViewResponse.json", case_view)
 
     changes = {
@@ -65,6 +69,7 @@ def test_all_contract_schemas():
         },
     }
     what_if = ComparisonView().build(svc.run_what_if(payload, changes))
+    WhatIfResponse.model_validate(what_if)
     _validate("WhatIfResponse.json", what_if)
 
     g = load_case_graph("CASE-01")

@@ -58,6 +58,9 @@ class ErrorResponse(BaseModel):
     error: ErrorDetail
 
 
+JsonValue = Any
+
+
 class ItemList(BaseModel):
     model_config = ConfigDict(extra="allow")
 

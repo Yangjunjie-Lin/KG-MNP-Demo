@@ -15,9 +15,10 @@ from kg_mnp_demo.application.errors import ApplicationError, ErrorCode
 def max_request_bytes() -> int:
     raw = os.environ.get("KG_MNP_MAX_REQUEST_BYTES", str(1024 * 1024))
     try:
-        return max(1024, int(raw))
+        value = int(raw)
     except ValueError:
         return 1024 * 1024
+    return max(1, value)
 
 
 class RequestSizeLimitMiddleware(BaseHTTPMiddleware):

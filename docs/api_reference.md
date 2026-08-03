@@ -28,9 +28,11 @@ All routes are under `/api/v1`.
 
 Request body for create: `{ "payload": <MNPCaseInput>, "persist": bool, "force_recompute": bool }`.
 
-Idempotency: same `case_id` + `assessment_time` + `input_hash` with `persist=true` and `force_recompute=false` returns the existing execution without a new artifact directory.
+Idempotency: same `case_id` + `assessment_time` + `input_hash` with `persist=true` and `force_recompute=false` returns the existing execution without a new artifact directory. `force_recompute=true` replaces the row and removes the previous artifact directory after a successful save.
 
 Body size: env `KG_MNP_MAX_REQUEST_BYTES` (default 1 MiB) → HTTP 413 / `REQUEST_TOO_LARGE`.
+
+Unknown core response fields are rejected (`extra="forbid"`). Prefer OpenAPI for TypeScript clients.
 
 ## Cases / Ontology / CQ / Rules / Examples / Views
 

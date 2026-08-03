@@ -5,6 +5,7 @@ import json
 from fastapi import APIRouter, Depends
 
 from kg_mnp_demo.api.dependencies import AppState, get_state
+from kg_mnp_demo.api.schemas.assessment import AssessmentRecordResponse
 from kg_mnp_demo.api.schemas.common import (
     ERROR_RESPONSES,
     CaseDetailResponse,
@@ -69,7 +70,11 @@ def case_history(case_id: str, state: AppState = Depends(get_state)):
     return {"case_id": case_id, "items": state.repository.list_case_history(case_id)}
 
 
-@router.get("/cases/{case_id}/latest", responses=ERROR_RESPONSES)
+@router.get(
+    "/cases/{case_id}/latest",
+    response_model=AssessmentRecordResponse | None,
+    responses=ERROR_RESPONSES,
+)
 def case_latest(case_id: str, state: AppState = Depends(get_state)):
     """Latest execution record for a case, or null when history is empty."""
     return state.repository.get_latest_case_execution(case_id)

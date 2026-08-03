@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "DashboardViewResponse",
   "type": "object",
-  "additionalProperties": true,
+  "additionalProperties": false,
   "required": [
     "project",
     "capabilities",
@@ -13,10 +13,19 @@
     "pipeline_steps"
   ],
   "properties": {
-    "project": { "type": "object" },
+    "project": {
+      "type": "object",
+      "required": ["name"],
+      "properties": {
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "root_name": { "type": "string" }
+      }
+    },
     "capabilities": { "type": "array", "items": { "type": "string" } },
     "ontology": {
       "type": "object",
+      "additionalProperties": false,
       "required": ["shape_count", "class_count", "rule_count", "competency_question_count"],
       "properties": {
         "module_count": { "type": "integer" },
@@ -32,6 +41,7 @@
     },
     "example_cases": {
       "type": "object",
+      "additionalProperties": false,
       "required": ["total", "eligible", "blocked", "manual_review"],
       "properties": {
         "total": { "type": "integer" },
@@ -42,13 +52,49 @@
     },
     "executions": {
       "type": "object",
-      "required": ["total", "eligible", "blocked", "manual_review"]
+      "additionalProperties": false,
+      "required": ["total", "eligible", "blocked", "manual_review"],
+      "properties": {
+        "total": { "type": "integer" },
+        "eligible": { "type": "integer" },
+        "blocked": { "type": "integer" },
+        "manual_review": { "type": "integer" }
+      }
     },
     "latest_case_states": {
       "type": "object",
-      "required": ["total", "eligible", "blocked", "manual_review"]
+      "additionalProperties": false,
+      "required": ["total", "eligible", "blocked", "manual_review"],
+      "properties": {
+        "total": { "type": "integer" },
+        "eligible": { "type": "integer" },
+        "blocked": { "type": "integer" },
+        "manual_review": { "type": "integer" }
+      }
     },
-    "pipeline_steps": { "type": "array" },
+    "cases": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["total", "eligible", "blocked", "manual_review"],
+      "properties": {
+        "total": { "type": "integer" },
+        "eligible": { "type": "integer" },
+        "blocked": { "type": "integer" },
+        "manual_review": { "type": "integer" }
+      }
+    },
+    "pipeline_steps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "label"],
+        "properties": {
+          "id": { "type": "string" },
+          "label": { "type": "string" },
+          "description": { "type": "string" }
+        }
+      }
+    },
     "example_case_ids": { "type": "array", "items": { "type": "string" } }
   }
 }

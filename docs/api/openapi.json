@@ -676,7 +676,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/TraceGraphResponse"
+                }
               }
             }
           },
@@ -1226,7 +1228,17 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/AssessmentRecordResponse"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ],
+                  "title": "Response Case Latest Api V1 Cases  Case Id  Latest Get"
+                }
               }
             }
           },
@@ -1559,7 +1571,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/OntologyClassResponse"
+                }
               }
             }
           },
@@ -2843,7 +2857,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/OntologyViewResponse"
+                }
               }
             }
           },
@@ -3117,7 +3133,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/TraceViewResponse"
+                }
               }
             }
           },
@@ -3207,7 +3225,9 @@
             "description": "Successful Response",
             "content": {
               "application/json": {
-                "schema": {}
+                "schema": {
+                  "$ref": "#/components/schemas/TimelineResponse"
+                }
               }
             }
           },
@@ -3568,6 +3588,10 @@
           "assessment_time": {
             "anyOf": [
               {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
                 "type": "string"
               },
               {
@@ -3593,14 +3617,9 @@
                 "$ref": "#/components/schemas/AssessmentResponse"
               },
               {
-                "additionalProperties": true,
-                "type": "object"
-              },
-              {
                 "type": "null"
               }
-            ],
-            "title": "Result"
+            ]
           },
           "input": {
             "anyOf": [
@@ -3647,6 +3666,10 @@
           "assessment_time": {
             "anyOf": [
               {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
                 "type": "string"
               },
               {
@@ -3661,37 +3684,15 @@
                 "$ref": "#/components/schemas/EligibilityDecisionCode"
               },
               {
-                "type": "string"
-              },
-              {
                 "type": "null"
               }
-            ],
-            "title": "Decision"
+            ]
           },
           "publication": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/PublicationResponse"
-              },
-              {
-                "additionalProperties": true,
-                "type": "object"
-              }
-            ],
-            "title": "Publication"
+            "$ref": "#/components/schemas/PublicationResponse"
           },
           "validations": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/ValidationsResponse"
-              },
-              {
-                "additionalProperties": true,
-                "type": "object"
-              }
-            ],
-            "title": "Validations"
+            "$ref": "#/components/schemas/ValidationsResponse"
           },
           "input_summary": {
             "additionalProperties": true,
@@ -3700,99 +3701,40 @@
           },
           "evidence": {
             "items": {
-              "anyOf": [
-                {
-                  "$ref": "#/components/schemas/EvidenceResponse"
-                },
-                {
-                  "additionalProperties": true,
-                  "type": "object"
-                }
-              ]
+              "$ref": "#/components/schemas/EvidenceResponse"
             },
             "type": "array",
             "title": "Evidence"
           },
           "rule_results": {
             "items": {
-              "anyOf": [
-                {
-                  "$ref": "#/components/schemas/RuleResultResponse"
-                },
-                {
-                  "additionalProperties": true,
-                  "type": "object"
-                }
-              ]
+              "$ref": "#/components/schemas/RuleResultResponse"
             },
             "type": "array",
             "title": "Rule Results"
           },
           "blocking_reasons": {
             "items": {
-              "anyOf": [
-                {
-                  "$ref": "#/components/schemas/BlockingReasonResponse"
-                },
-                {
-                  "additionalProperties": true,
-                  "type": "object"
-                }
-              ]
+              "$ref": "#/components/schemas/BlockingReasonResponse"
             },
             "type": "array",
             "title": "Blocking Reasons"
           },
           "remediation_actions": {
             "items": {
-              "anyOf": [
-                {
-                  "$ref": "#/components/schemas/RemediationActionResponse"
-                },
-                {
-                  "additionalProperties": true,
-                  "type": "object"
-                }
-              ]
+              "$ref": "#/components/schemas/RemediationActionResponse"
             },
             "type": "array",
             "title": "Remediation Actions"
           },
           "process": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/ProcessResponse"
-              },
-              {
-                "additionalProperties": true,
-                "type": "object"
-              }
-            ],
-            "title": "Process"
+            "$ref": "#/components/schemas/ProcessResponse"
           },
           "trace_subgraph": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/TraceGraphResponse"
-              },
-              {
-                "additionalProperties": true,
-                "type": "object"
-              }
-            ],
-            "title": "Trace Subgraph"
+            "$ref": "#/components/schemas/TraceGraphResponse"
           },
           "inference": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/InferenceResponse"
-              },
-              {
-                "additionalProperties": true,
-                "type": "object"
-              }
-            ],
-            "title": "Inference"
+            "$ref": "#/components/schemas/InferenceResponse"
           },
           "warnings": {
             "items": {
@@ -3809,7 +3751,7 @@
             "title": "Artifacts"
           }
         },
-        "additionalProperties": true,
+        "additionalProperties": false,
         "type": "object",
         "required": [
           "schema_version",
@@ -3908,7 +3850,7 @@
             "title": "Technical Details"
           }
         },
-        "additionalProperties": true,
+        "additionalProperties": false,
         "type": "object",
         "title": "AssessmentViewResponse"
       },
@@ -3980,6 +3922,10 @@
           "issued_at": {
             "anyOf": [
               {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
                 "type": "string"
               },
               {
@@ -3990,6 +3936,10 @@
           },
           "valid_until": {
             "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
               {
                 "type": "string"
               },
@@ -4011,7 +3961,7 @@
             "title": "Masked Value"
           }
         },
-        "additionalProperties": true,
+        "additionalProperties": false,
         "type": "object",
         "title": "AuthorizationCodeResponse"
       },
@@ -4143,17 +4093,16 @@
                 "$ref": "#/components/schemas/EvidenceResponse"
               },
               {
-                "additionalProperties": true,
-                "type": "object"
-              },
-              {
                 "type": "null"
               }
-            ],
-            "title": "Evidence"
+            ]
           },
           "assessment_time": {
             "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
               {
                 "type": "string"
               },
@@ -4166,6 +4115,10 @@
           "effective_from": {
             "anyOf": [
               {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
                 "type": "string"
               },
               {
@@ -4177,6 +4130,10 @@
           "effective_to": {
             "anyOf": [
               {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
                 "type": "string"
               },
               {
@@ -4186,7 +4143,7 @@
             "title": "Effective To"
           }
         },
-        "additionalProperties": true,
+        "additionalProperties": false,
         "type": "object",
         "required": [
           "reason_code"
@@ -4402,17 +4359,12 @@
                 "$ref": "#/components/schemas/AssessmentViewResponse"
               },
               {
-                "additionalProperties": true,
-                "type": "object"
-              },
-              {
                 "type": "null"
               }
-            ],
-            "title": "Latest Assessment"
+            ]
           }
         },
-        "additionalProperties": true,
+        "additionalProperties": false,
         "type": "object",
         "required": [
           "case"
@@ -4479,16 +4431,8 @@
             "title": "Changed Rule Versions"
           },
           "changed_evidence": {
-            "anyOf": [
-              {
-                "additionalProperties": true,
-                "type": "object"
-              },
-              {
-                "items": {},
-                "type": "array"
-              }
-            ],
+            "additionalProperties": true,
+            "type": "object",
             "title": "Changed Evidence"
           },
           "rule_changes": {
@@ -4500,7 +4444,7 @@
             "title": "Rule Changes"
           }
         },
-        "additionalProperties": true,
+        "additionalProperties": false,
         "type": "object",
         "title": "ComparisonResponse"
       },
@@ -4760,52 +4704,16 @@
             "title": "Capabilities"
           },
           "ontology": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/OntologyDashboardStats"
-              },
-              {
-                "additionalProperties": true,
-                "type": "object"
-              }
-            ],
-            "title": "Ontology"
+            "$ref": "#/components/schemas/OntologyDashboardStats"
           },
           "example_cases": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/CaseCountStats"
-              },
-              {
-                "additionalProperties": true,
-                "type": "object"
-              }
-            ],
-            "title": "Example Cases"
+            "$ref": "#/components/schemas/CaseCountStats"
           },
           "executions": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/CaseCountStats"
-              },
-              {
-                "additionalProperties": true,
-                "type": "object"
-              }
-            ],
-            "title": "Executions"
+            "$ref": "#/components/schemas/CaseCountStats"
           },
           "latest_case_states": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/CaseCountStats"
-              },
-              {
-                "additionalProperties": true,
-                "type": "object"
-              }
-            ],
-            "title": "Latest Case States"
+            "$ref": "#/components/schemas/CaseCountStats"
           },
           "cases": {
             "anyOf": [
@@ -4813,14 +4721,9 @@
                 "$ref": "#/components/schemas/CaseCountStats"
               },
               {
-                "additionalProperties": true,
-                "type": "object"
-              },
-              {
                 "type": "null"
               }
-            ],
-            "title": "Cases"
+            ]
           },
           "pipeline_steps": {
             "items": {
@@ -4838,7 +4741,7 @@
             "title": "Example Case Ids"
           }
         },
-        "additionalProperties": true,
+        "additionalProperties": false,
         "type": "object",
         "required": [
           "project",
@@ -4979,6 +4882,10 @@
           "generated_at": {
             "anyOf": [
               {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
                 "type": "string"
               },
               {
@@ -4989,6 +4896,10 @@
           },
           "valid_until": {
             "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
               {
                 "type": "string"
               },
@@ -5074,6 +4985,17 @@
             ],
             "title": "Input"
           },
+          "json_file": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Json File"
+          },
           "ttl_file": {
             "anyOf": [
               {
@@ -5086,7 +5008,7 @@
             "title": "Ttl File"
           }
         },
-        "additionalProperties": true,
+        "additionalProperties": false,
         "type": "object",
         "required": [
           "case_id"
@@ -5154,7 +5076,7 @@
             "title": "Ttl File"
           }
         },
-        "additionalProperties": true,
+        "additionalProperties": false,
         "type": "object",
         "required": [
           "case_id"
@@ -5165,15 +5087,7 @@
         "properties": {
           "items": {
             "items": {
-              "anyOf": [
-                {
-                  "$ref": "#/components/schemas/ExampleItem"
-                },
-                {
-                  "additionalProperties": true,
-                  "type": "object"
-                }
-              ]
+              "$ref": "#/components/schemas/ExampleItem"
             },
             "type": "array",
             "title": "Items"
@@ -5274,7 +5188,7 @@
             "title": "Triples Added"
           }
         },
-        "additionalProperties": true,
+        "additionalProperties": false,
         "type": "object",
         "title": "InferenceResponse"
       },
@@ -5626,7 +5540,7 @@
             "title": "Competency Question Count"
           }
         },
-        "additionalProperties": true,
+        "additionalProperties": false,
         "type": "object",
         "title": "OntologyDashboardStats"
       },
@@ -5759,6 +5673,40 @@
         "additionalProperties": false,
         "type": "object",
         "title": "OntologyGraphResponse"
+      },
+      "OntologyKeyPath": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "source_class": {
+            "type": "string",
+            "title": "Source Class"
+          },
+          "predicate": {
+            "type": "string",
+            "title": "Predicate"
+          },
+          "target_class": {
+            "type": "string",
+            "title": "Target Class"
+          },
+          "exists_in_rdf": {
+            "type": "boolean",
+            "title": "Exists In Rdf",
+            "default": true
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "source_class",
+          "predicate",
+          "target_class"
+        ],
+        "title": "OntologyKeyPath"
       },
       "OntologyModuleListResponse": {
         "properties": {
@@ -6017,6 +5965,38 @@
         "type": "object",
         "title": "OntologySummaryResponse"
       },
+      "OntologyViewResponse": {
+        "properties": {
+          "modules": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "type": "array",
+            "title": "Modules"
+          },
+          "graph": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Graph"
+          },
+          "key_paths": {
+            "items": {
+              "$ref": "#/components/schemas/OntologyKeyPath"
+            },
+            "type": "array",
+            "title": "Key Paths"
+          },
+          "stats": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Stats"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "OntologyViewResponse"
+      },
       "PhoneNumberInput": {
         "properties": {
           "masked_number": {
@@ -6094,7 +6074,7 @@
             "title": "Message"
           }
         },
-        "additionalProperties": true,
+        "additionalProperties": false,
         "type": "object",
         "title": "ProcessBlockingReason"
       },
@@ -6167,15 +6147,7 @@
           },
           "blocking_reasons": {
             "items": {
-              "anyOf": [
-                {
-                  "$ref": "#/components/schemas/ProcessBlockingReason"
-                },
-                {
-                  "additionalProperties": true,
-                  "type": "object"
-                }
-              ]
+              "$ref": "#/components/schemas/ProcessBlockingReason"
             },
             "type": "array",
             "title": "Blocking Reasons"
@@ -6186,14 +6158,9 @@
                 "$ref": "#/components/schemas/AuthorizationCodeResponse"
               },
               {
-                "additionalProperties": true,
-                "type": "object"
-              },
-              {
                 "type": "null"
               }
-            ],
-            "title": "Authorization Code"
+            ]
           },
           "eligibility_decision": {
             "anyOf": [
@@ -6207,7 +6174,7 @@
             "title": "Eligibility Decision"
           }
         },
-        "additionalProperties": true,
+        "additionalProperties": false,
         "type": "object",
         "title": "ProcessResponse"
       },
@@ -6218,18 +6185,10 @@
             "title": "Publishable"
           },
           "status": {
-            "anyOf": [
-              {
-                "$ref": "#/components/schemas/PublicationStatus"
-              },
-              {
-                "type": "string"
-              }
-            ],
-            "title": "Status"
+            "$ref": "#/components/schemas/PublicationStatus"
           }
         },
-        "additionalProperties": true,
+        "additionalProperties": false,
         "type": "object",
         "required": [
           "publishable",
@@ -6294,7 +6253,7 @@
             "title": "Iri"
           }
         },
-        "additionalProperties": true,
+        "additionalProperties": false,
         "type": "object",
         "title": "RemediationActionResponse"
       },
@@ -6373,6 +6332,10 @@
           "effective_from": {
             "anyOf": [
               {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
                 "type": "string"
               },
               {
@@ -6383,6 +6346,10 @@
           },
           "effective_to": {
             "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
               {
                 "type": "string"
               },
@@ -6395,6 +6362,10 @@
           "selected_for_assessment_time": {
             "anyOf": [
               {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
                 "type": "string"
               },
               {
@@ -6404,7 +6375,7 @@
             "title": "Selected For Assessment Time"
           }
         },
-        "additionalProperties": true,
+        "additionalProperties": false,
         "type": "object",
         "required": [
           "rule_id"
@@ -6553,6 +6524,57 @@
         "type": "object",
         "title": "TerminationAgreementInput"
       },
+      "TimelineResponse": {
+        "properties": {
+          "execution_id": {
+            "type": "string",
+            "title": "Execution Id"
+          },
+          "timeline": {
+            "items": {
+              "$ref": "#/components/schemas/TimelineStepResponse"
+            },
+            "type": "array",
+            "title": "Timeline"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "execution_id"
+        ],
+        "title": "TimelineResponse"
+      },
+      "TimelineStepResponse": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "title": "Id"
+          },
+          "label": {
+            "type": "string",
+            "title": "Label"
+          },
+          "status": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Status"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "label"
+        ],
+        "title": "TimelineStepResponse"
+      },
       "TraceEdgeResponse": {
         "properties": {
           "source": {
@@ -6581,33 +6603,61 @@
         "properties": {
           "nodes": {
             "items": {
-              "anyOf": [
-                {
-                  "$ref": "#/components/schemas/TraceNodeResponse"
-                },
-                {
-                  "additionalProperties": true,
-                  "type": "object"
-                }
-              ]
+              "$ref": "#/components/schemas/TraceNodeResponse"
             },
             "type": "array",
             "title": "Nodes"
           },
           "edges": {
             "items": {
-              "anyOf": [
-                {
-                  "$ref": "#/components/schemas/TraceEdgeResponse"
-                },
-                {
-                  "additionalProperties": true,
-                  "type": "object"
-                }
-              ]
+              "$ref": "#/components/schemas/TraceEdgeResponse"
             },
             "type": "array",
             "title": "Edges"
+          },
+          "case_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Case Id"
+          },
+          "root": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Root"
+          },
+          "root_local": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Root Local"
+          },
+          "query_file": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Query File"
           }
         },
         "additionalProperties": false,
@@ -6619,6 +6669,17 @@
           "id": {
             "type": "string",
             "title": "Id"
+          },
+          "local_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Local Id"
           },
           "label": {
             "anyOf": [
@@ -6649,6 +6710,50 @@
           "id"
         ],
         "title": "TraceNodeResponse"
+      },
+      "TraceViewResponse": {
+        "properties": {
+          "case_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Case Id"
+          },
+          "execution_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Execution Id"
+          },
+          "graph": {
+            "additionalProperties": true,
+            "type": "object",
+            "title": "Graph"
+          },
+          "node_count": {
+            "type": "integer",
+            "title": "Node Count",
+            "default": 0
+          },
+          "edge_count": {
+            "type": "integer",
+            "title": "Edge Count",
+            "default": 0
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "TraceViewResponse"
       },
       "ValidationStepResponse": {
         "properties": {
@@ -6697,7 +6802,7 @@
             "title": "Detail"
           }
         },
-        "additionalProperties": true,
+        "additionalProperties": false,
         "type": "object",
         "title": "ValidationStepResponse"
       },
@@ -6709,14 +6814,9 @@
                 "$ref": "#/components/schemas/ValidationStepResponse"
               },
               {
-                "additionalProperties": true,
-                "type": "object"
-              },
-              {
                 "type": "null"
               }
-            ],
-            "title": "Json Schema"
+            ]
           },
           "input_graph": {
             "anyOf": [
@@ -6724,14 +6824,9 @@
                 "$ref": "#/components/schemas/ValidationStepResponse"
               },
               {
-                "additionalProperties": true,
-                "type": "object"
-              },
-              {
                 "type": "null"
               }
-            ],
-            "title": "Input Graph"
+            ]
           },
           "assessment_graph": {
             "anyOf": [
@@ -6739,17 +6834,12 @@
                 "$ref": "#/components/schemas/ValidationStepResponse"
               },
               {
-                "additionalProperties": true,
-                "type": "object"
-              },
-              {
                 "type": "null"
               }
-            ],
-            "title": "Assessment Graph"
+            ]
           }
         },
-        "additionalProperties": true,
+        "additionalProperties": false,
         "type": "object",
         "title": "ValidationsResponse"
       },
@@ -6840,7 +6930,7 @@
             "title": "Trace Changes"
           }
         },
-        "additionalProperties": true,
+        "additionalProperties": false,
         "type": "object",
         "required": [
           "baseline",

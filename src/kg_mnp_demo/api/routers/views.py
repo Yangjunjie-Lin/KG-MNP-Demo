@@ -12,8 +12,11 @@ from kg_mnp_demo.api.schemas.views import (
     AssessmentViewResponse,
     CaseViewResponse,
     DashboardViewResponse,
+    OntologyViewResponse,
+    TimelineResponse,
+    TraceViewResponse,
 )
-from kg_mnp_demo.application.errors import ApplicationError, ErrorCode
+from kg_mnp_demo.application.errors import ApplicationError
 from kg_mnp_demo.loader import project_root
 from kg_mnp_demo.namespaces import CASE_JSON_FILES
 from kg_mnp_demo.presentation import (
@@ -39,7 +42,11 @@ def dashboard(state: AppState = Depends(get_state)):
     )
 
 
-@router.get("/ontology", responses=ERROR_RESPONSES)
+@router.get(
+    "/ontology",
+    response_model=OntologyViewResponse,
+    responses=ERROR_RESPONSES,
+)
 def ontology_view(state: AppState = Depends(get_state)):
     return OntologyView().build(state.ontology_service)
 
@@ -74,13 +81,21 @@ def assessment_view(execution_id: str, state: AppState = Depends(get_state)):
     return AssessmentView().build(record)
 
 
-@router.get("/assessments/{execution_id}/trace", responses=ERROR_RESPONSES)
+@router.get(
+    "/assessments/{execution_id}/trace",
+    response_model=TraceViewResponse,
+    responses=ERROR_RESPONSES,
+)
 def assessment_trace_view(execution_id: str, state: AppState = Depends(get_state)):
     record = state.repository.get_execution(execution_id)
     return TraceView().build(record.get("result") or {})
 
 
-@router.get("/assessments/{execution_id}/timeline", responses=ERROR_RESPONSES)
+@router.get(
+    "/assessments/{execution_id}/timeline",
+    response_model=TimelineResponse,
+    responses=ERROR_RESPONSES,
+)
 def assessment_timeline(execution_id: str, state: AppState = Depends(get_state)):
     view = AssessmentView().build(state.repository.get_execution(execution_id))
     return {"execution_id": execution_id, "timeline": view["timeline"]}

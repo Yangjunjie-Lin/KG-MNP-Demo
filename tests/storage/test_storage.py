@@ -128,16 +128,11 @@ def test_process_requires_assessment_time():
 
 
 def test_unwritable_db(tmp_path):
-    bad = tmp_path / "readonly"
-    bad.mkdir()
-    bad.chmod(0o400)
-    # On Windows chmod may not block writes the same way — still attempt
-    try:
-        Database(bad / "nested" / "x.sqlite3")
-    except ApplicationError as exc:
-        assert exc.code == ErrorCode.STORAGE_ERROR
-    finally:
-        bad.chmod(0o700)
+    not_a_directory = tmp_path / "not-a-directory"
+    not_a_directory.write_text("file", encoding="utf-8")
+    with pytest.raises(ApplicationError) as exc:
+        Database(not_a_directory / "db.sqlite3")
+    assert exc.value.code == ErrorCode.STORAGE_ERROR
 
 
 def test_cleanup_orphan_dir(tmp_path):
