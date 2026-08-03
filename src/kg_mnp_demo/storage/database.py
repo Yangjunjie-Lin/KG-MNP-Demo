@@ -97,6 +97,108 @@ class AssessmentRepository:
     def __init__(self, db: Database | None = None) -> None:
         self.db = db or Database()
 
+    def find_idempotent_execution(
+        self,
+        case_id: str,
+        assessment_time: str,
+        input_hash: str,
+    ) -> dict[str, Any] | None:
+        row = self.db.connection.execute(
+            """
+            SELECT * FROM executions
+            WHERE case_id = ? AND assessment_time = ? AND input_hash = ?
+            """,
+            (case_id, assessment_time, input_hash),
+        ).fetchone()
+        if not row:
+            return None
+        return self._row_to_record(row)
+
+    def count_by_decision(self) -> dict[str, int]:
+        rows = self.db.connection.execute(
+            """
+            SELECT decision, COUNT(*) AS n FROM executions GROUP BY decision
+            """
+        ).fetchall()
+        out = {"total": 0, "eligible": 0, "blocked": 0, "manual_review": 0, "other": 0}
+        for row in rows:
+            n = int(row["n"])
+            out["total"] += n
+            d = row["decision"]
+            if d == "ELIGIBLE":
+                out["eligible"] += n
+            elif d == "BLOCKED":
+                out["blocked"] += n
+            elif d == "MANUAL_REVIEW":
+                out["manual_review"] += n
+            else:
+                out["other"] += n
+        return out
+
+    def latest_case_decision_counts(self) -> dict[str, int]:
+        rows = self.db.connection.execute(
+            """
+            SELECT e.case_id, e.decision
+            FROM executions e
+            INNER JOIN (
+                SELECT case_id, MAX(created_at) AS max_created
+                FROM executions
+                GROUP BY case_id
+            ) t ON e.case_id = t.case_id AND e.created_at = t.max_created
+            """
+        ).fetchall()
+        out = {"total": 0, "eligible": 0, "blocked": 0, "manual_review": 0, "other": 0}
+        seen: set[str] = set()
+        for row in rows:
+            if row["case_id"] in seen:
+                continue
+            seen.add(row["case_id"])
+            out["total"] += 1
+            d = row["decision"]
+            if d == "ELIGIBLE":
+                out["eligible"] += 1
+            elif d == "BLOCKED":
+                out["blocked"] += 1
+            elif d == "MANUAL_REVIEW":
+                out["manual_review"] += 1
+            else:
+                out["other"] += 1
+        return out
+
+    def find_affected_by_rule_version(
+        self,
+        *,
+        rule_id: str,
+        old_version: str,
+        new_version: str | None = None,
+        case_id: str | None = None,
+    ) -> list[dict[str, Any]]:
+        items: list[dict[str, Any]] = []
+        summaries = self.list_executions(case_id=case_id, limit=5000, offset=0)
+        for summary in summaries:
+            record = self.get_execution(summary["execution_id"])
+            result = record.get("result") or {}
+            rules = result.get("rule_results") or []
+            used_old = any(
+                r.get("rule_id") == rule_id
+                and str(r.get("version") or r.get("rule_version")) == str(old_version)
+                for r in rules
+            )
+            if not used_old:
+                continue
+            items.append(
+                {
+                    "execution_id": record["execution_id"],
+                    "case_id": record["case_id"],
+                    "assessment_time": record["assessment_time"],
+                    "requires_reassessment": True,
+                    "rule_id": rule_id,
+                    "old_version": old_version,
+                    "new_version": new_version,
+                }
+            )
+        return json_safe(items)
+
     def save_execution(
         self,
         *,
@@ -235,24 +337,24 @@ class AssessmentRepository:
         return self.get_execution(rows[0]["execution_id"])
 
     def compare_executions(self, left_id: str, right_id: str) -> dict[str, Any]:
+        from kg_mnp_demo.application.comparison import (
+            compare_evidence,
+            compare_reasons,
+            compare_rule_results,
+        )
+
         left = self.get_execution(left_id)
         right = self.get_execution(right_id)
         left_result = left.get("result") or {}
         right_result = right.get("result") or {}
-        left_reasons = {
-            r.get("reason_code") for r in (left_result.get("blocking_reasons") or [])
-        }
-        right_reasons = {
-            r.get("reason_code") for r in (right_result.get("blocking_reasons") or [])
-        }
-        left_rules = {
-            (r.get("rule_id"), r.get("version"))
-            for r in (left_result.get("rule_results") or [])
-        }
-        right_rules = {
-            (r.get("rule_id"), r.get("version"))
-            for r in (right_result.get("rule_results") or [])
-        }
+        reason_diff = compare_reasons(
+            left_result.get("blocking_reasons"),
+            right_result.get("blocking_reasons"),
+        )
+        rule_diff = compare_rule_results(
+            left_result.get("rule_results"),
+            right_result.get("rule_results"),
+        )
         return json_safe(
             {
                 "decision_changed": left_result.get("decision") != right_result.get("decision"),
@@ -266,16 +368,22 @@ class AssessmentRepository:
                     "decision": right_result.get("decision"),
                     "case_id": right.get("case_id"),
                 },
-                "added_blocking_reasons": sorted(right_reasons - left_reasons),
-                "removed_blocking_reasons": sorted(left_reasons - right_reasons),
-                "changed_rule_versions": sorted(
-                    [
-                        {"rule_id": a[0], "version": a[1]}
-                        for a in (left_rules.symmetric_difference(right_rules))
-                    ],
-                    key=lambda x: (x["rule_id"], x["version"]),
+                "added_blocking_reasons": reason_diff["added"],
+                "removed_blocking_reasons": reason_diff["removed"],
+                "changed_rule_versions": [
+                    {
+                        "rule_id": r["rule_id"],
+                        "version_before": r.get("version_before"),
+                        "version_after": r.get("version_after"),
+                    }
+                    for r in rule_diff
+                    if r.get("changed")
+                ],
+                "changed_evidence": compare_evidence(
+                    left_result.get("evidence"),
+                    right_result.get("evidence"),
                 ),
-                "changed_evidence": [],
+                "rule_changes": rule_diff,
             }
         )
 
@@ -337,6 +445,14 @@ class ArtifactRepository:
         path = self.root / execution_id
         path.mkdir(parents=True, exist_ok=True)
         return path
+
+    def cleanup_execution_dir(self, execution_id: str) -> None:
+        """Remove a newly created artifact directory for a failed/orphaned write."""
+        import shutil
+
+        path = self.root / execution_id
+        if path.exists() and path.is_dir():
+            shutil.rmtree(path, ignore_errors=True)
 
     def relative_artifacts(self, names: dict[str, str]) -> dict[str, str]:
         return {k: Path(v).name for k, v in names.items()}

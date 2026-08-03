@@ -14,9 +14,15 @@ class ErrorCode(str, Enum):
     TRACE_INTEGRITY_ERROR = "TRACE_INTEGRITY_ERROR"
     CASE_NOT_FOUND = "CASE_NOT_FOUND"
     EXECUTION_NOT_FOUND = "EXECUTION_NOT_FOUND"
-    STORAGE_ERROR = "STORAGE_ERROR"
+    ONTOLOGY_TERM_NOT_FOUND = "ONTOLOGY_TERM_NOT_FOUND"
+    RULE_NOT_FOUND = "RULE_NOT_FOUND"
+    EXAMPLE_NOT_FOUND = "EXAMPLE_NOT_FOUND"
     QUERY_NOT_FOUND = "QUERY_NOT_FOUND"
     QUERY_EXECUTION_ERROR = "QUERY_EXECUTION_ERROR"
+    STORAGE_ERROR = "STORAGE_ERROR"
+    PROCESS_ERROR = "PROCESS_ERROR"
+    PROCESS_ASSESSMENT_TIME_REQUIRED = "PROCESS_ASSESSMENT_TIME_REQUIRED"
+    REQUEST_TOO_LARGE = "REQUEST_TOO_LARGE"
     INTERNAL_ERROR = "INTERNAL_ERROR"
 
 
@@ -28,11 +34,42 @@ _MESSAGES_ZH: dict[ErrorCode, str] = {
     ErrorCode.TRACE_INTEGRITY_ERROR: "追溯子图与 RDF 图不一致。",
     ErrorCode.CASE_NOT_FOUND: "未找到指定案件。",
     ErrorCode.EXECUTION_NOT_FOUND: "未找到指定评估执行记录。",
-    ErrorCode.STORAGE_ERROR: "持久化存储不可用。",
+    ErrorCode.ONTOLOGY_TERM_NOT_FOUND: "未找到指定本体术语。",
+    ErrorCode.RULE_NOT_FOUND: "未找到指定规则。",
+    ErrorCode.EXAMPLE_NOT_FOUND: "未找到指定示例案例。",
     ErrorCode.QUERY_NOT_FOUND: "未找到指定能力问题。",
     ErrorCode.QUERY_EXECUTION_ERROR: "能力问题查询执行失败。",
+    ErrorCode.STORAGE_ERROR: "持久化存储不可用。",
+    ErrorCode.PROCESS_ERROR: "流程评估失败。",
+    ErrorCode.PROCESS_ASSESSMENT_TIME_REQUIRED: "流程评估必须提供 assessment_time。",
+    ErrorCode.REQUEST_TOO_LARGE: "请求体超过大小限制。",
     ErrorCode.INTERNAL_ERROR: "内部错误。",
 }
+
+
+ERROR_HTTP_STATUS: dict[ErrorCode, int] = {
+    ErrorCode.INPUT_SCHEMA_ERROR: 422,
+    ErrorCode.INPUT_GRAPH_INVALID: 400,
+    ErrorCode.RULE_CONFIGURATION_ERROR: 500,
+    ErrorCode.ASSESSMENT_GRAPH_INVALID: 400,
+    ErrorCode.TRACE_INTEGRITY_ERROR: 500,
+    ErrorCode.CASE_NOT_FOUND: 404,
+    ErrorCode.EXECUTION_NOT_FOUND: 404,
+    ErrorCode.ONTOLOGY_TERM_NOT_FOUND: 404,
+    ErrorCode.RULE_NOT_FOUND: 404,
+    ErrorCode.EXAMPLE_NOT_FOUND: 404,
+    ErrorCode.QUERY_NOT_FOUND: 404,
+    ErrorCode.QUERY_EXECUTION_ERROR: 400,
+    ErrorCode.STORAGE_ERROR: 503,
+    ErrorCode.PROCESS_ERROR: 400,
+    ErrorCode.PROCESS_ASSESSMENT_TIME_REQUIRED: 400,
+    ErrorCode.REQUEST_TOO_LARGE: 413,
+    ErrorCode.INTERNAL_ERROR: 500,
+}
+
+
+def http_status_for(code: ErrorCode) -> int:
+    return ERROR_HTTP_STATUS.get(code, 500)
 
 
 class ApplicationError(Exception):
@@ -63,3 +100,7 @@ class ApplicationError(Exception):
                 "retryable": self.retryable,
             }
         }
+
+    @property
+    def http_status(self) -> int:
+        return http_status_for(self.code)

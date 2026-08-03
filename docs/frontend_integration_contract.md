@@ -6,6 +6,12 @@
 http://127.0.0.1:8000/api/v1
 ```
 
+## Schema version
+
+- Assessment response `schema_version`: `1.0`
+- API path version: `/api/v1`
+- OpenAPI: `docs/api/openapi.json`
+
 ## Start backend
 
 ```bash
@@ -13,55 +19,40 @@ python -m pip install -e ".[api]"
 kg-mnp-api
 ```
 
-## OpenAPI / JSON Schema
+## Idempotency
 
-- Live: `/openapi.json`
-- Exported: `docs/api/openapi.json` via `python scripts/export_openapi.py`
-- Frozen response schemas: `schemas/api/`
+Same `case_id` + `assessment_time` + `input_hash` with `persist=true` and `force_recompute=false` returns the original execution **without** creating a new artifact directory.
 
-## Core flows
+`force_recompute=true` replaces the idempotent row and writes a new execution.
 
-1. `POST /assessments` with case JSON → assessment response
-2. `GET /assessments/{execution_id}` → reopen history
-3. `GET /views/assessments/{execution_id}` → page-ready view model
-4. `GET /ontology/modules` + `GET /views/ontology` → ontology UI
-5. `POST /competency-questions/{cq_id}/execute` → controlled CQ only
-6. `POST /views/what-if` → backend computes diffs
+## Request size limit
 
-## Enums
+Env: `KG_MNP_MAX_REQUEST_BYTES` (default 1048576). Oversize → HTTP 413 / `REQUEST_TOO_LARGE`.
 
-- `decision`: `ELIGIBLE` | `BLOCKED` | `CONDITIONAL` | `MANUAL_REVIEW`
-- `publication.status`: `PUBLISHABLE` | `NOT_PUBLISHABLE`
-- `authCodeStatus`: `VALID` | `EXPIRED` | `MISSING` | `USED` | `REVOKED`
-- process step codes: `ELIGIBILITY_CHECK` | `AUTHORIZATION_CODE_REQUEST` | `PORT_IN_SUBMISSION` | ...
+## Dashboard stats
 
-## Error shape
+| Field | Meaning |
+|-------|---------|
+| `example_cases` | Fixed repo cases CASE-01..09 |
+| `executions` | All SQLite assessment rows |
+| `latest_case_states` | Per-case latest decision |
 
-```json
-{
-  "error": {
-    "code": "INPUT_SCHEMA_ERROR",
-    "message": "...",
-    "details": [],
-    "retryable": false
-  }
-}
+## Runnable examples
+
+All nine cases are `runnable=true` with JSON under `inputs/case0N.json`.
+
+## Rule update query
+
+```text
+GET /api/v1/rule-updates/affected-assessments?rule_id=MNP-ELIG-005&old_version=1.0&new_version=1.1
 ```
+
+Queries SQLite history only (no hard-coded CASE-06 load).
 
 ## Frontend must NOT
 
-- Submit arbitrary SPARQL
-- Upload arbitrary TTL
-- Re-implement eligibility rules
+- Submit arbitrary SPARQL / TTL
+- Re-implement eligibility
 - Invent graph edges
-- Treat demo regulatory clauses as formal law
-- Rely on Neo4j
-- Call an LLM to decide eligibility or explain diffs
-
-## Fields computed only by backend
-
-- `decision`, `blocking_reasons`, `rule_results`
-- `process.can_advance` and process blocking reasons
-- What-if diffs (`decision_change`, `reason_changes`)
-- Trace subgraph edges
-- Ontology key paths (`exists_in_rdf`)
+- Compute What-if diffs locally
+- Treat demo clauses as formal law

@@ -2,13 +2,53 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "DashboardViewResponse",
   "type": "object",
-  "required": ["project", "capabilities", "ontology", "cases", "pipeline_steps", "example_cases"],
+  "additionalProperties": true,
+  "required": [
+    "project",
+    "capabilities",
+    "ontology",
+    "example_cases",
+    "executions",
+    "latest_case_states",
+    "pipeline_steps"
+  ],
   "properties": {
     "project": { "type": "object" },
-    "capabilities": { "type": "array" },
-    "ontology": { "type": "object" },
-    "cases": { "type": "object" },
+    "capabilities": { "type": "array", "items": { "type": "string" } },
+    "ontology": {
+      "type": "object",
+      "required": ["shape_count", "class_count", "rule_count", "competency_question_count"],
+      "properties": {
+        "module_count": { "type": "integer" },
+        "class_count": { "type": "integer" },
+        "object_property_count": { "type": "integer" },
+        "data_property_count": { "type": "integer" },
+        "shape_count": { "type": "integer" },
+        "node_shape_count": { "type": "integer" },
+        "property_shape_count": { "type": "integer" },
+        "rule_count": { "type": "integer" },
+        "competency_question_count": { "type": "integer" }
+      }
+    },
+    "example_cases": {
+      "type": "object",
+      "required": ["total", "eligible", "blocked", "manual_review"],
+      "properties": {
+        "total": { "type": "integer" },
+        "eligible": { "type": "integer" },
+        "blocked": { "type": "integer" },
+        "manual_review": { "type": "integer" }
+      }
+    },
+    "executions": {
+      "type": "object",
+      "required": ["total", "eligible", "blocked", "manual_review"]
+    },
+    "latest_case_states": {
+      "type": "object",
+      "required": ["total", "eligible", "blocked", "manual_review"]
+    },
     "pipeline_steps": { "type": "array" },
-    "example_cases": { "type": "array" }
+    "example_case_ids": { "type": "array", "items": { "type": "string" } }
   }
 }

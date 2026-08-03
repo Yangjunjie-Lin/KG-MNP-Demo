@@ -1,12 +1,13 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://example.org/kg-mnp/schemas/api/ErrorResponse.json",
   "title": "ErrorResponse",
   "type": "object",
+  "additionalProperties": false,
   "required": ["error"],
   "properties": {
     "error": {
       "type": "object",
+      "additionalProperties": false,
       "required": ["code", "message", "details", "retryable"],
       "properties": {
         "code": { "type": "string" },

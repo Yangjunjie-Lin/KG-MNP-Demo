@@ -40,6 +40,34 @@ def seed_json_case(case_id: str, service: AssessmentService, repo: AssessmentRep
         artifact_directory=out.name,
         force_recompute=True,
     )
+    if case_id == "CASE-06":
+        # Explicit historical snapshot using superseded rule version (for rule-update queries).
+        hist_id = str(uuid.uuid4())
+        hist = json_safe(
+            {
+                **execution.response,
+                "execution_id": hist_id,
+                "assessment_time": "2026-05-15T00:00:00Z",
+                "rule_results": [
+                    {
+                        "rule_id": "MNP-ELIG-005",
+                        "version": "1.0",
+                        "status": "PASS",
+                        "effective_from": "2024-01-01T00:00:00Z",
+                        "effective_to": "2026-05-31T23:59:59Z",
+                    }
+                ],
+                "warnings": ["seeded historical dependency on MNP-ELIG-005 v1.0"],
+            }
+        )
+        repo.save_execution(
+            execution_id=hist_id,
+            case_id="CASE-06",
+            assessment_time="2026-05-15T00:00:00Z",
+            input_payload={"case_id": "CASE-06", "source": "seed-history"},
+            result=hist,
+            force_recompute=True,
+        )
     return execution.response["decision"]
 
 

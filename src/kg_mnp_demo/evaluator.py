@@ -36,7 +36,9 @@ def _evidence_snapshot(graph: Graph, evidence_iri: str | None) -> dict[str, Any]
         return None
     q = """
     PREFIX mnp: <http://example.org/kg-mnp#>
-    SELECT ?status ?gen ?until ?sysId ?type WHERE {
+    SELECT ?status ?gen ?until ?sysId ?type ?amount ?contractStatus
+           ?contractEnd ?days ?numberStatus ?matched ?arrangement
+    WHERE {
       BIND(%s AS ?ev)
       ?ev mnp:evidenceStatus ?status ;
           mnp:evidenceGeneratedAt ?gen ;
@@ -44,10 +46,17 @@ def _evidence_snapshot(graph: Graph, evidence_iri: str | None) -> dict[str, Any]
       OPTIONAL { ?ev mnp:evidenceValidUntil ?until }
       OPTIONAL { ?ev mnp:evidenceType ?type }
       OPTIONAL { ?sys mnp:systemIdentifier ?sysId }
+      OPTIONAL { ?ev mnp:observedAmount ?amount }
+      OPTIONAL { ?ev mnp:contractStatusCode ?contractStatus }
+      OPTIONAL { ?ev mnp:contractEndTime ?contractEnd }
+      OPTIONAL { ?ev mnp:daysSinceLastPort ?days }
+      OPTIONAL { ?ev mnp:numberStatusCode ?numberStatus }
+      OPTIONAL { ?ev mnp:identityMatchFlag ?matched }
+      OPTIONAL { ?ev mnp:hasPaymentArrangement ?arrangement }
     }
     """ % f"<{evidence_iri}>"
     for row in graph.query(q):
-        return {
+        snap: dict[str, Any] = {
             "evidence_id": evidence_iri.rsplit("#", 1)[-1],
             "evidence_iri": evidence_iri,
             "evidence_type": str(row.type) if row.type else None,
@@ -56,6 +65,26 @@ def _evidence_snapshot(graph: Graph, evidence_iri: str | None) -> dict[str, Any]
             "valid_until": str(row.until) if row.until else None,
             "status": str(row.status),
         }
+        if row.amount is not None:
+            amount = str(row.amount)
+            snap["outstanding_amount"] = amount
+            snap["observed_amount"] = amount
+        if row.contractStatus is not None:
+            snap["contract_status"] = str(row.contractStatus)
+            snap["contract_status_code"] = str(row.contractStatus)
+        if row.contractEnd is not None:
+            snap["contract_end_time"] = str(row.contractEnd)
+        if row.days is not None:
+            snap["days_since_last_port"] = int(row.days)
+        if row.numberStatus is not None:
+            snap["status_code"] = str(row.numberStatus)
+            snap["number_status_code"] = str(row.numberStatus)
+        if row.matched is not None:
+            snap["matched"] = bool(row.matched)
+            snap["identity_match_flag"] = bool(row.matched)
+        if row.arrangement is not None:
+            snap["has_payment_arrangement"] = bool(row.arrangement)
+        return snap
     return {
         "evidence_id": evidence_iri.rsplit("#", 1)[-1],
         "evidence_iri": evidence_iri,

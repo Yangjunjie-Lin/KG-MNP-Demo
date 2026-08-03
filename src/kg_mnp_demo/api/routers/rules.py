@@ -1,18 +1,21 @@
 from __future__ import annotations
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends, Query
 
+from kg_mnp_demo.api.dependencies import AppState, get_state
+from kg_mnp_demo.api.schemas.common import ERROR_RESPONSES
+from kg_mnp_demo.api.schemas.rules import (
+    AffectedAssessmentsResponse,
+    RuleDetailResponse,
+    RuleListResponse,
+)
 from kg_mnp_demo.application.errors import ApplicationError, ErrorCode
-from kg_mnp_demo.evaluator import materialize_assessment
-from kg_mnp_demo.inference import apply_owlrl
-from kg_mnp_demo.loader import load_case_graph
 from kg_mnp_demo.rule_engine import load_all_rule_versions
-from kg_mnp_demo.trace import affected_assessments
 
 router = APIRouter()
 
 
-@router.get("/rules")
+@router.get("/rules", response_model=RuleListResponse, responses=ERROR_RESPONSES)
 def list_rules():
     rules = load_all_rule_versions()
     items = sorted(
@@ -34,22 +37,52 @@ def list_rules():
     return {"items": items}
 
 
-@router.get("/rules/{rule_id}")
+@router.get(
+    "/rules/{rule_id}",
+    response_model=RuleDetailResponse,
+    responses=ERROR_RESPONSES,
+)
 def get_rule(rule_id: str):
     versions = [r for r in load_all_rule_versions() if r["rule_id"] == rule_id]
     if not versions:
-        raise ApplicationError(ErrorCode.CASE_NOT_FOUND, message=f"未找到规则：{rule_id}", details=[rule_id])
+        raise ApplicationError(
+            ErrorCode.RULE_NOT_FOUND,
+            message=f"未找到规则：{rule_id}",
+            details=[rule_id],
+        )
     return {"rule_id": rule_id, "versions": versions}
 
 
-@router.get("/rules/{rule_id}/versions")
+@router.get(
+    "/rules/{rule_id}/versions",
+    response_model=RuleDetailResponse,
+    responses=ERROR_RESPONSES,
+)
 def rule_versions(rule_id: str):
     return get_rule(rule_id)
 
 
-@router.get("/rule-updates/affected-assessments")
-def rule_update_affected():
-    g = load_case_graph("CASE-06")
-    apply_owlrl(g)
-    materialize_assessment(g, "CASE-06", use_updated_rules=True, validate=False)
-    return {"case_id": "CASE-06", "items": affected_assessments(g)}
+@router.get(
+    "/rule-updates/affected-assessments",
+    response_model=AffectedAssessmentsResponse,
+    responses=ERROR_RESPONSES,
+)
+def rule_update_affected(
+    rule_id: str = Query(..., description="Rule identifier, e.g. MNP-ELIG-005"),
+    old_version: str = Query(..., description="Superseded rule version"),
+    new_version: str | None = Query(None, description="New rule version"),
+    case_id: str | None = Query(None),
+    state: AppState = Depends(get_state),
+):
+    items = state.repository.find_affected_by_rule_version(
+        rule_id=rule_id,
+        old_version=old_version,
+        new_version=new_version,
+        case_id=case_id,
+    )
+    return {
+        "rule_id": rule_id,
+        "old_version": old_version,
+        "new_version": new_version,
+        "items": items,
+    }

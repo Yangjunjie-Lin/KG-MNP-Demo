@@ -1,9 +1,10 @@
-"""API dependency wiring."""
+"""API dependency wiring — app-instance state only (no global singleton)."""
 
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from pathlib import Path
+
+from fastapi import Request
 
 from kg_mnp_demo.application.assessment_service import AssessmentService
 from kg_mnp_demo.application.ontology_service import OntologyService
@@ -25,16 +26,9 @@ class AppState:
             self.repository = AssessmentRepository(self.db)
 
 
-_STATE: AppState | None = None
-
-
-def set_state(state: AppState) -> None:
-    global _STATE
-    _STATE = state
-
-
-def get_state() -> AppState:
-    global _STATE
-    if _STATE is None:
-        _STATE = AppState()
-    return _STATE
+def get_state(request: Request) -> AppState:
+    """Resolve AppState bound to this FastAPI application instance."""
+    state = getattr(request.app.state, "kg_mnp", None)
+    if state is None:
+        raise RuntimeError("Application state not initialized (kg_mnp missing on app.state)")
+    return state

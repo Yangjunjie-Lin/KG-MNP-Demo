@@ -8,6 +8,7 @@ from typing import Any
 from rdflib import Graph, Literal
 from rdflib.namespace import XSD
 
+from kg_mnp_demo.application.errors import ApplicationError, ErrorCode
 from kg_mnp_demo.application.serializers import json_safe, to_iso_utc
 from kg_mnp_demo.namespaces import MNP
 from kg_mnp_demo.rule_engine import resolve_case_uri
@@ -77,7 +78,9 @@ def evaluate_process_state(
     payload: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """Return process transition permission separate from eligibility decision."""
-    as_of = _parse_dt(assessment_time) or datetime.now(timezone.utc)
+    as_of = _parse_dt(assessment_time)
+    if as_of is None:
+        raise ApplicationError(ErrorCode.PROCESS_ASSESSMENT_TIME_REQUIRED)
     auth = None
     if graph is not None:
         auth = _auth_from_graph(graph, case_id)

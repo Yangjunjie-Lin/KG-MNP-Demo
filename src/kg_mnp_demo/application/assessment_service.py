@@ -505,7 +505,9 @@ class AssessmentService:
         persist_artifacts: bool = False,
         artifact_dir: Path | None = None,
     ) -> dict[str, Any]:
-        """Deep-merge ``changes`` into baseline and re-assess."""
+        """Deep-merge ``changes`` into baseline and re-assess with full diffs."""
+        from kg_mnp_demo.application.comparison import build_what_if_diff
+
         merged = deep_merge(deepcopy(baseline_payload), changes)
         baseline = self.assess_dict(baseline_payload, raise_on_error=False)
         scenario = self.assess_dict(
@@ -514,18 +516,11 @@ class AssessmentService:
             artifact_dir=artifact_dir,
             raise_on_error=False,
         )
+        diff = build_what_if_diff(baseline, scenario, changes=changes)
         return {
             "schema_version": SCHEMA_VERSION,
-            "baseline": baseline,
-            "scenario": scenario,
-            "changes": changes,
-            "decision_changed": (
-                isinstance(baseline, dict)
-                and isinstance(scenario, dict)
-                and baseline.get("decision") != scenario.get("decision")
-                and "error" not in baseline
-                and "error" not in scenario
-            ),
+            **diff,
+            "decision_changed": bool((diff.get("decision_change") or {}).get("changed")),
         }
 
     def assess_execution(

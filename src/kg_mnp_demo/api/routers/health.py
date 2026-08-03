@@ -2,15 +2,21 @@ from __future__ import annotations
 
 from datetime import datetime, timezone
 
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 
-from kg_mnp_demo.api.dependencies import get_state
+from kg_mnp_demo.api.dependencies import AppState, get_state
+from kg_mnp_demo.api.schemas.common import (
+    ERROR_RESPONSES,
+    HealthResponse,
+    MetaResponse,
+    ReadyResponse,
+)
 from kg_mnp_demo.loader import project_root
 
 router = APIRouter()
 
 
-@router.get("/health")
+@router.get("/health", response_model=HealthResponse, responses=ERROR_RESPONSES)
 def health():
     return {
         "status": "ok",
@@ -18,9 +24,8 @@ def health():
     }
 
 
-@router.get("/ready")
-def ready():
-    state = get_state()
+@router.get("/ready", response_model=ReadyResponse, responses=ERROR_RESPONSES)
+def ready(state: AppState = Depends(get_state)):
     try:
         state.db.connection.execute("SELECT 1").fetchone()
         db_ok = True
@@ -33,13 +38,15 @@ def ready():
     }
 
 
-@router.get("/meta")
+@router.get("/meta", response_model=MetaResponse, responses=ERROR_RESPONSES)
 def meta():
     return {
         "name": "kg-mnp-demo",
         "api_version": "v1",
+        "schema_version": "1.0",
         "project_root_name": project_root().name,
         "cors_note": "Configured via KG_MNP_CORS_ORIGINS",
+        "max_request_bytes_env": "KG_MNP_MAX_REQUEST_BYTES",
         "backend": "rdf",
         "neo4j_required": False,
     }

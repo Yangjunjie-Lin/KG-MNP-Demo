@@ -1,8 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://example.org/kg-mnp/schemas/api/AssessmentResponse.json",
   "title": "AssessmentResponse",
   "type": "object",
+  "additionalProperties": true,
   "required": [
     "schema_version",
     "execution_id",
@@ -20,7 +20,7 @@
     "schema_version": { "type": "string" },
     "execution_id": { "type": "string" },
     "case_id": { "type": ["string", "null"] },
-    "assessment_time": { "type": ["string", "null"] },
+    "assessment_time": { "type": ["string", "null"], "format": "date-time" },
     "decision": {
       "type": ["string", "null"],
       "enum": ["ELIGIBLE", "BLOCKED", "CONDITIONAL", "MANUAL_REVIEW", null]
@@ -30,22 +30,73 @@
       "required": ["publishable", "status"],
       "properties": {
         "publishable": { "type": "boolean" },
-        "status": { "type": "string" }
+        "status": { "type": "string", "enum": ["PUBLISHABLE", "NOT_PUBLISHABLE"] }
       }
     },
     "validations": { "type": "object" },
     "input_summary": { "type": "object" },
-    "evidence": { "type": "array" },
-    "rule_results": { "type": "array" },
-    "blocking_reasons": { "type": "array" },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "evidence_id": { "type": "string" },
+          "evidence_type": { "type": "string" },
+          "source_system": { "type": ["string", "null"] },
+          "status": { "type": "string" },
+          "generated_at": { "type": ["string", "null"] },
+          "valid_until": { "type": ["string", "null"] }
+        }
+      }
+    },
+    "rule_results": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["rule_id"],
+        "properties": {
+          "rule_id": { "type": "string" },
+          "version": { "type": "string" },
+          "status": { "type": "string" }
+        }
+      }
+    },
+    "blocking_reasons": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["reason_code"],
+        "properties": {
+          "reason_code": { "type": "string" },
+          "rule_id": { "type": "string" },
+          "rule_version": { "type": "string" },
+          "regulatory_clause": { "type": ["string", "null"] },
+          "action_code": { "type": ["string", "null"] },
+          "evidence": { "type": ["object", "null"] }
+        }
+      }
+    },
     "remediation_actions": { "type": "array" },
-    "process": { "type": "object" },
+    "process": {
+      "type": "object",
+      "properties": {
+        "current_step": { "type": ["string", "null"] },
+        "next_step": { "type": ["string", "null"] },
+        "can_advance": { "type": "boolean" },
+        "blocking_reasons": { "type": "array" },
+        "authorization_code": { "type": ["object", "null"] }
+      }
+    },
     "trace_subgraph": {
       "type": "object",
-      "required": ["nodes", "edges"]
+      "required": ["nodes", "edges"],
+      "properties": {
+        "nodes": { "type": "array" },
+        "edges": { "type": "array" }
+      }
     },
     "inference": { "type": "object" },
-    "warnings": { "type": "array" },
+    "warnings": { "type": "array", "items": { "type": "string" } },
     "artifacts": { "type": "object" }
   }
 }

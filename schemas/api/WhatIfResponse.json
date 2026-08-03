@@ -2,14 +2,56 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "title": "WhatIfResponse",
   "type": "object",
-  "required": ["baseline", "scenario", "decision_change", "reason_changes"],
+  "additionalProperties": true,
+  "required": [
+    "baseline",
+    "scenario",
+    "decision_change",
+    "rule_changes",
+    "reason_changes",
+    "evidence_changes",
+    "trace_changes"
+  ],
   "properties": {
     "baseline": { "type": "object" },
     "scenario": { "type": "object" },
-    "changes": {},
-    "decision_change": { "type": "object" },
-    "rule_changes": { "type": "array" },
-    "reason_changes": { "type": "object" },
+    "changes": { "type": "object" },
+    "decision_change": {
+      "type": "object",
+      "required": ["changed", "from", "to"],
+      "properties": {
+        "changed": { "type": "boolean" },
+        "from": { "type": ["string", "null"] },
+        "to": { "type": ["string", "null"] }
+      }
+    },
+    "rule_changes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["rule_id", "changed"],
+        "properties": {
+          "rule_id": { "type": "string" },
+          "version_before": { "type": ["string", "null"] },
+          "version_after": { "type": ["string", "null"] },
+          "status_before": { "type": ["string", "null"] },
+          "status_after": { "type": ["string", "null"] },
+          "changed": { "type": "boolean" }
+        }
+      }
+    },
+    "reason_changes": {
+      "type": "object",
+      "required": ["added", "removed"],
+      "properties": {
+        "added": { "type": "array", "items": { "type": "string" } },
+        "removed": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "evidence_changes": {
+      "type": "object",
+      "required": ["added", "removed", "modified"]
+    },
     "trace_changes": { "type": "object" }
   }
 }

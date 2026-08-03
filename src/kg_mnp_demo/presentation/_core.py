@@ -7,8 +7,8 @@ from typing import Any
 from kg_mnp_demo.application.ontology_service import OntologyService
 from kg_mnp_demo.application.query_service import QueryService
 from kg_mnp_demo.application.serializers import json_safe
-from kg_mnp_demo.loader import project_root
-from kg_mnp_demo.namespaces import CASE_FILES
+from kg_mnp_demo.loader import project_root, shapes_path
+from kg_mnp_demo.namespaces import CASE_FILES, EXAMPLE_META
 from kg_mnp_demo.rule_engine import load_all_rule_versions
 from kg_mnp_demo.storage import AssessmentRepository
 
@@ -35,6 +35,42 @@ REASON_TEMPLATES = {
 }
 
 
+def count_shacl_shapes(shapes_file=None) -> dict[str, int]:
+    """Count NodeShape and PropertyShape resources from the formal SHACL file."""
+    from rdflib import Graph, Namespace
+    from rdflib.namespace import RDF
+
+    SH = Namespace("http://www.w3.org/ns/shacl#")
+    path = shapes_file or shapes_path()
+    g = Graph()
+    g.parse(path, format="turtle")
+    node_shapes = set(g.subjects(RDF.type, SH.NodeShape))
+    prop_typed = set(g.subjects(RDF.type, SH.PropertyShape))
+    prop_inline = {o for _s, _p, o in g.triples((None, SH.property, None))}
+    property_shapes = prop_typed | prop_inline
+    all_shapes = node_shapes | property_shapes
+    return {
+        "shape_count": len(all_shapes),
+        "node_shape_count": len(node_shapes),
+        "property_shape_count": len(property_shapes),
+    }
+
+
+def _example_case_stats() -> dict[str, int]:
+    stats = {"total": len(CASE_FILES), "eligible": 0, "blocked": 0, "manual_review": 0}
+    for case_id, meta in EXAMPLE_META.items():
+        if case_id not in CASE_FILES:
+            continue
+        d = meta.get("expected_decision")
+        if d == "ELIGIBLE":
+            stats["eligible"] += 1
+        elif d == "BLOCKED":
+            stats["blocked"] += 1
+        elif d == "MANUAL_REVIEW":
+            stats["manual_review"] += 1
+    return stats
+
+
 def _reason_text(reason: dict[str, Any]) -> str:
     code = reason.get("reason_code") or ""
     template = REASON_TEMPLATES.get(code, "规则 {rule_id} v{rule_version} 未通过：{reason_code}。")
@@ -55,16 +91,19 @@ class DashboardView:
         summary = ontology.get_summary()
         rules = load_all_rule_versions()
         cq = QueryService().list_questions()
-        cases = {"total": len(CASE_FILES), "eligible": 0, "blocked": 0, "manual_review": 0}
+        shape_stats = count_shacl_shapes()
+        example_cases = _example_case_stats()
+        executions = {"total": 0, "eligible": 0, "blocked": 0, "manual_review": 0}
+        latest_case_states = {"total": 0, "eligible": 0, "blocked": 0, "manual_review": 0}
         if repository is not None:
-            for item in repository.list_executions(limit=500):
-                d = item.get("decision")
-                if d == "ELIGIBLE":
-                    cases["eligible"] += 1
-                elif d == "BLOCKED":
-                    cases["blocked"] += 1
-                elif d == "MANUAL_REVIEW":
-                    cases["manual_review"] += 1
+            executions = {
+                k: repository.count_by_decision().get(k, 0)
+                for k in ("total", "eligible", "blocked", "manual_review")
+            }
+            latest_case_states = {
+                k: repository.latest_case_decision_counts().get(k, 0)
+                for k in ("total", "eligible", "blocked", "manual_review")
+            }
         return json_safe(
             {
                 "project": {
@@ -85,13 +124,19 @@ class DashboardView:
                     "class_count": summary.get("class_count"),
                     "object_property_count": summary.get("object_property_count"),
                     "data_property_count": summary.get("data_property_count"),
-                    "shape_count": None,
+                    "shape_count": shape_stats["shape_count"],
+                    "node_shape_count": shape_stats["node_shape_count"],
+                    "property_shape_count": shape_stats["property_shape_count"],
                     "rule_count": len(rules),
                     "competency_question_count": len(cq),
                 },
-                "cases": cases,
+                "example_cases": example_cases,
+                "executions": executions,
+                "latest_case_states": latest_case_states,
+                # Backward-compatible alias: fixed example inventory only
+                "cases": example_cases,
                 "pipeline_steps": PIPELINE_STEPS,
-                "example_cases": sorted(CASE_FILES.keys()),
+                "example_case_ids": sorted(CASE_FILES.keys()),
             }
         )
 
@@ -201,36 +246,17 @@ class OntologyView:
 
 class ComparisonView:
     def build(self, what_if_result: dict[str, Any]) -> dict[str, Any]:
+        from kg_mnp_demo.application.comparison import build_what_if_diff
+
         baseline = what_if_result.get("baseline") or {}
         scenario = what_if_result.get("scenario") or {}
-        b_reasons = {r.get("reason_code") for r in (baseline.get("blocking_reasons") or [])}
-        s_reasons = {r.get("reason_code") for r in (scenario.get("blocking_reasons") or [])}
-        return json_safe(
-            {
-                "baseline": {
-                    "decision": baseline.get("decision"),
-                    "execution_id": baseline.get("execution_id"),
-                },
-                "scenario": {
-                    "decision": scenario.get("decision"),
-                    "execution_id": scenario.get("execution_id"),
-                },
-                "changes": what_if_result.get("changes") or {},
-                "decision_change": {
-                    "changed": what_if_result.get("decision_changed"),
-                    "from": baseline.get("decision"),
-                    "to": scenario.get("decision"),
-                },
-                "rule_changes": [],
-                "reason_changes": {
-                    "added": sorted(s_reasons - b_reasons),
-                    "removed": sorted(b_reasons - s_reasons),
-                },
-                "trace_changes": {
-                    "baseline_edge_count": len((baseline.get("trace_subgraph") or {}).get("edges") or []),
-                    "scenario_edge_count": len((scenario.get("trace_subgraph") or {}).get("edges") or []),
-                },
-            }
+        # Prefer precomputed fields when present
+        if what_if_result.get("rule_changes") is not None and what_if_result.get(
+            "evidence_changes"
+        ) is not None:
+            return json_safe(what_if_result)
+        return build_what_if_diff(
+            baseline, scenario, changes=what_if_result.get("changes")
         )
 
 
