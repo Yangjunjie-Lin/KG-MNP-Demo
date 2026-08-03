@@ -1,0 +1,159 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "AssessmentResponse",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "execution_id",
+    "case_id",
+    "assessment_time",
+    "decision",
+    "publication",
+    "validations",
+    "blocking_reasons",
+    "rule_results",
+    "trace_subgraph",
+    "process"
+  ],
+  "properties": {
+    "schema_version": { "type": "string" },
+    "execution_id": { "type": "string" },
+    "case_id": { "type": ["string", "null"] },
+    "assessment_time": { "type": ["string", "null"], "format": "date-time" },
+    "decision": {
+      "type": ["string", "null"],
+      "enum": ["ELIGIBLE", "BLOCKED", "CONDITIONAL", "MANUAL_REVIEW", null]
+    },
+    "publication": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["publishable", "status"],
+      "properties": {
+        "publishable": { "type": "boolean" },
+        "status": { "type": "string", "enum": ["PUBLISHABLE", "NOT_PUBLISHABLE"] }
+      }
+    },
+    "validations": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "json_schema": { "$ref": "#/$defs/validationStep" },
+        "input_graph": { "$ref": "#/$defs/validationStep" },
+        "assessment_graph": { "$ref": "#/$defs/validationStep" }
+      }
+    },
+    "input_summary": { "type": "object" },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "evidence_id": { "type": "string" },
+          "evidence_iri": { "type": "string" },
+          "evidence_type": { "type": "string" },
+          "source_system": { "type": ["string", "null"] },
+          "status": { "type": "string" },
+          "generated_at": { "type": ["string", "null"] },
+          "valid_until": { "type": ["string", "null"] }
+        }
+      }
+    },
+    "rule_results": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["rule_id"],
+        "properties": {
+          "rule_id": { "type": "string" },
+          "version": { "type": "string" },
+          "status": { "type": "string" },
+          "effective_from": { "type": ["string", "null"] },
+          "effective_to": { "type": ["string", "null"] },
+          "selected_for_assessment_time": { "type": ["string", "null"] }
+        }
+      }
+    },
+    "blocking_reasons": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["reason_code", "rule_id", "rule_version", "regulatory_clause", "action_code", "evidence"],
+        "properties": {
+          "reason_code": { "type": "string" },
+          "rule_id": { "type": ["string", "null"] },
+          "rule_version": { "type": ["string", "null"] },
+          "regulatory_clause": { "type": ["string", "null"] },
+          "action_code": { "type": ["string", "null"] },
+          "evidence": { "type": ["object", "null"] },
+          "assessment_time": { "type": ["string", "null"] },
+          "effective_from": { "type": ["string", "null"] },
+          "effective_to": { "type": ["string", "null"] }
+        }
+      }
+    },
+    "remediation_actions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "action_code": { "type": ["string", "null"] },
+          "iri": { "type": ["string", "null"] }
+        }
+      }
+    },
+    "process": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "current_step": { "type": ["string", "null"] },
+        "next_step": { "type": ["string", "null"] },
+        "can_advance": { "type": "boolean" },
+        "blocking_reasons": { "type": "array" },
+        "authorization_code": { "type": ["object", "null"] },
+        "eligibility_decision": { "type": ["string", "null"] }
+      }
+    },
+    "trace_subgraph": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["nodes", "edges"],
+      "properties": {
+        "nodes": { "type": "array" },
+        "edges": { "type": "array" },
+        "case_id": { "type": ["string", "null"] },
+        "root": { "type": ["string", "null"] },
+        "root_local": { "type": ["string", "null"] },
+        "query_file": { "type": ["string", "null"] }
+      }
+    },
+    "inference": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "triples_before": { "type": ["integer", "null"] },
+        "triples_after": { "type": ["integer", "null"] },
+        "triples_added": { "type": ["integer", "null"] }
+      }
+    },
+    "warnings": { "type": "array", "items": { "type": "string" } },
+    "artifacts": {
+      "type": "object",
+      "additionalProperties": { "type": "string" }
+    }
+  },
+  "$defs": {
+    "validationStep": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "label": { "type": ["string", "null"] },
+        "status": { "type": ["string", "null"] },
+        "conforms": { "type": ["boolean", "null"] },
+        "detail": { "type": ["string", "null"] }
+      }
+    }
+  }
+}

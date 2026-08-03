@@ -1,0 +1,120 @@
+@prefix mnp: <http://example.org/kg-mnp#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+
+#################################################################
+# Account & billing layer
+#################################################################
+
+<http://example.org/kg-mnp/account-billing> a owl:Ontology ;
+    dcterms:title "KG-MNP Account and Billing Module"@en ;
+    dcterms:title "账户与计费层"@zh ;
+    owl:versionInfo "0.1.0" ;
+    rdfs:comment "Billing account, charges, payments and outstanding balance observations."@en .
+
+mnp:BillingAccount a owl:Class ;
+    rdfs:subClassOf mnp:TelecomAccount ;
+    rdfs:label "Billing Account"@en ;
+    rdfs:label "计费账户"@zh ;
+    rdfs:comment "A billing account that aggregates charges and payments."@en ;
+    mnp:moduleCode "ACCOUNT_BILLING" .
+
+mnp:Bill a owl:Class ;
+    rdfs:label "Bill"@en ;
+    rdfs:label "账单"@zh ;
+    rdfs:comment "A periodic bill issued against a billing account."@en ;
+    mnp:moduleCode "ACCOUNT_BILLING" .
+
+mnp:Charge a owl:Class ;
+    rdfs:label "Charge"@en ;
+    rdfs:label "费用项"@zh ;
+    rdfs:comment "An individual charge line on a bill."@en ;
+    mnp:moduleCode "ACCOUNT_BILLING" .
+
+mnp:Payment a owl:Class ;
+    rdfs:label "Payment"@en ;
+    rdfs:label "缴费"@zh ;
+    rdfs:comment "A payment applied to a billing account."@en ;
+    mnp:moduleCode "ACCOUNT_BILLING" .
+
+mnp:OutstandingBalanceObservation a owl:Class ;
+    rdfs:subClassOf mnp:SystemObservation ;
+    rdfs:label "Outstanding Balance Observation"@en ;
+    rdfs:label "欠费余额观测"@zh ;
+    rdfs:comment "Observed outstanding balance used as billing evidence."@en ;
+    mnp:moduleCode "ACCOUNT_BILLING" .
+
+mnp:PaymentArrangement a owl:Class ;
+    rdfs:label "Payment Arrangement"@en ;
+    rdfs:label "缴费安排"@zh ;
+    rdfs:comment "An agreed payment plan that may clear portability restrictions."@en ;
+    mnp:moduleCode "ACCOUNT_BILLING" .
+
+mnp:BillingSettlement a owl:Class ;
+    rdfs:label "Billing Settlement"@en ;
+    rdfs:label "计费结清"@zh ;
+    rdfs:comment "A settlement event clearing outstanding balances."@en ;
+    mnp:moduleCode "ACCOUNT_BILLING" .
+
+mnp:hasBill a owl:ObjectProperty ;
+    rdfs:domain mnp:BillingAccount ;
+    rdfs:range mnp:Bill ;
+    rdfs:label "has bill"@en ;
+    mnp:moduleCode "ACCOUNT_BILLING" .
+
+mnp:hasCharge a owl:ObjectProperty ;
+    rdfs:domain mnp:Bill ;
+    rdfs:range mnp:Charge ;
+    rdfs:label "has charge"@en ;
+    mnp:moduleCode "ACCOUNT_BILLING" .
+
+mnp:hasPayment a owl:ObjectProperty ;
+    rdfs:domain mnp:BillingAccount ;
+    rdfs:range mnp:Payment ;
+    rdfs:label "has payment"@en ;
+    mnp:moduleCode "ACCOUNT_BILLING" .
+
+mnp:observesAccount a owl:ObjectProperty ;
+    rdfs:domain mnp:OutstandingBalanceObservation ;
+    rdfs:range mnp:BillingAccount ;
+    rdfs:label "observes account"@en ;
+    mnp:moduleCode "ACCOUNT_BILLING" .
+
+mnp:hasPaymentArrangementRecord a owl:ObjectProperty ;
+    rdfs:domain mnp:BillingAccount ;
+    rdfs:range mnp:PaymentArrangement ;
+    rdfs:label "has payment arrangement"@en ;
+    mnp:moduleCode "ACCOUNT_BILLING" .
+
+mnp:settlesAccount a owl:ObjectProperty ;
+    rdfs:domain mnp:BillingSettlement ;
+    rdfs:range mnp:BillingAccount ;
+    rdfs:label "settles account"@en ;
+    mnp:moduleCode "ACCOUNT_BILLING" .
+
+mnp:billPeriodStart a owl:DatatypeProperty ;
+    rdfs:domain mnp:Bill ;
+    rdfs:range xsd:dateTime ;
+    mnp:moduleCode "ACCOUNT_BILLING" .
+
+mnp:billPeriodEnd a owl:DatatypeProperty ;
+    rdfs:domain mnp:Bill ;
+    rdfs:range xsd:dateTime ;
+    mnp:moduleCode "ACCOUNT_BILLING" .
+
+mnp:chargeAmount a owl:DatatypeProperty ;
+    rdfs:domain mnp:Charge ;
+    rdfs:range xsd:decimal ;
+    mnp:moduleCode "ACCOUNT_BILLING" .
+
+mnp:paymentAmount a owl:DatatypeProperty ;
+    rdfs:domain mnp:Payment ;
+    rdfs:range xsd:decimal ;
+    mnp:moduleCode "ACCOUNT_BILLING" .
+
+mnp:arrangementStatusCode a owl:DatatypeProperty ;
+    rdfs:domain mnp:PaymentArrangement ;
+    rdfs:range xsd:string ;
+    mnp:moduleCode "ACCOUNT_BILLING" .

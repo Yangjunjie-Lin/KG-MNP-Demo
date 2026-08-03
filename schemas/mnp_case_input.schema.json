@@ -87,9 +87,41 @@
           "$ref": "#/$defs/portingEvidence"
         }
       }
+    },
+    "process": {
+      "$ref": "#/$defs/processBlock"
     }
   },
   "$defs": {
+    "processBlock": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "current_step": { "type": "string" },
+        "authorization_code": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "status": {
+              "type": "string",
+              "enum": ["VALID", "EXPIRED", "MISSING", "USED", "REVOKED"]
+            },
+            "issued_at": { "type": "string", "format": "date-time" },
+            "valid_until": { "type": "string", "format": "date-time" },
+            "masked_value": { "type": "string" }
+          }
+        },
+        "termination_agreement": {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "signed_at": { "type": "string", "format": "date-time" },
+            "effective_at": { "type": "string", "format": "date-time" },
+            "status": { "type": "string" }
+          }
+        }
+      }
+    },
     "evidenceBase": {
       "type": "object",
       "required": [

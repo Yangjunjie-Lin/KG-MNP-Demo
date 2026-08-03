@@ -1,0 +1,104 @@
+@prefix mnp: <http://example.org/kg-mnp#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+# CASE-07: all conditions satisfied → ELIGIBLE
+
+mnp:Sub-07 a mnp:Subscriber ;
+    rdfs:label "Subscriber 07" ;
+    mnp:ownsPhoneNumber mnp:Phone-07 ;
+    mnp:billedThrough mnp:Acct-07 ;
+    mnp:hasSubscription mnp:Subscr-07 ;
+    mnp:relatedAccount mnp:Acct-07 .
+
+mnp:Phone-07 a mnp:PhoneNumber ;
+    mnp:maskedPhoneNumber "138****0007" .
+
+mnp:Acct-07 a mnp:TelecomAccount ;
+    rdfs:label "Account 07" .
+
+mnp:Svc-Mobile-Basic a mnp:TelecomService ;
+    rdfs:label "Mobile Basic Plan" .
+
+mnp:Subscr-07 a mnp:ServiceSubscription ;
+    mnp:subscribesToService mnp:Svc-Mobile-Basic ;
+    mnp:subscriptionStatusCode "ACTIVE" ;
+    mnp:governedByContract mnp:Contract-07 .
+
+mnp:Contract-07 a mnp:ServiceContract ;
+    mnp:contractStatusCode "EXPIRED" ;
+    mnp:contractEndTime "2025-01-01T00:00:00Z"^^xsd:dateTime .
+
+mnp:CASE-07 a mnp:MNPCase ;
+    mnp:caseIdentifier "CASE-07" ;
+    mnp:concernsNumber mnp:Phone-07 ;
+    mnp:requestedBy mnp:Sub-07 ;
+    mnp:hasCaseEvidence
+        mnp:Ev-07-ID ,
+        mnp:Ev-07-NUM ,
+        mnp:Ev-07-BILL ,
+        mnp:Ev-07-CTR ,
+        mnp:Ev-07-PORT .
+
+mnp:Ev-07-ID a mnp:SystemObservation ;
+    mnp:evidenceType "IDENTITY_MATCH" ;
+    mnp:identityMatchFlag true ;
+    mnp:evidenceStatus "VALID" ;
+    mnp:evidenceGeneratedAt "2026-06-20T10:00:00Z"^^xsd:dateTime ;
+    mnp:evidenceValidUntil "2026-12-31T23:59:59Z"^^xsd:dateTime ;
+    mnp:hasSourceSystem mnp:SYS-CRM .
+
+mnp:Ev-07-NUM a mnp:SystemObservation ;
+    mnp:evidenceType "NUMBER_STATUS" ;
+    mnp:numberStatusCode "ACTIVE" ;
+    mnp:evidenceStatus "VALID" ;
+    mnp:evidenceGeneratedAt "2026-06-20T10:05:00Z"^^xsd:dateTime ;
+    mnp:evidenceValidUntil "2026-12-31T23:59:59Z"^^xsd:dateTime ;
+    mnp:hasSourceSystem mnp:SYS-HLR .
+
+mnp:Ev-07-BILL a mnp:SystemObservation ;
+    mnp:evidenceType "BILLING_BALANCE" ;
+    mnp:observedAmount "0.00"^^xsd:decimal ;
+    mnp:currencyCode "CNY" ;
+    mnp:hasPaymentArrangement false ;
+    mnp:evidenceStatus "VALID" ;
+    mnp:evidenceGeneratedAt "2026-06-20T10:10:00Z"^^xsd:dateTime ;
+    mnp:evidenceValidUntil "2026-12-31T23:59:59Z"^^xsd:dateTime ;
+    mnp:hasSourceSystem mnp:SYS-BILLING .
+
+mnp:Ev-07-CTR a mnp:SystemObservation ;
+    mnp:evidenceType "CONTRACT_STATUS" ;
+    mnp:contractStatusCode "EXPIRED" ;
+    mnp:contractEndTime "2025-01-01T00:00:00Z"^^xsd:dateTime ;
+    mnp:evidenceStatus "VALID" ;
+    mnp:evidenceGeneratedAt "2026-06-20T10:15:00Z"^^xsd:dateTime ;
+    mnp:evidenceValidUntil "2026-12-31T23:59:59Z"^^xsd:dateTime ;
+    mnp:hasSourceSystem mnp:SYS-CONTRACT .
+
+mnp:Ev-07-PORT a mnp:SystemObservation ;
+    mnp:evidenceType "PORTING_HISTORY" ;
+    mnp:daysSinceLastPort 400 ;
+    mnp:evidenceStatus "VALID" ;
+    mnp:evidenceGeneratedAt "2026-06-20T10:20:00Z"^^xsd:dateTime ;
+    mnp:evidenceValidUntil "2026-12-31T23:59:59Z"^^xsd:dateTime ;
+    mnp:hasSourceSystem mnp:SYS-MNP .
+
+
+mnp:Step-07-AUTH a mnp:ProcessStep ;
+    mnp:stepCode "AUTHORIZATION_CODE_REQUEST" .
+
+mnp:CASE-07 mnp:currentProcessStep mnp:Step-07-AUTH ;
+    mnp:hasProcessStep mnp:Step-07-AUTH ;
+    mnp:hasAuthorizationCode mnp:AuthCode-07 ;
+    mnp:hasProcessEvent mnp:ProcessEvent-07-AUTH .
+
+mnp:AuthCode-07 a mnp:AuthorizationCode ;
+    mnp:authCodeStatus "EXPIRED" ;
+    mnp:authCodeIssuedAt "2026-06-01T00:00:00Z"^^xsd:dateTime ;
+    mnp:authCodeValidUntil "2026-06-15T00:00:00Z"^^xsd:dateTime ;
+    mnp:authCodeValueMasked "****07" .
+
+mnp:ProcessEvent-07-AUTH a mnp:ProcessEvent ;
+    mnp:eventTypeCode "AUTHORIZATION_CODE_EXPIRED" ;
+    mnp:eventTime "2026-06-15T00:00:00Z"^^xsd:dateTime .
+

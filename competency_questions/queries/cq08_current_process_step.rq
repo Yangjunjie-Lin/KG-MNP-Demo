@@ -1,0 +1,7 @@
+PREFIX mnp: <http://example.org/kg-mnp#>
+SELECT ?caseId ?stepCode WHERE {
+  ?case a mnp:MNPCase ; mnp:caseIdentifier ?caseId .
+  FILTER(STR(?caseId) = STR(?requestedCaseId))
+  OPTIONAL { ?case mnp:currentProcessStep ?step . ?step mnp:stepCode ?stepCode }
+}
+ORDER BY ?caseId

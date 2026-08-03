@@ -14,9 +14,16 @@
     owl:imports <http://example.org/kg-mnp/core> ;
     rdfs:comment "Compliance-oriented extensions for regulatory operationalization and reassessment."@en .
 
+mnp:moduleCode a owl:DatatypeProperty ;
+    rdfs:range xsd:string ;
+    rdfs:label "module code"@en ;
+    rdfs:comment "Stable ontology module code for catalog and UI grouping."@en .
+
 mnp:ReassessmentMarker a owl:Class ;
     rdfs:label "Reassessment Marker"@en ;
-    rdfs:comment "Marks an assessment that used a superseded rule version and requires re-evaluation."@en .
+    rdfs:label "重评标记"@zh ;
+    rdfs:comment "Marks an assessment that used a superseded rule version and requires re-evaluation."@en ;
+    mnp:moduleCode "COMPLIANCE" .
 
 mnp:supersedesRuleVersion a owl:ObjectProperty ;
     rdfs:domain mnp:RuleVersion ;

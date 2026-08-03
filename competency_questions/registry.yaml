@@ -1,0 +1,186 @@
+competency_questions:
+- id: CQ-01
+  title_zh: 当前是否可携转
+  question: What is the current eligibility decision?
+  description: Returns the eligibility decision for a case.
+  required_inputs:
+  - case_id
+  return_fields:
+  - decision
+  query_file: cq01_current_eligibility.rq
+  supported_backends:
+  - rdf
+  example_case: CASE-01
+- id: CQ-02
+  title_zh: 阻塞原因
+  question: If blocked, what are the blocking reasons?
+  description: Lists independent blocking reason codes.
+  required_inputs:
+  - case_id
+  return_fields:
+  - reasonCode
+  query_file: cq02_blocking_reasons.rq
+  supported_backends:
+  - rdf
+  example_case: CASE-04
+- id: CQ-03
+  title_zh: 阻塞证据
+  question: What evidence supports each blocking reason?
+  description: Evidence linked to each blocking reason.
+  required_inputs:
+  - case_id
+  return_fields:
+  - evidence
+  - evidenceStatus
+  query_file: cq03_blocking_evidence.rq
+  supported_backends:
+  - rdf
+  example_case: CASE-04
+- id: CQ-04
+  title_zh: 证据来源和时间
+  question: What are evidence sources and times?
+  description: Source system and generation/validity times.
+  required_inputs:
+  - case_id
+  return_fields:
+  - sourceSystem
+  - generatedAt
+  query_file: cq04_evidence_provenance.rq
+  supported_backends:
+  - rdf
+  example_case: CASE-03
+- id: CQ-05
+  title_zh: 使用的规则版本
+  question: Which rule versions were used?
+  description: Rule versions selected for assessment_time.
+  required_inputs:
+  - case_id
+  return_fields:
+  - ruleId
+  - ruleVersion
+  query_file: cq05_rule_versions.rq
+  supported_backends:
+  - rdf
+  example_case: CASE-03
+- id: CQ-06
+  title_zh: 监管条款
+  question: Which regulatory clauses were cited?
+  description: Demo clause identifiers cited by blocking reasons.
+  required_inputs:
+  - case_id
+  return_fields:
+  - clauseId
+  query_file: cq06_regulatory_clauses.rq
+  supported_backends:
+  - rdf
+  example_case: CASE-03
+- id: CQ-07
+  title_zh: 解除动作
+  question: What remediation actions are recommended?
+  description: Recommended remediation action codes.
+  required_inputs:
+  - case_id
+  return_fields:
+  - actionCode
+  query_file: cq07_remediation_actions.rq
+  supported_backends:
+  - rdf
+  example_case: CASE-03
+- id: CQ-08
+  title_zh: 当前流程步骤
+  question: What is the current process step?
+  description: Current process step code if present.
+  required_inputs:
+  - case_id
+  return_fields:
+  - stepCode
+  query_file: cq08_current_process_step.rq
+  supported_backends:
+  - rdf
+  example_case: CASE-07
+- id: CQ-09
+  title_zh: 不能进入下一步的原因
+  question: Why can the process not advance?
+  description: Process events related to blocked transitions.
+  required_inputs:
+  - case_id
+  return_fields:
+  - eventTypeCode
+  query_file: cq09_process_blocks.rq
+  supported_backends:
+  - rdf
+  example_case: CASE-07
+- id: CQ-10
+  title_zh: 授权码是否有效
+  question: Is the authorization code valid?
+  description: Authorization code status and validity window.
+  required_inputs:
+  - case_id
+  return_fields:
+  - authStatus
+  - validUntil
+  query_file: cq10_auth_code_validity.rq
+  supported_backends:
+  - rdf
+  example_case: CASE-07
+- id: CQ-11
+  title_zh: 关联业务
+  question: What services are related to the case?
+  description: Related telecom services/subscriptions.
+  required_inputs:
+  - case_id
+  return_fields:
+  - service
+  query_file: cq11_related_services.rq
+  supported_backends:
+  - rdf
+  example_case: CASE-01
+- id: CQ-12
+  title_zh: 影响携转的合约
+  question: Which contracts affect portability?
+  description: Contract status and end times.
+  required_inputs:
+  - case_id
+  return_fields:
+  - contractStatus
+  query_file: cq12_affecting_contracts.rq
+  supported_backends:
+  - rdf
+  example_case: CASE-03
+- id: CQ-13
+  title_zh: 欠费证据是否过期
+  question: Is billing evidence expired?
+  description: Billing evidence validity window.
+  required_inputs:
+  - case_id
+  return_fields:
+  - validUntil
+  query_file: cq13_billing_evidence_expiry.rq
+  supported_backends:
+  - rdf
+  example_case: CASE-02
+- id: CQ-14
+  title_zh: 多阻塞如何分别处理
+  question: How should multiple blocks be remediated separately?
+  description: Each blocking reason with its own action.
+  required_inputs:
+  - case_id
+  return_fields:
+  - reasonCode
+  - actionCode
+  query_file: cq14_multi_block_actions.rq
+  supported_backends:
+  - rdf
+  example_case: CASE-04
+- id: CQ-15
+  title_zh: 规则更新影响哪些评估
+  question: Which assessments are affected by rule updates?
+  description: Assessments marked for reassessment.
+  required_inputs:
+  - case_id
+  return_fields:
+  - assessment
+  query_file: cq15_affected_assessments.rq
+  supported_backends:
+  - rdf
+  example_case: CASE-06

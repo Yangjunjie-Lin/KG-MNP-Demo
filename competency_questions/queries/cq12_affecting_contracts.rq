@@ -1,0 +1,12 @@
+PREFIX mnp: <http://example.org/kg-mnp#>
+SELECT ?caseId ?contract ?contractStatus ?contractEnd WHERE {
+  ?case a mnp:MNPCase ; mnp:caseIdentifier ?caseId ; mnp:requestedBy ?sub .
+  FILTER(STR(?caseId) = STR(?requestedCaseId))
+  OPTIONAL {
+    ?sub mnp:hasSubscription ?ss .
+    ?ss mnp:governedByContract ?contract .
+    OPTIONAL { ?contract mnp:contractStatusCode ?contractStatus }
+    OPTIONAL { ?contract mnp:contractEndTime ?contractEnd }
+  }
+}
+ORDER BY ?contract

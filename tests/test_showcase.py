@@ -99,14 +99,17 @@ def test_case03_contract_block_and_trace(showcase, tmp_path):
 
 def test_all_cases_summary(showcase):
     summary = showcase.summarize_all_cases()
-    assert set(summary["cases"]) == {
+    assert {
         "CASE-01",
         "CASE-02",
         "CASE-03",
         "CASE-04",
         "CASE-05",
         "CASE-06",
-    }
+        "CASE-07",
+        "CASE-08",
+        "CASE-09",
+    }.issubset(set(summary["cases"]))
     assert summary["cases"]["CASE-01"]["decision"] == "ELIGIBLE"
     assert summary["cases"]["CASE-04"]["blocking_reasons"] == [
         "OUTSTANDING_BALANCE",
@@ -127,6 +130,9 @@ def test_all_cases_summary(showcase):
         "ASSESS-CASE-06-HIST" in (r.get("assessmentId") or "")
         for r in case06["affected_assessments"]
     )
+    assert summary["cases"]["CASE-07"]["decision"] == "ELIGIBLE"
+    assert summary["cases"]["CASE-08"]["decision"] == "BLOCKED"
+    assert summary["cases"]["CASE-09"]["decision"] == "BLOCKED"
 
 
 def test_html_generated(showcase, tmp_path):

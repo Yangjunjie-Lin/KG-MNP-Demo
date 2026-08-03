@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "DashboardViewResponse",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "project",
+    "capabilities",
+    "ontology",
+    "example_cases",
+    "executions",
+    "latest_case_states",
+    "pipeline_steps"
+  ],
+  "properties": {
+    "project": {
+      "type": "object",
+      "required": ["name"],
+      "properties": {
+        "name": { "type": "string" },
+        "description": { "type": "string" },
+        "root_name": { "type": "string" }
+      }
+    },
+    "capabilities": { "type": "array", "items": { "type": "string" } },
+    "ontology": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["shape_count", "class_count", "rule_count", "competency_question_count"],
+      "properties": {
+        "module_count": { "type": "integer" },
+        "class_count": { "type": "integer" },
+        "object_property_count": { "type": "integer" },
+        "data_property_count": { "type": "integer" },
+        "shape_count": { "type": "integer" },
+        "node_shape_count": { "type": "integer" },
+        "property_shape_count": { "type": "integer" },
+        "rule_count": { "type": "integer" },
+        "competency_question_count": { "type": "integer" }
+      }
+    },
+    "example_cases": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["total", "eligible", "blocked", "manual_review"],
+      "properties": {
+        "total": { "type": "integer" },
+        "eligible": { "type": "integer" },
+        "blocked": { "type": "integer" },
+        "manual_review": { "type": "integer" }
+      }
+    },
+    "executions": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["total", "eligible", "blocked", "manual_review"],
+      "properties": {
+        "total": { "type": "integer" },
+        "eligible": { "type": "integer" },
+        "blocked": { "type": "integer" },
+        "manual_review": { "type": "integer" }
+      }
+    },
+    "latest_case_states": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["total", "eligible", "blocked", "manual_review"],
+      "properties": {
+        "total": { "type": "integer" },
+        "eligible": { "type": "integer" },
+        "blocked": { "type": "integer" },
+        "manual_review": { "type": "integer" }
+      }
+    },
+    "cases": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["total", "eligible", "blocked", "manual_review"],
+      "properties": {
+        "total": { "type": "integer" },
+        "eligible": { "type": "integer" },
+        "blocked": { "type": "integer" },
+        "manual_review": { "type": "integer" }
+      }
+    },
+    "pipeline_steps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "label"],
+        "properties": {
+          "id": { "type": "string" },
+          "label": { "type": "string" },
+          "description": { "type": "string" }
+        }
+      }
+    },
+    "example_case_ids": { "type": "array", "items": { "type": "string" } }
+  }
+}

@@ -2,33 +2,29 @@
 JSON business input (optional)
         │
         ▼
-   JSON Schema + normalize
+   AssessmentService (application layer)
+        │
+        ├─ JSON Schema + normalize
+        ├─ RDF instance builder
+        ├─ Input Graph SHACL
+        ├─ OWL-RL
+        ├─ Python rule engine
+        ├─ Assessment materialization
+        ├─ Assessment SHACL
+        ├─ Process / auth-code checks
+        └─ SPARQL dependency subgraph
         │
         ▼
-   RDF instance builder (hasCaseEvidence)
+   Stable AssessmentResponse (+ optional SQLite / artifacts)
         │
-Case RDF + Regulations + Systems
-        │
-        ▼
-   Input Graph SHACL (pySHACL)
-        │
-        ▼
-   OWL-RL (owlrl) ── subclass/property expansion
-        │
-        ▼
-   Python rule engine ── amounts, dates, validity (assessment_time param)
-        │
-        ▼
-   Materialize EligibilityAssessment / Decision / Reasons
-        │
-        ▼
-   Assessment Graph SHACL
-        │
-        ├──────────────────────────────┐
-        ▼                              ▼
-   SPARQL dependency subgraph   Neo4j (n10s + Cypher overlay)
-   offline --backend rdf        practical --backend neo4j
+        ├─ CLI / pipeline / showcase
+        └─ FastAPI /api/v1 (+ presentation views)
 ```
+
+Ontology runtime modules are loaded explicitly from `loader.ontology_paths()` (offline).
+Module catalog authority: `config/ontology_modules.yaml`.
+SQLite stores execution metadata only; RDF remains semantic authority.
+Neo4j remains optional and is not required for API health.
 
 ## Evidence relations
 
@@ -59,9 +55,12 @@ Applicable rule versions are chosen by `assessment_time` against closed
 | SHACL | Instance completeness (input + assessment graphs) |
 | OWL-RL | Deterministic type/relation expansion |
 | YAML + Python | Eligibility checks needing numeric/date logic |
+| Process service | Authorization code / transition permission (separate from eligibility) |
 | JSON adapter | Schema validate + normalize; no eligibility logic |
 | RDF builder | Deterministic IRI/instance generation; no decisions |
+| Application service | Single assessment entry for CLI/API |
 | SPARQL / trace_graph | Offline audit subgraph |
+| SQLite | Execution metadata + artifact index |
 | Neo4j + Cypher | Persistent graph store and path traces (optional) |
 
 Alignments (`mnp-alignments.ttl`) are documentation-grade and optional at runtime.

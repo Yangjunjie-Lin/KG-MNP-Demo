@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "TraceGraphResponse",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["nodes", "edges"],
+  "properties": {
+    "case_id": { "type": ["string", "null"] },
+    "root": { "type": ["string", "null"] },
+    "root_local": { "type": ["string", "null"] },
+    "query_file": { "type": ["string", "null"] },
+    "nodes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "required": ["id"],
+        "properties": {
+          "id": { "type": "string" },
+          "local_id": { "type": "string" },
+          "label": { "type": "string" },
+          "type": { "type": "string" }
+        }
+      }
+    },
+    "edges": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": true,
+        "required": ["source", "predicate", "target"],
+        "properties": {
+          "source": { "type": "string" },
+          "predicate": { "type": "string" },
+          "target": { "type": "string" }
+        }
+      }
+    }
+  }
+}

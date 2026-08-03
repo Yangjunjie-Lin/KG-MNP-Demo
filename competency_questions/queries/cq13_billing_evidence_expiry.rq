@@ -1,0 +1,13 @@
+PREFIX mnp: <http://example.org/kg-mnp#>
+SELECT ?caseId ?evidence ?evidenceStatus ?validUntil ?assessmentTime WHERE {
+  ?case a mnp:MNPCase ; mnp:caseIdentifier ?caseId ; mnp:hasCaseEvidence ?evidence .
+  FILTER(STR(?caseId) = STR(?requestedCaseId))
+  ?evidence mnp:evidenceType "BILLING_BALANCE" .
+  OPTIONAL { ?evidence mnp:evidenceStatus ?evidenceStatus }
+  OPTIONAL { ?evidence mnp:evidenceValidUntil ?validUntil }
+  OPTIONAL {
+    ?case mnp:hasEligibilityAssessment ?a .
+    ?a mnp:assessmentTime ?assessmentTime .
+  }
+}
+ORDER BY ?evidence

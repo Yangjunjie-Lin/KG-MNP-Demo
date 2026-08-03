@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CaseViewResponse",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["case"],
+  "properties": {
+    "case": {
+      "type": "object",
+      "properties": {
+        "schema_version": { "type": "string" },
+        "case_id": { "type": "string" },
+        "assessment_time": { "type": "string", "format": "date-time" },
+        "subscriber": { "type": "object" },
+        "phone_number": { "type": "object" },
+        "account": { "type": "object" },
+        "evidence": { "type": "object" },
+        "process": { "type": "object" }
+      }
+    },
+    "latest_assessment": { "type": ["object", "null"] }
+  }
+}

@@ -91,7 +91,7 @@ mnp:Assessment-CASE-06-HIST a mnp:EligibilityAssessment ;
     mnp:usesRuleVersion mnp:RuleVersion-MNP-ELIG-005-1-0 ;
     mnp:dependsOn mnp:Dep-CASE-06-HIST ;
     mnp:producesDecision mnp:Decision-CASE-06-HIST ;
-    mnp:requiresReassessment false .
+    mnp:requiresReassessment true .
 
 mnp:Dep-CASE-06-HIST a mnp:AssessmentDependency ;
     mnp:dependsOnRuleVersion mnp:RuleVersion-MNP-ELIG-005-1-0 ;

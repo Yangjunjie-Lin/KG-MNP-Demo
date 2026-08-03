@@ -1,24 +1,28 @@
-"""JSON → RDF → eligibility assessment pipeline."""
+"""JSON → RDF → eligibility assessment pipeline.
+
+File I/O and CLI live here. Core evaluation is delegated to
+``kg_mnp_demo.application.AssessmentService`` so REST APIs share one path.
+"""
 
 from __future__ import annotations
 
 import argparse
 import json
 import sys
-from copy import deepcopy
 from datetime import datetime
 from pathlib import Path
 from typing import Any
 
-from rdflib import Graph
+from kg_mnp_demo.application.assessment_service import (
+    AssessmentService,
+    write_assessment_artifacts,
+)
+from kg_mnp_demo.application.errors import ApplicationError
+from kg_mnp_demo.loader import merge_reference_graph, project_root
+from kg_mnp_demo.trace_graph import render_subgraph_html
 
-from kg_mnp_demo.evaluator import evaluate_case
-from kg_mnp_demo.inference import apply_owlrl
-from kg_mnp_demo.input_adapter import InputValidationError, load_and_normalize
-from kg_mnp_demo.loader import load_graph, ontology_paths, project_root, reference_paths
-from kg_mnp_demo.rdf_builder import build_case_graph
-from kg_mnp_demo.trace_graph import build_assessment_subgraph, render_subgraph_html
-from kg_mnp_demo.validator import validate_graph
+# Re-export for existing imports (tests / showcase).
+__all__ = ["run_pipeline", "merge_reference_graph", "main", "build_parser"]
 
 
 def _write_json(path: Path, payload: Any) -> None:
@@ -29,23 +33,6 @@ def _write_json(path: Path, payload: Any) -> None:
     )
 
 
-def _validation_payload(label: str, result) -> dict[str, Any]:
-    return {
-        "label": label,
-        "status": "PASSED" if result.conforms else "FAILED",
-        "conforms": result.conforms,
-        "detail": result.text if not result.conforms else "",
-    }
-
-
-def merge_reference_graph(instance: Graph) -> Graph:
-    """Merge ontology + reference systems/regulations into a working graph."""
-    base = load_graph(ontology_paths() + reference_paths())
-    for triple in instance:
-        base.add(triple)
-    return base
-
-
 def run_pipeline(
     input_path: Path | str,
     output_dir: Path | str,
@@ -53,138 +40,92 @@ def run_pipeline(
     write_html: bool = True,
     print_rdf: bool = False,
 ) -> dict[str, Any]:
-    """Full JSON input pipeline. Returns result dict and writes artifacts."""
+    """Full JSON input pipeline. Returns result dict and writes artifacts.
+
+    Compatibility wrapper around ``AssessmentService``. Return shape preserves
+    fields expected by existing tests and CLI.
+    """
     input_path = Path(input_path)
     output_dir = Path(output_dir)
     output_dir.mkdir(parents=True, exist_ok=True)
 
+    service = AssessmentService()
     try:
-        normalized = load_and_normalize(input_path)
-    except InputValidationError as exc:
-        payload = {
-            "status": "JSON_SCHEMA_FAILED",
-            "errors": exc.errors,
-            "publishable": False,
-        }
-        _write_json(output_dir / "input_validation.json", payload)
-        return {
-            "exit_code": 1,
-            "publishable": False,
-            "case_id": None,
-            "decision": None,
-            "errors": exc.errors,
-            "input_validation": payload,
-            "assessment_validation": None,
-            "evaluation": None,
-            "trace_subgraph": None,
-            "output_dir": str(output_dir),
-        }
+        raw = json.loads(input_path.read_text(encoding="utf-8"))
+        if not isinstance(raw, dict):
+            raise ApplicationError(
+                "INPUT_SCHEMA_ERROR",
+                details=["(root) must be a JSON object"],
+            )
+        execution = service.assess_execution(raw, persist_artifacts=False)
+    except json.JSONDecodeError:
+        raise
+    except ApplicationError as exc:
+        if exc.code.value == "INPUT_SCHEMA_ERROR":
+            payload = {
+                "status": "JSON_SCHEMA_FAILED",
+                "errors": exc.details,
+                "publishable": False,
+            }
+            _write_json(output_dir / "input_validation.json", payload)
+            return {
+                "exit_code": 1,
+                "publishable": False,
+                "case_id": None,
+                "decision": None,
+                "errors": exc.details,
+                "input_validation": payload,
+                "assessment_validation": None,
+                "evaluation": None,
+                "trace_subgraph": None,
+                "output_dir": str(output_dir),
+                "assessment_response": exc.to_dict(),
+            }
+        raise
 
-    normalized_dict = normalized.to_dict()
-    _write_json(output_dir / "normalized_input.json", normalized_dict)
-
-    instance = build_case_graph(normalized)
-    instance.serialize(destination=output_dir / "input_graph.ttl", format="turtle")
-    if print_rdf:
-        print(instance.serialize(format="turtle"))
-
-    working = merge_reference_graph(instance)
-    input_graph_snapshot = deepcopy(working)
-
-    input_shacl = validate_graph(working)
-    input_validation = _validation_payload("Input Graph Validation", input_shacl)
-    _write_json(output_dir / "input_validation.json", input_validation)
-
-    if not input_shacl.conforms:
-        return {
-            "exit_code": 1,
-            "publishable": False,
-            "case_id": normalized.case_id,
-            "decision": None,
-            "errors": [input_validation["detail"]],
-            "input_validation": input_validation,
-            "assessment_validation": None,
-            "evaluation": None,
-            "trace_subgraph": None,
-            "normalized": normalized_dict,
-            "assessment_time": normalized.assessment_time,
-            "output_dir": str(output_dir),
-        }
-
-    before = len(working)
-    apply_owlrl(working)
-    inference = {
-        "triples_before": before,
-        "triples_after": len(working),
-        "triples_added": len(working) - before,
-    }
-    _write_json(output_dir / "inference.json", inference)
-
-    evaluation = evaluate_case(
-        working,
-        normalized.case_id,
-        use_updated_rules=True,
-        assessment_time=normalized.assessment_time,
-        validate=False,
+    artifacts = write_assessment_artifacts(
+        execution, output_dir, write_html=write_html
     )
-    evaluation["assessment_time"] = normalized.assessment_time.strftime(
-        "%Y-%m-%dT%H:%M:%SZ"
-    )
-    evaluation["publishable"] = False  # set after assessment SHACL
+    execution.response["artifacts"] = artifacts
 
-    working.serialize(destination=output_dir / "assessment_graph.ttl", format="turtle")
+    if print_rdf and execution.instance_graph is not None:
+        print(execution.instance_graph.serialize(format="turtle"))
 
-    assessment_shacl = validate_graph(working)
-    assessment_validation = _validation_payload(
-        "Assessment Graph Validation", assessment_shacl
-    )
-    _write_json(output_dir / "assessment_validation.json", assessment_validation)
-
-    publishable = assessment_shacl.conforms
-    if not publishable:
-        evaluation["validation_status"] = "FAILED"
-        evaluation["validation_detail"] = assessment_validation["detail"]
-        evaluation["publishable"] = False
-        evaluation["publication_status"] = "NOT_PUBLISHABLE"
+    response = execution.response
+    validations = response.get("validations") or {}
+    assessment_time = response.get("assessment_time")
+    if isinstance(assessment_time, str):
+        try:
+            assessment_time_dt = datetime.fromisoformat(
+                assessment_time.replace("Z", "+00:00")
+            )
+        except ValueError:
+            assessment_time_dt = assessment_time
     else:
-        evaluation["validation_status"] = "PASSED"
-        evaluation["validation_detail"] = ""
-        evaluation["publishable"] = True
-        evaluation["publication_status"] = "PUBLISHABLE"
+        assessment_time_dt = assessment_time
 
-    _write_json(output_dir / "evaluation.json", evaluation)
-
-    subgraph = build_assessment_subgraph(working, normalized.case_id)
-    _write_json(output_dir / "trace_subgraph.json", subgraph)
-
-    if write_html:
-        html = _render_report(
-            normalized_dict,
-            input_validation,
-            assessment_validation,
-            evaluation,
-            subgraph,
-            inference,
-        )
-        (output_dir / "report.html").write_text(html, encoding="utf-8")
-
-    exit_code = 0 if publishable else 1
     return {
-        "exit_code": exit_code,
-        "publishable": publishable,
-        "case_id": normalized.case_id,
-        "decision": evaluation.get("decision"),
-        "blocking_reasons": evaluation.get("blocking_reasons"),
-        "input_validation": input_validation,
-        "assessment_validation": assessment_validation,
-        "evaluation": evaluation,
-        "trace_subgraph": subgraph,
-        "inference": inference,
-        "normalized": normalized_dict,
-        "assessment_time": normalized.assessment_time,
-        "input_graph": input_graph_snapshot,
-        "assessment_graph": working,
+        "exit_code": execution.exit_code,
+        "publishable": execution.publishable,
+        "case_id": execution.case_id,
+        "decision": execution.decision,
+        "blocking_reasons": response.get("blocking_reasons"),
+        "input_validation": validations.get("input_graph"),
+        "assessment_validation": validations.get("assessment_graph"),
+        "evaluation": execution.evaluation,
+        "trace_subgraph": response.get("trace_subgraph"),
+        "inference": response.get("inference"),
+        "normalized": execution.normalized,
+        "assessment_time": assessment_time_dt,
+        "input_graph": execution.assessment_graph,  # legacy: working graph snapshot
+        "assessment_graph": execution.assessment_graph,
         "output_dir": str(output_dir),
+        "assessment_response": response,
+        "errors": (
+            [execution.error.message]
+            if execution.error and execution.decision is None
+            else None
+        ),
     }
 
 
