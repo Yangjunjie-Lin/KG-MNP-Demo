@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.org/kg-mnp/schemas/api/AssessmentResponse.json",
+  "title": "AssessmentResponse",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "execution_id",
+    "case_id",
+    "assessment_time",
+    "decision",
+    "publication",
+    "validations",
+    "blocking_reasons",
+    "rule_results",
+    "trace_subgraph",
+    "process"
+  ],
+  "properties": {
+    "schema_version": { "type": "string" },
+    "execution_id": { "type": "string" },
+    "case_id": { "type": ["string", "null"] },
+    "assessment_time": { "type": ["string", "null"] },
+    "decision": {
+      "type": ["string", "null"],
+      "enum": ["ELIGIBLE", "BLOCKED", "CONDITIONAL", "MANUAL_REVIEW", null]
+    },
+    "publication": {
+      "type": "object",
+      "required": ["publishable", "status"],
+      "properties": {
+        "publishable": { "type": "boolean" },
+        "status": { "type": "string" }
+      }
+    },
+    "validations": { "type": "object" },
+    "input_summary": { "type": "object" },
+    "evidence": { "type": "array" },
+    "rule_results": { "type": "array" },
+    "blocking_reasons": { "type": "array" },
+    "remediation_actions": { "type": "array" },
+    "process": { "type": "object" },
+    "trace_subgraph": {
+      "type": "object",
+      "required": ["nodes", "edges"]
+    },
+    "inference": { "type": "object" },
+    "warnings": { "type": "array" },
+    "artifacts": { "type": "object" }
+  }
+}

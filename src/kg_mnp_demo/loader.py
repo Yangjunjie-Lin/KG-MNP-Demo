@@ -22,14 +22,29 @@ def load_graph(paths: list[Path]) -> Graph:
     return g
 
 
-def ontology_paths(*, include_alignments: bool = False) -> list[Path]:
-    paths = [
-        ROOT / "ontology" / "mnp-core.ttl",
-        ROOT / "ontology" / "mnp-compliance.ttl",
+def ontology_module_files(*, include_alignments: bool = False) -> list[str]:
+    """Ordered local ontology modules loaded explicitly (offline; no remote owl:imports)."""
+    files = [
+        "mnp-core.ttl",
+        "mnp-compliance.ttl",
+        "mnp-identity.ttl",
+        "mnp-account-billing.ttl",
+        "mnp-service-contract.ttl",
+        "mnp-process.ttl",
+        "mnp-evidence-time.ttl",
+        "mnp-code-list.ttl",
     ]
     if include_alignments:
-        paths.append(ROOT / "ontology" / "mnp-alignments.ttl")
-    return paths
+        files.append("mnp-alignments.ttl")
+    return files
+
+
+def ontology_paths(*, include_alignments: bool = False) -> list[Path]:
+    return [ROOT / "ontology" / name for name in ontology_module_files(include_alignments=include_alignments)]
+
+
+def ontology_modules_config_path() -> Path:
+    return ROOT / "config" / "ontology_modules.yaml"
 
 
 def shapes_path() -> Path:
@@ -65,6 +80,14 @@ def load_case_graph(
 
 def load_ontology_graph(*, include_alignments: bool = False) -> Graph:
     return load_graph(ontology_paths(include_alignments=include_alignments))
+
+
+def merge_reference_graph(instance: Graph) -> Graph:
+    """Merge ontology + reference systems/regulations into a working graph."""
+    base = load_graph(ontology_paths() + reference_paths())
+    for triple in instance:
+        base.add(triple)
+    return base
 
 
 def rules_path() -> Path:

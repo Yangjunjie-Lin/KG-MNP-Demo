@@ -1,0 +1,108 @@
+@prefix mnp: <http://example.org/kg-mnp#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+
+#################################################################
+# Identity layer — subscribers, documents, verification
+# Does not redefine core classes already in mnp-core.ttl.
+#################################################################
+
+<http://example.org/kg-mnp/identity> a owl:Ontology ;
+    dcterms:title "KG-MNP Identity Module"@en ;
+    dcterms:title "用户与身份层"@zh ;
+    owl:versionInfo "0.1.0" ;
+    rdfs:comment "Identity and real-name concepts for MNP eligibility."@en .
+
+mnp:NaturalPerson a owl:Class ;
+    rdfs:subClassOf mnp:Subscriber ;
+    rdfs:label "Natural Person"@en ;
+    rdfs:label "自然人用户"@zh ;
+    rdfs:comment "A natural person subscriber requesting number portability."@en ;
+    mnp:moduleCode "IDENTITY" .
+
+mnp:OrganisationSubscriber a owl:Class ;
+    rdfs:subClassOf mnp:Subscriber ;
+    rdfs:label "Organisation Subscriber"@en ;
+    rdfs:label "组织用户"@zh ;
+    rdfs:comment "An organisation acting as a telecom subscriber."@en ;
+    mnp:moduleCode "IDENTITY" .
+
+mnp:IdentityDocument a owl:Class ;
+    rdfs:label "Identity Document"@en ;
+    rdfs:label "身份证件"@zh ;
+    rdfs:comment "An identity document used for real-name registration."@en ;
+    mnp:moduleCode "IDENTITY" .
+
+mnp:RealNameRegistration a owl:Class ;
+    rdfs:label "Real Name Registration"@en ;
+    rdfs:label "实名登记"@zh ;
+    rdfs:comment "A real-name registration record linking a subscriber to identity evidence."@en ;
+    mnp:moduleCode "IDENTITY" .
+
+mnp:IdentityVerification a owl:Class ;
+    rdfs:subClassOf mnp:SystemObservation ;
+    rdfs:label "Identity Verification"@en ;
+    rdfs:label "实名核验"@zh ;
+    rdfs:comment "A system observation recording identity match outcome."@en ;
+    mnp:moduleCode "IDENTITY" .
+
+mnp:PhoneNumberOwnership a owl:Class ;
+    rdfs:label "Phone Number Ownership"@en ;
+    rdfs:label "号码归属关系"@zh ;
+    rdfs:comment "Asserted ownership link between a subscriber and a phone number."@en ;
+    mnp:moduleCode "IDENTITY" .
+
+mnp:hasIdentityDocument a owl:ObjectProperty ;
+    rdfs:domain mnp:NaturalPerson ;
+    rdfs:range mnp:IdentityDocument ;
+    rdfs:label "has identity document"@en ;
+    rdfs:label "持有身份证件"@zh ;
+    mnp:moduleCode "IDENTITY" .
+
+mnp:hasRealNameRegistration a owl:ObjectProperty ;
+    rdfs:domain mnp:Subscriber ;
+    rdfs:range mnp:RealNameRegistration ;
+    rdfs:label "has real-name registration"@en ;
+    rdfs:label "具有实名登记"@zh ;
+    mnp:moduleCode "IDENTITY" .
+
+mnp:verifiedBy a owl:ObjectProperty ;
+    rdfs:domain mnp:RealNameRegistration ;
+    rdfs:range mnp:IdentityVerification ;
+    rdfs:label "verified by"@en ;
+    rdfs:label "由核验记录验证"@zh ;
+    mnp:moduleCode "IDENTITY" .
+
+mnp:assertsOwnership a owl:ObjectProperty ;
+    rdfs:domain mnp:PhoneNumberOwnership ;
+    rdfs:range mnp:PhoneNumber ;
+    rdfs:label "asserts ownership of"@en ;
+    rdfs:label "主张号码归属"@zh ;
+    mnp:moduleCode "IDENTITY" .
+
+mnp:ownershipHolder a owl:ObjectProperty ;
+    rdfs:domain mnp:PhoneNumberOwnership ;
+    rdfs:range mnp:Subscriber ;
+    rdfs:label "ownership holder"@en ;
+    rdfs:label "归属主体"@zh ;
+    mnp:moduleCode "IDENTITY" .
+
+mnp:documentTypeCode a owl:DatatypeProperty ;
+    rdfs:domain mnp:IdentityDocument ;
+    rdfs:range xsd:string ;
+    rdfs:label "document type code"@en ;
+    mnp:moduleCode "IDENTITY" .
+
+mnp:documentNumberMasked a owl:DatatypeProperty ;
+    rdfs:domain mnp:IdentityDocument ;
+    rdfs:range xsd:string ;
+    rdfs:label "masked document number"@en ;
+    mnp:moduleCode "IDENTITY" .
+
+mnp:verificationOutcome a owl:DatatypeProperty ;
+    rdfs:domain mnp:IdentityVerification ;
+    rdfs:range xsd:string ;
+    rdfs:label "verification outcome"@en ;
+    mnp:moduleCode "IDENTITY" .

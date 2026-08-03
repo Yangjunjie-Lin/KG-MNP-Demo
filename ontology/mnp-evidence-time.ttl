@@ -1,0 +1,87 @@
+@prefix mnp: <http://example.org/kg-mnp#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+
+#################################################################
+# Evidence & time cross-cutting layer
+#################################################################
+
+<http://example.org/kg-mnp/evidence-time> a owl:Ontology ;
+    dcterms:title "KG-MNP Evidence and Time Module"@en ;
+    dcterms:title "证据与时间横向层"@zh ;
+    owl:versionInfo "0.1.0" ;
+    rdfs:comment "API responses, evidence validity and temporal annotations. No amount/date arithmetic."@en .
+
+mnp:APIResponse a owl:Class ;
+    rdfs:subClassOf mnp:SystemObservation ;
+    rdfs:label "API Response"@en ;
+    rdfs:label "接口响应证据"@zh ;
+    rdfs:comment "Evidence derived from a synthetic API response snapshot."@en ;
+    mnp:moduleCode "EVIDENCE_TIME" .
+
+mnp:EvidenceValidity a owl:Class ;
+    rdfs:label "Evidence Validity"@en ;
+    rdfs:label "证据有效性"@zh ;
+    rdfs:comment "A validity window description for an evidence record."@en ;
+    mnp:moduleCode "EVIDENCE_TIME" .
+
+mnp:ObservationTime a owl:Class ;
+    rdfs:label "Observation Time"@en ;
+    rdfs:label "观测时间"@zh ;
+    mnp:moduleCode "EVIDENCE_TIME" .
+
+mnp:EvaluationTime a owl:Class ;
+    rdfs:label "Evaluation Time"@en ;
+    rdfs:label "评估时间点"@zh ;
+    mnp:moduleCode "EVIDENCE_TIME" .
+
+mnp:RecordedTime a owl:Class ;
+    rdfs:label "Recorded Time"@en ;
+    rdfs:label "记录时间"@zh ;
+    mnp:moduleCode "EVIDENCE_TIME" .
+
+mnp:hasEvidenceValidity a owl:ObjectProperty ;
+    rdfs:domain mnp:EvidenceRecord ;
+    rdfs:range mnp:EvidenceValidity ;
+    rdfs:label "has evidence validity"@en ;
+    mnp:moduleCode "EVIDENCE_TIME" .
+
+mnp:observedAtTime a owl:ObjectProperty ;
+    rdfs:domain mnp:SystemObservation ;
+    rdfs:range mnp:ObservationTime ;
+    rdfs:label "observed at time"@en ;
+    mnp:moduleCode "EVIDENCE_TIME" .
+
+mnp:evaluatedAtTime a owl:ObjectProperty ;
+    rdfs:domain mnp:EligibilityAssessment ;
+    rdfs:range mnp:EvaluationTime ;
+    rdfs:label "evaluated at time"@en ;
+    mnp:moduleCode "EVIDENCE_TIME" .
+
+mnp:recordedAtTime a owl:ObjectProperty ;
+    rdfs:domain mnp:EvidenceRecord ;
+    rdfs:range mnp:RecordedTime ;
+    rdfs:label "recorded at time"@en ;
+    mnp:moduleCode "EVIDENCE_TIME" .
+
+mnp:timeInstant a owl:DatatypeProperty ;
+    rdfs:domain mnp:ObservationTime ;
+    rdfs:range xsd:dateTime ;
+    mnp:moduleCode "EVIDENCE_TIME" .
+
+mnp:validityStart a owl:DatatypeProperty ;
+    rdfs:domain mnp:EvidenceValidity ;
+    rdfs:range xsd:dateTime ;
+    mnp:moduleCode "EVIDENCE_TIME" .
+
+mnp:validityEnd a owl:DatatypeProperty ;
+    rdfs:domain mnp:EvidenceValidity ;
+    rdfs:range xsd:dateTime ;
+    mnp:moduleCode "EVIDENCE_TIME" .
+
+mnp:apiEndpointCode a owl:DatatypeProperty ;
+    rdfs:domain mnp:APIResponse ;
+    rdfs:range xsd:string ;
+    mnp:moduleCode "EVIDENCE_TIME" .

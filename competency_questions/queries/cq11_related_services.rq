@@ -1,0 +1,11 @@
+PREFIX mnp: <http://example.org/kg-mnp#>
+SELECT ?caseId ?service ?subscriptionStatus WHERE {
+  ?case a mnp:MNPCase ; mnp:caseIdentifier ?caseId ; mnp:requestedBy ?sub .
+  FILTER(STR(?caseId) = STR(?requestedCaseId))
+  OPTIONAL {
+    ?sub mnp:hasSubscription ?ss .
+    ?ss mnp:subscribesToService ?service .
+    OPTIONAL { ?ss mnp:subscriptionStatusCode ?subscriptionStatus }
+  }
+}
+ORDER BY ?service

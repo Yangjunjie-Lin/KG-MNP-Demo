@@ -1,0 +1,12 @@
+PREFIX mnp: <http://example.org/kg-mnp#>
+SELECT ?assessment ?oldVersion ?newVersion WHERE {
+  ?new mnp:supersedesRuleVersion ?old .
+  ?assessment mnp:usesRuleVersion ?old .
+  OPTIONAL { ?old mnp:ruleVersion ?oldVersion }
+  OPTIONAL { ?new mnp:ruleVersion ?newVersion }
+  OPTIONAL {
+    ?case a mnp:MNPCase ; mnp:caseIdentifier ?caseId ; mnp:hasEligibilityAssessment ?assessment .
+    FILTER(STR(?caseId) = STR(?requestedCaseId))
+  }
+}
+ORDER BY ?assessment

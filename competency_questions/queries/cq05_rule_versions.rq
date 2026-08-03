@@ -1,0 +1,10 @@
+PREFIX mnp: <http://example.org/kg-mnp#>
+SELECT ?caseId ?ruleId ?ruleVersion ?effectiveFrom WHERE {
+  ?case a mnp:MNPCase ; mnp:caseIdentifier ?caseId ; mnp:hasEligibilityAssessment ?a .
+  FILTER(STR(?caseId) = STR(?requestedCaseId))
+  ?a mnp:usesRuleVersion ?rv .
+  OPTIONAL { ?rv mnp:ruleIdentifier ?ruleId }
+  OPTIONAL { ?rv mnp:ruleVersion ?ruleVersion }
+  OPTIONAL { ?rv mnp:effectiveFrom ?effectiveFrom }
+}
+ORDER BY ?ruleId ?ruleVersion

@@ -80,8 +80,14 @@ def _add_evidence_base(
     g.add((sys_uri, MNP.systemIdentifier, Literal(evidence.source_system)))
 
 
-def build_case_graph(normalized: NormalizedCaseInput) -> Graph:
+def build_case_graph(
+    normalized: NormalizedCaseInput,
+    *,
+    process: dict | None = None,
+) -> Graph:
     """Build instance RDF only (no assessment, no eligibility conclusion)."""
+    from typing import Any
+
     g = Graph()
     g.bind("mnp", MNP)
 
@@ -178,4 +184,87 @@ def build_case_graph(normalized: NormalizedCaseInput) -> Graph:
         g.add((case, MNP.hasCaseEvidence, ev))
         g.add((ev, MNP.evidenceForCase, case))
 
+    _add_process_triples(g, case, case_id, process)
     return g
+
+
+def _add_process_triples(
+    g: Graph,
+    case: URIRef,
+    case_id: str,
+    process: dict | None,
+) -> None:
+    if not process:
+        return
+    step_code = process.get("current_step")
+    if step_code:
+        step = URIRef(f"{BASE}Step-{sanitize_iri_fragment(case_id)}-{sanitize_iri_fragment(str(step_code))}")
+        g.add((step, RDF.type, MNP.ProcessStep))
+        g.add((step, MNP.stepCode, Literal(str(step_code))))
+        g.add((case, MNP.hasProcessStep, step))
+        g.add((case, MNP.currentProcessStep, step))
+
+    auth = process.get("authorization_code")
+    if isinstance(auth, dict):
+        code = URIRef(f"{BASE}AuthCode-{sanitize_iri_fragment(case_id)}")
+        g.add((code, RDF.type, MNP.AuthorizationCode))
+        if auth.get("status"):
+            g.add((code, MNP.authCodeStatus, Literal(str(auth["status"]))))
+        if auth.get("issued_at"):
+            g.add(
+                (
+                    code,
+                    MNP.authCodeIssuedAt,
+                    Literal(str(auth["issued_at"]).replace("+00:00", "Z"), datatype=XSD.dateTime),
+                )
+            )
+        if auth.get("valid_until"):
+            g.add(
+                (
+                    code,
+                    MNP.authCodeValidUntil,
+                    Literal(str(auth["valid_until"]).replace("+00:00", "Z"), datatype=XSD.dateTime),
+                )
+            )
+        if auth.get("masked_value"):
+            g.add((code, MNP.authCodeValueMasked, Literal(str(auth["masked_value"]))))
+        g.add((case, MNP.hasAuthorizationCode, code))
+
+        # Process event for expired/missing auth
+        status = str(auth.get("status") or "").upper()
+        if status in {"EXPIRED", "MISSING"}:
+            ev = URIRef(f"{BASE}ProcessEvent-{sanitize_iri_fragment(case_id)}-AUTH")
+            g.add((ev, RDF.type, MNP.ProcessEvent))
+            g.add((ev, MNP.eventTypeCode, Literal(f"AUTHORIZATION_CODE_{status}")))
+            when = auth.get("valid_until") or auth.get("issued_at") or "2026-07-01T00:00:00Z"
+            g.add(
+                (
+                    ev,
+                    MNP.eventTime,
+                    Literal(str(when).replace("+00:00", "Z"), datatype=XSD.dateTime),
+                )
+            )
+            g.add((case, MNP.hasProcessEvent, ev))
+
+    term = process.get("termination_agreement")
+    if isinstance(term, dict):
+        agreement = URIRef(f"{BASE}Termination-{sanitize_iri_fragment(case_id)}")
+        g.add((agreement, RDF.type, MNP.TerminationAgreement))
+        if term.get("signed_at"):
+            g.add(
+                (
+                    agreement,
+                    MNP.terminationSignedAt,
+                    Literal(str(term["signed_at"]).replace("+00:00", "Z"), datatype=XSD.dateTime),
+                )
+            )
+        if term.get("effective_at"):
+            g.add(
+                (
+                    agreement,
+                    MNP.terminationEffectiveAt,
+                    Literal(str(term["effective_at"]).replace("+00:00", "Z"), datatype=XSD.dateTime),
+                )
+            )
+        if term.get("status"):
+            g.add((agreement, MNP.terminationStatusCode, Literal(str(term["status"]))))

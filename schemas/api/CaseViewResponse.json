@@ -1,0 +1,10 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "CaseViewResponse",
+  "type": "object",
+  "required": ["case"],
+  "properties": {
+    "case": { "type": "object" },
+    "latest_assessment": {}
+  }
+}

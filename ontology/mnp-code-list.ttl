@@ -1,0 +1,99 @@
+@prefix mnp: <http://example.org/kg-mnp#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+
+#################################################################
+# Controlled code lists (status vocabularies)
+#################################################################
+
+<http://example.org/kg-mnp/code-list> a owl:Ontology ;
+    dcterms:title "KG-MNP Code List Module"@en ;
+    dcterms:title "受控状态码表"@zh ;
+    owl:versionInfo "0.1.0" ;
+    rdfs:comment "Controlled status codes for evidence, contracts, process and authorization."@en .
+
+mnp:CodeListEntry a owl:Class ;
+    rdfs:label "Code List Entry"@en ;
+    rdfs:label "码表项"@zh ;
+    mnp:moduleCode "CODE_LIST" .
+
+mnp:codeListName a owl:DatatypeProperty ;
+    rdfs:domain mnp:CodeListEntry ;
+    rdfs:range xsd:string ;
+    mnp:moduleCode "CODE_LIST" .
+
+mnp:codeValue a owl:DatatypeProperty ;
+    rdfs:domain mnp:CodeListEntry ;
+    rdfs:range xsd:string ;
+    mnp:moduleCode "CODE_LIST" .
+
+mnp:codeLabelEn a owl:DatatypeProperty ;
+    rdfs:domain mnp:CodeListEntry ;
+    rdfs:range xsd:string ;
+    mnp:moduleCode "CODE_LIST" .
+
+mnp:codeLabelZh a owl:DatatypeProperty ;
+    rdfs:domain mnp:CodeListEntry ;
+    rdfs:range xsd:string ;
+    mnp:moduleCode "CODE_LIST" .
+
+# Evidence status
+mnp:Code-Evidence-VALID a mnp:CodeListEntry ;
+    mnp:codeListName "evidenceStatus" ;
+    mnp:codeValue "VALID" ;
+    mnp:codeLabelEn "Valid" ;
+    mnp:codeLabelZh "有效" ;
+    mnp:moduleCode "CODE_LIST" .
+
+mnp:Code-Evidence-EXPIRED a mnp:CodeListEntry ;
+    mnp:codeListName "evidenceStatus" ;
+    mnp:codeValue "EXPIRED" ;
+    mnp:codeLabelEn "Expired" ;
+    mnp:codeLabelZh "过期" ;
+    mnp:moduleCode "CODE_LIST" .
+
+# Auth code status
+mnp:Code-Auth-VALID a mnp:CodeListEntry ;
+    mnp:codeListName "authCodeStatus" ;
+    mnp:codeValue "VALID" ;
+    mnp:codeLabelEn "Valid" ;
+    mnp:codeLabelZh "有效" ;
+    mnp:moduleCode "CODE_LIST" .
+
+mnp:Code-Auth-EXPIRED a mnp:CodeListEntry ;
+    mnp:codeListName "authCodeStatus" ;
+    mnp:codeValue "EXPIRED" ;
+    mnp:codeLabelEn "Expired" ;
+    mnp:codeLabelZh "已过期" ;
+    mnp:moduleCode "CODE_LIST" .
+
+mnp:Code-Auth-MISSING a mnp:CodeListEntry ;
+    mnp:codeListName "authCodeStatus" ;
+    mnp:codeValue "MISSING" ;
+    mnp:codeLabelEn "Missing" ;
+    mnp:codeLabelZh "缺失" ;
+    mnp:moduleCode "CODE_LIST" .
+
+# Process step codes
+mnp:Code-Step-ELIGIBILITY_CHECK a mnp:CodeListEntry ;
+    mnp:codeListName "processStep" ;
+    mnp:codeValue "ELIGIBILITY_CHECK" ;
+    mnp:codeLabelEn "Eligibility Check" ;
+    mnp:codeLabelZh "资格检查" ;
+    mnp:moduleCode "CODE_LIST" .
+
+mnp:Code-Step-AUTHORIZATION_CODE_REQUEST a mnp:CodeListEntry ;
+    mnp:codeListName "processStep" ;
+    mnp:codeValue "AUTHORIZATION_CODE_REQUEST" ;
+    mnp:codeLabelEn "Authorization Code Request" ;
+    mnp:codeLabelZh "授权码申请" ;
+    mnp:moduleCode "CODE_LIST" .
+
+mnp:Code-Step-PORT_IN_SUBMISSION a mnp:CodeListEntry ;
+    mnp:codeListName "processStep" ;
+    mnp:codeValue "PORT_IN_SUBMISSION" ;
+    mnp:codeLabelEn "Port-In Submission" ;
+    mnp:codeLabelZh "携入提交" ;
+    mnp:moduleCode "CODE_LIST" .

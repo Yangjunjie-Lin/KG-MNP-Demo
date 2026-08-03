@@ -1,0 +1,150 @@
+@prefix mnp: <http://example.org/kg-mnp#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+
+#################################################################
+# Porting process layer — authorization code and process steps
+#################################################################
+
+<http://example.org/kg-mnp/process> a owl:Ontology ;
+    dcterms:title "KG-MNP Process Module"@en ;
+    dcterms:title "携转流程层"@zh ;
+    owl:versionInfo "0.1.0" ;
+    rdfs:comment "MNP process steps, authorization codes and transition permissions."@en .
+
+mnp:MNPRequest a owl:Class ;
+    rdfs:subClassOf mnp:MNPCase ;
+    rdfs:label "MNP Request"@en ;
+    rdfs:label "携转申请"@zh ;
+    mnp:moduleCode "PROCESS" .
+
+mnp:EligibilityCheck a owl:Class ;
+    rdfs:label "Eligibility Check"@en ;
+    rdfs:label "资格检查步骤"@zh ;
+    rdfs:subClassOf mnp:ProcessStep ;
+    mnp:moduleCode "PROCESS" .
+
+mnp:AuthorizationCodeRequest a owl:Class ;
+    rdfs:label "Authorization Code Request"@en ;
+    rdfs:label "授权码申请"@zh ;
+    rdfs:subClassOf mnp:ProcessStep ;
+    mnp:moduleCode "PROCESS" .
+
+mnp:AuthorizationCode a owl:Class ;
+    rdfs:label "Authorization Code"@en ;
+    rdfs:label "授权码"@zh ;
+    rdfs:comment "A time-bounded authorization code for port-in submission."@en ;
+    mnp:moduleCode "PROCESS" .
+
+mnp:PortInSubmission a owl:Class ;
+    rdfs:label "Port-In Submission"@en ;
+    rdfs:label "携入提交"@zh ;
+    rdfs:subClassOf mnp:ProcessStep ;
+    mnp:moduleCode "PROCESS" .
+
+mnp:PortingExecution a owl:Class ;
+    rdfs:label "Porting Execution"@en ;
+    rdfs:label "携转执行"@zh ;
+    rdfs:subClassOf mnp:ProcessStep ;
+    mnp:moduleCode "PROCESS" .
+
+mnp:PortingConfirmation a owl:Class ;
+    rdfs:label "Porting Confirmation"@en ;
+    rdfs:label "携转确认"@zh ;
+    rdfs:subClassOf mnp:ProcessStep ;
+    mnp:moduleCode "PROCESS" .
+
+mnp:ProcessStep a owl:Class ;
+    rdfs:label "Process Step"@en ;
+    rdfs:label "流程步骤"@zh ;
+    rdfs:comment "A discrete step in the MNP process lifecycle."@en ;
+    mnp:moduleCode "PROCESS" .
+
+mnp:ProcessEvent a owl:Class ;
+    rdfs:label "Process Event"@en ;
+    rdfs:label "流程事件"@zh ;
+    rdfs:comment "An event recorded during process execution."@en ;
+    mnp:moduleCode "PROCESS" .
+
+mnp:MNPCaseStatus a owl:Class ;
+    rdfs:label "MNP Case Status"@en ;
+    rdfs:label "案件流程状态"@zh ;
+    mnp:moduleCode "PROCESS" .
+
+mnp:hasProcessStep a owl:ObjectProperty ;
+    rdfs:domain mnp:MNPCase ;
+    rdfs:range mnp:ProcessStep ;
+    rdfs:label "has process step"@en ;
+    mnp:moduleCode "PROCESS" .
+
+mnp:currentProcessStep a owl:ObjectProperty ;
+    rdfs:domain mnp:MNPCase ;
+    rdfs:range mnp:ProcessStep ;
+    rdfs:label "current process step"@en ;
+    mnp:moduleCode "PROCESS" .
+
+mnp:nextProcessStep a owl:ObjectProperty ;
+    rdfs:domain mnp:ProcessStep ;
+    rdfs:range mnp:ProcessStep ;
+    rdfs:label "next process step"@en ;
+    mnp:moduleCode "PROCESS" .
+
+mnp:hasAuthorizationCode a owl:ObjectProperty ;
+    rdfs:domain mnp:MNPCase ;
+    rdfs:range mnp:AuthorizationCode ;
+    rdfs:label "has authorization code"@en ;
+    mnp:moduleCode "PROCESS" .
+
+mnp:hasProcessEvent a owl:ObjectProperty ;
+    rdfs:domain mnp:MNPCase ;
+    rdfs:range mnp:ProcessEvent ;
+    rdfs:label "has process event"@en ;
+    mnp:moduleCode "PROCESS" .
+
+mnp:hasCaseStatus a owl:ObjectProperty ;
+    rdfs:domain mnp:MNPCase ;
+    rdfs:range mnp:MNPCaseStatus ;
+    rdfs:label "has case status"@en ;
+    mnp:moduleCode "PROCESS" .
+
+mnp:stepCode a owl:DatatypeProperty ;
+    rdfs:domain mnp:ProcessStep ;
+    rdfs:range xsd:string ;
+    mnp:moduleCode "PROCESS" .
+
+mnp:authCodeValueMasked a owl:DatatypeProperty ;
+    rdfs:domain mnp:AuthorizationCode ;
+    rdfs:range xsd:string ;
+    mnp:moduleCode "PROCESS" .
+
+mnp:authCodeStatus a owl:DatatypeProperty ;
+    rdfs:domain mnp:AuthorizationCode ;
+    rdfs:range xsd:string ;
+    mnp:moduleCode "PROCESS" .
+
+mnp:authCodeIssuedAt a owl:DatatypeProperty ;
+    rdfs:domain mnp:AuthorizationCode ;
+    rdfs:range xsd:dateTime ;
+    mnp:moduleCode "PROCESS" .
+
+mnp:authCodeValidUntil a owl:DatatypeProperty ;
+    rdfs:domain mnp:AuthorizationCode ;
+    rdfs:range xsd:dateTime ;
+    mnp:moduleCode "PROCESS" .
+
+mnp:eventTypeCode a owl:DatatypeProperty ;
+    rdfs:domain mnp:ProcessEvent ;
+    rdfs:range xsd:string ;
+    mnp:moduleCode "PROCESS" .
+
+mnp:eventTime a owl:DatatypeProperty ;
+    rdfs:domain mnp:ProcessEvent ;
+    rdfs:range xsd:dateTime ;
+    mnp:moduleCode "PROCESS" .
+
+mnp:caseStatusCode a owl:DatatypeProperty ;
+    rdfs:domain mnp:MNPCaseStatus ;
+    rdfs:range xsd:string ;
+    mnp:moduleCode "PROCESS" .

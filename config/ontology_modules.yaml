@@ -1,0 +1,85 @@
+# Authoritative ontology module catalog for KG-MNP.
+# TTL files declare mnp:moduleCode on new terms; this file is the UI/catalog source of truth.
+
+modules:
+  - code: CORE
+    label_zh: 核心概念层
+    label_en: Core Concepts
+    description: 携转资格评估的核心类与属性（案件、证据、规则、决定、阻塞原因）。
+    file: mnp-core.ttl
+    runtime: true
+  - code: IDENTITY
+    label_zh: 用户与身份层
+    label_en: Identity
+    description: 自然人/组织用户、证件、实名登记与核验、号码归属。
+    file: mnp-identity.ttl
+    runtime: true
+  - code: ACCOUNT_BILLING
+    label_zh: 账户与计费层
+    label_en: Account and Billing
+    description: 计费账户、账单、费用、缴费、欠费观测与结清。
+    file: mnp-account-billing.ttl
+    runtime: true
+  - code: SERVICE_CONTRACT
+    label_zh: 业务与合约层
+    label_en: Service and Contract
+    description: 套餐与增值业务、承诺期、解除协议。
+    file: mnp-service-contract.ttl
+    runtime: true
+  - code: PROCESS
+    label_zh: 携转流程层
+    label_en: Porting Process
+    description: 流程步骤、授权码、流程事件与案件状态。
+    file: mnp-process.ttl
+    runtime: true
+  - code: COMPLIANCE
+    label_zh: 资格与合规层
+    label_en: Eligibility and Compliance
+    description: 规则版本重评、监管条款辅助属性。
+    file: mnp-compliance.ttl
+    runtime: true
+  - code: EVIDENCE_TIME
+    label_zh: 证据与时间横向层
+    label_en: Evidence and Time
+    description: 接口响应证据、有效性与时间标注（不含金额/日差计算）。
+    file: mnp-evidence-time.ttl
+    runtime: true
+  - code: CODE_LIST
+    label_zh: 受控码表
+    label_en: Code Lists
+    description: 证据、授权码与流程步骤等受控状态码。
+    file: mnp-code-list.ttl
+    runtime: true
+  - code: ALIGNMENTS
+    label_zh: 外部对齐注释
+    label_en: Alignments
+    description: 文档级外部本体/API 对齐，运行时可选。
+    file: mnp-alignments.ttl
+    runtime: false
+
+# Map core terms (without explicit mnp:moduleCode) to catalog modules.
+core_term_modules:
+  Subscriber: IDENTITY
+  PhoneNumber: IDENTITY
+  TelecomAccount: ACCOUNT_BILLING
+  TelecomService: SERVICE_CONTRACT
+  ServiceSubscription: SERVICE_CONTRACT
+  ServiceContract: SERVICE_CONTRACT
+  MNPCase: PROCESS
+  EligibilityAssessment: COMPLIANCE
+  EligibilityDecision: COMPLIANCE
+  EligibleDecision: COMPLIANCE
+  BlockingDecision: COMPLIANCE
+  ConditionalDecision: COMPLIANCE
+  ManualReviewDecision: COMPLIANCE
+  EvidenceRecord: EVIDENCE_TIME
+  SystemObservation: EVIDENCE_TIME
+  EligibilityRule: COMPLIANCE
+  BlockingReason: COMPLIANCE
+  RemediationAction: COMPLIANCE
+  RegulatoryClause: COMPLIANCE
+  RegulatoryDocument: COMPLIANCE
+  InformationSystem: EVIDENCE_TIME
+  RuleVersion: COMPLIANCE
+  AssessmentDependency: COMPLIANCE
+  MappingRecord: CORE

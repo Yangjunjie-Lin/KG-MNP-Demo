@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "DashboardViewResponse",
+  "type": "object",
+  "required": ["project", "capabilities", "ontology", "cases", "pipeline_steps", "example_cases"],
+  "properties": {
+    "project": { "type": "object" },
+    "capabilities": { "type": "array" },
+    "ontology": { "type": "object" },
+    "cases": { "type": "object" },
+    "pipeline_steps": { "type": "array" },
+    "example_cases": { "type": "array" }
+  }
+}

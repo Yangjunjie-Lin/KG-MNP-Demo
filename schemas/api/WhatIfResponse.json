@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "WhatIfResponse",
+  "type": "object",
+  "required": ["baseline", "scenario", "decision_change", "reason_changes"],
+  "properties": {
+    "baseline": { "type": "object" },
+    "scenario": { "type": "object" },
+    "changes": {},
+    "decision_change": { "type": "object" },
+    "rule_changes": { "type": "array" },
+    "reason_changes": { "type": "object" },
+    "trace_changes": { "type": "object" }
+  }
+}

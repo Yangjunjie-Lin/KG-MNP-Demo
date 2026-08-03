@@ -1,0 +1,7 @@
+PREFIX mnp: <http://example.org/kg-mnp#>
+SELECT ?caseId ?reasonCode WHERE {
+  ?case a mnp:MNPCase ; mnp:caseIdentifier ?caseId ; mnp:hasEligibilityAssessment ?a .
+  FILTER(STR(?caseId) = STR(?requestedCaseId))
+  ?a mnp:producesBlockingReason ?r . ?r mnp:reasonCode ?reasonCode .
+}
+ORDER BY ?reasonCode

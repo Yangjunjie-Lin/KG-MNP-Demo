@@ -1,0 +1,10 @@
+PREFIX mnp: <http://example.org/kg-mnp#>
+SELECT ?caseId ?evidence ?evidenceType ?sourceSystem ?generatedAt ?validUntil WHERE {
+  ?case a mnp:MNPCase ; mnp:caseIdentifier ?caseId ; mnp:hasCaseEvidence ?evidence .
+  FILTER(STR(?caseId) = STR(?requestedCaseId))
+  OPTIONAL { ?evidence mnp:evidenceType ?evidenceType }
+  OPTIONAL { ?evidence mnp:evidenceGeneratedAt ?generatedAt }
+  OPTIONAL { ?evidence mnp:evidenceValidUntil ?validUntil }
+  OPTIONAL { ?evidence mnp:hasSourceSystem ?sys . ?sys mnp:systemIdentifier ?sourceSystem }
+}
+ORDER BY ?evidenceType

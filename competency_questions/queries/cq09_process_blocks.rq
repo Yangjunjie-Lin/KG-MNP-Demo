@@ -1,0 +1,10 @@
+PREFIX mnp: <http://example.org/kg-mnp#>
+SELECT ?caseId ?eventTypeCode ?eventTime WHERE {
+  ?case a mnp:MNPCase ; mnp:caseIdentifier ?caseId .
+  FILTER(STR(?caseId) = STR(?requestedCaseId))
+  OPTIONAL {
+    ?case mnp:hasProcessEvent ?ev .
+    ?ev mnp:eventTypeCode ?eventTypeCode ; mnp:eventTime ?eventTime .
+  }
+}
+ORDER BY ?eventTime

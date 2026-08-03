@@ -1,0 +1,100 @@
+@prefix mnp: <http://example.org/kg-mnp#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+
+#################################################################
+# Service & contract layer
+#################################################################
+
+<http://example.org/kg-mnp/service-contract> a owl:Ontology ;
+    dcterms:title "KG-MNP Service and Contract Module"@en ;
+    dcterms:title "业务与合约层"@zh ;
+    owl:versionInfo "0.1.0" ;
+    rdfs:comment "Service offerings, commitment periods and termination agreements."@en .
+
+mnp:MobilePlan a owl:Class ;
+    rdfs:subClassOf mnp:TelecomService ;
+    rdfs:label "Mobile Plan"@en ;
+    rdfs:label "移动套餐"@zh ;
+    mnp:moduleCode "SERVICE_CONTRACT" .
+
+mnp:BroadbandService a owl:Class ;
+    rdfs:subClassOf mnp:TelecomService ;
+    rdfs:label "Broadband Service"@en ;
+    rdfs:label "宽带业务"@zh ;
+    mnp:moduleCode "SERVICE_CONTRACT" .
+
+mnp:ValueAddedService a owl:Class ;
+    rdfs:subClassOf mnp:TelecomService ;
+    rdfs:label "Value Added Service"@en ;
+    rdfs:label "增值业务"@zh ;
+    mnp:moduleCode "SERVICE_CONTRACT" .
+
+mnp:SupplementaryCardService a owl:Class ;
+    rdfs:subClassOf mnp:TelecomService ;
+    rdfs:label "Supplementary Card Service"@en ;
+    rdfs:label "副卡业务"@zh ;
+    mnp:moduleCode "SERVICE_CONTRACT" .
+
+mnp:ConvergedService a owl:Class ;
+    rdfs:subClassOf mnp:TelecomService ;
+    rdfs:label "Converged Service"@en ;
+    rdfs:label "融合业务"@zh ;
+    mnp:moduleCode "SERVICE_CONTRACT" .
+
+mnp:CommitmentPeriod a owl:Class ;
+    rdfs:label "Commitment Period"@en ;
+    rdfs:label "承诺期"@zh ;
+    rdfs:comment "A contractual commitment window that may restrict portability."@en ;
+    mnp:moduleCode "SERVICE_CONTRACT" .
+
+mnp:TerminationAgreement a owl:Class ;
+    rdfs:label "Termination Agreement"@en ;
+    rdfs:label "解除协议"@zh ;
+    rdfs:comment "An agreement to terminate a contract, possibly with a future effective time."@en ;
+    mnp:moduleCode "SERVICE_CONTRACT" .
+
+mnp:hasCommitmentPeriod a owl:ObjectProperty ;
+    rdfs:domain mnp:ServiceContract ;
+    rdfs:range mnp:CommitmentPeriod ;
+    rdfs:label "has commitment period"@en ;
+    mnp:moduleCode "SERVICE_CONTRACT" .
+
+mnp:hasTerminationAgreement a owl:ObjectProperty ;
+    rdfs:domain mnp:ServiceContract ;
+    rdfs:range mnp:TerminationAgreement ;
+    rdfs:label "has termination agreement"@en ;
+    mnp:moduleCode "SERVICE_CONTRACT" .
+
+mnp:coversService a owl:ObjectProperty ;
+    rdfs:domain mnp:ServiceContract ;
+    rdfs:range mnp:TelecomService ;
+    rdfs:label "covers service"@en ;
+    mnp:moduleCode "SERVICE_CONTRACT" .
+
+mnp:commitmentStartTime a owl:DatatypeProperty ;
+    rdfs:domain mnp:CommitmentPeriod ;
+    rdfs:range xsd:dateTime ;
+    mnp:moduleCode "SERVICE_CONTRACT" .
+
+mnp:commitmentEndTime a owl:DatatypeProperty ;
+    rdfs:domain mnp:CommitmentPeriod ;
+    rdfs:range xsd:dateTime ;
+    mnp:moduleCode "SERVICE_CONTRACT" .
+
+mnp:terminationSignedAt a owl:DatatypeProperty ;
+    rdfs:domain mnp:TerminationAgreement ;
+    rdfs:range xsd:dateTime ;
+    mnp:moduleCode "SERVICE_CONTRACT" .
+
+mnp:terminationEffectiveAt a owl:DatatypeProperty ;
+    rdfs:domain mnp:TerminationAgreement ;
+    rdfs:range xsd:dateTime ;
+    mnp:moduleCode "SERVICE_CONTRACT" .
+
+mnp:terminationStatusCode a owl:DatatypeProperty ;
+    rdfs:domain mnp:TerminationAgreement ;
+    rdfs:range xsd:string ;
+    mnp:moduleCode "SERVICE_CONTRACT" .

@@ -296,3 +296,81 @@ mnp:MappingRecordShape a sh:NodeShape ;
         sh:minCount 1 ;
         sh:message "映射记录必须包含审查状态 (mappingReviewStatus)。" ;
     ] .
+
+#################################################################
+# Extended shapes for modular concepts (structural only)
+#################################################################
+
+mnp:IdentityVerificationShape a sh:NodeShape ;
+    sh:targetClass mnp:IdentityVerification ;
+    sh:property [
+        sh:path mnp:hasSourceSystem ;
+        sh:class mnp:InformationSystem ;
+        sh:minCount 1 ;
+        sh:message "实名核验必须标明来源系统。" ;
+    ] ;
+    sh:property [
+        sh:path mnp:evidenceGeneratedAt ;
+        sh:datatype xsd:dateTime ;
+        sh:minCount 1 ;
+        sh:message "实名核验必须有生成时间。" ;
+    ] .
+
+mnp:OutstandingBalanceObservationShape a sh:NodeShape ;
+    sh:targetClass mnp:OutstandingBalanceObservation ;
+    sh:property [
+        sh:path mnp:observedAmount ;
+        sh:datatype xsd:decimal ;
+        sh:minCount 1 ;
+        sh:message "欠费观测必须包含观测金额。" ;
+    ] ;
+    sh:property [
+        sh:path mnp:hasSourceSystem ;
+        sh:class mnp:InformationSystem ;
+        sh:minCount 1 ;
+        sh:message "欠费观测必须标明来源系统。" ;
+    ] .
+
+mnp:ServiceContractExtendedShape a sh:NodeShape ;
+    sh:targetClass mnp:ServiceContract ;
+    sh:property [
+        sh:path mnp:contractStatusCode ;
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:message "合约状态码最多一个。" ;
+    ] .
+
+mnp:AuthorizationCodeShape a sh:NodeShape ;
+    sh:targetClass mnp:AuthorizationCode ;
+    sh:property [
+        sh:path mnp:authCodeStatus ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+        sh:in ( "VALID" "EXPIRED" "MISSING" "USED" "REVOKED" ) ;
+        sh:message "授权码必须有受控状态。" ;
+    ] ;
+    sh:property [
+        sh:path mnp:authCodeIssuedAt ;
+        sh:datatype xsd:dateTime ;
+        sh:maxCount 1 ;
+    ] ;
+    sh:property [
+        sh:path mnp:authCodeValidUntil ;
+        sh:datatype xsd:dateTime ;
+        sh:maxCount 1 ;
+    ] .
+
+mnp:ProcessEventShape a sh:NodeShape ;
+    sh:targetClass mnp:ProcessEvent ;
+    sh:property [
+        sh:path mnp:eventTypeCode ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+        sh:message "流程事件必须有事件类型码。" ;
+    ] ;
+    sh:property [
+        sh:path mnp:eventTime ;
+        sh:datatype xsd:dateTime ;
+        sh:minCount 1 ;
+        sh:message "流程事件必须有事件时间。" ;
+    ] .

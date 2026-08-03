@@ -19,11 +19,21 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-dev = ["pytest>=8.0.0,<9.0.0"]
+dev = [
+  "pytest>=8.0.0,<9.0.0",
+  "httpx>=0.27.0,<1.0.0",
+  "ruff>=0.5.0,<1.0.0",
+]
 neo4j = ["neo4j>=5.14.0,<6.0.0"]
+api = [
+  "fastapi>=0.111.0,<1.0.0",
+  "uvicorn[standard]>=0.30.0,<1.0.0",
+  "httpx>=0.27.0,<1.0.0",
+]
 
 [project.scripts]
 kg-mnp = "kg_mnp_demo.cli:main"
+kg-mnp-api = "kg_mnp_demo.api.app:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]

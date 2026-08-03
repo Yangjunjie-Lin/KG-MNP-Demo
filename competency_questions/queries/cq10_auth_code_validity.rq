@@ -1,0 +1,12 @@
+PREFIX mnp: <http://example.org/kg-mnp#>
+SELECT ?caseId ?authStatus ?issuedAt ?validUntil WHERE {
+  ?case a mnp:MNPCase ; mnp:caseIdentifier ?caseId .
+  FILTER(STR(?caseId) = STR(?requestedCaseId))
+  OPTIONAL {
+    ?case mnp:hasAuthorizationCode ?code .
+    OPTIONAL { ?code mnp:authCodeStatus ?authStatus }
+    OPTIONAL { ?code mnp:authCodeIssuedAt ?issuedAt }
+    OPTIONAL { ?code mnp:authCodeValidUntil ?validUntil }
+  }
+}
+ORDER BY ?caseId
