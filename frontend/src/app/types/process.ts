@@ -1,0 +1,15 @@
+/** Process step codes aligned with backend PROCESS_STEPS */
+export type ProcessStepCode =
+  | "ELIGIBILITY_CHECK"
+  | "AUTHORIZATION_CODE_REQUEST"
+  | "PORT_IN_SUBMISSION"
+  | "PORTING_EXECUTION"
+  | "PORTING_CONFIRMATION";
+
+export const PROCESS_STEP_ORDER: ProcessStepCode[] = [
+  "ELIGIBILITY_CHECK",
+  "AUTHORIZATION_CODE_REQUEST",
+  "PORT_IN_SUBMISSION",
+  "PORTING_EXECUTION",
+  "PORTING_CONFIRMATION",
+];
