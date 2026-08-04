@@ -4,13 +4,17 @@ import json
 from pathlib import Path
 
 from kg_mnp_demo.application.assessment_service import AssessmentService
-from kg_mnp_demo.application.comparison import build_what_if_diff, compare_evidence
-from kg_mnp_demo.presentation import AssessmentView, ComparisonView, DashboardView, OntologyView
+from kg_mnp_demo.application.comparison import compare_evidence
+from kg_mnp_demo.presentation import (
+    AssessmentView,
+    CaseCatalogView,
+    ComparisonView,
+    DashboardView,
+    OntologyView,
+)
 from kg_mnp_demo.presentation._core import count_shacl_shapes
 from kg_mnp_demo.application.ontology_service import OntologyService
 from kg_mnp_demo.loader import shapes_path
-from rdflib import Graph, Namespace
-from rdflib.namespace import RDF
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -42,6 +46,57 @@ def test_dashboard_stats_split():
     assert dash["latest_case_states"]["total"] == 0
     assert dash["ontology"]["shape_count"] == count_shacl_shapes()["shape_count"]
     assert "D:\\" not in json.dumps(dash)
+
+
+def test_case_catalog_view_aggregates_history_and_keeps_empty_cases():
+    class FakeRepository:
+        calls = 0
+
+        def list_executions(self, *, limit, offset):
+            self.calls += 1
+            assert limit is None
+            assert offset == 0
+            # Deliberately return newest write first; latest must follow the
+            # business assessment timestamp instead of list/write order.
+            return [
+                {
+                    "execution_id": "case06-old-assessment",
+                    "case_id": "CASE-06",
+                    "assessment_time": "2026-01-01T00:00:00Z",
+                    "created_at": "2026-08-04T00:00:02Z",
+                    "decision": "BLOCKED",
+                    "publication_status": "PUBLISHABLE",
+                },
+                {
+                    "execution_id": "case06-new-assessment",
+                    "case_id": "CASE-06",
+                    "assessment_time": "2027-01-01T00:00:00Z",
+                    "created_at": "2026-08-04T00:00:01Z",
+                    "decision": "BLOCKED",
+                    "publication_status": "PUBLISHABLE",
+                },
+                {
+                    "execution_id": "case01-only",
+                    "case_id": "CASE-01",
+                    "assessment_time": "2026-05-01T00:00:00Z",
+                    "created_at": "2026-08-04T00:00:03Z",
+                    "decision": "ELIGIBLE",
+                    "publication_status": "PUBLISHABLE",
+                },
+            ]
+
+    repository = FakeRepository()
+    body = CaseCatalogView().build(repository)
+    assert repository.calls == 1
+    assert len(body["items"]) == 9
+    items = {item["case_id"]: item for item in body["items"]}
+    assert items["CASE-06"]["execution_count"] == 2
+    assert items["CASE-06"]["latest_execution_id"] == "case06-new-assessment"
+    assert items["CASE-06"]["latest_decision"] == "BLOCKED"
+    assert items["CASE-01"]["has_history"] is True
+    assert items["CASE-01"]["latest_execution_id"] == "case01-only"
+    assert items["CASE-02"]["execution_count"] == 0
+    assert items["CASE-02"]["latest_execution_id"] is None
 
 
 def test_case04_two_reason_cards():

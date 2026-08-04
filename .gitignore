@@ -22,6 +22,7 @@ dist/
 # Runtime-generated outputs (local runs only; not versioned)
 runtime_outputs/
 runtime_data/
+runtime_reports/
 
 # Generated ontology/documentation artifacts
 third_party/widoco/*.jar

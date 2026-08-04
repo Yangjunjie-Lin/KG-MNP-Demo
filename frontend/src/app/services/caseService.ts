@@ -7,25 +7,10 @@ import {
   type CaseViewModel,
 } from "../../api/adapters/caseAdapter";
 import { adaptAssessmentRecord } from "../../api/adapters/assessmentAdapter";
-import { array, record } from "../../api/adapters/guards";
 
 export async function listCases(signal?: AbortSignal): Promise<CaseViewModel[]> {
-  const catalog = await apiGet("/api/v1/cases", { signal });
-  const items = array(record(catalog).items);
-  const histories = new Map<string, unknown[]>();
-  await Promise.all(
-    items.map(async (raw) => {
-      const caseId = String(record(raw).case_id ?? "");
-      const history = record(
-        await apiGet("/api/v1/cases/{case_id}/history", {
-          pathParams: { case_id: caseId },
-          signal,
-        }),
-      );
-      histories.set(caseId, array(history.items));
-    }),
-  );
-  return adaptCaseCatalog(catalog, histories);
+  const catalog = await apiGet("/api/v1/views/cases", { signal });
+  return adaptCaseCatalog(catalog);
 }
 
 export async function getCaseById(caseId: string, signal?: AbortSignal) {

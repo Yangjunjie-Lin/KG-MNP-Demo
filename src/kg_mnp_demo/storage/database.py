@@ -6,9 +6,10 @@ import hashlib
 import json
 import sqlite3
 import threading
+from contextlib import contextmanager
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any
+from typing import Any, Iterator
 
 from kg_mnp_demo.application.errors import ApplicationError, ErrorCode
 from kg_mnp_demo.application.serializers import json_safe, to_iso_utc
@@ -56,6 +57,7 @@ class Database:
     def __init__(self, path: Path | str | None = None) -> None:
         self.path = Path(path) if path else default_db_path()
         self._lock = threading.RLock()
+        self._savepoint_counter = 0
         try:
             self.path.parent.mkdir(parents=True, exist_ok=True)
             self._conn = sqlite3.connect(str(self.path), check_same_thread=False)
@@ -111,13 +113,53 @@ class Database:
         with self._lock:
             self._conn.commit()
 
-    def delete_execution(self, execution_id: str) -> int:
+    @contextmanager
+    def transaction(self, *, immediate: bool = False) -> Iterator[sqlite3.Connection]:
+        """Run a group of statements atomically on the shared connection.
+
+        The connection is shared by the API worker threads, so the lock must be
+        held for the complete transaction rather than for individual statements.
+        If a caller already owns a transaction, a SAVEPOINT is used instead of
+        issuing a second ``BEGIN``.  This keeps nested repository helpers from
+        triggering SQLite's ``cannot start a transaction within a transaction``
+        error while preserving rollback isolation.
+        """
         with self._lock:
-            cursor = self._conn.execute(
+            nested = self._conn.in_transaction
+            savepoint: str | None = None
+            try:
+                if nested:
+                    self._savepoint_counter += 1
+                    savepoint = f"kg_mnp_sp_{threading.get_ident()}_{self._savepoint_counter}"
+                    self._conn.execute(f'SAVEPOINT "{savepoint}"')
+                else:
+                    self._conn.execute("BEGIN IMMEDIATE" if immediate else "BEGIN")
+
+                yield self._conn
+
+                if savepoint is not None:
+                    self._conn.execute(f'RELEASE SAVEPOINT "{savepoint}"')
+                else:
+                    self._conn.commit()
+            except BaseException:
+                # Rollback is deliberately best-effort: the original exception
+                # must remain the one visible to callers.
+                try:
+                    if savepoint is not None:
+                        self._conn.execute(f'ROLLBACK TO SAVEPOINT "{savepoint}"')
+                        self._conn.execute(f'RELEASE SAVEPOINT "{savepoint}"')
+                    elif self._conn.in_transaction:
+                        self._conn.rollback()
+                except sqlite3.Error:
+                    pass
+                raise
+
+    def delete_execution(self, execution_id: str) -> int:
+        with self.transaction(immediate=True) as conn:
+            cursor = conn.execute(
                 "DELETE FROM executions WHERE execution_id = ?",
                 (execution_id,),
             )
-            self._conn.commit()
             return cursor.rowcount
 
     @property
@@ -272,28 +314,33 @@ class AssessmentRepository:
             "result_json": json.dumps(json_safe(result), ensure_ascii=False),
         }
 
-        with self.db._lock:
-            if not force_recompute:
-                existing = self.db.fetchone(
-                    """
-                    SELECT * FROM executions
-                    WHERE case_id = ? AND assessment_time = ? AND input_hash = ?
-                    """,
-                    (case_id, assessment_time, input_hash),
-                )
-                if existing:
-                    return self._row_to_record(existing)
-            else:
-                self.db.execute(
-                    """
-                    DELETE FROM executions
-                    WHERE case_id = ? AND assessment_time = ? AND input_hash = ?
-                    """,
-                    (case_id, assessment_time, input_hash),
-                )
+        saved_record: dict[str, Any] | None = None
+        try:
+            with self.db.transaction(immediate=True) as conn:
+                existing_record = None
+                if not force_recompute:
+                    existing = conn.execute(
+                        """
+                        SELECT * FROM executions
+                        WHERE case_id = ? AND assessment_time = ? AND input_hash = ?
+                        """,
+                        (case_id, assessment_time, input_hash),
+                    ).fetchone()
+                    if existing:
+                        existing_record = self._row_to_record(existing)
+                else:
+                    conn.execute(
+                        """
+                        DELETE FROM executions
+                        WHERE case_id = ? AND assessment_time = ? AND input_hash = ?
+                        """,
+                        (case_id, assessment_time, input_hash),
+                    )
 
-            try:
-                self.db.execute(
+                if existing_record is not None:
+                    return existing_record
+
+                conn.execute(
                     """
                     INSERT INTO executions (
                         execution_id, case_id, assessment_time, created_at, input_hash,
@@ -307,30 +354,51 @@ class AssessmentRepository:
                     """,
                     row,
                 )
-                self.db.commit()
-            except sqlite3.IntegrityError:
-                # Concurrent idempotent insert — return original
-                existing = self.db.fetchone(
-                    """
-                    SELECT * FROM executions
-                    WHERE case_id = ? AND assessment_time = ? AND input_hash = ?
-                    """,
-                    (case_id, assessment_time, input_hash),
-                )
+                inserted = conn.execute(
+                    "SELECT * FROM executions WHERE execution_id = ?",
+                    (execution_id,),
+                ).fetchone()
+                if inserted is None:
+                    raise sqlite3.OperationalError("inserted execution could not be read")
+                saved_record = self._row_to_record(inserted)
+        except sqlite3.IntegrityError as exc:
+            # The transaction context has already rolled back.  Only ordinary
+            # idempotent writes may recover the winner.
+            if not force_recompute:
+                try:
+                    existing = self.db.fetchone(
+                        """
+                        SELECT * FROM executions
+                        WHERE case_id = ? AND assessment_time = ? AND input_hash = ?
+                        """,
+                        (case_id, assessment_time, input_hash),
+                    )
+                except sqlite3.Error as lookup_exc:
+                    raise ApplicationError(
+                        ErrorCode.STORAGE_ERROR,
+                        message="写入执行记录失败。",
+                        details=[str(lookup_exc)],
+                    ) from lookup_exc
                 if existing:
                     return self._row_to_record(existing)
-                raise ApplicationError(
-                    ErrorCode.STORAGE_ERROR,
-                    message="写入执行记录失败。",
-                    details=["integrity error"],
-                )
-            except sqlite3.Error as exc:
-                raise ApplicationError(
-                    ErrorCode.STORAGE_ERROR,
-                    message="写入执行记录失败。",
-                    details=[str(exc)],
-                ) from exc
+            raise ApplicationError(
+                ErrorCode.STORAGE_ERROR,
+                message="写入执行记录失败。",
+                details=[str(exc)],
+            ) from exc
+        except sqlite3.Error as exc:
+            # Rollback has completed before converting SQLite errors.
+            raise ApplicationError(
+                ErrorCode.STORAGE_ERROR,
+                message="写入执行记录失败。",
+                details=[str(exc)],
+            ) from exc
 
+        # Return the snapshot read while the transaction was still protected by
+        # the lock.  A concurrent force recompute may replace this row
+        # immediately after commit, so querying by execution_id here is racy.
+        if saved_record is not None:
+            return saved_record
         return self.get_execution(execution_id)
 
     def get_execution(self, execution_id: str) -> dict[str, Any]:
@@ -349,24 +417,29 @@ class AssessmentRepository:
         self,
         *,
         case_id: str | None = None,
-        limit: int = 50,
+        limit: int | None = 50,
         offset: int = 0,
     ) -> list[dict[str, Any]]:
+        # ``limit=None`` is reserved for internal aggregate views that must
+        # count every persisted execution.  User-facing history endpoints
+        # continue to use a bounded page by default.
+        pagination = "" if limit is None else " LIMIT ? OFFSET ?"
+        pagination_params: tuple[Any, ...] = () if limit is None else (limit, offset)
         if case_id:
             rows = self.db.fetchall(
-                """
+                f"""
                 SELECT * FROM executions WHERE case_id = ?
-                ORDER BY assessment_time DESC, created_at DESC LIMIT ? OFFSET ?
+                ORDER BY assessment_time DESC, created_at DESC{pagination}
                 """,
-                (case_id, limit, offset),
+                (case_id, *pagination_params),
             )
         else:
             rows = self.db.fetchall(
-                """
+                f"""
                 SELECT * FROM executions
-                ORDER BY created_at DESC LIMIT ? OFFSET ?
+                ORDER BY created_at DESC{pagination}
                 """,
-                (limit, offset),
+                pagination_params,
             )
         return [self._row_to_summary(r) for r in rows]
 

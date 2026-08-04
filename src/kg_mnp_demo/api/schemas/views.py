@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-from typing import Any
-
 from pydantic import BaseModel, ConfigDict, Field
 
 from kg_mnp_demo.api.schemas.common import JsonValue
@@ -67,6 +65,37 @@ class CaseViewResponse(BaseModel):
 
     case: dict[str, JsonValue]
     latest_assessment: AssessmentViewResponse | None = None
+
+
+class CaseSummaryViewItem(BaseModel):
+    """One row in the aggregated case catalog view.
+
+    The catalog deliberately contains only execution metadata.  Full case
+    history and assessment views remain available from their dedicated
+    endpoints.
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    case_id: str
+    scenario: str | None = None
+    expected_decision: str | None = None
+    ttl_file: str | None = None
+    json_file: str | None = None
+    latest_execution_id: str | None = None
+    latest_assessment_time: str | None = None
+    latest_decision: str | None = None
+    publication_status: str | None = None
+    execution_count: int = 0
+    has_history: bool = False
+
+
+class CaseListViewResponse(BaseModel):
+    """Aggregated case catalog and latest execution summaries."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    items: list[CaseSummaryViewItem] = Field(default_factory=list)
 
 
 class ExampleItem(BaseModel):

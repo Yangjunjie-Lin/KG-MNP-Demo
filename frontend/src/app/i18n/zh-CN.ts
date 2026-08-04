@@ -222,6 +222,28 @@ export const ontologyClassLabels: Record<string, string> = {
   TelecomService: "电信业务",
 };
 
+export const traceEvidenceLabels: Record<string, string> = {
+  CONTRACT_STATUS: "合约状态证据",
+  BILLING_BALANCE: "计费余额证据",
+  IDENTITY_MATCH: "实名一致性证据",
+  NUMBER_STATUS: "号码状态证据",
+  PORTING_HISTORY: "携转历史证据",
+};
+
+export const traceNodeTypeLabels: Record<string, string> = {
+  EligibilityAssessment: "资格评估",
+  EvidenceRecord: "证据",
+  BlockingReason: "阻塞原因",
+  EligibilityRule: "资格规则",
+  RuleVersion: "规则版本",
+  RegulatoryClause: "监管条款",
+  RemediationAction: "处理动作",
+  MNPCase: "案例",
+  BlockingDecision: "资格结论",
+  AssessmentDependency: "评估依赖",
+  RegulatoryDocument: "监管文件",
+};
+
 export const ontologyTypeLabels: Record<string, string> = {
   Class: "类",
   ObjectProperty: "对象属性",
@@ -347,9 +369,15 @@ export const numberStatusLabels: Record<string, string> = {
 
 export const authCodeStatusLabels: Record<string, string> = {
   EXPIRED: "已过期",
-  VALID: "有效",
+  VALID: "已签发",
   MISSING: "缺失",
   ISSUED: "已签发",
+  USED: "已使用",
+  REVOKED: "已撤销",
+};
+
+export const terminationStatusLabels: Record<string, string> = {
+  SIGNED_PENDING_EFFECTIVE: "已签署但尚未生效",
 };
 
 export const serviceStatusLabels: Record<string, string> = {

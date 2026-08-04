@@ -36,28 +36,36 @@ function safeDecision(value: unknown): Decision {
     : "UNKNOWN";
 }
 
-export function adaptCaseCatalog(dto: unknown, histories: Map<string, unknown[]>): CaseViewModel[] {
+export function adaptCaseCatalog(dto: unknown, histories?: Map<string, unknown[]>): CaseViewModel[] {
   const items = array(record(dto).items);
   return items.map((raw) => {
     const item = record(raw);
     const caseId = text(item.case_id);
-    const records = (histories.get(caseId) ?? [])
-      .map(record)
-      .sort((left, right) => text(right.assessment_time).localeCompare(text(left.assessment_time)));
-    const latest = records[0] ?? {};
-    const hasHistory = records.length > 0;
+    const records = histories?.get(caseId) ?? [];
+    const latest = histories
+      ? records
+          .map(record)
+          .sort((left, right) => text(right.assessment_time).localeCompare(text(left.assessment_time)))[0] ?? {}
+      : {};
+    const hasHistory = histories ? records.length > 0 : bool(item.has_history);
+    const latestExecutionId = histories
+      ? (hasHistory ? text(latest.execution_id) : null)
+      : text(item.latest_execution_id) || null;
+    const latestAssessmentTime = histories ? text(latest.assessment_time) : text(item.latest_assessment_time);
+    const latestDecision = histories ? latest.decision : item.latest_decision;
+    const publicationStatus = histories ? latest.publication_status : item.publication_status;
     return {
       id: caseId,
       title: "预置演示案例",
       scenario: text(item.scenario, "真实后端演示案例"),
-      decision: safeDecision(latest.decision),
-      assessmentTime: text(latest.assessment_time),
+      decision: safeDecision(latestDecision),
+      assessmentTime: latestAssessmentTime,
       blockingReasons: [],
-      executionCount: records.length,
-      published: bool(latest.publishable),
-      publicationStatus: text(latest.publication_status, "NOT_PUBLISHABLE") as PublicationStatus,
+      executionCount: histories ? records.length : number(item.execution_count),
+      published: histories ? bool(latest.publishable) : text(publicationStatus) === "PUBLISHABLE",
+      publicationStatus: text(publicationStatus, "NOT_PUBLISHABLE") as PublicationStatus,
       maskedNumber: "已脱敏",
-      latestExecutionId: hasHistory ? text(latest.execution_id) : null,
+      latestExecutionId,
       hasHistory,
     };
   });

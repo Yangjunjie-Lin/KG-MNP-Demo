@@ -10,6 +10,7 @@ from kg_mnp_demo.api.schemas.assessment import WhatIfResponse, WhatIfViewRequest
 from kg_mnp_demo.api.schemas.common import ERROR_RESPONSES
 from kg_mnp_demo.api.schemas.views import (
     AssessmentViewResponse,
+    CaseListViewResponse,
     CaseViewResponse,
     DashboardViewResponse,
     OntologyViewResponse,
@@ -21,6 +22,7 @@ from kg_mnp_demo.loader import project_root
 from kg_mnp_demo.namespaces import CASE_JSON_FILES
 from kg_mnp_demo.presentation import (
     AssessmentView,
+    CaseCatalogView,
     CaseView,
     ComparisonView,
     DashboardView,
@@ -49,6 +51,21 @@ def dashboard(state: AppState = Depends(get_state)):
 )
 def ontology_view(state: AppState = Depends(get_state)):
     return OntologyView().build(state.ontology_service)
+
+
+@router.get(
+    "/cases",
+    response_model=CaseListViewResponse,
+    responses=ERROR_RESPONSES,
+)
+def case_catalog_view(state: AppState = Depends(get_state)):
+    """Return the complete case catalog and latest execution summaries.
+
+    The view is intentionally separate from ``/cases``: callers that need a
+    full history can continue using the case-history endpoint, while list
+    pages can obtain every row with one request.
+    """
+    return CaseCatalogView().build(state.repository)
 
 
 @router.get(

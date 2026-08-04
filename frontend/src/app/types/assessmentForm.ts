@@ -31,6 +31,23 @@ export interface AssessmentFormValues {
       daysSinceLastPort: string;
     };
   };
+  /** Optional workflow metadata. Omitted entirely when the section is blank. */
+  process?: ProcessFormValues;
+}
+
+export interface ProcessFormValues {
+  currentStep: string;
+  authorizationCode: {
+    status: "" | "VALID" | "EXPIRED" | "MISSING" | "USED" | "REVOKED";
+    issuedAt: string;
+    validUntil: string;
+    maskedValue: string;
+  };
+  terminationAgreement: {
+    signedAt: string;
+    effectiveAt: string;
+    status: string;
+  };
 }
 
 export type EvidenceFormStatus = "VALID" | "EXPIRED" | "REVOKED" | "UNKNOWN";

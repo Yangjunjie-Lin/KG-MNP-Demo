@@ -2,13 +2,14 @@
 
 from __future__ import annotations
 
+from datetime import datetime, timezone
 from typing import Any
 
 from kg_mnp_demo.application.ontology_service import OntologyService
 from kg_mnp_demo.application.query_service import QueryService
 from kg_mnp_demo.application.serializers import json_safe
 from kg_mnp_demo.loader import project_root, shapes_path
-from kg_mnp_demo.namespaces import CASE_FILES, EXAMPLE_META
+from kg_mnp_demo.namespaces import CASE_FILES, CASE_JSON_FILES, EXAMPLE_META
 from kg_mnp_demo.rule_engine import load_all_rule_versions
 from kg_mnp_demo.storage import AssessmentRepository
 
@@ -282,6 +283,74 @@ class CaseView:
                 "latest_assessment": AssessmentView().build(latest) if latest else None,
             }
         )
+
+
+def _catalog_datetime(value: Any) -> datetime:
+    """Normalize an execution timestamp for deterministic latest selection."""
+    if isinstance(value, datetime):
+        parsed = value
+    elif isinstance(value, str) and value.strip():
+        try:
+            parsed = datetime.fromisoformat(value.strip().replace("Z", "+00:00"))
+        except ValueError:
+            return datetime.min.replace(tzinfo=timezone.utc)
+    else:
+        return datetime.min.replace(tzinfo=timezone.utc)
+    if parsed.tzinfo is None:
+        return parsed.replace(tzinfo=timezone.utc)
+    return parsed.astimezone(timezone.utc)
+
+
+class CaseCatalogView:
+    """Build the case list in one repository read.
+
+    The previous frontend flow fetched the static catalog and then requested
+    each case's history independently.  This view consumes one execution
+    summary collection, groups it in memory, and preserves cases with no
+    history.  ``assessment_time`` is the primary ordering key; ``created_at``
+    is used only to make equal assessment timestamps deterministic.
+    """
+
+    def build(self, repository: AssessmentRepository | None = None) -> dict[str, Any]:
+        summaries = (
+            repository.list_executions(limit=None, offset=0)
+            if repository is not None
+            else []
+        )
+        by_case: dict[str, list[dict[str, Any]]] = {}
+        for summary in summaries:
+            case_id = str(summary.get("case_id") or "")
+            if case_id:
+                by_case.setdefault(case_id, []).append(summary)
+
+        items: list[dict[str, Any]] = []
+        for case_id in sorted(CASE_FILES):
+            metadata = EXAMPLE_META.get(case_id) or {}
+            records = by_case.get(case_id, [])
+            latest = max(
+                records,
+                key=lambda record: (
+                    _catalog_datetime(record.get("assessment_time")),
+                    _catalog_datetime(record.get("created_at")),
+                ),
+                default=None,
+            )
+            items.append(
+                {
+                    "case_id": case_id,
+                    "scenario": metadata.get("scenario"),
+                    "expected_decision": metadata.get("expected_decision"),
+                    "ttl_file": CASE_FILES.get(case_id),
+                    "json_file": CASE_JSON_FILES.get(case_id),
+                    "latest_execution_id": latest.get("execution_id") if latest else None,
+                    "latest_assessment_time": latest.get("assessment_time") if latest else None,
+                    "latest_decision": latest.get("decision") if latest else None,
+                    "publication_status": latest.get("publication_status") if latest else None,
+                    "execution_count": len(records),
+                    "has_history": bool(records),
+                }
+            )
+        return json_safe({"items": items})
 
 
 class RuleView:

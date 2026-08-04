@@ -2,9 +2,11 @@ import type { components } from "../generated/schema";
 import {
   type AssessmentFormValues,
   type EvidenceFormStatus,
+  type ProcessFormValues,
 } from "../../app/types/assessmentForm";
 
 export type AssessmentPayloadDto = components["schemas"]["MNPCaseInput"];
+type ProcessPayloadDto = NonNullable<AssessmentPayloadDto["process"]>;
 
 const evidenceStatuses = new Set<EvidenceFormStatus>([
   "VALID",
@@ -42,6 +44,29 @@ function hasEvidenceBase(value: unknown): value is Record<string, unknown> {
 function isFiniteNumberLike(value: unknown): boolean {
   if (typeof value === "number") return Number.isFinite(value);
   return typeof value === "string" && value.trim() !== "" && Number.isFinite(Number(value));
+}
+
+function isOptionalDateTime(value: unknown): boolean {
+  return value === undefined || value === null || isDateTime(value);
+}
+
+function isOptionalProcess(value: unknown): boolean {
+  if (value === undefined || value === null) return true;
+  if (!isRecord(value)) return false;
+  const auth = value.authorization_code;
+  const term = value.termination_agreement;
+  if (auth !== undefined && auth !== null) {
+    if (!isRecord(auth)) return false;
+    if (auth.status !== undefined && !isNonEmptyString(auth.status)) return false;
+    if (!isOptionalDateTime(auth.issued_at) || !isOptionalDateTime(auth.valid_until)) return false;
+    if (auth.masked_value !== undefined && auth.masked_value !== null && !isNonEmptyString(auth.masked_value)) return false;
+  }
+  if (term !== undefined && term !== null) {
+    if (!isRecord(term)) return false;
+    if (!isOptionalDateTime(term.signed_at) || !isOptionalDateTime(term.effective_at)) return false;
+    if (term.status !== undefined && term.status !== null && !isNonEmptyString(term.status)) return false;
+  }
+  return value.current_step === undefined || value.current_step === null || isNonEmptyString(value.current_step);
 }
 
 export function isAssessmentPayloadDto(value: unknown): value is AssessmentPayloadDto {
@@ -86,7 +111,8 @@ export function isAssessmentPayloadDto(value: unknown): value is AssessmentPaylo
     (contractEndTime === undefined || contractEndTime === null || isDateTime(contractEndTime)) &&
     typeof portingHistory.days_since_last_port === "number" &&
     Number.isInteger(portingHistory.days_since_last_port) &&
-    portingHistory.days_since_last_port >= 0
+    portingHistory.days_since_last_port >= 0 &&
+    isOptionalProcess(value.process)
   );
 }
 
@@ -121,6 +147,9 @@ export function localDateTimeToIso(value: string): string {
 
 export function adaptExamplePayloadToAssessmentForm(input: unknown): AssessmentFormValues {
   const payload = parseAssessmentPayload(input);
+  const process = payload.process;
+  const auth = process?.authorization_code;
+  const termination = process?.termination_agreement;
   return {
     schemaVersion: "1.0",
     caseId: payload.case_id,
@@ -168,6 +197,24 @@ export function adaptExamplePayloadToAssessmentForm(input: unknown): AssessmentF
         status: payload.evidence.porting_history.status,
       },
     },
+    ...(process
+      ? {
+          process: {
+            currentStep: process.current_step ?? "",
+            authorizationCode: {
+              status: auth?.status ?? "",
+              issuedAt: isoToLocalDateTime(auth?.issued_at),
+              validUntil: isoToLocalDateTime(auth?.valid_until),
+              maskedValue: auth?.masked_value ?? "",
+            },
+            terminationAgreement: {
+              signedAt: isoToLocalDateTime(termination?.signed_at),
+              effectiveAt: isoToLocalDateTime(termination?.effective_at),
+              status: termination?.status ?? "",
+            },
+          } satisfies ProcessFormValues,
+        }
+      : {}),
   };
 }
 
@@ -183,8 +230,53 @@ function requiredNonNegativeInteger(value: string): number {
   return parsed;
 }
 
+function optionalText(value: string | null | undefined): string | undefined {
+  const trimmed = value?.trim() ?? "";
+  return trimmed ? trimmed : undefined;
+}
+
+function optionalDateTime(value: string | null | undefined): string | undefined {
+  const supplied = optionalText(value);
+  return supplied ? localDateTimeToIso(supplied) : undefined;
+}
+
+function optionalProcess(values: ProcessFormValues | undefined): ProcessPayloadDto | undefined {
+  if (!values) return undefined;
+  const process: ProcessPayloadDto = {};
+  const currentStep = optionalText(values.currentStep);
+  if (currentStep) process.current_step = currentStep;
+
+  const auth = values.authorizationCode ?? {
+    status: "",
+    issuedAt: "",
+    validUntil: "",
+    maskedValue: "",
+  };
+  const authorizationCode: NonNullable<ProcessPayloadDto["authorization_code"]> = {};
+  if (auth.status) authorizationCode.status = auth.status;
+  const issuedAt = optionalDateTime(auth.issuedAt);
+  const validUntil = optionalDateTime(auth.validUntil);
+  const maskedValue = optionalText(auth.maskedValue);
+  if (issuedAt) authorizationCode.issued_at = issuedAt;
+  if (validUntil) authorizationCode.valid_until = validUntil;
+  if (maskedValue) authorizationCode.masked_value = maskedValue;
+  if (Object.keys(authorizationCode).length) process.authorization_code = authorizationCode;
+
+  const term = values.terminationAgreement ?? { signedAt: "", effectiveAt: "", status: "" };
+  const terminationAgreement: NonNullable<ProcessPayloadDto["termination_agreement"]> = {};
+  const signedAt = optionalDateTime(term.signedAt);
+  const effectiveAt = optionalDateTime(term.effectiveAt);
+  const status = optionalText(term.status);
+  if (signedAt) terminationAgreement.signed_at = signedAt;
+  if (effectiveAt) terminationAgreement.effective_at = effectiveAt;
+  if (status) terminationAgreement.status = status;
+  if (Object.keys(terminationAgreement).length) process.termination_agreement = terminationAgreement;
+
+  return Object.keys(process).length ? process : undefined;
+}
+
 export function adaptAssessmentFormToPayload(values: AssessmentFormValues): AssessmentPayloadDto {
-  return {
+  const payload: AssessmentPayloadDto = {
     schema_version: values.schemaVersion,
     case_id: values.caseId,
     assessment_time: localDateTimeToIso(values.assessmentTime),
@@ -236,6 +328,9 @@ export function adaptAssessmentFormToPayload(values: AssessmentFormValues): Asse
       },
     },
   };
+  const process = optionalProcess(values.process);
+  if (process) payload.process = process;
+  return payload;
 }
 
 export function formatTechnicalAssessmentPayload(input: unknown): string {

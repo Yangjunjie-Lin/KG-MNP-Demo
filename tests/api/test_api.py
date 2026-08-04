@@ -42,6 +42,7 @@ def test_health_ready_meta_openapi(client):
     assert empty_latest.json() is None
     openapi = c.get("/openapi.json").json()
     assert "/api/v1/assessments" in openapi["paths"]
+    assert "/api/v1/views/cases" in openapi["paths"]
     schema = openapi["components"]["schemas"]
     assert "MNPCaseInput" in schema or "AssessmentCreateRequest" in schema
     # payload must not be empty free-form only
@@ -108,6 +109,54 @@ def test_ontology_cq_rules_views(client):
     assert dash["ontology"]["shape_count"] > 0
     assert "example_cases" in dash and "executions" in dash
     assert c.get("/api/v1/views/ontology").status_code == 200
+
+
+def test_aggregated_case_view_returns_all_cases_and_latest_by_assessment_time(client):
+    c, state, _ = client
+
+    empty = c.get("/api/v1/views/cases")
+    assert empty.status_code == 200
+    empty_items = {item["case_id"]: item for item in empty.json()["items"]}
+    assert set(empty_items) == {f"CASE-{index:02d}" for index in range(1, 10)}
+    assert all(item["execution_count"] == 0 for item in empty_items.values())
+    assert all(item["has_history"] is False for item in empty_items.values())
+
+    # Insert two records in reverse write order.  The later business
+    # assessment timestamp must win even when it was written first.
+    def save(case_id: str, execution_id: str, assessment_time: str, decision: str):
+        payload = {"case_id": case_id, "assessment_time": assessment_time}
+        result = {
+            "execution_id": execution_id,
+            "case_id": case_id,
+            "assessment_time": assessment_time,
+            "decision": decision,
+            "publication": {"publishable": True, "status": "PUBLISHABLE"},
+            "blocking_reasons": [],
+        }
+        return state.repository.save_execution(
+            execution_id=execution_id,
+            case_id=case_id,
+            assessment_time=assessment_time,
+            input_payload=payload,
+            result=result,
+        )
+
+    save("CASE-06", "case06-latest", "2027-01-01T00:00:00Z", "BLOCKED")
+    save("CASE-06", "case06-older", "2026-01-01T00:00:00Z", "BLOCKED")
+    save("CASE-01", "case01-only", "2026-05-01T00:00:00Z", "ELIGIBLE")
+
+    response = c.get("/api/v1/views/cases")
+    assert response.status_code == 200
+    items = {item["case_id"]: item for item in response.json()["items"]}
+    case06 = items["CASE-06"]
+    assert case06["latest_execution_id"] == "case06-latest"
+    assert case06["latest_assessment_time"] == "2027-01-01T00:00:00Z"
+    assert case06["latest_decision"] == "BLOCKED"
+    assert case06["execution_count"] == 2
+    assert case06["has_history"] is True
+    assert case06["expected_decision"] == "BLOCKED"
+    assert items["CASE-01"]["execution_count"] == 1
+    assert items["CASE-02"]["latest_execution_id"] is None
 
 
 def test_what_if_and_compare(client):

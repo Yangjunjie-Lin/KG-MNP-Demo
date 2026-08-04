@@ -3,6 +3,7 @@
 from kg_mnp_demo.presentation._core import (
     PIPELINE_STEPS,
     AssessmentView,
+    CaseCatalogView,
     CaseView,
     ComparisonView,
     DashboardView,
@@ -14,6 +15,7 @@ from kg_mnp_demo.presentation._core import (
 __all__ = [
     "PIPELINE_STEPS",
     "AssessmentView",
+    "CaseCatalogView",
     "CaseView",
     "ComparisonView",
     "DashboardView",

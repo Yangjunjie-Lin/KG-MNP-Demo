@@ -535,6 +535,30 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/views/cases": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Case Catalog View
+         * @description Return the complete case catalog and latest execution summaries.
+         *
+         *     The view is intentionally separate from ``/cases``: callers that need a
+         *     full history can continue using the case-history endpoint, while list
+         *     pages can obtain every row with one request.
+         */
+        get: operations["case_catalog_view_api_v1_views_cases_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/views/cases/{case_id}": {
         parameters: {
             query?: never;
@@ -942,6 +966,52 @@ export interface components {
             items?: (components["schemas"]["CaseCatalogItem"] | {
                 [key: string]: unknown;
             })[];
+        };
+        /**
+         * CaseListViewResponse
+         * @description Aggregated case catalog and latest execution summaries.
+         */
+        CaseListViewResponse: {
+            /** Items */
+            items?: components["schemas"]["CaseSummaryViewItem"][];
+        };
+        /**
+         * CaseSummaryViewItem
+         * @description One row in the aggregated case catalog view.
+         *
+         *     The catalog deliberately contains only execution metadata.  Full case
+         *     history and assessment views remain available from their dedicated
+         *     endpoints.
+         */
+        CaseSummaryViewItem: {
+            /** Case Id */
+            case_id: string;
+            /** Scenario */
+            scenario?: string | null;
+            /** Expected Decision */
+            expected_decision?: string | null;
+            /** Ttl File */
+            ttl_file?: string | null;
+            /** Json File */
+            json_file?: string | null;
+            /** Latest Execution Id */
+            latest_execution_id?: string | null;
+            /** Latest Assessment Time */
+            latest_assessment_time?: string | null;
+            /** Latest Decision */
+            latest_decision?: string | null;
+            /** Publication Status */
+            publication_status?: string | null;
+            /**
+             * Execution Count
+             * @default 0
+             */
+            execution_count: number;
+            /**
+             * Has History
+             * @default false
+             */
+            has_history: boolean;
         };
         /** CaseViewResponse */
         CaseViewResponse: {
@@ -4148,6 +4218,80 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["OntologyViewResponse"];
+                };
+            };
+            /** @description Bad Request */
+            400: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Not Found */
+            404: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Request Entity Too Large */
+            413: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Unprocessable Entity */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Internal Server Error */
+            500: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+            /** @description Service Unavailable */
+            503: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponse"];
+                };
+            };
+        };
+    };
+    case_catalog_view_api_v1_views_cases_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CaseListViewResponse"];
                 };
             };
             /** @description Bad Request */

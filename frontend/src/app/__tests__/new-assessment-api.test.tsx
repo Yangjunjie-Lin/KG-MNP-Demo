@@ -28,7 +28,7 @@ describe("新建评估 API 集成", () => {
       </>,
       { route: "/assessments/new" },
     );
-    fireEvent.click(getByRole("button", { name: "加载示例（案例三）" }));
+    fireEvent.click(getByRole("button", { name: /加载示例/ }));
     await waitFor(() =>
       expect((getByRole("combobox", { name: /案例编号/ }) as HTMLSelectElement).value).toBe("CASE-03"),
     );
@@ -58,6 +58,25 @@ describe("新建评估 API 集成", () => {
     expect(typeof billing.outstanding_amount).toBe("number");
     await waitFor(() =>
       expect(getByTestId("current-path")).toHaveTextContent("/assessments/exec-created"),
+    );
+  });
+
+  it("选择案例七和案例八时回填授权码与解除协议流程信息", async () => {
+    const { getByLabelText, getByRole } = renderWithProviders(<NewAssessment />, {
+      route: "/assessments/new",
+    });
+    fireEvent.change(getByLabelText("选择案例"), { target: { value: "CASE-07" } });
+    fireEvent.click(getByRole("button", { name: /加载示例/ }));
+    await waitFor(() =>
+      expect((getByLabelText("授权码状态") as HTMLSelectElement).value).toBe("EXPIRED"),
+    );
+
+    fireEvent.change(getByLabelText("选择案例"), { target: { value: "CASE-08" } });
+    fireEvent.click(getByRole("button", { name: /加载示例/ }));
+    await waitFor(() =>
+      expect((getByLabelText("解除协议状态") as HTMLSelectElement).value).toBe(
+        "SIGNED_PENDING_EFFECTIVE",
+      ),
     );
   });
 });

@@ -1,4 +1,4 @@
-.PHONY: install test test-neo4j run-all validate-case03 evaluate-case03 trace-case03 docs check-refs neo4j-up neo4j-ping api frontend fullstack verify-frontend verify-fullstack
+.PHONY: install test test-neo4j run-all validate-case03 evaluate-case03 trace-case03 docs check-refs neo4j-up neo4j-ping api frontend fullstack verify-frontend verify-fullstack verify-storage-atomicity verify-docker-runtime verify-stage-gate
 
 install:
 	python -m pip install -e ".[dev,api]"
@@ -50,10 +50,27 @@ verify-fullstack:
 	python -m pytest -q
 	python scripts/check_references.py
 	python scripts/check_rule_versions.py
-	python scripts/export_openapi.py
-	git diff --exit-code docs/api/openapi.json
+	python scripts/check_openapi_drift.py
 	$(MAKE) verify-frontend
 	cd frontend && npx playwright install chromium
 	python scripts/run_fullstack.py --reset-seed --playwright
 	docker compose -f docker-compose.fullstack.yml config
 	docker compose -f docker-compose.fullstack.yml build
+
+verify-storage-atomicity:
+	python -m pytest -q tests/storage/test_storage.py tests/storage/test_force_recompute_artifacts.py
+
+verify-docker-runtime:
+	python scripts/verify_docker_runtime.py
+
+verify-stage-gate:
+	python -m pytest -q
+	python scripts/check_references.py
+	python scripts/check_rule_versions.py
+	python scripts/check_openapi_drift.py
+	cd frontend && npm ci
+	cd frontend && npm run api:check
+	cd frontend && npm run verify
+	cd frontend && npx playwright install chromium
+	python scripts/run_fullstack.py --reset-seed --playwright
+	$(MAKE) verify-docker-runtime

@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "api:generate": "openapi-typescript ../docs/api/openapi.json -o src/api/generated/schema.ts && node scripts/mark-generated.mjs",
-    "api:check": "npm run api:generate && git diff --exit-code src/api/generated/schema.ts",
+    "api:check": "node scripts/check-generated-api.mjs",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",

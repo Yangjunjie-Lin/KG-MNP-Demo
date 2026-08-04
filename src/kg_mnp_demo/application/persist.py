@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import logging
 import uuid
 from typing import Any
 
@@ -17,6 +18,27 @@ from kg_mnp_demo.storage import (
     ArtifactRepository,
     compute_input_hash,
 )
+
+
+logger = logging.getLogger(__name__)
+
+
+def _cleanup_artifact_dir_best_effort(
+    artifacts: ArtifactRepository,
+    execution_id: str,
+    *,
+    reason: str,
+) -> None:
+    """Clean an uncommitted/replaced artifact without masking the real error."""
+    try:
+        artifacts.cleanup_execution_dir(execution_id)
+    except Exception as exc:  # noqa: BLE001 - cleanup is compensating work
+        logger.warning(
+            "Artifact cleanup failed (%s) for execution %s: %s",
+            reason,
+            execution_id,
+            exc,
+        )
 
 
 def persist_assessment(
@@ -70,10 +92,12 @@ def persist_assessment(
     try:
         if result.get("case_id") and result.get("assessment_time"):
             out = artifacts.execution_dir(execution_id)
+            # Mark the directory as owned by this attempt before writing any
+            # files so a partial artifact is also compensated on failure.
+            wrote_artifacts = True
             names = write_assessment_artifacts(execution, out, write_html=write_html)
             result["artifacts"] = artifacts.relative_artifacts(names)
             art_dir_name = out.name
-            wrote_artifacts = True
 
         record = repository.save_execution(
             execution_id=result["execution_id"],
@@ -92,9 +116,17 @@ def persist_assessment(
             and old_execution_id
             and old_execution_id != result["execution_id"]
         ):
-            artifacts.cleanup_execution_dir(old_execution_id)
+            _cleanup_artifact_dir_best_effort(
+                artifacts,
+                old_execution_id,
+                reason="replaced execution",
+            )
             if old_artifact_dir and old_artifact_dir != old_execution_id:
-                artifacts.cleanup_execution_dir(old_artifact_dir)
+                _cleanup_artifact_dir_best_effort(
+                    artifacts,
+                    old_artifact_dir,
+                    reason="replaced artifact directory",
+                )
 
         # Idempotent race returned older id — drop orphaned new dir.
         if (
@@ -102,12 +134,20 @@ def persist_assessment(
             and record.get("execution_id")
             and record["execution_id"] != execution_id
         ):
-            artifacts.cleanup_execution_dir(execution_id)
+            _cleanup_artifact_dir_best_effort(
+                artifacts,
+                execution_id,
+                reason="idempotent race",
+            )
 
         return saved
     except Exception:
         if wrote_artifacts:
-            artifacts.cleanup_execution_dir(execution_id)
+            _cleanup_artifact_dir_best_effort(
+                artifacts,
+                execution_id,
+                reason="persistence failure",
+            )
         raise
 
 
@@ -159,7 +199,6 @@ def assert_execution_consistency(result: dict[str, Any]) -> None:
     }
     for reason in reasons:
         rid = reason.get("rule_id")
-        ver = str(reason.get("rule_version") or "")
         # Blocking reasons should correspond to a FAIL rule when rule_id present
         if rid and all(r.get("rule_id") == rid and r.get("status") == "PASS" for r in rules if r.get("rule_id") == rid):
             raise AssertionError(

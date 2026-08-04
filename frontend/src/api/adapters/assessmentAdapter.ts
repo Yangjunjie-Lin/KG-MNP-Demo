@@ -13,6 +13,8 @@ export interface TraceNodeView {
   id: string;
   label: string;
   type: string;
+  localId?: string;
+  evidenceType?: string;
   x: number;
   y: number;
 }
@@ -174,6 +176,8 @@ function trace(value: unknown): { nodes: TraceNodeView[]; edges: TraceEdgeView[]
       id: text(node.id),
       label: text(node.label ?? node.local_id),
       type: text(node.type),
+      localId: text(node.local_id) || undefined,
+      evidenceType: text(node.evidence_type) || undefined,
       x: 30 + col * 160,
       y: 45 + row * 86,
     };

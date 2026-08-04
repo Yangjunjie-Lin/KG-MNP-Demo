@@ -44,6 +44,67 @@ describe("评估表单适配器", () => {
     expect(() => parseTechnicalAssessmentPayload("not-json")).toThrow();
   });
 
+  it("只序列化已填写的流程补充信息，空流程不发送 process", () => {
+    const form = adaptExamplePayloadToAssessmentForm(exampleInputFixture);
+    expect(adaptAssessmentFormToPayload(form)).not.toHaveProperty("process");
+
+    const withProcess = {
+      ...form,
+      process: {
+        currentStep: "AUTHORIZATION_CODE_REQUEST",
+        authorizationCode: {
+          status: "EXPIRED" as const,
+          issuedAt: "2026-06-01T00:00:00",
+          validUntil: "2026-06-15T00:00:00",
+          maskedValue: "****07",
+        },
+        terminationAgreement: { signedAt: "", effectiveAt: "", status: "" },
+      },
+    };
+    expect(adaptAssessmentFormToPayload(withProcess).process).toEqual({
+      current_step: "AUTHORIZATION_CODE_REQUEST",
+      authorization_code: {
+        status: "EXPIRED",
+        issued_at: new Date("2026-06-01T00:00:00").toISOString(),
+        valid_until: new Date("2026-06-15T00:00:00").toISOString(),
+        masked_value: "****07",
+      },
+    });
+  });
+
+  it("回填案例七授权码与案例八解除协议字段", () => {
+    const base = exampleInputFixture;
+    const case07 = adaptExamplePayloadToAssessmentForm({
+      ...base,
+      case_id: "CASE-07",
+      process: {
+        current_step: "AUTHORIZATION_CODE_REQUEST",
+        authorization_code: {
+          status: "EXPIRED",
+          issued_at: "2026-06-01T00:00:00Z",
+          valid_until: "2026-06-15T00:00:00Z",
+          masked_value: "****07",
+        },
+      },
+    });
+    expect(case07.process?.authorizationCode.status).toBe("EXPIRED");
+
+    const case08 = adaptExamplePayloadToAssessmentForm({
+      ...base,
+      case_id: "CASE-08",
+      process: {
+        current_step: "ELIGIBILITY_CHECK",
+        termination_agreement: {
+          signed_at: "2026-06-20T00:00:00Z",
+          effective_at: "2026-08-01T00:00:00Z",
+          status: "SIGNED_PENDING_EFFECTIVE",
+        },
+      },
+    });
+    expect(case08.process?.terminationAgreement.status).toBe("SIGNED_PENDING_EFFECTIVE");
+    expect(case08.process?.terminationAgreement.effectiveAt).toContain("2026-08-01");
+  });
+
   it("页面源码不直接声明后端 snake_case 字段", () => {
     const source = readFileSync(join(process.cwd(), "src/app/pages/NewAssessment.tsx"), "utf8");
     expect(source).not.toMatch(/\b(?:schema_version|case_id|assessment_time|source_system|generated_at|valid_until|outstanding_amount|contract_status|days_since_last_port)\b/u);

@@ -104,6 +104,26 @@ jobs:
         run: docker compose -f docker-compose.fullstack.yml config
       - name: 构建全栈镜像
         run: docker compose -f docker-compose.fullstack.yml build
+      - name: 启动全栈容器
+        run: docker compose -f docker-compose.fullstack.yml up -d --build --wait
+      - name: 运行 Docker 全栈冒烟
+        run: python scripts/docker_fullstack_smoke.py 2>&1 | tee docker-fullstack-smoke.log
+      - name: 写入 Docker 验收摘要
+        if: always()
+        run: |
+          echo "## Docker Compose 运行态验收" >> "$GITHUB_STEP_SUMMARY"
+          echo "状态：${{ job.status }}" >> "$GITHUB_STEP_SUMMARY"
+          if [ -f docker-fullstack-smoke.log ]; then
+            echo '```text' >> "$GITHUB_STEP_SUMMARY"
+            cat docker-fullstack-smoke.log >> "$GITHUB_STEP_SUMMARY"
+            echo '```' >> "$GITHUB_STEP_SUMMARY"
+          fi
+      - name: 输出容器日志
+        if: failure()
+        run: docker compose -f docker-compose.fullstack.yml logs --no-color
+      - name: 停止并清理容器
+        if: always()
+        run: docker compose -f docker-compose.fullstack.yml down -v --remove-orphans
 
   fullstack-e2e:
     runs-on: ubuntu-latest

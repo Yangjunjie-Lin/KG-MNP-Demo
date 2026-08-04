@@ -1,7 +1,9 @@
 import { http, HttpResponse } from "msw";
 import { describe, expect, it } from "vitest";
 import { server } from "../../mocks/server";
+import { caseCatalogViewFixture } from "../../mocks/fixtures/api";
 import { getAssessmentDetail, runWhatIf } from "../services/assessmentService";
+import { listCases } from "../services/caseService";
 import { getAffectedAssessments, listRules } from "../services/ruleService";
 import { getOntology } from "../services/ontologyService";
 import { executeCompetencyQuestion } from "../services/competencyService";
@@ -34,5 +36,38 @@ describe("真实 HTTP Service 层", () => {
     const result = await runWhatIf("e-1", { contractStatus: "EXPIRED" });
     expect(body).toEqual({ changes: { evidence: { contract: { contract_status: "EXPIRED" } } } });
     expect(result.scenarioDecision).toBe("ELIGIBLE");
+  });
+
+  it("案件列表只请求一次聚合视图，不再逐案例读取历史", async () => {
+    let aggregateRequests = 0;
+    let historyRequests = 0;
+    server.use(
+      http.get("*/api/v1/views/cases", () => {
+        aggregateRequests += 1;
+        return HttpResponse.json(caseCatalogViewFixture);
+      }),
+      http.get("*/api/v1/cases/:caseId/history", () => {
+        historyRequests += 1;
+        return HttpResponse.json({ items: [] });
+      }),
+    );
+    const cases = await listCases();
+    expect(cases).toHaveLength(9);
+    const case06 = cases.find((item) => item.id === "CASE-06");
+    expect(case06).toMatchObject({
+      decision: "BLOCKED",
+      assessmentTime: "2026-07-01T00:00:00Z",
+      executionCount: 2,
+      hasHistory: true,
+    });
+    const case01 = cases.find((item) => item.id === "CASE-01");
+    expect(case01).toMatchObject({
+      decision: "UNKNOWN",
+      executionCount: 0,
+      hasHistory: false,
+      latestExecutionId: null,
+    });
+    expect(aggregateRequests).toBe(1);
+    expect(historyRequests).toBe(0);
   });
 });

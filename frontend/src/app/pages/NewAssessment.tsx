@@ -16,6 +16,8 @@ import {
   currencyLabels,
   dataSourceLabels,
   numberStatusLabels,
+  processStepLabels,
+  terminationStatusLabels,
 } from "../i18n/zh-CN";
 import { useCreateAssessment } from "../query/hooks/useAppQueries";
 import { getExample } from "../services/exampleService";
@@ -44,6 +46,23 @@ const evidenceStatusOptions = [
   { value: "VALID", label: "有效" },
   { value: "EXPIRED", label: "已过期" },
 ];
+const processStepOptions = [
+  "ELIGIBILITY_CHECK",
+  "AUTHORIZATION_CODE_REQUEST",
+  "PORT_IN_SUBMISSION",
+  "PORTING_EXECUTION",
+  "PORTING_CONFIRMATION",
+].map((value) => ({ value, label: processStepLabels[value] }));
+const authCodeStatusOptions = [
+  { value: "VALID", label: "已签发" },
+  { value: "EXPIRED", label: "已过期" },
+  { value: "USED", label: "已使用" },
+  { value: "REVOKED", label: "已撤销" },
+];
+const terminationStatusOptions = Object.entries(terminationStatusLabels).map(([value, label]) => ({
+  value,
+  label,
+}));
 
 type FormFieldType = "text" | "datetime" | "number" | "select";
 type FormFieldOption = { value: string; label: string };
@@ -53,6 +72,7 @@ export function NewAssessment() {
   const mutation = useCreateAssessment();
   const [loadError, setLoadError] = useState<unknown>();
   const [loadingExample, setLoadingExample] = useState(false);
+  const [selectedExampleCase, setSelectedExampleCase] = useState("CASE-03");
   const [mode, setMode] = useState<"form" | "technical">("form");
   const [technicalPayload, setTechnicalPayload] = useState("");
   const [technicalError, setTechnicalError] = useState("");
@@ -68,7 +88,7 @@ export function NewAssessment() {
     setLoadingExample(true);
     setLoadError(undefined);
     try {
-      const example = await getExample("CASE-03");
+      const example = await getExample(selectedExampleCase);
       const formValues = adaptExamplePayloadToAssessmentForm(example.input);
       setTechnicalPayload(formatTechnicalAssessmentPayload(example.input));
       reset(formValues);
@@ -167,14 +187,27 @@ export function NewAssessment() {
           className="min-h-[520px] w-full rounded border border-slate-300 bg-white p-3 font-mono text-xs"
         />
         <div className="flex flex-wrap items-center gap-3">
-          <button
+          <div className="flex flex-wrap items-center gap-2">
+            <label className="sr-only" htmlFor="technical-example-case">选择案例</label>
+            <select
+              id="technical-example-case"
+              aria-label="选择案例"
+              value={selectedExampleCase}
+              onChange={(event) => setSelectedExampleCase(event.target.value)}
+              className="rounded border border-slate-200 bg-white px-3 py-2 text-xs"
+            >
+              {caseOptions.slice(1).map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
+            </select>
+            <button
             type="button"
+            aria-label="加载示例（后端）"
             onClick={() => void loadExample()}
             disabled={loadingExample}
             className="rounded border border-blue-200 bg-blue-50 px-3 py-2 text-xs text-blue-700"
           >
-            加载后端示例
+            加载示例（后端）
           </button>
+          </div>
           <button
             type="button"
             onClick={submitTechnical}
@@ -212,15 +245,28 @@ export function NewAssessment() {
               技术调试
             </button>
           )}
-          <button
+          <div className="flex flex-wrap items-center gap-2">
+            <label className="sr-only" htmlFor="form-example-case">选择案例</label>
+            <select
+              id="form-example-case"
+              aria-label="选择案例"
+              value={selectedExampleCase}
+              onChange={(event) => setSelectedExampleCase(event.target.value)}
+              className="rounded border border-slate-200 bg-white px-3 py-2 text-xs"
+            >
+              {caseOptions.slice(1).map((option) => <option key={option.value} value={option.value}>{option.label}</option>)}
+            </select>
+            <button
             type="button"
+            aria-label="加载示例（后端）"
             onClick={() => void loadExample()}
             disabled={loadingExample}
             className="inline-flex items-center gap-1.5 rounded border border-blue-200 bg-blue-50 px-3 py-2 text-xs font-medium text-blue-700"
           >
             <RefreshCw size={13} className={loadingExample ? "animate-spin" : ""} />
-            加载示例（案例三）
+            加载示例（后端）
           </button>
+          </div>
         </div>
       </div>
 
@@ -234,6 +280,30 @@ export function NewAssessment() {
           {field("account.accountId", "账户编号")}
         </div>
       </section>
+
+      <details className="rounded-lg border border-slate-200 bg-white p-5">
+        <summary className="cursor-pointer text-sm font-semibold text-slate-700">流程补充信息（可选）</summary>
+        <p className="mt-2 text-xs text-slate-500">仅填写已知流程信息；留空时不会发送 process。</p>
+        <div className="mt-4 grid gap-4 md:grid-cols-2">
+          {field("process.currentStep", "当前流程步骤", "select", [
+            { value: "", label: "未填写" },
+            ...processStepOptions,
+          ], false)}
+          {field("process.authorizationCode.status", "授权码状态", "select", [
+            { value: "", label: "未填写" },
+            ...authCodeStatusOptions,
+          ], false)}
+          {field("process.authorizationCode.issuedAt", "授权码签发时间", "datetime", undefined, false)}
+          {field("process.authorizationCode.validUntil", "授权码有效期", "datetime", undefined, false)}
+          {field("process.authorizationCode.maskedValue", "脱敏授权码", "text", undefined, false)}
+          {field("process.terminationAgreement.signedAt", "解除协议签署时间", "datetime", undefined, false)}
+          {field("process.terminationAgreement.effectiveAt", "解除协议生效时间", "datetime", undefined, false)}
+          {field("process.terminationAgreement.status", "解除协议状态", "select", [
+            { value: "", label: "未填写" },
+            ...terminationStatusOptions,
+          ], false)}
+        </div>
+      </details>
 
       <section className="rounded-lg border border-slate-200 bg-white p-5">
         <h2 className="mb-4 text-sm font-semibold text-slate-700">实名与号码证据</h2>

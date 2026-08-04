@@ -77,6 +77,36 @@ export const historiesFixture: Record<string, Array<Record<string, unknown>>> = 
   ],
 };
 
+export const caseCatalogViewFixture = {
+  items: caseCatalogFixture.items.map((item) => {
+    const history = historiesFixture[item.case_id] ?? [];
+    const latest = [...history].sort((left, right) =>
+      String(right.assessment_time ?? "").localeCompare(String(left.assessment_time ?? "")),
+    )[0];
+    const expectedDecisions: Record<string, string> = {
+      "CASE-01": "ELIGIBLE",
+      "CASE-02": "BLOCKED",
+      "CASE-03": "BLOCKED",
+      "CASE-04": "BLOCKED",
+      "CASE-05": "MANUAL_REVIEW",
+      "CASE-06": "BLOCKED",
+      "CASE-07": "ELIGIBLE",
+      "CASE-08": "BLOCKED",
+      "CASE-09": "BLOCKED",
+    };
+    return {
+      ...item,
+      expected_decision: expectedDecisions[item.case_id],
+      latest_execution_id: latest?.execution_id ?? null,
+      latest_assessment_time: latest?.assessment_time ?? null,
+      latest_decision: latest?.decision ?? null,
+      publication_status: latest?.publication_status ?? null,
+      execution_count: history.length,
+      has_history: history.length > 0,
+    };
+  }),
+};
+
 const validationSteps = [
   { id: "json_schema", status: "PASSED" },
   { id: "input_graph", status: "PASSED" },

@@ -29,7 +29,7 @@ def test_db_init_and_idempotent(tmp_path):
     out = arts.execution_dir("e1")
     write_assessment_artifacts(ex1, out)
     ex1.response["artifacts"] = arts.relative_artifacts({"evaluation": "evaluation.json"})
-    r1 = repo.save_execution(
+    repo.save_execution(
         execution_id="e1",
         case_id=ex1.response["case_id"],
         assessment_time=ex1.response["assessment_time"],
@@ -224,3 +224,184 @@ def test_cleanup_orphan_dir(tmp_path):
     assert d.exists()
     arts.cleanup_execution_dir("orphan")
     assert not (tmp_path / "exec" / "orphan").exists()
+
+
+def test_force_recompute_insert_failure_rolls_back_delete(tmp_path):
+    """A failed replacement must leave the prior idempotent row committed."""
+    db = Database(tmp_path / "atomic.sqlite3")
+    repo = AssessmentRepository(db)
+    assessment_time = "2026-07-01T00:00:00Z"
+    payload = {"case": "atomicity"}
+    old_result = {
+        "schema_version": "1.0",
+        "execution_id": "old-execution",
+        "case_id": "CASE-03",
+        "assessment_time": assessment_time,
+        "decision": "BLOCKED",
+        "publication": {"publishable": True, "status": "PUBLISHABLE"},
+    }
+    repo.save_execution(
+        execution_id="old-execution",
+        case_id="CASE-03",
+        assessment_time=assessment_time,
+        input_payload=payload,
+        result=old_result,
+    )
+
+    db.connection.execute(
+        """
+        CREATE TRIGGER fail_forced_insert
+        BEFORE INSERT ON executions
+        WHEN NEW.execution_id = 'forced-failure'
+        BEGIN
+            SELECT RAISE(ABORT, 'injected insert failure');
+        END;
+        """
+    )
+    db.commit()
+
+    with pytest.raises(ApplicationError) as exc_info:
+        repo.save_execution(
+            execution_id="forced-failure",
+            case_id="CASE-03",
+            assessment_time=assessment_time,
+            input_payload=payload,
+            result={**old_result, "execution_id": "forced-failure"},
+            force_recompute=True,
+        )
+
+    assert exc_info.value.code == ErrorCode.STORAGE_ERROR
+    assert db.connection.in_transaction is False
+    assert repo.get_execution("old-execution")["execution_id"] == "old-execution"
+    assert repo.find_idempotent_execution(
+        "CASE-03", assessment_time, compute_input_hash(payload)
+    )["execution_id"] == "old-execution"
+    assert db.fetchone(
+        "SELECT execution_id FROM executions WHERE execution_id = ?",
+        ("forced-failure",),
+    ) is None
+
+    # The connection remains usable after rollback and the trigger can be
+    # removed before a successful replacement.
+    db.connection.execute("DROP TRIGGER fail_forced_insert")
+    db.commit()
+    replacement = repo.save_execution(
+        execution_id="new-execution",
+        case_id="CASE-03",
+        assessment_time=assessment_time,
+        input_payload=payload,
+        result={**old_result, "execution_id": "new-execution"},
+        force_recompute=True,
+    )
+    assert replacement["execution_id"] == "new-execution"
+    with pytest.raises(ApplicationError) as missing:
+        repo.get_execution("old-execution")
+    assert missing.value.code == ErrorCode.EXECUTION_NOT_FOUND
+    assert db.fetchone(
+        """
+        SELECT COUNT(*) AS n FROM executions
+        WHERE case_id = ? AND assessment_time = ? AND input_hash = ?
+        """,
+        ("CASE-03", assessment_time, compute_input_hash(payload)),
+    )["n"] == 1
+
+
+def test_transaction_rolls_back_and_nested_savepoint_isolated(tmp_path):
+    db = Database(tmp_path / "transaction-context.sqlite3")
+    db.execute("CREATE TABLE scratch (value INTEGER NOT NULL)")
+    db.commit()
+
+    with db.transaction(immediate=True) as conn:
+        conn.execute("INSERT INTO scratch(value) VALUES (1)")
+        with pytest.raises(RuntimeError):
+            with db.transaction():
+                conn.execute("INSERT INTO scratch(value) VALUES (2)")
+                raise RuntimeError("rollback nested unit")
+        assert conn.execute("SELECT COUNT(*) FROM scratch").fetchone()[0] == 1
+
+    assert db.fetchone("SELECT COUNT(*) FROM scratch")[0] == 1
+    with pytest.raises(ValueError):
+        with db.transaction():
+            db.execute("INSERT INTO scratch(value) VALUES (3)")
+            raise ValueError("rollback outer unit")
+    assert db.fetchone("SELECT COUNT(*) FROM scratch")[0] == 1
+    assert db.connection.in_transaction is False
+
+
+def test_concurrent_idempotent_writes_return_one_record(tmp_path):
+    db = Database(tmp_path / "concurrent-idempotent.sqlite3")
+    repo = AssessmentRepository(db)
+    assessment_time = "2026-07-01T00:00:00Z"
+    payload = {"case": "same-input"}
+
+    def write(attempt: int) -> str:
+        execution_id = f"ordinary-{attempt}"
+        result = {
+            "schema_version": "1.0",
+            "execution_id": execution_id,
+            "case_id": "CASE-03",
+            "assessment_time": assessment_time,
+            "decision": "BLOCKED",
+            "publication": {"publishable": True, "status": "PUBLISHABLE"},
+        }
+        return repo.save_execution(
+            execution_id=execution_id,
+            case_id="CASE-03",
+            assessment_time=assessment_time,
+            input_payload=payload,
+            result=result,
+        )["execution_id"]
+
+    with ThreadPoolExecutor(max_workers=16) as pool:
+        returned = list(pool.map(write, range(64)))
+
+    assert len(set(returned)) == 1
+    assert len(repo.list_executions(case_id="CASE-03")) == 1
+    assert db.fetchone("SELECT COUNT(*) AS n FROM executions")["n"] == 1
+    assert db.connection.in_transaction is False
+
+
+def test_concurrent_force_recompute_writes_are_serialized(tmp_path):
+    db = Database(tmp_path / "concurrent-force.sqlite3")
+    repo = AssessmentRepository(db)
+    assessment_time = "2026-07-01T00:00:00Z"
+    payload = {"case": "force-input"}
+    base = {
+        "schema_version": "1.0",
+        "case_id": "CASE-03",
+        "assessment_time": assessment_time,
+        "decision": "BLOCKED",
+        "publication": {"publishable": True, "status": "PUBLISHABLE"},
+    }
+    repo.save_execution(
+        execution_id="force-seed",
+        case_id="CASE-03",
+        assessment_time=assessment_time,
+        input_payload=payload,
+        result={**base, "execution_id": "force-seed"},
+    )
+
+    def replace(attempt: int) -> str:
+        execution_id = f"force-{attempt}"
+        return repo.save_execution(
+            execution_id=execution_id,
+            case_id="CASE-03",
+            assessment_time=assessment_time,
+            input_payload=payload,
+            result={**base, "execution_id": execution_id},
+            force_recompute=True,
+        )["execution_id"]
+
+    expected_ids = {f"force-{i}" for i in range(32)}
+    with ThreadPoolExecutor(max_workers=16) as pool:
+        returned = list(pool.map(replace, range(32)))
+
+    # Each force operation is a complete serialized replacement.  The return
+    # value is the snapshot inserted by that call, while only the last row is
+    # retained for the unique idempotency key.
+    assert set(returned) == expected_ids
+    retained = repo.list_executions(case_id="CASE-03")
+    assert len(retained) == 1
+    assert retained[0]["execution_id"] in expected_ids
+    assert db.connection.in_transaction is False
+    assert repo.get_execution(retained[0]["execution_id"])["case_id"] == "CASE-03"
