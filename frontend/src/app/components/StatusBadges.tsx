@@ -34,6 +34,10 @@ const decisionStyles: Record<Decision, { bg: string; icon: ReactNode }> = {
     bg: "bg-blue-50 text-blue-700 ring-1 ring-blue-200",
     icon: <Info size={12} />,
   },
+  UNKNOWN: {
+    bg: "bg-slate-50 text-slate-600 ring-1 ring-slate-200",
+    icon: <Info size={12} />,
+  },
 };
 
 export function DecisionBadge({ decision }: { decision: Decision }) {

@@ -1,356 +1,68 @@
-import { useEffect, useState } from "react";
+import { useMutation } from "@tanstack/react-query";
 import { Play } from "lucide-react";
-import { DecisionBadge, StatusBadge } from "../components/StatusBadges";
-import { cn } from "../utils/cn";
+import { useEffect, useState } from "react";
+import { ApiErrorState, EmptyState, MutationStatus, PageSkeleton } from "../components/dataStates";
 import {
+  authCodeStatusLabels,
   blockingReasonLabels,
   caseLabels,
+  contractStatusLabels,
+  dataSourceLabels,
   decisionLabels,
+  evidenceStatusLabels,
+  evidenceTypeLabels,
   processStepLabels,
+  regulatoryClauseLabels,
   remediationActionLabels,
   ruleLabels,
   translateOrUnknown,
   ui,
 } from "../i18n/zh-CN";
-import { getCompetencyQuestions, getAssessmentDetail } from "../services/assessmentService";
-import { listCases } from "../services/caseService";
-import type { CompetencyQuestion } from "../data/mockCompetencyQuestions";
-import type { AssessmentDetail, CaseSummary } from "../types/assessment";
+import { useCases, useCompetencyQuestions } from "../query/hooks/useAppQueries";
+import { executeCompetencyQuestion } from "../services/competencyService";
+import { cn } from "../utils/cn";
 
-function cqOrdinal(id: string): string {
-  const n = Number(id.replace("CQ-", ""));
-  const map = [
-    "",
-    "一",
-    "二",
-    "三",
-    "四",
-    "五",
-    "六",
-    "七",
-    "八",
-    "九",
-    "十",
-    "十一",
-    "十二",
-    "十三",
-    "十四",
-    "十五",
-  ];
-  return map[n] ? `问题${map[n]}` : "未识别问题";
-}
+const columnLabels: Record<string, string> = {
+  decision: "资格结论", reasonCode: "阻塞原因", ruleId: "资格规则", actionCode: "处理动作",
+  authStatus: "授权码状态", caseId: "案例", status: "状态", version: "版本", ruleVersion: "规则版本",
+  clause: "监管条款", clauseId: "监管条款", sourceSystem: "数据来源", generatedAt: "生成时间", validUntil: "有效期",
+  currentStep: "当前步骤", stepCode: "当前步骤", canAdvance: "能否继续", contractStatus: "合约状态", contractEndTime: "合约结束时间",
+  evidence: "证据记录", evidenceType: "证据类型", evidenceStatus: "证据状态", effectiveFrom: "生效时间",
+  eventTypeCode: "流程阻塞原因", eventTime: "事件时间", issuedAt: "签发时间", service: "关联业务",
+  subscriptionStatus: "订阅状态", contract: "服务合约", contractEnd: "合约结束时间", assessmentTime: "评估时间",
+  assessment: "资格评估", oldVersion: "历史版本", newVersion: "当前版本", requiresReassessment: "是否需要重新评估",
+};
 
-function ResultPanel({
-  cq,
-  caseId,
-  detail,
-}: {
-  cq: CompetencyQuestion;
-  caseId: string;
-  detail: AssessmentDetail | null;
-}) {
-  const caseLabel = translateOrUnknown(caseLabels, caseId, ui.unknownCase);
-  if (!detail) {
-    return <div className="text-xs text-slate-400 py-4 text-center">{ui.empty}</div>;
+function ordinal(id: string) { const n = Number(id.replace(/\D/g, "")); const values = ["", "一", "二", "三", "四", "五", "六", "七", "八", "九", "十", "十一", "十二", "十三", "十四", "十五"]; return values[n] ? `问题${values[n]}` : "能力问题"; }
+function displayValue(column: string, value: unknown): string {
+  if (value == null || value === "") return "暂无信息";
+  if (typeof value === "boolean" || value === "true" || value === "false") {
+    return value === true || value === "true" ? "是" : "否";
   }
-
-  if (cq.id === "CQ-01") {
-    return (
-      <div className="text-xs space-y-2">
-        <div className="bg-white border border-slate-200 rounded-lg p-3">
-          <div className="text-slate-400 text-[10px] mb-2">查询结果</div>
-          <div className="grid grid-cols-2 gap-2">
-            <div>
-              <span className="text-slate-400">案例</span>
-              <br />
-              <span className="text-blue-700">{caseLabel}</span>
-            </div>
-            <div>
-              <span className="text-slate-400">资格结论</span>
-              <br />
-              <DecisionBadge decision={detail.decision} />
-            </div>
-            <div>
-              <span className="text-slate-400">评估时间</span>
-              <br />
-              <span className="text-slate-600">
-                {detail.assessmentTime.replace("T", " ").replace("Z", "").slice(0, 16)}
-              </span>
-            </div>
-            <div>
-              <span className="text-slate-400">执行编号</span>
-              <br />
-              <span className="text-slate-600">执行-{caseLabel}</span>
-            </div>
-          </div>
-        </div>
-        <div className="text-slate-600 bg-slate-50 rounded p-2">
-          {caseLabel} 当前结论为「
-          {translateOrUnknown(decisionLabels, detail.decision, ui.unknownStatus)}」。
-        </div>
-      </div>
-    );
+  const raw = String(value);
+  if (raw.startsWith("http://") || raw.startsWith("https://")) {
+    const resourceLabels: Record<string, string> = {
+      evidence: "证据记录", contract: "服务合约", service: "电信业务", assessment: "资格评估",
+    };
+    return resourceLabels[column] ?? "关联记录";
   }
-
-  if (cq.id === "CQ-02" || cq.id === "CQ-14") {
-    return (
-      <div className="text-xs space-y-2">
-        {detail.blockingReasonDetails.length === 0 ? (
-          <div className="text-emerald-600 bg-emerald-50 rounded p-3">无阻塞原因</div>
-        ) : (
-          detail.blockingReasonDetails.map((br) => (
-            <div key={br.reasonCode} className="bg-white border border-slate-200 rounded-lg p-3">
-              <div className="font-medium text-red-700 mb-1">
-                {translateOrUnknown(blockingReasonLabels, br.reasonCode, ui.unknownStatus)}
-              </div>
-              <div className="text-slate-600">{br.description}</div>
-              {cq.id === "CQ-14" && (
-                <div className="mt-1 text-emerald-700">
-                  处理动作：
-                  {translateOrUnknown(
-                    remediationActionLabels,
-                    br.actionCode,
-                    ui.unknownAction,
-                  )}
-                </div>
-              )}
-            </div>
-          ))
-        )}
-      </div>
-    );
-  }
-
-  if (cq.id === "CQ-05") {
-    return (
-      <div className="overflow-x-auto">
-        <table className="w-full bg-white border border-slate-200 rounded-lg overflow-hidden text-xs min-w-[480px]">
-          <thead className="bg-slate-50">
-            <tr>
-              {["规则名称", "版本", "执行结果", "触发原因"].map((h) => (
-                <th key={h} className="px-3 py-2 text-left text-[10px] font-semibold text-slate-500">
-                  {h}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {detail.ruleResults.map((r) => (
-              <tr key={`${r.ruleId}-${r.version}`} className="border-t border-slate-100">
-                <td className="px-3 py-2 text-violet-700">
-                  {translateOrUnknown(ruleLabels, r.ruleId, ui.unknownRule)}
-                </td>
-                <td className="px-3 py-2 text-slate-500">{r.version}</td>
-                <td className="px-3 py-2">
-                  <StatusBadge status={r.status} />
-                </td>
-                <td className="px-3 py-2 text-slate-400">
-                  {r.reasonCode
-                    ? translateOrUnknown(blockingReasonLabels, r.reasonCode, ui.unknownStatus)
-                    : "—"}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    );
-  }
-
-  if (cq.id === "CQ-08" || cq.id === "CQ-09" || cq.id === "CQ-10") {
-    const process = detail.process;
-    return (
-      <div className="text-xs space-y-2 bg-white border border-slate-200 rounded-lg p-3">
-        <div>
-          当前步骤：
-          {translateOrUnknown(processStepLabels, process?.currentStep, ui.unknownStatus)}
-        </div>
-        <div>
-          能否继续：
-          {process?.canAdvance ? ui.canAdvance : ui.cannotAdvance}
-        </div>
-        {process?.processBlockingReasons?.map((p) => (
-          <div key={p.code} className="text-red-600">
-            {p.message ||
-              translateOrUnknown(blockingReasonLabels, p.code, ui.unknownStatus)}
-          </div>
-        ))}
-        {process?.authorizationCode && (
-          <div>
-            授权码状态：
-            <StatusBadge status={process.authorizationCode.status} />
-          </div>
-        )}
-      </div>
-    );
-  }
-
-  if (cq.id === "CQ-15") {
-    return (
-      <div className="text-xs bg-white border border-slate-200 rounded-lg p-3 space-y-2">
-        <div>
-          受影响案例：{translateOrUnknown(caseLabels, "CASE-06", ui.unknownCase)}
-        </div>
-        <div className="flex items-center gap-2">
-          <DecisionBadge decision="ELIGIBLE" />
-          <span className="text-slate-400">→</span>
-          <DecisionBadge decision="BLOCKED" />
-        </div>
-        <div className="text-slate-600">
-          规则五由版本 1.0（120 天）更新为版本 1.1（180 天）后，历史评估需重新评估。
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="bg-white border border-slate-200 rounded-lg p-3 text-xs">
-      <div className="text-center py-2 text-slate-600">
-        已对 {caseLabel} 执行「{cqOrdinal(cq.id)}：{cq.titleZh}」
-        <br />
-        <span className="text-emerald-600">查询成功</span>
-      </div>
-    </div>
-  );
+  const maps = [caseLabels, decisionLabels, blockingReasonLabels, remediationActionLabels,
+    regulatoryClauseLabels, ruleLabels, processStepLabels, authCodeStatusLabels,
+    evidenceStatusLabels, evidenceTypeLabels, dataSourceLabels, contractStatusLabels];
+  for (const map of maps) if (map[raw]) return map[raw];
+  if (/^\d{4}-\d{2}-\d{2}T/u.test(raw)) return raw.replace("T", " ").replace(/\+00:00$|Z$/u, "");
+  if (/[\u3400-\u9fff]/u.test(raw) || /^[\d\s.*+:/-]+$/u.test(raw)) return raw;
+  return "未识别信息";
 }
 
 export function CompetencyQuestions() {
-  const [questions, setQuestions] = useState<CompetencyQuestion[]>([]);
-  const [cases, setCases] = useState<CaseSummary[]>([]);
-  const [selectedCQ, setSelectedCQ] = useState<CompetencyQuestion | null>(null);
-  const [selectedCase, setSelectedCase] = useState("CASE-03");
-  const [detail, setDetail] = useState<AssessmentDetail | null>(null);
-  const [executed, setExecuted] = useState(false);
-
-  useEffect(() => {
-    void (async () => {
-      const [cqs, caseList] = await Promise.all([
-        getCompetencyQuestions(),
-        listCases(),
-      ]);
-      setQuestions(cqs);
-      setCases(caseList);
-      setSelectedCQ(cqs[0] ?? null);
-      if (cqs[0]?.exampleCase) setSelectedCase(cqs[0].exampleCase);
-    })();
-  }, []);
-
-  useEffect(() => {
-    void getAssessmentDetail(selectedCase).then(setDetail);
-  }, [selectedCase]);
-
-  return (
-    <div className="flex h-full min-w-0 overflow-x-hidden">
-      <div className="w-64 border-r border-slate-200 bg-white flex-shrink-0 overflow-y-auto">
-        <div className="p-3 border-b border-slate-100">
-          <div className="text-[10px] text-slate-400 font-semibold tracking-wider">
-            能力问题（问题一至问题十五）
-          </div>
-        </div>
-        {questions.map((cq) => (
-          <button
-            key={cq.id}
-            type="button"
-            onClick={() => {
-              setSelectedCQ(cq);
-              setExecuted(false);
-              if (cq.exampleCase) setSelectedCase(cq.exampleCase);
-            }}
-            className={cn(
-              "w-full text-left p-3 border-b border-slate-50 transition-colors",
-              selectedCQ?.id === cq.id
-                ? "bg-blue-50 border-l-2 border-l-blue-500"
-                : "hover:bg-slate-50",
-            )}
-          >
-            <div className="flex items-center gap-2 mb-1">
-              <span className="text-[10px] text-blue-600 bg-blue-50 px-1.5 py-0.5 rounded">
-                {cqOrdinal(cq.id)}
-              </span>
-              <span className="text-[9px] text-slate-400">
-                {translateOrUnknown(caseLabels, cq.exampleCase, ui.unknownCase)}
-              </span>
-            </div>
-            <div className="text-xs text-slate-700 leading-relaxed">{cq.titleZh}</div>
-          </button>
-        ))}
-      </div>
-
-      <div className="flex-1 overflow-y-auto p-6 space-y-4 min-w-0">
-        {selectedCQ && (
-          <>
-            <div className="bg-white border border-slate-200 rounded-lg p-4">
-              <div className="flex items-center gap-2 mb-1 flex-wrap">
-                <span className="text-sm text-blue-700">{cqOrdinal(selectedCQ.id)}</span>
-                <span className="text-slate-300">—</span>
-                <span className="text-sm font-medium text-slate-700">{selectedCQ.questionZh}</span>
-              </div>
-              <div className="text-xs text-slate-500 mb-3">用途：{selectedCQ.usage}</div>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
-                <div>
-                  <div className="text-[10px] text-slate-400 mb-1">需要输入</div>
-                  {selectedCQ.requiredInputs.length > 0 ? (
-                    selectedCQ.requiredInputs.map((i) => (
-                      <span key={i} className="text-slate-600 block">
-                        {i === "case_id" ? "案例编号" : i}
-                      </span>
-                    ))
-                  ) : (
-                    <span className="text-slate-400">无需输入</span>
-                  )}
-                </div>
-                <div>
-                  <div className="text-[10px] text-slate-400 mb-1">预期返回</div>
-                  <div className="text-slate-600">{selectedCQ.expected}</div>
-                </div>
-                <div>
-                  <div className="text-[10px] text-slate-400 mb-1">示例案例</div>
-                  <span className="text-blue-600">
-                    {translateOrUnknown(caseLabels, selectedCQ.exampleCase, ui.unknownCase)}
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white border border-slate-200 rounded-lg p-4">
-              <div className="flex flex-wrap items-center gap-3 mb-4">
-                <select
-                  value={selectedCase}
-                  onChange={(e) => {
-                    setSelectedCase(e.target.value);
-                    setExecuted(false);
-                  }}
-                  className="text-xs border border-slate-200 rounded px-2 py-1.5 bg-white text-slate-700 outline-none"
-                >
-                  {cases.map((c) => (
-                    <option key={c.id} value={c.id}>
-                      {translateOrUnknown(caseLabels, c.id, ui.unknownCase)} — {c.title}
-                    </option>
-                  ))}
-                </select>
-                <button
-                  type="button"
-                  onClick={() => setExecuted(true)}
-                  className="flex items-center gap-1.5 bg-blue-600 hover:bg-blue-700 text-white text-xs px-3 py-1.5 rounded-md font-medium transition-colors"
-                >
-                  <Play size={11} /> 执行查询
-                </button>
-              </div>
-              {executed ? (
-                <div>
-                  <div className="text-[10px] text-slate-400 tracking-wide mb-2">查询结果</div>
-                  <ResultPanel cq={selectedCQ} caseId={selectedCase} detail={detail} />
-                </div>
-              ) : (
-                <div className="text-center text-slate-300 text-xs py-6">
-                  <Play size={20} className="mx-auto mb-1.5 opacity-40" />
-                  选择案例后点击执行
-                </div>
-              )}
-            </div>
-          </>
-        )}
-      </div>
-    </div>
-  );
+  const questions = useCompetencyQuestions(); const cases = useCases(); const [selectedId, setSelectedId] = useState(""); const [caseId, setCaseId] = useState("CASE-03");
+  const mutation = useMutation({ mutationFn: ({ cqId, selectedCase }: { cqId: string; selectedCase: string }) => executeCompetencyQuestion(cqId, selectedCase) });
+  useEffect(() => { if (!selectedId && questions.data?.[0]) { setSelectedId(questions.data[0].id); setCaseId(questions.data[0].exampleCase); } }, [questions.data, selectedId]);
+  if (questions.isLoading || cases.isLoading) return <PageSkeleton />;
+  if (questions.isError) return <ApiErrorState error={questions.error} onRetry={() => void questions.refetch()} />;
+  if (cases.isError) return <ApiErrorState error={cases.error} onRetry={() => void cases.refetch()} />;
+  const selected = questions.data?.find((item) => item.id === selectedId);
+  if (!selected) return <EmptyState message="暂无能力问题" />;
+  return <div className="flex h-full min-w-0"><aside className="w-64 flex-shrink-0 overflow-y-auto border-r bg-white"><div className="border-b p-3 text-xs font-semibold text-slate-500">能力问题（问题一至问题十五）</div>{questions.data?.map((item) => <button key={item.id} type="button" onClick={() => { setSelectedId(item.id); setCaseId(item.exampleCase); mutation.reset(); }} className={cn("w-full border-b p-3 text-left", selectedId === item.id ? "border-l-2 border-l-blue-500 bg-blue-50" : "hover:bg-slate-50")}><div className="mb-1 text-[10px] text-blue-600">{ordinal(item.id)}</div><div className="text-xs text-slate-700">{item.titleZh}</div></button>)}</aside><main className="min-w-0 flex-1 space-y-4 overflow-y-auto p-6"><section className="rounded-lg border border-slate-200 bg-white p-5"><div className="flex flex-wrap items-center gap-3"><h1 className="text-base font-semibold text-slate-800">{ordinal(selected.id)}：{selected.titleZh}</h1>{(questions.isFetching || cases.isFetching) && <span role="status" className="ml-auto text-xs text-slate-400">正在刷新查询目录…</span>}</div><div className="mt-3 text-xs text-slate-500">结果列由后端查询定义，界面只负责中文显示。</div></section><section className="rounded-lg border border-slate-200 bg-white p-5"><div className="mb-4 flex flex-wrap items-center gap-3"><select aria-label="查询案例" value={caseId} onChange={(event) => { setCaseId(event.target.value); mutation.reset(); }} className="rounded border border-slate-200 px-3 py-2 text-xs">{cases.data?.map((item) => <option key={item.id} value={item.id}>{translateOrUnknown(caseLabels, item.id, ui.unknownCase)}</option>)}</select><button type="button" disabled={mutation.isPending} onClick={() => mutation.mutate({ cqId: selected.id, selectedCase: caseId })} className="inline-flex items-center gap-1.5 rounded bg-blue-600 px-3 py-2 text-xs font-medium text-white"><Play size={12} />执行查询</button></div><MutationStatus pending={mutation.isPending} error={mutation.error} />{mutation.data && <div className="mt-4 overflow-x-auto" data-testid="competency-result">{mutation.data.rows.length ? <table className="w-full min-w-[480px] text-xs"><thead><tr className="border-b bg-slate-50">{mutation.data.columns.map((column) => <th key={column} className="px-3 py-2 text-left text-slate-500">{columnLabels[column] ?? "未识别字段"}</th>)}</tr></thead><tbody>{mutation.data.rows.map((row, index) => <tr key={index} className="border-b">{mutation.data.columns.map((column) => <td key={column} className="px-3 py-2 text-slate-700">{displayValue(column, row[column])}</td>)}</tr>)}</tbody></table> : <EmptyState message="查询已执行，暂无匹配结果" />}</div>}</section></main></div>;
 }

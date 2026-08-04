@@ -14,8 +14,6 @@ from kg_mnp_demo.application.errors import ApplicationError, ErrorCode
 from kg_mnp_demo.application.serializers import json_safe, to_iso_utc
 from kg_mnp_demo.loader import project_root
 
-_LOCK = threading.Lock()
-
 SCHEMA_SQL = """
 CREATE TABLE IF NOT EXISTS executions (
     execution_id TEXT PRIMARY KEY,
@@ -57,6 +55,7 @@ def compute_input_hash(payload: dict[str, Any]) -> str:
 class Database:
     def __init__(self, path: Path | str | None = None) -> None:
         self.path = Path(path) if path else default_db_path()
+        self._lock = threading.RLock()
         try:
             self.path.parent.mkdir(parents=True, exist_ok=True)
             self._conn = sqlite3.connect(str(self.path), check_same_thread=False)
@@ -79,16 +78,55 @@ class Database:
             ) from exc
 
     def migrate(self) -> None:
-        with _LOCK:
+        with self._lock:
             self._conn.executescript(SCHEMA_SQL)
             self._conn.commit()
+
+    def execute(
+        self,
+        sql: str,
+        parameters: tuple[Any, ...] | dict[str, Any] = (),
+    ) -> sqlite3.Cursor:
+        """Serialize use of the shared SQLite connection across API worker threads."""
+        with self._lock:
+            return self._conn.execute(sql, parameters)
+
+    def fetchone(
+        self,
+        sql: str,
+        parameters: tuple[Any, ...] | dict[str, Any] = (),
+    ) -> sqlite3.Row | None:
+        with self._lock:
+            return self._conn.execute(sql, parameters).fetchone()
+
+    def fetchall(
+        self,
+        sql: str,
+        parameters: tuple[Any, ...] | dict[str, Any] = (),
+    ) -> list[sqlite3.Row]:
+        with self._lock:
+            return self._conn.execute(sql, parameters).fetchall()
+
+    def commit(self) -> None:
+        with self._lock:
+            self._conn.commit()
+
+    def delete_execution(self, execution_id: str) -> int:
+        with self._lock:
+            cursor = self._conn.execute(
+                "DELETE FROM executions WHERE execution_id = ?",
+                (execution_id,),
+            )
+            self._conn.commit()
+            return cursor.rowcount
 
     @property
     def connection(self) -> sqlite3.Connection:
         return self._conn
 
     def close(self) -> None:
-        self._conn.close()
+        with self._lock:
+            self._conn.close()
 
 
 class AssessmentRepository:
@@ -103,23 +141,23 @@ class AssessmentRepository:
         assessment_time: str,
         input_hash: str,
     ) -> dict[str, Any] | None:
-        row = self.db.connection.execute(
+        row = self.db.fetchone(
             """
             SELECT * FROM executions
             WHERE case_id = ? AND assessment_time = ? AND input_hash = ?
             """,
             (case_id, assessment_time, input_hash),
-        ).fetchone()
+        )
         if not row:
             return None
         return self._row_to_record(row)
 
     def count_by_decision(self) -> dict[str, int]:
-        rows = self.db.connection.execute(
+        rows = self.db.fetchall(
             """
             SELECT decision, COUNT(*) AS n FROM executions GROUP BY decision
             """
-        ).fetchall()
+        )
         out = {"total": 0, "eligible": 0, "blocked": 0, "manual_review": 0, "other": 0}
         for row in rows:
             n = int(row["n"])
@@ -136,17 +174,22 @@ class AssessmentRepository:
         return out
 
     def latest_case_decision_counts(self) -> dict[str, int]:
-        rows = self.db.connection.execute(
+        rows = self.db.fetchall(
             """
-            SELECT e.case_id, e.decision
-            FROM executions e
-            INNER JOIN (
-                SELECT case_id, MAX(created_at) AS max_created
+            SELECT case_id, decision
+            FROM (
+                SELECT
+                    case_id,
+                    decision,
+                    ROW_NUMBER() OVER (
+                        PARTITION BY case_id
+                        ORDER BY assessment_time DESC, created_at DESC
+                    ) AS row_number
                 FROM executions
-                GROUP BY case_id
-            ) t ON e.case_id = t.case_id AND e.created_at = t.max_created
+            ) ranked
+            WHERE row_number = 1
             """
-        ).fetchall()
+        )
         out = {"total": 0, "eligible": 0, "blocked": 0, "manual_review": 0, "other": 0}
         seen: set[str] = set()
         for row in rows:
@@ -229,19 +272,19 @@ class AssessmentRepository:
             "result_json": json.dumps(json_safe(result), ensure_ascii=False),
         }
 
-        with _LOCK:
+        with self.db._lock:
             if not force_recompute:
-                existing = self.db.connection.execute(
+                existing = self.db.fetchone(
                     """
                     SELECT * FROM executions
                     WHERE case_id = ? AND assessment_time = ? AND input_hash = ?
                     """,
                     (case_id, assessment_time, input_hash),
-                ).fetchone()
+                )
                 if existing:
                     return self._row_to_record(existing)
             else:
-                self.db.connection.execute(
+                self.db.execute(
                     """
                     DELETE FROM executions
                     WHERE case_id = ? AND assessment_time = ? AND input_hash = ?
@@ -250,7 +293,7 @@ class AssessmentRepository:
                 )
 
             try:
-                self.db.connection.execute(
+                self.db.execute(
                     """
                     INSERT INTO executions (
                         execution_id, case_id, assessment_time, created_at, input_hash,
@@ -264,16 +307,16 @@ class AssessmentRepository:
                     """,
                     row,
                 )
-                self.db.connection.commit()
+                self.db.commit()
             except sqlite3.IntegrityError:
                 # Concurrent idempotent insert — return original
-                existing = self.db.connection.execute(
+                existing = self.db.fetchone(
                     """
                     SELECT * FROM executions
                     WHERE case_id = ? AND assessment_time = ? AND input_hash = ?
                     """,
                     (case_id, assessment_time, input_hash),
-                ).fetchone()
+                )
                 if existing:
                     return self._row_to_record(existing)
                 raise ApplicationError(
@@ -291,10 +334,10 @@ class AssessmentRepository:
         return self.get_execution(execution_id)
 
     def get_execution(self, execution_id: str) -> dict[str, Any]:
-        row = self.db.connection.execute(
+        row = self.db.fetchone(
             "SELECT * FROM executions WHERE execution_id = ?",
             (execution_id,),
-        ).fetchone()
+        )
         if not row:
             raise ApplicationError(
                 ErrorCode.EXECUTION_NOT_FOUND,
@@ -310,30 +353,30 @@ class AssessmentRepository:
         offset: int = 0,
     ) -> list[dict[str, Any]]:
         if case_id:
-            rows = self.db.connection.execute(
+            rows = self.db.fetchall(
                 """
                 SELECT * FROM executions WHERE case_id = ?
-                ORDER BY created_at DESC LIMIT ? OFFSET ?
+                ORDER BY assessment_time DESC, created_at DESC LIMIT ? OFFSET ?
                 """,
                 (case_id, limit, offset),
-            ).fetchall()
+            )
         else:
-            rows = self.db.connection.execute(
+            rows = self.db.fetchall(
                 """
                 SELECT * FROM executions
                 ORDER BY created_at DESC LIMIT ? OFFSET ?
                 """,
                 (limit, offset),
-            ).fetchall()
+            )
         return [self._row_to_summary(r) for r in rows]
 
     def list_case_history(self, case_id: str) -> list[dict[str, Any]]:
         return self.list_executions(case_id=case_id, limit=1000, offset=0)
 
-    def get_latest_case_execution(self, case_id: str) -> dict[str, Any]:
+    def get_latest_case_execution(self, case_id: str) -> dict[str, Any] | None:
         rows = self.list_executions(case_id=case_id, limit=1)
         if not rows:
-            raise ApplicationError(ErrorCode.CASE_NOT_FOUND, details=[case_id])
+            return None
         return self.get_execution(rows[0]["execution_id"])
 
     def compare_executions(self, left_id: str, right_id: str) -> dict[str, Any]:
@@ -388,17 +431,11 @@ class AssessmentRepository:
         )
 
     def delete_runtime_execution(self, execution_id: str) -> None:
-        with _LOCK:
-            cur = self.db.connection.execute(
-                "DELETE FROM executions WHERE execution_id = ?",
-                (execution_id,),
+        if self.db.delete_execution(execution_id) == 0:
+            raise ApplicationError(
+                ErrorCode.EXECUTION_NOT_FOUND,
+                details=[execution_id],
             )
-            self.db.connection.commit()
-            if cur.rowcount == 0:
-                raise ApplicationError(
-                    ErrorCode.EXECUTION_NOT_FOUND,
-                    details=[execution_id],
-                )
 
     def _row_to_record(self, row: sqlite3.Row) -> dict[str, Any]:
         data = dict(row)

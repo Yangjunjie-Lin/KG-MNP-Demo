@@ -1,0 +1,16 @@
+.git
+.github
+.pytest_cache
+.venv
+venv
+**/__pycache__
+**/*.pyc
+frontend
+runtime_data
+runtime_outputs
+build
+dist
+htmlcov
+.coverage
+docs/ontology-site/doc
+third_party/widoco/*.jar

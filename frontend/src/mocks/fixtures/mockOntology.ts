@@ -1,11 +1,11 @@
-import type { OntologyEdge, OntologyModule, OntologyNode } from "../types/ontology";
+import type { OntologyEdge, OntologyModule, OntologyNode } from "../../app/types/ontology";
 import {
   moduleLabels,
   ontologyClassLabels,
   ontologyRelationLabels,
   translateOrUnknown,
   ui,
-} from "../i18n/zh-CN";
+} from "../../app/i18n/zh-CN";
 
 export const mockOntologyModules: OntologyModule[] = [
   { id: "Core", label: moduleLabels.Core, description: "携转资格评估的核心类与属性" },

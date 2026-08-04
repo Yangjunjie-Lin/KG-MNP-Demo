@@ -1,5 +1,5 @@
-import type { EligibilityRule } from "../types/rules";
-import { ruleLabels } from "../i18n/zh-CN";
+import type { EligibilityRule } from "../../app/types/rules";
+import { ruleLabels } from "../../app/i18n/zh-CN";
 
 export const mockRules: EligibilityRule[] = [
   {

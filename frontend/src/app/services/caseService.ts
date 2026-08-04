@@ -1,25 +1,61 @@
-// 后续在这里连接本地 FastAPI
-import type { CaseDetail, CaseSummary } from "../types/assessment";
+import { apiGet } from "../../api/client";
 import {
-  getMockCaseById,
-  mockCaseSummaries,
-  mockCases,
-} from "../data/mockCases";
-import { mockCompetencyQuestions } from "../data/mockCompetencyQuestions";
-import type { CompetencyQuestion } from "../data/mockCompetencyQuestions";
+  adaptCaseCatalog,
+  adaptCaseDetail,
+  adaptCaseHistory,
+  adaptCaseView,
+  type CaseViewModel,
+} from "../../api/adapters/caseAdapter";
+import { adaptAssessmentRecord } from "../../api/adapters/assessmentAdapter";
+import { array, record } from "../../api/adapters/guards";
 
-export async function listCases(): Promise<CaseSummary[]> {
-  return Promise.resolve(mockCaseSummaries);
+export async function listCases(signal?: AbortSignal): Promise<CaseViewModel[]> {
+  const catalog = await apiGet("/api/v1/cases", { signal });
+  const items = array(record(catalog).items);
+  const histories = new Map<string, unknown[]>();
+  await Promise.all(
+    items.map(async (raw) => {
+      const caseId = String(record(raw).case_id ?? "");
+      const history = record(
+        await apiGet("/api/v1/cases/{case_id}/history", {
+          pathParams: { case_id: caseId },
+          signal,
+        }),
+      );
+      histories.set(caseId, array(history.items));
+    }),
+  );
+  return adaptCaseCatalog(catalog, histories);
 }
 
-export async function getCaseById(caseId: string): Promise<CaseDetail | null> {
-  return Promise.resolve(getMockCaseById(caseId) ?? null);
+export async function getCaseById(caseId: string, signal?: AbortSignal) {
+  return adaptCaseDetail(
+    await apiGet("/api/v1/cases/{case_id}", { pathParams: { case_id: caseId }, signal }),
+  );
 }
 
-export async function listCaseDetails(): Promise<CaseDetail[]> {
-  return Promise.resolve(mockCases);
+export async function getCaseHistory(caseId: string, signal?: AbortSignal) {
+  return adaptCaseHistory(
+    await apiGet("/api/v1/cases/{case_id}/history", {
+      pathParams: { case_id: caseId },
+      signal,
+    }),
+  );
 }
 
-export async function getCompetencyQuestions(): Promise<CompetencyQuestion[]> {
-  return Promise.resolve(mockCompetencyQuestions);
+export async function getCaseLatest(caseId: string, signal?: AbortSignal) {
+  const dto = await apiGet("/api/v1/cases/{case_id}/latest", {
+    pathParams: { case_id: caseId },
+    signal,
+  });
+  return dto ? adaptAssessmentRecord(dto) : null;
+}
+
+export async function getCaseView(caseId: string, signal?: AbortSignal) {
+  return adaptCaseView(
+    await apiGet("/api/v1/views/cases/{case_id}", {
+      pathParams: { case_id: caseId },
+      signal,
+    }),
+  );
 }

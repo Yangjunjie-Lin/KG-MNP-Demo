@@ -27,7 +27,7 @@ def health():
 @router.get("/ready", response_model=ReadyResponse, responses=ERROR_RESPONSES)
 def ready(state: AppState = Depends(get_state)):
     try:
-        state.db.connection.execute("SELECT 1").fetchone()
+        state.db.fetchone("SELECT 1")
         db_ok = True
     except Exception:  # noqa: BLE001
         db_ok = False

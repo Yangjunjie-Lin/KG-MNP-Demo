@@ -47,10 +47,39 @@
 
 ```bash
 cd kg-mnp-demo
-python -m pip install -e ".[dev]"
+python -m pip install -e ".[dev,api]"
+cd frontend && npm ci && cd ..
 ```
 
 可选 Neo4j 驱动：`python -m pip install -e ".[dev,neo4j]"`。
+
+## 全栈启动
+
+默认前端通过 `/api/v1` 使用真实 FastAPI，资格结论、阻塞原因、规则版本、情景推演差异和追溯边均以后端结果为准。SQLite 保存执行历史；Neo4j 不是运行必需项。
+
+本地一键启动：
+
+```bash
+make fullstack
+```
+
+访问前端 `http://127.0.0.1:5173`，接口健康检查为 `http://127.0.0.1:8000/api/v1/health`。`Ctrl+C` 会同时关闭前后端进程。也可以分别使用 `make api` 和 `make frontend`。
+
+Docker 全栈启动：
+
+```bash
+docker compose -f docker-compose.fullstack.yml up --build
+```
+
+访问前端 `http://localhost:8080`、接口 `http://localhost:8000`。Nginx 将前端同源的 `/api/v1` 请求反向代理至后端，刷新任意前端路由会回退到 `index.html`。
+
+完整验收：
+
+```bash
+make verify-fullstack
+```
+
+该命令会安装 Playwright Chromium、重建确定性的九案例演示数据、启动真实前后端并执行 E2E；因此会清除本地 `runtime_data`。详见 [`docs/fullstack_quickstart.md`](docs/fullstack_quickstart.md) 和 [`docs/fullstack_acceptance.md`](docs/fullstack_acceptance.md)。显式 Mock 模式仅用于前端组件开发和单元测试；API 请求失败不会回退到 Mock。技术调试模式默认关闭。
 
 ## 本地一键演示
 
@@ -63,7 +92,7 @@ python scripts/showcase_demo.py --case CASE-03
 * CASE-03 输入摘要（证据经 `hasCaseEvidence` 关联）；
 * **输入图** SHACL 验证 → OWL-RL → 资格判断 → **评估结果图** SHACL 验证；
 追溯子图由 `queries/assessment_subgraph.rq` 运行生成，Python（`trace_graph.py`）仅负责将 SPARQL 结果转换为稳定的 nodes/edges，并校验每条边确实存在于 RDF 图中。
-* 六个案例汇总；
+* 九个案例汇总；
 * HTML 演示报告。
 
 ### JSON 外部输入
@@ -143,7 +172,7 @@ bash scripts/generate_docs.sh
 
 固定版本见脚本内 `WIDOCO_VERSION=1.4.25`。若无 Java/无法下载，脚本失败但**核心 pytest 仍应通过**。成功时检查 `docs/ontology-site/index.html`。
 
-## 六个案例预期
+## 九个案例预期
 
 | 案例 | 结论 |
 |------|------|
@@ -153,6 +182,9 @@ bash scripts/generate_docs.sh
 | CASE-04 | BLOCKED（欠费+合约，两条链） |
 | CASE-05 | MANUAL_REVIEW（关键证据过期） |
 | CASE-06 | 规则 1.0→1.1；旧评估可定位并标记重评；现评估因间隔不足 BLOCKED |
+| CASE-07 | ELIGIBLE；授权码已过期，流程不能继续 |
+| CASE-08 | BLOCKED（解除协议已签但尚未生效） |
+| CASE-09 | BLOCKED（实名信息不一致） |
 
 ## MVP 不包含
 

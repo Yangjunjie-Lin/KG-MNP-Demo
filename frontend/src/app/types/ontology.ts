@@ -23,3 +23,11 @@ export interface OntologyModule {
   label: string;
   description: string;
 }
+
+export interface OntologyKeyPath {
+  id: string;
+  sourceClass: string;
+  predicate: string;
+  targetClass: string;
+  existsInRdf: boolean;
+}

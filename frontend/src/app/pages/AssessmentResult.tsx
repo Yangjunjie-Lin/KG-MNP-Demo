@@ -1,836 +1,135 @@
-import { useEffect, useState } from "react";
-import {
-  AlertTriangle,
-  ArrowRight,
-  CheckCircle2,
-  ChevronLeft,
-  XCircle,
-} from "lucide-react";
-import { SectionHeader } from "../components/SectionHeader";
-import { BlockingReasonCard } from "../components/BlockingReasonCard";
+import { useQuery } from "@tanstack/react-query";
+import { AlertTriangle, ArrowRight, CheckCircle2, ChevronLeft, XCircle } from "lucide-react";
+import { useMemo, useState } from "react";
+import { useNavigate, useParams } from "react-router";
+import type { AssessmentViewModel, TraceNodeView } from "../../api/adapters/assessmentAdapter";
+import { localName } from "../../api/adapters/guards";
+import { isApiError } from "../../api/errors";
+import { ApiErrorState, EmptyState, PageSkeleton, RetryButton } from "../components/dataStates";
 import { DecisionBadge, StatusBadge } from "../components/StatusBadges";
-import { cn } from "../utils/cn";
 import {
   authCodeStatusLabels,
   blockingReasonLabels,
   caseLabels,
   dataSourceLabels,
   decisionLabels,
+  evidenceStatusLabels,
   evidenceTypeLabels,
   ontologyClassLabels,
   ontologyRelationLabels,
+  pipelineStepLabels,
   processStepLabels,
   publicationStatusLabels,
   regulatoryClauseLabels,
   remediationActionLabels,
   ruleLabels,
+  stepStatusLabels,
   translateOrUnknown,
   ui,
 } from "../i18n/zh-CN";
-import {
-  getAssessmentDetail,
-  getHistoricalAssessment,
-} from "../services/assessmentService";
-import type { AssessmentDetail } from "../types/assessment";
-import type { Decision, StepStatus } from "../types/common";
+import { getAssessmentDetail } from "../services/assessmentService";
+import { getCaseHistory } from "../services/caseService";
+import { cn } from "../utils/cn";
+import { useAssessment, useRules } from "../query/hooks/useAppQueries";
 
-function formatTime(iso: string): string {
-  return iso.replace("T", " ").replace("Z", "").slice(0, 19);
-}
+const tabs = [
+  ["timeline", "处理时间线"], ["validation", "验证结果"], ["evidence", "证据表"],
+  ["rules", "规则执行"], ["blocking", "阻塞原因"], ["process", "流程状态"], ["trace", "追溯图"],
+] as const;
 
-/** 按字符边界温和截断，避免截断中文中间语义。 */
-function softTruncate(label: string, maxChars: number): string {
-  if (label.length <= maxChars) return label;
-  return `${label.slice(0, maxChars)}…`;
-}
+function formatTime(value?: string | null) { return value ? value.replace("T", " ").replace("Z", "").slice(0, 19) : "暂无信息"; }
 
-function estimateBoxWidth(label: string, typeLabel: string): number {
-  const longest = Math.max(label.length, typeLabel.length);
-  return Math.min(220, Math.max(140, longest * 12 + 24));
-}
-
-const TABS = [
-  { id: "timeline", label: "处理时间线" },
-  { id: "validation", label: "验证结果" },
-  { id: "evidence", label: "证据表" },
-  { id: "rules", label: "规则执行" },
-  { id: "blocking", label: "阻塞原因" },
-  { id: "process", label: "流程状态" },
-  { id: "trace", label: "追溯图" },
-];
-
-function TraceGraph({ detail }: { detail: AssessmentDetail }) {
-  const [selectedNode, setSelectedNode] = useState<string | null>(null);
-  const caseLabel = translateOrUnknown(caseLabels, detail.caseId, ui.unknownCase);
-  const firstBlock = detail.blockingReasonDetails[0];
-  const brLabel = firstBlock
-    ? translateOrUnknown(blockingReasonLabels, firstBlock.reasonCode, ui.unknownStatus)
-    : "无阻塞";
-  const ruleLabel = firstBlock
-    ? translateOrUnknown(ruleLabels, firstBlock.ruleId, ui.unknownRule)
-    : translateOrUnknown(ruleLabels, "MNP-ELIG-001", ui.unknownRule);
-  const actionLabel = firstBlock
-    ? translateOrUnknown(remediationActionLabels, firstBlock.actionCode, ui.unknownAction)
-    : "—";
-  const clauseLabel = firstBlock
-    ? translateOrUnknown(
-        regulatoryClauseLabels,
-        firstBlock.regulatoryClause,
-        ui.unknownClause,
-      )
-    : "监管条款";
-
-  const nodes = [
-    { id: "case", label: caseLabel, type: "MNPCase", x: 20, y: 160, color: "#2563eb" },
-    { id: "assessment", label: "资格评估", type: "EligibilityAssessment", x: 200, y: 160, color: "#7c3aed" },
-    {
-      id: "ev1",
-      label: translateOrUnknown(evidenceTypeLabels, "CONTRACT_STATUS", ui.unknownEvidence),
-      type: "EvidenceRecord",
-      x: 380,
-      y: 70,
-      color: "#0891b2",
-    },
-    {
-      id: "ev2",
-      label: translateOrUnknown(evidenceTypeLabels, "BILLING_BALANCE", ui.unknownEvidence),
-      type: "EvidenceRecord",
-      x: 380,
-      y: 160,
-      color: "#0891b2",
-    },
-    {
-      id: "ev3",
-      label: translateOrUnknown(evidenceTypeLabels, "IDENTITY_MATCH", ui.unknownEvidence),
-      type: "EvidenceRecord",
-      x: 380,
-      y: 250,
-      color: "#0891b2",
-    },
-    { id: "br1", label: brLabel, type: "BlockingReason", x: 580, y: 70, color: "#dc2626" },
-    { id: "rule", label: ruleLabel, type: "EligibilityRule", x: 780, y: 30, color: "#7c3aed" },
-    {
-      id: "rv",
-      label: firstBlock ? `版本 ${firstBlock.ruleVersion}` : "版本 1.0",
-      type: "RuleVersion",
-      x: 980,
-      y: 30,
-      color: "#5b21b6",
-    },
-    { id: "rc", label: clauseLabel, type: "RegulatoryClause", x: 980, y: 130, color: "#1e3a8a" },
-    { id: "ra", label: actionLabel, type: "RemediationAction", x: 780, y: 160, color: "#059669" },
-  ].map((n) => {
-    const typeLabel = translateOrUnknown(
-      ontologyClassLabels,
-      n.type,
-      ui.unknownOntologyClass,
-    );
-    const displayLabel = softTruncate(n.label, 18);
-    return {
-      ...n,
-      typeLabel,
-      displayLabel,
-      width: estimateBoxWidth(displayLabel, typeLabel),
-    };
-  });
-
-  const edges = [
-    { from: "case", to: "assessment", label: ontologyRelationLabels.hasAssessment },
-    { from: "assessment", to: "ev1", label: ontologyRelationLabels.usesEvidence },
-    { from: "assessment", to: "ev2", label: ontologyRelationLabels.usesEvidence },
-    { from: "assessment", to: "ev3", label: ontologyRelationLabels.usesEvidence },
-    { from: "assessment", to: "br1", label: ontologyRelationLabels.hasBlockingReason },
-    { from: "br1", to: "rule", label: ontologyRelationLabels.triggeredBy },
-    { from: "rule", to: "rv", label: ontologyRelationLabels.hasVersion },
-    { from: "rv", to: "rc", label: ontologyRelationLabels.citesClause },
-    { from: "br1", to: "ra", label: ontologyRelationLabels.hasRemediation },
-  ];
-
-  const nodeMap = Object.fromEntries(nodes.map((n) => [n.id, n]));
-  const selected = selectedNode ? nodeMap[selectedNode] : null;
-  const typeColors: Record<string, string> = {
-    MNPCase: "#dbeafe",
-    EligibilityAssessment: "#ede9fe",
-    EvidenceRecord: "#cffafe",
-    BlockingReason: "#fee2e2",
-    EligibilityRule: "#ede9fe",
-    RuleVersion: "#f3e8ff",
-    RegulatoryClause: "#e0e7ff",
-    RemediationAction: "#d1fae5",
-  };
-
-  return (
-    <div className="flex flex-col lg:flex-row gap-4 min-w-0">
-      <div className="flex-1 bg-white border border-slate-200 rounded-lg overflow-x-auto min-w-0">
-        <svg viewBox="0 0 1220 340" className="w-full min-w-[900px]" style={{ height: 340 }}>
-          <defs>
-            <marker id="arrow-trace" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto">
-              <path d="M0,0 L0,6 L8,3 z" fill="#94a3b8" />
-            </marker>
-          </defs>
-          {edges.map((e, i) => {
-            const from = nodeMap[e.from];
-            const to = nodeMap[e.to];
-            if (!from || !to) return null;
-            const mx = (from.x + from.width / 2 + to.x + to.width / 2) / 2;
-            const my = (from.y + to.y) / 2;
-            return (
-              <g key={i}>
-                <line
-                  x1={from.x + from.width}
-                  y1={from.y + 16}
-                  x2={to.x}
-                  y2={to.y + 16}
-                  stroke="#cbd5e1"
-                  strokeWidth="1.5"
-                  markerEnd="url(#arrow-trace)"
-                />
-                <text x={mx} y={my + 10} fontSize="9" fill="#94a3b8" textAnchor="middle">
-                  {e.label}
-                </text>
-              </g>
-            );
-          })}
-          {nodes.map((n) => (
-            <g
-              key={n.id}
-              onClick={() => setSelectedNode(selectedNode === n.id ? null : n.id)}
-              className="cursor-pointer"
-              style={{ userSelect: "none" }}
-            >
-              <rect
-                x={n.x}
-                y={n.y}
-                width={n.width}
-                height={32}
-                rx={5}
-                fill={typeColors[n.type] || "#f8fafc"}
-                stroke={selectedNode === n.id ? n.color : "#e2e8f0"}
-                strokeWidth={selectedNode === n.id ? 2 : 1}
-              />
-              <text
-                x={n.x + n.width / 2}
-                y={n.y + 13}
-                fontSize="9"
-                fill={n.color}
-                fontWeight="600"
-                textAnchor="middle"
-              >
-                {n.typeLabel}
-              </text>
-              <text x={n.x + n.width / 2} y={n.y + 25} fontSize="8" fill="#475569" textAnchor="middle">
-                {n.displayLabel}
-              </text>
-            </g>
-          ))}
-        </svg>
-      </div>
-      {selected && (
-        <div className="w-full lg:w-56 bg-white border border-slate-200 rounded-lg p-4 text-xs flex-shrink-0">
-          <div className="font-semibold text-slate-700 mb-3">{selected.typeLabel}</div>
-          <div className="space-y-2">
-            <div>
-              <span className="text-slate-400">名称：</span>
-              <span className="text-slate-700 break-all">{selected.label}</span>
-            </div>
-            <div>
-              <span className="text-slate-400">类型：</span>
-              <span className="text-slate-700">{selected.typeLabel}</span>
-            </div>
-          </div>
-          <button
-            type="button"
-            onClick={() => setSelectedNode(null)}
-            className="mt-3 text-slate-400 hover:text-slate-600 text-[10px]"
-          >
-            关闭
-          </button>
-        </div>
-      )}
-    </div>
-  );
-}
-
-export function AssessmentResult({
-  caseId,
-  onBack,
-}: {
-  caseId: string;
-  onBack: () => void;
-}) {
-  const [detail, setDetail] = useState<AssessmentDetail | null>(null);
-  const [historical, setHistorical] = useState<AssessmentDetail | null>(null);
-  const [activeTab, setActiveTab] = useState("timeline");
-
-  useEffect(() => {
-    void (async () => {
-      const [d, h] = await Promise.all([
-        getAssessmentDetail(caseId),
-        getHistoricalAssessment(caseId),
-      ]);
-      setDetail(d);
-      setHistorical(h);
-    })();
-  }, [caseId]);
-
-  if (!detail) {
-    return (
-      <div className="p-6 text-sm text-slate-400">{ui.loading}</div>
-    );
+function nodeLabel(node: TraceNodeView, detail: AssessmentViewModel): string {
+  const rawType = localName(node.type);
+  if (["MNPCase", "Case"].includes(rawType)) return translateOrUnknown(caseLabels, detail.caseId, ui.unknownCase);
+  if (["EligibilityRule", "Rule"].includes(rawType)) {
+    const rawRule = Object.keys(ruleLabels).find((id) => node.label.includes(id));
+    return translateOrUnknown(ruleLabels, rawRule, ui.unknownRule);
   }
+  return translateOrUnknown(ontologyClassLabels, rawType, ui.unknownOntologyClass);
+}
 
-  const isEligible = detail.decision === "ELIGIBLE";
-  const isBlocked = detail.decision === "BLOCKED";
-  const isCase06 = detail.caseId === "CASE-06";
-  const isCase07 = detail.caseId === "CASE-07";
-  const decisionZh = translateOrUnknown(decisionLabels, detail.decision, ui.unknownStatus);
-  const caseName = translateOrUnknown(caseLabels, detail.caseId, ui.unknownCase);
+function TraceGraph({ detail }: { detail: AssessmentViewModel }) {
+  const [selected, setSelected] = useState<string | null>(null);
+  const nodes = detail.traceNodes;
+  const nodeMap = useMemo(() => Object.fromEntries(nodes.map((node) => [node.id, node])), [nodes]);
+  if (!nodes.length) return <EmptyState message="暂无追溯图数据" />;
+  const width = 860; const height = Math.max(420, Math.ceil(nodes.length / 5) * 86 + 80);
+  return <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white" data-testid="trace-graph"><svg viewBox={`0 0 ${width} ${height}`} className="min-w-[760px]" style={{ height }}><defs><marker id="trace-arrow" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#94a3b8" /></marker></defs>{detail.traceEdges.map((edge, index) => { const source = nodeMap[edge.source]; const target = nodeMap[edge.target]; if (!source || !target) return null; const relation = translateOrUnknown(ontologyRelationLabels, localName(edge.relation), ui.unknownOntologyRelation); return <g key={`${edge.source}-${edge.target}-${index}`}><line x1={source.x + 120} y1={source.y + 18} x2={target.x} y2={target.y + 18} stroke="#cbd5e1" markerEnd="url(#trace-arrow)" /><text x={(source.x + target.x + 120) / 2} y={(source.y + target.y) / 2 + 8} textAnchor="middle" fontSize="8" fill="#64748b">{relation}</text></g>; })}{nodes.map((node) => { const label = nodeLabel(node, detail); const active = selected === node.id; return <g key={node.id} onClick={() => setSelected(active ? null : node.id)} className="cursor-pointer"><rect x={node.x} y={node.y} width="120" height="36" rx="4" fill={active ? "#dbeafe" : "#f8fafc"} stroke={active ? "#2563eb" : "#cbd5e1"} /><text x={node.x + 60} y={node.y + 22} textAnchor="middle" fontSize="10" fill="#334155">{label.length > 16 ? `${label.slice(0, 16)}…` : label}</text></g>; })}</svg></div>;
+}
 
-  const timelineSteps = detail.pipelineSteps.map((step) => {
-    let status: StepStatus = step.status ?? "PASSED";
-    if (step.id === "rule-engine" && detail.ruleResults.some((r) => r.status === "FAIL")) {
-      status = "FAILED";
+interface RuleVersionComparison {
+  historical: AssessmentViewModel;
+  historicalRule: AssessmentViewModel["ruleResults"][number];
+  currentRule: AssessmentViewModel["ruleResults"][number];
+}
+
+function findRuleVersionComparison(
+  current: AssessmentViewModel,
+  candidates: AssessmentViewModel[],
+): RuleVersionComparison | null {
+  const currentRules = new Map(current.ruleResults.map((rule) => [rule.ruleId, rule]));
+  for (const historical of candidates) {
+    for (const historicalRule of historical.ruleResults) {
+      const currentRule = currentRules.get(historicalRule.ruleId);
+      if (currentRule && currentRule.version !== historicalRule.version) {
+        return { historical, historicalRule, currentRule };
+      }
     }
-    return { ...step, status };
+  }
+  return null;
+}
+
+function useRuleVersionHistory(detail?: AssessmentViewModel) {
+  return useQuery({
+    queryKey: ["case-history", detail?.caseId, detail?.executionId],
+    enabled: !!detail,
+    queryFn: async ({ signal }) => {
+      if (!detail) return null;
+      const history = await getCaseHistory(detail.caseId, signal);
+      const historicalIds = history
+        .filter((item) => item.executionId !== detail.executionId)
+        .sort((left, right) => right.assessmentTime.localeCompare(left.assessmentTime))
+        .map((item) => item.executionId)
+        .filter(Boolean)
+        .slice(0, 20);
+      const candidates = await Promise.all(
+        historicalIds.map((historicalId) => getAssessmentDetail(historicalId, signal)),
+      );
+      return findRuleVersionComparison(detail, candidates);
+    },
   });
+}
 
-  return (
-    <div className="flex flex-col h-full min-w-0 overflow-x-hidden">
-      <div className="bg-white border-b border-slate-200 px-6 py-3 flex items-center gap-3 flex-shrink-0 min-w-0">
-        <button
-          type="button"
-          onClick={onBack}
-          className="flex items-center gap-1.5 text-xs text-slate-500 hover:text-slate-700 transition-colors"
-        >
-          <ChevronLeft size={14} /> 返回案件列表
-        </button>
-        <div className="w-px h-4 bg-slate-200" />
-        <span className="text-xs text-slate-500">{caseName}</span>
-        <ArrowRight size={12} className="text-slate-300" />
-        <span className="text-xs text-slate-600 font-medium truncate">{detail.title}</span>
-      </div>
-
-      <div className="flex-1 overflow-y-auto overflow-x-hidden min-w-0">
-        <div
-          className={cn(
-            "border-b px-6 py-5",
-            isEligible
-              ? "bg-emerald-50 border-emerald-100"
-              : isBlocked
-                ? "bg-red-50 border-red-100"
-                : "bg-amber-50 border-amber-100",
-          )}
-        >
-          <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-4 min-w-0">
-            <div className="flex items-center gap-4 min-w-0">
-              <div
-                className={cn(
-                  "w-12 h-12 rounded-xl flex items-center justify-center flex-shrink-0",
-                  isEligible ? "bg-emerald-600" : isBlocked ? "bg-red-600" : "bg-amber-500",
-                )}
-              >
-                {isEligible ? (
-                  <CheckCircle2 size={24} className="text-white" />
-                ) : isBlocked ? (
-                  <XCircle size={24} className="text-white" />
-                ) : (
-                  <AlertTriangle size={24} className="text-white" />
-                )}
-              </div>
-              <div className="min-w-0">
-                <div className="flex flex-wrap items-center gap-3 mb-1">
-                  <span
-                    className={cn(
-                      "text-2xl font-bold",
-                      isEligible
-                        ? "text-emerald-700"
-                        : isBlocked
-                          ? "text-red-700"
-                          : "text-amber-700",
-                    )}
-                  >
-                    {decisionZh}
-                  </span>
-                  <DecisionBadge decision={detail.decision} />
-                </div>
-                <div className="text-sm text-slate-600">
-                  {detail.title} — {detail.scenario}
-                </div>
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-x-6 gap-y-1 text-xs text-left lg:text-right flex-shrink-0">
-              <span className="text-slate-400">案例编号</span>
-              <span className="text-slate-700">{caseName}</span>
-              <span className="text-slate-400">{ui.assessmentTime}</span>
-              <span className="text-slate-700">{formatTime(detail.assessmentTime)}</span>
-              <span className="text-slate-400">{ui.executionCount}</span>
-              <span className="text-slate-700">{detail.executionCount}</span>
-              <span className="text-slate-400">{ui.publicationStatus}</span>
-              <span
-                className={cn(
-                  detail.publicationStatus === "PUBLISHABLE"
-                    ? "text-emerald-600"
-                    : "text-amber-600",
-                )}
-              >
-                {translateOrUnknown(
-                  publicationStatusLabels,
-                  detail.publicationStatus,
-                  ui.unknownStatus,
-                )}
-              </span>
-            </div>
-          </div>
-        </div>
-
-        {isCase06 && (
-          <div className="px-6 pt-4 space-y-3">
-            <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-4">
-              <div className="text-xs font-semibold text-emerald-800 mb-1">
-                {ui.case06HistoricalAssessment}（{ui.historicalVersion} · 120 天）
-              </div>
-              <div className="text-sm text-emerald-700">
-                {detail.historicalAssessment?.note ??
-                  historical?.currentAssessmentNote ??
-                  "历史规则版本要求 120 天，结论为可携转。"}
-              </div>
-              <div className="mt-2">
-                <DecisionBadge decision={"ELIGIBLE" as Decision} />
-                <span className="ml-2 text-xs text-emerald-600">
-                  评估时间：
-                  {formatTime(
-                    detail.historicalAssessment?.assessmentTime ??
-                      historical?.assessmentTime ??
-                      "2026-05-15T00:00:00Z",
-                  )}
-                </span>
-              </div>
-            </div>
-            <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-              <div className="text-xs font-semibold text-red-800 mb-1">
-                {ui.case06CurrentAssessment}（{ui.currentVersion} · 180 天）
-              </div>
-              <div className="text-sm text-red-700">
-                {detail.currentAssessmentNote ?? "当前规则版本要求 180 天，结论为不可携转。"}
-              </div>
-              <div className="mt-2">
-                <DecisionBadge decision={detail.decision} />
-                <span className="ml-2 text-xs text-red-600">
-                  评估时间：{formatTime(detail.assessmentTime)}
-                </span>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {isCase07 && (
-          <div className="px-6 pt-4">
-            <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 flex items-start gap-2">
-              <AlertTriangle size={16} className="text-amber-600 flex-shrink-0 mt-0.5" />
-              <div className="text-xs text-amber-800 leading-relaxed">
-                <strong>重要说明：</strong>
-                {ui.eligibilityVsProcessNote}
-                本案例资格结论为「可携转」，但授权码已过期，流程状态为「不能继续」。二者含义不同，请分别查看资格结论与流程状态。
-              </div>
-            </div>
-          </div>
-        )}
-
-        <div className="bg-white border-b border-slate-200 px-6 flex-shrink-0 overflow-x-auto">
-          <div className="flex gap-0 min-w-max">
-            {TABS.map((tab) => (
-              <button
-                key={tab.id}
-                type="button"
-                onClick={() => setActiveTab(tab.id)}
-                className={cn(
-                  "px-4 py-3 text-sm border-b-2 transition-colors whitespace-nowrap",
-                  activeTab === tab.id
-                    ? "border-blue-600 text-blue-700 font-medium"
-                    : "border-transparent text-slate-500 hover:text-slate-700",
-                )}
-              >
-                {tab.label}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div className="p-6 min-w-0">
-          {activeTab === "timeline" && (
-            <div className="space-y-2">
-              <SectionHeader title="处理时间线" />
-              {timelineSteps.map((step, i) => (
-                <div
-                  key={step.id}
-                  className="flex items-center gap-4 bg-white border border-slate-200 rounded-lg px-4 py-3 min-w-0"
-                >
-                  <StatusBadge status={step.status ?? "PASSED"} />
-                  <div className="flex-1 min-w-0">
-                    <span className="text-sm font-medium text-slate-700">{step.label}</span>
-                    <span className="ml-2 text-xs text-slate-400">{step.description}</span>
-                  </div>
-                  <span className="text-xs text-slate-400 flex-shrink-0">
-                    {(i * 42 + 18).toString().padStart(4, "0")} 毫秒
-                  </span>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {activeTab === "validation" && (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {[
-                {
-                  title: "结构化输入校验",
-                  status: "PASSED",
-                  checks: 24,
-                  violations: 0,
-                  note: "所有必填字段已提供，数据类型符合数据规范第一版。",
-                },
-                {
-                  title: "输入图约束校验",
-                  status: "PASSED",
-                  checks: 18,
-                  violations: 0,
-                  note: "输入图满足全部约束要求。",
-                },
-                {
-                  title: "评估图约束校验",
-                  status: "PASSED",
-                  checks: 13,
-                  violations: 0,
-                  note: "评估图输出完整，资格结论与阻塞原因节点均已生成。",
-                },
-              ].map((v) => (
-                <div key={v.title} className="bg-white border border-slate-200 rounded-lg p-4">
-                  <div className="flex items-start justify-between mb-3">
-                    <div>
-                      <div className="text-sm font-semibold text-slate-700 mb-1">{v.title}</div>
-                      <StatusBadge status={v.status} />
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-2 gap-2 text-xs mb-3">
-                    <div className="bg-slate-50 rounded p-2 text-center">
-                      <div className="text-lg font-bold text-slate-700">{v.checks}</div>
-                      <div className="text-slate-400">检查项</div>
-                    </div>
-                    <div className="bg-slate-50 rounded p-2 text-center">
-                      <div
-                        className={cn(
-                          "text-lg font-bold",
-                          v.violations === 0 ? "text-emerald-600" : "text-red-600",
-                        )}
-                      >
-                        {v.violations}
-                      </div>
-                      <div className="text-slate-400">违规项</div>
-                    </div>
-                  </div>
-                  <p className="text-xs text-slate-500 leading-relaxed">{v.note}</p>
-                </div>
-              ))}
-            </div>
-          )}
-
-          {activeTab === "evidence" && (
-            <div className="min-w-0">
-              <SectionHeader title="证据表" sub={`${detail.evidence.length} 条证据`} />
-              <div className="bg-white border border-slate-200 rounded-lg overflow-x-auto">
-                <table className="w-full text-xs min-w-[720px]">
-                  <thead>
-                    <tr className="border-b border-slate-200 bg-slate-50">
-                      {[
-                        "证据编号",
-                        "证据类型",
-                        "数据来源",
-                        "状态",
-                        "生成时间",
-                        "有效期至",
-                        "观测摘要",
-                      ].map((h) => (
-                        <th
-                          key={h}
-                          className="px-4 py-2.5 text-left font-semibold text-slate-500 text-[10px]"
-                        >
-                          {h}
-                        </th>
-                      ))}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {detail.evidence.map((ev, i) => (
-                      <tr
-                        key={ev.evidenceId}
-                        className={cn(
-                          "border-b border-slate-100",
-                          i % 2 === 0 ? "" : "bg-slate-50/50",
-                        )}
-                      >
-                        <td className="px-4 py-2.5 text-slate-600">
-                          {translateOrUnknown(
-                            evidenceTypeLabels,
-                            ev.evidenceType,
-                            ui.unknownEvidence,
-                          )}
-                          -{i + 1}
-                        </td>
-                        <td className="px-4 py-2.5 text-violet-700">
-                          {translateOrUnknown(
-                            evidenceTypeLabels,
-                            ev.evidenceType,
-                            ui.unknownEvidence,
-                          )}
-                        </td>
-                        <td className="px-4 py-2.5 text-slate-500">
-                          {translateOrUnknown(
-                            dataSourceLabels,
-                            ev.sourceSystem,
-                            ui.unknownDataSource,
-                          )}
-                        </td>
-                        <td className="px-4 py-2.5">
-                          <StatusBadge status={ev.status} />
-                        </td>
-                        <td className="px-4 py-2.5 text-slate-500">
-                          {formatTime(ev.generatedAt)}
-                        </td>
-                        <td className="px-4 py-2.5 text-slate-500">
-                          {formatTime(ev.validUntil)}
-                        </td>
-                        <td className="px-4 py-2.5 text-slate-600 max-w-xs truncate">
-                          {ev.valueSummary}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          )}
-
-          {activeTab === "rules" && (
-            <div className="min-w-0">
-              <SectionHeader title="规则执行表" />
-              <div className="bg-white border border-slate-200 rounded-lg overflow-x-auto">
-                <table className="w-full text-xs min-w-[640px]">
-                  <thead>
-                    <tr className="border-b border-slate-200 bg-slate-50">
-                      {["规则名称", "版本", "执行结果", "生效时间", "失效时间", "原因"].map(
-                        (h) => (
-                          <th
-                            key={h}
-                            className="px-4 py-2.5 text-left font-semibold text-slate-500 text-[10px]"
-                          >
-                            {h}
-                          </th>
-                        ),
-                      )}
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {detail.ruleResults.map((r, i) => (
-                      <tr
-                        key={`${r.ruleId}-${r.version}`}
-                        className={cn(
-                          "border-b border-slate-100",
-                          i % 2 === 0 ? "" : "bg-slate-50/50",
-                        )}
-                      >
-                        <td className="px-4 py-2.5 text-violet-700">
-                          {translateOrUnknown(ruleLabels, r.ruleId, ui.unknownRule)}
-                        </td>
-                        <td className="px-4 py-2.5 text-slate-500">{r.version}</td>
-                        <td className="px-4 py-2.5">
-                          <StatusBadge status={r.status} />
-                        </td>
-                        <td className="px-4 py-2.5 text-slate-500">
-                          {r.effectiveFrom ? formatTime(r.effectiveFrom).slice(0, 10) : "—"}
-                        </td>
-                        <td className="px-4 py-2.5 text-slate-400">
-                          {r.effectiveTo ? formatTime(r.effectiveTo).slice(0, 10) : "—"}
-                        </td>
-                        <td className="px-4 py-2.5 text-slate-500">
-                          {r.reasonCode
-                            ? translateOrUnknown(
-                                blockingReasonLabels,
-                                r.reasonCode,
-                                ui.unknownStatus,
-                              )
-                            : "—"}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          )}
-
-          {activeTab === "blocking" && (
-            <div className="space-y-4">
-              <SectionHeader
-                title="阻塞原因"
-                sub={
-                  detail.blockingReasonDetails.length === 0
-                    ? "无阻塞原因"
-                    : `${detail.blockingReasonDetails.length} 个阻塞原因`
-                }
-              />
-              {detail.blockingReasonDetails.length === 0 && (
-                <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-6 text-center">
-                  <CheckCircle2 size={32} className="text-emerald-500 mx-auto mb-2" />
-                  <div className="text-sm font-medium text-emerald-700">
-                    所有规则均通过，无资格阻塞原因
-                  </div>
-                  {isCase07 && (
-                    <div className="text-xs text-emerald-600 mt-2">
-                      流程侧仍可能因授权码过期而不能继续，请查看「流程状态」。
-                    </div>
-                  )}
-                </div>
-              )}
-              {detail.blockingReasonDetails.map((br) => (
-                <BlockingReasonCard
-                  key={br.reasonCode + br.ruleId}
-                  code={br.reasonCode}
-                  description={br.description}
-                  evidence={br.evidenceIds}
-                  ruleId={br.ruleId}
-                  ruleVersion={br.ruleVersion}
-                  clause={br.regulatoryClause}
-                  action={br.actionCode}
-                />
-              ))}
-            </div>
-          )}
-
-          {activeTab === "process" && (
-            <div className="space-y-4">
-              <SectionHeader title={ui.processStatus} />
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="bg-white border border-slate-200 rounded-lg p-4 space-y-3">
-                  <div className="text-xs font-semibold text-slate-500">{ui.decision}</div>
-                  <div className="flex items-center gap-2">
-                    <DecisionBadge decision={detail.decision} />
-                    <span className="text-sm text-slate-700">
-                      {isEligible
-                        ? "用户满足所有资格条件"
-                        : isBlocked
-                          ? "用户当前不符合携转资格"
-                          : "需要人工审核"}
-                    </span>
-                  </div>
-                  <div className="text-xs text-slate-500 bg-slate-50 rounded p-2 leading-relaxed">
-                    {isEligible
-                      ? "资格已通过：从资格维度可继续推进携转流程。"
-                      : isBlocked
-                        ? "资格未通过：需先解除阻塞条件后重新申请。"
-                        : "资格待定：需人工核查相关证据。"}
-                  </div>
-                </div>
-                <div className="bg-white border border-slate-200 rounded-lg p-4 space-y-3">
-                  <div className="text-xs font-semibold text-slate-500">流程步骤</div>
-                  <div className="space-y-2">
-                    <div className="flex justify-between text-xs gap-2">
-                      <span className="text-slate-500">当前步骤</span>
-                      <span className="text-slate-700 text-right">
-                        {translateOrUnknown(
-                          processStepLabels,
-                          detail.process?.currentStep,
-                          ui.unknownStatus,
-                        )}
-                      </span>
-                    </div>
-                    <div className="flex justify-between text-xs gap-2">
-                      <span className="text-slate-500">下一步骤</span>
-                      <span className="text-slate-700 text-right">
-                        {detail.process?.nextStep
-                          ? translateOrUnknown(
-                              processStepLabels,
-                              detail.process.nextStep,
-                              ui.unknownStatus,
-                            )
-                          : "—"}
-                      </span>
-                    </div>
-                    <div className="flex justify-between text-xs gap-2">
-                      <span className="text-slate-500">能否继续</span>
-                      <span
-                        className={cn(
-                          "font-medium",
-                          detail.process?.canAdvance ? "text-emerald-600" : "text-red-600",
-                        )}
-                      >
-                        {detail.process?.canAdvance ? ui.canAdvance : ui.cannotAdvance}
-                      </span>
-                    </div>
-                    <div className="flex justify-between text-xs gap-2">
-                      <span className="text-slate-500">授权码状态</span>
-                      {detail.process?.authorizationCode ? (
-                        <StatusBadge status={detail.process.authorizationCode.status} />
-                      ) : (
-                        <span className="text-slate-400">未签发</span>
-                      )}
-                    </div>
-                  </div>
-                  {detail.process?.processBlockingReasons?.map((p) => (
-                    <div
-                      key={p.code}
-                      className="text-xs bg-red-50 border border-red-100 rounded p-2 text-red-700"
-                    >
-                      {p.message ||
-                        translateOrUnknown(blockingReasonLabels, p.code, ui.unknownStatus)}
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              {isCase07 && (
-                <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-                  <div className="flex items-start gap-2">
-                    <AlertTriangle size={15} className="text-amber-600 flex-shrink-0 mt-0.5" />
-                    <div className="text-xs text-amber-700 leading-relaxed">
-                      <strong>注意：</strong>
-                      {ui.eligibilityVsProcessNote}
-                      当前资格结论为「{decisionZh}」，但授权码状态为「
-                      {translateOrUnknown(
-                        authCodeStatusLabels,
-                        detail.process?.authorizationCode?.status ?? "EXPIRED",
-                        ui.unknownStatus,
-                      )}
-                      」，流程「{ui.cannotAdvance}」。资格通过并不等于流程可以继续。
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {!isEligible && !isCase07 && (
-                <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-                  <div className="flex items-start gap-2">
-                    <AlertTriangle size={15} className="text-amber-600 flex-shrink-0 mt-0.5" />
-                    <div className="text-xs text-amber-700">
-                      <strong>注意：</strong>
-                      {ui.eligibilityVsProcessNote}
-                      当前案件属于资格未通过，需先解除阻塞条件。
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
-
-          {activeTab === "trace" && (
-            <div className="min-w-0">
-              <SectionHeader
-                title="追溯图"
-                sub="案件 → 资格评估 → 证据 → 阻塞原因 → 规则 → 版本 → 条款 → 处理动作"
-              />
-              <TraceGraph detail={detail} />
-            </div>
-          )}
-        </div>
-      </div>
+export function AssessmentResult() {
+  const { executionId = "" } = useParams(); const navigate = useNavigate(); const query = useAssessment(executionId); const history = useRuleVersionHistory(query.data); const rules = useRules(); const [activeTab, setActiveTab] = useState<(typeof tabs)[number][0]>("timeline");
+  if (query.isLoading) return <PageSkeleton />;
+  if (isApiError(query.error) && query.error.status === 404) return <div role="alert" className="m-6 rounded border border-slate-200 bg-white p-10 text-center"><h1 className="mb-2 text-lg font-semibold text-slate-800">未找到相关评估</h1><p className="mb-4 text-sm text-slate-500">该评估记录不存在或已被移除，请检查地址。</p><RetryButton onRetry={() => void query.refetch()} /></div>;
+  if (query.isError) return <ApiErrorState error={query.error} onRetry={() => void query.refetch()} />;
+  if (!query.data) return <EmptyState message="未找到相关评估" />;
+  const detail = query.data;
+  const isEligible = detail.decision === "ELIGIBLE"; const isBlocked = detail.decision === "BLOCKED";
+  const comparison = history.data;
+  const historicalMinimum = comparison ? rules.data?.find((rule) => rule.ruleId === comparison.historicalRule.ruleId && rule.version === comparison.historicalRule.version)?.checkMinimum : null;
+  const currentMinimum = comparison ? rules.data?.find((rule) => rule.ruleId === comparison.currentRule.ruleId && rule.version === comparison.currentRule.version)?.checkMinimum : null;
+  const processHasData = !!(detail.process?.currentStep || detail.process?.authorizationCode || detail.process?.processBlockingReasons.length);
+  const processCannotAdvanceAfterEligibility = isEligible && processHasData && !detail.process?.canAdvance;
+  return <div className="flex h-full min-w-0 flex-col overflow-x-hidden"><div className="flex flex-shrink-0 items-center gap-3 border-b border-slate-200 bg-white px-6 py-3"><button type="button" onClick={() => navigate("/cases")} className="flex items-center gap-1 text-xs text-slate-500"><ChevronLeft size={14} />返回案件列表</button><span className="text-xs text-slate-500">{translateOrUnknown(caseLabels, detail.caseId, ui.unknownCase)}</span>{(query.isFetching || history.isFetching || rules.isFetching) && <span role="status" className="ml-auto text-xs text-slate-400">正在刷新评估详情…</span>}</div><div className="min-w-0 flex-1 overflow-y-auto">
+    <section className={cn("border-b px-6 py-5", isEligible ? "border-emerald-100 bg-emerald-50" : isBlocked ? "border-red-100 bg-red-50" : "border-amber-100 bg-amber-50")}><div className="flex flex-wrap items-center gap-4"><div className={cn("flex h-12 w-12 items-center justify-center rounded-lg", isEligible ? "bg-emerald-600" : isBlocked ? "bg-red-600" : "bg-amber-500")}>{isEligible ? <CheckCircle2 className="text-white" /> : <XCircle className="text-white" />}</div><div><div className="text-xs text-slate-500">资格结论</div><DecisionBadge decision={detail.decision} /></div><div className="ml-auto text-right text-xs text-slate-500"><div>评估时间：{formatTime(detail.assessmentTime)}</div><div>发布状态：{translateOrUnknown(publicationStatusLabels, detail.publicationStatus, ui.unknownStatus)}</div></div></div></section>
+    {history.isError && <ApiErrorState error={history.error} onRetry={() => void history.refetch()} />}
+    {comparison && rules.isError && <ApiErrorState error={rules.error} onRetry={() => void rules.refetch()} />}
+    {comparison && rules.isLoading && <section className="px-6 pt-4 text-xs text-slate-500">正在加载规则版本对比…</section>}
+    {comparison && rules.data && <section className="grid gap-3 px-6 pt-4 md:grid-cols-2"><div className="rounded-lg border border-emerald-200 bg-emerald-50 p-4"><div className="mb-2 text-xs font-semibold text-emerald-800">历史规则版本 {comparison.historicalRule.version} / {historicalMinimum == null ? "门槛暂无信息" : `${historicalMinimum} 天`}</div><DecisionBadge decision={comparison.historical.decision} /><div className="mt-2 text-xs text-emerald-700">评估时间：{formatTime(comparison.historical.assessmentTime)}</div></div><div className="rounded-lg border border-red-200 bg-red-50 p-4"><div className="mb-2 text-xs font-semibold text-red-800">当前规则版本 {comparison.currentRule.version} / {currentMinimum == null ? "门槛暂无信息" : `${currentMinimum} 天`}</div><DecisionBadge decision={detail.decision} /><div className="mt-2 text-xs text-red-700">评估时间：{formatTime(detail.assessmentTime)}</div></div></section>}
+    {processCannotAdvanceAfterEligibility && <section className="px-6 pt-4"><div className="flex items-start gap-2 rounded-lg border border-amber-200 bg-amber-50 p-4 text-xs text-amber-800"><AlertTriangle size={16} /><span>资格结论为{translateOrUnknown(decisionLabels, detail.decision, ui.unknownStatus)}；{detail.process?.authorizationCode ? `授权码${translateOrUnknown(authCodeStatusLabels, detail.process.authorizationCode.status, ui.unknownStatus)}，` : ""}流程不能继续。资格结论与流程状态分别来自后端。</span></div></section>}
+    <div className="mt-4 overflow-x-auto border-y border-slate-200 bg-white px-6"><div className="flex min-w-max">{tabs.map(([id, label]) => <button key={id} type="button" onClick={() => setActiveTab(id)} className={cn("border-b-2 px-4 py-3 text-xs", activeTab === id ? "border-blue-600 font-medium text-blue-700" : "border-transparent text-slate-500")}>{label}</button>)}</div></div>
+    <div className="min-w-0 p-6">
+      {activeTab === "timeline" && (detail.timeline.length ? <div className="space-y-2">{detail.timeline.map((step) => <div key={step.id} className="flex items-center gap-3 rounded-lg border border-slate-200 bg-white px-4 py-3"><StatusBadge status={step.status ?? "PENDING"} /><span className="text-sm text-slate-700">{translateOrUnknown(stepStatusLabels, step.status, "处理状态未知")} · {translateOrUnknown(pipelineStepLabels, step.id, "处理步骤")}</span></div>)}</div> : <EmptyState message="暂无时间线数据" />)}
+      {activeTab === "validation" && (detail.validationSteps.length ? <div className="grid gap-3 md:grid-cols-3">{detail.validationSteps.map((step) => <div key={step.id} className="rounded-lg border border-slate-200 bg-white p-4"><div className="mb-2 text-sm font-medium text-slate-700">{translateOrUnknown(pipelineStepLabels, step.id, "验证步骤")}</div><StatusBadge status={step.status ?? "PENDING"} /></div>)}</div> : <EmptyState message="暂无验证结果" />)}
+      {activeTab === "evidence" && (detail.evidence.length ? <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white"><table className="w-full min-w-[650px] text-xs"><thead><tr className="border-b bg-slate-50 text-left text-slate-500"><th className="px-3 py-2">证据类型</th><th className="px-3 py-2">来源</th><th className="px-3 py-2">状态</th><th className="px-3 py-2">生成时间</th><th className="px-3 py-2">有效期</th></tr></thead><tbody>{detail.evidence.map((item, index) => <tr key={`${item.evidenceId}-${index}`} className="border-b"><td className="px-3 py-2">{translateOrUnknown(evidenceTypeLabels, item.evidenceType, ui.unknownEvidence)}</td><td className="px-3 py-2">{translateOrUnknown(dataSourceLabels, item.sourceSystem, ui.unknownDataSource)}</td><td className="px-3 py-2">{translateOrUnknown(evidenceStatusLabels, item.status, ui.unknownStatus)}</td><td className="px-3 py-2">{formatTime(item.generatedAt)}</td><td className="px-3 py-2">{formatTime(item.validUntil)}</td></tr>)}</tbody></table></div> : <EmptyState message="暂无证据记录" />)}
+      {activeTab === "rules" && (detail.ruleResults.length ? <div className="space-y-2">{detail.ruleResults.map((rule, index) => <div key={`${rule.ruleId}-${rule.version}-${index}`} className="flex flex-wrap items-center gap-3 rounded-lg border border-slate-200 bg-white p-4"><span className="text-sm font-medium text-violet-700">{translateOrUnknown(ruleLabels, rule.ruleId, ui.unknownRule)}</span><span className="text-xs text-slate-500">版本 {rule.version}</span><StatusBadge status={rule.status} /></div>)}</div> : <EmptyState message="暂无规则执行记录" />)}
+      {activeTab === "blocking" && (detail.blockingReasonDetails.length ? <div className="space-y-3">{detail.blockingReasonDetails.map((reason, index) => <div key={`${reason.reasonCode}-${index}`} className="rounded-lg border border-red-200 bg-red-50 p-4"><div className="font-medium text-red-800">{translateOrUnknown(blockingReasonLabels, reason.reasonCode, ui.unknownStatus)}</div><div className="mt-2 grid gap-2 text-xs text-slate-600 md:grid-cols-3"><span>{translateOrUnknown(ruleLabels, reason.ruleId, ui.unknownRule)}</span><span>{translateOrUnknown(regulatoryClauseLabels, reason.regulatoryClause, ui.unknownClause)}</span><span>{translateOrUnknown(remediationActionLabels, reason.actionCode, ui.unknownAction)}</span></div></div>)}</div> : <EmptyState message="本次评估没有资格阻塞原因" />)}
+      {activeTab === "process" && <div className="rounded-lg border border-slate-200 bg-white p-5"><div className="grid gap-3 text-sm md:grid-cols-3"><div><div className="text-xs text-slate-400">当前步骤</div>{translateOrUnknown(processStepLabels, detail.process?.currentStep, "流程步骤未知")}</div><div><div className="text-xs text-slate-400">是否可以继续</div><span className={detail.process?.canAdvance ? "text-emerald-700" : "text-red-700"}>{detail.process?.canAdvance ? "可以继续" : "不能继续"}</span></div><div><div className="text-xs text-slate-400">授权码状态</div>{translateOrUnknown(authCodeStatusLabels, detail.process?.authorizationCode?.status, "暂无授权码")}</div></div>{detail.process?.processBlockingReasons.length ? <div className="mt-4 border-t pt-3 text-xs text-red-700">{detail.process.processBlockingReasons.map((reason) => translateOrUnknown(blockingReasonLabels, reason.code, ui.unknownStatus)).join("、")}</div> : null}</div>}
+      {activeTab === "trace" && <><div className="mb-3 flex items-center gap-2 text-xs text-slate-500">真实追溯关系：{detail.traceNodes.length} 个节点，{detail.traceEdges.length} 条边 <ArrowRight size={12} /></div><TraceGraph detail={detail} /></>}
     </div>
-  );
+  </div></div>;
 }

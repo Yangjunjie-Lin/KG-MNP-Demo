@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 import pytest
@@ -119,6 +120,88 @@ def test_changed_evidence_compare(tmp_path):
     cmp = repo.compare_executions("L", "R")
     assert cmp["changed_evidence"]["modified"]
     assert any(r["changed"] for r in cmp["rule_changes"])
+
+
+def test_latest_case_execution_uses_assessment_time(tmp_path):
+    db = Database(tmp_path / "latest.sqlite3")
+    repo = AssessmentRepository(db)
+    current = {
+        "schema_version": "1.0",
+        "execution_id": "current",
+        "case_id": "CASE-06",
+        "assessment_time": "2026-07-01T00:00:00Z",
+        "decision": "BLOCKED",
+        "publication": {"publishable": True, "status": "PUBLISHABLE"},
+    }
+    historical = {
+        **current,
+        "execution_id": "historical",
+        "assessment_time": "2026-05-15T00:00:00Z",
+        "decision": "ELIGIBLE",
+    }
+
+    repo.save_execution(
+        execution_id="current",
+        case_id="CASE-06",
+        assessment_time=current["assessment_time"],
+        input_payload={"version": "current"},
+        result=current,
+        force_recompute=True,
+    )
+    # Historical imports may be persisted later than the current assessment.
+    repo.save_execution(
+        execution_id="historical",
+        case_id="CASE-06",
+        assessment_time=historical["assessment_time"],
+        input_payload={"version": "historical"},
+        result=historical,
+        force_recompute=True,
+    )
+
+    latest = repo.get_latest_case_execution("CASE-06")
+    history = repo.list_case_history("CASE-06")
+    latest_counts = repo.latest_case_decision_counts()
+
+    assert latest["execution_id"] == "current"
+    assert [item["execution_id"] for item in history] == ["current", "historical"]
+    assert latest_counts["blocked"] == 1
+    assert latest_counts["eligible"] == 0
+
+
+def test_latest_case_execution_returns_none_without_history(tmp_path):
+    db = Database(tmp_path / "empty-latest.sqlite3")
+    repo = AssessmentRepository(db)
+
+    assert repo.get_latest_case_execution("CASE-03") is None
+
+
+def test_parallel_history_reads_share_connection_safely(tmp_path):
+    db = Database(tmp_path / "parallel.sqlite3")
+    repo = AssessmentRepository(db)
+    result = {
+        "schema_version": "1.0",
+        "execution_id": "parallel",
+        "case_id": "CASE-03",
+        "assessment_time": "2026-07-01T00:00:00Z",
+        "decision": "BLOCKED",
+        "publication": {"publishable": True, "status": "PUBLISHABLE"},
+    }
+    repo.save_execution(
+        execution_id="parallel",
+        case_id="CASE-03",
+        assessment_time=result["assessment_time"],
+        input_payload={"case": "parallel"},
+        result=result,
+        force_recompute=True,
+    )
+
+    def read_history(_: int):
+        return repo.list_case_history("CASE-03")
+
+    with ThreadPoolExecutor(max_workers=12) as pool:
+        histories = list(pool.map(read_history, range(200)))
+
+    assert all(items[0]["execution_id"] == "parallel" for items in histories)
 
 
 def test_process_requires_assessment_time():

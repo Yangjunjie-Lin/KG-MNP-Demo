@@ -1,37 +1,123 @@
-// 后续在这里连接本地 FastAPI
-import type { AssessmentDetail, PipelineStep } from "../types/assessment";
+import { apiGet, apiPost } from "../../api/client";
 import {
-  case06HistoricalAssessment,
-  getMockAssessmentDetail,
-  mockAssessments,
-  pipelineSteps,
-} from "../data/mockAssessments";
-import { mockCompetencyQuestions } from "../data/mockCompetencyQuestions";
-import type { CompetencyQuestion } from "../data/mockCompetencyQuestions";
+  adaptAssessmentArtifacts,
+  adaptAssessmentComparison,
+  adaptAssessmentRecord,
+  adaptAssessmentTimeline,
+  adaptAssessmentTrace,
+  adaptAssessmentView,
+  type AssessmentViewModel,
+} from "../../api/adapters/assessmentAdapter";
+import { adaptAssessmentList } from "../../api/adapters/caseAdapter";
+import {
+  adaptWhatIf,
+  toWhatIfDtoChanges,
+  type WhatIfScenarioChanges,
+} from "../../api/adapters/whatIfAdapter";
+import type { components } from "../../api/generated/schema";
 
-export async function getPipelineSteps(): Promise<PipelineStep[]> {
-  return Promise.resolve(pipelineSteps);
+export type AssessmentPayload = components["schemas"]["MNPCaseInput"];
+export type AssessmentCreateRequest = components["schemas"]["AssessmentCreateRequest"];
+type WhatIfRequestDto = components["schemas"]["WhatIfRequest"];
+
+export async function createAssessment(
+  payload: AssessmentPayload,
+  options: { persist?: boolean; forceRecompute?: boolean; signal?: AbortSignal } = {},
+): Promise<AssessmentViewModel> {
+  const body: AssessmentCreateRequest = {
+    payload,
+    persist: options.persist ?? true,
+    force_recompute: options.forceRecompute ?? false,
+  };
+  return adaptAssessmentRecord(
+    await apiPost("/api/v1/assessments", body, { signal: options.signal }),
+  );
+}
+
+export async function listAssessments(signal?: AbortSignal) {
+  return adaptAssessmentList(await apiGet("/api/v1/assessments", { signal }));
 }
 
 export async function getAssessmentDetail(
-  caseId: string,
-): Promise<AssessmentDetail | null> {
-  return Promise.resolve(getMockAssessmentDetail(caseId) ?? null);
+  executionId: string,
+  signal?: AbortSignal,
+): Promise<AssessmentViewModel> {
+  const [view, record] = await Promise.all([
+    apiGet("/api/v1/views/assessments/{execution_id}", {
+      pathParams: { execution_id: executionId },
+      signal,
+    }),
+    apiGet("/api/v1/assessments/{execution_id}", {
+      pathParams: { execution_id: executionId },
+      signal,
+    }),
+  ]);
+  return adaptAssessmentView(view, record);
 }
 
-export async function listAssessments(): Promise<AssessmentDetail[]> {
-  return Promise.resolve(mockAssessments);
+export const getAssessmentView = getAssessmentDetail;
+
+export async function getAssessmentRecord(executionId: string, signal?: AbortSignal) {
+  return adaptAssessmentRecord(
+    await apiGet("/api/v1/assessments/{execution_id}", {
+      pathParams: { execution_id: executionId },
+      signal,
+    }),
+  );
 }
 
-export async function getHistoricalAssessment(
-  caseId: string,
-): Promise<AssessmentDetail | null> {
-  if (caseId === "CASE-06") {
-    return Promise.resolve(case06HistoricalAssessment);
-  }
-  return Promise.resolve(null);
+export async function compareAssessments(left: string, right: string, signal?: AbortSignal) {
+  return adaptAssessmentComparison(
+    await apiGet("/api/v1/assessments/compare", { query: { left, right }, signal }),
+  );
 }
 
-export async function getCompetencyQuestions(): Promise<CompetencyQuestion[]> {
-  return Promise.resolve(mockCompetencyQuestions);
+export async function getAssessmentArtifacts(executionId: string, signal?: AbortSignal) {
+  return adaptAssessmentArtifacts(
+    await apiGet("/api/v1/assessments/{execution_id}/artifacts", {
+      pathParams: { execution_id: executionId },
+      signal,
+    }),
+  );
+}
+
+export async function getAssessmentTrace(executionId: string, signal?: AbortSignal) {
+  const dto = await apiGet("/api/v1/assessments/{execution_id}/trace", {
+    pathParams: { execution_id: executionId },
+    signal,
+  });
+  return adaptAssessmentTrace({ ...dto, execution_id: executionId });
+}
+
+export async function getAssessmentTraceView(executionId: string, signal?: AbortSignal) {
+  return adaptAssessmentTrace(
+    await apiGet("/api/v1/views/assessments/{execution_id}/trace", {
+      pathParams: { execution_id: executionId },
+      signal,
+    }),
+  );
+}
+
+export async function getAssessmentTimeline(executionId: string, signal?: AbortSignal) {
+  return adaptAssessmentTimeline(
+    await apiGet("/api/v1/views/assessments/{execution_id}/timeline", {
+      pathParams: { execution_id: executionId },
+      signal,
+    }),
+  );
+}
+
+export async function runWhatIf(
+  executionId: string,
+  changes: WhatIfScenarioChanges,
+  signal?: AbortSignal,
+) {
+  const body: WhatIfRequestDto = { changes: toWhatIfDtoChanges(changes) };
+  return adaptWhatIf(
+    await apiPost(
+      "/api/v1/assessments/{execution_id}/what-if",
+      body,
+      { pathParams: { execution_id: executionId }, signal },
+    ),
+  );
 }

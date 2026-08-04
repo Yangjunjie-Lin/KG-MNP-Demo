@@ -1,222 +1,33 @@
-import { useEffect, useState } from "react";
-import {
-  ArrowRight,
-  ChevronRight,
-  Clock,
-  FileText,
-  Database,
-  Shield,
-  Cpu,
-  Zap,
-  BarChart3,
-  FileCheck,
-  GitBranch,
-} from "lucide-react";
-import { SectionHeader } from "../components/SectionHeader";
+import { ChevronRight, Clock, Play } from "lucide-react";
+import { useNavigate } from "react-router";
+import { ApiErrorState, EmptyState, MutationStatus, PageSkeleton } from "../components/dataStates";
 import { MetricCard } from "../components/MetricCard";
+import { SectionHeader } from "../components/SectionHeader";
 import { DecisionBadge } from "../components/StatusBadges";
-import { cn } from "../utils/cn";
-import {
-  blockingReasonLabels,
-  caseLabels,
-  translateOrUnknown,
-  ui,
-} from "../i18n/zh-CN";
-import { listCases } from "../services/caseService";
-import { getPipelineSteps } from "../services/assessmentService";
-import { getModules, getNodes, getEdges } from "../services/ontologyService";
-import { listRules } from "../services/ruleService";
-import { getCompetencyQuestions } from "../services/assessmentService";
-import type { CaseSummary, PipelineStep } from "../types/assessment";
+import { caseLabels, translateOrUnknown, ui } from "../i18n/zh-CN";
+import { useCases, useDashboard, useRunExample } from "../query/hooks/useAppQueries";
 
-const PIPELINE_ICONS: Record<string, typeof FileText> = {
-  "json-schema": FileText,
-  "rdf-builder": Database,
-  "input-shacl": Shield,
-  "owl-rl": Cpu,
-  "rule-engine": Zap,
-  assessment: BarChart3,
-  "assessment-shacl": FileCheck,
-  "sparql-trace": GitBranch,
-};
+function formatTime(value: string) { return value ? value.replace("T", " ").replace("Z", "").slice(0, 16) : "尚未运行"; }
 
-function formatTime(iso: string): string {
-  return iso.replace("T", " ").replace("Z", "").slice(0, 16);
-}
-
-export function SystemOverview({
-  onCaseClick,
-}: {
-  onCaseClick: (caseId: string) => void;
-}) {
-  const [cases, setCases] = useState<CaseSummary[]>([]);
-  const [pipeline, setPipeline] = useState<PipelineStep[]>([]);
-  const [activeStep, setActiveStep] = useState<string | null>(null);
-  const [metrics, setMetrics] = useState({
-    modules: 0,
-    classes: 0,
-    props: 0,
-    shapes: 31,
-    rules: 0,
-    cqs: 0,
-  });
-
-  useEffect(() => {
-    void (async () => {
-      const [caseList, steps, modules, nodes, edges, rules, cqs] =
-        await Promise.all([
-          listCases(),
-          getPipelineSteps(),
-          getModules(),
-          getNodes(),
-          getEdges(),
-          listRules(),
-          getCompetencyQuestions(),
-        ]);
-      setCases(caseList);
-      setPipeline(steps);
-      setMetrics({
-        modules: modules.length,
-        classes: nodes.length,
-        props: edges.length,
-        shapes: 31,
-        rules: rules.length,
-        cqs: cqs.length,
-      });
-    })();
-  }, []);
-
-  return (
-    <div className="p-6 space-y-6 max-w-full min-w-0 overflow-x-hidden">
-      <div>
-        <SectionHeader title="本体统计" />
-        <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-3">
-          <MetricCard label="本体模块" value={metrics.modules} color="text-blue-700" />
-          <MetricCard label="本体类" value={metrics.classes} color="text-violet-700" />
-          <MetricCard label="对象属性" value={metrics.props} color="text-indigo-700" />
-          <MetricCard label="约束形状" value={metrics.shapes} color="text-cyan-700" />
-          <MetricCard label="规则数量" value={metrics.rules} color="text-emerald-700" />
-          <MetricCard label="能力问题" value={metrics.cqs} color="text-amber-700" />
-        </div>
-      </div>
-
-      <div>
-        <SectionHeader title="系统处理流程" sub="点击步骤查看详情" />
-        <div className="bg-white border border-slate-200 rounded-lg p-5 min-w-0">
-          <div className="flex items-start gap-1 overflow-x-auto pb-2">
-            {pipeline.map((step, i) => {
-              const Icon = PIPELINE_ICONS[step.id] ?? FileText;
-              const isActive = activeStep === step.id;
-              return (
-                <div key={step.id} className="flex items-center gap-1 flex-shrink-0">
-                  <button
-                    type="button"
-                    onClick={() => setActiveStep(isActive ? null : step.id)}
-                    className={cn(
-                      "flex flex-col items-center gap-2 px-3 py-3 rounded-lg border transition-all min-w-[90px]",
-                      isActive
-                        ? "border-blue-400 bg-blue-50 shadow-sm"
-                        : "border-slate-200 hover:border-blue-300 hover:bg-slate-50",
-                    )}
-                  >
-                    <div
-                      className={cn(
-                        "w-8 h-8 rounded-lg flex items-center justify-center",
-                        isActive ? "bg-blue-600" : "bg-slate-100",
-                      )}
-                    >
-                      <Icon
-                        size={16}
-                        className={isActive ? "text-white" : "text-slate-600"}
-                      />
-                    </div>
-                    <span
-                      className={cn(
-                        "text-[11px] font-medium text-center leading-tight",
-                        isActive ? "text-blue-700" : "text-slate-600",
-                      )}
-                    >
-                      {step.label}
-                    </span>
-                  </button>
-                  {i < pipeline.length - 1 && (
-                    <ArrowRight size={14} className="text-slate-300 flex-shrink-0" />
-                  )}
-                </div>
-              );
-            })}
-          </div>
-          {activeStep &&
-            (() => {
-              const step = pipeline.find((s) => s.id === activeStep);
-              if (!step) return null;
-              return (
-                <div className="mt-4 border-t border-slate-100 pt-4">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
-                    <div>
-                      <div className="text-xs text-slate-400 font-medium mb-1">功能</div>
-                      <div className="text-slate-700">{step.description}</div>
-                    </div>
-                    <div>
-                      <div className="text-xs text-slate-400 font-medium mb-1">输入</div>
-                      <div className="text-slate-700">{step.input}</div>
-                    </div>
-                    <div>
-                      <div className="text-xs text-slate-400 font-medium mb-1">输出</div>
-                      <div className="text-slate-700">{step.output}</div>
-                    </div>
-                    <div>
-                      <div className="text-xs text-red-400 font-medium mb-1">失败时</div>
-                      <div className="text-slate-700">{step.failure}</div>
-                    </div>
-                  </div>
-                </div>
-              );
-            })()}
-        </div>
-      </div>
-
-      <div>
-        <SectionHeader title="示例案件" sub="九个预置案例，点击查看评估详情" />
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-3">
-          {cases.map((c) => (
-            <button
-              key={c.id}
-              type="button"
-              onClick={() => onCaseClick(c.id)}
-              className="bg-white border border-slate-200 rounded-lg p-4 text-left hover:border-blue-300 hover:shadow-sm transition-all group min-w-0"
-            >
-              <div className="flex items-start justify-between mb-2 gap-2">
-                <span className="text-xs text-slate-500 bg-slate-50 px-1.5 py-0.5 rounded">
-                  {translateOrUnknown(caseLabels, c.id, ui.unknownCase)}
-                </span>
-                <DecisionBadge decision={c.decision} />
-              </div>
-              <div className="font-medium text-slate-800 text-sm mb-1.5">{c.title}</div>
-              <div className="text-xs text-slate-500 mb-3 leading-relaxed">{c.scenario}</div>
-              {c.blockingReasons.length > 0 && (
-                <div className="flex flex-wrap gap-1 mb-2">
-                  {c.blockingReasons.map((r) => (
-                    <span
-                      key={r}
-                      className="text-[10px] bg-red-50 text-red-600 px-1.5 py-0.5 rounded border border-red-100"
-                    >
-                      {translateOrUnknown(blockingReasonLabels, r, ui.unknownStatus)}
-                    </span>
-                  ))}
-                </div>
-              )}
-              <div className="flex items-center gap-2 text-[11px] text-slate-400 mt-auto">
-                <Clock size={10} />
-                <span>{formatTime(c.assessmentTime)}</span>
-                <span className="ml-auto flex items-center gap-1 text-blue-500 opacity-0 group-hover:opacity-100 transition-opacity">
-                  查看详情 <ChevronRight size={10} />
-                </span>
-              </div>
-            </button>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
+export function SystemOverview() {
+  const navigate = useNavigate();
+  const dashboard = useDashboard();
+  const cases = useCases();
+  const run = useRunExample();
+  if (dashboard.isLoading || cases.isLoading) return <PageSkeleton />;
+  if (dashboard.isError) return <ApiErrorState error={dashboard.error} onRetry={() => void dashboard.refetch()} />;
+  if (cases.isError) return <ApiErrorState error={cases.error} onRetry={() => void cases.refetch()} />;
+  if (!dashboard.data || !cases.data) return <EmptyState />;
+  const stats = dashboard.data.ontology;
+  const openCase = (caseId: string, executionId: string | null) => {
+    if (executionId) { navigate(`/assessments/${executionId}`); return; }
+    if (!window.confirm("该案例尚未运行，是否现在提交后端执行？")) return;
+    run.mutate(caseId, { onSuccess: (assessment) => navigate(`/assessments/${assessment.executionId}`) });
+  };
+  return <div className="min-w-0 max-w-full space-y-6 overflow-x-hidden p-6">
+    <section><SectionHeader title="真实数据统计" sub={dashboard.isFetching ? "正在刷新" : "来自后端当前数据"} /><div className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-6"><MetricCard label="本体模块" value={stats.modules} /><MetricCard label="本体类" value={stats.classes} /><MetricCard label="对象属性" value={stats.objectProperties} /><MetricCard label="数据属性" value={stats.dataProperties} /><MetricCard label="约束形状" value={stats.shapes} /><MetricCard label="资格规则" value={stats.rules} /></div></section>
+    <section><SectionHeader title="运行数据" /><div className="grid grid-cols-2 gap-3 md:grid-cols-4"><MetricCard label="能力问题" value={stats.competencyQuestions} /><MetricCard label="示例案例" value={dashboard.data.examples} /><MetricCard label="执行记录" value={dashboard.data.executions} /><MetricCard label="当前案例" value={dashboard.data.exampleCaseIds.length} /></div></section>
+    <section><SectionHeader title="最新案件状态" sub="按每个案例最新评估时间汇总" /><div className="grid grid-cols-2 gap-3 md:grid-cols-4"><MetricCard label="已运行案例" value={dashboard.data.latestCaseStates.total} /><MetricCard label="最新可携转" value={dashboard.data.latestCaseStates.eligible} color="text-emerald-600" /><MetricCard label="最新不可携转" value={dashboard.data.latestCaseStates.blocked} color="text-red-600" /><MetricCard label="最新需人工复核" value={dashboard.data.latestCaseStates.manualReview} color="text-amber-600" /></div></section>
+    <section><SectionHeader title="示例案件" sub="点击已有结果查看详情；尚未运行的案例将提交后端执行" />{cases.data.length === 0 ? <EmptyState message="暂无示例案例" /> : <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-3">{cases.data.map((item) => <button key={item.id} type="button" disabled={run.isPending} onClick={() => openCase(item.id, item.latestExecutionId)} className="group min-w-0 rounded-lg border border-slate-200 bg-white p-4 text-left transition-all hover:border-blue-300 hover:shadow-sm disabled:opacity-60"><div className="mb-2 flex items-start justify-between gap-2"><span className="rounded bg-slate-50 px-1.5 py-0.5 text-xs text-slate-500">{translateOrUnknown(caseLabels, item.id, ui.unknownCase)}</span>{item.hasHistory ? <DecisionBadge decision={item.decision} /> : <span className="text-xs text-slate-400">尚未运行</span>}</div><div className="mb-3 min-h-10 text-xs leading-relaxed text-slate-500">{item.scenario}</div><div className="flex items-center gap-2 text-[11px] text-slate-400"><Clock size={10} /><span>{formatTime(item.assessmentTime)}</span><span className="ml-auto flex items-center gap-1 text-blue-600">{item.hasHistory ? <><span>查看详情</span><ChevronRight size={10} /></> : <><Play size={10} /><span>运行案例</span></>}</span></div></button>)}</div>}<div className="mt-3"><MutationStatus pending={run.isPending} error={run.error} /></div></section>
+  </div>;
 }

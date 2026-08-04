@@ -1,45 +1,38 @@
+import { http, HttpResponse } from "msw";
 import { describe, expect, it } from "vitest";
-import {
-  getAssessmentDetail,
-  getHistoricalAssessment,
-  getPipelineSteps,
-  getCompetencyQuestions,
-} from "../services/assessmentService";
-import { listCases, getCaseById } from "../services/caseService";
-import { listRules } from "../services/ruleService";
-import { getNodes, getEdges, getModules } from "../services/ontologyService";
+import { server } from "../../mocks/server";
+import { getAssessmentDetail, runWhatIf } from "../services/assessmentService";
+import { getAffectedAssessments, listRules } from "../services/ruleService";
+import { getOntology } from "../services/ontologyService";
+import { executeCompetencyQuestion } from "../services/competencyService";
 
-describe("Service 层模拟数据", () => {
-  it("案例服务返回九个案例", async () => {
-    const cases = await listCases();
-    expect(cases).toHaveLength(9);
-    const c07 = await getCaseById("CASE-07");
-    expect(c07?.decision).toBe("ELIGIBLE");
-    expect(c07?.process?.canAdvance).toBe(false);
+describe("真实 HTTP Service 层", () => {
+  it("评估详情来自视图接口", async () => {
+    server.use(http.get("*/api/v1/views/assessments/e-1", () => HttpResponse.json({ header: { execution_id: "e-1", case_id: "CASE-07", assessment_time: "2026-07-01T00:00:00Z" }, decision_card: { decision: "ELIGIBLE", publication: { publishable: true, status: "PUBLISHABLE" } }, input_summary: {}, validation_steps: [], evidence_table: [], rule_execution_table: [], blocking_reason_cards: [], remediation_actions: [], process_status: { can_advance: false, authorization_code: { status: "EXPIRED" } }, trace_graph: { nodes: [], edges: [] }, timeline: [], artifacts: [], technical_details: {} })));
+    const detail = await getAssessmentDetail("e-1");
+    expect(detail.decision).toBe("ELIGIBLE");
+    expect(detail.process?.canAdvance).toBe(false);
+    expect(detail.process?.authorizationCode?.status).toBe("EXPIRED");
   });
 
-  it("评估服务区分案例六历史与当前", async () => {
-    const current = await getAssessmentDetail("CASE-06");
-    const historical = await getHistoricalAssessment("CASE-06");
-    expect(current?.decision).toBe("BLOCKED");
-    expect(historical?.decision).toBe("ELIGIBLE");
-    expect(current?.historicalAssessment?.requiredDays).toBe(120);
+  it("规则、本体和能力问题由 HTTP 响应适配", async () => {
+    server.use(
+      http.get("*/api/v1/rules", () => HttpResponse.json({ items: [{ rule_id: "MNP-ELIG-004", version: "1.0", effective_from: "2024-01-01", reason_code: "ACTIVE_CONTRACT_RESTRICTION", action_code: "WAIT_OR_TERMINATE_CONTRACT", regulatory_clause: "REG-MNP-CLAUSE-04", inputs: [] }] })),
+      http.get("*/api/v1/views/ontology", () => HttpResponse.json({ modules: [{ module: "Core", label_zh: "核心" }], graph: { nodes: [{ id: "a", local_name: "MNPCase", type: "Class", module: "Core" }], edges: [{ source: "a", target: "b", predicate: "hasAssessment" }] }, key_paths: [], stats: {} })),
+      http.post("*/api/v1/competency-questions/CQ-01/execute", () => HttpResponse.json({ question_id: "CQ-01", case_id: "CASE-03", status: "success", columns: ["decision"], rows: [{ decision: "BLOCKED" }] })),
+      http.get("*/api/v1/rule-updates/affected-assessments", () => HttpResponse.json({ rule_id: "MNP-ELIG-005", old_version: "1.0", new_version: "1.1", items: [{ execution_id: "history", case_id: "CASE-06", assessment_time: "2026-05-15" }] })),
+    );
+    expect(await listRules()).toHaveLength(1);
+    expect((await getOntology()).edges).toHaveLength(1);
+    expect((await executeCompetencyQuestion("CQ-01", "CASE-03")).rows).toEqual([{ decision: "BLOCKED" }]);
+    expect((await getAffectedAssessments())[0].executionId).toBe("history");
   });
 
-  it("规则与本体、能力问题可加载", async () => {
-    const [rules, nodes, edges, modules, steps, cqs] = await Promise.all([
-      listRules(),
-      getNodes(),
-      getEdges(),
-      getModules(),
-      getPipelineSteps(),
-      getCompetencyQuestions(),
-    ]);
-    expect(rules.length).toBeGreaterThanOrEqual(5);
-    expect(nodes.length).toBeGreaterThan(0);
-    expect(edges.length).toBeGreaterThan(0);
-    expect(modules.length).toBeGreaterThan(0);
-    expect(steps.every((s) => /[\u4e00-\u9fff]/.test(s.label))).toBe(true);
-    expect(cqs).toHaveLength(15);
+  it("What-if 请求仅发送 changes，不在 Service 计算结论", async () => {
+    let body: unknown;
+    server.use(http.post("*/api/v1/assessments/e-1/what-if", async ({ request }) => { body = await request.json(); return HttpResponse.json({ baseline: { decision: "BLOCKED" }, scenario: { decision: "ELIGIBLE" }, decision_changed: true, rule_changes: [], reason_changes: {}, evidence_changes: {}, trace_changes: {} }); }));
+    const result = await runWhatIf("e-1", { contractStatus: "EXPIRED" });
+    expect(body).toEqual({ changes: { evidence: { contract: { contract_status: "EXPIRED" } } } });
+    expect(result.scenarioDecision).toBe("ELIGIBLE");
   });
 });

@@ -12,6 +12,8 @@ venv/
 
 # Node / frontend
 node_modules/
+frontend/playwright-report/
+frontend/test-results/
 
 # Build
 build/

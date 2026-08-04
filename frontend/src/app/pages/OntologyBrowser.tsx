@@ -1,7 +1,6 @@
-import { useEffect, useMemo, useState } from "react";
-import { Network, Search, X } from "lucide-react";
-import { ModuleTag } from "../components/StatusBadges";
-import { cn } from "../utils/cn";
+import { useMemo, useState } from "react";
+import { Network, RefreshCw, Search, X } from "lucide-react";
+import { ApiErrorState, EmptyState, PageSkeleton } from "../components/dataStates";
 import {
   moduleLabels,
   ontologyClassLabels,
@@ -10,237 +9,276 @@ import {
   translateOrUnknown,
   ui,
 } from "../i18n/zh-CN";
-import { getEdges, getModules, getNodes } from "../services/ontologyService";
-import type { OntologyEdge, OntologyModule, OntologyNode } from "../types/ontology";
+import { useOntology } from "../query/hooks/useAppQueries";
+import type { OntologyEdge, OntologyNode } from "../types/ontology";
+import { cn } from "../utils/cn";
 
 const MODULE_COLORS: Record<string, string> = {
-  Core: "#2563eb",
-  Identity: "#7c3aed",
-  AccountBilling: "#0891b2",
-  Contract: "#4f46e5",
-  MNPProcess: "#0d9488",
-  Eligibility: "#059669",
-  Evidence: "#0891b2",
-  Rules: "#7c3aed",
-  Regulatory: "#1e40af",
+  CORE: "#2563eb",
+  IDENTITY: "#7c3aed",
+  ACCOUNT_BILLING: "#0891b2",
+  SERVICE_CONTRACT: "#4f46e5",
+  PROCESS: "#0d9488",
+  COMPLIANCE: "#059669",
+  EVIDENCE_TIME: "#0284c7",
+  CODE_LIST: "#64748b",
+  ALIGNMENTS: "#475569",
 };
 
-const MODULE_BG: Record<string, string> = {
-  Core: "#dbeafe",
-  Identity: "#ede9fe",
-  AccountBilling: "#cffafe",
-  Contract: "#e0e7ff",
-  MNPProcess: "#ccfbf1",
-  Eligibility: "#d1fae5",
-  Evidence: "#cffafe",
-  Rules: "#ede9fe",
-  Regulatory: "#e0e7ff",
+const MODULE_BACKGROUNDS: Record<string, string> = {
+  CORE: "#dbeafe",
+  IDENTITY: "#ede9fe",
+  ACCOUNT_BILLING: "#cffafe",
+  SERVICE_CONTRACT: "#e0e7ff",
+  PROCESS: "#ccfbf1",
+  COMPLIANCE: "#d1fae5",
+  EVIDENCE_TIME: "#e0f2fe",
+  CODE_LIST: "#f1f5f9",
+  ALIGNMENTS: "#f8fafc",
 };
 
-function nodeDisplayLabel(n: OntologyNode): string {
+function containsChinese(value: string): boolean {
+  return /[\u3400-\u9fff]/u.test(value);
+}
+
+function nodeDisplayLabel(node: OntologyNode): string {
+  if (containsChinese(node.label)) return node.label;
   return translateOrUnknown(
     ontologyClassLabels,
-    n.localName || n.id,
+    node.localName || node.id,
     ui.unknownOntologyClass,
   );
 }
 
-function edgeDisplayLabel(e: OntologyEdge): string {
+function edgeDisplayLabel(edge: OntologyEdge): string {
+  if (containsChinese(edge.label)) return edge.label;
   return translateOrUnknown(
     ontologyRelationLabels,
-    e.relation,
+    edge.relation,
     ui.unknownOntologyRelation,
   );
 }
 
-function moduleDisplayLabel(moduleId: string): string {
-  return translateOrUnknown(moduleLabels, moduleId, ui.unknownModule);
-}
-
 export function OntologyBrowser() {
-  const [nodes, setNodes] = useState<OntologyNode[]>([]);
-  const [edges, setEdges] = useState<OntologyEdge[]>([]);
-  const [modules, setModules] = useState<OntologyModule[]>([]);
-  const [selectedNode, setSelectedNode] = useState<OntologyNode | null>(null);
+  const query = useOntology();
+  const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
   const [selectedModule, setSelectedModule] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
 
-  useEffect(() => {
-    void (async () => {
-      const [n, e, m] = await Promise.all([getNodes(), getEdges(), getModules()]);
-      setNodes(n);
-      setEdges(e);
-      setModules(m);
-    })();
-  }, []);
+  const data = query.data;
+  const nodes = data?.nodes ?? [];
+  const edges = data?.edges ?? [];
+  const modules = data?.modules ?? [];
+  const moduleNames = useMemo(
+    () => new Map(modules.map((module) => [module.id, module.label])),
+    [modules],
+  );
+  const moduleDisplayLabel = (moduleId: string): string => {
+    const backendLabel = moduleNames.get(moduleId) ?? "";
+    return containsChinese(backendLabel)
+      ? backendLabel
+      : translateOrUnknown(moduleLabels, moduleId, ui.unknownModule);
+  };
+  const selectedNode = nodes.find((node) => node.id === selectedNodeId) ?? null;
 
   const visibleNodes = useMemo(
     () =>
-      nodes.filter((n) => {
-        const label = nodeDisplayLabel(n);
-        const moduleLabel = moduleDisplayLabel(n.module);
+      nodes.filter((node) => {
+        const normalizedSearch = searchTerm.trim();
         return (
-          (!selectedModule || n.module === selectedModule) &&
-          (!searchTerm ||
-            label.includes(searchTerm) ||
-            moduleLabel.includes(searchTerm))
+          (!selectedModule || node.module === selectedModule) &&
+          (!normalizedSearch ||
+            nodeDisplayLabel(node).includes(normalizedSearch) ||
+            moduleDisplayLabel(node.module).includes(normalizedSearch))
         );
       }),
-    [nodes, selectedModule, searchTerm],
+    [nodes, selectedModule, searchTerm, moduleNames],
   );
-
+  const visibleNodeIds = useMemo(
+    () => new Set(visibleNodes.map((node) => node.id)),
+    [visibleNodes],
+  );
   const nodeMap = useMemo(
-    () => Object.fromEntries(nodes.map((n) => [n.id, n])),
+    () => new Map(nodes.map((node) => [node.id, node])),
     [nodes],
   );
+  const localNameMap = useMemo(
+    () => new Map(nodes.map((node) => [node.localName, node])),
+    [nodes],
+  );
+  const edgeLabelMap = useMemo(
+    () => new Map(edges.map((edge) => [edge.relation, edgeDisplayLabel(edge)])),
+    [edges],
+  );
+  const canvasWidth = Math.max(860, ...nodes.map((node) => node.x + 180));
+  const canvasHeight = Math.max(560, ...nodes.map((node) => node.y + 70));
+
+  if (query.isLoading) return <PageSkeleton />;
+  if (query.isError) {
+    return <ApiErrorState error={query.error} onRetry={() => void query.refetch()} />;
+  }
+  if (!data || nodes.length === 0) return <EmptyState message="暂无本体图数据" />;
 
   return (
     <div className="flex h-full min-w-0 overflow-x-hidden">
-      <div className="w-44 border-r border-slate-200 bg-white flex-shrink-0 overflow-y-auto p-3">
-        <div className="text-[10px] text-slate-400 font-semibold tracking-wider mb-2 px-1">
+      <aside className="w-48 flex-shrink-0 overflow-y-auto border-r border-slate-200 bg-white p-3">
+        <div className="mb-2 px-1 text-[10px] font-semibold tracking-wider text-slate-400">
           本体模块
         </div>
         <button
           type="button"
           onClick={() => setSelectedModule(null)}
           className={cn(
-            "w-full text-left text-xs px-2 py-1.5 rounded mb-0.5 transition-colors",
+            "mb-0.5 w-full rounded px-2 py-1.5 text-left text-xs transition-colors",
             !selectedModule
-              ? "bg-blue-50 text-blue-700 font-medium"
+              ? "bg-blue-50 font-medium text-blue-700"
               : "text-slate-600 hover:bg-slate-50",
           )}
         >
           全部模块
         </button>
-        {modules.map((m) => (
+        {modules.map((module) => (
           <button
-            key={m.id}
+            key={module.id}
             type="button"
-            onClick={() => setSelectedModule(m.id === selectedModule ? null : m.id)}
+            onClick={() => setSelectedModule(module.id === selectedModule ? null : module.id)}
             className={cn(
-              "w-full text-left text-xs px-2 py-1.5 rounded mb-0.5 transition-colors flex items-center gap-1.5",
-              selectedModule === m.id
-                ? "bg-blue-50 text-blue-700 font-medium"
+              "mb-0.5 flex w-full items-center gap-1.5 rounded px-2 py-1.5 text-left text-xs transition-colors",
+              selectedModule === module.id
+                ? "bg-blue-50 font-medium text-blue-700"
                 : "text-slate-600 hover:bg-slate-50",
             )}
           >
             <span
-              className="w-2 h-2 rounded-full flex-shrink-0"
-              style={{ backgroundColor: MODULE_COLORS[m.id] || "#94a3b8" }}
+              className="h-2 w-2 flex-shrink-0 rounded-full"
+              style={{ backgroundColor: MODULE_COLORS[module.id] ?? "#94a3b8" }}
             />
-            {moduleDisplayLabel(m.id)}
+            <span className="min-w-0 break-words">{moduleDisplayLabel(module.id)}</span>
           </button>
         ))}
+
         <div className="mt-4 border-t border-slate-100 pt-3">
-          <div className="text-[10px] text-slate-400 font-semibold tracking-wider mb-2 px-1">
+          <div className="mb-2 px-1 text-[10px] font-semibold tracking-wider text-slate-400">
             语义路径
           </div>
-          {[
-            "携转案件 → 资格评估 → 资格结论",
-            "资格评估 → 证据记录",
-            "阻塞原因 → 处理动作",
-            "资格规则 → 监管条款",
-          ].map((p) => (
-            <div
-              key={p}
-              className="text-[10px] text-slate-500 px-1 py-1 leading-relaxed border-b border-slate-50 last:border-0"
-            >
-              {p}
-            </div>
-          ))}
+          {data.keyPaths.length === 0 ? (
+            <div className="px-1 text-[10px] text-slate-400">暂无语义路径</div>
+          ) : (
+            data.keyPaths.map((path) => {
+              const source = localNameMap.get(path.sourceClass);
+              const target = localNameMap.get(path.targetClass);
+              return (
+                <div
+                  key={path.id}
+                  className="border-b border-slate-50 px-1 py-1 text-[10px] leading-relaxed text-slate-500 last:border-0"
+                >
+                  {source ? nodeDisplayLabel(source) : ui.unknownOntologyClass}
+                  {" → "}
+                  {edgeLabelMap.get(path.predicate) ?? ui.unknownOntologyRelation}
+                  {" → "}
+                  {target ? nodeDisplayLabel(target) : ui.unknownOntologyClass}
+                </div>
+              );
+            })
+          )}
         </div>
-      </div>
+      </aside>
 
-      <div className="flex-1 bg-slate-50 relative overflow-hidden min-w-0">
-        <div className="absolute top-3 left-3 right-3 flex items-center gap-2 z-10 min-w-0">
-          <div className="flex items-center gap-1.5 bg-white border border-slate-200 rounded-md px-3 py-1.5 shadow-sm flex-1 max-w-xs min-w-0">
-            <Search size={12} className="text-slate-400 flex-shrink-0" />
+      <section className="relative min-w-0 flex-1 overflow-auto bg-slate-50">
+        <div className="sticky left-3 top-3 z-10 flex w-[calc(100%-1.5rem)] min-w-0 items-center gap-2">
+          <label className="flex max-w-xs min-w-0 flex-1 items-center gap-1.5 rounded-md border border-slate-200 bg-white px-3 py-1.5 shadow-sm">
+            <Search size={12} className="flex-shrink-0 text-slate-400" />
+            <span className="sr-only">搜索本体概念</span>
             <input
-              type="text"
+              type="search"
               placeholder={ui.searchOntology}
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="text-xs bg-transparent outline-none text-slate-700 placeholder-slate-400 w-full min-w-0"
+              onChange={(event) => setSearchTerm(event.target.value)}
+              className="w-full min-w-0 bg-transparent text-xs text-slate-700 outline-none placeholder:text-slate-400"
             />
-          </div>
-          <div className="hidden md:flex items-center gap-1.5 flex-wrap min-w-0">
-            {modules.slice(0, 5).map((m) => (
-              <div key={m.id} className="flex items-center gap-1 text-[10px] text-slate-500">
-                <span
-                  className="w-2 h-2 rounded-full"
-                  style={{ backgroundColor: MODULE_COLORS[m.id] }}
-                />
-                {moduleDisplayLabel(m.id)}
-              </div>
-            ))}
-          </div>
+          </label>
+          {query.isFetching && (
+            <span role="status" className="flex items-center gap-1 rounded bg-white px-2 py-1 text-xs text-slate-400 shadow-sm">
+              <RefreshCw size={11} className="animate-spin" />正在刷新…
+            </span>
+          )}
         </div>
-        <svg viewBox="0 0 860 560" className="w-full h-full">
+
+        <svg
+          viewBox={`0 0 ${canvasWidth} ${canvasHeight}`}
+          style={{ width: canvasWidth, height: canvasHeight }}
+          aria-label="本体关系图"
+        >
           <defs>
-            <marker id="arrow-onto" markerWidth="7" markerHeight="7" refX="6" refY="2.5" orient="auto">
+            <marker id="arrow-ontology" markerWidth="7" markerHeight="7" refX="6" refY="2.5" orient="auto">
               <path d="M0,0 L0,5 L7,2.5 z" fill="#cbd5e1" />
             </marker>
           </defs>
-          {edges.map((e, i) => {
-            const from = nodeMap[e.from];
-            const to = nodeMap[e.to];
+          {edges.map((edge) => {
+            const from = nodeMap.get(edge.from);
+            const to = nodeMap.get(edge.to);
             if (!from || !to) return null;
-            const fromVisible =
-              !selectedModule ||
-              from.module === selectedModule ||
-              to.module === selectedModule;
-            if (!fromVisible) return null;
+            const edgeVisible = visibleNodeIds.has(from.id) && visibleNodeIds.has(to.id);
             const fromLabel = nodeDisplayLabel(from);
             const toLabel = nodeDisplayLabel(to);
             const fromWidth = Math.max(110, fromLabel.length * 13 + 16);
             const toWidth = Math.max(110, toLabel.length * 13 + 16);
-            const mx = (from.x + fromWidth / 2 + to.x + toWidth / 2) / 2;
-            const my = (from.y + to.y) / 2;
+            const middleX = (from.x + fromWidth / 2 + to.x + toWidth / 2) / 2;
+            const middleY = (from.y + to.y) / 2;
             return (
-              <g key={i}>
+              <g key={`${edge.from}|${edge.relation}|${edge.to}`} opacity={edgeVisible ? 1 : 0.12}>
                 <line
                   x1={from.x + fromWidth}
                   y1={from.y + 14}
                   x2={to.x}
                   y2={to.y + 14}
-                  stroke="#e2e8f0"
-                  strokeWidth="1.5"
-                  markerEnd="url(#arrow-onto)"
+                  stroke="#cbd5e1"
+                  strokeWidth="1.25"
+                  markerEnd="url(#arrow-ontology)"
                 />
-                <text x={mx} y={my + 8} fontSize="8" fill="#94a3b8" textAnchor="middle">
-                  {edgeDisplayLabel(e)}
+                <text x={middleX} y={middleY + 8} fontSize="8" fill="#64748b" textAnchor="middle">
+                  {edgeDisplayLabel(edge)}
                 </text>
               </g>
             );
           })}
-          {nodes.map((n) => {
-            const visible = visibleNodes.some((v) => v.id === n.id);
-            const isSelected = selectedNode?.id === n.id;
-            const label = nodeDisplayLabel(n);
-            const nodeWidth = Math.max(110, label.length * 13 + 16);
+          {nodes.map((node) => {
+            const visible = visibleNodeIds.has(node.id);
+            const selected = selectedNode?.id === node.id;
+            const label = nodeDisplayLabel(node);
+            const width = Math.max(110, label.length * 13 + 16);
+            const color = MODULE_COLORS[node.module] ?? "#475569";
             return (
               <g
-                key={n.id}
-                onClick={() => setSelectedNode(isSelected ? null : n)}
-                className="cursor-pointer"
-                style={{ opacity: visible ? 1 : 0.2 }}
+                key={node.id}
+                role="button"
+                tabIndex={0}
+                onClick={() => setSelectedNodeId(selected ? null : node.id)}
+                onKeyDown={(event) => {
+                  if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    setSelectedNodeId(selected ? null : node.id);
+                  }
+                }}
+                className="cursor-pointer outline-none"
+                opacity={visible ? 1 : 0.15}
               >
                 <rect
-                  x={n.x}
-                  y={n.y}
-                  width={nodeWidth}
+                  x={node.x}
+                  y={node.y}
+                  width={width}
                   height={28}
                   rx={4}
-                  fill={MODULE_BG[n.module] || "#f8fafc"}
-                  stroke={isSelected ? MODULE_COLORS[n.module] : "#e2e8f0"}
-                  strokeWidth={isSelected ? 2 : 1}
+                  fill={MODULE_BACKGROUNDS[node.module] ?? "#f8fafc"}
+                  stroke={selected ? color : "#cbd5e1"}
+                  strokeWidth={selected ? 2 : 1}
                 />
                 <text
-                  x={n.x + nodeWidth / 2}
-                  y={n.y + 18}
+                  x={node.x + width / 2}
+                  y={node.y + 18}
                   fontSize="11"
                   fontWeight="500"
-                  fill={MODULE_COLORS[n.module] || "#475569"}
+                  fill={color}
                   textAnchor="middle"
                 >
                   {label}
@@ -249,78 +287,67 @@ export function OntologyBrowser() {
             );
           })}
         </svg>
-      </div>
+      </section>
 
-      <div className="w-64 border-l border-slate-200 bg-white overflow-y-auto flex-shrink-0 p-4">
+      <aside className="w-64 flex-shrink-0 overflow-y-auto border-l border-slate-200 bg-white p-4">
         {selectedNode ? (
-          <div className="text-xs space-y-3">
+          <div className="space-y-3 text-xs">
             <div className="flex items-start justify-between gap-2">
               <div className="min-w-0">
-                <div className="font-semibold text-slate-800 text-sm mb-1 break-words">
+                <div className="mb-1 break-words text-sm font-semibold text-slate-800">
                   {nodeDisplayLabel(selectedNode)}
                 </div>
-                <ModuleTag module={selectedNode.module} />
+                <span
+                  className="inline-flex rounded px-1.5 py-0.5 text-xs font-medium"
+                  style={{
+                    color: MODULE_COLORS[selectedNode.module] ?? "#475569",
+                    backgroundColor: MODULE_BACKGROUNDS[selectedNode.module] ?? "#f1f5f9",
+                  }}
+                >
+                  {moduleDisplayLabel(selectedNode.module)}
+                </span>
               </div>
               <button
                 type="button"
-                onClick={() => setSelectedNode(null)}
-                className="text-slate-300 hover:text-slate-500"
+                aria-label="关闭详情"
+                onClick={() => setSelectedNodeId(null)}
+                className="text-slate-400 hover:text-slate-600"
               >
                 <X size={14} />
               </button>
             </div>
-            <div className="space-y-2 border-t border-slate-100 pt-3">
-              {[
-                {
-                  label: "类型",
-                  value: translateOrUnknown(
-                    ontologyTypeLabels,
-                    selectedNode.type,
-                    ui.unknownOntologyClass,
-                  ),
-                },
-                {
-                  label: "模块",
-                  value: moduleDisplayLabel(selectedNode.module),
-                },
-                {
-                  label: "本地名称",
-                  value: nodeDisplayLabel(selectedNode),
-                },
-              ].map((f) => (
-                <div key={f.label}>
-                  <div className="text-[10px] text-slate-400 tracking-wide mb-0.5">{f.label}</div>
-                  <div className="text-slate-700 break-all">{f.value}</div>
-                </div>
-              ))}
+            <dl className="space-y-2 border-t border-slate-100 pt-3">
               <div>
-                <div className="text-[10px] text-slate-400 tracking-wide mb-1">定义</div>
-                <div className="text-slate-600 leading-relaxed">{selectedNode.definition}</div>
+                <dt className="mb-0.5 text-[10px] tracking-wide text-slate-400">类型</dt>
+                <dd className="text-slate-700">
+                  {translateOrUnknown(ontologyTypeLabels, selectedNode.type, ui.unknownOntologyClass)}
+                </dd>
               </div>
               <div>
-                <div className="text-[10px] text-slate-400 tracking-wide mb-1">相关关系</div>
-                {edges
-                  .filter((e) => e.from === selectedNode.id || e.to === selectedNode.id)
-                  .map((e) => (
-                    <div
-                      key={e.relation + e.from + e.to}
-                      className="text-[10px] text-blue-600 py-0.5"
-                    >
-                      {edgeDisplayLabel(e)}
-                    </div>
-                  ))}
+                <dt className="mb-1 text-[10px] tracking-wide text-slate-400">相关关系</dt>
+                <dd className="space-y-1">
+                  {edges.filter((edge) => edge.from === selectedNode.id || edge.to === selectedNode.id).length === 0 ? (
+                    <span className="text-slate-400">暂无相关关系</span>
+                  ) : (
+                    edges
+                      .filter((edge) => edge.from === selectedNode.id || edge.to === selectedNode.id)
+                      .map((edge) => (
+                        <div key={`${edge.from}|${edge.relation}|${edge.to}`} className="text-blue-700">
+                          {edgeDisplayLabel(edge)}
+                        </div>
+                      ))
+                  )}
+                </dd>
               </div>
-            </div>
+            </dl>
           </div>
         ) : (
-          <div className="text-center text-slate-400 text-xs mt-12">
+          <div className="mt-12 text-center text-xs text-slate-400">
             <Network size={28} className="mx-auto mb-2 opacity-30" />
-            点击图中节点查看
-            <br />
-            本体类详情
+            点击图中节点查看本体类详情
           </div>
         )}
-      </div>
+      </aside>
     </div>
   );
 }

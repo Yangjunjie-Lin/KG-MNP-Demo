@@ -4,8 +4,8 @@ import type {
   CaseSummary,
   EvidenceItem,
   RuleResult,
-} from "../types/assessment";
-import type { EvidenceStatus, PublicationStatus } from "../types/common";
+} from "../../app/types/assessment";
+import type { EvidenceStatus, PublicationStatus } from "../../app/types/common";
 
 function evidenceBase(
   caseNum: string,

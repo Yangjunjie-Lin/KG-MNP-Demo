@@ -1,4 +1,4 @@
-import { caseLabels, translateOrUnknown, ui } from "../i18n/zh-CN";
+import { caseLabels, translateOrUnknown, ui } from "../../app/i18n/zh-CN";
 
 export interface CompetencyQuestion {
   id: string;

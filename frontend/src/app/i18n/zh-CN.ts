@@ -29,6 +29,7 @@ export const decisionLabels: Record<string, string> = {
   BLOCKED: "不可携转",
   MANUAL_REVIEW: "需要人工复核",
   CONDITIONAL: "有条件通过",
+  UNKNOWN: "结论未识别",
 };
 
 export const stepStatusLabels: Record<string, string> = {
@@ -65,6 +66,7 @@ export const pipelineStepLabels: Record<string, string> = {
   rdf_builder: "知识图谱构建",
   "rdf-builder": "知识图谱构建",
   "Input SHACL": "输入图约束校验",
+  input_graph: "输入图约束校验",
   input_shacl: "输入图约束校验",
   "input-shacl": "输入图约束校验",
   "OWL-RL": "语义关系推导",
@@ -77,6 +79,7 @@ export const pipelineStepLabels: Record<string, string> = {
   assessment: "评估结果生成",
   assessment_materialization: "评估结果生成",
   "Assessment SHACL": "评估图约束校验",
+  assessment_graph: "评估图约束校验",
   assessment_shacl: "评估图约束校验",
   "assessment-shacl": "评估图约束校验",
   "SPARQL Trace": "可追溯关系查询",
@@ -86,10 +89,15 @@ export const pipelineStepLabels: Record<string, string> = {
 
 export const evidenceTypeLabels: Record<string, string> = {
   IDENTITY_MATCH: "实名一致性证据",
+  IdentityEvidence: "实名一致性证据",
   NUMBER_STATUS: "号码状态证据",
+  NumberStatusEvidence: "号码状态证据",
   BILLING_BALANCE: "计费余额证据",
+  BillingEvidence: "计费余额证据",
   CONTRACT_STATUS: "合约状态证据",
+  ContractEvidence: "合约状态证据",
   PORTING_HISTORY: "携转历史证据",
+  PortingHistoryEvidence: "携转历史证据",
 };
 
 export const blockingReasonLabels: Record<string, string> = {
@@ -98,6 +106,7 @@ export const blockingReasonLabels: Record<string, string> = {
   OUTSTANDING_BALANCE: "存在未结费用",
   ACTIVE_CONTRACT_RESTRICTION: "存在有效合约限制",
   PORTING_INTERVAL_TOO_SHORT: "携转间隔不足",
+  PORTING_INTERVAL_NOT_MET: "携转间隔不足",
   MISSING_OR_EXPIRED_EVIDENCE: "关键证据缺失或过期",
   AUTHORIZATION_CODE_EXPIRED: "授权码已过期",
   AUTHORIZATION_CODE_MISSING: "授权码不存在",
@@ -112,6 +121,7 @@ export const remediationActionLabels: Record<string, string> = {
   SETTLE_OUTSTANDING_FEES: "结清未付费用",
   WAIT_OR_TERMINATE_CONTRACT: "等待合约到期或办理解约",
   WAIT_PORTING_INTERVAL: "等待满足携转间隔",
+  WAIT_UNTIL_INTERVAL_MET: "等待满足携转间隔",
 };
 
 export const regulatoryClauseLabels: Record<string, string> = {
@@ -124,6 +134,7 @@ export const regulatoryClauseLabels: Record<string, string> = {
 
 export const processStepLabels: Record<string, string> = {
   ELIGIBILITY_CHECK: "资格检查",
+  AUTHORIZATION: "授权码申请",
   AUTHORIZATION_CODE_REQUEST: "授权码申请",
   PORT_IN_SUBMISSION: "转入申请提交",
   PORTING_EXECUTION: "携转执行",
@@ -198,6 +209,17 @@ export const ontologyClassLabels: Record<string, string> = {
   IdentityDocument: "身份证件",
   Invoice: "账单",
   ProcessStep: "流程步骤",
+  BlockingDecision: "不可携转结论",
+  ConditionalDecision: "有条件结论",
+  EligibleDecision: "可携转结论",
+  ManualReviewDecision: "人工复核结论",
+  AssessmentDependency: "评估依赖关系",
+  InformationSystem: "信息系统",
+  MappingRecord: "映射记录",
+  RegulatoryDocument: "监管文件",
+  ServiceSubscription: "业务订阅",
+  SystemObservation: "系统观测",
+  TelecomService: "电信业务",
 };
 
 export const ontologyTypeLabels: Record<string, string> = {
@@ -210,10 +232,12 @@ export const ontologyTypeLabels: Record<string, string> = {
 };
 
 export const ontologyRelationLabels: Record<string, string> = {
+  subClassOf: "属于上位类",
   hasEligibilityAssessment: "包含资格评估",
   hasAssessment: "包含资格评估",
   usesEvidence: "使用证据",
   evaluatedByRule: "依据规则评估",
+  evaluatedBy: "依据规则评估",
   triggeredBy: "依据规则评估",
   producesDecision: "产生资格结论",
   hasDecision: "产生资格结论",
@@ -233,6 +257,54 @@ export const ontologyRelationLabels: Record<string, string> = {
   references: "引用",
   hasInvoice: "包含账单",
   hasEligibilityStatus: "包含资格状态",
+  partOfDocument: "属于监管文件",
+  dependsOnEvidence: "依赖证据",
+  dependsOnRuleVersion: "依赖规则版本",
+  supportedByEvidence: "由证据支持",
+  triggeredByRule: "由规则触发",
+  triggeredByRuleVersion: "由规则版本触发",
+  aboutCase: "关于案件",
+  affectsAssessment: "影响评估",
+  billedThrough: "通过账户计费",
+  concernsNumber: "涉及号码",
+  coversService: "涵盖业务",
+  currentProcessStep: "当前流程步骤",
+  dependsOn: "依赖",
+  evaluatedAtTime: "在指定时间评估",
+  evidenceForCase: "作为案件证据",
+  governedByContract: "受合约约束",
+  hasAuthorizationCode: "具有授权码",
+  hasBill: "包含账单",
+  hasCaseEvidence: "包含案件证据",
+  hasCaseStatus: "具有案件状态",
+  hasCharge: "包含费用项",
+  hasCommitmentPeriod: "具有承诺期",
+  hasEvidenceValidity: "具有证据有效性",
+  hasPayment: "包含缴费",
+  hasPaymentArrangementRecord: "具有缴费安排",
+  hasProcessEvent: "具有流程事件",
+  hasProcessStep: "具有流程步骤",
+  hasRuleVersion: "具有规则版本",
+  hasSourceSystem: "来自信息系统",
+  hasSubscription: "具有业务订阅",
+  hasTerminationAgreement: "具有解除协议",
+  markedForReassessment: "标记为需要重评",
+  nextProcessStep: "下一流程步骤",
+  observedAtTime: "在指定时间观测",
+  observesAccount: "观测账户",
+  ownsPhoneNumber: "持有号码",
+  recordedAtTime: "在指定时间记录",
+  relatedAccount: "关联账户",
+  requestedBy: "由订户申请",
+  settlesAccount: "结清账户",
+  subscribesToService: "订阅业务",
+  supersedesRuleVersion: "取代规则版本",
+  usesRuleVersion: "使用规则版本",
+  assertsOwnership: "主张号码归属",
+  hasIdentityDocument: "持有身份证件",
+  hasRealNameRegistration: "具有实名登记",
+  ownershipHolder: "归属主体",
+  verifiedBy: "由核验记录验证",
 };
 
 export const moduleLabels: Record<string, string> = {
@@ -250,6 +322,8 @@ export const moduleLabels: Record<string, string> = {
   COMPLIANCE: "资格",
   Evidence: "证据",
   EVIDENCE_TIME: "证据",
+  CODE_LIST: "受控码表",
+  ALIGNMENTS: "外部对齐",
   Rules: "规则",
   Regulatory: "监管",
 };
@@ -365,6 +439,7 @@ export const ui = {
   unknownDataSource: "数据来源未识别",
   unknownClause: "监管条款未识别",
   unknownAction: "处理动作未识别",
+  unknownReason: "阻塞原因未识别",
   unknownCase: "案例名称未识别",
   unknownModule: "模块未识别",
   case06HistoricalAssessment: "案例六历史评估",

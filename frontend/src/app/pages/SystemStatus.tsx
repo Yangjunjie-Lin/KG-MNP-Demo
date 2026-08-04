@@ -1,78 +1,76 @@
+import { ApiErrorState, EmptyState, PageSkeleton } from "../components/dataStates";
 import { MetricCard } from "../components/MetricCard";
 import { SectionHeader } from "../components/SectionHeader";
-import { cn } from "../utils/cn";
-import { serviceStatusLabels, t } from "../i18n/zh-CN";
+import { useSystemStatus } from "../query/hooks/useAppQueries";
 
-const SERVICES = [
-  { name: "本体推理服务", status: "ONLINE", latency: "42 毫秒", uptime: "99.97%", checkedAt: "2026-07-01 09:12" },
-  { name: "约束校验服务", status: "ONLINE", latency: "18 毫秒", uptime: "100%", checkedAt: "2026-07-01 09:12" },
-  { name: "规则引擎", status: "ONLINE", latency: "67 毫秒", uptime: "99.94%", checkedAt: "2026-07-01 09:11" },
-  { name: "图谱存储", status: "ONLINE", latency: "12 毫秒", uptime: "99.99%", checkedAt: "2026-07-01 09:12" },
-  { name: "查询接口", status: "ONLINE", latency: "85 毫秒", uptime: "99.91%", checkedAt: "2026-07-01 09:10" },
-  { name: "数据规范注册", status: "ONLINE", latency: "8 毫秒", uptime: "100%", checkedAt: "2026-07-01 09:12" },
-  { name: "证据采集服务", status: "DEGRADED", latency: "340 毫秒", uptime: "98.12%", checkedAt: "2026-07-01 09:09" },
-  { name: "审计日志服务", status: "ONLINE", latency: "22 毫秒", uptime: "99.88%", checkedAt: "2026-07-01 09:12" },
-];
+const backendLabels: Record<string, string> = {
+  rdf: "本地语义图谱",
+};
+
+function formatCheckedAt(value: string): string {
+  const date = new Date(value);
+  return Number.isNaN(date.getTime()) ? "暂无信息" : date.toLocaleString("zh-CN");
+}
+
+function yesNo(value: boolean): string {
+  return value ? "是" : "否";
+}
 
 export function SystemStatus() {
-  const online = SERVICES.filter((s) => s.status === "ONLINE").length;
-  const degraded = SERVICES.filter((s) => s.status === "DEGRADED").length;
+  const query = useSystemStatus();
+
+  if (query.isLoading) return <PageSkeleton />;
+  if (query.isError) {
+    return <ApiErrorState error={query.error} onRetry={() => void query.refetch()} />;
+  }
+  if (!query.data) return <EmptyState message="暂无系统状态信息" />;
+
+  const status = query.data;
+  const backendLabel = backendLabels[status.backend.toLowerCase()] ?? "后端类型未识别";
 
   return (
-    <div className="p-6 space-y-5 min-w-0 overflow-x-hidden">
-      <SectionHeader title="系统状态" sub="实时监控" />
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        <MetricCard label="全部服务" value={SERVICES.length} sub="监控中" />
-        <MetricCard label="运行正常" value={online} color="text-emerald-600" />
-        <MetricCard label="性能降级" value={degraded} color="text-amber-600" />
-        <MetricCard label="系统可用性" value="99.72%" sub="最近三十天" color="text-blue-700" />
+    <div className="min-w-0 space-y-5 overflow-x-hidden p-6">
+      <div className="flex flex-wrap items-start justify-between gap-2">
+        <SectionHeader title="系统状态" sub="实时监控" />
+        {query.isFetching && !query.isLoading && (
+          <span role="status" className="text-xs text-slate-400">
+            正在刷新状态…
+          </span>
+        )}
       </div>
-      <div className="bg-white border border-slate-200 rounded-lg overflow-x-auto">
-        <table className="w-full text-xs min-w-[640px]">
-          <thead>
-            <tr className="border-b border-slate-200 bg-slate-50">
-              {["服务名称", "状态", "响应延迟", "可用率", "最后检查"].map((h) => (
-                <th
-                  key={h}
-                  className="px-4 py-3 text-left font-semibold text-slate-500 tracking-wide text-[10px]"
-                >
-                  {h}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {SERVICES.map((s, i) => (
-              <tr
-                key={s.name}
-                className={cn("border-b border-slate-100", i % 2 === 0 ? "" : "bg-slate-50/50")}
-              >
-                <td className="px-4 py-3 text-slate-700">{s.name}</td>
-                <td className="px-4 py-3">
-                  <span
-                    className={cn(
-                      "inline-flex items-center gap-1 text-[10px] font-medium px-2 py-0.5 rounded",
-                      s.status === "ONLINE"
-                        ? "text-emerald-700 bg-emerald-50"
-                        : "text-amber-700 bg-amber-50",
-                    )}
-                  >
-                    <span
-                      className={cn(
-                        "w-1.5 h-1.5 rounded-full",
-                        s.status === "ONLINE" ? "bg-emerald-500" : "bg-amber-500",
-                      )}
-                    />
-                    {t(serviceStatusLabels, s.status)}
-                  </span>
-                </td>
-                <td className="px-4 py-3 text-slate-600">{s.latency}</td>
-                <td className="px-4 py-3 text-slate-600">{s.uptime}</td>
-                <td className="px-4 py-3 text-slate-400">{s.checkedAt}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+        <MetricCard
+          label="服务可访问"
+          value={status.reachable ? "是" : "否"}
+          color={status.reachable ? "text-emerald-600" : "text-red-600"}
+        />
+        <MetricCard
+          label="数据库就绪"
+          value={status.databaseReady ? "是" : "否"}
+          color={status.databaseReady ? "text-emerald-600" : "text-red-600"}
+        />
+        <MetricCard label="接口版本" value={status.apiVersion || "暂无信息"} />
+        <MetricCard label="数据规范版本" value={status.schemaVersion || "暂无信息"} />
+      </div>
+
+      <div className="overflow-hidden rounded-lg border border-slate-200 bg-white">
+        <dl className="divide-y divide-slate-100 text-sm">
+          {[
+            ["服务状态", status.reachable ? "可访问" : "不可访问"],
+            ["数据库状态", status.databaseReady ? "已就绪" : "未就绪"],
+            ["当前接口版本", status.apiVersion || "暂无信息"],
+            ["数据规范版本", status.schemaVersion || "暂无信息"],
+            ["后端类型", backendLabel],
+            ["是否必须使用图数据库", yesNo(status.neo4jRequired)],
+            ["检查时间", formatCheckedAt(status.checkedAt)],
+          ].map(([label, value]) => (
+            <div key={label} className="grid grid-cols-[minmax(9rem,0.45fr)_1fr] gap-4 px-4 py-3">
+              <dt className="text-xs text-slate-500">{label}</dt>
+              <dd className="min-w-0 break-words text-xs font-medium text-slate-700">{value}</dd>
+            </div>
+          ))}
+        </dl>
       </div>
     </div>
   );

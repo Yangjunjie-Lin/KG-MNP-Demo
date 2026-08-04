@@ -9,7 +9,7 @@ export type PageId =
   | "system-status"
   | "result";
 
-export type Decision = "ELIGIBLE" | "BLOCKED" | "MANUAL_REVIEW" | "CONDITIONAL";
+export type Decision = "ELIGIBLE" | "BLOCKED" | "MANUAL_REVIEW" | "CONDITIONAL" | "UNKNOWN";
 export type StepStatus =
   | "PASSED"
   | "FAILED"

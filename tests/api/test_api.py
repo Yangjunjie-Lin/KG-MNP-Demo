@@ -37,6 +37,9 @@ def test_health_ready_meta_openapi(client):
     assert c.get("/api/v1/health").status_code == 200
     assert c.get("/api/v1/ready").json()["status"] == "ready"
     assert c.get("/api/v1/meta").status_code == 200
+    empty_latest = c.get("/api/v1/cases/CASE-03/latest")
+    assert empty_latest.status_code == 200
+    assert empty_latest.json() is None
     openapi = c.get("/openapi.json").json()
     assert "/api/v1/assessments" in openapi["paths"]
     schema = openapi["components"]["schemas"]

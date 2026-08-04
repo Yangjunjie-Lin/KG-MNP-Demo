@@ -1,187 +1,20 @@
-import { useEffect, useMemo, useState } from "react";
-import { Eye, Search } from "lucide-react";
+import { Eye, Play, Search } from "lucide-react";
+import { useMemo, useState } from "react";
+import { useNavigate } from "react-router";
+import { ApiErrorState, EmptyState, MutationStatus, PageSkeleton } from "../components/dataStates";
 import { DecisionBadge } from "../components/StatusBadges";
-import { cn } from "../utils/cn";
-import {
-  blockingReasonLabels,
-  caseLabels,
-  decisionLabels,
-  publicationStatusLabels,
-  translateOrUnknown,
-  ui,
-} from "../i18n/zh-CN";
-import { listCases } from "../services/caseService";
-import type { CaseSummary } from "../types/assessment";
-import type { Decision } from "../types/common";
+import { caseLabels, translateOrUnknown, ui } from "../i18n/zh-CN";
+import { useCases, useRunExample } from "../query/hooks/useAppQueries";
 
-function formatTime(iso: string): string {
-  return iso.replace("T", " ").replace("Z", "").slice(0, 16);
-}
-
-export function CaseHistory({
-  onCaseClick,
-}: {
-  onCaseClick: (caseId: string) => void;
-}) {
-  const [cases, setCases] = useState<CaseSummary[]>([]);
-  const [search, setSearch] = useState("");
-  const [filterDecision, setFilterDecision] = useState<string>("ALL");
-  const [filterPublish, setFilterPublish] = useState<string>("ALL");
-
-  useEffect(() => {
-    void listCases().then(setCases);
-  }, []);
-
-  const filtered = useMemo(
-    () =>
-      cases.filter((c) => {
-        const label = translateOrUnknown(caseLabels, c.id, ui.unknownCase);
-        const matchSearch =
-          !search ||
-          label.includes(search) ||
-          c.title.includes(search) ||
-          c.scenario.includes(search);
-        const matchDecision =
-          filterDecision === "ALL" || c.decision === filterDecision;
-        const matchPublish =
-          filterPublish === "ALL" || c.publicationStatus === filterPublish;
-        return matchSearch && matchDecision && matchPublish;
-      }),
-    [cases, search, filterDecision, filterPublish],
-  );
-
-  return (
-    <div className="p-6 space-y-4 min-w-0 overflow-x-hidden">
-      <div className="flex flex-wrap items-center gap-3">
-        <div className="flex items-center gap-1.5 bg-white border border-slate-200 rounded-md px-3 py-1.5 flex-1 min-w-[180px] max-w-xs">
-          <Search size={13} className="text-slate-400 flex-shrink-0" />
-          <input
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            placeholder="搜索案例…"
-            className="text-xs bg-transparent outline-none text-slate-700 placeholder-slate-400 w-full min-w-0"
-          />
-        </div>
-        <select
-          value={filterDecision}
-          onChange={(e) => setFilterDecision(e.target.value)}
-          className="text-xs border border-slate-200 rounded px-2 py-1.5 bg-white text-slate-700 outline-none"
-        >
-          <option value="ALL">所有结论</option>
-          {(Object.keys(decisionLabels) as Decision[]).map((d) => (
-            <option key={d} value={d}>
-              {decisionLabels[d]}
-            </option>
-          ))}
-        </select>
-        <select
-          value={filterPublish}
-          onChange={(e) => setFilterPublish(e.target.value)}
-          className="text-xs border border-slate-200 rounded px-2 py-1.5 bg-white text-slate-700 outline-none"
-        >
-          <option value="ALL">全部发布状态</option>
-          <option value="PUBLISHABLE">{publicationStatusLabels.PUBLISHABLE}</option>
-          <option value="NOT_PUBLISHABLE">
-            {publicationStatusLabels.NOT_PUBLISHABLE}
-          </option>
-        </select>
-        <div className="ml-auto text-xs text-slate-400">
-          {filtered.length} / {cases.length} 案件
-        </div>
-      </div>
-
-      <div className="bg-white border border-slate-200 rounded-lg overflow-x-auto">
-        <table className="w-full text-xs min-w-[720px]">
-          <thead>
-            <tr className="border-b border-slate-200 bg-slate-50">
-              {[
-                ui.caseName,
-                ui.latestDecision,
-                ui.assessmentTime,
-                ui.publicationStatus,
-                ui.blockingReason,
-                ui.executionCount,
-                ui.actions,
-              ].map((h) => (
-                <th
-                  key={h}
-                  className="px-4 py-3 text-left font-semibold text-slate-500 tracking-wide text-[10px]"
-                >
-                  {h}
-                </th>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {filtered.map((c, i) => (
-              <tr
-                key={c.id}
-                className={cn(
-                  "border-b border-slate-100 hover:bg-slate-50 cursor-pointer",
-                  i % 2 === 0 ? "" : "bg-slate-50/50",
-                )}
-                onClick={() => onCaseClick(c.id)}
-              >
-                <td className="px-4 py-3">
-                  <div className="text-slate-800 font-medium">
-                    {translateOrUnknown(caseLabels, c.id, ui.unknownCase)}
-                  </div>
-                  <div className="text-[10px] text-slate-400 mt-0.5">{c.title}</div>
-                </td>
-                <td className="px-4 py-3">
-                  <DecisionBadge decision={c.decision} />
-                </td>
-                <td className="px-4 py-3 text-slate-500">
-                  {formatTime(c.assessmentTime)}
-                </td>
-                <td className="px-4 py-3">
-                  <span
-                    className={cn(
-                      "text-[10px] font-medium px-1.5 py-0.5 rounded",
-                      c.publicationStatus === "PUBLISHABLE"
-                        ? "text-emerald-700 bg-emerald-50"
-                        : "text-amber-600 bg-amber-50",
-                    )}
-                  >
-                    {translateOrUnknown(
-                      publicationStatusLabels,
-                      c.publicationStatus,
-                      ui.unknownStatus,
-                    )}
-                  </span>
-                </td>
-                <td className="px-4 py-3">
-                  <div className="flex flex-wrap gap-1">
-                    {c.blockingReasons.length === 0 ? (
-                      <span className="text-slate-300 text-[10px]">—</span>
-                    ) : (
-                      c.blockingReasons.map((r) => (
-                        <span
-                          key={r}
-                          className="text-[10px] bg-red-50 text-red-600 px-1 py-0.5 rounded"
-                        >
-                          {translateOrUnknown(blockingReasonLabels, r, ui.unknownStatus)}
-                        </span>
-                      ))
-                    )}
-                  </div>
-                </td>
-                <td className="px-4 py-3 text-slate-500 text-center">
-                  {c.executionCount}
-                </td>
-                <td className="px-4 py-3">
-                  <button
-                    type="button"
-                    className="flex items-center gap-1 text-blue-600 hover:text-blue-700 text-[10px] font-medium"
-                  >
-                    <Eye size={11} /> 查看
-                  </button>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-    </div>
-  );
+export function CaseHistory() {
+  const navigate = useNavigate(); const query = useCases(); const run = useRunExample(); const [search, setSearch] = useState("");
+  const items = useMemo(() => (query.data ?? []).filter((item) => !search || translateOrUnknown(caseLabels, item.id, ui.unknownCase).includes(search) || item.scenario.includes(search)), [query.data, search]);
+  if (query.isLoading) return <PageSkeleton />;
+  if (query.isError) return <ApiErrorState error={query.error} onRetry={() => void query.refetch()} />;
+  const activate = (caseId: string, executionId: string | null) => {
+    if (executionId) { navigate(`/assessments/${executionId}`); return; }
+    if (!window.confirm("该案例尚未运行，是否现在提交后端执行？")) return;
+    run.mutate(caseId, { onSuccess: (assessment) => navigate(`/assessments/${assessment.executionId}`) });
+  };
+  return <div className="min-w-0 space-y-4 overflow-x-hidden p-6"><div className="flex flex-wrap items-center gap-3"><div className="flex max-w-xs items-center gap-2 rounded-md border border-slate-200 bg-white px-3 py-2"><Search size={14} className="text-slate-400" /><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="搜索案例" className="min-w-0 flex-1 bg-transparent text-xs outline-none" /></div>{query.isFetching && <span role="status" className="text-xs text-slate-400">正在刷新案件历史…</span>}</div>{items.length === 0 ? <EmptyState /> : <div className="overflow-x-auto rounded-lg border border-slate-200 bg-white"><table className="w-full min-w-[720px] text-xs"><thead><tr className="border-b bg-slate-50 text-left text-slate-500"><th className="px-4 py-3">案例</th><th className="px-4 py-3">最新结论</th><th className="px-4 py-3">评估时间</th><th className="px-4 py-3">执行次数</th><th className="px-4 py-3">操作</th></tr></thead><tbody>{items.map((item) => <tr key={item.id} className="border-b border-slate-100 hover:bg-slate-50"><td className="px-4 py-3"><div className="font-medium text-slate-800">{translateOrUnknown(caseLabels, item.id, ui.unknownCase)}</div><div className="mt-1 text-[10px] text-slate-400">{item.scenario}</div></td><td className="px-4 py-3">{item.hasHistory ? <DecisionBadge decision={item.decision} /> : <span className="text-slate-400">尚未运行</span>}</td><td className="px-4 py-3 text-slate-500">{item.assessmentTime ? item.assessmentTime.slice(0, 19).replace("T", " ") : "尚未运行"}</td><td className="px-4 py-3 text-slate-500">{item.executionCount}</td><td className="px-4 py-3"><button type="button" disabled={run.isPending} onClick={() => activate(item.id, item.latestExecutionId)} className="inline-flex items-center gap-1 font-medium text-blue-600">{item.hasHistory ? <><Eye size={12} />查看详情</> : <><Play size={12} />运行案例</>}</button></td></tr>)}</tbody></table></div>}<MutationStatus pending={run.isPending} error={run.error} /></div>;
 }

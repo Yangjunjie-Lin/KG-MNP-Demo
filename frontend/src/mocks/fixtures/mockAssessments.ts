@@ -1,5 +1,5 @@
-import type { AssessmentDetail, PipelineStep } from "../types/assessment";
-import { pipelineStepLabels } from "../i18n/zh-CN";
+import type { AssessmentDetail, PipelineStep } from "../../app/types/assessment";
+import { pipelineStepLabels } from "../../app/i18n/zh-CN";
 import { getMockCaseById, mockCases } from "./mockCases";
 
 export const pipelineSteps: PipelineStep[] = [

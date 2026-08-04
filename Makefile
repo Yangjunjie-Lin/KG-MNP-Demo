@@ -1,7 +1,7 @@
-.PHONY: install test test-neo4j run-all validate-case03 evaluate-case03 trace-case03 docs check-refs neo4j-up neo4j-ping
+.PHONY: install test test-neo4j run-all validate-case03 evaluate-case03 trace-case03 docs check-refs neo4j-up neo4j-ping api frontend fullstack verify-frontend verify-fullstack
 
 install:
-	python -m pip install -e ".[dev,neo4j]"
+	python -m pip install -e ".[dev,api]"
 
 test:
 	python -m pytest
@@ -33,3 +33,27 @@ check-refs:
 
 docs:
 	bash scripts/generate_docs.sh
+
+api:
+	python -m uvicorn kg_mnp_demo.api.app:app --host 127.0.0.1 --port 8000
+
+frontend:
+	cd frontend && npm run dev -- --host 127.0.0.1 --port 5173 --strictPort
+
+fullstack:
+	python scripts/run_fullstack.py
+
+verify-frontend:
+	cd frontend && npm ci && npm run api:check && npm run verify
+
+verify-fullstack:
+	python -m pytest -q
+	python scripts/check_references.py
+	python scripts/check_rule_versions.py
+	python scripts/export_openapi.py
+	git diff --exit-code docs/api/openapi.json
+	$(MAKE) verify-frontend
+	cd frontend && npx playwright install chromium
+	python scripts/run_fullstack.py --reset-seed --playwright
+	docker compose -f docker-compose.fullstack.yml config
+	docker compose -f docker-compose.fullstack.yml build

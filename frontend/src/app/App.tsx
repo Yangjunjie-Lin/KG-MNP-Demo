@@ -1,86 +1,29 @@
-import { useState } from "react";
+import { Navigate, Route, Routes } from "react-router";
 import { AppLayout } from "./layout/AppLayout";
-import { SystemOverview } from "./pages/SystemOverview";
-import { NewAssessment } from "./pages/NewAssessment";
-import { CaseHistory } from "./pages/CaseHistory";
 import { AssessmentResult } from "./pages/AssessmentResult";
-import { OntologyBrowser } from "./pages/OntologyBrowser";
+import { CaseHistory } from "./pages/CaseHistory";
 import { CompetencyQuestions } from "./pages/CompetencyQuestions";
+import { NewAssessment } from "./pages/NewAssessment";
+import { OntologyBrowser } from "./pages/OntologyBrowser";
 import { RulesAndVersions } from "./pages/RulesAndVersions";
-import { WhatIfExperiment } from "./pages/WhatIfExperiment";
+import { SystemOverview } from "./pages/SystemOverview";
 import { SystemStatus } from "./pages/SystemStatus";
-import type { PageId } from "./types/common";
+import { WhatIfExperiment } from "./pages/WhatIfExperiment";
+
+function NotFound() { return <div className="m-6 rounded border border-slate-200 bg-white p-10 text-center"><h1 className="mb-2 text-lg font-semibold text-slate-800">未找到相关页面</h1><p className="text-sm text-slate-500">请检查地址或返回系统总览。</p></div>; }
 
 export default function App() {
-  const [page, setPage] = useState<PageId>("overview");
-  const [selectedCaseId, setSelectedCaseId] = useState<string | null>(null);
-
-  const openCase = (caseId: string) => {
-    setSelectedCaseId(caseId);
-    setPage("result");
-  };
-
-  const handleBack = () => {
-    setPage("case-history");
-    setSelectedCaseId(null);
-  };
-
-  const handleRunDemo = () => {
-    openCase("CASE-03");
-  };
-
-  const handleNavigate = (p: PageId) => {
-    setPage(p);
-    if (p !== "result") setSelectedCaseId(null);
-  };
-
-  return (
-    <AppLayout current={page} onNavigate={handleNavigate} onRunDemo={handleRunDemo}>
-      {page === "overview" && (
-        <div className="flex-1 overflow-y-auto overflow-x-hidden min-w-0">
-          <SystemOverview onCaseClick={openCase} />
-        </div>
-      )}
-      {page === "result" && selectedCaseId && (
-        <div className="flex-1 overflow-hidden flex flex-col min-w-0">
-          <AssessmentResult caseId={selectedCaseId} onBack={handleBack} />
-        </div>
-      )}
-      {page === "new-assessment" && (
-        <div className="flex-1 overflow-y-auto overflow-x-hidden min-w-0">
-          <NewAssessment />
-        </div>
-      )}
-      {page === "case-history" && (
-        <div className="flex-1 overflow-y-auto overflow-x-hidden min-w-0">
-          <CaseHistory onCaseClick={openCase} />
-        </div>
-      )}
-      {page === "ontology" && (
-        <div className="flex-1 overflow-hidden flex min-w-0">
-          <OntologyBrowser />
-        </div>
-      )}
-      {page === "competency" && (
-        <div className="flex-1 overflow-hidden flex min-w-0">
-          <CompetencyQuestions />
-        </div>
-      )}
-      {page === "rules" && (
-        <div className="flex-1 overflow-hidden flex min-w-0">
-          <RulesAndVersions />
-        </div>
-      )}
-      {page === "whatif" && (
-        <div className="flex-1 overflow-y-auto overflow-x-hidden min-w-0">
-          <WhatIfExperiment />
-        </div>
-      )}
-      {page === "system-status" && (
-        <div className="flex-1 overflow-y-auto overflow-x-hidden min-w-0">
-          <SystemStatus />
-        </div>
-      )}
-    </AppLayout>
-  );
+  return <AppLayout><Routes>
+    <Route path="/" element={<Navigate to="/overview" replace />} />
+    <Route path="/overview" element={<SystemOverview />} />
+    <Route path="/assessments/new" element={<NewAssessment />} />
+    <Route path="/cases" element={<CaseHistory />} />
+    <Route path="/assessments/:executionId" element={<AssessmentResult />} />
+    <Route path="/ontology" element={<OntologyBrowser />} />
+    <Route path="/competency-questions" element={<CompetencyQuestions />} />
+    <Route path="/rules" element={<RulesAndVersions />} />
+    <Route path="/what-if" element={<WhatIfExperiment />} />
+    <Route path="/system" element={<SystemStatus />} />
+    <Route path="*" element={<NotFound />} />
+  </Routes></AppLayout>;
 }
