@@ -7,7 +7,9 @@ on:
 jobs:
   python:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     strategy:
+      fail-fast: false
       matrix:
         python-version: ["3.11", "3.12"]
     steps:
@@ -21,15 +23,25 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install -e ".[dev,api]"
       - name: Pytest
-        run: pytest -q
+        run: |
+          mkdir -p runtime_reports
+          pytest -q \
+            --durations=20 \
+            --junitxml=runtime_reports/pytest-${{ matrix.python-version }}.xml
+      - name: 上传 Python 测试报告
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pytest-${{ matrix.python-version }}
+          path: runtime_reports/
+          if-no-files-found: ignore
+          retention-days: 7
       - name: Reference checks
         run: python scripts/check_references.py
       - name: Rule version checks
         run: python scripts/check_rule_versions.py
-      - name: Export OpenAPI
-        run: python scripts/export_openapi.py
       - name: OpenAPI drift
-        run: git diff --exit-code docs/api/openapi.json
+        run: python scripts/check_openapi_drift.py
       - name: Seed demo data
         run: |
           rm -rf runtime_data

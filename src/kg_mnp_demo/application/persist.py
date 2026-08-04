@@ -55,6 +55,8 @@ def persist_assessment(
 
     force_recompute=true replaces the prior idempotent DB row and removes the
     previous artifact directory only after the new record is saved successfully.
+    Cleanup targets come from the transaction outcome (what was actually
+    replaced), never from a pre-transaction snapshot.
     """
     try:
         normalized = normalize_case_input(payload)
@@ -72,9 +74,6 @@ def persist_assessment(
     )
     if persist and existing and not force_recompute:
         return existing.get("result") or existing
-
-    old_execution_id = existing.get("execution_id") if existing else None
-    old_artifact_dir = existing.get("artifact_directory") if existing else None
 
     execution_id = str(uuid.uuid4())
     execution = service.assess_execution(
@@ -99,7 +98,7 @@ def persist_assessment(
             result["artifacts"] = artifacts.relative_artifacts(names)
             art_dir_name = out.name
 
-        record = repository.save_execution(
+        outcome = repository.save_execution_outcome(
             execution_id=result["execution_id"],
             case_id=result["case_id"],
             assessment_time=result["assessment_time"],
@@ -108,32 +107,31 @@ def persist_assessment(
             artifact_directory=art_dir_name,
             force_recompute=force_recompute,
         )
-        saved = record.get("result") or result
+        saved = outcome.record.get("result") or result
 
-        # After successful replace, remove previous artifact for same idempotent key.
-        if (
-            force_recompute
-            and old_execution_id
-            and old_execution_id != result["execution_id"]
-        ):
+        # After successful replace, remove only the predecessor the transaction
+        # actually replaced (concurrent force_recompute may each replace a
+        # different intermediate execution).
+        if force_recompute and outcome.replaced_execution_id:
             _cleanup_artifact_dir_best_effort(
                 artifacts,
-                old_execution_id,
+                outcome.replaced_execution_id,
                 reason="replaced execution",
             )
-            if old_artifact_dir and old_artifact_dir != old_execution_id:
+            replaced_dir = outcome.replaced_artifact_directory
+            if (
+                replaced_dir
+                and replaced_dir != outcome.replaced_execution_id
+            ):
                 _cleanup_artifact_dir_best_effort(
                     artifacts,
-                    old_artifact_dir,
+                    replaced_dir,
                     reason="replaced artifact directory",
                 )
 
-        # Idempotent race returned older id — drop orphaned new dir.
-        if (
-            wrote_artifacts
-            and record.get("execution_id")
-            and record["execution_id"] != execution_id
-        ):
+        # Ordinary idempotent race returned an existing row — drop the artifact
+        # directory created for this attempt that never entered the database.
+        if wrote_artifacts and not outcome.inserted:
             _cleanup_artifact_dir_best_effort(
                 artifacts,
                 execution_id,

@@ -7,6 +7,7 @@ import json
 import sqlite3
 import threading
 from contextlib import contextmanager
+from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Iterator
@@ -14,6 +15,16 @@ from typing import Any, Iterator
 from kg_mnp_demo.application.errors import ApplicationError, ErrorCode
 from kg_mnp_demo.application.serializers import json_safe, to_iso_utc
 from kg_mnp_demo.loader import project_root
+
+
+@dataclass(frozen=True)
+class SaveExecutionOutcome:
+    """Result of an atomic execution save, including what was actually replaced."""
+
+    record: dict[str, Any]
+    inserted: bool
+    replaced_execution_id: str | None = None
+    replaced_artifact_directory: str | None = None
 
 SCHEMA_SQL = """
 CREATE TABLE IF NOT EXISTS executions (
@@ -295,6 +306,35 @@ class AssessmentRepository:
         artifact_directory: str | None = None,
         force_recompute: bool = False,
     ) -> dict[str, Any]:
+        """Compatibility wrapper — prefer ``save_execution_outcome`` for cleanup."""
+        return self.save_execution_outcome(
+            execution_id=execution_id,
+            case_id=case_id,
+            assessment_time=assessment_time,
+            input_payload=input_payload,
+            result=result,
+            artifact_directory=artifact_directory,
+            force_recompute=force_recompute,
+        ).record
+
+    def save_execution_outcome(
+        self,
+        *,
+        execution_id: str,
+        case_id: str,
+        assessment_time: str,
+        input_payload: dict[str, Any],
+        result: dict[str, Any],
+        artifact_directory: str | None = None,
+        force_recompute: bool = False,
+    ) -> SaveExecutionOutcome:
+        """Atomically save an execution and report what was actually replaced.
+
+        Under ``BEGIN IMMEDIATE`` the existing idempotent row is read inside the
+        same transaction that deletes/inserts, so concurrent force_recompute
+        callers each learn the *true* predecessor they replaced — not a stale
+        pre-transaction snapshot.
+        """
         input_hash = compute_input_hash(input_payload)
         created_at = to_iso_utc(datetime.now(timezone.utc))
         publication = result.get("publication") or {}
@@ -314,21 +354,33 @@ class AssessmentRepository:
             "result_json": json.dumps(json_safe(result), ensure_ascii=False),
         }
 
-        saved_record: dict[str, Any] | None = None
+        outcome: SaveExecutionOutcome | None = None
         try:
             with self.db.transaction(immediate=True) as conn:
-                existing_record = None
-                if not force_recompute:
-                    existing = conn.execute(
-                        """
-                        SELECT * FROM executions
-                        WHERE case_id = ? AND assessment_time = ? AND input_hash = ?
-                        """,
-                        (case_id, assessment_time, input_hash),
-                    ).fetchone()
-                    if existing:
-                        existing_record = self._row_to_record(existing)
-                else:
+                existing = conn.execute(
+                    """
+                    SELECT * FROM executions
+                    WHERE case_id = ? AND assessment_time = ? AND input_hash = ?
+                    """,
+                    (case_id, assessment_time, input_hash),
+                ).fetchone()
+                existing_record = (
+                    self._row_to_record(existing) if existing is not None else None
+                )
+
+                if existing_record is not None and not force_recompute:
+                    return SaveExecutionOutcome(
+                        record=existing_record,
+                        inserted=False,
+                    )
+
+                replaced_execution_id: str | None = None
+                replaced_artifact_directory: str | None = None
+                if existing_record is not None and force_recompute:
+                    replaced_execution_id = existing_record.get("execution_id")
+                    replaced_artifact_directory = existing_record.get(
+                        "artifact_directory"
+                    )
                     conn.execute(
                         """
                         DELETE FROM executions
@@ -336,9 +388,6 @@ class AssessmentRepository:
                         """,
                         (case_id, assessment_time, input_hash),
                     )
-
-                if existing_record is not None:
-                    return existing_record
 
                 conn.execute(
                     """
@@ -360,7 +409,12 @@ class AssessmentRepository:
                 ).fetchone()
                 if inserted is None:
                     raise sqlite3.OperationalError("inserted execution could not be read")
-                saved_record = self._row_to_record(inserted)
+                outcome = SaveExecutionOutcome(
+                    record=self._row_to_record(inserted),
+                    inserted=True,
+                    replaced_execution_id=replaced_execution_id,
+                    replaced_artifact_directory=replaced_artifact_directory,
+                )
         except sqlite3.IntegrityError as exc:
             # The transaction context has already rolled back.  Only ordinary
             # idempotent writes may recover the winner.
@@ -380,7 +434,10 @@ class AssessmentRepository:
                         details=[str(lookup_exc)],
                     ) from lookup_exc
                 if existing:
-                    return self._row_to_record(existing)
+                    return SaveExecutionOutcome(
+                        record=self._row_to_record(existing),
+                        inserted=False,
+                    )
             raise ApplicationError(
                 ErrorCode.STORAGE_ERROR,
                 message="写入执行记录失败。",
@@ -397,9 +454,12 @@ class AssessmentRepository:
         # Return the snapshot read while the transaction was still protected by
         # the lock.  A concurrent force recompute may replace this row
         # immediately after commit, so querying by execution_id here is racy.
-        if saved_record is not None:
-            return saved_record
-        return self.get_execution(execution_id)
+        if outcome is not None:
+            return outcome
+        return SaveExecutionOutcome(
+            record=self.get_execution(execution_id),
+            inserted=True,
+        )
 
     def get_execution(self, execution_id: str) -> dict[str, Any]:
         row = self.db.fetchone(
