@@ -119,30 +119,15 @@ export function adaptOntologyGraph(dto: unknown, propertiesDto?: unknown): Ontol
       .filter((property) => property.localName && property.label)
       .map((property) => [property.localName, property.label]),
   );
-  const rawNodes = array(graph.nodes);
-  let maxLabelLength = 0;
-  for (const raw of rawNodes) {
-    const node = record(raw);
-    maxLabelLength = Math.max(
-      maxLabelLength,
-      text(node.label).length,
-      text(node.local_name).length,
-    );
-  }
-  const columnWidth = Math.max(170, maxLabelLength * 13 + 42);
   return {
-    nodes: rawNodes.map((raw, index) => {
+    nodes: array(graph.nodes).map((raw) => {
       const node = record(raw);
-      const col = index % 6;
-      const row = Math.floor(index / 6);
       return {
         id: text(node.id),
         label: chineseLabel(node.label),
         localName: text(node.local_name),
         module: text(node.module, "CORE"),
         type: text(node.type, "Class"),
-        x: 25 + col * columnWidth,
-        y: 64 + row * 68,
         definition: "",
       } satisfies OntologyNode;
     }),

@@ -1,19 +1,28 @@
+import type { OntologyLaneId } from "../ontology/ontologyGraphTypes";
+
 export interface OntologyNode {
   id: string;
   label: string;
-  /** Raw local name / class code kept for data layer */
   localName: string;
   module: string;
   type: "Class" | "Individual" | string;
+  definition: string;
+}
+
+export interface PositionedOntologyNode extends OntologyNode {
+  laneId: OntologyLaneId;
   x: number;
   y: number;
-  definition: string;
+  width: number;
+  height: number;
+  order: number;
+  overview: boolean;
+  technicalSupport: boolean;
 }
 
 export interface OntologyEdge {
   from: string;
   to: string;
-  /** Raw relation code */
   relation: string;
   label: string;
 }

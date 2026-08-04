@@ -1,41 +1,31 @@
-import { useMemo, useState } from "react";
-import { Network, RefreshCw, Search, X } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
 import { ApiErrorState, EmptyState, PageSkeleton } from "../components/dataStates";
+import { OntologyGraphToolbar } from "../components/ontology/OntologyGraphToolbar";
+import { OntologyLaneGraph } from "../components/ontology/OntologyLaneGraph";
+import { OntologyNodeDetails } from "../components/ontology/OntologyNodeDetails";
 import {
-  moduleLabels,
   ontologyClassLabels,
   ontologyRelationLabels,
-  ontologyTypeLabels,
   translateOrUnknown,
   ui,
 } from "../i18n/zh-CN";
+import {
+  ONTOLOGY_VIEW_LABELS,
+  ONTOLOGY_LANE_LABELS,
+} from "../ontology/ontologyLaneConfig";
+import { assertGraphGeometry } from "../ontology/ontologyGeometry";
+import { layoutOntologyGraph } from "../ontology/ontologyLayout";
+import {
+  buildOntologyOverview,
+  collapseParallelEdges,
+  getDetailEdgesForLane,
+  getDetailNodesForLane,
+} from "../ontology/ontologyOverviewBuilder";
+import { routeOntologyEdges } from "../ontology/orthogonalRouter";
+import type { OntologyLaneId, OntologyViewMode } from "../ontology/ontologyGraphTypes";
 import { useOntology } from "../query/hooks/useAppQueries";
-import type { OntologyEdge, OntologyNode } from "../types/ontology";
+import type { OntologyEdge, OntologyNode, PositionedOntologyNode } from "../types/ontology";
 import { cn } from "../utils/cn";
-
-const MODULE_COLORS: Record<string, string> = {
-  CORE: "#2563eb",
-  IDENTITY: "#7c3aed",
-  ACCOUNT_BILLING: "#0891b2",
-  SERVICE_CONTRACT: "#4f46e5",
-  PROCESS: "#0d9488",
-  COMPLIANCE: "#059669",
-  EVIDENCE_TIME: "#0284c7",
-  CODE_LIST: "#64748b",
-  ALIGNMENTS: "#475569",
-};
-
-const MODULE_BACKGROUNDS: Record<string, string> = {
-  CORE: "#dbeafe",
-  IDENTITY: "#ede9fe",
-  ACCOUNT_BILLING: "#cffafe",
-  SERVICE_CONTRACT: "#e0e7ff",
-  PROCESS: "#ccfbf1",
-  COMPLIANCE: "#d1fae5",
-  EVIDENCE_TIME: "#e0f2fe",
-  CODE_LIST: "#f1f5f9",
-  ALIGNMENTS: "#f8fafc",
-};
 
 function containsChinese(value: string): boolean {
   return /[\u3400-\u9fff]/u.test(value);
@@ -59,59 +49,194 @@ function edgeDisplayLabel(edge: OntologyEdge): string {
   );
 }
 
+const VIEW_MODES: OntologyViewMode[] = [
+  "OVERVIEW",
+  "USER_IDENTITY",
+  "ACCOUNT_BILLING",
+  "SERVICE_OFFERING",
+  "PORTABILITY_PROCESS",
+  "QUALIFICATION_COMPLIANCE",
+];
+
 export function OntologyBrowser() {
   const query = useOntology();
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
-  const [selectedModule, setSelectedModule] = useState<string | null>(null);
+  const [selectedEdgeId, setSelectedEdgeId] = useState<string | null>(null);
+  const [viewMode, setViewMode] = useState<OntologyViewMode>("OVERVIEW");
   const [searchTerm, setSearchTerm] = useState("");
 
   const data = query.data;
   const nodes = data?.nodes ?? [];
   const edges = data?.edges ?? [];
-  const modules = data?.modules ?? [];
-  const moduleNames = useMemo(
-    () => new Map(modules.map((module) => [module.id, module.label])),
-    [modules],
-  );
-  const moduleDisplayLabel = (moduleId: string): string => {
-    const backendLabel = moduleNames.get(moduleId) ?? "";
-    return containsChinese(backendLabel)
-      ? backendLabel
-      : translateOrUnknown(moduleLabels, moduleId, ui.unknownModule);
-  };
-  const selectedNode = nodes.find((node) => node.id === selectedNodeId) ?? null;
 
-  const visibleNodes = useMemo(
+  const overview = useMemo(
+    () => buildOntologyOverview(nodes, edges),
+    [nodes, edges],
+  );
+
+  const activeLaneId: OntologyLaneId | null =
+    viewMode === "OVERVIEW" ? null : viewMode;
+
+  const visibleSourceNodes = useMemo(() => {
+    if (!activeLaneId) return overview.overviewNodes;
+    return getDetailNodesForLane(activeLaneId, overview.allLaneNodes);
+  }, [activeLaneId, overview]);
+
+  const visibleSourceEdges = useMemo(() => {
+    if (!activeLaneId) return overview.overviewEdges;
+    return getDetailEdgesForLane(activeLaneId, visibleSourceNodes, edges);
+  }, [activeLaneId, visibleSourceNodes, edges, overview.overviewEdges]);
+
+  const layout = useMemo(
     () =>
-      nodes.filter((node) => {
-        const normalizedSearch = searchTerm.trim();
-        return (
-          (!selectedModule || node.module === selectedModule) &&
-          (!normalizedSearch ||
-            nodeDisplayLabel(node).includes(normalizedSearch) ||
-            moduleDisplayLabel(node.module).includes(normalizedSearch))
-        );
+      layoutOntologyGraph(nodes, {
+        overview: viewMode === "OVERVIEW",
+        laneFilter: activeLaneId ?? undefined,
       }),
-    [nodes, selectedModule, searchTerm, moduleNames],
+    [nodes, viewMode, activeLaneId],
   );
-  const visibleNodeIds = useMemo(
-    () => new Set(visibleNodes.map((node) => node.id)),
-    [visibleNodes],
+
+  const collapsedEdges = useMemo(() => {
+    if (viewMode === "OVERVIEW") return overview.collapsedEdges;
+    return collapseParallelEdges(visibleSourceEdges);
+  }, [viewMode, overview.collapsedEdges, visibleSourceEdges]);
+
+  const routedEdges = useMemo(
+    () =>
+      routeOntologyEdges({
+        nodes: layout.nodes,
+        collapsedEdges,
+        lanes: layout.lanes,
+        contentRight: layout.contentRight,
+      }),
+    [layout, collapsedEdges],
   );
+
+  useEffect(() => {
+    if (import.meta.env.DEV && layout.nodes.length > 0) {
+      assertGraphGeometry(
+        {
+          nodes: layout.nodes,
+          edges: routedEdges,
+          lanes: layout.lanes,
+          contentRight: layout.contentRight,
+        },
+        "warn",
+      );
+    }
+  }, [layout, routedEdges]);
+
+  const adjacency = useMemo(() => {
+    const map = new Map<string, Set<string>>();
+    const ensure = (id: string) => {
+      if (!map.has(id)) map.set(id, new Set());
+      return map.get(id)!;
+    };
+    for (const edge of visibleSourceEdges) {
+      ensure(edge.from).add(edge.to);
+      ensure(edge.to).add(edge.from);
+    }
+    return map;
+  }, [visibleSourceEdges]);
+
   const nodeMap = useMemo(
-    () => new Map(nodes.map((node) => [node.id, node])),
-    [nodes],
+    () => new Map(layout.nodes.map((node) => [node.id, node])),
+    [layout.nodes],
   );
-  const localNameMap = useMemo(
-    () => new Map(nodes.map((node) => [node.localName, node])),
-    [nodes],
-  );
-  const edgeLabelMap = useMemo(
-    () => new Map(edges.map((edge) => [edge.relation, edgeDisplayLabel(edge)])),
-    [edges],
-  );
-  const canvasWidth = Math.max(860, ...nodes.map((node) => node.x + 180));
-  const canvasHeight = Math.max(560, ...nodes.map((node) => node.y + 70));
+
+  const selectedNode = selectedNodeId
+    ? (nodeMap.get(selectedNodeId) ?? null)
+    : null;
+
+  const relatedNodeIds = useMemo(() => {
+    if (!selectedNodeId) return new Set<string>();
+    const neighbors = adjacency.get(selectedNodeId) ?? new Set<string>();
+    return new Set([selectedNodeId, ...neighbors]);
+  }, [selectedNodeId, adjacency]);
+
+  const relatedEdgeIds = useMemo(() => {
+    if (!selectedNodeId) return new Set<string>();
+    return new Set(
+      routedEdges
+        .filter(
+          (edge) =>
+            edge.from === selectedNodeId || edge.to === selectedNodeId,
+        )
+        .map((edge) => edge.id),
+    );
+  }, [selectedNodeId, routedEdges]);
+
+  const normalizedSearch = searchTerm.trim();
+  const searchMatches = useMemo(() => {
+    if (!normalizedSearch) return null;
+    const matched = new Set<string>();
+    for (const node of layout.nodes) {
+      const label = nodeDisplayLabel(node);
+      const laneLabel = ONTOLOGY_LANE_LABELS[node.laneId];
+      if (label.includes(normalizedSearch) || laneLabel.includes(normalizedSearch)) {
+        matched.add(node.id);
+      }
+    }
+    return matched;
+  }, [layout.nodes, normalizedSearch]);
+
+  const searchNeighborIds = useMemo(() => {
+    if (!searchMatches) return null;
+    const neighbors = new Set<string>();
+    for (const id of searchMatches) {
+      for (const neighbor of adjacency.get(id) ?? []) {
+        if (!searchMatches.has(neighbor)) neighbors.add(neighbor);
+      }
+    }
+    return neighbors;
+  }, [searchMatches, adjacency]);
+
+  const nodeOpacity = (nodeId: string): number => {
+    if (searchMatches) {
+      if (searchMatches.has(nodeId)) return 1;
+      if (searchNeighborIds?.has(nodeId)) return 0.65;
+      return 0.12;
+    }
+    if (selectedNodeId) {
+      return relatedNodeIds.has(nodeId) ? 1 : 0.18;
+    }
+    return 1;
+  };
+
+  const edgeOpacity = (edgeId: string): number => {
+    if (selectedNodeId) {
+      return relatedEdgeIds.has(edgeId) ? 1 : 0.08;
+    }
+    if (searchMatches) {
+      const edge = routedEdges.find((item) => item.id === edgeId);
+      if (!edge) return 0.12;
+      if (searchMatches.has(edge.from) || searchMatches.has(edge.to)) return 1;
+      return 0.12;
+    }
+    return 1;
+  };
+
+  const edgeHighlighted = (edgeId: string): boolean =>
+    Boolean(selectedNodeId && relatedEdgeIds.has(edgeId)) ||
+    selectedEdgeId === edgeId;
+
+  const relatedDetailNodes: PositionedOntologyNode[] = useMemo(() => {
+    if (!selectedNodeId) return [];
+    return [...(adjacency.get(selectedNodeId) ?? [])]
+      .map((id) => nodeMap.get(id))
+      .filter((node): node is PositionedOntologyNode => Boolean(node));
+  }, [selectedNodeId, adjacency, nodeMap]);
+
+  useEffect(() => {
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setSelectedNodeId(null);
+        setSelectedEdgeId(null);
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, []);
 
   if (query.isLoading) return <PageSkeleton />;
   if (query.isError) {
@@ -119,235 +244,114 @@ export function OntologyBrowser() {
   }
   if (!data || nodes.length === 0) return <EmptyState message="暂无本体图数据" />;
 
-  return (
-    <div className="flex h-full min-w-0 overflow-x-hidden">
-      <aside className="w-48 flex-shrink-0 overflow-y-auto border-r border-slate-200 bg-white p-3">
-        <div className="mb-2 px-1 text-[10px] font-semibold tracking-wider text-slate-400">
-          本体模块
-        </div>
+  const nav = (
+    <div className="space-y-0.5">
+      <div className="mb-2 px-1 text-[10px] font-semibold tracking-wider text-slate-400">
+        {ui.ontologyViewNav}
+      </div>
+      {VIEW_MODES.map((mode) => (
         <button
+          key={mode}
           type="button"
-          onClick={() => setSelectedModule(null)}
+          onClick={() => {
+            setViewMode(mode);
+            setSelectedNodeId(null);
+            setSelectedEdgeId(null);
+          }}
           className={cn(
             "mb-0.5 w-full rounded px-2 py-1.5 text-left text-xs transition-colors",
-            !selectedModule
+            viewMode === mode
               ? "bg-blue-50 font-medium text-blue-700"
               : "text-slate-600 hover:bg-slate-50",
           )}
         >
-          全部模块
+          {ONTOLOGY_VIEW_LABELS[mode]}
         </button>
-        {modules.map((module) => (
-          <button
-            key={module.id}
-            type="button"
-            onClick={() => setSelectedModule(module.id === selectedModule ? null : module.id)}
-            className={cn(
-              "mb-0.5 flex w-full items-center gap-1.5 rounded px-2 py-1.5 text-left text-xs transition-colors",
-              selectedModule === module.id
-                ? "bg-blue-50 font-medium text-blue-700"
-                : "text-slate-600 hover:bg-slate-50",
-            )}
-          >
-            <span
-              className="h-2 w-2 flex-shrink-0 rounded-full"
-              style={{ backgroundColor: MODULE_COLORS[module.id] ?? "#94a3b8" }}
-            />
-            <span className="min-w-0 break-words">{moduleDisplayLabel(module.id)}</span>
-          </button>
-        ))}
+      ))}
+    </div>
+  );
 
-        <div className="mt-4 border-t border-slate-100 pt-3">
-          <div className="mb-2 px-1 text-[10px] font-semibold tracking-wider text-slate-400">
-            语义路径
-          </div>
-          {data.keyPaths.length === 0 ? (
-            <div className="px-1 text-[10px] text-slate-400">暂无语义路径</div>
-          ) : (
-            data.keyPaths.map((path) => {
-              const source = localNameMap.get(path.sourceClass);
-              const target = localNameMap.get(path.targetClass);
-              return (
-                <div
-                  key={path.id}
-                  className="border-b border-slate-50 px-1 py-1 text-[10px] leading-relaxed text-slate-500 last:border-0"
-                >
-                  {source ? nodeDisplayLabel(source) : ui.unknownOntologyClass}
-                  {" → "}
-                  {edgeLabelMap.get(path.predicate) ?? ui.unknownOntologyRelation}
-                  {" → "}
-                  {target ? nodeDisplayLabel(target) : ui.unknownOntologyClass}
-                </div>
-              );
-            })
-          )}
-        </div>
+  return (
+    <div className="flex h-full min-w-0 flex-col overflow-x-hidden lg:flex-row">
+      <aside className="hidden w-[190px] flex-shrink-0 overflow-y-auto border-r border-slate-200 bg-white p-3 lg:block">
+        {nav}
       </aside>
 
-      <section className="relative min-w-0 flex-1 overflow-auto bg-slate-50">
-        <div className="sticky left-3 top-3 z-10 flex w-[calc(100%-1.5rem)] min-w-0 items-center gap-2">
-          <label className="flex max-w-xs min-w-0 flex-1 items-center gap-1.5 rounded-md border border-slate-200 bg-white px-3 py-1.5 shadow-sm">
-            <Search size={12} className="flex-shrink-0 text-slate-400" />
-            <span className="sr-only">搜索本体概念</span>
-            <input
-              type="search"
-              placeholder={ui.searchOntology}
-              value={searchTerm}
-              onChange={(event) => setSearchTerm(event.target.value)}
-              className="w-full min-w-0 bg-transparent text-xs text-slate-700 outline-none placeholder:text-slate-400"
-            />
-          </label>
-          {query.isFetching && (
-            <span role="status" className="flex items-center gap-1 rounded bg-white px-2 py-1 text-xs text-slate-400 shadow-sm">
-              <RefreshCw size={11} className="animate-spin" />正在刷新…
-            </span>
-          )}
-        </div>
+      <div className="border-b border-slate-200 bg-white p-3 lg:hidden">
+        <label className="block text-xs text-slate-500">
+          {ui.ontologyViewNav}
+          <select
+            className="mt-1 w-full rounded border border-slate-200 px-2 py-1.5 text-sm text-slate-700"
+            value={viewMode}
+            onChange={(event) => {
+              setViewMode(event.target.value as OntologyViewMode);
+              setSelectedNodeId(null);
+              setSelectedEdgeId(null);
+            }}
+          >
+            {VIEW_MODES.map((mode) => (
+              <option key={mode} value={mode}>
+                {ONTOLOGY_VIEW_LABELS[mode]}
+              </option>
+            ))}
+          </select>
+        </label>
+      </div>
 
-        <svg
-          viewBox={`0 0 ${canvasWidth} ${canvasHeight}`}
-          style={{ width: canvasWidth, height: canvasHeight }}
-          aria-label="本体关系图"
-        >
-          <defs>
-            <marker id="arrow-ontology" markerWidth="7" markerHeight="7" refX="6" refY="2.5" orient="auto">
-              <path d="M0,0 L0,5 L7,2.5 z" fill="#cbd5e1" />
-            </marker>
-          </defs>
-          {edges.map((edge) => {
-            const from = nodeMap.get(edge.from);
-            const to = nodeMap.get(edge.to);
-            if (!from || !to) return null;
-            const edgeVisible = visibleNodeIds.has(from.id) && visibleNodeIds.has(to.id);
-            const fromLabel = nodeDisplayLabel(from);
-            const toLabel = nodeDisplayLabel(to);
-            const fromWidth = Math.max(110, fromLabel.length * 13 + 16);
-            const toWidth = Math.max(110, toLabel.length * 13 + 16);
-            const middleX = (from.x + fromWidth / 2 + to.x + toWidth / 2) / 2;
-            const middleY = (from.y + to.y) / 2;
-            return (
-              <g key={`${edge.from}|${edge.relation}|${edge.to}`} opacity={edgeVisible ? 1 : 0.12}>
-                <line
-                  x1={from.x + fromWidth}
-                  y1={from.y + 14}
-                  x2={to.x}
-                  y2={to.y + 14}
-                  stroke="#cbd5e1"
-                  strokeWidth="1.25"
-                  markerEnd="url(#arrow-ontology)"
-                />
-                <text x={middleX} y={middleY + 8} fontSize="8" fill="#64748b" textAnchor="middle">
-                  {edgeDisplayLabel(edge)}
-                </text>
-              </g>
-            );
-          })}
-          {nodes.map((node) => {
-            const visible = visibleNodeIds.has(node.id);
-            const selected = selectedNode?.id === node.id;
-            const label = nodeDisplayLabel(node);
-            const width = Math.max(110, label.length * 13 + 16);
-            const color = MODULE_COLORS[node.module] ?? "#475569";
-            return (
-              <g
-                key={node.id}
-                role="button"
-                tabIndex={0}
-                onClick={() => setSelectedNodeId(selected ? null : node.id)}
-                onKeyDown={(event) => {
-                  if (event.key === "Enter" || event.key === " ") {
-                    event.preventDefault();
-                    setSelectedNodeId(selected ? null : node.id);
-                  }
-                }}
-                className="cursor-pointer outline-none"
-                opacity={visible ? 1 : 0.15}
-              >
-                <rect
-                  x={node.x}
-                  y={node.y}
-                  width={width}
-                  height={28}
-                  rx={4}
-                  fill={MODULE_BACKGROUNDS[node.module] ?? "#f8fafc"}
-                  stroke={selected ? color : "#cbd5e1"}
-                  strokeWidth={selected ? 2 : 1}
-                />
-                <text
-                  x={node.x + width / 2}
-                  y={node.y + 18}
-                  fontSize="11"
-                  fontWeight="500"
-                  fill={color}
-                  textAnchor="middle"
-                >
-                  {label}
-                </text>
-              </g>
-            );
-          })}
-        </svg>
+      <section className="relative min-w-0 flex-1 overflow-auto bg-slate-50">
+        <OntologyGraphToolbar
+          searchTerm={searchTerm}
+          onSearchChange={setSearchTerm}
+          overviewRelationCount={
+            viewMode === "OVERVIEW"
+              ? overview.whitelistRelationCount
+              : visibleSourceEdges.length
+          }
+          secondaryRelationCount={
+            viewMode === "OVERVIEW" ? overview.secondaryRelationCount : 0
+          }
+          unmappedCount={overview.unmappedNodes.length}
+          isFetching={query.isFetching}
+        />
+        <div className="overflow-auto p-3 pt-2">
+          <OntologyLaneGraph
+            width={layout.width}
+            height={layout.height}
+            contentRight={layout.contentRight}
+            lanes={layout.lanes}
+            nodes={layout.nodes}
+            edges={routedEdges}
+            nodeLabel={nodeDisplayLabel}
+            nodeOpacity={nodeOpacity}
+            edgeOpacity={edgeOpacity}
+            edgeHighlighted={edgeHighlighted}
+            selectedNodeId={selectedNodeId}
+            onSelectNode={setSelectedNodeId}
+            onSelectEdge={setSelectedEdgeId}
+            testId={
+              viewMode === "OVERVIEW"
+                ? "ontology-overview-graph"
+                : `ontology-lane-graph-${viewMode}`
+            }
+          />
+        </div>
       </section>
 
-      <aside className="w-64 flex-shrink-0 overflow-y-auto border-l border-slate-200 bg-white p-4">
-        {selectedNode ? (
-          <div className="space-y-3 text-xs">
-            <div className="flex items-start justify-between gap-2">
-              <div className="min-w-0">
-                <div className="mb-1 break-words text-sm font-semibold text-slate-800">
-                  {nodeDisplayLabel(selectedNode)}
-                </div>
-                <span
-                  className="inline-flex rounded px-1.5 py-0.5 text-xs font-medium"
-                  style={{
-                    color: MODULE_COLORS[selectedNode.module] ?? "#475569",
-                    backgroundColor: MODULE_BACKGROUNDS[selectedNode.module] ?? "#f1f5f9",
-                  }}
-                >
-                  {moduleDisplayLabel(selectedNode.module)}
-                </span>
-              </div>
-              <button
-                type="button"
-                aria-label="关闭详情"
-                onClick={() => setSelectedNodeId(null)}
-                className="text-slate-400 hover:text-slate-600"
-              >
-                <X size={14} />
-              </button>
-            </div>
-            <dl className="space-y-2 border-t border-slate-100 pt-3">
-              <div>
-                <dt className="mb-0.5 text-[10px] tracking-wide text-slate-400">类型</dt>
-                <dd className="text-slate-700">
-                  {translateOrUnknown(ontologyTypeLabels, selectedNode.type, ui.unknownOntologyClass)}
-                </dd>
-              </div>
-              <div>
-                <dt className="mb-1 text-[10px] tracking-wide text-slate-400">相关关系</dt>
-                <dd className="space-y-1">
-                  {edges.filter((edge) => edge.from === selectedNode.id || edge.to === selectedNode.id).length === 0 ? (
-                    <span className="text-slate-400">暂无相关关系</span>
-                  ) : (
-                    edges
-                      .filter((edge) => edge.from === selectedNode.id || edge.to === selectedNode.id)
-                      .map((edge) => (
-                        <div key={`${edge.from}|${edge.relation}|${edge.to}`} className="text-blue-700">
-                          {edgeDisplayLabel(edge)}
-                        </div>
-                      ))
-                  )}
-                </dd>
-              </div>
-            </dl>
-          </div>
-        ) : (
-          <div className="mt-12 text-center text-xs text-slate-400">
-            <Network size={28} className="mx-auto mb-2 opacity-30" />
-            点击图中节点查看本体类详情
-          </div>
-        )}
+      <aside className="w-full flex-shrink-0 overflow-y-auto border-t border-slate-200 bg-white p-4 lg:w-[280px] lg:border-l lg:border-t-0">
+        <OntologyNodeDetails
+          node={selectedNode}
+          edges={visibleSourceEdges}
+          nodeLabel={nodeDisplayLabel}
+          edgeLabel={edgeDisplayLabel}
+          relatedNodes={relatedDetailNodes}
+          onClose={() => {
+            setSelectedNodeId(null);
+            setSelectedEdgeId(null);
+          }}
+        />
       </aside>
     </div>
   );
 }
+
+

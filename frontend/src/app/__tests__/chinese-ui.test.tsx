@@ -41,7 +41,7 @@ describe("中文界面与安全映射", () => {
   });
 
   it("本体浏览器不出现禁止词", async () => {
-    const { container } = await renderRoute("/ontology", "本体模块");
+    const { container } = await renderRoute("/ontology", /总览图|用户与身份层/);
     assertNoForbidden("本体浏览器", container.textContent);
   });
 
