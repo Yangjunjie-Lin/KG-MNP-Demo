@@ -2,6 +2,7 @@ import type { PositionedOntologyNode } from "../types/ontology";
 import type {
   GeometryViolation,
   LaneGeometry,
+  OntologyGeometryDiagnostics,
   Point,
   RoutedOntologyEdge,
 } from "./ontologyGraphTypes";
@@ -293,16 +294,37 @@ export function validateGraphGeometry(input: {
   return violations;
 }
 
+export function summarizeGeometryViolations(
+  violations: GeometryViolation[],
+): OntologyGeometryDiagnostics {
+  const count = (kind: string) =>
+    violations.filter((item) => item.kind === kind).length;
+  return {
+    total: violations.length,
+    edgeThroughNode: count("edge-through-node"),
+    segmentOverlap: count("segment-overlap"),
+    labelInsideNode: count("label-inside-node"),
+    nodeOutsideLane: count("node-outside-lane"),
+    duplicateCrossChannel: count("duplicate-cross-channel"),
+    edgeInsideEndpoint: count("edge-inside-endpoint"),
+  };
+}
+
 export function assertGraphGeometry(
   input: Parameters<typeof validateGraphGeometry>[0],
   mode: "warn" | "throw" = "warn",
 ): GeometryViolation[] {
   const violations = validateGraphGeometry(input);
-  for (const violation of violations) {
-    if (mode === "throw") {
-      throw new Error(`[ontology-layout] geometry violation: ${violation.message}`);
-    }
-    console.warn("[ontology-layout] geometry violation", violation);
+  if (violations.length === 0) return violations;
+  const diagnostics = summarizeGeometryViolations(violations);
+  if (mode === "throw") {
+    throw new Error(
+      `[ontology-layout] geometry violation: ${violations[0]?.message ?? "unknown"}`,
+    );
   }
+  console.error("[ontology-layout] runtime geometry violations", {
+    diagnostics,
+    violations,
+  });
   return violations;
 }

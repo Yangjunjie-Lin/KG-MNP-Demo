@@ -10,10 +10,59 @@ const LANES = [
 ] as const;
 
 test("本体浏览器五层总览与正交连线", async ({ page }) => {
+  const layoutErrors: string[] = [];
+  page.on("console", (message) => {
+    if (
+      message.type() === "error" &&
+      message.text().includes("[ontology-layout]")
+    ) {
+      layoutErrors.push(message.text());
+    }
+  });
+
+  const response = await page.request.get(
+    "http://127.0.0.1:8000/api/v1/views/ontology",
+  );
+  expect(response.ok()).toBe(true);
+  const payload = await response.json();
+  expect(payload.graph.nodes.length).toBeGreaterThan(0);
+  expect(payload.graph.edges.length).toBeGreaterThan(0);
+
   await page.setViewportSize({ width: 1440, height: 900 });
   await page.goto("/ontology");
   await expect(page.getByRole("button", { name: "总览图" })).toBeVisible();
-  await expect(page.getByTestId("ontology-overview-graph")).toBeVisible();
+
+  const graph = page.getByTestId("ontology-overview-graph");
+  await expect(graph).toBeVisible();
+
+  await expect(graph).toHaveAttribute("data-geometry-violation-count", "0");
+  await expect(graph).toHaveAttribute("data-edge-through-node-count", "0");
+  await expect(graph).toHaveAttribute("data-segment-overlap-count", "0");
+  await expect(graph).toHaveAttribute("data-label-inside-node-count", "0");
+  await expect(graph).toHaveAttribute("data-node-outside-lane-count", "0");
+  await expect(graph).toHaveAttribute("data-duplicate-cross-channel-count", "0");
+  await expect(graph).toHaveAttribute("data-unmapped-node-count", "0");
+
+  const width = Number(await graph.getAttribute("data-overview-width"));
+  expect(width).toBeGreaterThanOrEqual(1600);
+  expect(width).toBeLessThanOrEqual(2200);
+
+  const runtimeNodeCount = Number(
+    await graph.getAttribute("data-runtime-node-count"),
+  );
+  const runtimeEdgeCount = Number(
+    await graph.getAttribute("data-runtime-edge-count"),
+  );
+  const renderedNodeCount = Number(
+    await graph.getAttribute("data-rendered-node-count"),
+  );
+  const renderedEdgeCount = Number(
+    await graph.getAttribute("data-rendered-edge-count"),
+  );
+  expect(runtimeNodeCount).toBeGreaterThan(0);
+  expect(runtimeEdgeCount).toBeGreaterThan(0);
+  expect(renderedNodeCount).toBe(runtimeNodeCount);
+  expect(renderedEdgeCount).toBe(runtimeEdgeCount);
 
   for (const lane of LANES) {
     await expect(page.getByTestId(lane)).toBeVisible();
@@ -60,10 +109,10 @@ test("本体浏览器五层总览与正交连线", async ({ page }) => {
   }
 
   const pathStats = await page.evaluate(() => {
-    const graph = document.querySelector('[data-testid="ontology-overview-graph"]');
-    if (!graph) return { lines: -1, paths: 0, bad: 0 };
-    const lines = graph.querySelectorAll("line").length;
-    const paths = [...graph.querySelectorAll("path")].filter((path) =>
+    const root = document.querySelector('[data-testid="ontology-overview-graph"]');
+    if (!root) return { lines: -1, paths: 0, bad: 0 };
+    const lines = root.querySelectorAll("line").length;
+    const paths = [...root.querySelectorAll("path")].filter((path) =>
       path.closest('[data-testid^="ontology-edge-"]'),
     );
     const bad = paths.filter((path) => /[CQA]/i.test(path.getAttribute("d") ?? "")).length;
@@ -86,4 +135,5 @@ test("本体浏览器五层总览与正交连线", async ({ page }) => {
   }
 
   await expectChineseUi(page);
+  expect(layoutErrors).toEqual([]);
 });

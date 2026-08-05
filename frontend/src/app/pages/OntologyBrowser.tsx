@@ -13,7 +13,10 @@ import {
   ONTOLOGY_VIEW_LABELS,
   ONTOLOGY_LANE_LABELS,
 } from "../ontology/ontologyLaneConfig";
-import { assertGraphGeometry } from "../ontology/ontologyGeometry";
+import {
+  summarizeGeometryViolations,
+  validateGraphGeometry,
+} from "../ontology/ontologyGeometry";
 import { layoutOntologyGraph } from "../ontology/ontologyLayout";
 import {
   buildOntologyOverview,
@@ -87,19 +90,20 @@ export function OntologyBrowser() {
     return getDetailEdgesForLane(activeLaneId, visibleSourceNodes, edges);
   }, [activeLaneId, visibleSourceNodes, edges, overview.overviewEdges]);
 
-  const layout = useMemo(
-    () =>
-      layoutOntologyGraph(nodes, {
-        overview: viewMode === "OVERVIEW",
-        laneFilter: activeLaneId ?? undefined,
-      }),
-    [nodes, viewMode, activeLaneId],
-  );
-
   const collapsedEdges = useMemo(() => {
     if (viewMode === "OVERVIEW") return overview.collapsedEdges;
     return collapseParallelEdges(visibleSourceEdges);
   }, [viewMode, overview.collapsedEdges, visibleSourceEdges]);
+
+  const layout = useMemo(
+    () =>
+      layoutOntologyGraph(nodes, collapsedEdges, {
+        overview: viewMode === "OVERVIEW",
+        laneFilter: activeLaneId ?? undefined,
+        allEdges: edges,
+      }),
+    [nodes, collapsedEdges, viewMode, activeLaneId, edges],
+  );
 
   const routedEdges = useMemo(
     () =>
@@ -112,19 +116,29 @@ export function OntologyBrowser() {
     [layout, collapsedEdges],
   );
 
+  const geometryViolations = useMemo(
+    () =>
+      validateGraphGeometry({
+        nodes: layout.nodes,
+        edges: routedEdges,
+        lanes: layout.lanes,
+        contentRight: layout.contentRight,
+      }),
+    [layout, routedEdges],
+  );
+
+  const geometryDiagnostics = useMemo(
+    () => summarizeGeometryViolations(geometryViolations),
+    [geometryViolations],
+  );
+
   useEffect(() => {
-    if (import.meta.env.DEV && layout.nodes.length > 0) {
-      assertGraphGeometry(
-        {
-          nodes: layout.nodes,
-          edges: routedEdges,
-          lanes: layout.lanes,
-          contentRight: layout.contentRight,
-        },
-        "warn",
-      );
-    }
-  }, [layout, routedEdges]);
+    if (geometryViolations.length === 0) return;
+    console.error("[ontology-layout] runtime geometry violations", {
+      diagnostics: geometryDiagnostics,
+      violations: geometryViolations,
+    });
+  }, [geometryDiagnostics, geometryViolations]);
 
   const adjacency = useMemo(() => {
     const map = new Map<string, Set<string>>();
@@ -311,6 +325,9 @@ export function OntologyBrowser() {
             viewMode === "OVERVIEW" ? overview.secondaryRelationCount : 0
           }
           unmappedCount={overview.unmappedNodes.length}
+          technicalAdjacencyCount={overview.technicalAdjacencyCount}
+          technicalFallbackCount={overview.technicalFallbackCount}
+          geometryViolationCount={geometryDiagnostics.total}
           isFetching={query.isFetching}
         />
         <div className="overflow-auto p-3 pt-2">
@@ -321,6 +338,16 @@ export function OntologyBrowser() {
             lanes={layout.lanes}
             nodes={layout.nodes}
             edges={routedEdges}
+            diagnostics={geometryDiagnostics}
+            unmappedNodeCount={overview.unmappedNodes.length}
+            runtimeNodeCount={
+              viewMode === "OVERVIEW"
+                ? overview.overviewNodes.length
+                : visibleSourceNodes.length
+            }
+            runtimeEdgeCount={collapsedEdges.length}
+            renderedNodeCount={layout.nodes.length}
+            renderedEdgeCount={routedEdges.length}
             nodeLabel={nodeDisplayLabel}
             nodeOpacity={nodeOpacity}
             edgeOpacity={edgeOpacity}
@@ -353,5 +380,3 @@ export function OntologyBrowser() {
     </div>
   );
 }
-
-

@@ -3,6 +3,7 @@ import { OntologyLaneBackground } from "./OntologyLaneBackground";
 import { OntologyNodeCard } from "./OntologyNodeCard";
 import type {
   LaneGeometry,
+  OntologyGeometryDiagnostics,
   RoutedOntologyEdge,
 } from "../../ontology/ontologyGraphTypes";
 import type { PositionedOntologyNode } from "../../types/ontology";
@@ -14,6 +15,12 @@ interface OntologyLaneGraphProps {
   lanes: LaneGeometry[];
   nodes: PositionedOntologyNode[];
   edges: RoutedOntologyEdge[];
+  diagnostics: OntologyGeometryDiagnostics;
+  unmappedNodeCount: number;
+  runtimeNodeCount: number;
+  runtimeEdgeCount: number;
+  renderedNodeCount: number;
+  renderedEdgeCount: number;
   nodeLabel: (node: PositionedOntologyNode) => string;
   nodeOpacity: (nodeId: string) => number;
   edgeOpacity: (edgeId: string) => number;
@@ -31,6 +38,12 @@ export function OntologyLaneGraph({
   lanes,
   nodes,
   edges,
+  diagnostics,
+  unmappedNodeCount,
+  runtimeNodeCount,
+  runtimeEdgeCount,
+  renderedNodeCount,
+  renderedEdgeCount,
   nodeLabel,
   nodeOpacity,
   edgeOpacity,
@@ -43,6 +56,18 @@ export function OntologyLaneGraph({
   return (
     <svg
       data-testid={testId}
+      data-geometry-violation-count={diagnostics.total}
+      data-edge-through-node-count={diagnostics.edgeThroughNode}
+      data-segment-overlap-count={diagnostics.segmentOverlap}
+      data-label-inside-node-count={diagnostics.labelInsideNode}
+      data-node-outside-lane-count={diagnostics.nodeOutsideLane}
+      data-duplicate-cross-channel-count={diagnostics.duplicateCrossChannel}
+      data-unmapped-node-count={unmappedNodeCount}
+      data-overview-width={width}
+      data-runtime-node-count={runtimeNodeCount}
+      data-runtime-edge-count={runtimeEdgeCount}
+      data-rendered-node-count={renderedNodeCount}
+      data-rendered-edge-count={renderedEdgeCount}
       width={width}
       height={height}
       viewBox={`0 0 ${width} ${height}`}

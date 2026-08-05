@@ -19,6 +19,12 @@ describe("本体浏览器交互", () => {
     expect(
       container.querySelectorAll('[data-testid="ontology-overview-graph"] line'),
     ).toHaveLength(0);
+
+    const graph = container.querySelector(
+      '[data-testid="ontology-overview-graph"]',
+    );
+    expect(graph).toHaveAttribute("data-geometry-violation-count", "0");
+    expect(graph).toHaveAttribute("data-unmapped-node-count", "0");
   });
 
   it("切换用户与身份层后只保留该层节点", async () => {

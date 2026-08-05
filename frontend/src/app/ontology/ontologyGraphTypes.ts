@@ -27,6 +27,33 @@ export interface NodePorts {
   bottom: Point;
 }
 
+export interface PortAssignment {
+  edgeId: string;
+  nodeId: string;
+  side: "left" | "right" | "top" | "bottom";
+  offset: number;
+}
+
+export interface LaneAssignment {
+  laneId: OntologyLaneId;
+  reason:
+    | "EXACT_LOCAL_NAME"
+    | "BACKEND_MODULE"
+    | "CORE_NODE"
+    | "TECHNICAL_ADJACENCY"
+    | "TECHNICAL_FALLBACK";
+}
+
+export interface OntologyGeometryDiagnostics {
+  total: number;
+  edgeThroughNode: number;
+  segmentOverlap: number;
+  labelInsideNode: number;
+  nodeOutsideLane: number;
+  duplicateCrossChannel: number;
+  edgeInsideEndpoint: number;
+}
+
 export interface CollapsedOntologyEdge {
   id: string;
   from: string;
@@ -69,6 +96,8 @@ export interface OntologyOverviewGraph {
   unmappedNodes: OntologyNode[];
   secondaryRelationCount: number;
   whitelistRelationCount: number;
+  technicalAdjacencyCount: number;
+  technicalFallbackCount: number;
 }
 
 export interface OntologyLayoutResult {

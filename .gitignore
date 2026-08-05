@@ -8,7 +8,11 @@ htmlcov/
 
 # Virtual environments
 .venv/
+.venv*/
 venv/
+venv*/
+env/
+env*/
 
 # Node / frontend
 node_modules/

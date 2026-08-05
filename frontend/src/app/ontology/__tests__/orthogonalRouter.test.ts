@@ -16,7 +16,10 @@ describe("orthogonalRouter", () => {
     const nodes = buildCurrentOntologyNodes();
     const edges = buildSampleOverviewEdges(nodes);
     const overview = buildOntologyOverview(nodes, edges);
-    const layout = layoutOntologyGraph(nodes, { overview: true });
+    const layout = layoutOntologyGraph(nodes, overview.collapsedEdges, {
+      overview: true,
+      allEdges: edges,
+    });
     const routed = routeOntologyEdges({
       nodes: layout.nodes,
       collapsedEdges: overview.collapsedEdges,

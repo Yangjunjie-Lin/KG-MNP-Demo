@@ -338,17 +338,23 @@ export const ontologyViewFixture = {
     { module: "SERVICE_CONTRACT", label_zh: "业务与服务层", description: "业务" },
     { module: "PROCESS", label_zh: "携转流程层", description: "流程" },
     { module: "COMPLIANCE", label_zh: "资格与合规层", description: "合规" },
+    { module: "CODE_LIST", label_zh: "码表", description: "技术" },
   ],
   graph: {
     nodes: [
       { id: "urn:mnp:Subscriber", local_name: "Subscriber", label: "订户", type: "Class", module: "IDENTITY" },
       { id: "urn:mnp:NaturalPerson", local_name: "NaturalPerson", label: "自然人订户", type: "Class", module: "IDENTITY" },
+      { id: "urn:mnp:OrganisationSubscriber", local_name: "OrganisationSubscriber", label: "组织订户", type: "Class", module: "IDENTITY" },
       { id: "urn:mnp:IdentityDocument", local_name: "IdentityDocument", label: "身份证件", type: "Class", module: "IDENTITY" },
       { id: "urn:mnp:RealNameRegistration", local_name: "RealNameRegistration", label: "实名登记", type: "Class", module: "IDENTITY" },
+      { id: "urn:mnp:IdentityVerification", local_name: "IdentityVerification", label: "身份核验", type: "Class", module: "IDENTITY" },
+      { id: "urn:mnp:PhoneNumberOwnership", local_name: "PhoneNumberOwnership", label: "号码归属", type: "Class", module: "IDENTITY" },
       { id: "urn:mnp:PhoneNumber", local_name: "PhoneNumber", label: "电话号码", type: "Class", module: "IDENTITY" },
       { id: "urn:mnp:TelecomAccount", local_name: "TelecomAccount", label: "电信账户", type: "Class", module: "ACCOUNT_BILLING" },
       { id: "urn:mnp:BillingAccount", local_name: "BillingAccount", label: "计费账户", type: "Class", module: "ACCOUNT_BILLING" },
       { id: "urn:mnp:Bill", local_name: "Bill", label: "账单", type: "Class", module: "ACCOUNT_BILLING" },
+      { id: "urn:mnp:Charge", local_name: "Charge", label: "费用项", type: "Class", module: "ACCOUNT_BILLING" },
+      { id: "urn:mnp:Payment", local_name: "Payment", label: "缴费记录", type: "Class", module: "ACCOUNT_BILLING" },
       { id: "urn:mnp:MobilePlan", local_name: "MobilePlan", label: "移动套餐", type: "Class", module: "SERVICE_CONTRACT" },
       { id: "urn:mnp:TelecomService", local_name: "TelecomService", label: "电信业务", type: "Class", module: "SERVICE_CONTRACT" },
       { id: "urn:mnp:ServiceSubscription", local_name: "ServiceSubscription", label: "业务订阅", type: "Class", module: "SERVICE_CONTRACT" },
@@ -359,19 +365,29 @@ export const ontologyViewFixture = {
       { id: "urn:mnp:EligibilityRule", local_name: "EligibilityRule", label: "资格规则", type: "Class", module: "COMPLIANCE" },
       { id: "urn:mnp:EvidenceRecord", local_name: "EvidenceRecord", label: "证据记录", type: "Class", module: "EVIDENCE_TIME" },
       { id: "urn:mnp:BlockingReason", local_name: "BlockingReason", label: "阻塞原因", type: "Class", module: "COMPLIANCE" },
+      { id: "urn:mnp:CodeListEntry", local_name: "CodeListEntry", label: "码表项", type: "Class", module: "CODE_LIST" },
     ],
     edges: [
+      // 跨层
       { source: "urn:mnp:case", target: "urn:mnp:assessment", predicate: "hasEligibilityAssessment" },
+      { source: "urn:mnp:Subscriber", target: "urn:mnp:TelecomAccount", predicate: "billedThrough" },
+      { source: "urn:mnp:MNPRequest", target: "urn:mnp:Subscriber", predicate: "requestedBy" },
+      // 层内多边 / 同一节点多出边
       { source: "urn:mnp:Subscriber", target: "urn:mnp:PhoneNumber", predicate: "ownsPhoneNumber" },
       { source: "urn:mnp:Subscriber", target: "urn:mnp:RealNameRegistration", predicate: "hasRealNameRegistration" },
       { source: "urn:mnp:Subscriber", target: "urn:mnp:IdentityDocument", predicate: "hasIdentityDocument" },
+      { source: "urn:mnp:RealNameRegistration", target: "urn:mnp:IdentityVerification", predicate: "verifiedBy" },
       { source: "urn:mnp:TelecomAccount", target: "urn:mnp:BillingAccount", predicate: "relatedAccount" },
       { source: "urn:mnp:BillingAccount", target: "urn:mnp:Bill", predicate: "hasBill" },
+      { source: "urn:mnp:Bill", target: "urn:mnp:Charge", predicate: "hasCharge" },
+      { source: "urn:mnp:Bill", target: "urn:mnp:Payment", predicate: "hasPayment" },
       { source: "urn:mnp:ServiceSubscription", target: "urn:mnp:TelecomService", predicate: "subscribesToService" },
       { source: "urn:mnp:assessment", target: "urn:mnp:EvidenceRecord", predicate: "usesEvidence" },
       { source: "urn:mnp:assessment", target: "urn:mnp:EligibilityRule", predicate: "evaluatedByRule" },
-      { source: "urn:mnp:MNPRequest", target: "urn:mnp:Subscriber", predicate: "requestedBy" },
+      // 平行关系折叠
       { source: "urn:mnp:case", target: "urn:mnp:assessment", predicate: "aboutCase" },
+      // 技术节点关联归层（账户层）
+      { source: "urn:mnp:CodeListEntry", target: "urn:mnp:BillingAccount", predicate: "mapsAccountCode" },
     ],
   },
   key_paths: [
@@ -383,7 +399,7 @@ export const ontologyViewFixture = {
       exists_in_rdf: true,
     },
   ],
-  stats: { class_count: 18, edge_count: 11 },
+  stats: { class_count: 24, edge_count: 16 },
 };
 
 export const ontologyPropertiesFixture = {

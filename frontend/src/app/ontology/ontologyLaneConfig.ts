@@ -1,5 +1,9 @@
-import type { OntologyNode } from "../types/ontology";
-import type { OntologyLaneId, OntologyViewMode } from "./ontologyGraphTypes";
+import type { OntologyEdge, OntologyNode } from "../types/ontology";
+import type {
+  LaneAssignment,
+  OntologyLaneId,
+  OntologyViewMode,
+} from "./ontologyGraphTypes";
 
 export const ONTOLOGY_LANE_ORDER: OntologyLaneId[] = [
   "USER_IDENTITY",
@@ -165,11 +169,8 @@ export const ONTOLOGY_LANE_CONFIGS: OntologyLaneConfig[] = [
   },
 ];
 
-/** Exact localName → lane overrides (priority 1). */
-export const LOCAL_NAME_LANE_MAP: Record<string, OntologyLaneId> = {
-  MappingRecord: "QUALIFICATION_COMPLIANCE",
-  CodeListEntry: "QUALIFICATION_COMPLIANCE",
-};
+/** Exact localName → lane overrides (priority 1). Technical nodes are not listed here. */
+export const LOCAL_NAME_LANE_MAP: Record<string, OntologyLaneId> = {};
 
 export const OVERVIEW_RELATION_ALLOWLIST = new Set([
   // 用户与身份
@@ -279,54 +280,173 @@ export function isEmphasizedNode(laneId: OntologyLaneId, localName: string): boo
 }
 
 /**
- * Assign a node to exactly one business lane.
- * Priority: localName map → backend module → CORE exact map → technical fallback → null.
+ * Phase-1 assignment only. Technical support nodes are deferred to adjacency.
  */
 export function assignOntologyLane(node: OntologyNode): OntologyLaneId | null {
+  const phase1 = assignPhase1(node);
+  return phase1?.laneId ?? null;
+}
+
+function assignPhase1(node: OntologyNode): LaneAssignment | null {
   const byLocalName = LOCAL_NAME_LANE_MAP[node.localName];
-  if (byLocalName) return byLocalName;
+  if (byLocalName) {
+    return { laneId: byLocalName, reason: "EXACT_LOCAL_NAME" };
+  }
+
+  if (isTechnicalSupportNode(node)) {
+    return null;
+  }
 
   const module = normalizeModule(node.module);
   const byModule = BACKEND_MODULE_LANE.get(module);
-  if (byModule) return byModule;
+  if (byModule) {
+    return { laneId: byModule, reason: "BACKEND_MODULE" };
+  }
 
   if (module === "CORE") {
     const byCore = CORE_NODE_LANE.get(node.localName);
-    if (byCore) return byCore;
-  }
-
-  if (TECHNICAL_MODULES.has(module)) {
-    return LOCAL_NAME_LANE_MAP[node.localName] ?? "QUALIFICATION_COMPLIANCE";
+    if (byCore) {
+      return { laneId: byCore, reason: "CORE_NODE" };
+    }
   }
 
   return null;
 }
 
+function pickLaneByNeighborScores(
+  scores: Map<OntologyLaneId, number>,
+): OntologyLaneId | null {
+  let bestLane: OntologyLaneId | null = null;
+  let bestScore = -1;
+  for (const laneId of ONTOLOGY_LANE_ORDER) {
+    const score = scores.get(laneId) ?? 0;
+    if (score > bestScore) {
+      bestScore = score;
+      bestLane = laneId;
+    }
+  }
+  return bestScore > 0 ? bestLane : null;
+}
+
 export function assignAllOntologyLanes(
   nodes: OntologyNode[],
+  edges: OntologyEdge[] = [],
 ): {
   assignments: Map<string, OntologyLaneId>;
+  assignmentMeta: Map<string, LaneAssignment>;
   unmapped: OntologyNode[];
+  technicalAdjacencyCount: number;
+  technicalFallbackCount: number;
 } {
+  const nodeById = new Map(nodes.map((node) => [node.id, node]));
   const assignments = new Map<string, OntologyLaneId>();
-  const unmapped: OntologyNode[] = [];
+  const assignmentMeta = new Map<string, LaneAssignment>();
+  const pendingTechnical: OntologyNode[] = [];
 
-  for (const node of nodes) {
-    const lane = assignOntologyLane(node);
-    if (!lane) {
-      console.warn("[ontology-layout] unmapped node", {
-        id: node.id,
-        localName: node.localName,
-        module: node.module,
-      });
-      unmapped.push(node);
+  const sortedNodes = [...nodes].sort((a, b) =>
+    a.id.localeCompare(b.id) || a.localName.localeCompare(b.localName),
+  );
+
+  for (const node of sortedNodes) {
+    const phase1 = assignPhase1(node);
+    if (phase1) {
+      if (assignments.has(node.id)) {
+        throw new Error(`Duplicate lane assignment for node ${node.id}`);
+      }
+      assignments.set(node.id, phase1.laneId);
+      assignmentMeta.set(node.id, phase1);
       continue;
     }
-    if (assignments.has(node.id)) {
-      throw new Error(`Duplicate lane assignment for node ${node.id}`);
+    if (isTechnicalSupportNode(node)) {
+      pendingTechnical.push(node);
+      continue;
     }
-    assignments.set(node.id, lane);
   }
 
-  return { assignments, unmapped };
+  const adjacency = new Map<string, string[]>();
+  const sortedEdges = [...edges].sort(
+    (a, b) =>
+      a.from.localeCompare(b.from) ||
+      a.to.localeCompare(b.to) ||
+      a.relation.localeCompare(b.relation),
+  );
+  for (const edge of sortedEdges) {
+    if (!adjacency.has(edge.from)) adjacency.set(edge.from, []);
+    if (!adjacency.has(edge.to)) adjacency.set(edge.to, []);
+    adjacency.get(edge.from)?.push(edge.to);
+    adjacency.get(edge.to)?.push(edge.from);
+  }
+
+  let progressed = true;
+  while (progressed) {
+    progressed = false;
+    const stillPending: OntologyNode[] = [];
+    const orderedPending = [...pendingTechnical].sort((a, b) =>
+      a.id.localeCompare(b.id),
+    );
+    for (const node of orderedPending) {
+      if (assignments.has(node.id)) continue;
+      const scores = new Map<OntologyLaneId, number>();
+      for (const neighborId of adjacency.get(node.id) ?? []) {
+        const laneId = assignments.get(neighborId);
+        if (!laneId) continue;
+        scores.set(laneId, (scores.get(laneId) ?? 0) + 1);
+      }
+      const chosen = pickLaneByNeighborScores(scores);
+      if (!chosen) {
+        stillPending.push(node);
+        continue;
+      }
+      const meta: LaneAssignment = {
+        laneId: chosen,
+        reason: "TECHNICAL_ADJACENCY",
+      };
+      assignments.set(node.id, meta.laneId);
+      assignmentMeta.set(node.id, meta);
+      progressed = true;
+    }
+    pendingTechnical.length = 0;
+    pendingTechnical.push(...stillPending);
+  }
+
+  let technicalFallbackCount = 0;
+  for (const node of [...pendingTechnical].sort((a, b) => a.id.localeCompare(b.id))) {
+    const meta: LaneAssignment = {
+      laneId: "QUALIFICATION_COMPLIANCE",
+      reason: "TECHNICAL_FALLBACK",
+    };
+    assignments.set(node.id, meta.laneId);
+    assignmentMeta.set(node.id, meta);
+    technicalFallbackCount += 1;
+  }
+
+  const unmapped: OntologyNode[] = [];
+  for (const node of sortedNodes) {
+    if (assignments.has(node.id)) continue;
+    console.warn("[ontology-layout] unmapped node", {
+      id: node.id,
+      localName: node.localName,
+      module: node.module,
+    });
+    unmapped.push(node);
+  }
+
+  // Validate referenced edge endpoints exist in node set (ignore dangling).
+  for (const edge of sortedEdges) {
+    void nodeById.get(edge.from);
+    void nodeById.get(edge.to);
+  }
+
+  let technicalAdjacencyCount = 0;
+  for (const meta of assignmentMeta.values()) {
+    if (meta.reason === "TECHNICAL_ADJACENCY") technicalAdjacencyCount += 1;
+  }
+
+  return {
+    assignments,
+    assignmentMeta,
+    unmapped,
+    technicalAdjacencyCount,
+    technicalFallbackCount,
+  };
 }

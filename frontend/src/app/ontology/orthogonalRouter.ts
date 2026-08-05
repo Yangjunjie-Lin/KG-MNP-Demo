@@ -6,7 +6,15 @@ import type {
   Point,
   RoutedOntologyEdge,
 } from "./ontologyGraphTypes";
-import { getNodePorts, LAYOUT, laneIndex, midpoint } from "./ontologyLayout";
+import {
+  LAYOUT,
+  assignIntervalChannels,
+  assignNodePorts,
+  getNodePorts,
+  laneIndex,
+  midpoint,
+  portOffsetLookup,
+} from "./ontologyLayout";
 
 function pointsToPath(points: Point[]): string {
   if (points.length === 0) return "";
@@ -54,7 +62,6 @@ function longestHorizontalLabel(points: Point[]): Point {
     }
   }
   if (bestLen < 0) {
-    // fallback to geometric midpoint of polyline
     const midIndex = Math.floor(points.length / 2);
     return points[midIndex] ?? { x: 0, y: 0 };
   }
@@ -107,90 +114,131 @@ function compareIntraLane(
   );
 }
 
-function gapSlotX(
+function portFor(
+  edgeId: string,
   node: PositionedOntologyNode,
-  channel: number,
-  side: "left" | "right",
-): number {
-  const half = Math.floor(LAYOUT.nodeGapX / 2);
-  const maxSlots = Math.max(1, Math.floor((half - 16) / 8));
-  const slot = 8 + (channel % maxSlots) * 8;
-  if (side === "right") {
-    // Left half of the gap after this node.
-    return node.x + LAYOUT.emphasizedNodeWidth + slot;
-  }
-  // Right half of the gap before this node.
-  return node.x - half - slot;
+  side: "left" | "right" | "top" | "bottom",
+  offsets: Map<string, number>,
+): Point {
+  const offset = offsets.get(`${edgeId}|${node.id}|${side}`) ?? 0;
+  return getNodePorts(node, { [side]: offset })[side];
 }
 
-function routeForwardIntra(
+function sameColumn(a: PositionedOntologyNode, b: PositionedOntologyNode): boolean {
+  return Math.abs(a.x - b.x) < 1;
+}
+
+function isForward(source: PositionedOntologyNode, target: PositionedOntologyNode): boolean {
+  return source.order < target.order;
+}
+
+function pickSides(
   source: PositionedOntologyNode,
   target: PositionedOntologyNode,
-  channel: number,
+): { leaveSide: "left" | "right"; arriveSide: "left" | "right" } {
+  if (sameColumn(source, target)) {
+    return { leaveSide: "right", arriveSide: "right" };
+  }
+  if (source.x <= target.x) {
+    return { leaveSide: "right", arriveSide: "left" };
+  }
+  return { leaveSide: "left", arriveSide: "right" };
+}
+
+function preferredStubX(
+  node: PositionedOntologyNode,
+  side: "left" | "right",
+  slot: number,
+): number {
+  const inset = 6 + slot * 4;
+  const cellRight = node.x + LAYOUT.emphasizedNodeWidth;
+  return side === "right" ? cellRight + inset : node.x - inset;
+}
+
+function allocateDistinctX(preferred: number, used: number[]): number {
+  let x = preferred;
+  const minGap = 4;
+  for (let guard = 0; guard < 500; guard += 1) {
+    if (!used.some((value) => Math.abs(value - x) < minGap)) {
+      used.push(x);
+      return x;
+    }
+    x += minGap;
+  }
+  used.push(x);
+  return x;
+}
+
+function busYFor(
   lane: LaneGeometry,
-): Point[] {
-  const sp = getNodePorts(source);
-  const tp = getNodePorts(target);
-  const exitX = gapSlotX(source, channel, "right");
-  const entryX = gapSlotX(target, channel, "left");
-  const busY =
+  channel: number,
+  band: "forward" | "reverse",
+  forwardChannelCount: number,
+): number {
+  const forwardBand = Math.max(1, forwardChannelCount);
+  if (band === "forward") {
+    return (
+      lane.y +
+      lane.height +
+      LAYOUT.reverseRouteBase +
+      channel * LAYOUT.reverseRouteGap
+    );
+  }
+  return (
     lane.y +
     lane.height +
     LAYOUT.reverseRouteBase +
-    channel * LAYOUT.reverseRouteGap;
+    forwardBand * LAYOUT.reverseRouteGap +
+    channel * LAYOUT.reverseRouteGap
+  );
+}
+
+function routeIntraSideGap(
+  edgeId: string,
+  source: PositionedOntologyNode,
+  target: PositionedOntologyNode,
+  exitX: number,
+  entryX: number,
+  busSlot: number,
+  lane: LaneGeometry,
+  offsets: Map<string, number>,
+  forwardChannelCount: number,
+  band: "forward" | "reverse",
+): Point[] {
+  const { leaveSide, arriveSide } = pickSides(source, target);
+  const leave = portFor(edgeId, source, leaveSide, offsets);
+  const arrive = portFor(edgeId, target, arriveSide, offsets);
+  const busY = busYFor(lane, busSlot, band, forwardChannelCount);
   return orthogonalize([
-    sp.right,
-    { x: exitX, y: sp.right.y },
+    leave,
+    { x: exitX, y: leave.y },
     { x: exitX, y: busY },
     { x: entryX, y: busY },
-    { x: entryX, y: tp.left.y },
-    tp.left,
-  ]);
-}
-
-function routeReverseIntra(
-  source: PositionedOntologyNode,
-  target: PositionedOntologyNode,
-  channel: number,
-  lane: LaneGeometry,
-): Point[] {
-  const sp = getNodePorts(source);
-  const tp = getNodePorts(target);
-  const exitX = gapSlotX(source, channel, "left");
-  const entryX = gapSlotX(target, channel, "right");
-  const laneRouteY =
-    lane.y +
-    lane.height +
-    LAYOUT.reverseRouteBase +
-    channel * LAYOUT.reverseRouteGap;
-  return orthogonalize([
-    sp.bottom,
-    { x: exitX, y: sp.bottom.y },
-    { x: exitX, y: laneRouteY },
-    { x: entryX, y: laneRouteY },
-    { x: entryX, y: tp.bottom.y },
-    tp.bottom,
+    { x: entryX, y: arrive.y },
+    arrive,
   ]);
 }
 
 function routeCrossLane(
+  edgeId: string,
   source: PositionedOntologyNode,
   target: PositionedOntologyNode,
   channel: number,
   contentRight: number,
+  offsets: Map<string, number>,
 ): Point[] {
-  const sp = getNodePorts(source);
-  const tp = getNodePorts(target);
-  const routeX = contentRight + 24 + channel * LAYOUT.edgeChannelGap;
   const sourceBelow = laneIndex(source.laneId) < laneIndex(target.laneId);
-  const leave = sourceBelow ? sp.bottom : sp.top;
-  const arrive = sourceBelow ? tp.top : tp.bottom;
+  const leaveSide = sourceBelow ? "bottom" : "top";
+  const arriveSide = sourceBelow ? "top" : "bottom";
+  const leave = portFor(edgeId, source, leaveSide, offsets);
+  const arrive = portFor(edgeId, target, arriveSide, offsets);
+  const routeX = contentRight + 24 + channel * LAYOUT.edgeChannelGap;
   const leaveStub = sourceBelow
-    ? leave.y + 10 + channel * 4
-    : leave.y - 10 - channel * 4;
+    ? leave.y + 8 + channel * 3
+    : leave.y - 8 - channel * 3;
   const arriveStub = sourceBelow
-    ? arrive.y - 10 - channel * 4
-    : arrive.y + 10 + channel * 4;
+    ? arrive.y - 8 - channel * 3
+    : arrive.y + 8 + channel * 3;
 
   return orthogonalize([
     leave,
@@ -209,6 +257,25 @@ function edgeLabel(relations: CollapsedOntologyEdge["relations"]): string {
   return `${relations.length} 项关系`;
 }
 
+function countBandSize(
+  edges: CollapsedOntologyEdge[],
+  nodeById: Map<string, PositionedOntologyNode>,
+  predicate: (
+    from: PositionedOntologyNode,
+    to: PositionedOntologyNode,
+  ) => boolean,
+): Map<OntologyLaneId, number> {
+  const counts = new Map<OntologyLaneId, number>();
+  for (const edge of edges) {
+    const from = nodeById.get(edge.from);
+    const to = nodeById.get(edge.to);
+    if (!from || !to || from.laneId !== to.laneId) continue;
+    if (!predicate(from, to)) continue;
+    counts.set(from.laneId, (counts.get(from.laneId) ?? 0) + 1);
+  }
+  return counts;
+}
+
 export function routeOntologyEdges(input: {
   nodes: PositionedOntologyNode[];
   collapsedEdges: CollapsedOntologyEdge[];
@@ -217,6 +284,9 @@ export function routeOntologyEdges(input: {
 }): RoutedOntologyEdge[] {
   const nodeById = new Map(input.nodes.map((node) => [node.id, node]));
   const laneById = new Map(input.lanes.map((lane) => [lane.id, lane]));
+  const offsets = portOffsetLookup(
+    assignNodePorts(input.nodes, input.collapsedEdges),
+  );
 
   const intra: CollapsedOntologyEdge[] = [];
   const cross: CollapsedOntologyEdge[] = [];
@@ -232,8 +302,52 @@ export function routeOntologyEdges(input: {
   intra.sort((a, b) => compareIntraLane(a, b, nodeById));
   cross.sort((a, b) => compareCrossLane(a, b, nodeById));
 
+  const channelByEdge = assignIntervalChannels(intra, nodeById);
+  const forwardCounts = countBandSize(
+    intra,
+    nodeById,
+    (from, to) => isForward(from, to) && !sameColumn(from, to),
+  );
+  const slotByEdge = new Map<string, number>();
+  const nextSlot = new Map<string, number>();
+  for (const edge of intra) {
+    const from = nodeById.get(edge.from);
+    const to = nodeById.get(edge.to);
+    if (!from || !to) continue;
+    const band =
+      isForward(from, to) && !sameColumn(from, to) ? "F" : "R";
+    const key = `${from.laneId}|${band}`;
+    const slot = nextSlot.get(key) ?? 0;
+    nextSlot.set(key, slot + 1);
+    slotByEdge.set(edge.id, slot);
+  }
+
+  const usedRailX = new Map<OntologyLaneId, number[]>();
+  const railByEdge = new Map<string, { exitX: number; entryX: number }>();
+  for (const edge of intra) {
+    const from = nodeById.get(edge.from);
+    const to = nodeById.get(edge.to);
+    if (!from || !to) continue;
+    const slot = slotByEdge.get(edge.id) ?? 0;
+    const useForward = isForward(from, to) && !sameColumn(from, to);
+    const stubSlot = useForward
+      ? slot
+      : slot + (forwardCounts.get(from.laneId) ?? 0);
+    const { leaveSide, arriveSide } = pickSides(from, to);
+    const used = usedRailX.get(from.laneId) ?? [];
+    const exitX = allocateDistinctX(
+      preferredStubX(from, leaveSide, stubSlot),
+      used,
+    );
+    const entryX = allocateDistinctX(
+      preferredStubX(to, arriveSide, stubSlot),
+      used,
+    );
+    usedRailX.set(from.laneId, used);
+    railByEdge.set(edge.id, { exitX, entryX });
+  }
+
   const routed: RoutedOntologyEdge[] = [];
-  const channelByLane = new Map<OntologyLaneId, number>();
 
   for (const edge of intra) {
     const from = nodeById.get(edge.from);
@@ -241,14 +355,29 @@ export function routeOntologyEdges(input: {
     if (!from || !to) continue;
     const lane = laneById.get(from.laneId);
     if (!lane) continue;
+    const rails = railByEdge.get(edge.id);
+    if (!rails) continue;
 
-    const channel = channelByLane.get(from.laneId) ?? 0;
-    channelByLane.set(from.laneId, channel + 1);
-
-    const forward = from.x + from.width <= to.x;
-    const points = forward
-      ? routeForwardIntra(from, to, channel, lane)
-      : routeReverseIntra(from, to, channel, lane);
+    const logicalChannel = channelByEdge.get(edge.id) ?? 0;
+    const slot = slotByEdge.get(edge.id) ?? 0;
+    const forwardChannelCount = Math.max(
+      1,
+      forwardCounts.get(from.laneId) ?? 1,
+    );
+    const useForwardSide =
+      isForward(from, to) && !sameColumn(from, to);
+    const points = routeIntraSideGap(
+      edge.id,
+      from,
+      to,
+      rails.exitX,
+      rails.entryX,
+      slot,
+      lane,
+      offsets,
+      forwardChannelCount,
+      useForwardSide ? "forward" : "reverse",
+    );
 
     const labelPoint = longestHorizontalLabel(points);
     routed.push({
@@ -259,9 +388,9 @@ export function routeOntologyEdges(input: {
       points,
       path: pointsToPath(points),
       labelX: labelPoint.x,
-      labelY: labelPoint.y,
+      labelY: labelPoint.y - 8,
       kind: "INTRA_LANE",
-      channel,
+      channel: logicalChannel,
     });
   }
 
@@ -269,7 +398,14 @@ export function routeOntologyEdges(input: {
     const from = nodeById.get(edge.from);
     const to = nodeById.get(edge.to);
     if (!from || !to) return;
-    const points = routeCrossLane(from, to, channel, input.contentRight);
+    const points = routeCrossLane(
+      edge.id,
+      from,
+      to,
+      channel,
+      input.contentRight,
+      offsets,
+    );
     const labelPoint = longestHorizontalLabel(points);
     routed.push({
       id: edge.id,
@@ -279,13 +415,12 @@ export function routeOntologyEdges(input: {
       points,
       path: pointsToPath(points),
       labelX: labelPoint.x,
-      labelY: labelPoint.y,
+      labelY: labelPoint.y - 8,
       kind: "CROSS_LANE",
       channel,
     });
   });
 
-  // Stable order: by kind then id
   routed.sort((a, b) => {
     if (a.kind !== b.kind) return a.kind === "INTRA_LANE" ? -1 : 1;
     return a.id.localeCompare(b.id);
@@ -312,3 +447,5 @@ export function pointsAreOrthogonal(points: Point[]): boolean {
   }
   return true;
 }
+
+export type { OntologyLaneId };

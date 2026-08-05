@@ -95,7 +95,12 @@ export function buildOntologyOverview(
   nodes: OntologyNode[],
   edges: OntologyEdge[],
 ): OntologyOverviewGraph {
-  const { assignments, unmapped } = assignAllOntologyLanes(nodes);
+  const {
+    assignments,
+    unmapped,
+    technicalAdjacencyCount,
+    technicalFallbackCount,
+  } = assignAllOntologyLanes(nodes, edges);
   const allLaneNodes = buildLaneNodeLists(nodes, assignments);
 
   const overviewLocalNames = new Set(
@@ -136,6 +141,8 @@ export function buildOntologyOverview(
     unmappedNodes: unmapped,
     secondaryRelationCount,
     whitelistRelationCount: whitelistEdges.length,
+    technicalAdjacencyCount,
+    technicalFallbackCount,
   };
 }
 

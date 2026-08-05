@@ -7,6 +7,9 @@ interface OntologyGraphToolbarProps {
   overviewRelationCount: number;
   secondaryRelationCount: number;
   unmappedCount: number;
+  technicalAdjacencyCount: number;
+  technicalFallbackCount: number;
+  geometryViolationCount: number;
   isFetching?: boolean;
 }
 
@@ -16,6 +19,9 @@ export function OntologyGraphToolbar({
   overviewRelationCount,
   secondaryRelationCount,
   unmappedCount,
+  technicalAdjacencyCount,
+  technicalFallbackCount,
+  geometryViolationCount,
   isFetching,
 }: OntologyGraphToolbarProps) {
   return (
@@ -38,9 +44,22 @@ export function OntologyGraphToolbar({
         <span className="rounded bg-white px-2 py-1 shadow-sm">
           {ui.ontologyCollapsedRelations}：{secondaryRelationCount}
         </span>
+        <span className="rounded bg-white px-2 py-1 shadow-sm">
+          {ui.ontologyTechnicalAdjacency}：{technicalAdjacencyCount}
+        </span>
+        {technicalFallbackCount > 0 ? (
+          <span className="rounded bg-amber-50 px-2 py-1 text-amber-700 shadow-sm">
+            {ui.ontologyTechnicalFallback}：{technicalFallbackCount}
+          </span>
+        ) : null}
         {unmappedCount > 0 ? (
           <span className="rounded bg-amber-50 px-2 py-1 text-amber-700 shadow-sm">
             {ui.ontologyUnmappedConcepts}：{unmappedCount}
+          </span>
+        ) : null}
+        {geometryViolationCount > 0 ? (
+          <span className="rounded bg-rose-50 px-2 py-1 text-rose-700 shadow-sm">
+            {ui.ontologyLayoutCheckFound} {geometryViolationCount} {ui.ontologyLayoutCheckAnomalies}
           </span>
         ) : null}
       </div>

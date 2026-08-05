@@ -1,4 +1,4 @@
-.PHONY: install test test-neo4j run-all validate-case03 evaluate-case03 trace-case03 docs check-refs neo4j-up neo4j-ping api frontend fullstack verify-frontend verify-fullstack verify-storage-atomicity verify-docker-runtime verify-stage-gate
+.PHONY: install test test-neo4j run-all validate-case03 evaluate-case03 trace-case03 docs check-refs neo4j-up neo4j-ping api frontend fullstack verify-frontend verify-fullstack verify-storage-atomicity verify-docker-runtime verify-repo-hygiene verify-stage-gate
 
 install:
 	python -m pip install -e ".[dev,api]"
@@ -43,10 +43,14 @@ frontend:
 fullstack:
 	python scripts/run_fullstack.py
 
+verify-repo-hygiene:
+	python scripts/check_repo_hygiene.py
+
 verify-frontend:
 	cd frontend && npm ci && npm run api:check && npm run verify
 
 verify-fullstack:
+	python scripts/check_repo_hygiene.py
 	python -m pytest -q
 	python scripts/check_references.py
 	python scripts/check_rule_versions.py
@@ -64,6 +68,7 @@ verify-docker-runtime:
 	python scripts/verify_docker_runtime.py
 
 verify-stage-gate:
+	python scripts/check_repo_hygiene.py
 	python -m pytest -q
 	python scripts/check_references.py
 	python scripts/check_rule_versions.py
@@ -73,4 +78,4 @@ verify-stage-gate:
 	cd frontend && npm run verify
 	cd frontend && npx playwright install chromium
 	python scripts/run_fullstack.py --reset-seed --playwright
-	$(MAKE) verify-docker-runtime
+	python scripts/verify_docker_runtime.py
