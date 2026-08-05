@@ -25,7 +25,7 @@ dev = [
 ]
 
 [project.scripts]
-kg-mnp = "kg_mnp_demo.cli:main"
+kg-mnp-eligibility = "kg_mnp_demo.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]

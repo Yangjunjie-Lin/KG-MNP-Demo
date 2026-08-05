@@ -1,0 +1,32 @@
+# Separated review, decision, issue, and publication vocabularies.
+# Do not collapse these into a single mixed status field.
+policy_version: "1.0"
+
+review_status:
+  - PROPOSED
+  - CONFIRMED
+  - REJECTED
+  - DEPRECATED
+
+review_decision:
+  - CONFIRM
+  - REJECT
+  - MODIFY_AND_CONFIRM
+  - DEFER
+  - DEPRECATE
+
+issue_types:
+  - MISSING_INFORMATION
+  - CONFLICT
+  - AMBIGUOUS
+  - UNSUPPORTED
+  - INCONSISTENT_SOURCE
+  - LOW_CONFIDENCE
+
+publication_scope:
+  - TBOX
+  - ABOX
+  - EVIDENCE
+  - MAPPING
+  - REVIEW_ONLY
+  - NONE

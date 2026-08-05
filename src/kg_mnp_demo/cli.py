@@ -119,7 +119,10 @@ def cmd_run_all() -> int:
 
 
 def build_parser() -> argparse.ArgumentParser:
-    p = argparse.ArgumentParser(prog="kg_mnp_demo", description="KG-MNP eligibility demo CLI")
+    p = argparse.ArgumentParser(
+        prog="kg-mnp-eligibility",
+        description="Legacy KG-MNP eligibility use-case CLI",
+    )
     sub = p.add_subparsers(dest="command", required=True)
 
     for name in ("validate", "infer"):

@@ -1,0 +1,41 @@
+# Ontology release and compatibility policy for future TBox publications.
+# Stage 02 freezes the policy; no ontology terms are changed here.
+policy_version: "1.0"
+versioning_scheme: "semantic-versioning"
+
+change_classification:
+  major:
+    - term_iri_change
+    - term_removal
+    - incompatible_domain_change
+    - incompatible_range_change
+    - incompatible_cardinality_change
+    - semantic_redefinition
+  minor:
+    - additive_class
+    - additive_property
+    - additive_optional_shape
+    - additive_alignment
+    - additive_mapping
+  patch:
+    - label_correction
+    - definition_clarification_without_semantic_change
+    - source_metadata_update
+    - documentation_fix
+
+deprecation:
+  require_deprecated_marker: true
+  require_replacement_term_when_available: true
+  require_change_log: true
+  immediate_removal_forbidden: true
+
+approval:
+  schema_delta_requires_review: true
+  tbox_publication_scope_required: true
+  rationale_required: true
+  evidence_required: true
+  compatibility_assessment_required: true
+
+generated_artifacts:
+  direct_manual_edit_forbidden: true
+  regenerate_from_authoritative_inputs: true

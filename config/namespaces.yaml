@@ -1,0 +1,34 @@
+# Formal IRI namespace policy for future KG-MNP ontology releases.
+# Stage 02 freezes this configuration only; existing TTL IRIs are not migrated here.
+policy_version: "1.0"
+
+project_base: "https://yangjunjie-lin.github.io/KG-MNP-Demo/"
+
+ontology:
+  base: "https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/"
+  terms: "https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#"
+  module_iri_template: "https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/{module}"
+  version_iri_template: "https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/{version}/{module}"
+
+shapes:
+  namespace: "https://yangjunjie-lin.github.io/KG-MNP-Demo/shapes#"
+
+instances:
+  base: "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/"
+
+evidence:
+  base: "https://yangjunjie-lin.github.io/KG-MNP-Demo/evidence/"
+
+mappings:
+  base: "https://yangjunjie-lin.github.io/KG-MNP-Demo/mapping/"
+
+review:
+  base: "https://yangjunjie-lin.github.io/KG-MNP-Demo/review/"
+
+named_graphs:
+  ontology: "urn:kg-mnp:ontology"
+  shapes: "urn:kg-mnp:shapes"
+  instances: "urn:kg-mnp:instances"
+  evidence: "urn:kg-mnp:evidence"
+  mappings: "urn:kg-mnp:mappings"
+  review: "urn:kg-mnp:review"

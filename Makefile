@@ -1,4 +1,5 @@
-.PHONY: install test check-refs verify-repo-hygiene verify-python-core
+.PHONY: install test check-refs verify-repo-hygiene verify-python-core \
+	verify-stage-01 verify-semantic-governance verify-stage-02
 
 PYTHON_CORE_TESTS = \
 	tests/test_ontology.py \
@@ -24,3 +25,11 @@ verify-repo-hygiene:
 
 verify-python-core: verify-repo-hygiene check-refs
 	python -m pytest $(PYTHON_CORE_TESTS)
+
+verify-stage-01: verify-python-core
+	python -m pytest -q tests/governance/test_stage_01_closure.py
+
+verify-semantic-governance:
+	python -m pytest -q tests/governance
+
+verify-stage-02: verify-stage-01 verify-semantic-governance
