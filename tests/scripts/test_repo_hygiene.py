@@ -38,6 +38,28 @@ def test_windows_absolute_path_is_rejected(tmp_path: Path):
     assert failures == ["local absolute path in frontend/src/example.ts:1"]
 
 
+def test_runtime_artifact_is_rejected():
+    mod = _load_module()
+    failures = mod.check_tracked_paths(["runtime_data/kg_mnp.sqlite3"])
+    assert failures == [
+        "tracked runtime/build artifact: runtime_data/kg_mnp.sqlite3"
+    ]
+
+
+def test_generated_ontology_site_is_rejected():
+    mod = _load_module()
+    failures = mod.check_tracked_paths(["docs/ontology-site/index.html"])
+    assert failures == [
+        "tracked runtime/build artifact: docs/ontology-site/index.html"
+    ]
+
+
+def test_downloaded_jar_is_rejected():
+    mod = _load_module()
+    failures = mod.check_tracked_paths(["third_party/widoco/tool.jar"])
+    assert failures == ["tracked third-party JAR: third_party/widoco/tool.jar"]
+
+
 def test_relative_path_is_allowed(tmp_path: Path):
     mod = _load_module()
     sample = tmp_path / "README.md"

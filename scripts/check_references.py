@@ -24,7 +24,6 @@ def main() -> int:
         "RDFLib/OWL-RL",
         "protegeproject/protege",
         "dgarijo/WIDOCO",
-        "neo4j-labs/neosemantics",
     }
     names = {s["name"] for s in sources}
     missing = required - names

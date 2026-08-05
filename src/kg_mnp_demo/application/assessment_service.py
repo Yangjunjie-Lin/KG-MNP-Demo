@@ -1,4 +1,4 @@
-"""Unified assessment application service — single entry for eligibility evaluation.
+"""Assessment service retained for the legacy eligibility example.
 
 Reuses existing input_adapter, rdf_builder, validator, OWL-RL, evaluator, and
 trace_graph. Does not re-implement eligibility rules.

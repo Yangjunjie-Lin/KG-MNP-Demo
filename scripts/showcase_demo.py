@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 """Local offline one-click showcase for KG-MNP eligibility ontology demo.
 
-Always uses the in-memory RDF backend. Does not read KG_MNP_BACKEND or Neo4j.
+Always uses the in-memory RDF backend.
 """
 
 from __future__ import annotations
@@ -1123,7 +1123,7 @@ def main(argv: list[str] | None = None) -> int:
     print("KG-MNP 携号转网资格判断本体演示")
     print("=" * 60)
     print()
-    print(f"backend = {BACKEND}（强制离线 RDF，忽略 Neo4j / 环境变量）")
+    print(f"backend = {BACKEND}（强制离线 RDF）")
     print(_assessment_time_note())
     print()
 

@@ -4,6 +4,8 @@
 2. **TM Forum Open APIs (Apache-2.0)** — map fields through YAML; do not invent OWL equivalents for JSON schema objects.
 3. **RDFLib / pySHACL / OWL-RL** — normal runtime dependencies with license notices.
 4. **Protégé / WIDOCO** — tooling only.
-5. **neosemantics** — future Neo4j bridge; not part of MVP tests.
 
-Candidate project contribution is the MNP **evidence–rule–clause–action** traceability layer, not inventing OWL/KG tooling itself.
+The retained MNP **evidence-rule-clause-action** traceability layer is a
+downstream legacy example, not the repository's current modeling pipeline.
+The project does not claim OWL or knowledge-graph tooling as an original
+contribution.

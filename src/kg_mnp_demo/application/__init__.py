@@ -1,4 +1,4 @@
-"""Application services: stable entry points for CLI, API, and presentation layers."""
+"""Application services retained for the legacy eligibility example."""
 
 from kg_mnp_demo.application.assessment_service import (
     AssessmentExecution,

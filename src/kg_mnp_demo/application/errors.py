@@ -1,4 +1,4 @@
-"""Unified application error model for CLI, API, and services."""
+"""Stable error model retained for the legacy eligibility example."""
 
 from __future__ import annotations
 

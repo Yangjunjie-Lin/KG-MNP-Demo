@@ -30,10 +30,14 @@ def showcase():
 
 
 def test_showcase_runs_rdf_offline(showcase, tmp_path):
-    code = showcase.main(["--case", "CASE-03", "--output-dir", str(tmp_path), "--no-html"])
+    code = showcase.main(
+        ["--case", "CASE-03", "--output-dir", str(tmp_path), "--no-html"]
+    )
     assert code == 0
     assert (tmp_path / "case03_evaluation.json").exists()
-    payload = json.loads((tmp_path / "case03_evaluation.json").read_text(encoding="utf-8"))
+    payload = json.loads(
+        (tmp_path / "case03_evaluation.json").read_text(encoding="utf-8")
+    )
     assert payload["backend"] == "rdf"
     assert payload["decision"] == "BLOCKED"
 
@@ -76,11 +80,7 @@ def test_case03_contract_block_and_trace(showcase, tmp_path):
         if e["predicate"] == "triggeredByRuleVersion":
             assert "Reason-" in e["source_local"] or "Blocking" in (
                 next(
-                    (
-                        n["type"]
-                        for n in subgraph["nodes"]
-                        if n["id"] == e["source"]
-                    ),
+                    (n["type"] for n in subgraph["nodes"] if n["id"] == e["source"]),
                     "",
                 )
                 or ""
@@ -120,7 +120,9 @@ def test_all_cases_summary(showcase):
     ]
     assert len(summary["cases"]["CASE-04"]["blocking_reasons"]) == 2
     assert summary["cases"]["CASE-05"]["decision"] == "MANUAL_REVIEW"
-    assert "MISSING_OR_EXPIRED_EVIDENCE" in summary["cases"]["CASE-05"]["blocking_reasons"]
+    assert (
+        "MISSING_OR_EXPIRED_EVIDENCE" in summary["cases"]["CASE-05"]["blocking_reasons"]
+    )
 
     case06 = summary["cases"]["CASE-06"]
     assert case06["decision"] == "BLOCKED"
@@ -174,23 +176,11 @@ def test_showcase_repeatable(showcase, tmp_path):
 
     showcase.main(["--output-dir", str(tmp_path / "r1"), "--no-html"])
     showcase.main(["--output-dir", str(tmp_path / "r2"), "--no-html"])
-    e1 = json.loads((tmp_path / "r1" / "case03_evaluation.json").read_text(encoding="utf-8"))
-    e2 = json.loads((tmp_path / "r2" / "case03_evaluation.json").read_text(encoding="utf-8"))
+    e1 = json.loads(
+        (tmp_path / "r1" / "case03_evaluation.json").read_text(encoding="utf-8")
+    )
+    e2 = json.loads(
+        (tmp_path / "r2" / "case03_evaluation.json").read_text(encoding="utf-8")
+    )
     assert e1["decision"] == e2["decision"]
     assert e1["blocking_reasons"] == e2["blocking_reasons"]
-
-
-def test_cli_default_backend_is_rdf():
-    from kg_mnp_demo.cli import _default_backend
-
-    assert _default_backend() in ("rdf", "neo4j")
-    # Without env override in this process we expect rdf after the change;
-    # if KG_MNP_BACKEND is set in the environment, honour it.
-    import os
-
-    old = os.environ.pop("KG_MNP_BACKEND", None)
-    try:
-        assert _default_backend() == "rdf"
-    finally:
-        if old is not None:
-            os.environ["KG_MNP_BACKEND"] = old

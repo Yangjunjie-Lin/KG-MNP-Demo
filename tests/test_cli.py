@@ -37,9 +37,3 @@ def test_cli_run_all_twice_consistent(capsys):
     assert first["run_all"]["CASE-01"]["decision"] == "ELIGIBLE"
     assert first["run_all"]["CASE-02"]["decision"] == "BLOCKED"
     assert first["run_all"]["CASE-05"]["decision"] == "MANUAL_REVIEW"
-
-
-def test_cli_neo4j_up(capsys):
-    assert main(["neo4j-up"]) == 0
-    out = json.loads(capsys.readouterr().out)
-    assert out["compose_file"] == "docker-compose.yml"

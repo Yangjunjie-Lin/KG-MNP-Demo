@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Fail if tracked files include virtualenvs or local absolute paths."""
+"""Fail on tracked runtime/build files, virtualenvs, or local absolute paths."""
 
 from __future__ import annotations
 
@@ -20,6 +20,20 @@ ABS_PATH_PATTERNS = [
 
 MAX_TEXT_BYTES = 2 * 1024 * 1024
 
+FORBIDDEN_TRACKED_PREFIXES = (
+    "runtime_logs/",
+    "runtime_data/",
+    "runtime_outputs/",
+    "runtime_reports/",
+    "docs/ontology-site/",
+    "build/",
+    "dist/",
+    "graphdb-data/",
+    "graphdb-local/",
+    "third_party/bin/",
+    "third_party/downloads/",
+)
+
 
 def _git_ls_files() -> list[str]:
     result = subprocess.run(
@@ -29,7 +43,14 @@ def _git_ls_files() -> list[str]:
         capture_output=True,
     )
     raw = result.stdout.split(b"\0")
-    return [item.decode("utf-8", errors="surrogateescape") for item in raw if item]
+    paths = [
+        item.decode("utf-8", errors="surrogateescape")
+        for item in raw
+        if item
+    ]
+    # During an uncommitted cleanup, Git still lists paths deleted from the
+    # working tree. Validate the repository that would remain, not tombstones.
+    return [path for path in paths if (ROOT / path).is_file()]
 
 
 def _segments(path: str) -> list[str]:
@@ -73,7 +94,7 @@ def _matches_forbidden_path(path: str) -> bool:
 
 def _is_excluded_from_abs_scan(path: str) -> bool:
     normalized = path.replace("\\", "/")
-    return normalized.startswith(".git/") or normalized.startswith("runtime_reports/")
+    return normalized.startswith((".git/", "runtime_reports/"))
 
 
 def _looks_like_utf8_text(data: bytes) -> bool:
@@ -88,11 +109,18 @@ def _looks_like_utf8_text(data: bytes) -> bool:
 
 def check_tracked_paths(paths: list[str] | None = None) -> list[str]:
     tracked = paths if paths is not None else _git_ls_files()
-    return [
+    failures = [
         f"tracked virtual environment: {path}"
         for path in tracked
         if _matches_forbidden_path(path)
     ]
+    for path in tracked:
+        normalized = path.replace("\\", "/")
+        if normalized.startswith(FORBIDDEN_TRACKED_PREFIXES):
+            failures.append(f"tracked runtime/build artifact: {path}")
+        if normalized.lower().endswith(".jar"):
+            failures.append(f"tracked third-party JAR: {path}")
+    return failures
 
 
 def check_absolute_paths(

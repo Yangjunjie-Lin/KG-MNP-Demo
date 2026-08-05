@@ -1,10 +1,9 @@
-"""CLI for KG-MNP eligibility demo (RDF offline + Neo4j practical backend)."""
+"""Legacy eligibility use-case CLI using the offline RDF backend."""
 
 from __future__ import annotations
 
 import argparse
 import json
-import os
 import sys
 from typing import Any
 
@@ -13,7 +12,6 @@ from kg_mnp_demo.inference import apply_owlrl
 from kg_mnp_demo.loader import load_case_graph, load_ontology_graph
 from kg_mnp_demo.mappings import load_mappings, load_source_manifest
 from kg_mnp_demo.namespaces import CASE_FILES
-from kg_mnp_demo.neo4j_client import ping as neo4j_ping
 from kg_mnp_demo.trace import (
     affected_assessments,
     blocking_reasons,
@@ -25,11 +23,6 @@ from kg_mnp_demo.validator import validate_graph
 
 def _json_print(payload: Any) -> None:
     print(json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True))
-
-
-def _default_backend() -> str:
-    # Offline-first: RDF is the default. Neo4j must be selected explicitly.
-    return os.environ.get("KG_MNP_BACKEND", "rdf").strip().lower() or "rdf"
 
 
 def cmd_validate(case_id: str) -> int:
@@ -97,34 +90,6 @@ def cmd_trace_rdf(case_id: str) -> int:
     return 0
 
 
-def cmd_evaluate(case_id: str, backend: str) -> int:
-    if backend == "rdf":
-        return cmd_evaluate_rdf(case_id)
-    from kg_mnp_demo.neo4j_pipeline import neo4j_evaluate_case
-
-    try:
-        result = neo4j_evaluate_case(case_id)
-    except Exception as exc:  # noqa: BLE001
-        _json_print({"case_id": case_id, "backend": "neo4j", "error": str(exc)})
-        return 1
-    _json_print(result)
-    return 0
-
-
-def cmd_trace(case_id: str, backend: str) -> int:
-    if backend == "rdf":
-        return cmd_trace_rdf(case_id)
-    from kg_mnp_demo.neo4j_pipeline import neo4j_trace_case
-
-    try:
-        payload = neo4j_trace_case(case_id)
-    except Exception as exc:  # noqa: BLE001
-        _json_print({"case_id": case_id, "backend": "neo4j", "error": str(exc)})
-        return 1
-    _json_print(payload)
-    return 0
-
-
 def cmd_mappings() -> int:
     _json_print({"mappings": load_mappings()})
     return 0
@@ -135,28 +100,7 @@ def cmd_sources() -> int:
     return 0
 
 
-def cmd_run_all(backend: str) -> int:
-    if backend == "neo4j":
-        from kg_mnp_demo.neo4j_pipeline import neo4j_load_case
-        from kg_mnp_demo.neo4j_client import ping
-
-        status = ping()
-        if not status.get("ok"):
-            _json_print({"backend": "neo4j", "error": status})
-            return 1
-        results = {}
-        for case_id in sorted(CASE_FILES):
-            loaded = neo4j_load_case(case_id, reset=(case_id == "CASE-01"))
-            results[case_id] = {
-                "decision": loaded["decision"],
-                "blocking_reasons": [b["reason_code"] for b in loaded["blocking_reasons"]],
-                "validation_status": loaded["validation_status"],
-                "trace_path_count": len(loaded.get("trace_paths") or []),
-                "backend": "neo4j",
-            }
-        _json_print({"run_all": results, "backend": "neo4j"})
-        return 0 if all(r["validation_status"] == "PASSED" for r in results.values()) else 1
-
+def cmd_run_all() -> int:
     results = {}
     for case_id in sorted(CASE_FILES):
         g = load_case_graph(case_id)
@@ -174,44 +118,6 @@ def cmd_run_all(backend: str) -> int:
     return 0 if all(r["validation_status"] == "PASSED" for r in results.values()) else 1
 
 
-def cmd_neo4j_ping() -> int:
-    status = neo4j_ping()
-    _json_print({"command": "neo4j-ping", **status})
-    return 0 if status.get("ok") else 1
-
-
-def cmd_neo4j_load(case_id: str, reset: bool) -> int:
-    from kg_mnp_demo.neo4j_pipeline import neo4j_load_case
-
-    try:
-        result = neo4j_load_case(case_id, reset=reset)
-    except Exception as exc:  # noqa: BLE001
-        _json_print({"case_id": case_id, "error": str(exc)})
-        return 1
-    _json_print(result)
-    return 0
-
-
-def cmd_neo4j_up() -> int:
-    _json_print(
-        {
-            "command": "neo4j-up",
-            "instructions": [
-                "1. Install and start Docker Desktop",
-                "2. cd kg-mnp-demo && copy .env.example .env",
-                "3. docker compose up -d",
-                "4. Wait until healthy, then: python -m kg_mnp_demo.cli neo4j-ping",
-                "5. Load a case: python -m kg_mnp_demo.cli neo4j-load --case CASE-03",
-            ],
-            "compose_file": "docker-compose.yml",
-            "browser": "http://localhost:7474",
-            "bolt": "bolt://localhost:7687",
-            "default_auth": "neo4j / kgmnp-demo-pass",
-        }
-    )
-    return 0
-
-
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(prog="kg_mnp_demo", description="KG-MNP eligibility demo CLI")
     sub = p.add_subparsers(dest="command", required=True)
@@ -223,32 +129,13 @@ def build_parser() -> argparse.ArgumentParser:
     for name in ("evaluate", "trace"):
         sp = sub.add_parser(name)
         sp.add_argument("--case", required=True, choices=sorted(CASE_FILES))
-        sp.add_argument(
-            "--backend",
-            choices=["neo4j", "rdf"],
-            default=_default_backend(),
-            help="rdf (default) is offline in-memory; neo4j requires Docker and --backend neo4j",
-        )
+        sp.add_argument("--backend", choices=["rdf"], default="rdf")
 
     sp_run = sub.add_parser("run-all")
-    sp_run.add_argument(
-        "--backend",
-        choices=["neo4j", "rdf"],
-        default=_default_backend(),
-        help="rdf (default) is offline in-memory; neo4j requires Docker and --backend neo4j",
-    )
+    sp_run.add_argument("--backend", choices=["rdf"], default="rdf")
 
     sub.add_parser("mappings")
     sub.add_parser("sources")
-    sub.add_parser("neo4j-up")
-    sub.add_parser("neo4j-ping")
-    sp_load = sub.add_parser("neo4j-load")
-    sp_load.add_argument("--case", required=True, choices=sorted(CASE_FILES))
-    sp_load.add_argument(
-        "--reset",
-        action="store_true",
-        help="DETACH DELETE all nodes before import (destructive)",
-    )
     return p
 
 
@@ -260,21 +147,15 @@ def main(argv: list[str] | None = None) -> int:
     if args.command == "infer":
         return cmd_infer(args.case)
     if args.command == "evaluate":
-        return cmd_evaluate(args.case, args.backend)
+        return cmd_evaluate_rdf(args.case)
     if args.command == "trace":
-        return cmd_trace(args.case, args.backend)
+        return cmd_trace_rdf(args.case)
     if args.command == "mappings":
         return cmd_mappings()
     if args.command == "sources":
         return cmd_sources()
     if args.command == "run-all":
-        return cmd_run_all(args.backend)
-    if args.command == "neo4j-up":
-        return cmd_neo4j_up()
-    if args.command == "neo4j-ping":
-        return cmd_neo4j_ping()
-    if args.command == "neo4j-load":
-        return cmd_neo4j_load(args.case, args.reset)
+        return cmd_run_all()
     parser.error(f"Unknown command {args.command}")
     return 2
 

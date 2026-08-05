@@ -6,9 +6,42 @@ import json
 from pathlib import Path
 
 from kg_mnp_demo.application.assessment_service import AssessmentService
-from kg_mnp_demo.application.persist import assert_execution_consistency
 
 ROOT = Path(__file__).resolve().parents[2]
+
+
+def _canonical_time(value: object) -> str:
+    return str(value or "").replace("+00:00", "Z")
+
+
+def _assert_execution_consistency(result: dict) -> None:
+    decision = result.get("decision")
+    rules = result.get("rule_results") or []
+    reasons = result.get("blocking_reasons") or []
+    assessment_time = _canonical_time(result.get("assessment_time"))
+
+    assert decision != "BLOCKED" or reasons
+    assert decision != "ELIGIBLE" or not reasons
+
+    failed_rule_ids = {
+        row.get("rule_id") for row in rules if row.get("status") == "FAIL"
+    }
+    for reason in reasons:
+        if rule_id := reason.get("rule_id"):
+            assert rule_id in failed_rule_ids
+
+    for evidence in result.get("evidence") or []:
+        generated_at = _canonical_time(evidence.get("generated_at"))
+        assert not generated_at or not assessment_time or generated_at <= assessment_time
+
+    for rule in rules:
+        selected_at = _canonical_time(rule.get("selected_for_assessment_time"))
+        if selected_at and assessment_time:
+            assert selected_at == assessment_time
+        effective_from = _canonical_time(rule.get("effective_from"))
+        effective_to = _canonical_time(rule.get("effective_to"))
+        assert not effective_from or not assessment_time or effective_from <= assessment_time
+        assert not effective_to or not assessment_time or effective_to >= assessment_time
 
 
 def _rule(result: dict, rule_id: str) -> dict:
@@ -27,8 +60,8 @@ def test_case06_history_and_current_are_real_rule_executions():
         json.loads((ROOT / "inputs" / "case06.json").read_text(encoding="utf-8"))
     )
 
-    assert_execution_consistency(historical)
-    assert_execution_consistency(current)
+    _assert_execution_consistency(historical)
+    _assert_execution_consistency(current)
 
     assert historical["decision"] == "ELIGIBLE"
     assert current["decision"] == "BLOCKED"

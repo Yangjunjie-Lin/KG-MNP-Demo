@@ -1,7 +1,8 @@
-"""JSON → RDF → eligibility assessment pipeline.
+"""Legacy eligibility use-case JSON-to-RDF assessment pipeline.
 
 File I/O and CLI live here. Core evaluation is delegated to
-``kg_mnp_demo.application.AssessmentService`` so REST APIs share one path.
+``kg_mnp_demo.application.AssessmentService``. This is a downstream example,
+not the repository's ontology-modeling pipeline.
 """
 
 from __future__ import annotations

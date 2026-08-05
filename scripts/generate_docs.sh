@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Generate ontology HTML docs with a pinned WIDOCO version.
-# Failure here must NOT fail core pytest — this is optional documentation.
+# Failure here must NOT fail core pytest - this is optional documentation.
 
 set -euo pipefail
 
@@ -50,7 +50,6 @@ java -jar "${TOOLS}/${WIDOCO_JAR}" \
   -outFolder "${OUT}" \
   -rewriteAll \
   -getOntologyMetadata \
-  -webVowl \
   -uniteSections || {
     echo "ERROR: WIDOCO execution failed." >&2
     echo "Core tests do not require WIDOCO." >&2

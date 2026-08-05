@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "kg-mnp-demo"
 version = "0.1.0"
-description = "KG-MNP Mobile Number Portability eligibility ontology demo with evidence-rule-clause-action traceability"
+description = "KG-MNP ontology and knowledge graph foundation"
 readme = "README.md"
 requires-python = ">=3.11"
 license = { text = "Apache-2.0" }
@@ -21,20 +21,11 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
   "pytest>=8.0.0,<9.0.0",
-  "pytest-asyncio>=0.23.0,<1.0.0",
-  "httpx>=0.27.0,<1.0.0",
   "ruff>=0.5.0,<1.0.0",
-]
-neo4j = ["neo4j>=5.14.0,<6.0.0"]
-api = [
-  "fastapi>=0.111.0,<1.0.0",
-  "uvicorn[standard]>=0.30.0,<1.0.0",
-  "httpx>=0.27.0,<1.0.0",
 ]
 
 [project.scripts]
 kg-mnp = "kg_mnp_demo.cli:main"
-kg-mnp-api = "kg_mnp_demo.api.app:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
@@ -42,10 +33,4 @@ where = ["src"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["src"]
-addopts = "-q -p no:deepeval"
-asyncio_mode = "auto"
-asyncio_default_fixture_loop_scope = "function"
-markers = [
-  "neo4j: integration tests requiring a running Neo4j instance",
-  "asyncio: mark test as an asyncio coroutine",
-]
+addopts = "-q -p no:deepeval -p no:asyncio"

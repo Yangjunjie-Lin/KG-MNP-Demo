@@ -4,7 +4,9 @@ __pycache__/
 *.egg-info/
 .pytest_cache/
 .coverage
+.coverage.*
 htmlcov/
+coverage.xml
 
 # Virtual environments
 .venv/
@@ -14,21 +16,24 @@ venv*/
 env/
 env*/
 
-# Node / frontend
-node_modules/
-frontend/playwright-report/
-frontend/test-results/
-
 # Build
 build/
 dist/
+node_modules/
 
 # Runtime-generated outputs (local runs only; not versioned)
 runtime_outputs/
 runtime_data/
 runtime_reports/
+runtime_logs/
+
+# Local GraphDB and downloaded tools (future optional integrations)
+graphdb-data/
+graphdb-local/
+third_party/bin/
+third_party/downloads/
+third_party/**/*.jar
 
 # Generated ontology/documentation artifacts
-third_party/widoco/*.jar
-docs/ontology-site/doc/
+docs/ontology-site/
 docs/demo_results.json

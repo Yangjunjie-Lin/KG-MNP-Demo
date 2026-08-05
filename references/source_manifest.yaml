@@ -88,23 +88,3 @@ sources:
     local_path: null
     runtime_dependency: false
     reuse_mode: documentation_tool
-
-  - name: neo4j/neo4j-python-driver
-    repository_url: https://github.com/neo4j/neo4j-python-driver
-    purpose: Bolt client for Neo4j evaluate/trace/load CLI backend
-    license: Apache-2.0
-    version_or_commit: ">=5.14.0,<6.0.0"
-    retrieved_at: "2026-07-30"
-    local_path: null
-    runtime_dependency: false
-    reuse_mode: dependency
-
-  - name: neo4j-labs/neosemantics
-    repository_url: https://github.com/neo4j-labs/neosemantics
-    purpose: RDF import into Neo4j via n10s (Docker NEO4J_PLUGINS); Cypher overlay for assessment traces
-    license: Apache-2.0
-    version_or_commit: "bundled via Neo4j Docker NEO4J_PLUGINS n10s (UNVERIFIED exact plugin SHA)"
-    retrieved_at: "2026-07-30"
-    local_path: null
-    runtime_dependency: false
-    reuse_mode: dependency

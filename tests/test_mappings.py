@@ -17,7 +17,6 @@ REQUIRED_SOURCES = [
     "RDFLib/OWL-RL",
     "protegeproject/protege",
     "dgarijo/WIDOCO",
-    "neo4j-labs/neosemantics",
 ]
 
 
