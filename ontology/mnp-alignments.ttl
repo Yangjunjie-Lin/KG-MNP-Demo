@@ -1,19 +1,26 @@
-@prefix mnp: <http://example.org/kg-mnp#> .
+@prefix mnp: <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix dcterms: <http://purl.org/dc/terms/> .
 @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
 
 #################################################################
 # Alignment annotations ONLY — NOT a runtime dependency.
-# No owl:equivalentClass for TM Forum JSON schema objects.
-# No owl:equivalentClass for unverified CTO classes.
+# Use skos:closeMatch / rdfs:seeAlso / mnp:alignmentStatus only.
+# NO owl:equivalentClass / owl:equivalentProperty.
 #################################################################
 
-<http://example.org/kg-mnp/alignments> a owl:Ontology ;
-    dcterms:title "KG-MNP Alignments"@en ;
-    owl:versionInfo "0.1.0" ;
-    rdfs:comment "Human-reviewed source and alignment annotations. Runtime loaders may skip this file."@en .
+<https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/mnp-alignments> a owl:Ontology ;
+    owl:versionIRI <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/1.0.0/mnp-alignments> ;
+    owl:versionInfo "1.0.0" ;
+    dcterms:title "KG-MNP Alignments Module"@en ;
+    dcterms:title "KG-MNP 对齐模块"@zh-CN ;
+    dcterms:description "Optional external alignment annotations; not a default runtime import. Uses skos:closeMatch, rdfs:seeAlso, and mnp:alignmentStatus only — never owl:equivalentClass or owl:equivalentProperty."@en ;
+    dcterms:description "可选外部对齐注解；不作为默认运行时导入。仅使用 skos:closeMatch、rdfs:seeAlso 与 mnp:alignmentStatus，绝不使用 owl:equivalentClass 或 owl:equivalentProperty。"@zh-CN ;
+    dcterms:license <https://www.apache.org/licenses/LICENSE-2.0> ;
+    owl:imports <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/mnp-core> .
 
 # --- Subscriber ---
 mnp:Subscriber
@@ -56,20 +63,14 @@ mnp:ServiceContract
     dcterms:source "Local MNP eligibility concept. CTO has hasContractLength on BroadbandService (data property), not a first-class ServiceContract class." ;
     rdfs:seeAlso <https://github.com/Point-Topic/cto-ontology/blob/main/resource/cto_extended.ttl> .
 
-# --- MNPCase and eligibility stack (local innovation layer) ---
-mnp:MNPCase mnp:alignmentStatus "LOCAL_ONLY" ;
+# --- MNPCase and eligibility stack ---
+mnp:MNPCase
+    mnp:alignmentStatus "LOCAL_ONLY" ;
     dcterms:source "Local MNP case concept; not present in CTO or TM Forum as OWL class." .
 
-mnp:EligibilityAssessment mnp:alignmentStatus "LOCAL_ONLY" ;
+mnp:EligibilityAssessment
+    mnp:alignmentStatus "LOCAL_ONLY" ;
     dcterms:source "Local evidence-rule-decision assessment concept." .
-
-mnp:EligibilityDecision mnp:alignmentStatus "LOCAL_ONLY" ;
-    dcterms:source "Local decision taxonomy." .
-
-mnp:EligibleDecision mnp:alignmentStatus "LOCAL_ONLY" .
-mnp:BlockingDecision mnp:alignmentStatus "LOCAL_ONLY" .
-mnp:ConditionalDecision mnp:alignmentStatus "LOCAL_ONLY" .
-mnp:ManualReviewDecision mnp:alignmentStatus "LOCAL_ONLY" .
 
 mnp:EvidenceRecord
     mnp:alignmentStatus "PARTIAL" ;
@@ -77,18 +78,7 @@ mnp:EvidenceRecord
     rdfs:seeAlso <https://github.com/Point-Topic/cto-ontology/blob/main/resource/cto_core.ttl> ;
     rdfs:comment "Not skos:closeMatch — MeasurementRecord is quantitative measurement; EvidenceRecord is eligibility provenance."@en .
 
-mnp:SystemObservation mnp:alignmentStatus "LOCAL_ONLY" .
-mnp:EligibilityRule mnp:alignmentStatus "LOCAL_ONLY" .
-mnp:BlockingReason mnp:alignmentStatus "LOCAL_ONLY" .
-mnp:RemediationAction mnp:alignmentStatus "LOCAL_ONLY" .
-mnp:RegulatoryClause mnp:alignmentStatus "LOCAL_ONLY" .
-mnp:RegulatoryDocument mnp:alignmentStatus "LOCAL_ONLY" .
-
 mnp:InformationSystem
     mnp:alignmentStatus "PARTIAL" ;
     dcterms:source "Compared with CTO WholesaleAccessPlatform / dcat:DataService as information channels; not equivalent." ;
     rdfs:seeAlso <https://github.com/Point-Topic/cto-ontology/blob/main/resource/cto_extended.ttl> .
-
-mnp:RuleVersion mnp:alignmentStatus "LOCAL_ONLY" .
-mnp:AssessmentDependency mnp:alignmentStatus "LOCAL_ONLY" .
-mnp:MappingRecord mnp:alignmentStatus "LOCAL_ONLY" .

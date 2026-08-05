@@ -8,7 +8,7 @@ from rdflib.namespace import RDF
 from kg_mnp_demo.evaluator import evaluate_case
 from kg_mnp_demo.inference import apply_owlrl
 from kg_mnp_demo.loader import load_case_graph
-from kg_mnp_demo.namespaces import CASE_FILES, MNP
+from kg_mnp_demo.namespaces import CASE_FILES, DATA, MNP
 from kg_mnp_demo.rule_engine import collect_evidence
 from kg_mnp_demo.validator import validate_graph
 
@@ -17,7 +17,7 @@ def test_all_cases_have_has_case_evidence():
     for case_id in CASE_FILES:
         g = load_case_graph(case_id)
         q = """
-        PREFIX mnp: <http://example.org/kg-mnp#>
+        PREFIX mnp: <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#>
         SELECT (COUNT(?ev) AS ?n) WHERE {
           ?case mnp:caseIdentifier %s ;
                 mnp:hasCaseEvidence ?ev .
@@ -36,12 +36,12 @@ def test_evidence_belongs_to_correct_case_only():
     iris = {e.iri for views in ev.values() for e in views}
     assert any("Ev-03" in i or "CTR" in i for i in iris)
     # Ensure no leakage from unrelated naming alone: invent fake Ev-02 node without relation
-    fake = MNP["Ev-02-BILL-FAKE"]
+    fake = DATA["Ev-02-BILL-FAKE"]
     g.add((fake, RDF.type, MNP.SystemObservation))
     g.add((fake, MNP.evidenceType, Literal("BILLING_BALANCE")))
     g.add((fake, MNP.evidenceStatus, Literal("VALID")))
     g.add((fake, MNP.evidenceGeneratedAt, Literal("2026-06-20T10:10:00Z")))
-    g.add((fake, MNP.hasSourceSystem, MNP["SYS-BILLING"]))
+    g.add((fake, MNP.hasSourceSystem, DATA["SYS-BILLING"]))
     ev2 = collect_evidence(g, "CASE-03")
     iris2 = {e.iri for views in ev2.values() for e in views}
     assert str(fake) not in iris2
@@ -51,8 +51,8 @@ def test_collect_evidence_not_name_dependent():
     g = load_case_graph("CASE-03")
     apply_owlrl(g)
     # Rename Ev-03-CTR to an arbitrary IRI while keeping hasCaseEvidence
-    old = MNP["Ev-03-CTR"]
-    new = MNP["ArbitraryContractEvidenceXYZ"]
+    old = DATA["Ev-03-CTR"]
+    new = DATA["ArbitraryContractEvidenceXYZ"]
     for p, o in list(g.predicate_objects(old)):
         g.remove((old, p, o))
         g.add((new, p, o))
@@ -60,8 +60,8 @@ def test_collect_evidence_not_name_dependent():
         g.remove((s, p, old))
         g.add((s, p, new))
     # Ensure case still links the renamed evidence
-    g.add((MNP["CASE-03"], MNP.hasCaseEvidence, new))
-    g.remove((MNP["CASE-03"], MNP.hasCaseEvidence, old))
+    g.add((DATA["CASE-03"], MNP.hasCaseEvidence, new))
+    g.remove((DATA["CASE-03"], MNP.hasCaseEvidence, old))
 
     result = evaluate_case(g, "CASE-03", validate=False)
     assert result["decision"] == "BLOCKED"
@@ -73,7 +73,7 @@ def test_collect_evidence_not_name_dependent():
 
 def test_missing_has_case_evidence_fails_shacl():
     g = load_case_graph("CASE-03")
-    for triple in list(g.triples((MNP["CASE-03"], MNP.hasCaseEvidence, None))):
+    for triple in list(g.triples((DATA["CASE-03"], MNP.hasCaseEvidence, None))):
         g.remove(triple)
     result = validate_graph(g)
     assert not result.conforms
@@ -85,13 +85,13 @@ def test_assessment_using_foreign_evidence_fails_shacl():
     apply_owlrl(g)
     evaluate_case(g, "CASE-03", validate=False)
     # Attach foreign evidence node and make assessment use it
-    foreign = MNP["ForeignEvidence"]
+    foreign = DATA["ForeignEvidence"]
     g.add((foreign, RDF.type, MNP.EvidenceRecord))
     g.add((foreign, MNP.evidenceType, Literal("CONTRACT_STATUS")))
     g.add((foreign, MNP.evidenceStatus, Literal("VALID")))
     g.add((foreign, MNP.evidenceGeneratedAt, Literal("2026-06-20T10:15:00Z")))
-    g.add((foreign, MNP.hasSourceSystem, MNP["SYS-CONTRACT"]))
-    assessment = MNP["Assessment-CASE-03"]
+    g.add((foreign, MNP.hasSourceSystem, DATA["SYS-CONTRACT"]))
+    assessment = DATA["Assessment-CASE-03"]
     g.add((assessment, MNP.usesEvidence, foreign))
     result = validate_graph(g)
     assert not result.conforms

@@ -1,87 +1,321 @@
-@prefix mnp: <http://example.org/kg-mnp#> .
+@prefix mnp: <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
 
-#################################################################
-# Evidence & time cross-cutting layer
-#################################################################
-
-<http://example.org/kg-mnp/evidence-time> a owl:Ontology ;
+<https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/mnp-evidence-time> a owl:Ontology ;
+    owl:versionIRI <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/1.0.0/mnp-evidence-time> ;
+    owl:versionInfo "1.0.0" ;
     dcterms:title "KG-MNP Evidence and Time Module"@en ;
-    dcterms:title "证据与时间横向层"@zh ;
-    owl:versionInfo "0.1.0" ;
-    rdfs:comment "API responses, evidence validity and temporal annotations. No amount/date arithmetic."@en .
-
+    dcterms:title "KG-MNP 证据与时间模块"@zh-CN ;
+    dcterms:description "Business evidence records, source systems and temporal annotations."@en ;
+    dcterms:description "业务证据、来源系统与时间注解。"@zh-CN ;
+    dcterms:license <https://www.apache.org/licenses/LICENSE-2.0> ;
+    owl:imports <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/mnp-core> .
 mnp:APIResponse a owl:Class ;
-    rdfs:subClassOf mnp:SystemObservation ;
     rdfs:label "API Response"@en ;
-    rdfs:label "接口响应证据"@zh ;
-    rdfs:comment "Evidence derived from a synthetic API response snapshot."@en ;
-    mnp:moduleCode "EVIDENCE_TIME" .
-
-mnp:EvidenceValidity a owl:Class ;
-    rdfs:label "Evidence Validity"@en ;
-    rdfs:label "证据有效性"@zh ;
-    rdfs:comment "A validity window description for an evidence record."@en ;
-    mnp:moduleCode "EVIDENCE_TIME" .
-
-mnp:ObservationTime a owl:Class ;
-    rdfs:label "Observation Time"@en ;
-    rdfs:label "观测时间"@zh ;
-    mnp:moduleCode "EVIDENCE_TIME" .
+    rdfs:label "接口响应证据"@zh-CN ;
+    skos:definition "Evidence captured from an API response payload."@en ;
+    skos:definition "从接口响应载荷捕获的证据。"@zh-CN ;
+    mnp:moduleCode "EVIDENCE_TIME" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-evidence-time" ;
+    rdfs:subClassOf mnp:SystemObservation .
 
 mnp:EvaluationTime a owl:Class ;
     rdfs:label "Evaluation Time"@en ;
-    rdfs:label "评估时间点"@zh ;
-    mnp:moduleCode "EVIDENCE_TIME" .
+    rdfs:label "评估时间点"@zh-CN ;
+    skos:definition "Time resource representing an evaluation as-of instant."@en ;
+    skos:definition "表示评估基准时刻的时间资源。"@zh-CN ;
+    mnp:moduleCode "EVIDENCE_TIME" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-evidence-time" .
+
+mnp:EvidenceRecord a owl:Class ;
+    rdfs:label "Evidence Record"@en ;
+    rdfs:label "证据记录"@zh-CN ;
+    skos:definition "A dated business observation used as evidence in eligibility assessment."@en ;
+    skos:definition "用于资格评估的带时间戳业务观测证据。"@zh-CN ;
+    mnp:moduleCode "EVIDENCE_TIME" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-evidence-time" .
+
+mnp:EvidenceValidity a owl:Class ;
+    rdfs:label "Evidence Validity"@en ;
+    rdfs:label "证据有效性"@zh-CN ;
+    skos:definition "A validity window annotation for an evidence record."@en ;
+    skos:definition "证据记录的有效期注解。"@zh-CN ;
+    mnp:moduleCode "EVIDENCE_TIME" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-evidence-time" .
+
+mnp:InformationSystem a owl:Class ;
+    rdfs:label "Information System"@en ;
+    rdfs:label "信息系统"@zh-CN ;
+    skos:definition "A source system that generates evidence observations."@en ;
+    skos:definition "产生证据观测的来源系统。"@zh-CN ;
+    mnp:moduleCode "EVIDENCE_TIME" ;
+    mnp:sourceStatus "INDUSTRY_ALIGNED" ;
+    mnp:definingModule "mnp-evidence-time" .
+
+mnp:ObservationTime a owl:Class ;
+    rdfs:label "Observation Time"@en ;
+    rdfs:label "观测时间"@zh-CN ;
+    skos:definition "Time resource representing when an observation was made."@en ;
+    skos:definition "表示观测发生时间的时间资源。"@zh-CN ;
+    mnp:moduleCode "EVIDENCE_TIME" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-evidence-time" .
 
 mnp:RecordedTime a owl:Class ;
     rdfs:label "Recorded Time"@en ;
-    rdfs:label "记录时间"@zh ;
-    mnp:moduleCode "EVIDENCE_TIME" .
+    rdfs:label "记录时间"@zh-CN ;
+    skos:definition "Time resource representing when a fact was recorded."@en ;
+    skos:definition "表示事实被记录时间的时间资源。"@zh-CN ;
+    mnp:moduleCode "EVIDENCE_TIME" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-evidence-time" .
 
-mnp:hasEvidenceValidity a owl:ObjectProperty ;
-    rdfs:domain mnp:EvidenceRecord ;
-    rdfs:range mnp:EvidenceValidity ;
-    rdfs:label "has evidence validity"@en ;
-    mnp:moduleCode "EVIDENCE_TIME" .
-
-mnp:observedAtTime a owl:ObjectProperty ;
-    rdfs:domain mnp:SystemObservation ;
-    rdfs:range mnp:ObservationTime ;
-    rdfs:label "observed at time"@en ;
-    mnp:moduleCode "EVIDENCE_TIME" .
-
-mnp:evaluatedAtTime a owl:ObjectProperty ;
-    rdfs:domain mnp:EligibilityAssessment ;
-    rdfs:range mnp:EvaluationTime ;
-    rdfs:label "evaluated at time"@en ;
-    mnp:moduleCode "EVIDENCE_TIME" .
-
-mnp:recordedAtTime a owl:ObjectProperty ;
-    rdfs:domain mnp:EvidenceRecord ;
-    rdfs:range mnp:RecordedTime ;
-    rdfs:label "recorded at time"@en ;
-    mnp:moduleCode "EVIDENCE_TIME" .
-
-mnp:timeInstant a owl:DatatypeProperty ;
-    rdfs:domain mnp:ObservationTime ;
-    rdfs:range xsd:dateTime ;
-    mnp:moduleCode "EVIDENCE_TIME" .
-
-mnp:validityStart a owl:DatatypeProperty ;
-    rdfs:domain mnp:EvidenceValidity ;
-    rdfs:range xsd:dateTime ;
-    mnp:moduleCode "EVIDENCE_TIME" .
-
-mnp:validityEnd a owl:DatatypeProperty ;
-    rdfs:domain mnp:EvidenceValidity ;
-    rdfs:range xsd:dateTime ;
-    mnp:moduleCode "EVIDENCE_TIME" .
+mnp:SystemObservation a owl:Class ;
+    rdfs:label "System Observation"@en ;
+    rdfs:label "系统观测"@zh-CN ;
+    skos:definition "Evidence produced by an information system observation."@en ;
+    skos:definition "由信息系统观测产生的证据。"@zh-CN ;
+    mnp:moduleCode "EVIDENCE_TIME" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-evidence-time" ;
+    rdfs:subClassOf mnp:EvidenceRecord .
 
 mnp:apiEndpointCode a owl:DatatypeProperty ;
+    rdfs:label "API endpoint code"@en ;
+    rdfs:label "接口端点代码"@zh-CN ;
+    skos:definition "Code identifying the API endpoint that produced evidence."@en ;
+    skos:definition "产生证据的接口端点代码。"@zh-CN ;
+    mnp:moduleCode "EVIDENCE_TIME" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-evidence-time" ;
     rdfs:domain mnp:APIResponse ;
-    rdfs:range xsd:string ;
-    mnp:moduleCode "EVIDENCE_TIME" .
+    rdfs:range xsd:string .
+
+mnp:currencyCode a owl:DatatypeProperty ;
+    rdfs:label "currency code"@en ;
+    rdfs:label "币种代码"@zh-CN ;
+    skos:definition "ISO-like currency code for an observed amount."@en ;
+    skos:definition "观测金额的币种代码。"@zh-CN ;
+    mnp:moduleCode "EVIDENCE_TIME" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-evidence-time" ;
+    rdfs:domain mnp:EvidenceRecord ;
+    rdfs:range xsd:string .
+
+mnp:daysSinceLastPort a owl:DatatypeProperty ;
+    rdfs:label "days since last port"@en ;
+    rdfs:label "距上次携转天数"@zh-CN ;
+    skos:definition "Observed days since last portability event."@en ;
+    skos:definition "距上次携转事件的天数观测。"@zh-CN ;
+    mnp:moduleCode "EVIDENCE_TIME" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-evidence-time" ;
+    rdfs:domain mnp:EvidenceRecord ;
+    rdfs:range xsd:integer .
+
+mnp:evidenceGeneratedAt a owl:DatatypeProperty ;
+    rdfs:label "evidence generated at"@en ;
+    rdfs:label "证据生成时间"@zh-CN ;
+    skos:definition "Datetime when evidence was generated."@en ;
+    skos:definition "证据生成时间。"@zh-CN ;
+    mnp:moduleCode "EVIDENCE_TIME" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-evidence-time" ;
+    rdfs:domain mnp:EvidenceRecord ;
+    rdfs:range xsd:dateTime .
+
+mnp:evidenceStatus a owl:DatatypeProperty ;
+    rdfs:label "evidence status"@en ;
+    rdfs:label "证据状态"@zh-CN ;
+    skos:definition "Status code of an evidence record (VALID/EXPIRED/REVOKED/UNKNOWN)."@en ;
+    skos:definition "证据记录状态码（VALID/EXPIRED/REVOKED/UNKNOWN）。"@zh-CN ;
+    mnp:moduleCode "EVIDENCE_TIME" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-evidence-time" ;
+    rdfs:domain mnp:EvidenceRecord ;
+    rdfs:range xsd:string .
+
+mnp:evidenceType a owl:DatatypeProperty ;
+    rdfs:label "evidence type"@en ;
+    rdfs:label "证据类型"@zh-CN ;
+    skos:definition "Type code classifying an evidence record."@en ;
+    skos:definition "证据记录类型代码。"@zh-CN ;
+    mnp:moduleCode "EVIDENCE_TIME" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-evidence-time" ;
+    rdfs:domain mnp:EvidenceRecord ;
+    rdfs:range xsd:string .
+
+mnp:evidenceValidUntil a owl:DatatypeProperty ;
+    rdfs:label "evidence valid until"@en ;
+    rdfs:label "证据有效期至"@zh-CN ;
+    skos:definition "Datetime until which evidence remains valid."@en ;
+    skos:definition "证据有效截止时间。"@zh-CN ;
+    mnp:moduleCode "EVIDENCE_TIME" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-evidence-time" ;
+    rdfs:domain mnp:EvidenceRecord ;
+    rdfs:range xsd:dateTime .
+
+mnp:hasPaymentArrangement a owl:DatatypeProperty ;
+    rdfs:label "has payment arrangement"@en ;
+    rdfs:label "是否有缴费安排"@zh-CN ;
+    skos:definition "Boolean flag on evidence indicating a payment arrangement."@en ;
+    skos:definition "证据上表示是否存在缴费安排的布尔标志。"@zh-CN ;
+    mnp:moduleCode "EVIDENCE_TIME" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-evidence-time" ;
+    rdfs:domain mnp:EvidenceRecord ;
+    rdfs:range xsd:boolean .
+
+mnp:identityMatchFlag a owl:DatatypeProperty ;
+    rdfs:label "identity match flag"@en ;
+    rdfs:label "身份匹配标志"@zh-CN ;
+    skos:definition "Boolean flag indicating identity match on evidence."@en ;
+    skos:definition "证据上的身份匹配布尔标志。"@zh-CN ;
+    mnp:moduleCode "EVIDENCE_TIME" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-evidence-time" ;
+    rdfs:domain mnp:EvidenceRecord ;
+    rdfs:range xsd:boolean .
+
+mnp:numberStatusCode a owl:DatatypeProperty ;
+    rdfs:label "number status code"@en ;
+    rdfs:label "号码状态码"@zh-CN ;
+    skos:definition "Number status observed on evidence."@en ;
+    skos:definition "证据中观测到的号码状态。"@zh-CN ;
+    mnp:moduleCode "EVIDENCE_TIME" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-evidence-time" ;
+    rdfs:domain mnp:EvidenceRecord ;
+    rdfs:range xsd:string .
+
+mnp:observedAmount a owl:DatatypeProperty ;
+    rdfs:label "observed amount"@en ;
+    rdfs:label "观测金额"@zh-CN ;
+    skos:definition "Observed monetary amount on an evidence record."@en ;
+    skos:definition "证据记录上的观测金额。"@zh-CN ;
+    mnp:moduleCode "EVIDENCE_TIME" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-evidence-time" ;
+    rdfs:domain mnp:EvidenceRecord ;
+    rdfs:range xsd:decimal .
+
+mnp:systemIdentifier a owl:DatatypeProperty ;
+    rdfs:label "system identifier"@en ;
+    rdfs:label "系统标识"@zh-CN ;
+    skos:definition "Business identifier of an information system."@en ;
+    skos:definition "信息系统业务标识。"@zh-CN ;
+    mnp:moduleCode "EVIDENCE_TIME" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-evidence-time" ;
+    rdfs:domain mnp:InformationSystem ;
+    rdfs:range xsd:string .
+
+mnp:timeInstant a owl:DatatypeProperty ;
+    rdfs:label "time instant"@en ;
+    rdfs:label "时间瞬间"@zh-CN ;
+    skos:definition "xsd:dateTime value carried by a time resource."@en ;
+    skos:definition "时间资源承载的 xsd:dateTime 值。"@zh-CN ;
+    mnp:moduleCode "EVIDENCE_TIME" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-evidence-time" ;
+    rdfs:range xsd:dateTime .
+
+mnp:validityEnd a owl:DatatypeProperty ;
+    rdfs:label "validity end"@en ;
+    rdfs:label "有效期结束"@zh-CN ;
+    skos:definition "End of an evidence validity window."@en ;
+    skos:definition "证据有效期结束。"@zh-CN ;
+    mnp:moduleCode "EVIDENCE_TIME" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-evidence-time" ;
+    rdfs:domain mnp:EvidenceValidity ;
+    rdfs:range xsd:dateTime .
+
+mnp:validityStart a owl:DatatypeProperty ;
+    rdfs:label "validity start"@en ;
+    rdfs:label "有效期开始"@zh-CN ;
+    skos:definition "Start of an evidence validity window."@en ;
+    skos:definition "证据有效期开始。"@zh-CN ;
+    mnp:moduleCode "EVIDENCE_TIME" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-evidence-time" ;
+    rdfs:domain mnp:EvidenceValidity ;
+    rdfs:range xsd:dateTime .
+
+mnp:evaluatedAtTime a owl:ObjectProperty ;
+    rdfs:label "evaluated at time"@en ;
+    rdfs:label "评估于"@zh-CN ;
+    skos:definition "Links an assessment-related resource to an evaluation time."@en ;
+    skos:definition "将评估相关资源关联到评估时间。"@zh-CN ;
+    mnp:moduleCode "EVIDENCE_TIME" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-evidence-time" ;
+    rdfs:domain mnp:EligibilityAssessment ;
+    rdfs:range mnp:EvaluationTime .
+
+mnp:evidenceForCase a owl:ObjectProperty ;
+    rdfs:label "evidence for case"@en ;
+    rdfs:label "作为案件证据"@zh-CN ;
+    skos:definition "Inverse of hasCaseEvidence; links an evidence record to the case it belongs to."@en ;
+    skos:definition "hasCaseEvidence 的逆属性；将证据记录关联到所属案件。"@zh-CN ;
+    mnp:moduleCode "EVIDENCE_TIME" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-evidence-time" ;
+    rdfs:domain mnp:EvidenceRecord ;
+    rdfs:range mnp:MNPCase ;
+    owl:inverseOf mnp:hasCaseEvidence .
+
+mnp:hasEvidenceValidity a owl:ObjectProperty ;
+    rdfs:label "has evidence validity"@en ;
+    rdfs:label "有证据有效性"@zh-CN ;
+    skos:definition "Links an evidence record to a validity annotation."@en ;
+    skos:definition "将证据记录关联到有效性注解。"@zh-CN ;
+    mnp:moduleCode "EVIDENCE_TIME" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-evidence-time" ;
+    rdfs:domain mnp:EvidenceRecord ;
+    rdfs:range mnp:EvidenceValidity .
+
+mnp:hasSourceSystem a owl:ObjectProperty ;
+    rdfs:label "has source system"@en ;
+    rdfs:label "有来源系统"@zh-CN ;
+    skos:definition "Links an evidence record to its producing information system."@en ;
+    skos:definition "将证据记录关联到产生它的信息系统。"@zh-CN ;
+    mnp:moduleCode "EVIDENCE_TIME" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-evidence-time" ;
+    rdfs:domain mnp:EvidenceRecord ;
+    rdfs:range mnp:InformationSystem .
+
+mnp:observedAtTime a owl:ObjectProperty ;
+    rdfs:label "observed at time"@en ;
+    rdfs:label "观测于"@zh-CN ;
+    skos:definition "Links an observation to an observation time resource."@en ;
+    skos:definition "将观测关联到观测时间资源。"@zh-CN ;
+    mnp:moduleCode "EVIDENCE_TIME" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-evidence-time" ;
+    rdfs:domain mnp:EvidenceRecord ;
+    rdfs:range mnp:ObservationTime .
+
+mnp:recordedAtTime a owl:ObjectProperty ;
+    rdfs:label "recorded at time"@en ;
+    rdfs:label "记录于"@zh-CN ;
+    skos:definition "Links a record to a recorded-time resource."@en ;
+    skos:definition "将记录关联到记录时间资源。"@zh-CN ;
+    mnp:moduleCode "EVIDENCE_TIME" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-evidence-time" ;
+    rdfs:domain mnp:EvidenceRecord ;
+    rdfs:range mnp:RecordedTime .

@@ -1,4 +1,4 @@
-PREFIX mnp: <http://example.org/kg-mnp#>
+PREFIX mnp: <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#>
 
 # All independent blocking reasons for a case.
 
@@ -10,7 +10,8 @@ WHERE {
         mnp:caseIdentifier ?caseId ;
         mnp:hasEligibilityAssessment ?assessment .
   FILTER(STR(?caseId) = "__CASE_ID__")
-  ?assessment mnp:producesBlockingReason ?reason .
+  ?assessment mnp:producesDecision ?decision .
+  ?decision mnp:hasBlockingReason ?reason .
   ?reason mnp:reasonCode ?reasonCode .
   OPTIONAL {
     ?reason mnp:supportedByEvidence ?evidence .

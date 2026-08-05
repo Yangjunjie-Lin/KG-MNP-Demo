@@ -1,108 +1,240 @@
-@prefix mnp: <http://example.org/kg-mnp#> .
+@prefix mnp: <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
 
-#################################################################
-# Identity layer — subscribers, documents, verification
-# Does not redefine core classes already in mnp-core.ttl.
-#################################################################
-
-<http://example.org/kg-mnp/identity> a owl:Ontology ;
+<https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/mnp-identity> a owl:Ontology ;
+    owl:versionIRI <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/1.0.0/mnp-identity> ;
+    owl:versionInfo "1.0.0" ;
     dcterms:title "KG-MNP Identity Module"@en ;
-    dcterms:title "用户与身份层"@zh ;
-    owl:versionInfo "0.1.0" ;
-    rdfs:comment "Identity and real-name concepts for MNP eligibility."@en .
-
-mnp:NaturalPerson a owl:Class ;
-    rdfs:subClassOf mnp:Subscriber ;
-    rdfs:label "Natural Person"@en ;
-    rdfs:label "自然人用户"@zh ;
-    rdfs:comment "A natural person subscriber requesting number portability."@en ;
-    mnp:moduleCode "IDENTITY" .
-
-mnp:OrganisationSubscriber a owl:Class ;
-    rdfs:subClassOf mnp:Subscriber ;
-    rdfs:label "Organisation Subscriber"@en ;
-    rdfs:label "组织用户"@zh ;
-    rdfs:comment "An organisation acting as a telecom subscriber."@en ;
-    mnp:moduleCode "IDENTITY" .
-
+    dcterms:title "KG-MNP 身份模块"@zh-CN ;
+    dcterms:description "Subscribers, phone numbers, identity documents and assignment relations."@en ;
+    dcterms:description "用户、号码、身份证件与分配关系。"@zh-CN ;
+    dcterms:license <https://www.apache.org/licenses/LICENSE-2.0> ;
+    owl:imports <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/mnp-core> .
 mnp:IdentityDocument a owl:Class ;
     rdfs:label "Identity Document"@en ;
-    rdfs:label "身份证件"@zh ;
-    rdfs:comment "An identity document used for real-name registration."@en ;
-    mnp:moduleCode "IDENTITY" .
+    rdfs:label "身份证件"@zh-CN ;
+    skos:definition "An identity document used for real-name registration."@en ;
+    skos:definition "用于实名登记的身份证件。"@zh-CN ;
+    mnp:moduleCode "IDENTITY" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-identity" .
+
+mnp:IdentityVerification a owl:Class ;
+    rdfs:label "Identity Verification"@en ;
+    rdfs:label "实名核验"@zh-CN ;
+    skos:definition "A system observation recording identity match outcome."@en ;
+    skos:definition "记录身份比对结果的系统观测。"@zh-CN ;
+    mnp:moduleCode "IDENTITY" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-identity" ;
+    rdfs:subClassOf mnp:SystemObservation .
+
+mnp:NaturalPerson a owl:Class ;
+    rdfs:label "Natural Person"@en ;
+    rdfs:label "自然人用户"@zh-CN ;
+    skos:definition "A natural person subscriber requesting number portability."@en ;
+    skos:definition "申请携号转网的自然人用户。"@zh-CN ;
+    mnp:moduleCode "IDENTITY" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-identity" ;
+    rdfs:subClassOf mnp:Subscriber .
+
+mnp:OrganisationSubscriber a owl:Class ;
+    rdfs:label "Organisation Subscriber"@en ;
+    rdfs:label "组织用户"@zh-CN ;
+    skos:definition "An organisation acting as a telecom subscriber."@en ;
+    skos:definition "作为电信用户的组织主体。"@zh-CN ;
+    mnp:moduleCode "IDENTITY" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-identity" ;
+    rdfs:subClassOf mnp:Subscriber .
+
+mnp:PhoneNumber a owl:Class ;
+    rdfs:label "Phone Number"@en ;
+    rdfs:label "电话号码"@zh-CN ;
+    skos:definition "A telephone number that may be the subject of an MNP case."@en ;
+    skos:definition "可作为携号转网案件标的的电话号码。"@zh-CN ;
+    mnp:moduleCode "IDENTITY" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-identity" .
+
+mnp:PhoneNumberOwnership a owl:Class ;
+    rdfs:label "Phone Number Ownership Assertion"@en ;
+    rdfs:label "号码归属主张"@zh-CN ;
+    skos:definition "An asserted ownership or assignment relationship between a holder and a phone number, distinct from subscription assignment."@en ;
+    skos:definition "持有人与号码之间的归属主张，区别于订阅分配关系。"@zh-CN ;
+    mnp:moduleCode "IDENTITY" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-identity" .
 
 mnp:RealNameRegistration a owl:Class ;
     rdfs:label "Real Name Registration"@en ;
-    rdfs:label "实名登记"@zh ;
-    rdfs:comment "A real-name registration record linking a subscriber to identity evidence."@en ;
-    mnp:moduleCode "IDENTITY" .
+    rdfs:label "实名登记"@zh-CN ;
+    skos:definition "A real-name registration record linking a subscriber to identity evidence."@en ;
+    skos:definition "将用户与身份证据关联的实名登记记录。"@zh-CN ;
+    mnp:moduleCode "IDENTITY" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-identity" .
 
-mnp:IdentityVerification a owl:Class ;
-    rdfs:subClassOf mnp:SystemObservation ;
-    rdfs:label "Identity Verification"@en ;
-    rdfs:label "实名核验"@zh ;
-    rdfs:comment "A system observation recording identity match outcome."@en ;
-    mnp:moduleCode "IDENTITY" .
-
-mnp:PhoneNumberOwnership a owl:Class ;
-    rdfs:label "Phone Number Ownership"@en ;
-    rdfs:label "号码归属关系"@zh ;
-    rdfs:comment "Asserted ownership link between a subscriber and a phone number."@en ;
-    mnp:moduleCode "IDENTITY" .
-
-mnp:hasIdentityDocument a owl:ObjectProperty ;
-    rdfs:domain mnp:NaturalPerson ;
-    rdfs:range mnp:IdentityDocument ;
-    rdfs:label "has identity document"@en ;
-    rdfs:label "持有身份证件"@zh ;
-    mnp:moduleCode "IDENTITY" .
-
-mnp:hasRealNameRegistration a owl:ObjectProperty ;
-    rdfs:domain mnp:Subscriber ;
-    rdfs:range mnp:RealNameRegistration ;
-    rdfs:label "has real-name registration"@en ;
-    rdfs:label "具有实名登记"@zh ;
-    mnp:moduleCode "IDENTITY" .
-
-mnp:verifiedBy a owl:ObjectProperty ;
-    rdfs:domain mnp:RealNameRegistration ;
-    rdfs:range mnp:IdentityVerification ;
-    rdfs:label "verified by"@en ;
-    rdfs:label "由核验记录验证"@zh ;
-    mnp:moduleCode "IDENTITY" .
-
-mnp:assertsOwnership a owl:ObjectProperty ;
-    rdfs:domain mnp:PhoneNumberOwnership ;
-    rdfs:range mnp:PhoneNumber ;
-    rdfs:label "asserts ownership of"@en ;
-    rdfs:label "主张号码归属"@zh ;
-    mnp:moduleCode "IDENTITY" .
-
-mnp:ownershipHolder a owl:ObjectProperty ;
-    rdfs:domain mnp:PhoneNumberOwnership ;
-    rdfs:range mnp:Subscriber ;
-    rdfs:label "ownership holder"@en ;
-    rdfs:label "归属主体"@zh ;
-    mnp:moduleCode "IDENTITY" .
-
-mnp:documentTypeCode a owl:DatatypeProperty ;
-    rdfs:domain mnp:IdentityDocument ;
-    rdfs:range xsd:string ;
-    rdfs:label "document type code"@en ;
-    mnp:moduleCode "IDENTITY" .
+mnp:Subscriber a owl:Class ;
+    rdfs:label "Subscriber"@en ;
+    rdfs:label "用户"@zh-CN ;
+    skos:definition "A person or organisation that holds telecom subscriptions and may request number portability."@en ;
+    skos:definition "持有电信订阅并可申请携号转网的自然人或组织。"@zh-CN ;
+    mnp:moduleCode "IDENTITY" ;
+    mnp:sourceStatus "INDUSTRY_ALIGNED" ;
+    mnp:definingModule "mnp-identity" .
 
 mnp:documentNumberMasked a owl:DatatypeProperty ;
-    rdfs:domain mnp:IdentityDocument ;
-    rdfs:range xsd:string ;
     rdfs:label "masked document number"@en ;
-    mnp:moduleCode "IDENTITY" .
+    rdfs:label "掩码证件号"@zh-CN ;
+    skos:definition "Masked identity document number."@en ;
+    skos:definition "经过掩码处理的证件号码。"@zh-CN ;
+    mnp:moduleCode "IDENTITY" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-identity" ;
+    rdfs:domain mnp:IdentityDocument ;
+    rdfs:range xsd:string .
+
+mnp:documentTypeCode a owl:DatatypeProperty ;
+    rdfs:label "document type code"@en ;
+    rdfs:label "证件类型代码"@zh-CN ;
+    skos:definition "Controlled code for identity document type."@en ;
+    skos:definition "身份证件类型受控代码。"@zh-CN ;
+    mnp:moduleCode "IDENTITY" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-identity" ;
+    rdfs:domain mnp:IdentityDocument ;
+    rdfs:range xsd:string .
+
+mnp:maskedPhoneNumber a owl:DatatypeProperty ;
+    rdfs:label "masked phone number"@en ;
+    rdfs:label "掩码电话号码"@zh-CN ;
+    skos:definition "A privacy-preserving masked representation of a phone number."@en ;
+    skos:definition "电话号码的隐私掩码表示。"@zh-CN ;
+    mnp:moduleCode "IDENTITY" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-identity" ;
+    rdfs:domain mnp:PhoneNumber ;
+    rdfs:range xsd:string .
 
 mnp:verificationOutcome a owl:DatatypeProperty ;
-    rdfs:domain mnp:IdentityVerification ;
-    rdfs:range xsd:string ;
     rdfs:label "verification outcome"@en ;
-    mnp:moduleCode "IDENTITY" .
+    rdfs:label "核验结果"@zh-CN ;
+    skos:definition "Outcome code of an identity verification."@en ;
+    skos:definition "身份核验结果代码。"@zh-CN ;
+    mnp:moduleCode "IDENTITY" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-identity" ;
+    rdfs:domain mnp:IdentityVerification ;
+    rdfs:range xsd:string .
+
+mnp:assertsOwnership a owl:ObjectProperty ;
+    rdfs:label "asserts ownership"@en ;
+    rdfs:label "主张归属"@zh-CN ;
+    skos:definition "Links an ownership assertion record to a phone number."@en ;
+    skos:definition "将归属主张记录关联到电话号码。"@zh-CN ;
+    mnp:moduleCode "IDENTITY" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-identity" ;
+    rdfs:domain mnp:PhoneNumberOwnership ;
+    rdfs:range mnp:PhoneNumber .
+
+mnp:assignedToSubscription a owl:ObjectProperty ;
+    rdfs:label "assigned to subscription"@en ;
+    rdfs:label "分配至订阅"@zh-CN ;
+    skos:definition "Links a phone number to the service subscription to which it is assigned."@en ;
+    skos:definition "将电话号码关联到其被分配的服务订阅。"@zh-CN ;
+    mnp:moduleCode "IDENTITY" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-identity" ;
+    rdfs:domain mnp:PhoneNumber ;
+    rdfs:range mnp:ServiceSubscription .
+
+mnp:hasIdentityDocument a owl:ObjectProperty ;
+    rdfs:label "has identity document"@en ;
+    rdfs:label "有身份证件"@zh-CN ;
+    skos:definition "Links a subscriber to an identity document."@en ;
+    skos:definition "将用户关联到身份证件。"@zh-CN ;
+    mnp:moduleCode "IDENTITY" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-identity" ;
+    rdfs:domain mnp:Subscriber ;
+    rdfs:range mnp:IdentityDocument .
+
+mnp:hasRealNameRegistration a owl:ObjectProperty ;
+    rdfs:label "has real-name registration"@en ;
+    rdfs:label "有实名登记"@zh-CN ;
+    skos:definition "Links a subscriber to a real-name registration record."@en ;
+    skos:definition "将用户关联到实名登记记录。"@zh-CN ;
+    mnp:moduleCode "IDENTITY" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-identity" ;
+    rdfs:domain mnp:Subscriber ;
+    rdfs:range mnp:RealNameRegistration .
+
+mnp:hasSubscription a owl:ObjectProperty ;
+    rdfs:label "has subscription (deprecated)"@en ;
+    rdfs:label "有订阅（已弃用）"@zh-CN ;
+    skos:definition "Deprecated synonym of holdsSubscription."@en ;
+    skos:definition "已弃用，请使用 holdsSubscription。"@zh-CN ;
+    mnp:moduleCode "IDENTITY" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-identity" ;
+    rdfs:domain mnp:Subscriber ;
+    rdfs:range mnp:ServiceSubscription ;
+    owl:deprecated true ;
+    mnp:replacementTerm mnp:holdsSubscription ;
+    skos:changeNote "Deprecated in ontology 1.0.0; use mnp:holdsSubscription."@en .
+
+mnp:holdsSubscription a owl:ObjectProperty ;
+    rdfs:label "holds subscription"@en ;
+    rdfs:label "持有订阅"@zh-CN ;
+    skos:definition "Links a subscriber to a service subscription they hold."@en ;
+    skos:definition "将用户关联到其持有的服务订阅。"@zh-CN ;
+    mnp:moduleCode "IDENTITY" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-identity" ;
+    rdfs:domain mnp:Subscriber ;
+    rdfs:range mnp:ServiceSubscription .
+
+mnp:ownershipHolder a owl:ObjectProperty ;
+    rdfs:label "ownership holder"@en ;
+    rdfs:label "归属持有人"@zh-CN ;
+    skos:definition "Links an ownership assertion to the asserting subscriber."@en ;
+    skos:definition "将归属主张关联到主张方用户。"@zh-CN ;
+    mnp:moduleCode "IDENTITY" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-identity" ;
+    rdfs:domain mnp:PhoneNumberOwnership ;
+    rdfs:range mnp:Subscriber .
+
+mnp:ownsPhoneNumber a owl:ObjectProperty ;
+    rdfs:label "owns phone number (deprecated)"@en ;
+    rdfs:label "拥有号码（已弃用）"@zh-CN ;
+    skos:definition "Deprecated. Previously linked Subscriber to PhoneNumber with ambiguous ownership semantics."@en ;
+    skos:definition "已弃用。原用于连接用户与号码，但“拥有”语义含糊。"@zh-CN ;
+    mnp:moduleCode "IDENTITY" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-identity" ;
+    rdfs:domain mnp:Subscriber ;
+    rdfs:range mnp:PhoneNumber ;
+    owl:deprecated true ;
+    mnp:replacementTerm mnp:assignedToSubscription ;
+    skos:changeNote "Deprecated in ontology 1.0.0; use mnp:assignedToSubscription."@en .
+
+mnp:verifiedBy a owl:ObjectProperty ;
+    rdfs:label "verified by"@en ;
+    rdfs:label "由...核验"@zh-CN ;
+    skos:definition "Links a real-name registration to an identity verification observation."@en ;
+    skos:definition "将实名登记关联到身份核验观测。"@zh-CN ;
+    mnp:moduleCode "IDENTITY" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-identity" ;
+    rdfs:domain mnp:RealNameRegistration ;
+    rdfs:range mnp:IdentityVerification .

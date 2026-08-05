@@ -1,85 +1,131 @@
-# Authoritative ontology module catalog for KG-MNP.
-# TTL files declare mnp:moduleCode on new terms; this file is the UI/catalog source of truth.
+# Authoritative ontology module catalog for KG-MNP (Stage 03 release 1.0.0).
+# Loader and Protégé catalog must agree with ontology IRIs declared in TTL files.
+
+ontology_version: "1.0.0"
 
 modules:
   - code: CORE
-    label_zh: 核心概念层
-    label_en: Core Concepts
-    description: 携转资格评估的核心类与属性（案件、证据、规则、决定、阻塞原因）。
     file: mnp-core.ttl
+    ontology_iri: "https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/mnp-core"
+    version_iri: "https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/1.0.0/mnp-core"
     runtime: true
-  - code: IDENTITY
-    label_zh: 用户与身份层
-    label_en: Identity
-    description: 自然人/组织用户、证件、实名登记与核验、号码归属。
-    file: mnp-identity.ttl
-    runtime: true
-  - code: ACCOUNT_BILLING
-    label_zh: 账户与计费层
-    label_en: Account and Billing
-    description: 计费账户、账单、费用、缴费、欠费观测与结清。
-    file: mnp-account-billing.ttl
-    runtime: true
-  - code: SERVICE_CONTRACT
-    label_zh: 业务与合约层
-    label_en: Service and Contract
-    description: 套餐与增值业务、承诺期、解除协议。
-    file: mnp-service-contract.ttl
-    runtime: true
-  - code: PROCESS
-    label_zh: 携转流程层
-    label_en: Porting Process
-    description: 流程步骤、授权码、流程事件与案件状态。
-    file: mnp-process.ttl
-    runtime: true
-  - code: COMPLIANCE
-    label_zh: 资格与合规层
-    label_en: Eligibility and Compliance
-    description: 规则版本重评、监管条款辅助属性。
-    file: mnp-compliance.ttl
-    runtime: true
-  - code: EVIDENCE_TIME
-    label_zh: 证据与时间横向层
-    label_en: Evidence and Time
-    description: 接口响应证据、有效性与时间标注（不含金额/日差计算）。
-    file: mnp-evidence-time.ttl
-    runtime: true
-  - code: CODE_LIST
-    label_zh: 受控码表
-    label_en: Code Lists
-    description: 证据、授权码与流程步骤等受控状态码。
-    file: mnp-code-list.ttl
-    runtime: true
-  - code: ALIGNMENTS
-    label_zh: 外部对齐注释
-    label_en: Alignments
-    description: 文档级外部本体/API 对齐，运行时可选。
-    file: mnp-alignments.ttl
-    runtime: false
+    optional: false
+    imports: []
+    label_en: Core Annotations
+    label_zh: 核心注解
+    description_en: Cross-module annotation properties and governance metadata.
+    description_zh: 跨模块注解属性与治理元数据。
 
-# Map core terms (without explicit mnp:moduleCode) to catalog modules.
-core_term_modules:
-  Subscriber: IDENTITY
-  PhoneNumber: IDENTITY
-  TelecomAccount: ACCOUNT_BILLING
-  TelecomService: SERVICE_CONTRACT
-  ServiceSubscription: SERVICE_CONTRACT
-  ServiceContract: SERVICE_CONTRACT
-  MNPCase: PROCESS
-  EligibilityAssessment: COMPLIANCE
-  EligibilityDecision: COMPLIANCE
-  EligibleDecision: COMPLIANCE
-  BlockingDecision: COMPLIANCE
-  ConditionalDecision: COMPLIANCE
-  ManualReviewDecision: COMPLIANCE
-  EvidenceRecord: EVIDENCE_TIME
-  SystemObservation: EVIDENCE_TIME
-  EligibilityRule: COMPLIANCE
-  BlockingReason: COMPLIANCE
-  RemediationAction: COMPLIANCE
-  RegulatoryClause: COMPLIANCE
-  RegulatoryDocument: COMPLIANCE
-  InformationSystem: EVIDENCE_TIME
-  RuleVersion: COMPLIANCE
-  AssessmentDependency: COMPLIANCE
-  MappingRecord: CORE
+  - code: IDENTITY
+    file: mnp-identity.ttl
+    ontology_iri: "https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/mnp-identity"
+    version_iri: "https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/1.0.0/mnp-identity"
+    runtime: true
+    optional: false
+    imports: ["mnp-core"]
+    label_en: Identity
+    label_zh: 用户与身份层
+    description_en: Subscribers, phone numbers, identity documents and assignment relations.
+    description_zh: 用户、号码、身份证件与分配关系。
+
+  - code: ACCOUNT_BILLING
+    file: mnp-account-billing.ttl
+    ontology_iri: "https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/mnp-account-billing"
+    version_iri: "https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/1.0.0/mnp-account-billing"
+    runtime: true
+    optional: false
+    imports: ["mnp-core"]
+    label_en: Account and Billing
+    label_zh: 账户与计费
+    description_en: Telecom accounts, bills, charges, payments and settlements.
+    description_zh: 电信账户、账单、费用、缴费与结清。
+
+  - code: SERVICE_CONTRACT
+    file: mnp-service-contract.ttl
+    ontology_iri: "https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/mnp-service-contract"
+    version_iri: "https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/1.0.0/mnp-service-contract"
+    runtime: true
+    optional: false
+    imports: ["mnp-core"]
+    label_en: Service and Contract
+    label_zh: 业务与合约
+    description_en: Services, subscriptions, contracts and billing linkage.
+    description_zh: 服务、订阅、合约与计费关联。
+
+  - code: PROCESS
+    file: mnp-process.ttl
+    ontology_iri: "https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/mnp-process"
+    version_iri: "https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/1.0.0/mnp-process"
+    runtime: true
+    optional: false
+    imports: ["mnp-core"]
+    label_en: Porting Process
+    label_zh: 携转流程
+    description_en: MNP cases, process steps, authorization codes and events.
+    description_zh: 携转案件、流程步骤、授权码与事件。
+
+  - code: COMPLIANCE
+    file: mnp-compliance.ttl
+    ontology_iri: "https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/mnp-compliance"
+    version_iri: "https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/1.0.0/mnp-compliance"
+    runtime: true
+    optional: false
+    imports: ["mnp-core"]
+    label_en: Eligibility and Compliance
+    label_zh: 资格与合规
+    description_en: Assessments, decisions, rules, clauses and blocking reasons.
+    description_zh: 评估、决定、规则、条款与阻塞原因。
+
+  - code: EVIDENCE_TIME
+    file: mnp-evidence-time.ttl
+    ontology_iri: "https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/mnp-evidence-time"
+    version_iri: "https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/1.0.0/mnp-evidence-time"
+    runtime: true
+    optional: false
+    imports: ["mnp-core"]
+    label_en: Evidence and Time
+    label_zh: 证据与时间
+    description_en: Business evidence records, source systems and temporal annotations.
+    description_zh: 业务证据、来源系统与时间注解。
+
+  - code: MODELING_PROVENANCE
+    file: mnp-modeling-provenance.ttl
+    ontology_iri: "https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/mnp-modeling-provenance"
+    version_iri: "https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/1.0.0/mnp-modeling-provenance"
+    runtime: true
+    optional: false
+    imports: ["mnp-core"]
+    label_en: Modeling Provenance
+    label_zh: 建模来源
+    description_en: Ontology modeling and mapping provenance (not business case evidence).
+    description_zh: 本体建模与映射来源（非业务案件证据）。
+
+  - code: CODE_LIST
+    file: mnp-code-list.ttl
+    ontology_iri: "https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/mnp-code-list"
+    version_iri: "https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/1.0.0/mnp-code-list"
+    runtime: true
+    optional: false
+    imports: ["mnp-core"]
+    label_en: Code Lists
+    label_zh: 受控码表
+    description_en: Controlled status code individuals.
+    description_zh: 受控状态码个体。
+
+  - code: ALIGNMENTS
+    file: mnp-alignments.ttl
+    ontology_iri: "https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/mnp-alignments"
+    version_iri: "https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/1.0.0/mnp-alignments"
+    runtime: false
+    optional: true
+    imports: ["mnp-core"]
+    label_en: Alignments
+    label_zh: 外部对齐
+    description_en: Optional external alignment annotations; excluded from default runtime root.
+    description_zh: 可选外部对齐注解；不进入默认运行时根本体。
+
+root:
+  file: kg-mnp.ttl
+  ontology_iri: "https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/kg-mnp"
+  version_iri: "https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/1.0.0/kg-mnp"
+  catalog: catalog-v001.xml

@@ -1,150 +1,331 @@
-@prefix mnp: <http://example.org/kg-mnp#> .
+@prefix mnp: <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
 
-#################################################################
-# Porting process layer — authorization code and process steps
-#################################################################
-
-<http://example.org/kg-mnp/process> a owl:Ontology ;
+<https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/mnp-process> a owl:Ontology ;
+    owl:versionIRI <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/1.0.0/mnp-process> ;
+    owl:versionInfo "1.0.0" ;
     dcterms:title "KG-MNP Process Module"@en ;
-    dcterms:title "携转流程层"@zh ;
-    owl:versionInfo "0.1.0" ;
-    rdfs:comment "MNP process steps, authorization codes and transition permissions."@en .
-
-mnp:MNPRequest a owl:Class ;
-    rdfs:subClassOf mnp:MNPCase ;
-    rdfs:label "MNP Request"@en ;
-    rdfs:label "携转申请"@zh ;
-    mnp:moduleCode "PROCESS" .
-
-mnp:EligibilityCheck a owl:Class ;
-    rdfs:label "Eligibility Check"@en ;
-    rdfs:label "资格检查步骤"@zh ;
-    rdfs:subClassOf mnp:ProcessStep ;
-    mnp:moduleCode "PROCESS" .
+    dcterms:title "KG-MNP 流程模块"@zh-CN ;
+    dcterms:description "MNP cases, process steps, authorization codes and events."@en ;
+    dcterms:description "携转案件、流程步骤、授权码与事件。"@zh-CN ;
+    dcterms:license <https://www.apache.org/licenses/LICENSE-2.0> ;
+    owl:imports <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/mnp-core> .
+mnp:AuthorizationCode a owl:Class ;
+    rdfs:label "Authorization Code"@en ;
+    rdfs:label "授权码"@zh-CN ;
+    skos:definition "A time-bounded authorization code for port-in submission."@en ;
+    skos:definition "用于携入提交的有时限授权码。"@zh-CN ;
+    mnp:moduleCode "PROCESS" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-process" .
 
 mnp:AuthorizationCodeRequest a owl:Class ;
     rdfs:label "Authorization Code Request"@en ;
-    rdfs:label "授权码申请"@zh ;
-    rdfs:subClassOf mnp:ProcessStep ;
-    mnp:moduleCode "PROCESS" .
+    rdfs:label "授权码申请"@zh-CN ;
+    skos:definition "Process step for requesting an authorization code."@en ;
+    skos:definition "申请授权码的流程步骤。"@zh-CN ;
+    mnp:moduleCode "PROCESS" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-process" ;
+    rdfs:subClassOf mnp:ProcessStep .
 
-mnp:AuthorizationCode a owl:Class ;
-    rdfs:label "Authorization Code"@en ;
-    rdfs:label "授权码"@zh ;
-    rdfs:comment "A time-bounded authorization code for port-in submission."@en ;
-    mnp:moduleCode "PROCESS" .
+mnp:EligibilityCheck a owl:Class ;
+    rdfs:label "Eligibility Check"@en ;
+    rdfs:label "资格检查步骤"@zh-CN ;
+    skos:definition "Process step for eligibility checking."@en ;
+    skos:definition "资格检查流程步骤。"@zh-CN ;
+    mnp:moduleCode "PROCESS" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-process" ;
+    rdfs:subClassOf mnp:ProcessStep .
 
-mnp:PortInSubmission a owl:Class ;
-    rdfs:label "Port-In Submission"@en ;
-    rdfs:label "携入提交"@zh ;
-    rdfs:subClassOf mnp:ProcessStep ;
-    mnp:moduleCode "PROCESS" .
-
-mnp:PortingExecution a owl:Class ;
-    rdfs:label "Porting Execution"@en ;
-    rdfs:label "携转执行"@zh ;
-    rdfs:subClassOf mnp:ProcessStep ;
-    mnp:moduleCode "PROCESS" .
-
-mnp:PortingConfirmation a owl:Class ;
-    rdfs:label "Porting Confirmation"@en ;
-    rdfs:label "携转确认"@zh ;
-    rdfs:subClassOf mnp:ProcessStep ;
-    mnp:moduleCode "PROCESS" .
-
-mnp:ProcessStep a owl:Class ;
-    rdfs:label "Process Step"@en ;
-    rdfs:label "流程步骤"@zh ;
-    rdfs:comment "A discrete step in the MNP process lifecycle."@en ;
-    mnp:moduleCode "PROCESS" .
-
-mnp:ProcessEvent a owl:Class ;
-    rdfs:label "Process Event"@en ;
-    rdfs:label "流程事件"@zh ;
-    rdfs:comment "An event recorded during process execution."@en ;
-    mnp:moduleCode "PROCESS" .
+mnp:MNPCase a owl:Class ;
+    rdfs:label "MNP Case"@en ;
+    rdfs:label "携转案件"@zh-CN ;
+    skos:definition "A mobile number portability request case."@en ;
+    skos:definition "携号转网申请案件。"@zh-CN ;
+    mnp:moduleCode "PROCESS" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-process" .
 
 mnp:MNPCaseStatus a owl:Class ;
     rdfs:label "MNP Case Status"@en ;
-    rdfs:label "案件流程状态"@zh ;
-    mnp:moduleCode "PROCESS" .
+    rdfs:label "案件流程状态"@zh-CN ;
+    skos:definition "Lifecycle status of an MNP case."@en ;
+    skos:definition "携转案件生命周期状态。"@zh-CN ;
+    mnp:moduleCode "PROCESS" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-process" .
 
-mnp:hasProcessStep a owl:ObjectProperty ;
-    rdfs:domain mnp:MNPCase ;
-    rdfs:range mnp:ProcessStep ;
-    rdfs:label "has process step"@en ;
-    mnp:moduleCode "PROCESS" .
+mnp:MNPRequest a owl:Class ;
+    rdfs:label "MNP Request"@en ;
+    rdfs:label "携转申请"@zh-CN ;
+    skos:definition "An MNP request specialization of an MNP case."@en ;
+    skos:definition "作为携转案件特例的携转申请。"@zh-CN ;
+    mnp:moduleCode "PROCESS" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-process" ;
+    rdfs:subClassOf mnp:MNPCase .
 
-mnp:currentProcessStep a owl:ObjectProperty ;
-    rdfs:domain mnp:MNPCase ;
-    rdfs:range mnp:ProcessStep ;
-    rdfs:label "current process step"@en ;
-    mnp:moduleCode "PROCESS" .
+mnp:PortInSubmission a owl:Class ;
+    rdfs:label "Port-In Submission"@en ;
+    rdfs:label "携入提交"@zh-CN ;
+    skos:definition "Process step for port-in submission."@en ;
+    skos:definition "携入提交流程步骤。"@zh-CN ;
+    mnp:moduleCode "PROCESS" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-process" ;
+    rdfs:subClassOf mnp:ProcessStep .
 
-mnp:nextProcessStep a owl:ObjectProperty ;
-    rdfs:domain mnp:ProcessStep ;
-    rdfs:range mnp:ProcessStep ;
-    rdfs:label "next process step"@en ;
-    mnp:moduleCode "PROCESS" .
+mnp:PortingConfirmation a owl:Class ;
+    rdfs:label "Porting Confirmation"@en ;
+    rdfs:label "携转确认"@zh-CN ;
+    skos:definition "Process step for porting confirmation."@en ;
+    skos:definition "携转确认流程步骤。"@zh-CN ;
+    mnp:moduleCode "PROCESS" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-process" ;
+    rdfs:subClassOf mnp:ProcessStep .
 
-mnp:hasAuthorizationCode a owl:ObjectProperty ;
-    rdfs:domain mnp:MNPCase ;
-    rdfs:range mnp:AuthorizationCode ;
-    rdfs:label "has authorization code"@en ;
-    mnp:moduleCode "PROCESS" .
+mnp:PortingExecution a owl:Class ;
+    rdfs:label "Porting Execution"@en ;
+    rdfs:label "携转执行"@zh-CN ;
+    skos:definition "Process step for porting execution."@en ;
+    skos:definition "携转执行流程步骤。"@zh-CN ;
+    mnp:moduleCode "PROCESS" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-process" ;
+    rdfs:subClassOf mnp:ProcessStep .
 
-mnp:hasProcessEvent a owl:ObjectProperty ;
-    rdfs:domain mnp:MNPCase ;
-    rdfs:range mnp:ProcessEvent ;
-    rdfs:label "has process event"@en ;
-    mnp:moduleCode "PROCESS" .
+mnp:ProcessEvent a owl:Class ;
+    rdfs:label "Process Event"@en ;
+    rdfs:label "流程事件"@zh-CN ;
+    skos:definition "An event recorded during process execution."@en ;
+    skos:definition "流程执行期间记录的事件。"@zh-CN ;
+    mnp:moduleCode "PROCESS" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-process" .
 
-mnp:hasCaseStatus a owl:ObjectProperty ;
-    rdfs:domain mnp:MNPCase ;
-    rdfs:range mnp:MNPCaseStatus ;
-    rdfs:label "has case status"@en ;
-    mnp:moduleCode "PROCESS" .
-
-mnp:stepCode a owl:DatatypeProperty ;
-    rdfs:domain mnp:ProcessStep ;
-    rdfs:range xsd:string ;
-    mnp:moduleCode "PROCESS" .
-
-mnp:authCodeValueMasked a owl:DatatypeProperty ;
-    rdfs:domain mnp:AuthorizationCode ;
-    rdfs:range xsd:string ;
-    mnp:moduleCode "PROCESS" .
-
-mnp:authCodeStatus a owl:DatatypeProperty ;
-    rdfs:domain mnp:AuthorizationCode ;
-    rdfs:range xsd:string ;
-    mnp:moduleCode "PROCESS" .
+mnp:ProcessStep a owl:Class ;
+    rdfs:label "Process Step"@en ;
+    rdfs:label "流程步骤"@zh-CN ;
+    skos:definition "A discrete step in the MNP process lifecycle."@en ;
+    skos:definition "携转流程生命周期中的离散步骤。"@zh-CN ;
+    mnp:moduleCode "PROCESS" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-process" .
 
 mnp:authCodeIssuedAt a owl:DatatypeProperty ;
+    rdfs:label "authorization code issued at"@en ;
+    rdfs:label "授权码签发时间"@zh-CN ;
+    skos:definition "Issuance datetime of an authorization code."@en ;
+    skos:definition "授权码签发时间。"@zh-CN ;
+    mnp:moduleCode "PROCESS" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-process" ;
     rdfs:domain mnp:AuthorizationCode ;
-    rdfs:range xsd:dateTime ;
-    mnp:moduleCode "PROCESS" .
+    rdfs:range xsd:dateTime .
+
+mnp:authCodeStatus a owl:DatatypeProperty ;
+    rdfs:label "authorization code status"@en ;
+    rdfs:label "授权码状态"@zh-CN ;
+    skos:definition "Status code of an authorization code."@en ;
+    skos:definition "授权码状态代码。"@zh-CN ;
+    mnp:moduleCode "PROCESS" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-process" ;
+    rdfs:domain mnp:AuthorizationCode ;
+    rdfs:range xsd:string .
 
 mnp:authCodeValidUntil a owl:DatatypeProperty ;
+    rdfs:label "authorization code valid until"@en ;
+    rdfs:label "授权码有效期至"@zh-CN ;
+    skos:definition "Validity end datetime of an authorization code."@en ;
+    skos:definition "授权码有效截止时间。"@zh-CN ;
+    mnp:moduleCode "PROCESS" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-process" ;
     rdfs:domain mnp:AuthorizationCode ;
-    rdfs:range xsd:dateTime ;
-    mnp:moduleCode "PROCESS" .
+    rdfs:range xsd:dateTime .
 
-mnp:eventTypeCode a owl:DatatypeProperty ;
-    rdfs:domain mnp:ProcessEvent ;
-    rdfs:range xsd:string ;
-    mnp:moduleCode "PROCESS" .
+mnp:authCodeValueMasked a owl:DatatypeProperty ;
+    rdfs:label "masked authorization code"@en ;
+    rdfs:label "掩码授权码"@zh-CN ;
+    skos:definition "Masked authorization code value."@en ;
+    skos:definition "经过掩码的授权码值。"@zh-CN ;
+    mnp:moduleCode "PROCESS" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-process" ;
+    rdfs:domain mnp:AuthorizationCode ;
+    rdfs:range xsd:string .
 
-mnp:eventTime a owl:DatatypeProperty ;
-    rdfs:domain mnp:ProcessEvent ;
-    rdfs:range xsd:dateTime ;
-    mnp:moduleCode "PROCESS" .
+mnp:caseIdentifier a owl:DatatypeProperty ;
+    rdfs:label "case identifier"@en ;
+    rdfs:label "案件编号"@zh-CN ;
+    skos:definition "Business identifier of an MNP case."@en ;
+    skos:definition "携转案件业务编号。"@zh-CN ;
+    mnp:moduleCode "PROCESS" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-process" ;
+    rdfs:domain mnp:MNPCase ;
+    rdfs:range xsd:string .
 
 mnp:caseStatusCode a owl:DatatypeProperty ;
+    rdfs:label "case status code"@en ;
+    rdfs:label "案件状态码"@zh-CN ;
+    skos:definition "Status code of an MNP case status resource."@en ;
+    skos:definition "携转案件状态资源的状态代码。"@zh-CN ;
+    mnp:moduleCode "PROCESS" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-process" ;
     rdfs:domain mnp:MNPCaseStatus ;
-    rdfs:range xsd:string ;
-    mnp:moduleCode "PROCESS" .
+    rdfs:range xsd:string .
+
+mnp:eventTime a owl:DatatypeProperty ;
+    rdfs:label "event time"@en ;
+    rdfs:label "事件时间"@zh-CN ;
+    skos:definition "Datetime of a process event."@en ;
+    skos:definition "流程事件发生时间。"@zh-CN ;
+    mnp:moduleCode "PROCESS" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-process" ;
+    rdfs:domain mnp:ProcessEvent ;
+    rdfs:range xsd:dateTime .
+
+mnp:eventTypeCode a owl:DatatypeProperty ;
+    rdfs:label "event type code"@en ;
+    rdfs:label "事件类型码"@zh-CN ;
+    skos:definition "Type code of a process event."@en ;
+    skos:definition "流程事件类型代码。"@zh-CN ;
+    mnp:moduleCode "PROCESS" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-process" ;
+    rdfs:domain mnp:ProcessEvent ;
+    rdfs:range xsd:string .
+
+mnp:stepCode a owl:DatatypeProperty ;
+    rdfs:label "step code"@en ;
+    rdfs:label "步骤代码"@zh-CN ;
+    skos:definition "Code identifying a process step."@en ;
+    skos:definition "流程步骤识别代码。"@zh-CN ;
+    mnp:moduleCode "PROCESS" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-process" ;
+    rdfs:domain mnp:ProcessStep ;
+    rdfs:range xsd:string .
+
+mnp:concernsNumber a owl:ObjectProperty ;
+    rdfs:label "concerns number"@en ;
+    rdfs:label "涉及号码"@zh-CN ;
+    skos:definition "Links an MNP case to the phone number concerned."@en ;
+    skos:definition "将携转案件关联到所涉号码。"@zh-CN ;
+    mnp:moduleCode "PROCESS" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-process" ;
+    rdfs:domain mnp:MNPCase ;
+    rdfs:range mnp:PhoneNumber .
+
+mnp:currentProcessStep a owl:ObjectProperty ;
+    rdfs:label "current process step"@en ;
+    rdfs:label "当前流程步骤"@zh-CN ;
+    skos:definition "Links an MNP case to its current process step."@en ;
+    skos:definition "将携转案件关联到当前流程步骤。"@zh-CN ;
+    mnp:moduleCode "PROCESS" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-process" ;
+    rdfs:domain mnp:MNPCase ;
+    rdfs:range mnp:ProcessStep .
+
+mnp:hasAuthorizationCode a owl:ObjectProperty ;
+    rdfs:label "has authorization code"@en ;
+    rdfs:label "有授权码"@zh-CN ;
+    skos:definition "Links an MNP case to an authorization code."@en ;
+    skos:definition "将携转案件关联到授权码。"@zh-CN ;
+    mnp:moduleCode "PROCESS" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-process" ;
+    rdfs:domain mnp:MNPCase ;
+    rdfs:range mnp:AuthorizationCode .
+
+mnp:hasCaseEvidence a owl:ObjectProperty ;
+    rdfs:label "has case evidence"@en ;
+    rdfs:label "有案件证据"@zh-CN ;
+    skos:definition "Links an MNP case to evidence records available for evaluating that case."@en ;
+    skos:definition "将携转案件关联到可用于评估该案件的证据记录。"@zh-CN ;
+    mnp:moduleCode "PROCESS" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-process" ;
+    rdfs:domain mnp:MNPCase ;
+    rdfs:range mnp:EvidenceRecord ;
+    owl:inverseOf mnp:evidenceForCase .
+
+mnp:hasCaseStatus a owl:ObjectProperty ;
+    rdfs:label "has case status"@en ;
+    rdfs:label "有案件状态"@zh-CN ;
+    skos:definition "Links an MNP case to a case status."@en ;
+    skos:definition "将携转案件关联到案件状态。"@zh-CN ;
+    mnp:moduleCode "PROCESS" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-process" ;
+    rdfs:domain mnp:MNPCase ;
+    rdfs:range mnp:MNPCaseStatus .
+
+mnp:hasEligibilityAssessment a owl:ObjectProperty ;
+    rdfs:label "has eligibility assessment"@en ;
+    rdfs:label "有资格评估"@zh-CN ;
+    skos:definition "Links an MNP case to an eligibility assessment."@en ;
+    skos:definition "将携转案件关联到资格评估。"@zh-CN ;
+    mnp:moduleCode "PROCESS" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-process" ;
+    rdfs:domain mnp:MNPCase ;
+    rdfs:range mnp:EligibilityAssessment .
+
+mnp:hasProcessEvent a owl:ObjectProperty ;
+    rdfs:label "has process event"@en ;
+    rdfs:label "有流程事件"@zh-CN ;
+    skos:definition "Links an MNP case to a process event."@en ;
+    skos:definition "将携转案件关联到流程事件。"@zh-CN ;
+    mnp:moduleCode "PROCESS" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-process" ;
+    rdfs:domain mnp:MNPCase ;
+    rdfs:range mnp:ProcessEvent .
+
+mnp:hasProcessStep a owl:ObjectProperty ;
+    rdfs:label "has process step"@en ;
+    rdfs:label "有流程步骤"@zh-CN ;
+    skos:definition "Links an MNP case to a process step."@en ;
+    skos:definition "将携转案件关联到流程步骤。"@zh-CN ;
+    mnp:moduleCode "PROCESS" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-process" ;
+    rdfs:domain mnp:MNPCase ;
+    rdfs:range mnp:ProcessStep .
+
+mnp:nextProcessStep a owl:ObjectProperty ;
+    rdfs:label "next process step"@en ;
+    rdfs:label "下一流程步骤"@zh-CN ;
+    skos:definition "Links a process step to its successor step."@en ;
+    skos:definition "将流程步骤关联到后续步骤。"@zh-CN ;
+    mnp:moduleCode "PROCESS" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-process" ;
+    rdfs:domain mnp:ProcessStep ;
+    rdfs:range mnp:ProcessStep .
+
+mnp:requestedBy a owl:ObjectProperty ;
+    rdfs:label "requested by"@en ;
+    rdfs:label "由...申请"@zh-CN ;
+    skos:definition "Links an MNP case to the requesting subscriber."@en ;
+    skos:definition "将携转案件关联到申请人。"@zh-CN ;
+    mnp:moduleCode "PROCESS" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-process" ;
+    rdfs:domain mnp:MNPCase ;
+    rdfs:range mnp:Subscriber .

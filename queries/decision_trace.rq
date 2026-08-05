@@ -1,4 +1,4 @@
-PREFIX mnp: <http://example.org/kg-mnp#>
+PREFIX mnp: <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#>
 
 # Full decision trace for a case.
 # Bind ?caseId externally as plain string, e.g. "CASE-03"
@@ -14,7 +14,7 @@ WHERE {
   ?assessment mnp:producesDecision ?decision .
   ?decision mnp:decisionCode ?decisionCode .
   OPTIONAL {
-    ?assessment mnp:producesBlockingReason ?reason .
+    ?decision mnp:hasBlockingReason ?reason .
     ?reason mnp:reasonCode ?reasonCode .
     OPTIONAL { ?reason mnp:supportedByEvidence ?evidence }
     OPTIONAL { ?reason mnp:triggeredByRule ?rule }

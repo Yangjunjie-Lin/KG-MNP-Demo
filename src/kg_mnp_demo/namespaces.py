@@ -1,9 +1,13 @@
-"""Shared RDF namespaces for KG-MNP."""
+"""Shared RDF namespaces for KG-MNP (Stage 03 formal IRIs)."""
 
 from rdflib import Namespace
 
-MNP = Namespace("http://example.org/kg-mnp#")
-BASE = "http://example.org/kg-mnp#"
+MNP = Namespace("https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#")
+BASE = "https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#"
+DATA = Namespace("https://yangjunjie-lin.github.io/KG-MNP-Demo/data/")
+DATA_BASE = "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/"
+SHAPES = Namespace("https://yangjunjie-lin.github.io/KG-MNP-Demo/shapes#")
+EVIDENCE = Namespace("https://yangjunjie-lin.github.io/KG-MNP-Demo/evidence/")
 
 CASE_FILES = {
     "CASE-01": "CASE-01-eligible.ttl",

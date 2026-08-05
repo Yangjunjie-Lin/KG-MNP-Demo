@@ -1,4 +1,4 @@
-PREFIX mnp: <http://example.org/kg-mnp#>
+PREFIX mnp: <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#>
 SELECT ?caseId ?eventTypeCode ?eventTime WHERE {
   ?case a mnp:MNPCase ; mnp:caseIdentifier ?caseId .
   FILTER(STR(?caseId) = STR(?requestedCaseId))

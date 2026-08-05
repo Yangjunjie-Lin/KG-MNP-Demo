@@ -11,7 +11,7 @@ import yaml
 from rdflib import Graph, URIRef
 
 from kg_mnp_demo.loader import rules_path
-from kg_mnp_demo.namespaces import MNP
+from kg_mnp_demo.namespaces import DATA, MNP
 
 ASSESSMENT_TIME = datetime(2026, 7, 1, 0, 0, 0, tzinfo=timezone.utc)
 
@@ -41,7 +41,7 @@ def resolve_case_uri(graph: Graph, case_id: str) -> URIRef | None:
     from rdflib.namespace import XSD
 
     q = """
-    PREFIX mnp: <http://example.org/kg-mnp#>
+    PREFIX mnp: <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#>
     SELECT ?case WHERE {
       ?case a mnp:MNPCase ;
             mnp:caseIdentifier ?caseId .
@@ -222,7 +222,7 @@ class RuleOutcome:
 def collect_evidence(graph: Graph, case_id: str) -> dict[str, list[EvidenceView]]:
     """Collect evidence via MNPCase hasCaseEvidence (not IRI naming conventions)."""
     q = """
-    PREFIX mnp: <http://example.org/kg-mnp#>
+    PREFIX mnp: <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#>
     SELECT ?ev ?type ?status ?gen ?until ?idMatch ?numStatus ?amount ?currency
            ?arrangement ?ctrStatus ?ctrEnd ?days ?sys ?sysId
     WHERE {
@@ -412,18 +412,18 @@ def summarize_decision(outcomes: list[RuleOutcome]) -> str:
 
 def clause_iri(clause_id: str) -> URIRef:
     suffix = clause_id.replace("REG-MNP-CLAUSE-", "")
-    return MNP[f"Clause-{suffix}"]
+    return DATA[f"Clause-{suffix}"]
 
 
 def rule_iri(rule_id: str, version: str) -> URIRef:
     if rule_id == "MNP-ELIG-005" and version == "1.1":
-        return MNP["Rule-MNP-ELIG-005-v1-1"]
-    return MNP[f"Rule-{rule_id}"]
+        return DATA["Rule-MNP-ELIG-005-v1-1"]
+    return DATA[f"Rule-{rule_id}"]
 
 
 def rule_version_iri(rule_id: str, version: str) -> URIRef:
-    return MNP[f"RuleVersion-{rule_id}-{version.replace('.', '-')}"]
+    return DATA[f"RuleVersion-{rule_id}-{version.replace('.', '-')}"]
 
 
 def action_iri(action_code: str) -> URIRef:
-    return MNP[f"Action-{action_code}"]
+    return DATA[f"Action-{action_code}"]

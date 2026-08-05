@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<catalog xmlns="urn:oasis:names:tc:entity:xmlns:xml:catalog" prefer="public">
+    <uri name="https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/1.0.0/kg-mnp" uri="kg-mnp.ttl"/>
+    <uri name="https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/1.0.0/mnp-account-billing" uri="mnp-account-billing.ttl"/>
+    <uri name="https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/1.0.0/mnp-alignments" uri="mnp-alignments.ttl"/>
+    <uri name="https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/1.0.0/mnp-code-list" uri="mnp-code-list.ttl"/>
+    <uri name="https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/1.0.0/mnp-compliance" uri="mnp-compliance.ttl"/>
+    <uri name="https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/1.0.0/mnp-core" uri="mnp-core.ttl"/>
+    <uri name="https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/1.0.0/mnp-evidence-time" uri="mnp-evidence-time.ttl"/>
+    <uri name="https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/1.0.0/mnp-identity" uri="mnp-identity.ttl"/>
+    <uri name="https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/1.0.0/mnp-modeling-provenance" uri="mnp-modeling-provenance.ttl"/>
+    <uri name="https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/1.0.0/mnp-process" uri="mnp-process.ttl"/>
+    <uri name="https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/1.0.0/mnp-service-contract" uri="mnp-service-contract.ttl"/>
+    <uri name="https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/kg-mnp" uri="kg-mnp.ttl"/>
+    <uri name="https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/mnp-account-billing" uri="mnp-account-billing.ttl"/>
+    <uri name="https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/mnp-alignments" uri="mnp-alignments.ttl"/>
+    <uri name="https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/mnp-code-list" uri="mnp-code-list.ttl"/>
+    <uri name="https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/mnp-compliance" uri="mnp-compliance.ttl"/>
+    <uri name="https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/mnp-core" uri="mnp-core.ttl"/>
+    <uri name="https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/mnp-evidence-time" uri="mnp-evidence-time.ttl"/>
+    <uri name="https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/mnp-identity" uri="mnp-identity.ttl"/>
+    <uri name="https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/mnp-modeling-provenance" uri="mnp-modeling-provenance.ttl"/>
+    <uri name="https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/mnp-process" uri="mnp-process.ttl"/>
+    <uri name="https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/mnp-service-contract" uri="mnp-service-contract.ttl"/>
+</catalog>

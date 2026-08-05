@@ -1,0 +1,199 @@
+@prefix mnp: <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+
+<https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/mnp-modeling-provenance> a owl:Ontology ;
+    owl:versionIRI <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/1.0.0/mnp-modeling-provenance> ;
+    owl:versionInfo "1.0.0" ;
+    dcterms:title "KG-MNP Modeling Provenance Module"@en ;
+    dcterms:title "KG-MNP 建模来源模块"@zh-CN ;
+    dcterms:description "Ontology modeling and mapping provenance concepts (not business case evidence)."@en ;
+    dcterms:description "本体建模与映射来源概念（非业务案件证据）。"@zh-CN ;
+    dcterms:license <https://www.apache.org/licenses/LICENSE-2.0> ;
+    owl:imports <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/mnp-core> .
+mnp:MappingRecord a owl:Class ;
+    rdfs:label "Mapping Record"@en ;
+    rdfs:label "映射记录"@zh-CN ;
+    skos:definition "A documented mapping from an external API field to an MNP term."@en ;
+    skos:definition "从外部 API 字段到 MNP 术语的文档化映射。"@zh-CN ;
+    mnp:moduleCode "MODELING_PROVENANCE" ;
+    mnp:sourceStatus "PROJECT_GOVERNANCE" ;
+    mnp:definingModule "mnp-modeling-provenance" .
+
+mnp:MappingRule a owl:Class ;
+    rdfs:label "Mapping Rule"@en ;
+    rdfs:label "映射规则"@zh-CN ;
+    skos:definition "A reusable rule describing how source fields map to ontology terms."@en ;
+    skos:definition "描述来源字段如何映射到本体术语的可复用规则。"@zh-CN ;
+    mnp:moduleCode "MODELING_PROVENANCE" ;
+    mnp:sourceStatus "PROJECT_GOVERNANCE" ;
+    mnp:definingModule "mnp-modeling-provenance" .
+
+mnp:ModelingAssertion a owl:Class ;
+    rdfs:label "Modeling Assertion"@en ;
+    rdfs:label "建模断言"@zh-CN ;
+    skos:definition "A proposed or confirmed assertion about ontology modeling, distinct from business case facts."@en ;
+    skos:definition "关于本体建模的提议或确认断言，区别于业务案件事实。"@zh-CN ;
+    mnp:moduleCode "MODELING_PROVENANCE" ;
+    mnp:sourceStatus "PROJECT_GOVERNANCE" ;
+    mnp:definingModule "mnp-modeling-provenance" .
+
+mnp:ModelingEvidence a owl:Class ;
+    rdfs:label "Modeling Evidence"@en ;
+    rdfs:label "建模证据"@zh-CN ;
+    skos:definition "Evidence supporting a modeling assertion; not a business EvidenceRecord."@en ;
+    skos:definition "支撑建模断言的证据；不是业务 EvidenceRecord。"@zh-CN ;
+    mnp:moduleCode "MODELING_PROVENANCE" ;
+    mnp:sourceStatus "PROJECT_GOVERNANCE" ;
+    mnp:definingModule "mnp-modeling-provenance" .
+
+mnp:RelationAssertion a owl:Class ;
+    rdfs:label "Relation Assertion"@en ;
+    rdfs:label "关系断言"@zh-CN ;
+    skos:definition "A modeling assertion that proposes a relation between terms or instances for review."@en ;
+    skos:definition "提议术语或实例间关系以供审核的建模断言。"@zh-CN ;
+    mnp:moduleCode "MODELING_PROVENANCE" ;
+    mnp:sourceStatus "PROJECT_GOVERNANCE" ;
+    mnp:definingModule "mnp-modeling-provenance" ;
+    rdfs:subClassOf mnp:ModelingAssertion .
+
+mnp:ReviewDecision a owl:Class ;
+    rdfs:label "Review Decision"@en ;
+    rdfs:label "建模审核决定"@zh-CN ;
+    skos:definition "A human review decision on a modeling assertion; not an EligibilityDecision."@en ;
+    skos:definition "对建模断言的人工审核决定；不是资格决定。"@zh-CN ;
+    mnp:moduleCode "MODELING_PROVENANCE" ;
+    mnp:sourceStatus "PROJECT_GOVERNANCE" ;
+    mnp:definingModule "mnp-modeling-provenance" .
+
+mnp:SourceField a owl:Class ;
+    rdfs:label "Source Field"@en ;
+    rdfs:label "来源字段"@zh-CN ;
+    skos:definition "A field within a source record used in a mapping."@en ;
+    skos:definition "映射所使用的来源记录中的字段。"@zh-CN ;
+    mnp:moduleCode "MODELING_PROVENANCE" ;
+    mnp:sourceStatus "PROJECT_GOVERNANCE" ;
+    mnp:definingModule "mnp-modeling-provenance" .
+
+mnp:SourceRecord a owl:Class ;
+    rdfs:label "Source Record"@en ;
+    rdfs:label "来源记录"@zh-CN ;
+    skos:definition "A source system or document record used as modeling input."@en ;
+    skos:definition "用作建模输入的来源系统或文件记录。"@zh-CN ;
+    mnp:moduleCode "MODELING_PROVENANCE" ;
+    mnp:sourceStatus "PROJECT_GOVERNANCE" ;
+    mnp:definingModule "mnp-modeling-provenance" .
+
+mnp:mappingReviewStatus a owl:DatatypeProperty ;
+    rdfs:label "mapping review status"@en ;
+    rdfs:label "映射审核状态"@zh-CN ;
+    skos:definition "Review status of a mapping record."@en ;
+    skos:definition "映射记录的审核状态。"@zh-CN ;
+    mnp:moduleCode "MODELING_PROVENANCE" ;
+    mnp:sourceStatus "PROJECT_GOVERNANCE" ;
+    mnp:definingModule "mnp-modeling-provenance" ;
+    rdfs:domain mnp:MappingRecord ;
+    rdfs:range xsd:string .
+
+mnp:reviewOutcomeCode a owl:DatatypeProperty ;
+    rdfs:label "review outcome code"@en ;
+    rdfs:label "审核结果代码"@zh-CN ;
+    skos:definition "Outcome code of a modeling review decision."@en ;
+    skos:definition "建模审核决定的结果代码。"@zh-CN ;
+    mnp:moduleCode "MODELING_PROVENANCE" ;
+    mnp:sourceStatus "PROJECT_GOVERNANCE" ;
+    mnp:definingModule "mnp-modeling-provenance" ;
+    rdfs:domain mnp:ReviewDecision ;
+    rdfs:range xsd:string .
+
+mnp:sourceApi a owl:DatatypeProperty ;
+    rdfs:label "source API"@en ;
+    rdfs:label "来源 API"@zh-CN ;
+    skos:definition "Identifier of the source API for a mapping record."@en ;
+    skos:definition "映射记录的来源 API 标识。"@zh-CN ;
+    mnp:moduleCode "MODELING_PROVENANCE" ;
+    mnp:sourceStatus "PROJECT_GOVERNANCE" ;
+    mnp:definingModule "mnp-modeling-provenance" ;
+    rdfs:domain mnp:MappingRecord ;
+    rdfs:range xsd:string .
+
+mnp:sourceFieldPath a owl:DatatypeProperty ;
+    rdfs:label "source field path"@en ;
+    rdfs:label "来源字段路径"@zh-CN ;
+    skos:definition "Path of the source field within an API payload."@en ;
+    skos:definition "API 载荷中来源字段的路径。"@zh-CN ;
+    mnp:moduleCode "MODELING_PROVENANCE" ;
+    mnp:sourceStatus "PROJECT_GOVERNANCE" ;
+    mnp:definingModule "mnp-modeling-provenance" ;
+    rdfs:domain mnp:MappingRecord ;
+    rdfs:range xsd:string .
+
+mnp:targetTerm a owl:DatatypeProperty ;
+    rdfs:label "target term"@en ;
+    rdfs:label "目标术语"@zh-CN ;
+    skos:definition "Local name or IRI string of the target ontology term."@en ;
+    skos:definition "目标本体术语的本地名或 IRI 字符串。"@zh-CN ;
+    mnp:moduleCode "MODELING_PROVENANCE" ;
+    mnp:sourceStatus "PROJECT_GOVERNANCE" ;
+    mnp:definingModule "mnp-modeling-provenance" ;
+    rdfs:domain mnp:MappingRecord ;
+    rdfs:range xsd:string .
+
+mnp:fieldOfSource a owl:ObjectProperty ;
+    rdfs:label "field of source"@en ;
+    rdfs:label "属于来源"@zh-CN ;
+    skos:definition "Links a source field to its parent source record."@en ;
+    skos:definition "将来源字段关联到所属来源记录。"@zh-CN ;
+    mnp:moduleCode "MODELING_PROVENANCE" ;
+    mnp:sourceStatus "PROJECT_GOVERNANCE" ;
+    mnp:definingModule "mnp-modeling-provenance" ;
+    rdfs:domain mnp:SourceField ;
+    rdfs:range mnp:SourceRecord .
+
+mnp:hasModelingEvidence a owl:ObjectProperty ;
+    rdfs:label "has modeling evidence"@en ;
+    rdfs:label "有建模证据"@zh-CN ;
+    skos:definition "Links a modeling assertion to modeling evidence."@en ;
+    skos:definition "将建模断言关联到建模证据。"@zh-CN ;
+    mnp:moduleCode "MODELING_PROVENANCE" ;
+    mnp:sourceStatus "PROJECT_GOVERNANCE" ;
+    mnp:definingModule "mnp-modeling-provenance" ;
+    rdfs:domain mnp:ModelingAssertion ;
+    rdfs:range mnp:ModelingEvidence .
+
+mnp:hasReviewDecision a owl:ObjectProperty ;
+    rdfs:label "has review decision"@en ;
+    rdfs:label "有审核决定"@zh-CN ;
+    skos:definition "Links a modeling assertion to a review decision."@en ;
+    skos:definition "将建模断言关联到审核决定。"@zh-CN ;
+    mnp:moduleCode "MODELING_PROVENANCE" ;
+    mnp:sourceStatus "PROJECT_GOVERNANCE" ;
+    mnp:definingModule "mnp-modeling-provenance" ;
+    rdfs:domain mnp:ModelingAssertion ;
+    rdfs:range mnp:ReviewDecision .
+
+mnp:mapsSourceField a owl:ObjectProperty ;
+    rdfs:label "maps source field"@en ;
+    rdfs:label "映射来源字段"@zh-CN ;
+    skos:definition "Links a mapping record to a source field."@en ;
+    skos:definition "将映射记录关联到来源字段。"@zh-CN ;
+    mnp:moduleCode "MODELING_PROVENANCE" ;
+    mnp:sourceStatus "PROJECT_GOVERNANCE" ;
+    mnp:definingModule "mnp-modeling-provenance" ;
+    rdfs:domain mnp:MappingRecord ;
+    rdfs:range mnp:SourceField .
+
+mnp:usesMappingRule a owl:ObjectProperty ;
+    rdfs:label "uses mapping rule"@en ;
+    rdfs:label "使用映射规则"@zh-CN ;
+    skos:definition "Links a mapping record to a mapping rule."@en ;
+    skos:definition "将映射记录关联到映射规则。"@zh-CN ;
+    mnp:moduleCode "MODELING_PROVENANCE" ;
+    mnp:sourceStatus "PROJECT_GOVERNANCE" ;
+    mnp:definingModule "mnp-modeling-provenance" ;
+    rdfs:domain mnp:MappingRecord ;
+    rdfs:range mnp:MappingRule .

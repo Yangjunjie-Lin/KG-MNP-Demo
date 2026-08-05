@@ -11,7 +11,7 @@ from rdflib.namespace import RDF
 from kg_mnp_demo.evaluator import evaluate_case, materialize_assessment
 from kg_mnp_demo.inference import apply_owlrl
 from kg_mnp_demo.loader import load_case_graph, query_path
-from kg_mnp_demo.namespaces import MNP
+from kg_mnp_demo.namespaces import DATA, MNP
 from kg_mnp_demo.trace import affected_assessments
 from kg_mnp_demo.trace_graph import (
     SUBGRAPH_QUERY_FILE,
@@ -46,7 +46,7 @@ def test_subgraph_edges_exist_in_rdf():
 def test_edges_have_predicate_iri():
     _, sub = _assessed("CASE-03")
     for edge in sub["edges"]:
-        assert edge["predicate_iri"].startswith("http://example.org/kg-mnp#")
+        assert edge["predicate_iri"].startswith("https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#")
         assert edge["predicate"] == edge["predicate_iri"].rsplit("#", 1)[-1]
 
 
@@ -91,10 +91,9 @@ def test_case03_subgraph_complete():
         "evaluatedByRule",
         "usesRuleVersion",
         "producesDecision",
-        "producesBlockingReason",
+        "hasBlockingReason",
         "operationalizesClause",
         "recommendsAction",
-        "dependsOn",
     ]:
         assert required in preds, required
 
@@ -102,7 +101,7 @@ def test_case03_subgraph_complete():
 def test_case04_two_blocking_reason_branches():
     _, sub = _assessed("CASE-04")
     reason_edges = [
-        e for e in sub["edges"] if e["predicate"] == "producesBlockingReason"
+        e for e in sub["edges"] if e["predicate"] == "hasBlockingReason"
     ]
     assert len(reason_edges) == 2
 
@@ -146,7 +145,7 @@ def test_rq_change_affects_output(monkeypatch, tmp_path):
     # Intentionally omit hasEligibilityAssessment so results diverge from baseline.
     stub.write_text(
         """
-PREFIX mnp: <http://example.org/kg-mnp#>
+PREFIX mnp: <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#>
 SELECT DISTINCT ?subject ?predicate ?object WHERE {
   ?case mnp:caseIdentifier ?caseId ;
         mnp:hasEligibilityAssessment ?assessment .
@@ -170,8 +169,8 @@ def test_html_and_tree_use_same_edges():
     _, sub = _assessed("CASE-03")
     tree = format_subgraph_tree(sub)
     html = render_subgraph_html(sub)
-    assert "producesBlockingReason" in tree
-    assert "producesBlockingReason" in html
+    assert "hasBlockingReason" in tree
+    assert "hasBlockingReason" in html
     assert "usesEvidence" in tree
     assert "usesEvidence" in html
     for edge in sub["edges"]:

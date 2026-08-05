@@ -1,20 +1,42 @@
-# Ontology files
+# Ontology modules (Stage 03 release 1.0.0)
 
-| File | Role | Runtime? | Module |
-|------|------|----------|--------|
-| `mnp-core.ttl` | Domain classes, properties, OWL cardinality | Yes | CORE |
-| `mnp-compliance.ttl` | Reassessment / clause helpers | Yes | COMPLIANCE |
-| `mnp-identity.ttl` | Natural person, documents, verification | Yes | IDENTITY |
-| `mnp-account-billing.ttl` | Billing account, bills, outstanding balance | Yes | ACCOUNT_BILLING |
-| `mnp-service-contract.ttl` | Plans, commitment, termination | Yes | SERVICE_CONTRACT |
-| `mnp-process.ttl` | Process steps, authorization code | Yes | PROCESS |
-| `mnp-evidence-time.ttl` | Evidence validity & time annotations | Yes | EVIDENCE_TIME |
-| `mnp-code-list.ttl` | Controlled status codes | Yes | CODE_LIST |
-| `mnp-alignments.ttl` | dcterms/rdfs/skos alignment annotations | No (optional) | ALIGNMENTS |
+Open **`ontology/kg-mnp.ttl`** in Protégé 5.6.x with **`catalog-v001.xml`** in the same folder (Protégé auto-loads the catalog for offline `owl:imports`).
 
-All runtime modules are loaded explicitly by `loader.ontology_paths()` (offline; no remote `owl:imports` resolution).
+| File | Runtime? | Role |
+|------|----------|------|
+| `kg-mnp.ttl` | entry | Root aggregate; imports runtime modules only |
+| `mnp-core.ttl` | yes | Cross-module annotation / governance properties |
+| `mnp-identity.ttl` | yes | Subscriber, phone assignment, identity |
+| `mnp-account-billing.ttl` | yes | Accounts, bills, payments |
+| `mnp-service-contract.ttl` | yes | Services, subscriptions, contracts, `billedThrough` |
+| `mnp-process.ttl` | yes | MNP cases, process steps, auth codes |
+| `mnp-compliance.ttl` | yes | Assessment, decision, rules, blocking reasons |
+| `mnp-evidence-time.ttl` | yes | Business evidence and time |
+| `mnp-modeling-provenance.ttl` | yes | Mapping / modeling provenance (not case evidence) |
+| `mnp-code-list.ttl` | yes | Controlled code individuals |
+| `mnp-alignments.ttl` | **optional** | External alignment annotations only |
+| `catalog-v001.xml` | — | Offline IRI → local TTL map |
 
-Module catalog authority: `config/ontology_modules.yaml`.
+## Formal IRIs
 
-Open `mnp-core.ttl` plus any module file in Protégé 5.6.x.
-Do **not** treat alignments as imports required for reasoning.
+- Term namespace: `https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#`
+- Root ontology: `https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/kg-mnp`
+- Version IRI: `https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/1.0.0/kg-mnp`
+- Ontology release version: **1.0.0** (Python package version remains independent)
+
+## Alignments optional
+
+`mnp-alignments.ttl` is excluded from the root imports and from default `loader` runtime load. Use `include_alignments=True` only for documentation review. No `owl:equivalentClass` / `owl:equivalentProperty` to third-party ontologies.
+
+## Loader
+
+`config/ontology_modules.yaml` is the sole module catalog. `loader.py` reads it; do not hardcode a second list.
+
+## Audit / reasoner
+
+```bash
+python scripts/audit_ontology.py
+python scripts/check_catalog.py
+python scripts/check_ontology_release.py
+python scripts/run_reasoner.py   # ROBOT + HermiT (Java required)
+```

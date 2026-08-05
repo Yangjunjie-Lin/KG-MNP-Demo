@@ -35,7 +35,7 @@ def _evidence_snapshot(graph: Graph, evidence_iri: str | None) -> dict[str, Any]
     if not evidence_iri:
         return None
     q = """
-    PREFIX mnp: <http://example.org/kg-mnp#>
+    PREFIX mnp: <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#>
     SELECT ?status ?gen ?until ?sysId ?type ?amount ?contractStatus
            ?contractEnd ?days ?numberStatus ?matched ?arrangement
     WHERE {
@@ -110,10 +110,11 @@ def materialize_assessment(
     )
     decision = summarize_decision(outcomes)
 
-    assessment = MNP[f"Assessment-{case_id}"]
-    decision_node = MNP[f"Decision-{case_id}"]
-    dependency = MNP[f"Dep-{case_id}"]
-    case_uri = resolve_case_uri(graph, case_id) or MNP[case_id]
+    from kg_mnp_demo.namespaces import DATA
+
+    assessment = DATA[f"Assessment-{case_id}"]
+    decision_node = DATA[f"Decision-{case_id}"]
+    case_uri = resolve_case_uri(graph, case_id) or DATA[case_id]
     assessment_time_str = as_of.strftime("%Y-%m-%dT%H:%M:%SZ")
 
     graph.add((assessment, RDF.type, MNP.EligibilityAssessment))
@@ -127,8 +128,6 @@ def materialize_assessment(
     )
     graph.add((assessment, MNP.aboutCase, case_uri))
     graph.add((case_uri, MNP.hasEligibilityAssessment, assessment))
-    graph.add((assessment, MNP.dependsOn, dependency))
-    graph.add((dependency, RDF.type, MNP.AssessmentDependency))
 
     graph.add((decision_node, RDF.type, DECISION_CLASS[decision]))
     graph.add((decision_node, MNP.decisionCode, Literal(decision)))
@@ -148,7 +147,6 @@ def materialize_assessment(
         rv_uri = rule_version_iri(outcome.rule_id, outcome.version)
         graph.add((assessment, MNP.evaluatedByRule, r_uri))
         graph.add((assessment, MNP.usesRuleVersion, rv_uri))
-        graph.add((dependency, MNP.dependsOnRuleVersion, rv_uri))
 
         rules_list.append(
             {
@@ -164,7 +162,6 @@ def materialize_assessment(
 
         if outcome.evidence_iri:
             graph.add((assessment, MNP.usesEvidence, URIRef(outcome.evidence_iri)))
-            graph.add((dependency, MNP.dependsOnEvidence, URIRef(outcome.evidence_iri)))
             if outcome.evidence_iri not in seen_evidence:
                 snap = _evidence_snapshot(graph, outcome.evidence_iri)
                 if snap:
@@ -172,11 +169,11 @@ def materialize_assessment(
                 seen_evidence.add(outcome.evidence_iri)
 
         if outcome.status in ("FAIL", "MISSING"):
-            reason = MNP[f"Reason-{case_id}-{outcome.reason_code}"]
+            reason = DATA[f"Reason-{case_id}-{outcome.reason_code}"]
             graph.add((reason, RDF.type, MNP.BlockingReason))
             graph.add((reason, MNP.reasonCode, Literal(outcome.reason_code)))
             graph.add((reason, MNP.reasonDescription, Literal(outcome.message)))
-            graph.add((assessment, MNP.producesBlockingReason, reason))
+            graph.add((decision_node, MNP.hasBlockingReason, reason))
             if outcome.evidence_iri:
                 graph.add((reason, MNP.supportedByEvidence, URIRef(outcome.evidence_iri)))
             graph.add((reason, MNP.triggeredByRule, r_uri))
@@ -284,14 +281,16 @@ def materialize_assessment(
 
 def _mark_reassessments(graph: Graph) -> None:
     q = """
-    PREFIX mnp: <http://example.org/kg-mnp#>
+    PREFIX mnp: <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#>
     SELECT ?assessment ?old ?new WHERE {
       ?new mnp:supersedesRuleVersion ?old .
       ?assessment mnp:usesRuleVersion ?old .
     }
     """
     for row in graph.query(q):
-        marker = MNP[f"Reassess-{row.assessment.rsplit('#', 1)[-1]}"]
+        from kg_mnp_demo.namespaces import DATA
+
+        marker = DATA[f"Reassess-{row.assessment.rsplit('/', 1)[-1].rsplit('#', 1)[-1]}"]
         graph.add((marker, RDF.type, MNP.ReassessmentMarker))
         graph.add(
             (

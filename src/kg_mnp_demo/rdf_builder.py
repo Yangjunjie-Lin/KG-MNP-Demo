@@ -8,15 +8,14 @@ from rdflib import Graph, Literal, URIRef
 from rdflib.namespace import RDF, XSD
 
 from kg_mnp_demo.input_adapter import EvidenceInput, NormalizedCaseInput
-from kg_mnp_demo.namespaces import BASE, MNP
-
+from kg_mnp_demo.namespaces import DATA, DATA_BASE, MNP
 
 SOURCE_SYSTEM_IRIS = {
-    "CRM": MNP["SYS-CRM"],
-    "HLR": MNP["SYS-HLR"],
-    "BILLING": MNP["SYS-BILLING"],
-    "CONTRACT": MNP["SYS-CONTRACT"],
-    "MNP_HISTORY": MNP["SYS-MNP"],
+    "CRM": DATA["SYS-CRM"],
+    "HLR": DATA["SYS-HLR"],
+    "BILLING": DATA["SYS-BILLING"],
+    "CONTRACT": DATA["SYS-CONTRACT"],
+    "MNP_HISTORY": DATA["SYS-MNP"],
 }
 
 
@@ -30,31 +29,35 @@ def sanitize_iri_fragment(value: str) -> str:
 
 
 def case_iri(case_id: str) -> URIRef:
-    return URIRef(f"{BASE}Case-{sanitize_iri_fragment(case_id)}")
+    return URIRef(f"{DATA_BASE}Case-{sanitize_iri_fragment(case_id)}")
 
 
 def subscriber_iri(subscriber_id: str) -> URIRef:
-    return URIRef(f"{BASE}Subscriber-{sanitize_iri_fragment(subscriber_id)}")
+    return URIRef(f"{DATA_BASE}Subscriber-{sanitize_iri_fragment(subscriber_id)}")
 
 
 def phone_iri(case_id: str) -> URIRef:
-    return URIRef(f"{BASE}Phone-{sanitize_iri_fragment(case_id)}")
+    return URIRef(f"{DATA_BASE}Phone-{sanitize_iri_fragment(case_id)}")
 
 
 def account_iri(account_id: str) -> URIRef:
-    return URIRef(f"{BASE}Account-{sanitize_iri_fragment(account_id)}")
+    return URIRef(f"{DATA_BASE}Account-{sanitize_iri_fragment(account_id)}")
+
+
+def subscription_iri(case_id: str) -> URIRef:
+    return URIRef(f"{DATA_BASE}Subscription-{sanitize_iri_fragment(case_id)}")
 
 
 def evidence_iri(case_id: str, kind: str) -> URIRef:
     return URIRef(
-        f"{BASE}Evidence-{sanitize_iri_fragment(case_id)}-{sanitize_iri_fragment(kind)}"
+        f"{DATA_BASE}Evidence-{sanitize_iri_fragment(case_id)}-{sanitize_iri_fragment(kind)}"
     )
 
 
 def source_system_iri(system_id: str) -> URIRef:
     if system_id in SOURCE_SYSTEM_IRIS:
         return SOURCE_SYSTEM_IRIS[system_id]
-    return URIRef(f"{BASE}SYS-{sanitize_iri_fragment(system_id)}")
+    return URIRef(f"{DATA_BASE}SYS-{sanitize_iri_fragment(system_id)}")
 
 
 def _dt(literal_dt) -> Literal:
@@ -98,11 +101,12 @@ def build_case_graph(
     account = account_iri(normalized.account_id)
 
     g.add((subscriber, RDF.type, MNP.Subscriber))
-    g.add((subscriber, MNP.ownsPhoneNumber, phone))
-    g.add((subscriber, MNP.billedThrough, account))
-    g.add((subscriber, MNP.relatedAccount, account))
-
+    subscription = subscription_iri(case_id)
+    g.add((subscriber, MNP.holdsSubscription, subscription))
+    g.add((subscription, RDF.type, MNP.ServiceSubscription))
+    g.add((subscription, MNP.billedThrough, account))
     g.add((phone, RDF.type, MNP.PhoneNumber))
+    g.add((phone, MNP.assignedToSubscription, subscription))
     g.add((phone, MNP.maskedPhoneNumber, Literal(normalized.masked_number)))
 
     g.add((account, RDF.type, MNP.TelecomAccount))
@@ -198,7 +202,7 @@ def _add_process_triples(
         return
     step_code = process.get("current_step")
     if step_code:
-        step = URIRef(f"{BASE}Step-{sanitize_iri_fragment(case_id)}-{sanitize_iri_fragment(str(step_code))}")
+        step = URIRef(f"{DATA_BASE}Step-{sanitize_iri_fragment(case_id)}-{sanitize_iri_fragment(str(step_code))}")
         g.add((step, RDF.type, MNP.ProcessStep))
         g.add((step, MNP.stepCode, Literal(str(step_code))))
         g.add((case, MNP.hasProcessStep, step))
@@ -206,7 +210,7 @@ def _add_process_triples(
 
     auth = process.get("authorization_code")
     if isinstance(auth, dict):
-        code = URIRef(f"{BASE}AuthCode-{sanitize_iri_fragment(case_id)}")
+        code = URIRef(f"{DATA_BASE}AuthCode-{sanitize_iri_fragment(case_id)}")
         g.add((code, RDF.type, MNP.AuthorizationCode))
         if auth.get("status"):
             g.add((code, MNP.authCodeStatus, Literal(str(auth["status"]))))
@@ -233,7 +237,7 @@ def _add_process_triples(
         # Process event for expired/missing auth
         status = str(auth.get("status") or "").upper()
         if status in {"EXPIRED", "MISSING"}:
-            ev = URIRef(f"{BASE}ProcessEvent-{sanitize_iri_fragment(case_id)}-AUTH")
+            ev = URIRef(f"{DATA_BASE}ProcessEvent-{sanitize_iri_fragment(case_id)}-AUTH")
             g.add((ev, RDF.type, MNP.ProcessEvent))
             g.add((ev, MNP.eventTypeCode, Literal(f"AUTHORIZATION_CODE_{status}")))
             when = auth.get("valid_until") or auth.get("issued_at") or "2026-07-01T00:00:00Z"
@@ -248,7 +252,7 @@ def _add_process_triples(
 
     term = process.get("termination_agreement")
     if isinstance(term, dict):
-        agreement = URIRef(f"{BASE}Termination-{sanitize_iri_fragment(case_id)}")
+        agreement = URIRef(f"{DATA_BASE}Termination-{sanitize_iri_fragment(case_id)}")
         g.add((agreement, RDF.type, MNP.TerminationAgreement))
         if term.get("signed_at"):
             g.add(

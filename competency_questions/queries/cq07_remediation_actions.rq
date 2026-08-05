@@ -1,8 +1,8 @@
-PREFIX mnp: <http://example.org/kg-mnp#>
+PREFIX mnp: <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#>
 SELECT ?caseId ?reasonCode ?actionCode WHERE {
   ?case a mnp:MNPCase ; mnp:caseIdentifier ?caseId ; mnp:hasEligibilityAssessment ?a .
   FILTER(STR(?caseId) = STR(?requestedCaseId))
-  ?a mnp:producesBlockingReason ?r .
+  ?a mnp:producesDecision ?d . ?d mnp:hasBlockingReason ?r .
   ?r mnp:reasonCode ?reasonCode ; mnp:recommendsAction ?act .
   ?act mnp:actionCode ?actionCode .
 }

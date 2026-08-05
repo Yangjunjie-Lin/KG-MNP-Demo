@@ -1,100 +1,263 @@
-@prefix mnp: <http://example.org/kg-mnp#> .
+@prefix mnp: <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
 
-#################################################################
-# Service & contract layer
-#################################################################
-
-<http://example.org/kg-mnp/service-contract> a owl:Ontology ;
+<https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/mnp-service-contract> a owl:Ontology ;
+    owl:versionIRI <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/1.0.0/mnp-service-contract> ;
+    owl:versionInfo "1.0.0" ;
     dcterms:title "KG-MNP Service and Contract Module"@en ;
-    dcterms:title "业务与合约层"@zh ;
-    owl:versionInfo "0.1.0" ;
-    rdfs:comment "Service offerings, commitment periods and termination agreements."@en .
-
-mnp:MobilePlan a owl:Class ;
-    rdfs:subClassOf mnp:TelecomService ;
-    rdfs:label "Mobile Plan"@en ;
-    rdfs:label "移动套餐"@zh ;
-    mnp:moduleCode "SERVICE_CONTRACT" .
-
+    dcterms:title "KG-MNP 业务与合约模块"@zh-CN ;
+    dcterms:description "Services, subscriptions, contracts and billing linkage."@en ;
+    dcterms:description "服务、订阅、合约与计费关联。"@zh-CN ;
+    dcterms:license <https://www.apache.org/licenses/LICENSE-2.0> ;
+    owl:imports <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/mnp-core> .
 mnp:BroadbandService a owl:Class ;
-    rdfs:subClassOf mnp:TelecomService ;
     rdfs:label "Broadband Service"@en ;
-    rdfs:label "宽带业务"@zh ;
-    mnp:moduleCode "SERVICE_CONTRACT" .
-
-mnp:ValueAddedService a owl:Class ;
-    rdfs:subClassOf mnp:TelecomService ;
-    rdfs:label "Value Added Service"@en ;
-    rdfs:label "增值业务"@zh ;
-    mnp:moduleCode "SERVICE_CONTRACT" .
-
-mnp:SupplementaryCardService a owl:Class ;
-    rdfs:subClassOf mnp:TelecomService ;
-    rdfs:label "Supplementary Card Service"@en ;
-    rdfs:label "副卡业务"@zh ;
-    mnp:moduleCode "SERVICE_CONTRACT" .
-
-mnp:ConvergedService a owl:Class ;
-    rdfs:subClassOf mnp:TelecomService ;
-    rdfs:label "Converged Service"@en ;
-    rdfs:label "融合业务"@zh ;
-    mnp:moduleCode "SERVICE_CONTRACT" .
+    rdfs:label "宽带服务"@zh-CN ;
+    skos:definition "A broadband access service offering."@en ;
+    skos:definition "宽带接入服务。"@zh-CN ;
+    mnp:moduleCode "SERVICE_CONTRACT" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-service-contract" ;
+    rdfs:subClassOf mnp:TelecomService .
 
 mnp:CommitmentPeriod a owl:Class ;
     rdfs:label "Commitment Period"@en ;
-    rdfs:label "承诺期"@zh ;
-    rdfs:comment "A contractual commitment window that may restrict portability."@en ;
-    mnp:moduleCode "SERVICE_CONTRACT" .
+    rdfs:label "承诺期"@zh-CN ;
+    skos:definition "A contractual commitment period attached to a service contract."@en ;
+    skos:definition "附属于服务合约的承诺期。"@zh-CN ;
+    mnp:moduleCode "SERVICE_CONTRACT" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-service-contract" .
+
+mnp:ConvergedService a owl:Class ;
+    rdfs:label "Converged Service"@en ;
+    rdfs:label "融合业务"@zh-CN ;
+    skos:definition "A converged multi-product service bundle."@en ;
+    skos:definition "融合多产品服务包。"@zh-CN ;
+    mnp:moduleCode "SERVICE_CONTRACT" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-service-contract" ;
+    rdfs:subClassOf mnp:TelecomService .
+
+mnp:MobilePlan a owl:Class ;
+    rdfs:label "Mobile Plan"@en ;
+    rdfs:label "移动套餐"@zh-CN ;
+    skos:definition "A mobile telephony plan offering."@en ;
+    skos:definition "移动电话套餐。"@zh-CN ;
+    mnp:moduleCode "SERVICE_CONTRACT" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-service-contract" ;
+    rdfs:subClassOf mnp:TelecomService .
+
+mnp:ServiceContract a owl:Class ;
+    rdfs:label "Service Contract"@en ;
+    rdfs:label "服务合约"@zh-CN ;
+    skos:definition "A contractual commitment that may restrict portability until end time."@en ;
+    skos:definition "可能在截止前限制携转的服务合约。"@zh-CN ;
+    mnp:moduleCode "SERVICE_CONTRACT" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-service-contract" .
+
+mnp:ServiceSubscription a owl:Class ;
+    rdfs:label "Service Subscription"@en ;
+    rdfs:label "服务订阅"@zh-CN ;
+    skos:definition "An instantiated subscription linking a subscriber to a telecom service and billing account."@en ;
+    skos:definition "将用户关联到电信服务与计费账户的订阅实例。"@zh-CN ;
+    mnp:moduleCode "SERVICE_CONTRACT" ;
+    mnp:sourceStatus "INDUSTRY_ALIGNED" ;
+    mnp:definingModule "mnp-service-contract" .
+
+mnp:SupplementaryCardService a owl:Class ;
+    rdfs:label "Supplementary Card Service"@en ;
+    rdfs:label "副卡业务"@zh-CN ;
+    skos:definition "A supplementary SIM card service."@en ;
+    skos:definition "副卡服务。"@zh-CN ;
+    mnp:moduleCode "SERVICE_CONTRACT" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-service-contract" ;
+    rdfs:subClassOf mnp:TelecomService .
+
+mnp:TelecomService a owl:Class ;
+    rdfs:label "Telecom Service"@en ;
+    rdfs:label "电信服务"@zh-CN ;
+    skos:definition "A catalogued telecom service or product offering."@en ;
+    skos:definition "目录化的电信服务或产品。"@zh-CN ;
+    mnp:moduleCode "SERVICE_CONTRACT" ;
+    mnp:sourceStatus "INDUSTRY_ALIGNED" ;
+    mnp:definingModule "mnp-service-contract" .
 
 mnp:TerminationAgreement a owl:Class ;
     rdfs:label "Termination Agreement"@en ;
-    rdfs:label "解除协议"@zh ;
-    rdfs:comment "An agreement to terminate a contract, possibly with a future effective time."@en ;
-    mnp:moduleCode "SERVICE_CONTRACT" .
+    rdfs:label "解除协议"@zh-CN ;
+    skos:definition "An agreement to terminate a service contract."@en ;
+    skos:definition "终止服务合约的解除协议。"@zh-CN ;
+    mnp:moduleCode "SERVICE_CONTRACT" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-service-contract" .
 
-mnp:hasCommitmentPeriod a owl:ObjectProperty ;
-    rdfs:domain mnp:ServiceContract ;
-    rdfs:range mnp:CommitmentPeriod ;
-    rdfs:label "has commitment period"@en ;
-    mnp:moduleCode "SERVICE_CONTRACT" .
-
-mnp:hasTerminationAgreement a owl:ObjectProperty ;
-    rdfs:domain mnp:ServiceContract ;
-    rdfs:range mnp:TerminationAgreement ;
-    rdfs:label "has termination agreement"@en ;
-    mnp:moduleCode "SERVICE_CONTRACT" .
-
-mnp:coversService a owl:ObjectProperty ;
-    rdfs:domain mnp:ServiceContract ;
-    rdfs:range mnp:TelecomService ;
-    rdfs:label "covers service"@en ;
-    mnp:moduleCode "SERVICE_CONTRACT" .
-
-mnp:commitmentStartTime a owl:DatatypeProperty ;
-    rdfs:domain mnp:CommitmentPeriod ;
-    rdfs:range xsd:dateTime ;
-    mnp:moduleCode "SERVICE_CONTRACT" .
+mnp:ValueAddedService a owl:Class ;
+    rdfs:label "Value-Added Service"@en ;
+    rdfs:label "增值业务"@zh-CN ;
+    skos:definition "A value-added telecom service."@en ;
+    skos:definition "电信增值业务。"@zh-CN ;
+    mnp:moduleCode "SERVICE_CONTRACT" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-service-contract" ;
+    rdfs:subClassOf mnp:TelecomService .
 
 mnp:commitmentEndTime a owl:DatatypeProperty ;
+    rdfs:label "commitment end time"@en ;
+    rdfs:label "承诺期结束"@zh-CN ;
+    skos:definition "End datetime of a commitment period."@en ;
+    skos:definition "承诺期结束时间。"@zh-CN ;
+    mnp:moduleCode "SERVICE_CONTRACT" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-service-contract" ;
     rdfs:domain mnp:CommitmentPeriod ;
-    rdfs:range xsd:dateTime ;
-    mnp:moduleCode "SERVICE_CONTRACT" .
+    rdfs:range xsd:dateTime .
 
-mnp:terminationSignedAt a owl:DatatypeProperty ;
-    rdfs:domain mnp:TerminationAgreement ;
-    rdfs:range xsd:dateTime ;
-    mnp:moduleCode "SERVICE_CONTRACT" .
+mnp:commitmentStartTime a owl:DatatypeProperty ;
+    rdfs:label "commitment start time"@en ;
+    rdfs:label "承诺期开始"@zh-CN ;
+    skos:definition "Start datetime of a commitment period."@en ;
+    skos:definition "承诺期开始时间。"@zh-CN ;
+    mnp:moduleCode "SERVICE_CONTRACT" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-service-contract" ;
+    rdfs:domain mnp:CommitmentPeriod ;
+    rdfs:range xsd:dateTime .
+
+mnp:contractEndTime a owl:DatatypeProperty ;
+    rdfs:label "contract end time"@en ;
+    rdfs:label "合约截止时间"@zh-CN ;
+    skos:definition "End datetime of a service contract or contract-status evidence observation. No single OWL domain; constrained by SHACL profiles."@en ;
+    skos:definition "服务合约或合约状态证据的截止时间。无单一 OWL Domain；由 SHACL 配置约束。"@zh-CN ;
+    mnp:moduleCode "SERVICE_CONTRACT" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-service-contract" ;
+    rdfs:range xsd:dateTime .
+
+mnp:contractStatusCode a owl:DatatypeProperty ;
+    rdfs:label "contract status code"@en ;
+    rdfs:label "合约状态码"@zh-CN ;
+    skos:definition "Status code of a service contract or contract-status evidence observation. No single OWL domain (used on contracts and evidence); constrained by SHACL profiles."@en ;
+    skos:definition "服务合约或合约状态证据观测的状态码。无单一 OWL Domain（合约与证据共用）；由 SHACL 配置约束。"@zh-CN ;
+    mnp:moduleCode "SERVICE_CONTRACT" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-service-contract" ;
+    rdfs:range xsd:string .
+
+mnp:subscriptionStatusCode a owl:DatatypeProperty ;
+    rdfs:label "subscription status code"@en ;
+    rdfs:label "订阅状态码"@zh-CN ;
+    skos:definition "Status code of a service subscription."@en ;
+    skos:definition "服务订阅状态代码。"@zh-CN ;
+    mnp:moduleCode "SERVICE_CONTRACT" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-service-contract" ;
+    rdfs:domain mnp:ServiceSubscription ;
+    rdfs:range xsd:string .
 
 mnp:terminationEffectiveAt a owl:DatatypeProperty ;
+    rdfs:label "termination effective at"@en ;
+    rdfs:label "解除协议生效时间"@zh-CN ;
+    skos:definition "Datetime when a termination agreement becomes effective."@en ;
+    skos:definition "解除协议生效时间。"@zh-CN ;
+    mnp:moduleCode "SERVICE_CONTRACT" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-service-contract" ;
     rdfs:domain mnp:TerminationAgreement ;
-    rdfs:range xsd:dateTime ;
-    mnp:moduleCode "SERVICE_CONTRACT" .
+    rdfs:range xsd:dateTime .
+
+mnp:terminationSignedAt a owl:DatatypeProperty ;
+    rdfs:label "termination signed at"@en ;
+    rdfs:label "解除协议签署时间"@zh-CN ;
+    skos:definition "Datetime when a termination agreement was signed."@en ;
+    skos:definition "解除协议签署时间。"@zh-CN ;
+    mnp:moduleCode "SERVICE_CONTRACT" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-service-contract" ;
+    rdfs:domain mnp:TerminationAgreement ;
+    rdfs:range xsd:dateTime .
 
 mnp:terminationStatusCode a owl:DatatypeProperty ;
+    rdfs:label "termination status code"@en ;
+    rdfs:label "解除协议状态码"@zh-CN ;
+    skos:definition "Status code of a termination agreement."@en ;
+    skos:definition "解除协议状态代码。"@zh-CN ;
+    mnp:moduleCode "SERVICE_CONTRACT" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-service-contract" ;
     rdfs:domain mnp:TerminationAgreement ;
-    rdfs:range xsd:string ;
-    mnp:moduleCode "SERVICE_CONTRACT" .
+    rdfs:range xsd:string .
+
+mnp:billedThrough a owl:ObjectProperty ;
+    rdfs:label "billed through"@en ;
+    rdfs:label "经账户计费"@zh-CN ;
+    skos:definition "Links a service subscription to the telecom account used for billing."@en ;
+    skos:definition "将服务订阅关联到用于计费的电信账户。"@zh-CN ;
+    mnp:moduleCode "SERVICE_CONTRACT" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-service-contract" ;
+    rdfs:domain mnp:ServiceSubscription ;
+    rdfs:range mnp:TelecomAccount .
+
+mnp:coversService a owl:ObjectProperty ;
+    rdfs:label "covers service"@en ;
+    rdfs:label "覆盖服务"@zh-CN ;
+    skos:definition "Links a contract or commitment to a covered telecom service."@en ;
+    skos:definition "将合约或承诺期关联到覆盖的电信服务。"@zh-CN ;
+    mnp:moduleCode "SERVICE_CONTRACT" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-service-contract" ;
+    rdfs:domain mnp:ServiceContract ;
+    rdfs:range mnp:TelecomService .
+
+mnp:governedByContract a owl:ObjectProperty ;
+    rdfs:label "governed by contract"@en ;
+    rdfs:label "受合约约束"@zh-CN ;
+    skos:definition "Links a service subscription to its governing service contract."@en ;
+    skos:definition "将服务订阅关联到约束它的服务合约。"@zh-CN ;
+    mnp:moduleCode "SERVICE_CONTRACT" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-service-contract" ;
+    rdfs:domain mnp:ServiceSubscription ;
+    rdfs:range mnp:ServiceContract .
+
+mnp:hasCommitmentPeriod a owl:ObjectProperty ;
+    rdfs:label "has commitment period"@en ;
+    rdfs:label "有承诺期"@zh-CN ;
+    skos:definition "Links a service contract to a commitment period."@en ;
+    skos:definition "将服务合约关联到承诺期。"@zh-CN ;
+    mnp:moduleCode "SERVICE_CONTRACT" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-service-contract" ;
+    rdfs:domain mnp:ServiceContract ;
+    rdfs:range mnp:CommitmentPeriod .
+
+mnp:hasTerminationAgreement a owl:ObjectProperty ;
+    rdfs:label "has termination agreement"@en ;
+    rdfs:label "有解除协议"@zh-CN ;
+    skos:definition "Links a service contract to a termination agreement."@en ;
+    skos:definition "将服务合约关联到解除协议。"@zh-CN ;
+    mnp:moduleCode "SERVICE_CONTRACT" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-service-contract" ;
+    rdfs:domain mnp:ServiceContract ;
+    rdfs:range mnp:TerminationAgreement .
+
+mnp:subscribesToService a owl:ObjectProperty ;
+    rdfs:label "subscribes to service"@en ;
+    rdfs:label "订阅服务"@zh-CN ;
+    skos:definition "Links a service subscription to the subscribed telecom service."@en ;
+    skos:definition "将服务订阅关联到所订阅的电信服务。"@zh-CN ;
+    mnp:moduleCode "SERVICE_CONTRACT" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-service-contract" ;
+    rdfs:domain mnp:ServiceSubscription ;
+    rdfs:range mnp:TelecomService .

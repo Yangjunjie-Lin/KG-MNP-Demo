@@ -1,120 +1,225 @@
-@prefix mnp: <http://example.org/kg-mnp#> .
+@prefix mnp: <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
 
-#################################################################
-# Account & billing layer
-#################################################################
-
-<http://example.org/kg-mnp/account-billing> a owl:Ontology ;
+<https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/mnp-account-billing> a owl:Ontology ;
+    owl:versionIRI <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/1.0.0/mnp-account-billing> ;
+    owl:versionInfo "1.0.0" ;
     dcterms:title "KG-MNP Account and Billing Module"@en ;
-    dcterms:title "账户与计费层"@zh ;
-    owl:versionInfo "0.1.0" ;
-    rdfs:comment "Billing account, charges, payments and outstanding balance observations."@en .
-
-mnp:BillingAccount a owl:Class ;
-    rdfs:subClassOf mnp:TelecomAccount ;
-    rdfs:label "Billing Account"@en ;
-    rdfs:label "计费账户"@zh ;
-    rdfs:comment "A billing account that aggregates charges and payments."@en ;
-    mnp:moduleCode "ACCOUNT_BILLING" .
-
+    dcterms:title "KG-MNP 账户与计费模块"@zh-CN ;
+    dcterms:description "Telecom accounts, bills, charges, payments and settlements."@en ;
+    dcterms:description "电信账户、账单、费用、缴费与结清。"@zh-CN ;
+    dcterms:license <https://www.apache.org/licenses/LICENSE-2.0> ;
+    owl:imports <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/mnp-core> .
 mnp:Bill a owl:Class ;
     rdfs:label "Bill"@en ;
-    rdfs:label "账单"@zh ;
-    rdfs:comment "A periodic bill issued against a billing account."@en ;
-    mnp:moduleCode "ACCOUNT_BILLING" .
+    rdfs:label "账单"@zh-CN ;
+    skos:definition "A periodic bill issued against a billing account."@en ;
+    skos:definition "针对计费账户出具的周期账单。"@zh-CN ;
+    mnp:moduleCode "ACCOUNT_BILLING" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-account-billing" .
 
-mnp:Charge a owl:Class ;
-    rdfs:label "Charge"@en ;
-    rdfs:label "费用项"@zh ;
-    rdfs:comment "An individual charge line on a bill."@en ;
-    mnp:moduleCode "ACCOUNT_BILLING" .
-
-mnp:Payment a owl:Class ;
-    rdfs:label "Payment"@en ;
-    rdfs:label "缴费"@zh ;
-    rdfs:comment "A payment applied to a billing account."@en ;
-    mnp:moduleCode "ACCOUNT_BILLING" .
-
-mnp:OutstandingBalanceObservation a owl:Class ;
-    rdfs:subClassOf mnp:SystemObservation ;
-    rdfs:label "Outstanding Balance Observation"@en ;
-    rdfs:label "欠费余额观测"@zh ;
-    rdfs:comment "Observed outstanding balance used as billing evidence."@en ;
-    mnp:moduleCode "ACCOUNT_BILLING" .
-
-mnp:PaymentArrangement a owl:Class ;
-    rdfs:label "Payment Arrangement"@en ;
-    rdfs:label "缴费安排"@zh ;
-    rdfs:comment "An agreed payment plan that may clear portability restrictions."@en ;
-    mnp:moduleCode "ACCOUNT_BILLING" .
+mnp:BillingAccount a owl:Class ;
+    rdfs:label "Billing Account"@en ;
+    rdfs:label "计费账户"@zh-CN ;
+    skos:definition "A billing account that aggregates charges and payments."@en ;
+    skos:definition "汇总费用与缴费的计费账户。"@zh-CN ;
+    mnp:moduleCode "ACCOUNT_BILLING" ;
+    mnp:sourceStatus "INDUSTRY_ALIGNED" ;
+    mnp:definingModule "mnp-account-billing" ;
+    rdfs:subClassOf mnp:TelecomAccount .
 
 mnp:BillingSettlement a owl:Class ;
     rdfs:label "Billing Settlement"@en ;
-    rdfs:label "计费结清"@zh ;
-    rdfs:comment "A settlement event clearing outstanding balances."@en ;
-    mnp:moduleCode "ACCOUNT_BILLING" .
+    rdfs:label "计费结清"@zh-CN ;
+    skos:definition "A settlement event clearing outstanding balances."@en ;
+    skos:definition "结清欠费余额的结算事件。"@zh-CN ;
+    mnp:moduleCode "ACCOUNT_BILLING" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-account-billing" .
 
-mnp:hasBill a owl:ObjectProperty ;
-    rdfs:domain mnp:BillingAccount ;
-    rdfs:range mnp:Bill ;
-    rdfs:label "has bill"@en ;
-    mnp:moduleCode "ACCOUNT_BILLING" .
+mnp:Charge a owl:Class ;
+    rdfs:label "Charge"@en ;
+    rdfs:label "费用项"@zh-CN ;
+    skos:definition "An individual charge line on a bill."@en ;
+    skos:definition "账单上的单项费用。"@zh-CN ;
+    mnp:moduleCode "ACCOUNT_BILLING" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-account-billing" .
 
-mnp:hasCharge a owl:ObjectProperty ;
-    rdfs:domain mnp:Bill ;
-    rdfs:range mnp:Charge ;
-    rdfs:label "has charge"@en ;
-    mnp:moduleCode "ACCOUNT_BILLING" .
+mnp:OutstandingBalanceObservation a owl:Class ;
+    rdfs:label "Outstanding Balance Observation"@en ;
+    rdfs:label "欠费余额观测"@zh-CN ;
+    skos:definition "Observed outstanding balance used as billing evidence."@en ;
+    skos:definition "用作计费证据的欠费余额观测。"@zh-CN ;
+    mnp:moduleCode "ACCOUNT_BILLING" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-account-billing" ;
+    rdfs:subClassOf mnp:SystemObservation .
 
-mnp:hasPayment a owl:ObjectProperty ;
-    rdfs:domain mnp:BillingAccount ;
-    rdfs:range mnp:Payment ;
-    rdfs:label "has payment"@en ;
-    mnp:moduleCode "ACCOUNT_BILLING" .
+mnp:Payment a owl:Class ;
+    rdfs:label "Payment"@en ;
+    rdfs:label "缴费"@zh-CN ;
+    skos:definition "A payment applied to a billing account."@en ;
+    skos:definition "应用于计费账户的缴费。"@zh-CN ;
+    mnp:moduleCode "ACCOUNT_BILLING" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-account-billing" .
 
-mnp:observesAccount a owl:ObjectProperty ;
-    rdfs:domain mnp:OutstandingBalanceObservation ;
-    rdfs:range mnp:BillingAccount ;
-    rdfs:label "observes account"@en ;
-    mnp:moduleCode "ACCOUNT_BILLING" .
+mnp:PaymentArrangement a owl:Class ;
+    rdfs:label "Payment Arrangement"@en ;
+    rdfs:label "缴费安排"@zh-CN ;
+    skos:definition "An agreed payment plan that may clear portability restrictions."@en ;
+    skos:definition "可能解除携转限制的约定缴费安排。"@zh-CN ;
+    mnp:moduleCode "ACCOUNT_BILLING" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-account-billing" .
 
-mnp:hasPaymentArrangementRecord a owl:ObjectProperty ;
-    rdfs:domain mnp:BillingAccount ;
-    rdfs:range mnp:PaymentArrangement ;
-    rdfs:label "has payment arrangement"@en ;
-    mnp:moduleCode "ACCOUNT_BILLING" .
-
-mnp:settlesAccount a owl:ObjectProperty ;
-    rdfs:domain mnp:BillingSettlement ;
-    rdfs:range mnp:BillingAccount ;
-    rdfs:label "settles account"@en ;
-    mnp:moduleCode "ACCOUNT_BILLING" .
-
-mnp:billPeriodStart a owl:DatatypeProperty ;
-    rdfs:domain mnp:Bill ;
-    rdfs:range xsd:dateTime ;
-    mnp:moduleCode "ACCOUNT_BILLING" .
-
-mnp:billPeriodEnd a owl:DatatypeProperty ;
-    rdfs:domain mnp:Bill ;
-    rdfs:range xsd:dateTime ;
-    mnp:moduleCode "ACCOUNT_BILLING" .
-
-mnp:chargeAmount a owl:DatatypeProperty ;
-    rdfs:domain mnp:Charge ;
-    rdfs:range xsd:decimal ;
-    mnp:moduleCode "ACCOUNT_BILLING" .
-
-mnp:paymentAmount a owl:DatatypeProperty ;
-    rdfs:domain mnp:Payment ;
-    rdfs:range xsd:decimal ;
-    mnp:moduleCode "ACCOUNT_BILLING" .
+mnp:TelecomAccount a owl:Class ;
+    rdfs:label "Telecom Account"@en ;
+    rdfs:label "电信账户"@zh-CN ;
+    skos:definition "A billing or customer account through which services are charged."@en ;
+    skos:definition "用于计费或客户管理的电信账户。"@zh-CN ;
+    mnp:moduleCode "ACCOUNT_BILLING" ;
+    mnp:sourceStatus "INDUSTRY_ALIGNED" ;
+    mnp:definingModule "mnp-account-billing" .
 
 mnp:arrangementStatusCode a owl:DatatypeProperty ;
+    rdfs:label "arrangement status code"@en ;
+    rdfs:label "缴费安排状态码"@zh-CN ;
+    skos:definition "Status code of a payment arrangement."@en ;
+    skos:definition "缴费安排状态代码。"@zh-CN ;
+    mnp:moduleCode "ACCOUNT_BILLING" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-account-billing" ;
     rdfs:domain mnp:PaymentArrangement ;
-    rdfs:range xsd:string ;
-    mnp:moduleCode "ACCOUNT_BILLING" .
+    rdfs:range xsd:string .
+
+mnp:billPeriodEnd a owl:DatatypeProperty ;
+    rdfs:label "bill period end"@en ;
+    rdfs:label "账期结束"@zh-CN ;
+    skos:definition "End datetime of a bill period."@en ;
+    skos:definition "账单账期结束时间。"@zh-CN ;
+    mnp:moduleCode "ACCOUNT_BILLING" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-account-billing" ;
+    rdfs:domain mnp:Bill ;
+    rdfs:range xsd:dateTime .
+
+mnp:billPeriodStart a owl:DatatypeProperty ;
+    rdfs:label "bill period start"@en ;
+    rdfs:label "账期开始"@zh-CN ;
+    skos:definition "Start datetime of a bill period."@en ;
+    skos:definition "账单账期开始时间。"@zh-CN ;
+    mnp:moduleCode "ACCOUNT_BILLING" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-account-billing" ;
+    rdfs:domain mnp:Bill ;
+    rdfs:range xsd:dateTime .
+
+mnp:chargeAmount a owl:DatatypeProperty ;
+    rdfs:label "charge amount"@en ;
+    rdfs:label "费用金额"@zh-CN ;
+    skos:definition "Monetary amount of a charge."@en ;
+    skos:definition "费用项金额。"@zh-CN ;
+    mnp:moduleCode "ACCOUNT_BILLING" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-account-billing" ;
+    rdfs:domain mnp:Charge ;
+    rdfs:range xsd:decimal .
+
+mnp:paymentAmount a owl:DatatypeProperty ;
+    rdfs:label "payment amount"@en ;
+    rdfs:label "缴费金额"@zh-CN ;
+    skos:definition "Monetary amount of a payment."@en ;
+    skos:definition "缴费金额。"@zh-CN ;
+    mnp:moduleCode "ACCOUNT_BILLING" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-account-billing" ;
+    rdfs:domain mnp:Payment ;
+    rdfs:range xsd:decimal .
+
+mnp:hasBill a owl:ObjectProperty ;
+    rdfs:label "has bill"@en ;
+    rdfs:label "有账单"@zh-CN ;
+    skos:definition "Links a billing account to a bill."@en ;
+    skos:definition "将计费账户关联到账单。"@zh-CN ;
+    mnp:moduleCode "ACCOUNT_BILLING" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-account-billing" ;
+    rdfs:domain mnp:BillingAccount ;
+    rdfs:range mnp:Bill .
+
+mnp:hasCharge a owl:ObjectProperty ;
+    rdfs:label "has charge"@en ;
+    rdfs:label "有费用项"@zh-CN ;
+    skos:definition "Links a bill to a charge line."@en ;
+    skos:definition "将账单关联到费用项。"@zh-CN ;
+    mnp:moduleCode "ACCOUNT_BILLING" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-account-billing" ;
+    rdfs:domain mnp:Bill ;
+    rdfs:range mnp:Charge .
+
+mnp:hasPayment a owl:ObjectProperty ;
+    rdfs:label "has payment"@en ;
+    rdfs:label "有缴费"@zh-CN ;
+    skos:definition "Links a billing account to a payment."@en ;
+    skos:definition "将计费账户关联到缴费。"@zh-CN ;
+    mnp:moduleCode "ACCOUNT_BILLING" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-account-billing" ;
+    rdfs:domain mnp:BillingAccount ;
+    rdfs:range mnp:Payment .
+
+mnp:hasPaymentArrangementRecord a owl:ObjectProperty ;
+    rdfs:label "has payment arrangement"@en ;
+    rdfs:label "有缴费安排"@zh-CN ;
+    skos:definition "Links a billing account to a payment arrangement."@en ;
+    skos:definition "将计费账户关联到缴费安排。"@zh-CN ;
+    mnp:moduleCode "ACCOUNT_BILLING" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-account-billing" ;
+    rdfs:domain mnp:BillingAccount ;
+    rdfs:range mnp:PaymentArrangement .
+
+mnp:observesAccount a owl:ObjectProperty ;
+    rdfs:label "observes account"@en ;
+    rdfs:label "观测账户"@zh-CN ;
+    skos:definition "Links an outstanding balance observation to the observed billing account."@en ;
+    skos:definition "将欠费观测关联到被观测的计费账户。"@zh-CN ;
+    mnp:moduleCode "ACCOUNT_BILLING" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-account-billing" ;
+    rdfs:domain mnp:OutstandingBalanceObservation ;
+    rdfs:range mnp:BillingAccount .
+
+mnp:relatedAccount a owl:ObjectProperty ;
+    rdfs:label "related account (deprecated)"@en ;
+    rdfs:label "相关账户（已弃用）"@zh-CN ;
+    skos:definition "Deprecated redundant link from Subscriber to TelecomAccount; use billedThrough on ServiceSubscription."@en ;
+    skos:definition "已弃用的用户到账户冗余关系；请使用订阅上的 billedThrough。"@zh-CN ;
+    mnp:moduleCode "ACCOUNT_BILLING" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-account-billing" ;
+    rdfs:domain mnp:Subscriber ;
+    rdfs:range mnp:TelecomAccount ;
+    owl:deprecated true ;
+    mnp:replacementTerm mnp:billedThrough ;
+    skos:changeNote "Deprecated in ontology 1.0.0; use mnp:billedThrough."@en .
+
+mnp:settlesAccount a owl:ObjectProperty ;
+    rdfs:label "settles account"@en ;
+    rdfs:label "结清账户"@zh-CN ;
+    skos:definition "Links a billing settlement to the settled account."@en ;
+    skos:definition "将结清事件关联到被结清账户。"@zh-CN ;
+    mnp:moduleCode "ACCOUNT_BILLING" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-account-billing" ;
+    rdfs:domain mnp:BillingSettlement ;
+    rdfs:range mnp:BillingAccount .

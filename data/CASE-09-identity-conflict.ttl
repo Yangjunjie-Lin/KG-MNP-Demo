@@ -1,62 +1,61 @@
-@prefix mnp: <http://example.org/kg-mnp#> .
+@prefix mnp: <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#> .
+@prefix data: <https://yangjunjie-lin.github.io/KG-MNP-Demo/data/> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
 # CASE-09: all conditions satisfied → ELIGIBLE
 
-mnp:Sub-09 a mnp:Subscriber ;
+data:Sub-09 a mnp:Subscriber ;
     rdfs:label "Subscriber 09" ;
-    mnp:ownsPhoneNumber mnp:Phone-09 ;
-    mnp:billedThrough mnp:Acct-09 ;
-    mnp:hasSubscription mnp:Subscr-09 ;
-    mnp:relatedAccount mnp:Acct-09 .
-
-mnp:Phone-09 a mnp:PhoneNumber ;
+    mnp:holdsSubscription data:Subscr-09  .
+data:Phone-09 a mnp:PhoneNumber ;
+    mnp:assignedToSubscription data:Subscr-09 ;
     mnp:maskedPhoneNumber "138****0009" .
 
-mnp:Acct-09 a mnp:TelecomAccount ;
+data:Acct-09 a mnp:TelecomAccount ;
     rdfs:label "Account 09" .
 
-mnp:Svc-Mobile-Basic a mnp:TelecomService ;
+data:Svc-Mobile-Basic a mnp:TelecomService ;
     rdfs:label "Mobile Basic Plan" .
 
-mnp:Subscr-09 a mnp:ServiceSubscription ;
-    mnp:subscribesToService mnp:Svc-Mobile-Basic ;
+data:Subscr-09 a mnp:ServiceSubscription ;
+    mnp:billedThrough data:Acct-09 ;
+    mnp:subscribesToService data:Svc-Mobile-Basic ;
     mnp:subscriptionStatusCode "ACTIVE" ;
-    mnp:governedByContract mnp:Contract-09 .
+    mnp:governedByContract data:Contract-09 .
 
-mnp:Contract-09 a mnp:ServiceContract ;
+data:Contract-09 a mnp:ServiceContract ;
     mnp:contractStatusCode "EXPIRED" ;
     mnp:contractEndTime "2025-01-01T00:00:00Z"^^xsd:dateTime .
 
-mnp:CASE-09 a mnp:MNPCase ;
+data:CASE-09 a mnp:MNPCase ;
     mnp:caseIdentifier "CASE-09" ;
-    mnp:concernsNumber mnp:Phone-09 ;
-    mnp:requestedBy mnp:Sub-09 ;
+    mnp:concernsNumber data:Phone-09 ;
+    mnp:requestedBy data:Sub-09 ;
     mnp:hasCaseEvidence
-        mnp:Ev-09-ID ,
-        mnp:Ev-09-NUM ,
-        mnp:Ev-09-BILL ,
-        mnp:Ev-09-CTR ,
-        mnp:Ev-09-PORT .
+        data:Ev-09-ID ,
+        data:Ev-09-NUM ,
+        data:Ev-09-BILL ,
+        data:Ev-09-CTR ,
+        data:Ev-09-PORT .
 
-mnp:Ev-09-ID a mnp:SystemObservation ;
+data:Ev-09-ID a mnp:SystemObservation ;
     mnp:evidenceType "IDENTITY_MATCH" ;
     mnp:identityMatchFlag false ;
     mnp:evidenceStatus "VALID" ;
     mnp:evidenceGeneratedAt "2026-06-20T10:00:00Z"^^xsd:dateTime ;
     mnp:evidenceValidUntil "2026-12-31T23:59:59Z"^^xsd:dateTime ;
-    mnp:hasSourceSystem mnp:SYS-CRM .
+    mnp:hasSourceSystem data:SYS-CRM .
 
-mnp:Ev-09-NUM a mnp:SystemObservation ;
+data:Ev-09-NUM a mnp:SystemObservation ;
     mnp:evidenceType "NUMBER_STATUS" ;
     mnp:numberStatusCode "ACTIVE" ;
     mnp:evidenceStatus "VALID" ;
     mnp:evidenceGeneratedAt "2026-06-20T10:05:00Z"^^xsd:dateTime ;
     mnp:evidenceValidUntil "2026-12-31T23:59:59Z"^^xsd:dateTime ;
-    mnp:hasSourceSystem mnp:SYS-HLR .
+    mnp:hasSourceSystem data:SYS-HLR .
 
-mnp:Ev-09-BILL a mnp:SystemObservation ;
+data:Ev-09-BILL a mnp:SystemObservation ;
     mnp:evidenceType "BILLING_BALANCE" ;
     mnp:observedAmount "0.00"^^xsd:decimal ;
     mnp:currencyCode "CNY" ;
@@ -64,21 +63,21 @@ mnp:Ev-09-BILL a mnp:SystemObservation ;
     mnp:evidenceStatus "VALID" ;
     mnp:evidenceGeneratedAt "2026-06-20T10:10:00Z"^^xsd:dateTime ;
     mnp:evidenceValidUntil "2026-12-31T23:59:59Z"^^xsd:dateTime ;
-    mnp:hasSourceSystem mnp:SYS-BILLING .
+    mnp:hasSourceSystem data:SYS-BILLING .
 
-mnp:Ev-09-CTR a mnp:SystemObservation ;
+data:Ev-09-CTR a mnp:SystemObservation ;
     mnp:evidenceType "CONTRACT_STATUS" ;
     mnp:contractStatusCode "EXPIRED" ;
     mnp:contractEndTime "2025-01-01T00:00:00Z"^^xsd:dateTime ;
     mnp:evidenceStatus "VALID" ;
     mnp:evidenceGeneratedAt "2026-06-20T10:15:00Z"^^xsd:dateTime ;
     mnp:evidenceValidUntil "2026-12-31T23:59:59Z"^^xsd:dateTime ;
-    mnp:hasSourceSystem mnp:SYS-CONTRACT .
+    mnp:hasSourceSystem data:SYS-CONTRACT .
 
-mnp:Ev-09-PORT a mnp:SystemObservation ;
+data:Ev-09-PORT a mnp:SystemObservation ;
     mnp:evidenceType "PORTING_HISTORY" ;
     mnp:daysSinceLastPort 400 ;
     mnp:evidenceStatus "VALID" ;
     mnp:evidenceGeneratedAt "2026-06-20T10:20:00Z"^^xsd:dateTime ;
     mnp:evidenceValidUntil "2026-12-31T23:59:59Z"^^xsd:dateTime ;
-    mnp:hasSourceSystem mnp:SYS-MNP .
+    mnp:hasSourceSystem data:SYS-MNP .

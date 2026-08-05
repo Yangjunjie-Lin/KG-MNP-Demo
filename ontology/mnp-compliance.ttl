@@ -1,51 +1,577 @@
-@prefix mnp: <http://example.org/kg-mnp#> .
+@prefix mnp: <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
 
-#################################################################
-# KG-MNP Compliance ontology — rule/clause/action helpers
-#################################################################
+<https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/mnp-compliance> a owl:Ontology ;
+    owl:versionIRI <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/1.0.0/mnp-compliance> ;
+    owl:versionInfo "1.0.0" ;
+    dcterms:title "KG-MNP Compliance Module"@en ;
+    dcterms:title "KG-MNP 合规模块"@zh-CN ;
+    dcterms:description "Eligibility assessment, decisions, rules, clauses and blocking reasons."@en ;
+    dcterms:description "资格评估、决定、规则、条款与阻塞原因。"@zh-CN ;
+    dcterms:license <https://www.apache.org/licenses/LICENSE-2.0> ;
+    owl:imports <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/mnp-core> .
+mnp:AssessmentDependency a owl:Class ;
+    rdfs:label "Assessment Dependency (deprecated)"@en ;
+    rdfs:label "评估依赖（已弃用）"@zh-CN ;
+    skos:definition "Deprecated wrapper formerly linking assessments to evidence/rule versions without independent metadata."@en ;
+    skos:definition "已弃用；原用于包装评估对证据/规则版本的依赖，无独立元数据。"@zh-CN ;
+    mnp:moduleCode "COMPLIANCE" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-compliance" ;
+    owl:deprecated true ;
+    mnp:replacementTerm mnp:usesEvidence ;
+    skos:changeNote "Deprecated in ontology 1.0.0; use mnp:usesEvidence."@en .
 
-<http://example.org/kg-mnp/compliance> a owl:Ontology ;
-    dcterms:title "KG-MNP Compliance Ontology"@en ;
-    owl:versionInfo "0.1.0" ;
-    owl:imports <http://example.org/kg-mnp/core> ;
-    rdfs:comment "Compliance-oriented extensions for regulatory operationalization and reassessment."@en .
+mnp:BlockingDecision a owl:Class ;
+    rdfs:label "Blocking Decision"@en ;
+    rdfs:label "阻塞决定"@zh-CN ;
+    skos:definition "Decision that portability is blocked."@en ;
+    skos:definition "携转被阻塞的决定。"@zh-CN ;
+    mnp:moduleCode "COMPLIANCE" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-compliance" ;
+    rdfs:subClassOf mnp:EligibilityDecision ;
+    owl:disjointWith mnp:EligibleDecision ;
+    owl:disjointWith mnp:ConditionalDecision ;
+    owl:disjointWith mnp:ManualReviewDecision .
 
-mnp:moduleCode a owl:DatatypeProperty ;
-    rdfs:range xsd:string ;
-    rdfs:label "module code"@en ;
-    rdfs:comment "Stable ontology module code for catalog and UI grouping."@en .
+mnp:BlockingReason a owl:Class ;
+    rdfs:label "Blocking Reason"@en ;
+    rdfs:label "阻塞原因"@zh-CN ;
+    skos:definition "An independent reason that contributes to a blocking or review outcome."@en ;
+    skos:definition "导致阻塞或复核结果的独立原因。"@zh-CN ;
+    mnp:moduleCode "COMPLIANCE" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-compliance" .
+
+mnp:ConditionalDecision a owl:Class ;
+    rdfs:label "Conditional Decision"@en ;
+    rdfs:label "有条件决定"@zh-CN ;
+    skos:definition "Decision that portability is conditionally allowed."@en ;
+    skos:definition "有条件允许携转的决定。"@zh-CN ;
+    mnp:moduleCode "COMPLIANCE" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-compliance" ;
+    rdfs:subClassOf mnp:EligibilityDecision ;
+    owl:disjointWith mnp:EligibleDecision ;
+    owl:disjointWith mnp:BlockingDecision ;
+    owl:disjointWith mnp:ManualReviewDecision .
+
+mnp:EligibilityAssessment a owl:Class ;
+    rdfs:label "Eligibility Assessment"@en ;
+    rdfs:label "资格评估"@zh-CN ;
+    skos:definition "A deterministic evaluation of an MNP case against eligibility rules and evidence."@en ;
+    skos:definition "依据资格规则与证据对携转案件进行的确定性评估。"@zh-CN ;
+    mnp:moduleCode "COMPLIANCE" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-compliance" .
+
+mnp:EligibilityDecision a owl:Class ;
+    rdfs:label "Eligibility Decision"@en ;
+    rdfs:label "资格决定"@zh-CN ;
+    skos:definition "Abstract decision outcome of an eligibility assessment."@en ;
+    skos:definition "资格评估的抽象决定结果。"@zh-CN ;
+    mnp:moduleCode "COMPLIANCE" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-compliance" .
+
+mnp:EligibilityRule a owl:Class ;
+    rdfs:label "Eligibility Rule"@en ;
+    rdfs:label "资格规则"@zh-CN ;
+    skos:definition "A versioned eligibility rule operationalizing regulatory clauses."@en ;
+    skos:definition "落实监管条款的版本化资格规则。"@zh-CN ;
+    mnp:moduleCode "COMPLIANCE" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-compliance" .
+
+mnp:EligibleDecision a owl:Class ;
+    rdfs:label "Eligible Decision"@en ;
+    rdfs:label "可携决定"@zh-CN ;
+    skos:definition "Decision that the case is eligible for portability."@en ;
+    skos:definition "案件符合携转资格的决定。"@zh-CN ;
+    mnp:moduleCode "COMPLIANCE" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-compliance" ;
+    rdfs:subClassOf mnp:EligibilityDecision ;
+    owl:disjointWith mnp:BlockingDecision ;
+    owl:disjointWith mnp:ConditionalDecision ;
+    owl:disjointWith mnp:ManualReviewDecision .
+
+mnp:ManualReviewDecision a owl:Class ;
+    rdfs:label "Manual Review Decision"@en ;
+    rdfs:label "人工复核决定"@zh-CN ;
+    skos:definition "Decision that manual review is required."@en ;
+    skos:definition "需要人工复核的决定。"@zh-CN ;
+    mnp:moduleCode "COMPLIANCE" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-compliance" ;
+    rdfs:subClassOf mnp:EligibilityDecision ;
+    owl:disjointWith mnp:EligibleDecision ;
+    owl:disjointWith mnp:BlockingDecision ;
+    owl:disjointWith mnp:ConditionalDecision .
 
 mnp:ReassessmentMarker a owl:Class ;
     rdfs:label "Reassessment Marker"@en ;
-    rdfs:label "重评标记"@zh ;
-    rdfs:comment "Marks an assessment that used a superseded rule version and requires re-evaluation."@en ;
-    mnp:moduleCode "COMPLIANCE" .
+    rdfs:label "重评标记"@zh-CN ;
+    skos:definition "Marker indicating an assessment requires reassessment after rule change."@en ;
+    skos:definition "表示规则变更后评估需重评的标记。"@zh-CN ;
+    mnp:moduleCode "COMPLIANCE" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-compliance" .
 
-mnp:supersedesRuleVersion a owl:ObjectProperty ;
-    rdfs:domain mnp:RuleVersion ;
-    rdfs:range mnp:RuleVersion ;
-    rdfs:comment "Links a newer rule version to the older version it supersedes."@en .
+mnp:RegulatoryClause a owl:Class ;
+    rdfs:label "Regulatory Clause"@en ;
+    rdfs:label "监管条款"@zh-CN ;
+    skos:definition "A specific clause within a regulatory document."@en ;
+    skos:definition "监管文件中的具体条款。"@zh-CN ;
+    mnp:moduleCode "COMPLIANCE" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-compliance" .
 
-mnp:markedForReassessment a owl:ObjectProperty ;
-    rdfs:domain mnp:EligibilityAssessment ;
-    rdfs:range mnp:ReassessmentMarker .
+mnp:RegulatoryDocument a owl:Class ;
+    rdfs:label "Regulatory Document"@en ;
+    rdfs:label "监管文件"@zh-CN ;
+    skos:definition "A regulatory or policy document containing clauses."@en ;
+    skos:definition "包含条款的监管或政策文件。"@zh-CN ;
+    mnp:moduleCode "COMPLIANCE" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-compliance" .
 
-mnp:reassessmentReason a owl:DatatypeProperty ;
-    rdfs:domain mnp:ReassessmentMarker ;
-    rdfs:range xsd:string .
+mnp:RemediationAction a owl:Class ;
+    rdfs:label "Remediation Action"@en ;
+    rdfs:label "处理动作"@zh-CN ;
+    skos:definition "A recommended action a user or operator should take."@en ;
+    skos:definition "建议用户或运营人员采取的处理动作。"@zh-CN ;
+    mnp:moduleCode "COMPLIANCE" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-compliance" .
 
-mnp:clauseText a owl:DatatypeProperty ;
-    rdfs:domain mnp:RegulatoryClause ;
-    rdfs:range xsd:string .
+mnp:RuleVersion a owl:Class ;
+    rdfs:label "Rule Version"@en ;
+    rdfs:label "规则版本"@zh-CN ;
+    skos:definition "A concrete version of an eligibility rule with effective dates."@en ;
+    skos:definition "带生效日期的资格规则具体版本。"@zh-CN ;
+    mnp:moduleCode "COMPLIANCE" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-compliance" .
 
-mnp:actionDescription a owl:DatatypeProperty ;
+mnp:actionCode a owl:DatatypeProperty ;
+    rdfs:label "action code"@en ;
+    rdfs:label "动作代码"@zh-CN ;
+    skos:definition "Code identifying a remediation action."@en ;
+    skos:definition "处理动作识别代码。"@zh-CN ;
+    mnp:moduleCode "COMPLIANCE" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-compliance" ;
     rdfs:domain mnp:RemediationAction ;
     rdfs:range xsd:string .
 
-mnp:reasonDescription a owl:DatatypeProperty ;
+mnp:actionDescription a owl:DatatypeProperty ;
+    rdfs:label "action description"@en ;
+    rdfs:label "动作说明"@zh-CN ;
+    skos:definition "Human-readable description of a remediation action."@en ;
+    skos:definition "处理动作的可读说明。"@zh-CN ;
+    mnp:moduleCode "COMPLIANCE" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-compliance" ;
+    rdfs:domain mnp:RemediationAction ;
+    rdfs:range xsd:string .
+
+mnp:assessmentIdentifier a owl:DatatypeProperty ;
+    rdfs:label "assessment identifier"@en ;
+    rdfs:label "评估编号"@zh-CN ;
+    skos:definition "Business identifier of an eligibility assessment."@en ;
+    skos:definition "资格评估业务编号。"@zh-CN ;
+    mnp:moduleCode "COMPLIANCE" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-compliance" ;
+    rdfs:domain mnp:EligibilityAssessment ;
+    rdfs:range xsd:string .
+
+mnp:assessmentTime a owl:DatatypeProperty ;
+    rdfs:label "assessment time"@en ;
+    rdfs:label "评估时间"@zh-CN ;
+    skos:definition "As-of datetime used when selecting rule versions and evaluating evidence validity."@en ;
+    skos:definition "选择规则版本并评估证据有效性时使用的基准时间。"@zh-CN ;
+    mnp:moduleCode "COMPLIANCE" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-compliance" ;
+    rdfs:domain mnp:EligibilityAssessment ;
+    rdfs:range xsd:dateTime .
+
+mnp:clauseIdentifier a owl:DatatypeProperty ;
+    rdfs:label "clause identifier"@en ;
+    rdfs:label "条款编号"@zh-CN ;
+    skos:definition "Business identifier of a regulatory clause."@en ;
+    skos:definition "监管条款业务编号。"@zh-CN ;
+    mnp:moduleCode "COMPLIANCE" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-compliance" ;
+    rdfs:domain mnp:RegulatoryClause ;
+    rdfs:range xsd:string .
+
+mnp:clauseText a owl:DatatypeProperty ;
+    rdfs:label "clause text"@en ;
+    rdfs:label "条款文本"@zh-CN ;
+    skos:definition "Textual content of a regulatory clause."@en ;
+    skos:definition "监管条款文本内容。"@zh-CN ;
+    mnp:moduleCode "COMPLIANCE" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-compliance" ;
+    rdfs:domain mnp:RegulatoryClause ;
+    rdfs:range xsd:string .
+
+mnp:decisionCode a owl:DatatypeProperty ;
+    rdfs:label "decision code"@en ;
+    rdfs:label "决定代码"@zh-CN ;
+    skos:definition "Code of an eligibility decision outcome."@en ;
+    skos:definition "资格决定结果代码。"@zh-CN ;
+    mnp:moduleCode "COMPLIANCE" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-compliance" ;
+    rdfs:domain mnp:EligibilityDecision ;
+    rdfs:range xsd:string .
+
+mnp:documentIdentifier a owl:DatatypeProperty ;
+    rdfs:label "document identifier"@en ;
+    rdfs:label "文件编号"@zh-CN ;
+    skos:definition "Business identifier of a regulatory document."@en ;
+    skos:definition "监管文件业务编号。"@zh-CN ;
+    mnp:moduleCode "COMPLIANCE" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-compliance" ;
+    rdfs:domain mnp:RegulatoryDocument ;
+    rdfs:range xsd:string .
+
+mnp:effectiveFrom a owl:DatatypeProperty ;
+    rdfs:label "effective from"@en ;
+    rdfs:label "生效自"@zh-CN ;
+    skos:definition "Datetime from which a rule version is effective."@en ;
+    skos:definition "规则版本生效起始时间。"@zh-CN ;
+    mnp:moduleCode "COMPLIANCE" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-compliance" ;
+    rdfs:range xsd:dateTime .
+
+mnp:effectiveTo a owl:DatatypeProperty ;
+    rdfs:label "effective to"@en ;
+    rdfs:label "生效至"@zh-CN ;
+    skos:definition "Datetime until which a rule version is effective."@en ;
+    skos:definition "规则版本生效截止时间。"@zh-CN ;
+    mnp:moduleCode "COMPLIANCE" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-compliance" ;
+    rdfs:range xsd:dateTime .
+
+mnp:reasonCode a owl:DatatypeProperty ;
+    rdfs:label "reason code"@en ;
+    rdfs:label "原因代码"@zh-CN ;
+    skos:definition "Code identifying a blocking reason."@en ;
+    skos:definition "阻塞原因识别代码。"@zh-CN ;
+    mnp:moduleCode "COMPLIANCE" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-compliance" ;
     rdfs:domain mnp:BlockingReason ;
     rdfs:range xsd:string .
+
+mnp:reasonDescription a owl:DatatypeProperty ;
+    rdfs:label "reason description"@en ;
+    rdfs:label "原因说明"@zh-CN ;
+    skos:definition "Human-readable description of a blocking reason."@en ;
+    skos:definition "阻塞原因的可读说明。"@zh-CN ;
+    mnp:moduleCode "COMPLIANCE" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-compliance" ;
+    rdfs:domain mnp:BlockingReason ;
+    rdfs:range xsd:string .
+
+mnp:reassessmentReason a owl:DatatypeProperty ;
+    rdfs:label "reassessment reason"@en ;
+    rdfs:label "重评原因"@zh-CN ;
+    skos:definition "Reason text for a reassessment marker."@en ;
+    skos:definition "重评标记的原因文本。"@zh-CN ;
+    mnp:moduleCode "COMPLIANCE" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-compliance" ;
+    rdfs:domain mnp:ReassessmentMarker ;
+    rdfs:range xsd:string .
+
+mnp:requiresReassessment a owl:DatatypeProperty ;
+    rdfs:label "requires reassessment"@en ;
+    rdfs:label "需要重评"@zh-CN ;
+    skos:definition "Boolean flag indicating reassessment is required."@en ;
+    skos:definition "表示需要重评的布尔标志。"@zh-CN ;
+    mnp:moduleCode "COMPLIANCE" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-compliance" ;
+    rdfs:domain mnp:EligibilityAssessment ;
+    rdfs:range xsd:boolean .
+
+mnp:ruleIdentifier a owl:DatatypeProperty ;
+    rdfs:label "rule identifier"@en ;
+    rdfs:label "规则编号"@zh-CN ;
+    skos:definition "Business identifier of an eligibility rule."@en ;
+    skos:definition "资格规则业务编号。"@zh-CN ;
+    mnp:moduleCode "COMPLIANCE" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-compliance" ;
+    rdfs:domain mnp:EligibilityRule ;
+    rdfs:range xsd:string .
+
+mnp:ruleVersion a owl:DatatypeProperty ;
+    rdfs:label "rule version label"@en ;
+    rdfs:label "规则版本标签"@zh-CN ;
+    skos:definition "Version label string for a rule or rule version."@en ;
+    skos:definition "规则或规则版本的版本标签字符串。"@zh-CN ;
+    mnp:moduleCode "COMPLIANCE" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-compliance" ;
+    rdfs:range xsd:string .
+
+mnp:aboutCase a owl:ObjectProperty ;
+    rdfs:label "about case"@en ;
+    rdfs:label "关于案件"@zh-CN ;
+    skos:definition "Links an assessment to the MNP case it evaluates."@en ;
+    skos:definition "将评估关联到其所评估的携转案件。"@zh-CN ;
+    mnp:moduleCode "COMPLIANCE" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-compliance" ;
+    rdfs:domain mnp:EligibilityAssessment ;
+    rdfs:range mnp:MNPCase .
+
+mnp:affectsAssessment a owl:ObjectProperty ;
+    rdfs:label "affects assessment"@en ;
+    rdfs:label "影响评估"@zh-CN ;
+    skos:definition "Links a newer rule version to assessments affected by supersession."@en ;
+    skos:definition "将新规则版本关联到受其替代影响的评估。"@zh-CN ;
+    mnp:moduleCode "COMPLIANCE" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-compliance" ;
+    rdfs:domain mnp:RuleVersion ;
+    rdfs:range mnp:EligibilityAssessment .
+
+mnp:citesClause a owl:ObjectProperty ;
+    rdfs:label "cites clause"@en ;
+    rdfs:label "引用条款"@zh-CN ;
+    skos:definition "Links a blocking reason to a cited regulatory clause."@en ;
+    skos:definition "将阻塞原因关联到所引用的监管条款。"@zh-CN ;
+    mnp:moduleCode "COMPLIANCE" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-compliance" ;
+    rdfs:domain mnp:BlockingReason ;
+    rdfs:range mnp:RegulatoryClause .
+
+mnp:dependsOn a owl:ObjectProperty ;
+    rdfs:label "depends on (deprecated)"@en ;
+    rdfs:label "依赖于（已弃用）"@zh-CN ;
+    skos:definition "Deprecated assessment-to-dependency wrapper property."@en ;
+    skos:definition "已弃用的评估依赖包装属性。"@zh-CN ;
+    mnp:moduleCode "COMPLIANCE" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-compliance" ;
+    rdfs:domain mnp:EligibilityAssessment ;
+    rdfs:range mnp:AssessmentDependency ;
+    owl:deprecated true ;
+    mnp:replacementTerm mnp:usesEvidence ;
+    skos:changeNote "Deprecated in ontology 1.0.0; use mnp:usesEvidence."@en .
+
+mnp:dependsOnEvidence a owl:ObjectProperty ;
+    rdfs:label "depends on evidence (deprecated)"@en ;
+    rdfs:label "依赖证据（已弃用）"@zh-CN ;
+    skos:definition "Deprecated; use usesEvidence directly."@en ;
+    skos:definition "已弃用；请直接使用 usesEvidence。"@zh-CN ;
+    mnp:moduleCode "COMPLIANCE" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-compliance" ;
+    rdfs:domain mnp:AssessmentDependency ;
+    rdfs:range mnp:EvidenceRecord ;
+    owl:deprecated true ;
+    mnp:replacementTerm mnp:usesEvidence ;
+    skos:changeNote "Deprecated in ontology 1.0.0; use mnp:usesEvidence."@en .
+
+mnp:dependsOnRuleVersion a owl:ObjectProperty ;
+    rdfs:label "depends on rule version (deprecated)"@en ;
+    rdfs:label "依赖规则版本（已弃用）"@zh-CN ;
+    skos:definition "Deprecated; use usesRuleVersion directly."@en ;
+    skos:definition "已弃用；请直接使用 usesRuleVersion。"@zh-CN ;
+    mnp:moduleCode "COMPLIANCE" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-compliance" ;
+    rdfs:domain mnp:AssessmentDependency ;
+    rdfs:range mnp:RuleVersion ;
+    owl:deprecated true ;
+    mnp:replacementTerm mnp:usesRuleVersion ;
+    skos:changeNote "Deprecated in ontology 1.0.0; use mnp:usesRuleVersion."@en .
+
+mnp:evaluatedByRule a owl:ObjectProperty ;
+    rdfs:label "evaluated by rule"@en ;
+    rdfs:label "由规则评估"@zh-CN ;
+    skos:definition "Links an assessment to an eligibility rule consulted."@en ;
+    skos:definition "将评估关联到所参照的资格规则。"@zh-CN ;
+    mnp:moduleCode "COMPLIANCE" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-compliance" ;
+    rdfs:domain mnp:EligibilityAssessment ;
+    rdfs:range mnp:EligibilityRule .
+
+mnp:hasBlockingReason a owl:ObjectProperty ;
+    rdfs:label "has blocking reason"@en ;
+    rdfs:label "有阻塞原因"@zh-CN ;
+    skos:definition "Links an eligibility decision to a blocking reason that justifies it."@en ;
+    skos:definition "将资格决定关联到支撑该决定的阻塞原因。"@zh-CN ;
+    mnp:moduleCode "COMPLIANCE" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-compliance" ;
+    rdfs:domain mnp:EligibilityDecision ;
+    rdfs:range mnp:BlockingReason .
+
+mnp:hasRuleVersion a owl:ObjectProperty ;
+    rdfs:label "has rule version"@en ;
+    rdfs:label "有规则版本"@zh-CN ;
+    skos:definition "Links an eligibility rule to a concrete rule version."@en ;
+    skos:definition "将资格规则关联到具体规则版本。"@zh-CN ;
+    mnp:moduleCode "COMPLIANCE" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-compliance" ;
+    rdfs:domain mnp:EligibilityRule ;
+    rdfs:range mnp:RuleVersion .
+
+mnp:markedForReassessment a owl:ObjectProperty ;
+    rdfs:label "marked for reassessment"@en ;
+    rdfs:label "标记需重评"@zh-CN ;
+    skos:definition "Links an assessment to a reassessment marker."@en ;
+    skos:definition "将评估关联到重评标记。"@zh-CN ;
+    mnp:moduleCode "COMPLIANCE" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-compliance" ;
+    rdfs:domain mnp:EligibilityAssessment ;
+    rdfs:range mnp:ReassessmentMarker .
+
+mnp:operationalizesClause a owl:ObjectProperty ;
+    rdfs:label "operationalizes clause"@en ;
+    rdfs:label "落实条款"@zh-CN ;
+    skos:definition "Links an eligibility rule to a regulatory clause it operationalizes."@en ;
+    skos:definition "将资格规则关联到其所落实的监管条款。"@zh-CN ;
+    mnp:moduleCode "COMPLIANCE" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-compliance" ;
+    rdfs:domain mnp:EligibilityRule ;
+    rdfs:range mnp:RegulatoryClause .
+
+mnp:partOfDocument a owl:ObjectProperty ;
+    rdfs:label "part of document"@en ;
+    rdfs:label "属于文件"@zh-CN ;
+    skos:definition "Links a regulatory clause to its parent document."@en ;
+    skos:definition "将监管条款关联到所属文件。"@zh-CN ;
+    mnp:moduleCode "COMPLIANCE" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-compliance" ;
+    rdfs:domain mnp:RegulatoryClause ;
+    rdfs:range mnp:RegulatoryDocument .
+
+mnp:producesBlockingReason a owl:ObjectProperty ;
+    rdfs:label "produces blocking reason (deprecated)"@en ;
+    rdfs:label "产生阻塞原因（已弃用）"@zh-CN ;
+    skos:definition "Deprecated. Blocking reasons attach to decisions via hasBlockingReason."@en ;
+    skos:definition "已弃用。阻塞原因通过 hasBlockingReason 挂在决定上。"@zh-CN ;
+    mnp:moduleCode "COMPLIANCE" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-compliance" ;
+    rdfs:domain mnp:EligibilityAssessment ;
+    rdfs:range mnp:BlockingReason ;
+    owl:deprecated true ;
+    mnp:replacementTerm mnp:hasBlockingReason ;
+    skos:changeNote "Deprecated in ontology 1.0.0; use mnp:hasBlockingReason."@en .
+
+mnp:producesDecision a owl:ObjectProperty, owl:FunctionalProperty ;
+    rdfs:label "produces decision"@en ;
+    rdfs:label "产生决定"@zh-CN ;
+    skos:definition "Links an eligibility assessment to its formal decision outcome."@en ;
+    skos:definition "将资格评估关联到正式决定结果。"@zh-CN ;
+    mnp:moduleCode "COMPLIANCE" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-compliance" ;
+    rdfs:domain mnp:EligibilityAssessment ;
+    rdfs:range mnp:EligibilityDecision .
+
+mnp:recommendsAction a owl:ObjectProperty ;
+    rdfs:label "recommends action"@en ;
+    rdfs:label "建议动作"@zh-CN ;
+    skos:definition "Links a blocking reason to a remediation action."@en ;
+    skos:definition "将阻塞原因关联到处理动作。"@zh-CN ;
+    mnp:moduleCode "COMPLIANCE" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-compliance" ;
+    rdfs:domain mnp:BlockingReason ;
+    rdfs:range mnp:RemediationAction .
+
+mnp:supersedesRuleVersion a owl:ObjectProperty ;
+    rdfs:label "supersedes rule version"@en ;
+    rdfs:label "替代规则版本"@zh-CN ;
+    skos:definition "Links a rule version to the prior version it supersedes."@en ;
+    skos:definition "将规则版本关联到其所替代的先前版本。"@zh-CN ;
+    mnp:moduleCode "COMPLIANCE" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-compliance" ;
+    rdfs:domain mnp:RuleVersion ;
+    rdfs:range mnp:RuleVersion .
+
+mnp:supportedByEvidence a owl:ObjectProperty ;
+    rdfs:label "supported by evidence"@en ;
+    rdfs:label "由证据支持"@zh-CN ;
+    skos:definition "Links a blocking reason to supporting evidence."@en ;
+    skos:definition "将阻塞原因关联到支持证据。"@zh-CN ;
+    mnp:moduleCode "COMPLIANCE" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-compliance" ;
+    rdfs:domain mnp:BlockingReason ;
+    rdfs:range mnp:EvidenceRecord .
+
+mnp:triggeredByRule a owl:ObjectProperty ;
+    rdfs:label "triggered by rule"@en ;
+    rdfs:label "由规则触发"@zh-CN ;
+    skos:definition "Links a blocking reason to the triggering eligibility rule."@en ;
+    skos:definition "将阻塞原因关联到触发规则。"@zh-CN ;
+    mnp:moduleCode "COMPLIANCE" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-compliance" ;
+    rdfs:domain mnp:BlockingReason ;
+    rdfs:range mnp:EligibilityRule .
+
+mnp:triggeredByRuleVersion a owl:ObjectProperty ;
+    rdfs:label "triggered by rule version"@en ;
+    rdfs:label "由规则版本触发"@zh-CN ;
+    skos:definition "Links a blocking reason to the triggering rule version."@en ;
+    skos:definition "将阻塞原因关联到触发规则版本。"@zh-CN ;
+    mnp:moduleCode "COMPLIANCE" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-compliance" ;
+    rdfs:domain mnp:BlockingReason ;
+    rdfs:range mnp:RuleVersion .
+
+mnp:usesEvidence a owl:ObjectProperty ;
+    rdfs:label "uses evidence"@en ;
+    rdfs:label "使用证据"@zh-CN ;
+    skos:definition "Links an eligibility assessment to the evidence snapshot actually used in that assessment."@en ;
+    skos:definition "将资格评估关联到该次评估实际使用的证据快照。"@zh-CN ;
+    mnp:moduleCode "COMPLIANCE" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-compliance" ;
+    rdfs:domain mnp:EligibilityAssessment ;
+    rdfs:range mnp:EvidenceRecord .
+
+mnp:usesRuleVersion a owl:ObjectProperty ;
+    rdfs:label "uses rule version"@en ;
+    rdfs:label "使用规则版本"@zh-CN ;
+    skos:definition "Links an assessment to the concrete rule version used."@en ;
+    skos:definition "将评估关联到实际使用的规则版本。"@zh-CN ;
+    mnp:moduleCode "COMPLIANCE" ;
+    mnp:sourceStatus "LOCAL_EXTENSION" ;
+    mnp:definingModule "mnp-compliance" ;
+    rdfs:domain mnp:EligibilityAssessment ;
+    rdfs:range mnp:RuleVersion .

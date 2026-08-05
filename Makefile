@@ -1,5 +1,8 @@
 .PHONY: install test check-refs verify-repo-hygiene verify-python-core \
-	verify-stage-01 verify-semantic-governance verify-stage-02
+	verify-stage-01 verify-semantic-governance verify-stage-02 \
+	verify-ontology-audit verify-ontology-release verify-shacl-profiles \
+	verify-legacy-eligibility verify-stage-03-core reasoner-check \
+	verify-reasoner-report verify-stage-03
 
 PYTHON_CORE_TESTS = \
 	tests/test_ontology.py \
@@ -33,3 +36,30 @@ verify-semantic-governance:
 	python -m pytest -q tests/governance
 
 verify-stage-02: verify-stage-01 verify-semantic-governance
+
+verify-ontology-audit:
+	python scripts/audit_ontology.py
+	python scripts/check_catalog.py
+	python -m pytest -q tests/ontology_release/test_stage03_core.py -k "inventory or ownership or catalog or module_config"
+
+verify-ontology-release:
+	python scripts/check_ontology_release.py
+	python -m pytest -q tests/ontology_release/test_stage03_core.py -k "namespace or bilingual or domain_range or deprecated or mapping_record or example_org or determinism or module_has_ontology"
+
+verify-shacl-profiles:
+	python -m pytest -q tests/ontology_release/test_stage03_core.py -k "shape_profiles or foundation or eligibility or case_03"
+
+verify-legacy-eligibility:
+	python -m pytest -q tests/test_cli.py tests/cases tests/ontology_release/test_stage03_core.py -k "competency"
+
+verify-stage-03-core: verify-stage-02 verify-ontology-audit verify-ontology-release \
+	verify-shacl-profiles verify-legacy-eligibility
+
+reasoner-check:
+	python scripts/run_reasoner.py
+
+verify-reasoner-report:
+	python scripts/verify_reasoner_report.py
+	python -m pytest -q tests/ontology_release/test_stage03_core.py -k reasoner_report
+
+verify-stage-03: verify-stage-03-core verify-reasoner-report

@@ -4,6 +4,17 @@ The mobile-number-portability eligibility implementation is retained as a
 downstream example of the existing ontology assets. It is not the repository's
 central modeling pipeline and is excluded from the default Stage 01 gate.
 
+## Eligibility SHACL profile
+
+Strict eligibility constraints live under:
+
+- [`shapes/eligibility-instance-shapes.ttl`](shapes/eligibility-instance-shapes.ttl)
+
+Loader profile key: `eligibility` (composes
+`shapes/foundation-instance-shapes.ttl` plus this file). See
+[`shapes/README.md`](../../shapes/README.md) for the full profile table
+(`foundation`, `eligibility`, `ontology_schema`).
+
 The example currently remains in its original repository locations to avoid
 breaking the established RDF, SHACL, OWL-RL, SPARQL, and rule tests. This is
 the explicit Stage 01 exception to a physical directory move:

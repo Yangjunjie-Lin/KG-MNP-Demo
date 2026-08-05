@@ -72,7 +72,7 @@ def test_case03_contract_block_and_trace(showcase, tmp_path):
     subgraph = trace["subgraph"]
     preds = {e["predicate"] for e in subgraph["edges"]}
     assert "usesEvidence" in preds
-    assert "producesBlockingReason" in preds
+    assert "hasBlockingReason" in preds
     assert "recommendsAction" in preds
     assert "triggeredByRuleVersion" in preds
     # No fabricated Evidence→triggeredByRuleVersion edge
@@ -147,7 +147,7 @@ def test_html_generated(showcase, tmp_path):
     assert "BLOCKED" in text
     assert "ACTIVE_CONTRACT_RESTRICTION" in text
     assert "资格判断追溯子图" in text
-    assert "producesBlockingReason" in text or "usesEvidence" in text
+    assert "hasBlockingReason" in text or "usesEvidence" in text
     assert "triggeredByRuleVersion" in text  # real predicate on BlockingReason
     assert "完整追溯链" not in text
 

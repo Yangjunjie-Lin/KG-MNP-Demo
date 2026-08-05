@@ -1,0 +1,416 @@
+@prefix mnp: <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#> .
+@prefix shapes: <https://yangjunjie-lin.github.io/KG-MNP-Demo/shapes#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+#################################################################
+# Eligibility instance profile — legacy use-case strictness
+# Migrated from shapes/mnp-shapes.ttl (ODR-002/003/004/006).
+#################################################################
+
+shapes:MNPCaseShape a sh:NodeShape ;
+    rdfs:label "Eligibility MNP case"@en ;
+    rdfs:label "资格用例携号转网案件"@zh-CN ;
+    sh:targetClass mnp:MNPCase ;
+    sh:severity sh:Violation ;
+    sh:property [
+        sh:path mnp:caseIdentifier ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "Each MNP case must have exactly one caseIdentifier."@en ;
+        sh:message "每个携号转网案件必须恰好有一个案件编号 (caseIdentifier)。"@zh-CN ;
+    ] ;
+    sh:property [
+        sh:path mnp:concernsNumber ;
+        sh:class mnp:PhoneNumber ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "Each MNP case must concern exactly one PhoneNumber."@en ;
+        sh:message "每个携号转网案件必须恰好关联一个号码 (concernsNumber)。"@zh-CN ;
+    ] ;
+    sh:property [
+        sh:path mnp:requestedBy ;
+        sh:class mnp:Subscriber ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "Each MNP case must have exactly one applicant (requestedBy)."@en ;
+        sh:message "每个携号转网案件必须恰好有一个申请人 (requestedBy)。"@zh-CN ;
+    ] ;
+    sh:property [
+        sh:path mnp:hasCaseEvidence ;
+        sh:class mnp:EvidenceRecord ;
+        sh:minCount 1 ;
+        sh:message "Each MNP case must have at least one case evidence (hasCaseEvidence)."@en ;
+        sh:message "每个携号转网案件必须至少关联一条案件证据 (hasCaseEvidence)。"@zh-CN ;
+    ] .
+
+shapes:EvidenceRecordShape a sh:NodeShape ;
+    rdfs:label "Eligibility evidence record"@en ;
+    rdfs:label "资格用例证据记录"@zh-CN ;
+    sh:targetClass mnp:EvidenceRecord ;
+    sh:severity sh:Violation ;
+    sh:property [
+        sh:path mnp:hasSourceSystem ;
+        sh:class mnp:InformationSystem ;
+        sh:minCount 1 ;
+        sh:message "EvidenceRecord must declare hasSourceSystem."@en ;
+        sh:message "证据记录必须标明来源系统 (hasSourceSystem)。"@zh-CN ;
+    ] ;
+    sh:property [
+        sh:path mnp:evidenceGeneratedAt ;
+        sh:datatype xsd:dateTime ;
+        sh:minCount 1 ;
+        sh:message "EvidenceRecord must have evidenceGeneratedAt."@en ;
+        sh:message "证据记录必须有生成时间 (evidenceGeneratedAt)。"@zh-CN ;
+    ] ;
+    sh:property [
+        sh:path mnp:evidenceStatus ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+        sh:in ( "VALID" "EXPIRED" "REVOKED" "UNKNOWN" ) ;
+        sh:message "EvidenceRecord must have evidenceStatus in VALID/EXPIRED/REVOKED/UNKNOWN."@en ;
+        sh:message "证据记录必须有有效状态 (VALID/EXPIRED/REVOKED/UNKNOWN)。"@zh-CN ;
+    ] .
+
+shapes:EligibilityAssessmentShape a sh:NodeShape ;
+    rdfs:label "Eligibility assessment"@en ;
+    rdfs:label "资格评估"@zh-CN ;
+    sh:targetClass mnp:EligibilityAssessment ;
+    sh:severity sh:Violation ;
+    sh:property [
+        sh:path mnp:usesEvidence ;
+        sh:class mnp:EvidenceRecord ;
+        sh:minCount 1 ;
+        sh:message "EligibilityAssessment must use at least one EvidenceRecord."@en ;
+        sh:message "资格评估必须至少使用一条证据 (usesEvidence)。"@zh-CN ;
+    ] ;
+    sh:property [
+        sh:path mnp:evaluatedByRule ;
+        sh:class mnp:EligibilityRule ;
+        sh:minCount 1 ;
+        sh:message "EligibilityAssessment must cite at least one EligibilityRule."@en ;
+        sh:message "资格评估必须至少引用一条规则 (evaluatedByRule)。"@zh-CN ;
+    ] ;
+    sh:property [
+        sh:path mnp:producesDecision ;
+        sh:class mnp:EligibilityDecision ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "EligibilityAssessment must produce exactly one EligibilityDecision."@en ;
+        sh:message "资格评估必须恰好产生一个决定 (producesDecision)。"@zh-CN ;
+    ] ;
+    sh:property [
+        sh:path mnp:assessmentTime ;
+        sh:datatype xsd:dateTime ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "EligibilityAssessment must have exactly one assessmentTime."@en ;
+        sh:message "资格评估必须恰好有一个评估时间 (assessmentTime)。"@zh-CN ;
+    ] ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "Assessment usesEvidence must be subset of the case hasCaseEvidence set."@en ;
+        sh:message "资格评估使用的证据不属于其对应案件的证据集合。"@zh-CN ;
+        sh:select """
+            PREFIX mnp: <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#>
+            SELECT $this ?evidence
+            WHERE {
+              $this mnp:aboutCase ?case ;
+                    mnp:usesEvidence ?evidence .
+              FILTER NOT EXISTS {
+                ?case mnp:hasCaseEvidence ?evidence .
+              }
+            }
+        """ ;
+    ] .
+
+shapes:BlockingDecisionShape a sh:NodeShape ;
+    rdfs:label "Blocking decision"@en ;
+    rdfs:label "阻塞决定"@zh-CN ;
+    sh:targetClass mnp:BlockingDecision ;
+    sh:severity sh:Violation ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "BlockingDecision produced by an assessment must have at least one hasBlockingReason."@en ;
+        sh:message "阻塞决定所在评估必须至少关联一个阻塞原因 (hasBlockingReason)。"@zh-CN ;
+        sh:select """
+            PREFIX mnp: <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#>
+            SELECT $this WHERE {
+                ?assessment mnp:producesDecision $this .
+                FILTER NOT EXISTS {
+                    $this mnp:hasBlockingReason ?reason .
+                }
+            }
+        """ ;
+    ] .
+
+shapes:BlockingReasonShape a sh:NodeShape ;
+    rdfs:label "Blocking reason"@en ;
+    rdfs:label "阻塞原因"@zh-CN ;
+    sh:targetClass mnp:BlockingReason ;
+    sh:severity sh:Violation ;
+    sh:property [
+        sh:path mnp:reasonCode ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "Each BlockingReason must have exactly one reasonCode."@en ;
+        sh:message "每个阻塞原因必须具有唯一原因编号 (reasonCode)。"@zh-CN ;
+    ] ;
+    sh:property [
+        sh:path mnp:supportedByEvidence ;
+        sh:class mnp:EvidenceRecord ;
+        sh:minCount 1 ;
+        sh:message "Each BlockingReason must cite supporting evidence."@en ;
+        sh:message "每个阻塞原因必须至少关联一条支持证据 (supportedByEvidence)。"@zh-CN ;
+    ] ;
+    sh:property [
+        sh:path mnp:triggeredByRule ;
+        sh:class mnp:EligibilityRule ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "Each BlockingReason must cite exactly one triggeredByRule."@en ;
+        sh:message "每个阻塞原因必须关联一条触发规则 (triggeredByRule)。"@zh-CN ;
+    ] ;
+    sh:property [
+        sh:path mnp:triggeredByRuleVersion ;
+        sh:class mnp:RuleVersion ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:message "Each BlockingReason must cite exactly one triggeredByRuleVersion."@en ;
+        sh:message "每个阻塞原因必须关联一个实际使用的规则版本 (triggeredByRuleVersion)。"@zh-CN ;
+    ] ;
+    sh:property [
+        sh:path mnp:citesClause ;
+        sh:class mnp:RegulatoryClause ;
+        sh:minCount 1 ;
+        sh:message "Each BlockingReason must cite a RegulatoryClause."@en ;
+        sh:message "每个阻塞原因必须关联监管条款 (citesClause)。"@zh-CN ;
+    ] ;
+    sh:property [
+        sh:path mnp:recommendsAction ;
+        sh:class mnp:RemediationAction ;
+        sh:minCount 1 ;
+        sh:message "Each BlockingReason must recommend a RemediationAction."@en ;
+        sh:message "每个阻塞原因必须具有处理动作 (recommendsAction)。"@zh-CN ;
+    ] ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "BlockingReason evidence must be used by the owning EligibilityAssessment."@en ;
+        sh:message "阻塞原因引用的证据不是所属资格评估实际使用的证据。"@zh-CN ;
+        sh:select """
+            PREFIX mnp: <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#>
+            SELECT $this ?evidence
+            WHERE {
+              $this mnp:supportedByEvidence ?evidence .
+              FILTER NOT EXISTS {
+                ?decision mnp:hasBlockingReason $this .
+                ?assessment mnp:producesDecision ?decision ;
+                            mnp:usesEvidence ?evidence .
+              }
+            }
+        """ ;
+    ] ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "BlockingReason rule must be evaluated by the owning EligibilityAssessment."@en ;
+        sh:message "阻塞原因引用的规则不是所属资格评估实际使用的规则。"@zh-CN ;
+        sh:select """
+            PREFIX mnp: <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#>
+            SELECT $this ?rule
+            WHERE {
+              $this mnp:triggeredByRule ?rule .
+              FILTER NOT EXISTS {
+                ?decision mnp:hasBlockingReason $this .
+                ?assessment mnp:producesDecision ?decision ;
+                            mnp:evaluatedByRule ?rule .
+              }
+            }
+        """ ;
+    ] ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "BlockingReason rule version must be used by the owning EligibilityAssessment."@en ;
+        sh:message "阻塞原因引用的规则版本不是所属资格评估实际使用的规则版本。"@zh-CN ;
+        sh:select """
+            PREFIX mnp: <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#>
+            SELECT $this ?rv
+            WHERE {
+              $this mnp:triggeredByRuleVersion ?rv .
+              FILTER NOT EXISTS {
+                ?decision mnp:hasBlockingReason $this .
+                ?assessment mnp:producesDecision ?decision ;
+                            mnp:usesRuleVersion ?rv .
+              }
+            }
+        """ ;
+    ] ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "BlockingReason clause must be operationalized by its triggeredByRule."@en ;
+        sh:message "阻塞原因引用的监管条款与其触发规则所执行的条款不一致。"@zh-CN ;
+        sh:select """
+            PREFIX mnp: <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#>
+            SELECT $this ?clause
+            WHERE {
+              $this mnp:triggeredByRule ?rule ;
+                    mnp:citesClause ?clause .
+              FILTER NOT EXISTS {
+                ?rule mnp:operationalizesClause ?clause .
+              }
+            }
+        """ ;
+    ] .
+
+shapes:EligibilityRuleShape a sh:NodeShape ;
+    rdfs:label "Eligibility rule"@en ;
+    rdfs:label "资格规则"@zh-CN ;
+    sh:targetClass mnp:EligibilityRule ;
+    sh:severity sh:Violation ;
+    sh:property [
+        sh:path mnp:ruleIdentifier ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+        sh:message "EligibilityRule must have ruleIdentifier."@en ;
+        sh:message "资格规则必须有规则编号 (ruleIdentifier)。"@zh-CN ;
+    ] ;
+    sh:property [
+        sh:path mnp:ruleVersion ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+        sh:message "EligibilityRule must have ruleVersion."@en ;
+        sh:message "资格规则必须有规则版本 (ruleVersion)。"@zh-CN ;
+    ] ;
+    sh:property [
+        sh:path mnp:effectiveFrom ;
+        sh:datatype xsd:dateTime ;
+        sh:minCount 1 ;
+        sh:message "EligibilityRule must have effectiveFrom."@en ;
+        sh:message "资格规则必须有生效时间 (effectiveFrom)。"@zh-CN ;
+    ] ;
+    sh:property [
+        sh:path mnp:operationalizesClause ;
+        sh:class mnp:RegulatoryClause ;
+        sh:minCount 1 ;
+        sh:message "EligibilityRule must operationalize at least one RegulatoryClause."@en ;
+        sh:message "资格规则必须至少关联一条监管条款 (operationalizesClause)。"@zh-CN ;
+    ] .
+
+shapes:ServiceContractShape a sh:NodeShape ;
+    rdfs:label "Service contract ACTIVE end time"@en ;
+    rdfs:label "服务合约 ACTIVE 截止时间"@zh-CN ;
+    sh:targetClass mnp:ServiceContract ;
+    sh:severity sh:Violation ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "ACTIVE ServiceContract must provide contractEndTime."@en ;
+        sh:message "状态为 ACTIVE 的有效合约必须提供截止时间 (contractEndTime)。"@zh-CN ;
+        sh:select """
+            PREFIX mnp: <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#>
+            SELECT $this WHERE {
+                $this mnp:contractStatusCode ?status .
+                FILTER(STR(?status) = "ACTIVE")
+                FILTER NOT EXISTS { $this mnp:contractEndTime ?end }
+            }
+        """ ;
+    ] .
+
+shapes:IdentityVerificationShape a sh:NodeShape ;
+    rdfs:label "Identity verification"@en ;
+    rdfs:label "实名核验"@zh-CN ;
+    sh:targetClass mnp:IdentityVerification ;
+    sh:severity sh:Violation ;
+    sh:property [
+        sh:path mnp:hasSourceSystem ;
+        sh:class mnp:InformationSystem ;
+        sh:minCount 1 ;
+        sh:message "IdentityVerification must declare hasSourceSystem."@en ;
+        sh:message "实名核验必须标明来源系统。"@zh-CN ;
+    ] ;
+    sh:property [
+        sh:path mnp:evidenceGeneratedAt ;
+        sh:datatype xsd:dateTime ;
+        sh:minCount 1 ;
+        sh:message "IdentityVerification must have evidenceGeneratedAt."@en ;
+        sh:message "实名核验必须有生成时间。"@zh-CN ;
+    ] .
+
+shapes:OutstandingBalanceObservationShape a sh:NodeShape ;
+    rdfs:label "Outstanding balance observation"@en ;
+    rdfs:label "欠费观测"@zh-CN ;
+    sh:targetClass mnp:OutstandingBalanceObservation ;
+    sh:severity sh:Violation ;
+    sh:property [
+        sh:path mnp:observedAmount ;
+        sh:datatype xsd:decimal ;
+        sh:minCount 1 ;
+        sh:message "OutstandingBalanceObservation must include observedAmount."@en ;
+        sh:message "欠费观测必须包含观测金额。"@zh-CN ;
+    ] ;
+    sh:property [
+        sh:path mnp:hasSourceSystem ;
+        sh:class mnp:InformationSystem ;
+        sh:minCount 1 ;
+        sh:message "OutstandingBalanceObservation must declare hasSourceSystem."@en ;
+        sh:message "欠费观测必须标明来源系统。"@zh-CN ;
+    ] .
+
+shapes:ServiceContractExtendedShape a sh:NodeShape ;
+    rdfs:label "Service contract status cardinality"@en ;
+    rdfs:label "服务合约状态基数"@zh-CN ;
+    sh:targetClass mnp:ServiceContract ;
+    sh:severity sh:Violation ;
+    sh:property [
+        sh:path mnp:contractStatusCode ;
+        sh:datatype xsd:string ;
+        sh:maxCount 1 ;
+        sh:message "contractStatusCode may appear at most once."@en ;
+        sh:message "合约状态码最多一个。"@zh-CN ;
+    ] .
+
+shapes:AuthorizationCodeShape a sh:NodeShape ;
+    rdfs:label "Authorization code"@en ;
+    rdfs:label "授权码"@zh-CN ;
+    sh:targetClass mnp:AuthorizationCode ;
+    sh:severity sh:Violation ;
+    sh:property [
+        sh:path mnp:authCodeStatus ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+        sh:in ( "VALID" "EXPIRED" "MISSING" "USED" "REVOKED" ) ;
+        sh:message "AuthorizationCode must have controlled authCodeStatus."@en ;
+        sh:message "授权码必须有受控状态。"@zh-CN ;
+    ] ;
+    sh:property [
+        sh:path mnp:authCodeIssuedAt ;
+        sh:datatype xsd:dateTime ;
+        sh:maxCount 1 ;
+    ] ;
+    sh:property [
+        sh:path mnp:authCodeValidUntil ;
+        sh:datatype xsd:dateTime ;
+        sh:maxCount 1 ;
+    ] .
+
+shapes:ProcessEventShape a sh:NodeShape ;
+    rdfs:label "Process event"@en ;
+    rdfs:label "流程事件"@zh-CN ;
+    sh:targetClass mnp:ProcessEvent ;
+    sh:severity sh:Violation ;
+    sh:property [
+        sh:path mnp:eventTypeCode ;
+        sh:datatype xsd:string ;
+        sh:minCount 1 ;
+        sh:message "ProcessEvent must have eventTypeCode."@en ;
+        sh:message "流程事件必须有事件类型码。"@zh-CN ;
+    ] ;
+    sh:property [
+        sh:path mnp:eventTime ;
+        sh:datatype xsd:dateTime ;
+        sh:minCount 1 ;
+        sh:message "ProcessEvent must have eventTime."@en ;
+        sh:message "流程事件必须有事件时间。"@zh-CN ;
+    ] .

@@ -1,4 +1,4 @@
-PREFIX mnp: <http://example.org/kg-mnp#>
+PREFIX mnp: <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#>
 SELECT ?assessment ?oldVersion ?newVersion ?requiresReassessment WHERE {
   ?new mnp:supersedesRuleVersion ?old .
   ?assessment mnp:usesRuleVersion ?old .

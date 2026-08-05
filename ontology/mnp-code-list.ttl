@@ -1,99 +1,173 @@
-@prefix mnp: <http://example.org/kg-mnp#> .
+@prefix mnp: <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#> .
 @prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 @prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
 
-#################################################################
-# Controlled code lists (status vocabularies)
-#################################################################
-
-<http://example.org/kg-mnp/code-list> a owl:Ontology ;
+<https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/mnp-code-list> a owl:Ontology ;
+    owl:versionIRI <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/1.0.0/mnp-code-list> ;
+    owl:versionInfo "1.0.0" ;
     dcterms:title "KG-MNP Code List Module"@en ;
-    dcterms:title "受控状态码表"@zh ;
-    owl:versionInfo "0.1.0" ;
-    rdfs:comment "Controlled status codes for evidence, contracts, process and authorization."@en .
-
+    dcterms:title "KG-MNP 码表模块"@zh-CN ;
+    dcterms:description "Controlled status code individuals for evidence, auth codes and process steps."@en ;
+    dcterms:description "证据、授权码与流程步骤等受控状态码个体。"@zh-CN ;
+    dcterms:license <https://www.apache.org/licenses/LICENSE-2.0> ;
+    owl:imports <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/mnp-core> .
 mnp:CodeListEntry a owl:Class ;
     rdfs:label "Code List Entry"@en ;
-    rdfs:label "码表项"@zh ;
-    mnp:moduleCode "CODE_LIST" .
-
-mnp:codeListName a owl:DatatypeProperty ;
-    rdfs:domain mnp:CodeListEntry ;
-    rdfs:range xsd:string ;
-    mnp:moduleCode "CODE_LIST" .
-
-mnp:codeValue a owl:DatatypeProperty ;
-    rdfs:domain mnp:CodeListEntry ;
-    rdfs:range xsd:string ;
-    mnp:moduleCode "CODE_LIST" .
+    rdfs:label "码表条目"@zh-CN ;
+    skos:definition "An entry in a controlled code list."@en ;
+    skos:definition "受控码表中的条目。"@zh-CN ;
+    mnp:moduleCode "CODE_LIST" ;
+    mnp:sourceStatus "PROJECT_GOVERNANCE" ;
+    mnp:definingModule "mnp-code-list" .
 
 mnp:codeLabelEn a owl:DatatypeProperty ;
+    rdfs:label "code label (English)"@en ;
+    rdfs:label "代码英文标签"@zh-CN ;
+    skos:definition "English label of a code list entry."@en ;
+    skos:definition "码表条目的英文标签。"@zh-CN ;
+    mnp:moduleCode "CODE_LIST" ;
+    mnp:sourceStatus "PROJECT_GOVERNANCE" ;
+    mnp:definingModule "mnp-code-list" ;
     rdfs:domain mnp:CodeListEntry ;
-    rdfs:range xsd:string ;
-    mnp:moduleCode "CODE_LIST" .
+    rdfs:range xsd:string .
 
 mnp:codeLabelZh a owl:DatatypeProperty ;
+    rdfs:label "code label (Chinese)"@en ;
+    rdfs:label "代码中文标签"@zh-CN ;
+    skos:definition "Chinese label of a code list entry."@en ;
+    skos:definition "码表条目的中文标签。"@zh-CN ;
+    mnp:moduleCode "CODE_LIST" ;
+    mnp:sourceStatus "PROJECT_GOVERNANCE" ;
+    mnp:definingModule "mnp-code-list" ;
     rdfs:domain mnp:CodeListEntry ;
-    rdfs:range xsd:string ;
-    mnp:moduleCode "CODE_LIST" .
+    rdfs:range xsd:string .
 
-# Evidence status
-mnp:Code-Evidence-VALID a mnp:CodeListEntry ;
-    mnp:codeListName "evidenceStatus" ;
-    mnp:codeValue "VALID" ;
-    mnp:codeLabelEn "Valid" ;
-    mnp:codeLabelZh "有效" ;
-    mnp:moduleCode "CODE_LIST" .
+mnp:codeListName a owl:DatatypeProperty ;
+    rdfs:label "code list name"@en ;
+    rdfs:label "码表名称"@zh-CN ;
+    skos:definition "Name of the controlled code list."@en ;
+    skos:definition "受控码表名称。"@zh-CN ;
+    mnp:moduleCode "CODE_LIST" ;
+    mnp:sourceStatus "PROJECT_GOVERNANCE" ;
+    mnp:definingModule "mnp-code-list" ;
+    rdfs:domain mnp:CodeListEntry ;
+    rdfs:range xsd:string .
 
-mnp:Code-Evidence-EXPIRED a mnp:CodeListEntry ;
-    mnp:codeListName "evidenceStatus" ;
-    mnp:codeValue "EXPIRED" ;
-    mnp:codeLabelEn "Expired" ;
-    mnp:codeLabelZh "过期" ;
-    mnp:moduleCode "CODE_LIST" .
-
-# Auth code status
-mnp:Code-Auth-VALID a mnp:CodeListEntry ;
-    mnp:codeListName "authCodeStatus" ;
-    mnp:codeValue "VALID" ;
-    mnp:codeLabelEn "Valid" ;
-    mnp:codeLabelZh "有效" ;
-    mnp:moduleCode "CODE_LIST" .
+mnp:codeValue a owl:DatatypeProperty ;
+    rdfs:label "code value"@en ;
+    rdfs:label "代码值"@zh-CN ;
+    skos:definition "Canonical value of a code list entry."@en ;
+    skos:definition "码表条目的规范代码值。"@zh-CN ;
+    mnp:moduleCode "CODE_LIST" ;
+    mnp:sourceStatus "PROJECT_GOVERNANCE" ;
+    mnp:definingModule "mnp-code-list" ;
+    rdfs:domain mnp:CodeListEntry ;
+    rdfs:range xsd:string .
 
 mnp:Code-Auth-EXPIRED a mnp:CodeListEntry ;
+    rdfs:label "Auth code EXPIRED"@en ;
+    rdfs:label "授权码-过期"@zh-CN ;
+    skos:definition "Controlled code for expired authorization code status."@en ;
+    skos:definition "授权码过期状态的受控代码。"@zh-CN ;
+    mnp:moduleCode "CODE_LIST" ;
+    mnp:sourceStatus "PROJECT_GOVERNANCE" ;
+    mnp:definingModule "mnp-code-list" ;
     mnp:codeListName "authCodeStatus" ;
     mnp:codeValue "EXPIRED" ;
     mnp:codeLabelEn "Expired" ;
-    mnp:codeLabelZh "已过期" ;
-    mnp:moduleCode "CODE_LIST" .
+    mnp:codeLabelZh "已过期" .
 
 mnp:Code-Auth-MISSING a mnp:CodeListEntry ;
+    rdfs:label "Auth code MISSING"@en ;
+    rdfs:label "授权码-缺失"@zh-CN ;
+    skos:definition "Controlled code for missing authorization code status."@en ;
+    skos:definition "授权码缺失状态的受控代码。"@zh-CN ;
+    mnp:moduleCode "CODE_LIST" ;
+    mnp:sourceStatus "PROJECT_GOVERNANCE" ;
+    mnp:definingModule "mnp-code-list" ;
     mnp:codeListName "authCodeStatus" ;
     mnp:codeValue "MISSING" ;
     mnp:codeLabelEn "Missing" ;
-    mnp:codeLabelZh "缺失" ;
-    mnp:moduleCode "CODE_LIST" .
+    mnp:codeLabelZh "缺失" .
 
-# Process step codes
-mnp:Code-Step-ELIGIBILITY_CHECK a mnp:CodeListEntry ;
-    mnp:codeListName "processStep" ;
-    mnp:codeValue "ELIGIBILITY_CHECK" ;
-    mnp:codeLabelEn "Eligibility Check" ;
-    mnp:codeLabelZh "资格检查" ;
-    mnp:moduleCode "CODE_LIST" .
+mnp:Code-Auth-VALID a mnp:CodeListEntry ;
+    rdfs:label "Auth code VALID"@en ;
+    rdfs:label "授权码-有效"@zh-CN ;
+    skos:definition "Controlled code for valid authorization code status."@en ;
+    skos:definition "授权码有效状态的受控代码。"@zh-CN ;
+    mnp:moduleCode "CODE_LIST" ;
+    mnp:sourceStatus "PROJECT_GOVERNANCE" ;
+    mnp:definingModule "mnp-code-list" ;
+    mnp:codeListName "authCodeStatus" ;
+    mnp:codeValue "VALID" ;
+    mnp:codeLabelEn "Valid" ;
+    mnp:codeLabelZh "有效" .
+
+mnp:Code-Evidence-EXPIRED a mnp:CodeListEntry ;
+    rdfs:label "Evidence status EXPIRED"@en ;
+    rdfs:label "证据状态-过期"@zh-CN ;
+    skos:definition "Controlled code for expired evidence status."@en ;
+    skos:definition "证据过期状态的受控代码。"@zh-CN ;
+    mnp:moduleCode "CODE_LIST" ;
+    mnp:sourceStatus "PROJECT_GOVERNANCE" ;
+    mnp:definingModule "mnp-code-list" ;
+    mnp:codeListName "evidenceStatus" ;
+    mnp:codeValue "EXPIRED" ;
+    mnp:codeLabelEn "Expired" ;
+    mnp:codeLabelZh "过期" .
+
+mnp:Code-Evidence-VALID a mnp:CodeListEntry ;
+    rdfs:label "Evidence status VALID"@en ;
+    rdfs:label "证据状态-有效"@zh-CN ;
+    skos:definition "Controlled code for valid evidence status."@en ;
+    skos:definition "证据有效状态的受控代码。"@zh-CN ;
+    mnp:moduleCode "CODE_LIST" ;
+    mnp:sourceStatus "PROJECT_GOVERNANCE" ;
+    mnp:definingModule "mnp-code-list" ;
+    mnp:codeListName "evidenceStatus" ;
+    mnp:codeValue "VALID" ;
+    mnp:codeLabelEn "Valid" ;
+    mnp:codeLabelZh "有效" .
 
 mnp:Code-Step-AUTHORIZATION_CODE_REQUEST a mnp:CodeListEntry ;
+    rdfs:label "Step AUTHORIZATION_CODE_REQUEST"@en ;
+    rdfs:label "步骤-授权码申请"@zh-CN ;
+    skos:definition "Controlled code for authorization code request step."@en ;
+    skos:definition "授权码申请流程步骤受控代码。"@zh-CN ;
+    mnp:moduleCode "CODE_LIST" ;
+    mnp:sourceStatus "PROJECT_GOVERNANCE" ;
+    mnp:definingModule "mnp-code-list" ;
     mnp:codeListName "processStep" ;
     mnp:codeValue "AUTHORIZATION_CODE_REQUEST" ;
     mnp:codeLabelEn "Authorization Code Request" ;
-    mnp:codeLabelZh "授权码申请" ;
-    mnp:moduleCode "CODE_LIST" .
+    mnp:codeLabelZh "授权码申请" .
+
+mnp:Code-Step-ELIGIBILITY_CHECK a mnp:CodeListEntry ;
+    rdfs:label "Step ELIGIBILITY_CHECK"@en ;
+    rdfs:label "步骤-资格检查"@zh-CN ;
+    skos:definition "Controlled code for eligibility check process step."@en ;
+    skos:definition "资格检查流程步骤受控代码。"@zh-CN ;
+    mnp:moduleCode "CODE_LIST" ;
+    mnp:sourceStatus "PROJECT_GOVERNANCE" ;
+    mnp:definingModule "mnp-code-list" ;
+    mnp:codeListName "processStep" ;
+    mnp:codeValue "ELIGIBILITY_CHECK" ;
+    mnp:codeLabelEn "Eligibility Check" ;
+    mnp:codeLabelZh "资格检查" .
 
 mnp:Code-Step-PORT_IN_SUBMISSION a mnp:CodeListEntry ;
+    rdfs:label "Step PORT_IN_SUBMISSION"@en ;
+    rdfs:label "步骤-携入提交"@zh-CN ;
+    skos:definition "Controlled code for port-in submission process step."@en ;
+    skos:definition "携入提交流程步骤受控代码。"@zh-CN ;
+    mnp:moduleCode "CODE_LIST" ;
+    mnp:sourceStatus "PROJECT_GOVERNANCE" ;
+    mnp:definingModule "mnp-code-list" ;
     mnp:codeListName "processStep" ;
     mnp:codeValue "PORT_IN_SUBMISSION" ;
     mnp:codeLabelEn "Port-In Submission" ;
-    mnp:codeLabelZh "携入提交" ;
-    mnp:moduleCode "CODE_LIST" .
+    mnp:codeLabelZh "携入提交" .

@@ -130,7 +130,7 @@ def _assessment_time_note() -> str:
 def extract_case_input_summary(graph: Graph, case_id: str) -> dict[str, Any]:
     """Parse RDF case facts into a human-readable input summary."""
     q = """
-    PREFIX mnp: <http://example.org/kg-mnp#>
+    PREFIX mnp: <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#>
     SELECT ?caseId ?masked ?applicant ?numStatus ?idMatch ?amount ?arrangement
            ?ctrStatus ?ctrEnd ?days
     WHERE {

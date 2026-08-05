@@ -1,0 +1,292 @@
+@prefix mnp: <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#> .
+@prefix shapes: <https://yangjunjie-lin.github.io/KG-MNP-Demo/shapes#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+
+#################################################################
+# Ontology schema profile — TBox annotation quality
+# Targets formal mnp: terms only (SPARQL). Domain/range not required.
+# Bilingual checks use SPARQL (sh:languageIn would reject sibling langs).
+#################################################################
+
+shapes:ClassLabelShape a sh:NodeShape ;
+    rdfs:label "Class bilingual labels"@en ;
+    rdfs:label "类双语标签"@zh-CN ;
+    sh:severity sh:Violation ;
+    sh:target [
+        a sh:SPARQLTarget ;
+        sh:select """
+            PREFIX owl: <http://www.w3.org/2002/07/owl#>
+            SELECT ?this WHERE {
+                ?this a owl:Class .
+                FILTER(STRSTARTS(STR(?this), "https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#"))
+            }
+        """ ;
+    ] ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "Formal class must have rdfs:label@en."@en ;
+        sh:message "正式类必须具有 rdfs:label@en。"@zh-CN ;
+        sh:select """
+            PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+            SELECT $this WHERE {
+                FILTER NOT EXISTS {
+                    $this rdfs:label ?label .
+                    FILTER(lang(?label) = "en")
+                }
+            }
+        """ ;
+    ] ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "Formal class must have rdfs:label@zh-CN."@en ;
+        sh:message "正式类必须具有 rdfs:label@zh-CN。"@zh-CN ;
+        sh:select """
+            PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+            SELECT $this WHERE {
+                FILTER NOT EXISTS {
+                    $this rdfs:label ?label .
+                    FILTER(lang(?label) = "zh-CN")
+                }
+            }
+        """ ;
+    ] .
+
+shapes:ClassDefinitionShape a sh:NodeShape ;
+    rdfs:label "Class bilingual definitions"@en ;
+    rdfs:label "类双语定义"@zh-CN ;
+    sh:severity sh:Violation ;
+    sh:target [
+        a sh:SPARQLTarget ;
+        sh:select """
+            PREFIX owl: <http://www.w3.org/2002/07/owl#>
+            SELECT ?this WHERE {
+                ?this a owl:Class .
+                FILTER(STRSTARTS(STR(?this), "https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#"))
+            }
+        """ ;
+    ] ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "Formal class must have skos:definition@en."@en ;
+        sh:message "正式类必须具有 skos:definition@en。"@zh-CN ;
+        sh:select """
+            PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+            SELECT $this WHERE {
+                FILTER NOT EXISTS {
+                    $this skos:definition ?def .
+                    FILTER(lang(?def) = "en")
+                }
+            }
+        """ ;
+    ] ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "Formal class must have skos:definition@zh-CN."@en ;
+        sh:message "正式类必须具有 skos:definition@zh-CN。"@zh-CN ;
+        sh:select """
+            PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+            SELECT $this WHERE {
+                FILTER NOT EXISTS {
+                    $this skos:definition ?def .
+                    FILTER(lang(?def) = "zh-CN")
+                }
+            }
+        """ ;
+    ] .
+
+shapes:ObjectPropertyLabelShape a sh:NodeShape ;
+    rdfs:label "Object property bilingual labels"@en ;
+    rdfs:label "对象属性双语标签"@zh-CN ;
+    sh:severity sh:Violation ;
+    sh:target [
+        a sh:SPARQLTarget ;
+        sh:select """
+            PREFIX owl: <http://www.w3.org/2002/07/owl#>
+            SELECT ?this WHERE {
+                ?this a owl:ObjectProperty .
+                FILTER(STRSTARTS(STR(?this), "https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#"))
+            }
+        """ ;
+    ] ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "Formal object property must have rdfs:label@en."@en ;
+        sh:message "正式对象属性必须具有 rdfs:label@en。"@zh-CN ;
+        sh:select """
+            PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+            SELECT $this WHERE {
+                FILTER NOT EXISTS {
+                    $this rdfs:label ?label .
+                    FILTER(lang(?label) = "en")
+                }
+            }
+        """ ;
+    ] ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "Formal object property must have rdfs:label@zh-CN."@en ;
+        sh:message "正式对象属性必须具有 rdfs:label@zh-CN。"@zh-CN ;
+        sh:select """
+            PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+            SELECT $this WHERE {
+                FILTER NOT EXISTS {
+                    $this rdfs:label ?label .
+                    FILTER(lang(?label) = "zh-CN")
+                }
+            }
+        """ ;
+    ] .
+
+shapes:ObjectPropertyDefinitionShape a sh:NodeShape ;
+    rdfs:label "Object property bilingual definitions"@en ;
+    rdfs:label "对象属性双语定义"@zh-CN ;
+    sh:severity sh:Violation ;
+    sh:target [
+        a sh:SPARQLTarget ;
+        sh:select """
+            PREFIX owl: <http://www.w3.org/2002/07/owl#>
+            SELECT ?this WHERE {
+                ?this a owl:ObjectProperty .
+                FILTER(STRSTARTS(STR(?this), "https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#"))
+            }
+        """ ;
+    ] ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "Formal object property must have skos:definition@en."@en ;
+        sh:message "正式对象属性必须具有 skos:definition@en。"@zh-CN ;
+        sh:select """
+            PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+            SELECT $this WHERE {
+                FILTER NOT EXISTS {
+                    $this skos:definition ?def .
+                    FILTER(lang(?def) = "en")
+                }
+            }
+        """ ;
+    ] ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "Formal object property must have skos:definition@zh-CN."@en ;
+        sh:message "正式对象属性必须具有 skos:definition@zh-CN。"@zh-CN ;
+        sh:select """
+            PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+            SELECT $this WHERE {
+                FILTER NOT EXISTS {
+                    $this skos:definition ?def .
+                    FILTER(lang(?def) = "zh-CN")
+                }
+            }
+        """ ;
+    ] .
+
+shapes:DatatypePropertyLabelShape a sh:NodeShape ;
+    rdfs:label "Datatype property bilingual labels"@en ;
+    rdfs:label "数据属性双语标签"@zh-CN ;
+    sh:severity sh:Violation ;
+    sh:target [
+        a sh:SPARQLTarget ;
+        sh:select """
+            PREFIX owl: <http://www.w3.org/2002/07/owl#>
+            SELECT ?this WHERE {
+                ?this a owl:DatatypeProperty .
+                FILTER(STRSTARTS(STR(?this), "https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#"))
+            }
+        """ ;
+    ] ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "Formal datatype property must have rdfs:label@en."@en ;
+        sh:message "正式数据属性必须具有 rdfs:label@en。"@zh-CN ;
+        sh:select """
+            PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+            SELECT $this WHERE {
+                FILTER NOT EXISTS {
+                    $this rdfs:label ?label .
+                    FILTER(lang(?label) = "en")
+                }
+            }
+        """ ;
+    ] ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "Formal datatype property must have rdfs:label@zh-CN."@en ;
+        sh:message "正式数据属性必须具有 rdfs:label@zh-CN。"@zh-CN ;
+        sh:select """
+            PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+            SELECT $this WHERE {
+                FILTER NOT EXISTS {
+                    $this rdfs:label ?label .
+                    FILTER(lang(?label) = "zh-CN")
+                }
+            }
+        """ ;
+    ] .
+
+shapes:DatatypePropertyDefinitionShape a sh:NodeShape ;
+    rdfs:label "Datatype property bilingual definitions"@en ;
+    rdfs:label "数据属性双语定义"@zh-CN ;
+    sh:severity sh:Violation ;
+    sh:target [
+        a sh:SPARQLTarget ;
+        sh:select """
+            PREFIX owl: <http://www.w3.org/2002/07/owl#>
+            SELECT ?this WHERE {
+                ?this a owl:DatatypeProperty .
+                FILTER(STRSTARTS(STR(?this), "https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#"))
+            }
+        """ ;
+    ] ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "Formal datatype property must have skos:definition@en."@en ;
+        sh:message "正式数据属性必须具有 skos:definition@en。"@zh-CN ;
+        sh:select """
+            PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+            SELECT $this WHERE {
+                FILTER NOT EXISTS {
+                    $this skos:definition ?def .
+                    FILTER(lang(?def) = "en")
+                }
+            }
+        """ ;
+    ] ;
+    sh:sparql [
+        a sh:SPARQLConstraint ;
+        sh:message "Formal datatype property must have skos:definition@zh-CN."@en ;
+        sh:message "正式数据属性必须具有 skos:definition@zh-CN。"@zh-CN ;
+        sh:select """
+            PREFIX skos: <http://www.w3.org/2004/02/skos/core#>
+            SELECT $this WHERE {
+                FILTER NOT EXISTS {
+                    $this skos:definition ?def .
+                    FILTER(lang(?def) = "zh-CN")
+                }
+            }
+        """ ;
+    ] .
+
+shapes:OntologyVersionIRIShape a sh:NodeShape ;
+    rdfs:label "Ontology version IRI"@en ;
+    rdfs:label "本体版本 IRI"@zh-CN ;
+    sh:severity sh:Violation ;
+    sh:target [
+        a sh:SPARQLTarget ;
+        sh:select """
+            PREFIX owl: <http://www.w3.org/2002/07/owl#>
+            SELECT ?this WHERE {
+                ?this a owl:Ontology .
+                FILTER(STRSTARTS(STR(?this), "https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/"))
+            }
+        """ ;
+    ] ;
+    sh:property [
+        sh:path owl:versionIRI ;
+        sh:minCount 1 ;
+        sh:nodeKind sh:IRI ;
+        sh:message "Ontology resource must declare owl:versionIRI as an IRI."@en ;
+        sh:message "本体资源必须声明 IRI 形式的 owl:versionIRI。"@zh-CN ;
+    ] .

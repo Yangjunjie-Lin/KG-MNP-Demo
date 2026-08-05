@@ -1,57 +1,56 @@
-@prefix mnp: <http://example.org/kg-mnp#> .
+@prefix mnp: <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#> .
+@prefix data: <https://yangjunjie-lin.github.io/KG-MNP-Demo/data/> .
 @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
 @prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
 
 # CASE-03: active contract not expired → BLOCKED (contract)
 
-mnp:Sub-03 a mnp:Subscriber ;
-    mnp:ownsPhoneNumber mnp:Phone-03 ;
-    mnp:billedThrough mnp:Acct-03 ;
-    mnp:hasSubscription mnp:Subscr-03 ;
-    mnp:relatedAccount mnp:Acct-03 .
-
-mnp:Phone-03 a mnp:PhoneNumber ;
+data:Sub-03 a mnp:Subscriber ;
+    mnp:holdsSubscription data:Subscr-03  .
+data:Phone-03 a mnp:PhoneNumber ;
+    mnp:assignedToSubscription data:Subscr-03 ;
     mnp:maskedPhoneNumber "138****0003" .
 
-mnp:Acct-03 a mnp:TelecomAccount .
+data:Acct-03 a mnp:TelecomAccount .
 
-mnp:Subscr-03 a mnp:ServiceSubscription ;
-    mnp:subscribesToService mnp:Svc-Mobile-Basic ;
+data:Subscr-03 a mnp:ServiceSubscription ;
+    mnp:billedThrough data:Acct-03 ;
+    mnp:subscribesToService data:Svc-Mobile-Basic ;
     mnp:subscriptionStatusCode "ACTIVE" ;
-    mnp:governedByContract mnp:Contract-03 .
+    mnp:governedByContract data:Contract-03 .
 
-mnp:Contract-03 a mnp:ServiceContract ;
+data:Contract-03 a mnp:ServiceContract ;
     mnp:contractStatusCode "ACTIVE" ;
     mnp:contractEndTime "2027-01-01T00:00:00Z"^^xsd:dateTime .
 
-mnp:CASE-03 a mnp:MNPCase ;
+data:CASE-03 a mnp:MNPCase ;
     mnp:caseIdentifier "CASE-03" ;
-    mnp:concernsNumber mnp:Phone-03 ;
-    mnp:requestedBy mnp:Sub-03 ;
+    mnp:concernsNumber data:Phone-03 ;
+    mnp:requestedBy data:Sub-03 ;
     mnp:hasCaseEvidence
-        mnp:Ev-03-ID ,
-        mnp:Ev-03-NUM ,
-        mnp:Ev-03-BILL ,
-        mnp:Ev-03-CTR ,
-        mnp:Ev-03-PORT .
+        data:Ev-03-ID ,
+        data:Ev-03-NUM ,
+        data:Ev-03-BILL ,
+        data:Ev-03-CTR ,
+        data:Ev-03-PORT .
 
-mnp:Ev-03-ID a mnp:SystemObservation ;
+data:Ev-03-ID a mnp:SystemObservation ;
     mnp:evidenceType "IDENTITY_MATCH" ;
     mnp:identityMatchFlag true ;
     mnp:evidenceStatus "VALID" ;
     mnp:evidenceGeneratedAt "2026-06-20T10:00:00Z"^^xsd:dateTime ;
     mnp:evidenceValidUntil "2026-12-31T23:59:59Z"^^xsd:dateTime ;
-    mnp:hasSourceSystem mnp:SYS-CRM .
+    mnp:hasSourceSystem data:SYS-CRM .
 
-mnp:Ev-03-NUM a mnp:SystemObservation ;
+data:Ev-03-NUM a mnp:SystemObservation ;
     mnp:evidenceType "NUMBER_STATUS" ;
     mnp:numberStatusCode "ACTIVE" ;
     mnp:evidenceStatus "VALID" ;
     mnp:evidenceGeneratedAt "2026-06-20T10:05:00Z"^^xsd:dateTime ;
     mnp:evidenceValidUntil "2026-12-31T23:59:59Z"^^xsd:dateTime ;
-    mnp:hasSourceSystem mnp:SYS-HLR .
+    mnp:hasSourceSystem data:SYS-HLR .
 
-mnp:Ev-03-BILL a mnp:SystemObservation ;
+data:Ev-03-BILL a mnp:SystemObservation ;
     mnp:evidenceType "BILLING_BALANCE" ;
     mnp:observedAmount "0.00"^^xsd:decimal ;
     mnp:currencyCode "CNY" ;
@@ -59,21 +58,21 @@ mnp:Ev-03-BILL a mnp:SystemObservation ;
     mnp:evidenceStatus "VALID" ;
     mnp:evidenceGeneratedAt "2026-06-20T10:10:00Z"^^xsd:dateTime ;
     mnp:evidenceValidUntil "2026-12-31T23:59:59Z"^^xsd:dateTime ;
-    mnp:hasSourceSystem mnp:SYS-BILLING .
+    mnp:hasSourceSystem data:SYS-BILLING .
 
-mnp:Ev-03-CTR a mnp:SystemObservation ;
+data:Ev-03-CTR a mnp:SystemObservation ;
     mnp:evidenceType "CONTRACT_STATUS" ;
     mnp:contractStatusCode "ACTIVE" ;
     mnp:contractEndTime "2027-01-01T00:00:00Z"^^xsd:dateTime ;
     mnp:evidenceStatus "VALID" ;
     mnp:evidenceGeneratedAt "2026-06-20T10:15:00Z"^^xsd:dateTime ;
     mnp:evidenceValidUntil "2026-12-31T23:59:59Z"^^xsd:dateTime ;
-    mnp:hasSourceSystem mnp:SYS-CONTRACT .
+    mnp:hasSourceSystem data:SYS-CONTRACT .
 
-mnp:Ev-03-PORT a mnp:SystemObservation ;
+data:Ev-03-PORT a mnp:SystemObservation ;
     mnp:evidenceType "PORTING_HISTORY" ;
     mnp:daysSinceLastPort 250 ;
     mnp:evidenceStatus "VALID" ;
     mnp:evidenceGeneratedAt "2026-06-20T10:20:00Z"^^xsd:dateTime ;
     mnp:evidenceValidUntil "2026-12-31T23:59:59Z"^^xsd:dateTime ;
-    mnp:hasSourceSystem mnp:SYS-MNP .
+    mnp:hasSourceSystem data:SYS-MNP .

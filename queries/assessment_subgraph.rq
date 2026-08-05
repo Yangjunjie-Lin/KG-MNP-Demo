@@ -1,4 +1,4 @@
-PREFIX mnp: <http://example.org/kg-mnp#>
+PREFIX mnp: <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#>
 
 # Sole runtime source of assessment dependency edges.
 # Bind ?requestedCaseId via RDFLib initBindings (xsd:string literal).
@@ -24,16 +24,22 @@ WHERE {
       mnp:evaluatedByRule,
       mnp:usesRuleVersion,
       mnp:producesDecision,
-      mnp:producesBlockingReason,
-      mnp:dependsOn,
       mnp:markedForReassessment
     ))
     BIND(?assessment AS ?subject)
   }
   UNION
   {
+    ?assessment mnp:producesDecision ?decision .
+    BIND(?assessment AS ?subject)
+    BIND(mnp:producesDecision AS ?predicate)
+    BIND(?decision AS ?object)
+  }
+  UNION
+  {
     ?reason a mnp:BlockingReason .
-    ?assessment mnp:producesBlockingReason ?reason .
+    ?assessment mnp:producesDecision ?decision .
+    ?decision mnp:hasBlockingReason ?reason .
     ?reason ?predicate ?object .
     FILTER(?predicate IN (
       mnp:supportedByEvidence,
@@ -43,6 +49,14 @@ WHERE {
       mnp:recommendsAction
     ))
     BIND(?reason AS ?subject)
+  }
+  UNION
+  {
+    ?assessment mnp:producesDecision ?decision .
+    ?decision mnp:hasBlockingReason ?reason .
+    BIND(?decision AS ?subject)
+    BIND(mnp:hasBlockingReason AS ?predicate)
+    BIND(?reason AS ?object)
   }
   UNION
   {
@@ -60,16 +74,6 @@ WHERE {
     BIND(?clause AS ?subject)
     BIND(mnp:partOfDocument AS ?predicate)
     BIND(?doc AS ?object)
-  }
-  UNION
-  {
-    ?assessment mnp:dependsOn ?dependency .
-    ?dependency ?predicate ?object .
-    FILTER(?predicate IN (
-      mnp:dependsOnEvidence,
-      mnp:dependsOnRuleVersion
-    ))
-    BIND(?dependency AS ?subject)
   }
   UNION
   {

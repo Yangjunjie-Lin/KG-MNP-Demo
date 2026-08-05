@@ -9,7 +9,7 @@ import yaml
 ROOT = Path(__file__).resolve().parents[1]
 CQ_DIR = ROOT / "competency_questions"
 Q_DIR = CQ_DIR / "queries"
-PREFIX = "PREFIX mnp: <http://example.org/kg-mnp#>\n"
+PREFIX = "PREFIX mnp: <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#>\n"
 
 CQS = [
     ("CQ-01", "当前是否可携转", "What is the current eligibility decision?", "Returns the eligibility decision for a case.", ["decision"], "cq01_current_eligibility.rq", "CASE-01"),

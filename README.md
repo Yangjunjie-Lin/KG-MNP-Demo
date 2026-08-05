@@ -27,67 +27,83 @@ GraphDB / WebVOWL
 |---|---|
 | Stage 01 Repository Baseline | PASS |
 | Stage 02 Semantic Governance | PASS |
-| Stage 03–08 | 尚未实施 |
+| Stage 03 Formal OWL/SHACL Semantic Audit and Ontology Release Baseline | PASS |
+| Stage 04–08 | NOT STARTED |
 
-当前已经完成旧系统退场，并冻结语义治理。当前还没有 Modeling Proposal
-Pipeline、Review/Confirm 实现、正式 IRI 迁移、GraphDB 或 WebVOWL。
+Stage 03 已完成正式 IRI 迁移、模块归属、Protégé catalog、SHACL profile 拆分，
+以及 OWL 2 DL（ROBOT + HermiT）一致性检查。尚未实施 Modeling Proposal
+Pipeline、Review/Confirm、GraphDB 或 WebVOWL。
 
 ## 当前边界
 
 - 当前没有前端，也没有 Node、Vite、Playwright 或 Nginx 运行路径。
-- 当前不以携号转网资格判断为中央任务。
-- 当前没有 HTTP API 或 SQLite 执行历史服务。
-- 当前不使用 Neo4j 作为正式后端；相关实现和 Docker 入口已移除。
-- GraphDB 和 WebVOWL 是后续阶段的发布目标，本阶段尚未接入。
-- 现有资格规则、案例和追溯代码仅作为下游示例资产保留。
-- 语义权威、TBox/ABox 边界、状态词汇、命名空间与发布政策已冻结；正式编译器尚未实现。
+- 当前不以携号转网资格判断为中央任务；九个 legacy 案例作为 eligibility profile 回归资产保留。
+- 当前没有 HTTP API 或 SQLite 执行历史服务作为本阶段交付物。
+- GraphDB 和 WebVOWL 是后续阶段目标，本阶段尚未接入。
+- 正式本体发布版本为 **1.0.0**；Python 包版本独立，不因本体版本机械升高。
 
 ## 保留的基础资产
 
 | 目录 | 作用 |
 |---|---|
-| `ontology/` | 现有模块化 OWL/Turtle 本体 |
-| `shapes/` | SHACL 数据质量约束 |
+| `ontology/` | 正式模块化 OWL/Turtle（含 `kg-mnp.ttl` 与 `catalog-v001.xml`） |
+| `shapes/` | foundation / ontology-schema SHACL |
+| `examples/eligibility-use-case/shapes/` | legacy 资格用例 SHACL |
 | `mappings/` | TM Forum 字段到 KG-MNP 术语的显式映射 |
 | `queries/` | 离线 SPARQL 查询 |
-| `config/ontology_modules.yaml` | 本体模块装载清单 |
-| `config/namespaces.yaml` | 未来正式 IRI 命名空间政策 |
+| `config/ontology_modules.yaml` | 本体模块装载清单（Loader 唯一来源） |
+| `config/namespaces.yaml` | 正式 IRI 命名空间政策 |
 | `config/modeling-statuses.yaml` | 审核状态 / 问题类型 / 发布范围词汇 |
 | `config/ontology-release-policy.yaml` | 本体版本发布政策 |
 | `references/` | 来源、许可与复用审计材料 |
-| `src/kg_mnp_demo/loader.py` | RDFLib 本体与案例加载入口 |
+| `src/kg_mnp_demo/loader.py` | 配置驱动的 RDFLib 离线加载 |
 | `src/kg_mnp_demo/inference.py` | OWL-RL 离线推理 |
-| `src/kg_mnp_demo/validator.py` | pySHACL 离线验证 |
-
-本阶段没有修改这些本体资产的核心业务语义。现有 TTL 仍可能使用
-`example.org`；正式 IRI 迁移属于 Stage 03。
-
-WIDOCO 文档站点是可再生成的构建输出，不进入版本控制；需要时运行
-`scripts/generate_docs.sh`，产物写入已忽略的 `docs/ontology-site/`。
+| `src/kg_mnp_demo/validator.py` | SHACL profile 验证 |
 
 ## 安装与验证
 
-需要 Python 3.11+。
+需要 Python 3.11+。完整 OWL 2 DL 检查需要 Java 17+（ROBOT/HermiT）。
 
 ```bash
 make install
 make verify-stage-01
-make verify-semantic-governance
 make verify-stage-02
+make verify-stage-03-core
+make reasoner-check
+make verify-reasoner-report
+make verify-stage-03
 ```
 
-等价的独立命令为：
+### Protégé
+
+打开 `ontology/kg-mnp.ttl`，确保同目录 `catalog-v001.xml` 可用（离线 imports）。
+
+### SHACL profiles
+
+```python
+from kg_mnp_demo.validator import validate_graph, validate_ontology_schema
+validate_graph(data_graph, profile="foundation")
+validate_graph(data_graph, profile="eligibility")
+validate_ontology_schema(ontology_graph)
+```
+
+### Legacy CLI
+
+```bash
+kg-mnp-eligibility evaluate --case CASE-03 --backend rdf
+kg-mnp-eligibility trace --case CASE-03 --backend rdf
+```
 
 ```bash
 python -m pip install -e ".[dev]"
-python -m pytest -q tests/governance/test_stage_01_closure.py
 python -m pytest -q tests/governance
 python scripts/check_references.py
 python scripts/check_repo_hygiene.py
 ```
 
-测试与 CI 门禁不依赖 Node、浏览器、Docker、数据库服务或外部运行服务；首次安装
-Python 依赖时仍可能需要访问包索引。CI 执行 `make verify-stage-02`。
+测试与 CI 门禁不依赖 Node、浏览器、Docker、数据库服务或外部 GraphDB/WebVOWL；
+完整 reasoner 需要本机/CI 的 Java。CI 执行 `make verify-stage-03-core`、
+`make reasoner-check` 与 `make verify-reasoner-report`。
 
 ## Legacy Eligibility Use Case
 
@@ -109,10 +125,12 @@ kg-mnp-eligibility evaluate --case CASE-03 --backend rdf
 
 ## 工程记录
 
-- Stage 01 基线与收尾：
-  [`docs/migration/stage-01-repository-baseline.md`](docs/migration/stage-01-repository-baseline.md)
+- Stage 03 本体发布基线：
+  [`docs/migration/stage-03-ontology-release.md`](docs/migration/stage-03-ontology-release.md)
 - Stage 02 语义治理：
   [`docs/migration/stage-02-semantic-governance.md`](docs/migration/stage-02-semantic-governance.md)
+- Stage 01 基线与收尾：
+  [`docs/migration/stage-01-repository-baseline.md`](docs/migration/stage-01-repository-baseline.md)
 - 语义权威 ADR：
   [`docs/adr/ADR-001-semantic-authority.md`](docs/adr/ADR-001-semantic-authority.md)
 - 本体模块说明：[`ontology/README.md`](ontology/README.md)

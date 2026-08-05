@@ -1,9 +1,9 @@
-PREFIX mnp: <http://example.org/kg-mnp#>
+PREFIX mnp: <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#>
 SELECT ?caseId ?contract ?contractStatus ?contractEnd WHERE {
   ?case a mnp:MNPCase ; mnp:caseIdentifier ?caseId ; mnp:requestedBy ?sub .
   FILTER(STR(?caseId) = STR(?requestedCaseId))
   OPTIONAL {
-    ?sub mnp:hasSubscription ?ss .
+    ?sub mnp:holdsSubscription ?ss .
     ?ss mnp:governedByContract ?contract .
     OPTIONAL { ?contract mnp:contractStatusCode ?contractStatus }
     OPTIONAL { ?contract mnp:contractEndTime ?contractEnd }

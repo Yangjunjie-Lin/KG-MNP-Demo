@@ -7,7 +7,7 @@ from rdflib.namespace import RDF
 from kg_mnp_demo.evaluator import evaluate_case
 from kg_mnp_demo.inference import apply_owlrl
 from kg_mnp_demo.loader import load_case_graph
-from kg_mnp_demo.namespaces import MNP
+from kg_mnp_demo.namespaces import DATA, MNP
 from kg_mnp_demo.validator import validate_graph
 
 
@@ -99,12 +99,12 @@ def test_foreign_evidence_on_reason_fails():
 
     g = _assessed("CASE-03")
     reason = next(g.subjects(RDF.type, MNP.BlockingReason))
-    foreign = MNP["ForeignEv-For-Reason"]
+    foreign = DATA["ForeignEv-For-Reason"]
     g.add((foreign, RDF.type, MNP.EvidenceRecord))
     g.add((foreign, MNP.evidenceType, Literal("CONTRACT_STATUS")))
     g.add((foreign, MNP.evidenceStatus, Literal("VALID")))
     g.add((foreign, MNP.evidenceGeneratedAt, Literal("2026-06-20T10:15:00Z")))
-    g.add((foreign, MNP.hasSourceSystem, MNP["SYS-CONTRACT"]))
+    g.add((foreign, MNP.hasSourceSystem, DATA["SYS-CONTRACT"]))
     for triple in list(g.triples((reason, MNP.supportedByEvidence, None))):
         g.remove(triple)
     g.add((reason, MNP.supportedByEvidence, foreign))
@@ -117,13 +117,13 @@ def test_foreign_rule_version_on_reason_fails():
     g = _assessed("CASE-03")
     reason = next(g.subjects(RDF.type, MNP.BlockingReason))
     # Point to a version the assessment did not use for this failure path
-    foreign_rv = MNP["RuleVersion-MNP-ELIG-005-1-1"]
+    foreign_rv = DATA["RuleVersion-MNP-ELIG-005-1-1"]
     for triple in list(g.triples((reason, MNP.triggeredByRuleVersion, None))):
         g.remove(triple)
     g.add((reason, MNP.triggeredByRuleVersion, foreign_rv))
     # Ensure assessment does not also use that version for the reason's assessment
     # (assessment may still use 1.1 for porting rule — remove from assessment)
-    assessment = MNP["Assessment-CASE-03"]
+    assessment = DATA["Assessment-CASE-03"]
     for triple in list(g.triples((assessment, MNP.usesRuleVersion, foreign_rv))):
         g.remove(triple)
     result = validate_graph(g)
@@ -135,7 +135,7 @@ def test_unrelated_clause_on_reason_fails():
     g = _assessed("CASE-03")
     reason = next(g.subjects(RDF.type, MNP.BlockingReason))
     # Cite a clause not operationalized by the triggered rule
-    wrong_clause = MNP["Clause-01"]
+    wrong_clause = DATA["Clause-01"]
     for triple in list(g.triples((reason, MNP.citesClause, None))):
         g.remove(triple)
     g.add((reason, MNP.citesClause, wrong_clause))

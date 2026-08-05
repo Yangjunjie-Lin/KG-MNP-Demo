@@ -252,8 +252,6 @@ def format_subgraph_tree(subgraph: dict[str, Any]) -> str:
             "evaluatedByRule",
             "usesRuleVersion",
             "producesDecision",
-            "producesBlockingReason",
-            "dependsOn",
             "aboutCase",
             "markedForReassessment",
         ]
@@ -297,9 +295,10 @@ def format_subgraph_tree(subgraph: dict[str, Any]) -> str:
                             )
                 continue
 
-            if pred == "producesBlockingReason":
+            if pred == "producesDecision":
                 lines.append(f"{indent}{pred_branch} {pred}")
                 reason_preds = [
+                    "hasBlockingReason",
                     "supportedByEvidence",
                     "triggeredByRule",
                     "triggeredByRuleVersion",
@@ -308,43 +307,40 @@ def format_subgraph_tree(subgraph: dict[str, Any]) -> str:
                 ]
                 for t_idx, target in enumerate(targets):
                     lines.append(f"{child_indent}{describe(target)}")
-                    r_children = children(target)
-                    r_by: dict[str, list[str]] = {}
-                    for e in r_children:
-                        r_by.setdefault(e["predicate"], []).append(e["target"])
-                    r_ordered = [p for p in reason_preds if p in r_by]
-                    r_ordered += sorted(p for p in r_by if p not in reason_preds)
-                    for rp_idx, rpred in enumerate(r_ordered):
-                        r_last = rp_idx == len(r_ordered) - 1
-                        marker = "└──" if r_last else "├──"
-                        for tgt in sorted(set(r_by[rpred]), key=_local):
-                            tgt_label = nodes_by_id.get(tgt, {}).get("label") or _local(tgt)
-                            lines.append(
-                                f"{child_indent}{marker} {rpred} → {tgt_label}"
-                            )
+                    # Blocking reasons hang off the decision
+                    br_edges = [
+                        e
+                        for e in children(target)
+                        if e["predicate"] == "hasBlockingReason"
+                    ]
+                    for br in br_edges:
+                        reason = br["target"]
+                        lines.append(f"{child_indent}└── hasBlockingReason")
+                        lines.append(f"{child_indent}    {describe(reason)}")
+                        r_children = children(reason)
+                        r_by: dict[str, list[str]] = {}
+                        for e in r_children:
+                            r_by.setdefault(e["predicate"], []).append(e["target"])
+                        r_ordered = [p for p in reason_preds if p in r_by and p != "hasBlockingReason"]
+                        r_ordered += sorted(
+                            p for p in r_by if p not in reason_preds and p != "hasBlockingReason"
+                        )
+                        for rp_idx, rpred in enumerate(r_ordered):
+                            r_last = rp_idx == len(r_ordered) - 1
+                            marker = "└──" if r_last else "├──"
+                            for tgt in sorted(set(r_by[rpred]), key=_local):
+                                tgt_label = nodes_by_id.get(tgt, {}).get("label") or _local(tgt)
+                                lines.append(
+                                    f"{child_indent}    {marker} {rpred} → {tgt_label}"
+                                )
                     if t_idx < len(targets) - 1:
                         lines.append(f"{child_indent}")
                 continue
 
+            if pred == "producesBlockingReason":
+                continue
+
             if pred == "dependsOn":
-                lines.append(f"{indent}{pred_branch} {pred}")
-                for target in targets:
-                    lines.append(f"{child_indent}{describe(target)}")
-                    d_children = children(target)
-                    d_by: dict[str, list[str]] = {}
-                    for e in d_children:
-                        d_by.setdefault(e["predicate"], []).append(e["target"])
-                    d_order = ["dependsOnEvidence", "dependsOnRuleVersion"]
-                    d_ordered = [p for p in d_order if p in d_by]
-                    d_ordered += sorted(p for p in d_by if p not in d_order)
-                    for dp_idx, dpred in enumerate(d_ordered):
-                        d_last = dp_idx == len(d_ordered) - 1
-                        marker = "└──" if d_last else "├──"
-                        for tgt in sorted(set(d_by[dpred]), key=_local):
-                            tgt_label = nodes_by_id.get(tgt, {}).get("label") or _local(tgt)
-                            lines.append(
-                                f"{child_indent}{marker} {dpred} → {tgt_label}"
-                            )
                 continue
 
             lines.append(f"{indent}{pred_branch} {pred}")
@@ -400,8 +396,6 @@ def render_subgraph_html(subgraph: dict[str, Any]) -> str:
             "evaluatedByRule",
             "usesRuleVersion",
             "producesDecision",
-            "producesBlockingReason",
-            "dependsOn",
         ]
         a_children = children(assessment)
         by_pred: dict[str, list[str]] = {}
@@ -421,27 +415,29 @@ def render_subgraph_html(subgraph: dict[str, Any]) -> str:
                             f"<ul><li><span class='pred'>operationalizesClause</span>"
                             f"<div class='node'>{esc(node_title(ce['target']))}</div></li></ul>"
                         )
-                if pred == "producesBlockingReason":
+                if pred == "producesDecision":
                     parts.append("<ul>")
                     for re in children(target):
-                        tgt_label = nodes_by_id.get(re["target"], {}).get("label") or _local(
-                            re["target"]
-                        )
+                        if re["predicate"] != "hasBlockingReason":
+                            continue
+                        reason = re["target"]
                         parts.append(
-                            f"<li><span class='pred'>{esc(re['predicate'])}</span> → "
-                            f"<span class='leaf'>{esc(tgt_label)}</span></li>"
+                            f"<li><span class='pred'>hasBlockingReason</span>"
+                            f"<div class='node'>{esc(node_title(reason))}</div><ul>"
                         )
-                    parts.append("</ul>")
-                if pred == "dependsOn":
-                    parts.append("<ul>")
-                    for de in children(target):
-                        tgt_label = nodes_by_id.get(de["target"], {}).get("label") or _local(
-                            de["target"]
-                        )
-                        parts.append(
-                            f"<li><span class='pred'>{esc(de['predicate'])}</span> → "
-                            f"<span class='leaf'>{esc(tgt_label)}</span></li>"
-                        )
+                        for child in children(reason):
+                            if child["predicate"] in {
+                                "supportedByEvidence",
+                                "triggeredByRule",
+                                "triggeredByRuleVersion",
+                                "citesClause",
+                                "recommendsAction",
+                            }:
+                                parts.append(
+                                    f"<li><span class='pred'>{esc(child['predicate'])}</span>"
+                                    f"<div class='node'>{esc(node_title(child['target']))}</div></li>"
+                                )
+                        parts.append("</ul></li>")
                     parts.append("</ul>")
                 parts.append("</li>")
             parts.append("</ul></li>")

@@ -1,4 +1,4 @@
-PREFIX mnp: <http://example.org/kg-mnp#>
+PREFIX mnp: <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#>
 SELECT ?caseId ?evidence ?evidenceType ?sourceSystem ?generatedAt ?validUntil WHERE {
   ?case a mnp:MNPCase ; mnp:caseIdentifier ?caseId ; mnp:hasCaseEvidence ?evidence .
   FILTER(STR(?caseId) = STR(?requestedCaseId))
