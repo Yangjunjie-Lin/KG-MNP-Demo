@@ -9,7 +9,7 @@
       "clauseId": "REG-MNP-CLAUSE-04",
       "clauseText": "在有效协议期内且协议限制携转的，不得办理携号转网。",
       "effectiveFrom": "2024-01-01T00:00:00+00:00",
-      "evidence": "http://example.org/kg-mnp#Ev-03-CTR",
+      "evidence": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Ev-03-CTR",
       "evidenceStatus": "VALID",
       "generatedAt": "2026-06-20T10:15:00+00:00",
       "reasonCode": "ACTIVE_CONTRACT_RESTRICTION",
@@ -22,12 +22,12 @@
   "decision_trace": [
     {
       "actionCode": "WAIT_OR_TERMINATE_CONTRACT",
-      "assessment": "http://example.org/kg-mnp#Assessment-CASE-03",
+      "assessment": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Assessment-CASE-03",
       "caseId": "CASE-03",
       "clauseId": "REG-MNP-CLAUSE-04",
       "decisionCode": "BLOCKED",
       "effectiveFrom": "2024-01-01T00:00:00+00:00",
-      "evidence": "http://example.org/kg-mnp#Ev-03-CTR",
+      "evidence": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Ev-03-CTR",
       "evidenceStatus": "VALID",
       "reasonCode": "ACTIVE_CONTRACT_RESTRICTION",
       "ruleId": "MNP-ELIG-004",
@@ -43,7 +43,7 @@
       "case_id": "CASE-03",
       "clause_id": "REG-MNP-CLAUSE-04",
       "decision": "BLOCKED",
-      "evidence_id": "Ev-03-CTR",
+      "evidence_id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Ev-03-CTR",
       "evidence_source": "CONTRACT",
       "evidence_status": "VALID",
       "reason_code": "ACTIVE_CONTRACT_RESTRICTION",
@@ -57,532 +57,438 @@
     "edges": [
       {
         "predicate": "aboutCase",
-        "predicate_iri": "http://example.org/kg-mnp#aboutCase",
-        "source": "http://example.org/kg-mnp#Assessment-CASE-03",
+        "predicate_iri": "https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#aboutCase",
+        "source": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Assessment-CASE-03",
         "source_local": "Assessment-CASE-03",
-        "target": "http://example.org/kg-mnp#CASE-03",
+        "target": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/CASE-03",
         "target_local": "CASE-03"
       },
       {
-        "predicate": "dependsOn",
-        "predicate_iri": "http://example.org/kg-mnp#dependsOn",
-        "source": "http://example.org/kg-mnp#Assessment-CASE-03",
-        "source_local": "Assessment-CASE-03",
-        "target": "http://example.org/kg-mnp#Dep-CASE-03",
-        "target_local": "Dep-CASE-03"
-      },
-      {
         "predicate": "evaluatedByRule",
-        "predicate_iri": "http://example.org/kg-mnp#evaluatedByRule",
-        "source": "http://example.org/kg-mnp#Assessment-CASE-03",
+        "predicate_iri": "https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#evaluatedByRule",
+        "source": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Assessment-CASE-03",
         "source_local": "Assessment-CASE-03",
-        "target": "http://example.org/kg-mnp#Rule-MNP-ELIG-001",
+        "target": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Rule-MNP-ELIG-001",
         "target_local": "Rule-MNP-ELIG-001"
       },
       {
         "predicate": "evaluatedByRule",
-        "predicate_iri": "http://example.org/kg-mnp#evaluatedByRule",
-        "source": "http://example.org/kg-mnp#Assessment-CASE-03",
+        "predicate_iri": "https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#evaluatedByRule",
+        "source": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Assessment-CASE-03",
         "source_local": "Assessment-CASE-03",
-        "target": "http://example.org/kg-mnp#Rule-MNP-ELIG-002",
+        "target": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Rule-MNP-ELIG-002",
         "target_local": "Rule-MNP-ELIG-002"
       },
       {
         "predicate": "evaluatedByRule",
-        "predicate_iri": "http://example.org/kg-mnp#evaluatedByRule",
-        "source": "http://example.org/kg-mnp#Assessment-CASE-03",
+        "predicate_iri": "https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#evaluatedByRule",
+        "source": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Assessment-CASE-03",
         "source_local": "Assessment-CASE-03",
-        "target": "http://example.org/kg-mnp#Rule-MNP-ELIG-003",
+        "target": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Rule-MNP-ELIG-003",
         "target_local": "Rule-MNP-ELIG-003"
       },
       {
         "predicate": "evaluatedByRule",
-        "predicate_iri": "http://example.org/kg-mnp#evaluatedByRule",
-        "source": "http://example.org/kg-mnp#Assessment-CASE-03",
+        "predicate_iri": "https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#evaluatedByRule",
+        "source": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Assessment-CASE-03",
         "source_local": "Assessment-CASE-03",
-        "target": "http://example.org/kg-mnp#Rule-MNP-ELIG-004",
+        "target": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Rule-MNP-ELIG-004",
         "target_local": "Rule-MNP-ELIG-004"
       },
       {
         "predicate": "evaluatedByRule",
-        "predicate_iri": "http://example.org/kg-mnp#evaluatedByRule",
-        "source": "http://example.org/kg-mnp#Assessment-CASE-03",
+        "predicate_iri": "https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#evaluatedByRule",
+        "source": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Assessment-CASE-03",
         "source_local": "Assessment-CASE-03",
-        "target": "http://example.org/kg-mnp#Rule-MNP-ELIG-005-v1-1",
+        "target": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Rule-MNP-ELIG-005-v1-1",
         "target_local": "Rule-MNP-ELIG-005-v1-1"
       },
       {
-        "predicate": "producesBlockingReason",
-        "predicate_iri": "http://example.org/kg-mnp#producesBlockingReason",
-        "source": "http://example.org/kg-mnp#Assessment-CASE-03",
-        "source_local": "Assessment-CASE-03",
-        "target": "http://example.org/kg-mnp#Reason-CASE-03-ACTIVE_CONTRACT_RESTRICTION",
-        "target_local": "Reason-CASE-03-ACTIVE_CONTRACT_RESTRICTION"
-      },
-      {
         "predicate": "producesDecision",
-        "predicate_iri": "http://example.org/kg-mnp#producesDecision",
-        "source": "http://example.org/kg-mnp#Assessment-CASE-03",
+        "predicate_iri": "https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#producesDecision",
+        "source": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Assessment-CASE-03",
         "source_local": "Assessment-CASE-03",
-        "target": "http://example.org/kg-mnp#Decision-CASE-03",
+        "target": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Decision-CASE-03",
         "target_local": "Decision-CASE-03"
       },
       {
         "predicate": "usesEvidence",
-        "predicate_iri": "http://example.org/kg-mnp#usesEvidence",
-        "source": "http://example.org/kg-mnp#Assessment-CASE-03",
+        "predicate_iri": "https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#usesEvidence",
+        "source": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Assessment-CASE-03",
         "source_local": "Assessment-CASE-03",
-        "target": "http://example.org/kg-mnp#Ev-03-BILL",
+        "target": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Ev-03-BILL",
         "target_local": "Ev-03-BILL"
       },
       {
         "predicate": "usesEvidence",
-        "predicate_iri": "http://example.org/kg-mnp#usesEvidence",
-        "source": "http://example.org/kg-mnp#Assessment-CASE-03",
+        "predicate_iri": "https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#usesEvidence",
+        "source": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Assessment-CASE-03",
         "source_local": "Assessment-CASE-03",
-        "target": "http://example.org/kg-mnp#Ev-03-CTR",
+        "target": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Ev-03-CTR",
         "target_local": "Ev-03-CTR"
       },
       {
         "predicate": "usesEvidence",
-        "predicate_iri": "http://example.org/kg-mnp#usesEvidence",
-        "source": "http://example.org/kg-mnp#Assessment-CASE-03",
+        "predicate_iri": "https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#usesEvidence",
+        "source": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Assessment-CASE-03",
         "source_local": "Assessment-CASE-03",
-        "target": "http://example.org/kg-mnp#Ev-03-ID",
+        "target": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Ev-03-ID",
         "target_local": "Ev-03-ID"
       },
       {
         "predicate": "usesEvidence",
-        "predicate_iri": "http://example.org/kg-mnp#usesEvidence",
-        "source": "http://example.org/kg-mnp#Assessment-CASE-03",
+        "predicate_iri": "https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#usesEvidence",
+        "source": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Assessment-CASE-03",
         "source_local": "Assessment-CASE-03",
-        "target": "http://example.org/kg-mnp#Ev-03-NUM",
+        "target": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Ev-03-NUM",
         "target_local": "Ev-03-NUM"
       },
       {
         "predicate": "usesEvidence",
-        "predicate_iri": "http://example.org/kg-mnp#usesEvidence",
-        "source": "http://example.org/kg-mnp#Assessment-CASE-03",
+        "predicate_iri": "https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#usesEvidence",
+        "source": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Assessment-CASE-03",
         "source_local": "Assessment-CASE-03",
-        "target": "http://example.org/kg-mnp#Ev-03-PORT",
+        "target": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Ev-03-PORT",
         "target_local": "Ev-03-PORT"
       },
       {
         "predicate": "usesRuleVersion",
-        "predicate_iri": "http://example.org/kg-mnp#usesRuleVersion",
-        "source": "http://example.org/kg-mnp#Assessment-CASE-03",
+        "predicate_iri": "https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#usesRuleVersion",
+        "source": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Assessment-CASE-03",
         "source_local": "Assessment-CASE-03",
-        "target": "http://example.org/kg-mnp#RuleVersion-MNP-ELIG-001-1-0",
+        "target": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/RuleVersion-MNP-ELIG-001-1-0",
         "target_local": "RuleVersion-MNP-ELIG-001-1-0"
       },
       {
         "predicate": "usesRuleVersion",
-        "predicate_iri": "http://example.org/kg-mnp#usesRuleVersion",
-        "source": "http://example.org/kg-mnp#Assessment-CASE-03",
+        "predicate_iri": "https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#usesRuleVersion",
+        "source": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Assessment-CASE-03",
         "source_local": "Assessment-CASE-03",
-        "target": "http://example.org/kg-mnp#RuleVersion-MNP-ELIG-002-1-0",
+        "target": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/RuleVersion-MNP-ELIG-002-1-0",
         "target_local": "RuleVersion-MNP-ELIG-002-1-0"
       },
       {
         "predicate": "usesRuleVersion",
-        "predicate_iri": "http://example.org/kg-mnp#usesRuleVersion",
-        "source": "http://example.org/kg-mnp#Assessment-CASE-03",
+        "predicate_iri": "https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#usesRuleVersion",
+        "source": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Assessment-CASE-03",
         "source_local": "Assessment-CASE-03",
-        "target": "http://example.org/kg-mnp#RuleVersion-MNP-ELIG-003-1-0",
+        "target": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/RuleVersion-MNP-ELIG-003-1-0",
         "target_local": "RuleVersion-MNP-ELIG-003-1-0"
       },
       {
         "predicate": "usesRuleVersion",
-        "predicate_iri": "http://example.org/kg-mnp#usesRuleVersion",
-        "source": "http://example.org/kg-mnp#Assessment-CASE-03",
+        "predicate_iri": "https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#usesRuleVersion",
+        "source": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Assessment-CASE-03",
         "source_local": "Assessment-CASE-03",
-        "target": "http://example.org/kg-mnp#RuleVersion-MNP-ELIG-004-1-0",
+        "target": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/RuleVersion-MNP-ELIG-004-1-0",
         "target_local": "RuleVersion-MNP-ELIG-004-1-0"
       },
       {
         "predicate": "usesRuleVersion",
-        "predicate_iri": "http://example.org/kg-mnp#usesRuleVersion",
-        "source": "http://example.org/kg-mnp#Assessment-CASE-03",
+        "predicate_iri": "https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#usesRuleVersion",
+        "source": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Assessment-CASE-03",
         "source_local": "Assessment-CASE-03",
-        "target": "http://example.org/kg-mnp#RuleVersion-MNP-ELIG-005-1-1",
+        "target": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/RuleVersion-MNP-ELIG-005-1-1",
         "target_local": "RuleVersion-MNP-ELIG-005-1-1"
       },
       {
         "predicate": "hasEligibilityAssessment",
-        "predicate_iri": "http://example.org/kg-mnp#hasEligibilityAssessment",
-        "source": "http://example.org/kg-mnp#CASE-03",
+        "predicate_iri": "https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#hasEligibilityAssessment",
+        "source": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/CASE-03",
         "source_local": "CASE-03",
-        "target": "http://example.org/kg-mnp#Assessment-CASE-03",
+        "target": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Assessment-CASE-03",
         "target_local": "Assessment-CASE-03"
       },
       {
         "predicate": "partOfDocument",
-        "predicate_iri": "http://example.org/kg-mnp#partOfDocument",
-        "source": "http://example.org/kg-mnp#Clause-01",
+        "predicate_iri": "https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#partOfDocument",
+        "source": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Clause-01",
         "source_local": "Clause-01",
-        "target": "http://example.org/kg-mnp#Doc-MNP-Regulation-2024",
+        "target": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Doc-MNP-Regulation-2024",
         "target_local": "Doc-MNP-Regulation-2024"
       },
       {
         "predicate": "partOfDocument",
-        "predicate_iri": "http://example.org/kg-mnp#partOfDocument",
-        "source": "http://example.org/kg-mnp#Clause-02",
+        "predicate_iri": "https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#partOfDocument",
+        "source": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Clause-02",
         "source_local": "Clause-02",
-        "target": "http://example.org/kg-mnp#Doc-MNP-Regulation-2024",
+        "target": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Doc-MNP-Regulation-2024",
         "target_local": "Doc-MNP-Regulation-2024"
       },
       {
         "predicate": "partOfDocument",
-        "predicate_iri": "http://example.org/kg-mnp#partOfDocument",
-        "source": "http://example.org/kg-mnp#Clause-03",
+        "predicate_iri": "https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#partOfDocument",
+        "source": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Clause-03",
         "source_local": "Clause-03",
-        "target": "http://example.org/kg-mnp#Doc-MNP-Regulation-2024",
+        "target": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Doc-MNP-Regulation-2024",
         "target_local": "Doc-MNP-Regulation-2024"
       },
       {
         "predicate": "partOfDocument",
-        "predicate_iri": "http://example.org/kg-mnp#partOfDocument",
-        "source": "http://example.org/kg-mnp#Clause-04",
+        "predicate_iri": "https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#partOfDocument",
+        "source": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Clause-04",
         "source_local": "Clause-04",
-        "target": "http://example.org/kg-mnp#Doc-MNP-Regulation-2024",
+        "target": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Doc-MNP-Regulation-2024",
         "target_local": "Doc-MNP-Regulation-2024"
       },
       {
         "predicate": "partOfDocument",
-        "predicate_iri": "http://example.org/kg-mnp#partOfDocument",
-        "source": "http://example.org/kg-mnp#Clause-05",
+        "predicate_iri": "https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#partOfDocument",
+        "source": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Clause-05",
         "source_local": "Clause-05",
-        "target": "http://example.org/kg-mnp#Doc-MNP-Regulation-2024",
+        "target": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Doc-MNP-Regulation-2024",
         "target_local": "Doc-MNP-Regulation-2024"
       },
       {
-        "predicate": "dependsOnEvidence",
-        "predicate_iri": "http://example.org/kg-mnp#dependsOnEvidence",
-        "source": "http://example.org/kg-mnp#Dep-CASE-03",
-        "source_local": "Dep-CASE-03",
-        "target": "http://example.org/kg-mnp#Ev-03-BILL",
-        "target_local": "Ev-03-BILL"
-      },
-      {
-        "predicate": "dependsOnEvidence",
-        "predicate_iri": "http://example.org/kg-mnp#dependsOnEvidence",
-        "source": "http://example.org/kg-mnp#Dep-CASE-03",
-        "source_local": "Dep-CASE-03",
-        "target": "http://example.org/kg-mnp#Ev-03-CTR",
-        "target_local": "Ev-03-CTR"
-      },
-      {
-        "predicate": "dependsOnEvidence",
-        "predicate_iri": "http://example.org/kg-mnp#dependsOnEvidence",
-        "source": "http://example.org/kg-mnp#Dep-CASE-03",
-        "source_local": "Dep-CASE-03",
-        "target": "http://example.org/kg-mnp#Ev-03-ID",
-        "target_local": "Ev-03-ID"
-      },
-      {
-        "predicate": "dependsOnEvidence",
-        "predicate_iri": "http://example.org/kg-mnp#dependsOnEvidence",
-        "source": "http://example.org/kg-mnp#Dep-CASE-03",
-        "source_local": "Dep-CASE-03",
-        "target": "http://example.org/kg-mnp#Ev-03-NUM",
-        "target_local": "Ev-03-NUM"
-      },
-      {
-        "predicate": "dependsOnEvidence",
-        "predicate_iri": "http://example.org/kg-mnp#dependsOnEvidence",
-        "source": "http://example.org/kg-mnp#Dep-CASE-03",
-        "source_local": "Dep-CASE-03",
-        "target": "http://example.org/kg-mnp#Ev-03-PORT",
-        "target_local": "Ev-03-PORT"
-      },
-      {
-        "predicate": "dependsOnRuleVersion",
-        "predicate_iri": "http://example.org/kg-mnp#dependsOnRuleVersion",
-        "source": "http://example.org/kg-mnp#Dep-CASE-03",
-        "source_local": "Dep-CASE-03",
-        "target": "http://example.org/kg-mnp#RuleVersion-MNP-ELIG-001-1-0",
-        "target_local": "RuleVersion-MNP-ELIG-001-1-0"
-      },
-      {
-        "predicate": "dependsOnRuleVersion",
-        "predicate_iri": "http://example.org/kg-mnp#dependsOnRuleVersion",
-        "source": "http://example.org/kg-mnp#Dep-CASE-03",
-        "source_local": "Dep-CASE-03",
-        "target": "http://example.org/kg-mnp#RuleVersion-MNP-ELIG-002-1-0",
-        "target_local": "RuleVersion-MNP-ELIG-002-1-0"
-      },
-      {
-        "predicate": "dependsOnRuleVersion",
-        "predicate_iri": "http://example.org/kg-mnp#dependsOnRuleVersion",
-        "source": "http://example.org/kg-mnp#Dep-CASE-03",
-        "source_local": "Dep-CASE-03",
-        "target": "http://example.org/kg-mnp#RuleVersion-MNP-ELIG-003-1-0",
-        "target_local": "RuleVersion-MNP-ELIG-003-1-0"
-      },
-      {
-        "predicate": "dependsOnRuleVersion",
-        "predicate_iri": "http://example.org/kg-mnp#dependsOnRuleVersion",
-        "source": "http://example.org/kg-mnp#Dep-CASE-03",
-        "source_local": "Dep-CASE-03",
-        "target": "http://example.org/kg-mnp#RuleVersion-MNP-ELIG-004-1-0",
-        "target_local": "RuleVersion-MNP-ELIG-004-1-0"
-      },
-      {
-        "predicate": "dependsOnRuleVersion",
-        "predicate_iri": "http://example.org/kg-mnp#dependsOnRuleVersion",
-        "source": "http://example.org/kg-mnp#Dep-CASE-03",
-        "source_local": "Dep-CASE-03",
-        "target": "http://example.org/kg-mnp#RuleVersion-MNP-ELIG-005-1-1",
-        "target_local": "RuleVersion-MNP-ELIG-005-1-1"
+        "predicate": "hasBlockingReason",
+        "predicate_iri": "https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#hasBlockingReason",
+        "source": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Decision-CASE-03",
+        "source_local": "Decision-CASE-03",
+        "target": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Reason-CASE-03-ACTIVE_CONTRACT_RESTRICTION",
+        "target_local": "Reason-CASE-03-ACTIVE_CONTRACT_RESTRICTION"
       },
       {
         "predicate": "citesClause",
-        "predicate_iri": "http://example.org/kg-mnp#citesClause",
-        "source": "http://example.org/kg-mnp#Reason-CASE-03-ACTIVE_CONTRACT_RESTRICTION",
+        "predicate_iri": "https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#citesClause",
+        "source": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Reason-CASE-03-ACTIVE_CONTRACT_RESTRICTION",
         "source_local": "Reason-CASE-03-ACTIVE_CONTRACT_RESTRICTION",
-        "target": "http://example.org/kg-mnp#Clause-04",
+        "target": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Clause-04",
         "target_local": "Clause-04"
       },
       {
         "predicate": "recommendsAction",
-        "predicate_iri": "http://example.org/kg-mnp#recommendsAction",
-        "source": "http://example.org/kg-mnp#Reason-CASE-03-ACTIVE_CONTRACT_RESTRICTION",
+        "predicate_iri": "https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#recommendsAction",
+        "source": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Reason-CASE-03-ACTIVE_CONTRACT_RESTRICTION",
         "source_local": "Reason-CASE-03-ACTIVE_CONTRACT_RESTRICTION",
-        "target": "http://example.org/kg-mnp#Action-WAIT_OR_TERMINATE_CONTRACT",
+        "target": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Action-WAIT_OR_TERMINATE_CONTRACT",
         "target_local": "Action-WAIT_OR_TERMINATE_CONTRACT"
       },
       {
         "predicate": "supportedByEvidence",
-        "predicate_iri": "http://example.org/kg-mnp#supportedByEvidence",
-        "source": "http://example.org/kg-mnp#Reason-CASE-03-ACTIVE_CONTRACT_RESTRICTION",
+        "predicate_iri": "https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#supportedByEvidence",
+        "source": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Reason-CASE-03-ACTIVE_CONTRACT_RESTRICTION",
         "source_local": "Reason-CASE-03-ACTIVE_CONTRACT_RESTRICTION",
-        "target": "http://example.org/kg-mnp#Ev-03-CTR",
+        "target": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Ev-03-CTR",
         "target_local": "Ev-03-CTR"
       },
       {
         "predicate": "triggeredByRule",
-        "predicate_iri": "http://example.org/kg-mnp#triggeredByRule",
-        "source": "http://example.org/kg-mnp#Reason-CASE-03-ACTIVE_CONTRACT_RESTRICTION",
+        "predicate_iri": "https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#triggeredByRule",
+        "source": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Reason-CASE-03-ACTIVE_CONTRACT_RESTRICTION",
         "source_local": "Reason-CASE-03-ACTIVE_CONTRACT_RESTRICTION",
-        "target": "http://example.org/kg-mnp#Rule-MNP-ELIG-004",
+        "target": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Rule-MNP-ELIG-004",
         "target_local": "Rule-MNP-ELIG-004"
       },
       {
         "predicate": "triggeredByRuleVersion",
-        "predicate_iri": "http://example.org/kg-mnp#triggeredByRuleVersion",
-        "source": "http://example.org/kg-mnp#Reason-CASE-03-ACTIVE_CONTRACT_RESTRICTION",
+        "predicate_iri": "https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#triggeredByRuleVersion",
+        "source": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Reason-CASE-03-ACTIVE_CONTRACT_RESTRICTION",
         "source_local": "Reason-CASE-03-ACTIVE_CONTRACT_RESTRICTION",
-        "target": "http://example.org/kg-mnp#RuleVersion-MNP-ELIG-004-1-0",
+        "target": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/RuleVersion-MNP-ELIG-004-1-0",
         "target_local": "RuleVersion-MNP-ELIG-004-1-0"
       },
       {
         "predicate": "operationalizesClause",
-        "predicate_iri": "http://example.org/kg-mnp#operationalizesClause",
-        "source": "http://example.org/kg-mnp#Rule-MNP-ELIG-001",
+        "predicate_iri": "https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#operationalizesClause",
+        "source": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Rule-MNP-ELIG-001",
         "source_local": "Rule-MNP-ELIG-001",
-        "target": "http://example.org/kg-mnp#Clause-01",
+        "target": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Clause-01",
         "target_local": "Clause-01"
       },
       {
         "predicate": "operationalizesClause",
-        "predicate_iri": "http://example.org/kg-mnp#operationalizesClause",
-        "source": "http://example.org/kg-mnp#Rule-MNP-ELIG-002",
+        "predicate_iri": "https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#operationalizesClause",
+        "source": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Rule-MNP-ELIG-002",
         "source_local": "Rule-MNP-ELIG-002",
-        "target": "http://example.org/kg-mnp#Clause-02",
+        "target": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Clause-02",
         "target_local": "Clause-02"
       },
       {
         "predicate": "operationalizesClause",
-        "predicate_iri": "http://example.org/kg-mnp#operationalizesClause",
-        "source": "http://example.org/kg-mnp#Rule-MNP-ELIG-003",
+        "predicate_iri": "https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#operationalizesClause",
+        "source": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Rule-MNP-ELIG-003",
         "source_local": "Rule-MNP-ELIG-003",
-        "target": "http://example.org/kg-mnp#Clause-03",
+        "target": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Clause-03",
         "target_local": "Clause-03"
       },
       {
         "predicate": "operationalizesClause",
-        "predicate_iri": "http://example.org/kg-mnp#operationalizesClause",
-        "source": "http://example.org/kg-mnp#Rule-MNP-ELIG-004",
+        "predicate_iri": "https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#operationalizesClause",
+        "source": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Rule-MNP-ELIG-004",
         "source_local": "Rule-MNP-ELIG-004",
-        "target": "http://example.org/kg-mnp#Clause-04",
+        "target": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Clause-04",
         "target_local": "Clause-04"
       },
       {
         "predicate": "operationalizesClause",
-        "predicate_iri": "http://example.org/kg-mnp#operationalizesClause",
-        "source": "http://example.org/kg-mnp#Rule-MNP-ELIG-005-v1-1",
+        "predicate_iri": "https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#operationalizesClause",
+        "source": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Rule-MNP-ELIG-005-v1-1",
         "source_local": "Rule-MNP-ELIG-005-v1-1",
-        "target": "http://example.org/kg-mnp#Clause-05",
+        "target": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Clause-05",
         "target_local": "Clause-05"
       }
     ],
     "nodes": [
       {
-        "id": "http://example.org/kg-mnp#Action-WAIT_OR_TERMINATE_CONTRACT",
+        "id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Action-WAIT_OR_TERMINATE_CONTRACT",
         "label": "WAIT_OR_TERMINATE_CONTRACT",
         "local_id": "Action-WAIT_OR_TERMINATE_CONTRACT",
         "type": "RemediationAction"
       },
       {
-        "id": "http://example.org/kg-mnp#Assessment-CASE-03",
+        "id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Assessment-CASE-03",
         "label": "ASSESS-CASE-03",
         "local_id": "Assessment-CASE-03",
         "type": "EligibilityAssessment"
       },
       {
-        "id": "http://example.org/kg-mnp#CASE-03",
+        "id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/CASE-03",
         "label": "CASE-03",
         "local_id": "CASE-03",
         "type": "MNPCase"
       },
       {
-        "id": "http://example.org/kg-mnp#Clause-01",
+        "id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Clause-01",
         "label": "REG-MNP-CLAUSE-01",
         "local_id": "Clause-01",
         "type": "RegulatoryClause"
       },
       {
-        "id": "http://example.org/kg-mnp#Clause-02",
+        "id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Clause-02",
         "label": "REG-MNP-CLAUSE-02",
         "local_id": "Clause-02",
         "type": "RegulatoryClause"
       },
       {
-        "id": "http://example.org/kg-mnp#Clause-03",
+        "id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Clause-03",
         "label": "REG-MNP-CLAUSE-03",
         "local_id": "Clause-03",
         "type": "RegulatoryClause"
       },
       {
-        "id": "http://example.org/kg-mnp#Clause-04",
+        "id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Clause-04",
         "label": "REG-MNP-CLAUSE-04",
         "local_id": "Clause-04",
         "type": "RegulatoryClause"
       },
       {
-        "id": "http://example.org/kg-mnp#Clause-05",
+        "id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Clause-05",
         "label": "REG-MNP-CLAUSE-05",
         "local_id": "Clause-05",
         "type": "RegulatoryClause"
       },
       {
-        "id": "http://example.org/kg-mnp#Decision-CASE-03",
+        "id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Decision-CASE-03",
         "label": "BLOCKED",
         "local_id": "Decision-CASE-03",
         "type": "BlockingDecision"
       },
       {
-        "id": "http://example.org/kg-mnp#Dep-CASE-03",
-        "label": "AssessmentDependency",
-        "local_id": "Dep-CASE-03",
-        "type": "AssessmentDependency"
-      },
-      {
-        "id": "http://example.org/kg-mnp#Doc-MNP-Regulation-2024",
+        "id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Doc-MNP-Regulation-2024",
         "label": "Doc-MNP-Regulation-2024",
         "local_id": "Doc-MNP-Regulation-2024",
         "type": "RegulatoryDocument"
       },
       {
-        "id": "http://example.org/kg-mnp#Ev-03-BILL",
+        "id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Ev-03-BILL",
         "label": "Ev-03-BILL",
         "local_id": "Ev-03-BILL",
         "type": "EvidenceRecord"
       },
       {
-        "id": "http://example.org/kg-mnp#Ev-03-CTR",
+        "id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Ev-03-CTR",
         "label": "Ev-03-CTR",
         "local_id": "Ev-03-CTR",
         "type": "EvidenceRecord"
       },
       {
-        "id": "http://example.org/kg-mnp#Ev-03-ID",
+        "id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Ev-03-ID",
         "label": "Ev-03-ID",
         "local_id": "Ev-03-ID",
         "type": "EvidenceRecord"
       },
       {
-        "id": "http://example.org/kg-mnp#Ev-03-NUM",
+        "id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Ev-03-NUM",
         "label": "Ev-03-NUM",
         "local_id": "Ev-03-NUM",
         "type": "EvidenceRecord"
       },
       {
-        "id": "http://example.org/kg-mnp#Ev-03-PORT",
+        "id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Ev-03-PORT",
         "label": "Ev-03-PORT",
         "local_id": "Ev-03-PORT",
         "type": "EvidenceRecord"
       },
       {
-        "id": "http://example.org/kg-mnp#Reason-CASE-03-ACTIVE_CONTRACT_RESTRICTION",
+        "id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Reason-CASE-03-ACTIVE_CONTRACT_RESTRICTION",
         "label": "ACTIVE_CONTRACT_RESTRICTION",
         "local_id": "Reason-CASE-03-ACTIVE_CONTRACT_RESTRICTION",
         "type": "BlockingReason"
       },
       {
-        "id": "http://example.org/kg-mnp#Rule-MNP-ELIG-001",
+        "id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Rule-MNP-ELIG-001",
         "label": "MNP-ELIG-001",
         "local_id": "Rule-MNP-ELIG-001",
         "type": "EligibilityRule"
       },
       {
-        "id": "http://example.org/kg-mnp#Rule-MNP-ELIG-002",
+        "id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Rule-MNP-ELIG-002",
         "label": "MNP-ELIG-002",
         "local_id": "Rule-MNP-ELIG-002",
         "type": "EligibilityRule"
       },
       {
-        "id": "http://example.org/kg-mnp#Rule-MNP-ELIG-003",
+        "id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Rule-MNP-ELIG-003",
         "label": "MNP-ELIG-003",
         "local_id": "Rule-MNP-ELIG-003",
         "type": "EligibilityRule"
       },
       {
-        "id": "http://example.org/kg-mnp#Rule-MNP-ELIG-004",
+        "id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Rule-MNP-ELIG-004",
         "label": "MNP-ELIG-004",
         "local_id": "Rule-MNP-ELIG-004",
         "type": "EligibilityRule"
       },
       {
-        "id": "http://example.org/kg-mnp#Rule-MNP-ELIG-005-v1-1",
+        "id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Rule-MNP-ELIG-005-v1-1",
         "label": "MNP-ELIG-005",
         "local_id": "Rule-MNP-ELIG-005-v1-1",
         "type": "EligibilityRule"
       },
       {
-        "id": "http://example.org/kg-mnp#RuleVersion-MNP-ELIG-001-1-0",
+        "id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/RuleVersion-MNP-ELIG-001-1-0",
         "label": "1.0",
         "local_id": "RuleVersion-MNP-ELIG-001-1-0",
         "type": "RuleVersion"
       },
       {
-        "id": "http://example.org/kg-mnp#RuleVersion-MNP-ELIG-002-1-0",
+        "id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/RuleVersion-MNP-ELIG-002-1-0",
         "label": "1.0",
         "local_id": "RuleVersion-MNP-ELIG-002-1-0",
         "type": "RuleVersion"
       },
       {
-        "id": "http://example.org/kg-mnp#RuleVersion-MNP-ELIG-003-1-0",
+        "id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/RuleVersion-MNP-ELIG-003-1-0",
         "label": "1.0",
         "local_id": "RuleVersion-MNP-ELIG-003-1-0",
         "type": "RuleVersion"
       },
       {
-        "id": "http://example.org/kg-mnp#RuleVersion-MNP-ELIG-004-1-0",
+        "id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/RuleVersion-MNP-ELIG-004-1-0",
         "label": "1.0",
         "local_id": "RuleVersion-MNP-ELIG-004-1-0",
         "type": "RuleVersion"
       },
       {
-        "id": "http://example.org/kg-mnp#RuleVersion-MNP-ELIG-005-1-1",
+        "id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/RuleVersion-MNP-ELIG-005-1-1",
         "label": "1.1",
         "local_id": "RuleVersion-MNP-ELIG-005-1-1",
         "type": "RuleVersion"
       }
     ],
     "query_file": "assessment_subgraph.rq",
-    "root": "http://example.org/kg-mnp#CASE-03",
+    "root": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/CASE-03",
     "root_local": "CASE-03"
   },
-  "tree_text": "MNPCase: CASE-03\n└── hasEligibilityAssessment\n    EligibilityAssessment: ASSESS-CASE-03\n    ├── usesEvidence\n    │   EvidenceRecord: Ev-03-BILL\n    │   EvidenceRecord: Ev-03-CTR\n    │   EvidenceRecord: Ev-03-ID\n    │   EvidenceRecord: Ev-03-NUM\n    │   EvidenceRecord: Ev-03-PORT\n    ├── evaluatedByRule\n    │   EligibilityRule: MNP-ELIG-001\n    │   └── operationalizesClause\n    │       RegulatoryClause: REG-MNP-CLAUSE-01\n    │       └── partOfDocument\n    │           RegulatoryDocument: Doc-MNP-Regulation-2024\n    │   EligibilityRule: MNP-ELIG-002\n    │   └── operationalizesClause\n    │       RegulatoryClause: REG-MNP-CLAUSE-02\n    │       └── partOfDocument\n    │           RegulatoryDocument: Doc-MNP-Regulation-2024\n    │   EligibilityRule: MNP-ELIG-003\n    │   └── operationalizesClause\n    │       RegulatoryClause: REG-MNP-CLAUSE-03\n    │       └── partOfDocument\n    │           RegulatoryDocument: Doc-MNP-Regulation-2024\n    │   EligibilityRule: MNP-ELIG-004\n    │   └── operationalizesClause\n    │       RegulatoryClause: REG-MNP-CLAUSE-04\n    │       └── partOfDocument\n    │           RegulatoryDocument: Doc-MNP-Regulation-2024\n    │   EligibilityRule: MNP-ELIG-005\n    │   └── operationalizesClause\n    │       RegulatoryClause: REG-MNP-CLAUSE-05\n    │       └── partOfDocument\n    │           RegulatoryDocument: Doc-MNP-Regulation-2024\n    ├── usesRuleVersion\n    │   RuleVersion: 1.0\n    │   RuleVersion: 1.0\n    │   RuleVersion: 1.0\n    │   RuleVersion: 1.0\n    │   RuleVersion: 1.1\n    ├── producesDecision\n    │   BlockingDecision: BLOCKED\n    ├── producesBlockingReason\n    │   BlockingReason: ACTIVE_CONTRACT_RESTRICTION\n    │   ├── supportedByEvidence → Ev-03-CTR\n    │   ├── triggeredByRule → MNP-ELIG-004\n    │   ├── triggeredByRuleVersion → 1.0\n    │   ├── citesClause → REG-MNP-CLAUSE-04\n    │   └── recommendsAction → WAIT_OR_TERMINATE_CONTRACT\n    ├── dependsOn\n    │   AssessmentDependency: AssessmentDependency\n    │   ├── dependsOnEvidence → Ev-03-BILL\n    │   ├── dependsOnEvidence → Ev-03-CTR\n    │   ├── dependsOnEvidence → Ev-03-ID\n    │   ├── dependsOnEvidence → Ev-03-NUM\n    │   ├── dependsOnEvidence → Ev-03-PORT\n    │   └── dependsOnRuleVersion → 1.0\n    │   └── dependsOnRuleVersion → 1.0\n    │   └── dependsOnRuleVersion → 1.0\n    │   └── dependsOnRuleVersion → 1.0\n    │   └── dependsOnRuleVersion → 1.1"
+  "tree_text": "MNPCase: CASE-03\n└── hasEligibilityAssessment\n    EligibilityAssessment: ASSESS-CASE-03\n    ├── usesEvidence\n    │   EvidenceRecord: Ev-03-BILL\n    │   EvidenceRecord: Ev-03-CTR\n    │   EvidenceRecord: Ev-03-ID\n    │   EvidenceRecord: Ev-03-NUM\n    │   EvidenceRecord: Ev-03-PORT\n    ├── evaluatedByRule\n    │   EligibilityRule: MNP-ELIG-001\n    │   └── operationalizesClause\n    │       RegulatoryClause: REG-MNP-CLAUSE-01\n    │       └── partOfDocument\n    │           RegulatoryDocument: Doc-MNP-Regulation-2024\n    │   EligibilityRule: MNP-ELIG-002\n    │   └── operationalizesClause\n    │       RegulatoryClause: REG-MNP-CLAUSE-02\n    │       └── partOfDocument\n    │           RegulatoryDocument: Doc-MNP-Regulation-2024\n    │   EligibilityRule: MNP-ELIG-003\n    │   └── operationalizesClause\n    │       RegulatoryClause: REG-MNP-CLAUSE-03\n    │       └── partOfDocument\n    │           RegulatoryDocument: Doc-MNP-Regulation-2024\n    │   EligibilityRule: MNP-ELIG-004\n    │   └── operationalizesClause\n    │       RegulatoryClause: REG-MNP-CLAUSE-04\n    │       └── partOfDocument\n    │           RegulatoryDocument: Doc-MNP-Regulation-2024\n    │   EligibilityRule: MNP-ELIG-005\n    │   └── operationalizesClause\n    │       RegulatoryClause: REG-MNP-CLAUSE-05\n    │       └── partOfDocument\n    │           RegulatoryDocument: Doc-MNP-Regulation-2024\n    ├── usesRuleVersion\n    │   RuleVersion: 1.0\n    │   RuleVersion: 1.0\n    │   RuleVersion: 1.0\n    │   RuleVersion: 1.0\n    │   RuleVersion: 1.1\n    ├── producesDecision\n    │   BlockingDecision: BLOCKED\n    │   └── hasBlockingReason\n    │       BlockingReason: ACTIVE_CONTRACT_RESTRICTION\n    │       ├── supportedByEvidence → Ev-03-CTR\n    │       ├── triggeredByRule → MNP-ELIG-004\n    │       ├── triggeredByRuleVersion → 1.0\n    │       ├── citesClause → REG-MNP-CLAUSE-04\n    │       └── recommendsAction → WAIT_OR_TERMINATE_CONTRACT"
 }

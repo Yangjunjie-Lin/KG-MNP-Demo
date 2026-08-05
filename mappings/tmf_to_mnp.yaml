@@ -16,19 +16,19 @@ mappings:
     in_mvp: true
     notes: "Customer is commercial party; Subscriber is MNP request party. Related, not exact."
 
-  - id: TMF629-relatedParty-to-TelecomAccount-link
+  - id: TMF629-related-party-to-billed-through
     source_api: TMF629_CustomerManagement
     source_version: "5.0.1"
     source_path: components.schemas.Customer.relatedParty
-    target_term: mnp:relatedAccount
+    target_term: mnp:billedThrough
     mapping_type: related
-    transformation: "relatedParty / account associations become mnp:relatedAccount or mnp:billedThrough links."
+    transformation: "Account associations become mnp:billedThrough links on service subscriptions."
     confidence: medium
     review_status: reviewed
     in_mvp: true
     notes: "TMF relatedParty is polymorphic; MVP only uses account-related parties."
 
-  - id: TMF629-relatedAccount-to-TelecomAccount
+  - id: TMF629-account-to-TelecomAccount
     source_api: TMF629_CustomerManagement
     source_version: "5.0.1"
     source_path: components.schemas.Customer.account

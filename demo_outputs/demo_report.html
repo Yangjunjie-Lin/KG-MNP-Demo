@@ -99,7 +99,7 @@
   <table>
     <tr><th>字段</th><th>值</th></tr>
     <tr><td>案件编号</td><td>CASE-03</td></tr>
-    <tr><td>申请人</td><td>Sub-03</td></tr>
+    <tr><td>申请人</td><td>https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Sub-03</td></tr>
     <tr><td>脱敏号码</td><td>138****0003</td></tr>
     <tr><td>号码状态</td><td>ACTIVE</td></tr>
     <tr><td>实名是否一致</td><td>True</td></tr>
@@ -113,7 +113,7 @@
   <h3>证据</h3>
   <table>
     <tr><th>类型</th><th>证据 ID</th><th>状态</th><th>来源系统</th></tr>
-    <tr><td>身份核验证据</td><td>Ev-03-ID</td><td>VALID</td><td>CRM</td></tr><tr><td>号码状态证据</td><td>Ev-03-NUM</td><td>VALID</td><td>HLR</td></tr><tr><td>计费证据</td><td>Ev-03-BILL</td><td>VALID</td><td>BILLING</td></tr><tr><td>合约证据</td><td>Ev-03-CTR</td><td>VALID</td><td>CONTRACT</td></tr><tr><td>携转历史证据</td><td>Ev-03-PORT</td><td>VALID</td><td>MNP_HISTORY</td></tr>
+    <tr><td>身份核验证据</td><td>https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Ev-03-ID</td><td>VALID</td><td>CRM</td></tr><tr><td>号码状态证据</td><td>https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Ev-03-NUM</td><td>VALID</td><td>HLR</td></tr><tr><td>计费证据</td><td>https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Ev-03-BILL</td><td>VALID</td><td>BILLING</td></tr><tr><td>合约证据</td><td>https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Ev-03-CTR</td><td>VALID</td><td>CONTRACT</td></tr><tr><td>携转历史证据</td><td>https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Ev-03-PORT</td><td>VALID</td><td>MNP_HISTORY</td></tr>
   </table>
 </section>
 
@@ -122,13 +122,13 @@
   <div class="flow">
     <span>输入案例</span>→
     <span>输入图 SHACL（PASSED）</span>→
-    <span>OWL-RL 推理（+973）</span>→
+    <span>OWL-RL 推理（+2309）</span>→
     <span>资格规则判断</span>→
     <span>评估结果图 SHACL（PASSED）</span>→
     <span>SPARQL 追溯子图</span>→
     <span>结构化输出</span>
   </div>
-  <ul><li>SystemObservation → 推导为 EvidenceRecord（实例 Ev-03-ID）</li><li>BlockingDecision → 推导为 EligibilityDecision（实例 Decision-CASE-03）</li></ul>
+  <ul><li>SystemObservation → 推导为 EvidenceRecord（实例 https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Ev-03-ID）</li><li>BlockingDecision → 推导为 EligibilityDecision（实例 https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Decision-CASE-03）</li></ul>
 </section>
 
 <section>
@@ -143,14 +143,14 @@
 <section>
   <h2>资格判断追溯子图</h2>
   <p class="muted">箭头均为真实 RDF 对象属性；非线性伪链。</p>
-  <div class="subgraph"><div class="node root"><span class="ntype">MNPCase</span> <span class="nlabel">CASE-03</span></div><ul class='tree'><li><span class='pred'>hasEligibilityAssessment</span><div class='node'><span class='ntype'>EligibilityAssessment</span> <span class='nlabel'>ASSESS-CASE-03</span></div><ul><li><span class='pred'>usesEvidence</span><ul><li><div class='node'>EvidenceRecord: Ev-03-BILL</div></li><li><div class='node'>EvidenceRecord: Ev-03-CTR</div></li><li><div class='node'>EvidenceRecord: Ev-03-ID</div></li><li><div class='node'>EvidenceRecord: Ev-03-NUM</div></li><li><div class='node'>EvidenceRecord: Ev-03-PORT</div></li></ul></li><li><span class='pred'>evaluatedByRule</span><ul><li><div class='node'>EligibilityRule: MNP-ELIG-001</div><ul><li><span class='pred'>operationalizesClause</span><div class='node'>RegulatoryClause: REG-MNP-CLAUSE-01</div></li></ul></li><li><div class='node'>EligibilityRule: MNP-ELIG-002</div><ul><li><span class='pred'>operationalizesClause</span><div class='node'>RegulatoryClause: REG-MNP-CLAUSE-02</div></li></ul></li><li><div class='node'>EligibilityRule: MNP-ELIG-003</div><ul><li><span class='pred'>operationalizesClause</span><div class='node'>RegulatoryClause: REG-MNP-CLAUSE-03</div></li></ul></li><li><div class='node'>EligibilityRule: MNP-ELIG-004</div><ul><li><span class='pred'>operationalizesClause</span><div class='node'>RegulatoryClause: REG-MNP-CLAUSE-04</div></li></ul></li><li><div class='node'>EligibilityRule: MNP-ELIG-005</div><ul><li><span class='pred'>operationalizesClause</span><div class='node'>RegulatoryClause: REG-MNP-CLAUSE-05</div></li></ul></li></ul></li><li><span class='pred'>usesRuleVersion</span><ul><li><div class='node'>RuleVersion: 1.0</div></li><li><div class='node'>RuleVersion: 1.0</div></li><li><div class='node'>RuleVersion: 1.0</div></li><li><div class='node'>RuleVersion: 1.0</div></li><li><div class='node'>RuleVersion: 1.1</div></li></ul></li><li><span class='pred'>producesDecision</span><ul><li><div class='node'>BlockingDecision: BLOCKED</div></li></ul></li><li><span class='pred'>producesBlockingReason</span><ul><li><div class='node'>BlockingReason: ACTIVE_CONTRACT_RESTRICTION</div><ul><li><span class='pred'>citesClause</span> → <span class='leaf'>REG-MNP-CLAUSE-04</span></li><li><span class='pred'>recommendsAction</span> → <span class='leaf'>WAIT_OR_TERMINATE_CONTRACT</span></li><li><span class='pred'>supportedByEvidence</span> → <span class='leaf'>Ev-03-CTR</span></li><li><span class='pred'>triggeredByRule</span> → <span class='leaf'>MNP-ELIG-004</span></li><li><span class='pred'>triggeredByRuleVersion</span> → <span class='leaf'>1.0</span></li></ul></li></ul></li><li><span class='pred'>dependsOn</span><ul><li><div class='node'>AssessmentDependency: AssessmentDependency</div><ul><li><span class='pred'>dependsOnEvidence</span> → <span class='leaf'>Ev-03-BILL</span></li><li><span class='pred'>dependsOnEvidence</span> → <span class='leaf'>Ev-03-CTR</span></li><li><span class='pred'>dependsOnEvidence</span> → <span class='leaf'>Ev-03-ID</span></li><li><span class='pred'>dependsOnEvidence</span> → <span class='leaf'>Ev-03-NUM</span></li><li><span class='pred'>dependsOnEvidence</span> → <span class='leaf'>Ev-03-PORT</span></li><li><span class='pred'>dependsOnRuleVersion</span> → <span class='leaf'>1.0</span></li><li><span class='pred'>dependsOnRuleVersion</span> → <span class='leaf'>1.0</span></li><li><span class='pred'>dependsOnRuleVersion</span> → <span class='leaf'>1.0</span></li><li><span class='pred'>dependsOnRuleVersion</span> → <span class='leaf'>1.0</span></li><li><span class='pred'>dependsOnRuleVersion</span> → <span class='leaf'>1.1</span></li></ul></li></ul></li></ul></li></ul></div>
+  <div class="subgraph"><div class="node root"><span class="ntype">MNPCase</span> <span class="nlabel">CASE-03</span></div><ul class='tree'><li><span class='pred'>hasEligibilityAssessment</span><div class='node'><span class='ntype'>EligibilityAssessment</span> <span class='nlabel'>ASSESS-CASE-03</span></div><ul><li><span class='pred'>usesEvidence</span><ul><li><div class='node'>EvidenceRecord: Ev-03-BILL</div></li><li><div class='node'>EvidenceRecord: Ev-03-CTR</div></li><li><div class='node'>EvidenceRecord: Ev-03-ID</div></li><li><div class='node'>EvidenceRecord: Ev-03-NUM</div></li><li><div class='node'>EvidenceRecord: Ev-03-PORT</div></li></ul></li><li><span class='pred'>evaluatedByRule</span><ul><li><div class='node'>EligibilityRule: MNP-ELIG-001</div><ul><li><span class='pred'>operationalizesClause</span><div class='node'>RegulatoryClause: REG-MNP-CLAUSE-01</div></li></ul></li><li><div class='node'>EligibilityRule: MNP-ELIG-002</div><ul><li><span class='pred'>operationalizesClause</span><div class='node'>RegulatoryClause: REG-MNP-CLAUSE-02</div></li></ul></li><li><div class='node'>EligibilityRule: MNP-ELIG-003</div><ul><li><span class='pred'>operationalizesClause</span><div class='node'>RegulatoryClause: REG-MNP-CLAUSE-03</div></li></ul></li><li><div class='node'>EligibilityRule: MNP-ELIG-004</div><ul><li><span class='pred'>operationalizesClause</span><div class='node'>RegulatoryClause: REG-MNP-CLAUSE-04</div></li></ul></li><li><div class='node'>EligibilityRule: MNP-ELIG-005</div><ul><li><span class='pred'>operationalizesClause</span><div class='node'>RegulatoryClause: REG-MNP-CLAUSE-05</div></li></ul></li></ul></li><li><span class='pred'>usesRuleVersion</span><ul><li><div class='node'>RuleVersion: 1.0</div></li><li><div class='node'>RuleVersion: 1.0</div></li><li><div class='node'>RuleVersion: 1.0</div></li><li><div class='node'>RuleVersion: 1.0</div></li><li><div class='node'>RuleVersion: 1.1</div></li></ul></li><li><span class='pred'>producesDecision</span><ul><li><div class='node'>BlockingDecision: BLOCKED</div><ul><li><span class='pred'>hasBlockingReason</span><div class='node'>BlockingReason: ACTIVE_CONTRACT_RESTRICTION</div><ul><li><span class='pred'>citesClause</span><div class='node'>RegulatoryClause: REG-MNP-CLAUSE-04</div></li><li><span class='pred'>recommendsAction</span><div class='node'>RemediationAction: WAIT_OR_TERMINATE_CONTRACT</div></li><li><span class='pred'>supportedByEvidence</span><div class='node'>EvidenceRecord: Ev-03-CTR</div></li><li><span class='pred'>triggeredByRule</span><div class='node'>EligibilityRule: MNP-ELIG-004</div></li><li><span class='pred'>triggeredByRuleVersion</span><div class='node'>RuleVersion: 1.0</div></li></ul></li></ul></li></ul></li></ul></li></ul></div>
 </section>
 
 <section>
   <h2>六个案例汇总</h2>
   <table>
     <tr><th>案例</th><th>结论</th><th>阻塞原因</th></tr>
-    <tr><td>CASE-01</td><td><strong>ELIGIBLE</strong></td><td>无</td></tr><tr><td>CASE-02</td><td><strong>BLOCKED</strong></td><td>OUTSTANDING_BALANCE</td></tr><tr><td>CASE-03</td><td><strong>BLOCKED</strong></td><td>ACTIVE_CONTRACT_RESTRICTION</td></tr><tr><td>CASE-04</td><td><strong>BLOCKED</strong></td><td>OUTSTANDING_BALANCE<br/>ACTIVE_CONTRACT_RESTRICTION</td></tr><tr><td>CASE-05</td><td><strong>MANUAL_REVIEW</strong></td><td>MISSING_OR_EXPIRED_EVIDENCE</td></tr><tr><td>CASE-06</td><td><strong>BLOCKED</strong></td><td>PORTING_INTERVAL_TOO_SHORT</td></tr>
+    <tr><td>CASE-01</td><td><strong>ELIGIBLE</strong></td><td>无</td></tr><tr><td>CASE-02</td><td><strong>BLOCKED</strong></td><td>OUTSTANDING_BALANCE</td></tr><tr><td>CASE-03</td><td><strong>BLOCKED</strong></td><td>ACTIVE_CONTRACT_RESTRICTION</td></tr><tr><td>CASE-04</td><td><strong>BLOCKED</strong></td><td>OUTSTANDING_BALANCE<br/>ACTIVE_CONTRACT_RESTRICTION</td></tr><tr><td>CASE-05</td><td><strong>MANUAL_REVIEW</strong></td><td>MISSING_OR_EXPIRED_EVIDENCE</td></tr><tr><td>CASE-06</td><td><strong>BLOCKED</strong></td><td>PORTING_INTERVAL_TOO_SHORT</td></tr><tr><td>CASE-07</td><td><strong>ELIGIBLE</strong></td><td>无</td></tr><tr><td>CASE-08</td><td><strong>BLOCKED</strong></td><td>ACTIVE_CONTRACT_RESTRICTION</td></tr><tr><td>CASE-09</td><td><strong>BLOCKED</strong></td><td>REAL_NAME_MISMATCH</td></tr>
   </table>
 </section>
 
@@ -167,14 +167,14 @@
 <section>
   <h2>本体核心类</h2>
   <div class="grid">
-    <div class="pill">MNPCase</div><div class="pill">EligibilityAssessment</div><div class="pill">EvidenceRecord</div><div class="pill">EligibilityRule</div><div class="pill">RuleVersion</div><div class="pill">RegulatoryClause</div><div class="pill">EligibilityDecision</div><div class="pill">BlockingReason</div><div class="pill">RemediationAction</div><div class="pill">AssessmentDependency</div>
+    <div class="pill">MNPCase</div><div class="pill">EligibilityAssessment</div><div class="pill">EvidenceRecord</div><div class="pill">EligibilityRule</div><div class="pill">RuleVersion</div><div class="pill">RegulatoryClause</div><div class="pill">EligibilityDecision</div><div class="pill">BlockingReason</div><div class="pill">RemediationAction</div>
   </div>
 </section>
 
 <section>
   <h2>本体核心关系</h2>
   <div class="grid">
-    <div class="pill">hasCaseEvidence</div><div class="pill">hasEligibilityAssessment</div><div class="pill">usesEvidence</div><div class="pill">usesRuleVersion</div><div class="pill">evaluatedByRule</div><div class="pill">producesDecision</div><div class="pill">producesBlockingReason</div><div class="pill">supportedByEvidence</div><div class="pill">triggeredByRule</div><div class="pill">citesClause</div><div class="pill">recommendsAction</div><div class="pill">dependsOn</div>
+    <div class="pill">hasCaseEvidence</div><div class="pill">hasEligibilityAssessment</div><div class="pill">usesEvidence</div><div class="pill">usesRuleVersion</div><div class="pill">evaluatedByRule</div><div class="pill">producesDecision</div><div class="pill">hasBlockingReason</div><div class="pill">supportedByEvidence</div><div class="pill">triggeredByRule</div><div class="pill">citesClause</div><div class="pill">recommendsAction</div>
   </div>
 </section>
 

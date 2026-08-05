@@ -1,0 +1,319 @@
+version: 1
+
+# The Stage 03 gate scans Git-tracked files plus non-ignored files that are
+# intended to be tracked.  demo_outputs is included because it is a versioned
+# release snapshot, not a disposable local runtime directory.
+scan_roots:
+  - src
+  - ontology
+  - shapes
+  - examples
+  - data
+  - queries
+  - competency_questions
+  - mappings
+  - rules
+  - tests
+  - scripts
+  - demo_outputs
+
+legacy_terms:
+  - 'http://example.org/kg-mnp#'
+  - 'producesBlockingReason'
+  - 'hasSubscription'
+  - 'ownsPhoneNumber'
+  - 'relatedAccount'
+  - 'dependsOn'
+  - 'AssessmentDependency'
+
+# Every approval identifies one exact stripped line in one exact path.  Counts
+# are checked and stale approvals fail, so this cannot exempt a whole file.
+allowed_occurrences:
+  - term: 'http://example.org/kg-mnp#'
+    path: scripts/stage03_constants.py
+    line_text: 'OLD_TERM_NS = "http://example.org/kg-mnp#"'
+    count: 1
+    category: migration_source
+    reason: Canonical old namespace input for the one-way Stage 03 IRI migration.
+  - term: 'http://example.org/kg-mnp#'
+    path: scripts/migrate_ontology_iris.py
+    line_text: 'mapping["http://example.org/kg-mnp#"] = TERM_NS'
+    count: 1
+    category: migration_tool
+    reason: Explicit source namespace handled by the one-way migration tool.
+
+  - term: producesBlockingReason
+    path: ontology/mnp-compliance.ttl
+    line_text: 'mnp:producesBlockingReason a owl:ObjectProperty ;'
+    count: 1
+    category: deprecated_declaration
+    reason: Deprecated declaration retained with owl:deprecated and replacementTerm metadata.
+  - term: producesBlockingReason
+    path: scripts/build_ontology_release.py
+    line_text: '("producesBlockingReason", "DEPRECATE", "hasBlockingReason", "ODR-002"),'
+    count: 1
+    category: change_log_generator
+    reason: Generates the controlled term change log entry.
+  - term: producesBlockingReason
+    path: scripts/stage03_term_catalog_part3.py
+    line_text: 'audit_notes="ODR-002 replacement for producesBlockingReason."),'
+    count: 1
+    category: deprecated_declaration_generator
+    reason: Audit note attached to the accepted replacement declaration.
+  - term: producesBlockingReason
+    path: scripts/stage03_term_catalog_part3.py
+    line_text: 'T(local="producesBlockingReason", term_type="ObjectProperty", module="COMPLIANCE",'
+    count: 1
+    category: deprecated_declaration_generator
+    reason: Generates the deprecated ontology declaration.
+  - term: producesBlockingReason
+    path: tests/ontology_release/test_stage03_core.py
+    line_text: 'MNP.producesBlockingReason,'
+    count: 1
+    category: migration_test
+    reason: Dedicated test verifies that the historical term is explicitly deprecated.
+
+  - term: hasSubscription
+    path: ontology/mnp-identity.ttl
+    line_text: 'mnp:hasSubscription a owl:ObjectProperty ;'
+    count: 1
+    category: deprecated_declaration
+    reason: Deprecated declaration retained with owl:deprecated and replacementTerm metadata.
+  - term: hasSubscription
+    path: scripts/build_ontology_release.py
+    line_text: 'audit_notes="ODR-001 replacement for hasSubscription."),'
+    count: 1
+    category: deprecated_declaration_generator
+    reason: Audit note records the accepted replacement.
+  - term: hasSubscription
+    path: scripts/build_ontology_release.py
+    line_text: 'T(local="hasSubscription", term_type="ObjectProperty", module="IDENTITY",'
+    count: 1
+    category: deprecated_declaration_generator
+    reason: Generates the deprecated ontology declaration.
+  - term: hasSubscription
+    path: scripts/build_ontology_release.py
+    line_text: '("hasSubscription", "DEPRECATE", "holdsSubscription", "ODR-001"),'
+    count: 1
+    category: change_log_generator
+    reason: Generates the controlled term change log entry.
+  - term: hasSubscription
+    path: scripts/rewrite_case_semantics.py
+    line_text: 'text = text.replace("mnp:hasSubscription", "mnp:holdsSubscription")'
+    count: 1
+    category: migration_tool
+    reason: One-way case-data migration from the old predicate to its replacement.
+  - term: hasSubscription
+    path: tests/ontology_release/test_stage03_core.py
+    line_text: 'MNP.hasSubscription,'
+    count: 1
+    category: migration_test
+    reason: Dedicated test verifies that the historical term is explicitly deprecated.
+
+  - term: ownsPhoneNumber
+    path: ontology/mnp-identity.ttl
+    line_text: 'mnp:ownsPhoneNumber a owl:ObjectProperty ;'
+    count: 1
+    category: deprecated_declaration
+    reason: Deprecated declaration retained with owl:deprecated and replacementTerm metadata.
+  - term: ownsPhoneNumber
+    path: scripts/build_ontology_release.py
+    line_text: 'audit_notes="ODR-001; replaces ownsPhoneNumber ownership semantics."),'
+    count: 1
+    category: deprecated_declaration_generator
+    reason: Audit note records the ownership-model replacement.
+  - term: ownsPhoneNumber
+    path: scripts/build_ontology_release.py
+    line_text: 'T(local="ownsPhoneNumber", term_type="ObjectProperty", module="IDENTITY",'
+    count: 1
+    category: deprecated_declaration_generator
+    reason: Generates the deprecated ontology declaration.
+  - term: ownsPhoneNumber
+    path: scripts/build_ontology_release.py
+    line_text: '("ownsPhoneNumber", "DEPRECATE", "assignedToSubscription", "ODR-001"),'
+    count: 1
+    category: change_log_generator
+    reason: Generates the controlled term change log entry.
+  - term: ownsPhoneNumber
+    path: scripts/rewrite_case_semantics.py
+    line_text: 'text = text.replace("mnp:ownsPhoneNumber", "mnp:_REMOVED_ownsPhoneNumber")'
+    count: 2
+    category: migration_tool
+    reason: Marks obsolete triples for removal during one-way case-data migration.
+  - term: ownsPhoneNumber
+    path: scripts/rewrite_case_semantics.py
+    line_text: 'text = re.sub(r"^\s*mnp:_REMOVED_ownsPhoneNumber[^\n]*\n", "", text, flags=re.M)'
+    count: 1
+    category: migration_tool
+    reason: Removes the marked obsolete triple during one-way case-data migration.
+  - term: ownsPhoneNumber
+    path: tests/ontology_release/test_stage03_core.py
+    line_text: '"ownsPhoneNumber",'
+    count: 1
+    category: migration_test
+    reason: Release inventory test requires the deprecated declaration to remain auditable.
+  - term: ownsPhoneNumber
+    path: tests/ontology_release/test_stage03_core.py
+    line_text: 'MNP.ownsPhoneNumber,'
+    count: 1
+    category: migration_test
+    reason: Dedicated test verifies that the historical term is explicitly deprecated.
+
+  - term: relatedAccount
+    path: ontology/mnp-account-billing.ttl
+    line_text: 'mnp:relatedAccount a owl:ObjectProperty ;'
+    count: 1
+    category: deprecated_declaration
+    reason: Deprecated declaration retained with owl:deprecated and replacementTerm metadata.
+  - term: relatedAccount
+    path: scripts/build_ontology_release.py
+    line_text: 'T(local="relatedAccount", term_type="ObjectProperty", module="ACCOUNT_BILLING",'
+    count: 1
+    category: deprecated_declaration_generator
+    reason: Generates the deprecated ontology declaration.
+  - term: relatedAccount
+    path: scripts/build_ontology_release.py
+    line_text: '("relatedAccount", "DEPRECATE", "billedThrough", "ODR-001"),'
+    count: 1
+    category: change_log_generator
+    reason: Generates the controlled term change log entry.
+  - term: relatedAccount
+    path: scripts/rewrite_case_semantics.py
+    line_text: 'text = text.replace("mnp:relatedAccount", "mnp:_REMOVED_relatedAccount")'
+    count: 2
+    category: migration_tool
+    reason: Marks obsolete triples for removal during one-way case-data migration.
+  - term: relatedAccount
+    path: scripts/rewrite_case_semantics.py
+    line_text: 'text = re.sub(r"^\s*mnp:_REMOVED_relatedAccount[^\n]*\n", "", text, flags=re.M)'
+    count: 1
+    category: migration_tool
+    reason: Removes the marked obsolete triple during one-way case-data migration.
+  - term: relatedAccount
+    path: tests/ontology_release/test_stage03_core.py
+    line_text: 'MNP.relatedAccount,'
+    count: 1
+    category: migration_test
+    reason: Dedicated test verifies that the historical term is explicitly deprecated.
+
+  - term: dependsOn
+    path: ontology/mnp-compliance.ttl
+    line_text: 'mnp:dependsOn a owl:ObjectProperty ;'
+    count: 1
+    category: deprecated_declaration
+    reason: Deprecated declaration retained with owl:deprecated and replacementTerm metadata.
+  - term: dependsOn
+    path: ontology/mnp-compliance.ttl
+    line_text: 'mnp:dependsOnEvidence a owl:ObjectProperty ;'
+    count: 1
+    category: deprecated_declaration
+    reason: Deprecated dependency-family declaration retained for migration auditability.
+  - term: dependsOn
+    path: ontology/mnp-compliance.ttl
+    line_text: 'mnp:dependsOnRuleVersion a owl:ObjectProperty ;'
+    count: 1
+    category: deprecated_declaration
+    reason: Deprecated dependency-family declaration retained for migration auditability.
+  - term: dependsOn
+    path: scripts/build_ontology_release.py
+    line_text: '("dependsOn", "DEPRECATE", "usesEvidence", "ODR-004"),'
+    count: 1
+    category: change_log_generator
+    reason: Generates the controlled term change log entry.
+  - term: dependsOn
+    path: scripts/build_ontology_release.py
+    line_text: '("dependsOnEvidence", "DEPRECATE", "usesEvidence", "ODR-004"),'
+    count: 1
+    category: change_log_generator
+    reason: Generates the controlled dependency-family change log entry.
+  - term: dependsOn
+    path: scripts/build_ontology_release.py
+    line_text: '("dependsOnRuleVersion", "DEPRECATE", "usesRuleVersion", "ODR-004"),'
+    count: 1
+    category: change_log_generator
+    reason: Generates the controlled dependency-family change log entry.
+  - term: dependsOn
+    path: scripts/stage03_term_catalog_part3.py
+    line_text: 'T(local="dependsOn", term_type="ObjectProperty", module="COMPLIANCE",'
+    count: 1
+    category: deprecated_declaration_generator
+    reason: Generates the deprecated ontology declaration.
+  - term: dependsOn
+    path: scripts/stage03_term_catalog_part3.py
+    line_text: 'T(local="dependsOnRuleVersion", term_type="ObjectProperty", module="COMPLIANCE",'
+    count: 1
+    category: deprecated_declaration_generator
+    reason: Generates the deprecated dependency-family declaration.
+  - term: dependsOn
+    path: scripts/stage03_term_catalog_part3.py
+    line_text: 'T(local="dependsOnEvidence", term_type="ObjectProperty", module="COMPLIANCE",'
+    count: 1
+    category: deprecated_declaration_generator
+    reason: Generates the deprecated dependency-family declaration.
+  - term: dependsOn
+    path: tests/ontology_release/test_stage03_core.py
+    line_text: 'MNP.dependsOn,'
+    count: 1
+    category: migration_test
+    reason: Dedicated test verifies that the historical term is explicitly deprecated.
+
+  - term: AssessmentDependency
+    path: ontology/mnp-compliance.ttl
+    line_text: 'mnp:AssessmentDependency a owl:Class ;'
+    count: 1
+    category: deprecated_declaration
+    reason: Deprecated declaration retained with owl:deprecated and replacementTerm metadata.
+  - term: AssessmentDependency
+    path: ontology/mnp-compliance.ttl
+    line_text: 'rdfs:range mnp:AssessmentDependency ;'
+    count: 1
+    category: deprecated_declaration
+    reason: Range statement belongs to the deprecated dependency predicate declaration.
+  - term: AssessmentDependency
+    path: ontology/mnp-compliance.ttl
+    line_text: 'rdfs:domain mnp:AssessmentDependency ;'
+    count: 2
+    category: deprecated_declaration
+    reason: Domain statements belong to deprecated dependency-family declarations.
+  - term: AssessmentDependency
+    path: scripts/build_ontology_release.py
+    line_text: '("AssessmentDependency", "DEPRECATE", "usesEvidence", "ODR-004"),'
+    count: 1
+    category: change_log_generator
+    reason: Generates the controlled term change log entry.
+  - term: AssessmentDependency
+    path: scripts/stage03_term_catalog_part3.py
+    line_text: 'T(local="AssessmentDependency", term_type="Class", module="COMPLIANCE",'
+    count: 1
+    category: deprecated_declaration_generator
+    reason: Generates the deprecated ontology declaration.
+  - term: AssessmentDependency
+    path: scripts/stage03_term_catalog_part3.py
+    line_text: 'domain="EligibilityAssessment", range="AssessmentDependency", deprecated=True,'
+    count: 1
+    category: deprecated_declaration_generator
+    reason: Generates the deprecated dependency predicate declaration.
+  - term: AssessmentDependency
+    path: scripts/stage03_term_catalog_part3.py
+    line_text: 'domain="AssessmentDependency", range="RuleVersion", deprecated=True,'
+    count: 1
+    category: deprecated_declaration_generator
+    reason: Generates a deprecated dependency-family declaration.
+  - term: AssessmentDependency
+    path: scripts/stage03_term_catalog_part3.py
+    line_text: 'domain="AssessmentDependency", range="EvidenceRecord", deprecated=True,'
+    count: 1
+    category: deprecated_declaration_generator
+    reason: Generates a deprecated dependency-family declaration.
+  - term: AssessmentDependency
+    path: tests/ontology_release/test_stage03_core.py
+    line_text: '"AssessmentDependency",'
+    count: 1
+    category: migration_test
+    reason: Release inventory test requires the deprecated declaration to remain auditable.
+  - term: AssessmentDependency
+    path: tests/ontology_release/test_stage03_core.py
+    line_text: 'MNP.AssessmentDependency,'
+    count: 1
+    category: migration_test
+    reason: Dedicated test verifies that the historical term is explicitly deprecated.

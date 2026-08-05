@@ -29,7 +29,6 @@ REQUIRED_CLASSES = [
     "RegulatoryDocument",
     "InformationSystem",
     "RuleVersion",
-    "AssessmentDependency",
 ]
 
 
@@ -65,13 +64,11 @@ def test_alignments_optional_and_no_tmf_equivalent():
 def test_core_object_properties_exist():
     g = load_ontology_graph()
     for prop in [
-        "ownsPhoneNumber",
         "concernsNumber",
         "requestedBy",
         "usesEvidence",
         "evaluatedByRule",
         "producesDecision",
         "operationalizesClause",
-        "dependsOn",
     ]:
         assert (MNP[prop], RDF.type, OWL.ObjectProperty) in g

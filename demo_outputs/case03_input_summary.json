@@ -1,5 +1,5 @@
 {
-  "applicant": "Sub-03",
+  "applicant": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Sub-03",
   "assessment_time": "2026-07-01T00:00:00Z",
   "assessment_time_note": "本次演示使用固定评估时间，以保证结果可重复。（ASSESSMENT_TIME = 2026-07-01T00:00:00Z）",
   "backend": "rdf",
@@ -9,7 +9,7 @@
   "days_since_last_port": 250,
   "evidence": [
     {
-      "evidence_id": "Ev-03-ID",
+      "evidence_id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Ev-03-ID",
       "evidence_type": "IDENTITY_MATCH",
       "generated_at": "2026-06-20T10:00:00+00:00",
       "label": "身份核验证据",
@@ -18,7 +18,7 @@
       "valid_until": "2026-12-31T23:59:59+00:00"
     },
     {
-      "evidence_id": "Ev-03-NUM",
+      "evidence_id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Ev-03-NUM",
       "evidence_type": "NUMBER_STATUS",
       "generated_at": "2026-06-20T10:05:00+00:00",
       "label": "号码状态证据",
@@ -27,7 +27,7 @@
       "valid_until": "2026-12-31T23:59:59+00:00"
     },
     {
-      "evidence_id": "Ev-03-BILL",
+      "evidence_id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Ev-03-BILL",
       "evidence_type": "BILLING_BALANCE",
       "generated_at": "2026-06-20T10:10:00+00:00",
       "label": "计费证据",
@@ -36,7 +36,7 @@
       "valid_until": "2026-12-31T23:59:59+00:00"
     },
     {
-      "evidence_id": "Ev-03-CTR",
+      "evidence_id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Ev-03-CTR",
       "evidence_type": "CONTRACT_STATUS",
       "generated_at": "2026-06-20T10:15:00+00:00",
       "label": "合约证据",
@@ -45,7 +45,7 @@
       "valid_until": "2026-12-31T23:59:59+00:00"
     },
     {
-      "evidence_id": "Ev-03-PORT",
+      "evidence_id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Ev-03-PORT",
       "evidence_type": "PORTING_HISTORY",
       "generated_at": "2026-06-20T10:20:00+00:00",
       "label": "携转历史证据",

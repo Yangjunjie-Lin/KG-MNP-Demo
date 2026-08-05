@@ -31,7 +31,8 @@ GraphDB / WebVOWL
 | Stage 04–08 | NOT STARTED |
 
 Stage 03 已完成正式 IRI 迁移、模块归属、Protégé catalog、SHACL profile 拆分，
-以及 OWL 2 DL（ROBOT + HermiT）一致性检查。尚未实施 Modeling Proposal
+以及 OWL 2 DL 一致性检查。ROBOT 是固定版本的命令行封装，HermiT 是由它调用的
+OWL 推理器；二者的版本在正式证明中分别记录。尚未实施 Modeling Proposal
 Pipeline、Review/Confirm、GraphDB 或 WebVOWL。
 
 ## 当前边界
@@ -62,17 +63,79 @@ Pipeline、Review/Confirm、GraphDB 或 WebVOWL。
 
 ## 安装与验证
 
-需要 Python 3.11+。完整 OWL 2 DL 检查需要 Java 17+（ROBOT/HermiT）。
+需要 Python 3.11+。完整 OWL 2 DL 检查需要 Java 17+。门禁只允许从 ROBOT
+官方 release URL 下载 `1.9.7`：
+`https://github.com/ontodev/robot/releases/download/v1.9.7/robot.jar`，并固定验证
+SHA-256 `91890c2e83d0f092dd08731376f154b36610544cfbe8685337a1bf7244ccaa2d`。
+已有缓存也会在每次使用前验证；下载内容先写临时文件，哈希匹配后才进入缓存。
+
+固定 JAR 的内嵌 Maven metadata 将 HermiT dependency 标识为 `1.4.5.456`。
+如果未来某个经批准的 ROBOT 发行物不能可靠给出该依赖版本，报告必须明确写
+`UNKNOWN`，不得把 ROBOT 版本冒充为 HermiT 版本。项目只允许该 dependency
+version 字段为 `UNKNOWN`；前提是固定 ROBOT 哈希、HermiT 实际执行和全部结果
+校验都成功。Consistency 或运行状态为 `UNKNOWN`/`NOT_RUN` 时绝不允许 PASS。
 
 ```bash
 make install
 make verify-stage-01
 make verify-stage-02
 make verify-stage-03-core
+make verify-robot-checksum
 make reasoner-check
+make verify-reasoner-run
 make verify-reasoner-report
+make verify-no-runtime-legacy-terms
 make verify-stage-03
 ```
+
+`verify-stage-03` 是 CI 和本地收尾的完整入口，并严格按以下顺序执行：Stage 03
+core（其中包含 Stage 01/02 回归）、ROBOT 校验、HermiT 实际运行、runtime run
+验证、正式报告验证、运行态旧术语扫描。默认 `reasoner-check` 只写已忽略的
+`runtime_reports/ontology/`，不得改动受版本控制文件。
+
+### Reasoner 产物与哈希
+
+一次运行的机器结果写入：
+
+- `runtime_reports/ontology/reasoner-run.json`
+- `runtime_reports/ontology/reasoner-input.nt`
+- `runtime_reports/ontology/reasoned-ontology.owl`
+- `runtime_reports/ontology/unsatisfiable-debug.owl` (present only when ROBOT emits an incoherence explanation; it is not parsed as a line-oriented class list)
+- `runtime_reports/ontology/unsatisfiable.txt`
+- `runtime_reports/ontology/unexpected-equivalences.json`
+
+这里使用三个不同含义的哈希：
+
+- `release_source_hash` 以稳定相对路径和 LF-normalized 内容覆盖根本体、配置声明
+  的全部 runtime module、模块配置与 Protégé catalog；默认发布 profile 明确
+  排除 optional alignments。
+- `reasoner_input_semantic_hash` 覆盖 HermiT 实际读取图的 canonical RDF 表示，
+  因而不受 Turtle 三元组顺序或 blank node 临时标识影响。
+- `reasoner_input_file_hash` 是 HermiT 实际读取文件的逐字节 SHA-256，用于审计
+  本次物理输入；它不再被当作发布源哈希。
+
+Canonicalization 直接影响可复现哈希，因此两个依赖清单都精确固定
+`rdflib==7.6.0`；runtime evidence 与正式 attestation 也记录该版本。
+
+正式发布证明由受版本控制的
+`docs/ontology/reasoner-attestation.json` 单一驱动，
+`docs/ontology/reasoner-report.md` 必须从该 JSON 确定性生成，不得分别手工维护。
+Markdown 中只保存 `python scripts/run_reasoner.py` 这类便携命令，不保存盘符、
+用户名、临时目录或本机项目路径。普通本地运行和 CI 不更新正式证明；只有在
+审核一次成功运行并确实要刷新发布证明时，才显式执行：
+
+```bash
+make reasoner-check
+make verify-reasoner-run
+python scripts/run_reasoner.py --update-attestation
+make verify-reasoner-report
+git diff --check
+```
+
+新增的 `owl:equivalentClass` 会从 reasoned ontology 与 asserted ontology 的差异中
+计算。只有 `config/reasoner-allowlist.yaml` 中明确批准的无序类对可以保留；其他
+新增等价类都会使 Stage 03 失败。`owl:Nothing` 相关项由不可满足命名类检查单独
+处理，不能用等价类 allowlist 掩盖。
 
 ### Protégé
 
@@ -102,8 +165,9 @@ python scripts/check_repo_hygiene.py
 ```
 
 测试与 CI 门禁不依赖 Node、浏览器、Docker、数据库服务或外部 GraphDB/WebVOWL；
-完整 reasoner 需要本机/CI 的 Java。CI 执行 `make verify-stage-03-core`、
-`make reasoner-check` 与 `make verify-reasoner-report`。
+完整 reasoner 只需要 Java 17+ 和固定校验的 ROBOT。CI 执行单一完整门禁
+`make verify-stage-03`，随后断言 `git diff` 与 `git status --short` 均为空，确保
+Reasoner runtime 产物不会污染正式仓库。
 
 ## Legacy Eligibility Use Case
 

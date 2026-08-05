@@ -39,7 +39,7 @@ mnp:PhoneNumber
 # --- TelecomAccount ---
 mnp:TelecomAccount
     mnp:alignmentStatus "PARTIAL" ;
-    dcterms:source "TM Forum TMF629 relatedParty / relatedAccount and CustomerAccount patterns (schema mapping layer)." ;
+    dcterms:source "TM Forum TMF629 related-party and customer-account patterns (schema mapping layer)." ;
     rdfs:seeAlso <https://github.com/tmforum-apis/TMF629_CustomerManagement> .
 
 # --- TelecomService ---

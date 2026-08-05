@@ -260,7 +260,7 @@
     "CASE-06": {
       "affected_assessments": [
         {
-          "assessment": "http://example.org/kg-mnp#Assessment-CASE-06-HIST",
+          "assessment": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/Assessment-CASE-06-HIST",
           "assessmentId": "ASSESS-CASE-06-HIST",
           "caseId": "CASE-06",
           "newVersion": "1.1",
@@ -312,6 +312,157 @@
           "rule_id": "MNP-ELIG-005",
           "selected_for_assessment_time": "2026-07-01T00:00:00Z",
           "status": "FAIL",
+          "version": "1.1"
+        }
+      ],
+      "validation_status": "PASSED"
+    },
+    "CASE-07": {
+      "affected_assessments": [],
+      "backend": "rdf",
+      "blocking_reasons": [],
+      "decision": "ELIGIBLE",
+      "rules": [
+        {
+          "effective_from": "2024-01-01T00:00:00Z",
+          "effective_to": null,
+          "rule_id": "MNP-ELIG-001",
+          "selected_for_assessment_time": "2026-07-01T00:00:00Z",
+          "status": "PASS",
+          "version": "1.0"
+        },
+        {
+          "effective_from": "2024-01-01T00:00:00Z",
+          "effective_to": null,
+          "rule_id": "MNP-ELIG-002",
+          "selected_for_assessment_time": "2026-07-01T00:00:00Z",
+          "status": "PASS",
+          "version": "1.0"
+        },
+        {
+          "effective_from": "2024-01-01T00:00:00Z",
+          "effective_to": null,
+          "rule_id": "MNP-ELIG-003",
+          "selected_for_assessment_time": "2026-07-01T00:00:00Z",
+          "status": "PASS",
+          "version": "1.0"
+        },
+        {
+          "effective_from": "2024-01-01T00:00:00Z",
+          "effective_to": null,
+          "rule_id": "MNP-ELIG-004",
+          "selected_for_assessment_time": "2026-07-01T00:00:00Z",
+          "status": "PASS",
+          "version": "1.0"
+        },
+        {
+          "effective_from": "2026-06-01T00:00:00Z",
+          "effective_to": null,
+          "rule_id": "MNP-ELIG-005",
+          "selected_for_assessment_time": "2026-07-01T00:00:00Z",
+          "status": "PASS",
+          "version": "1.1"
+        }
+      ],
+      "validation_status": "PASSED"
+    },
+    "CASE-08": {
+      "affected_assessments": [],
+      "backend": "rdf",
+      "blocking_reasons": [
+        "ACTIVE_CONTRACT_RESTRICTION"
+      ],
+      "decision": "BLOCKED",
+      "rules": [
+        {
+          "effective_from": "2024-01-01T00:00:00Z",
+          "effective_to": null,
+          "rule_id": "MNP-ELIG-001",
+          "selected_for_assessment_time": "2026-07-01T00:00:00Z",
+          "status": "PASS",
+          "version": "1.0"
+        },
+        {
+          "effective_from": "2024-01-01T00:00:00Z",
+          "effective_to": null,
+          "rule_id": "MNP-ELIG-002",
+          "selected_for_assessment_time": "2026-07-01T00:00:00Z",
+          "status": "PASS",
+          "version": "1.0"
+        },
+        {
+          "effective_from": "2024-01-01T00:00:00Z",
+          "effective_to": null,
+          "rule_id": "MNP-ELIG-003",
+          "selected_for_assessment_time": "2026-07-01T00:00:00Z",
+          "status": "PASS",
+          "version": "1.0"
+        },
+        {
+          "effective_from": "2024-01-01T00:00:00Z",
+          "effective_to": null,
+          "rule_id": "MNP-ELIG-004",
+          "selected_for_assessment_time": "2026-07-01T00:00:00Z",
+          "status": "FAIL",
+          "version": "1.0"
+        },
+        {
+          "effective_from": "2026-06-01T00:00:00Z",
+          "effective_to": null,
+          "rule_id": "MNP-ELIG-005",
+          "selected_for_assessment_time": "2026-07-01T00:00:00Z",
+          "status": "PASS",
+          "version": "1.1"
+        }
+      ],
+      "validation_status": "PASSED"
+    },
+    "CASE-09": {
+      "affected_assessments": [],
+      "backend": "rdf",
+      "blocking_reasons": [
+        "REAL_NAME_MISMATCH"
+      ],
+      "decision": "BLOCKED",
+      "rules": [
+        {
+          "effective_from": "2024-01-01T00:00:00Z",
+          "effective_to": null,
+          "rule_id": "MNP-ELIG-001",
+          "selected_for_assessment_time": "2026-07-01T00:00:00Z",
+          "status": "FAIL",
+          "version": "1.0"
+        },
+        {
+          "effective_from": "2024-01-01T00:00:00Z",
+          "effective_to": null,
+          "rule_id": "MNP-ELIG-002",
+          "selected_for_assessment_time": "2026-07-01T00:00:00Z",
+          "status": "PASS",
+          "version": "1.0"
+        },
+        {
+          "effective_from": "2024-01-01T00:00:00Z",
+          "effective_to": null,
+          "rule_id": "MNP-ELIG-003",
+          "selected_for_assessment_time": "2026-07-01T00:00:00Z",
+          "status": "PASS",
+          "version": "1.0"
+        },
+        {
+          "effective_from": "2024-01-01T00:00:00Z",
+          "effective_to": null,
+          "rule_id": "MNP-ELIG-004",
+          "selected_for_assessment_time": "2026-07-01T00:00:00Z",
+          "status": "PASS",
+          "version": "1.0"
+        },
+        {
+          "effective_from": "2026-06-01T00:00:00Z",
+          "effective_to": null,
+          "rule_id": "MNP-ELIG-005",
+          "selected_for_assessment_time": "2026-07-01T00:00:00Z",
+          "status": "PASS",
           "version": "1.1"
         }
       ],

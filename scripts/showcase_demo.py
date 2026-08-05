@@ -77,7 +77,6 @@ CORE_CLASSES = [
     "EligibilityDecision",
     "BlockingReason",
     "RemediationAction",
-    "AssessmentDependency",
 ]
 
 CORE_RELATIONS = [
@@ -87,12 +86,11 @@ CORE_RELATIONS = [
     "usesRuleVersion",
     "evaluatedByRule",
     "producesDecision",
-    "producesBlockingReason",
+    "hasBlockingReason",
     "supportedByEvidence",
     "triggeredByRule",
     "citesClause",
     "recommendsAction",
-    "dependsOn",
 ]
 
 
@@ -378,7 +376,7 @@ def apply_what_if(graph: Graph, case_id: str, scenario: str) -> dict[str, Any]:
             notes.append(f"set {_local(ev)} contractEndTime={expired_end}")
         if case_uri is not None:
             for sub in graph.objects(case_uri, MNP.requestedBy):
-                for subscription in graph.objects(sub, MNP.hasSubscription):
+                for subscription in graph.objects(sub, MNP.holdsSubscription):
                     for contract in graph.objects(subscription, MNP.governedByContract):
                         graph.set((contract, MNP.contractStatusCode, Literal("EXPIRED")))
                         graph.set((contract, MNP.contractEndTime, expired_end))

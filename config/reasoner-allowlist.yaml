@@ -1,0 +1,4 @@
+# Inferred named-class equivalences approved for the Stage 03 release.
+# Each entry must be a two-item list of absolute class IRIs. The pair is
+# unordered. An entry authorizes the inference; it does not require it.
+expected_equivalent_classes: []

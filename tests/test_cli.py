@@ -3,6 +3,7 @@
 import json
 
 from kg_mnp_demo.cli import main
+from kg_mnp_demo.namespaces import CASE_FILES
 
 
 def test_cli_evaluate_case_03(capsys):
@@ -34,6 +35,7 @@ def test_cli_run_all_twice_consistent(capsys):
     assert main(["run-all", "--backend", "rdf"]) == 0
     second = json.loads(capsys.readouterr().out)
     assert first == second
+    assert set(first["run_all"]) == set(CASE_FILES)
     assert first["run_all"]["CASE-01"]["decision"] == "ELIGIBLE"
     assert first["run_all"]["CASE-02"]["decision"] == "BLOCKED"
     assert first["run_all"]["CASE-05"]["decision"] == "MANUAL_REVIEW"

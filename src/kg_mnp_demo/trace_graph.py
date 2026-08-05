@@ -31,7 +31,6 @@ PREFERRED_TYPES = [
     "RegulatoryClause",
     "RegulatoryDocument",
     "RemediationAction",
-    "AssessmentDependency",
     "MNPCase",
     "ReassessmentMarker",
 ]
@@ -83,8 +82,6 @@ def _node_label(graph: Graph, node: URIRef, node_type: str | None) -> str:
         if val is not None:
             return str(val)
     local = _local(str(node))
-    if node_type == "AssessmentDependency":
-        return "AssessmentDependency"
     return local
 
 
@@ -335,12 +332,6 @@ def format_subgraph_tree(subgraph: dict[str, Any]) -> str:
                                 )
                     if t_idx < len(targets) - 1:
                         lines.append(f"{child_indent}")
-                continue
-
-            if pred == "producesBlockingReason":
-                continue
-
-            if pred == "dependsOn":
                 continue
 
             lines.append(f"{indent}{pred_branch} {pred}")

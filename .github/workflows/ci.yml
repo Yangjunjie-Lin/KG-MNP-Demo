@@ -27,9 +27,13 @@ jobs:
         run: |
           python -m pip install --upgrade pip
           python -m pip install -e ".[dev]"
-      - name: Verify Stage 03 core
-        run: make verify-stage-03-core
-      - name: Run OWL 2 DL reasoner
-        run: make reasoner-check
-      - name: Verify reasoner report
-        run: make verify-reasoner-report
+      - name: Verify Stage 03
+        run: make verify-stage-03
+      - name: Verify clean working tree
+        shell: bash
+        run: |
+          git diff --exit-code
+          if [[ -n "$(git status --short)" ]]; then
+            git status --short
+            exit 1
+          fi

@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import csv
 import hashlib
+import json
 from pathlib import Path
 
 import yaml
@@ -205,9 +206,15 @@ def test_competency_query_blocking_reason():
 
 def test_reasoner_report_fields_present():
     report = ROOT / "docs" / "ontology" / "reasoner-report.md"
-    # May be created by reasoner-check; if missing skip structural assert here
-    if not report.is_file():
-        return
+    attestation_path = ROOT / "docs" / "ontology" / "reasoner-attestation.json"
+    assert report.is_file()
+    assert attestation_path.is_file()
     text = report.read_text(encoding="utf-8")
-    assert "Ontology hash" in text
-    assert "Status:" in text
+    attestation = json.loads(attestation_path.read_text(encoding="utf-8"))
+    assert "Release source hash" in text
+    assert "Reasoner input semantic hash" in text
+    assert "Reasoner input file hash" in text
+    assert attestation["status"] == "PASS"
+    assert attestation["consistency"] == "CONSISTENT"
+    assert attestation["unsatisfiable_named_classes"] == []
+    assert attestation["unexpected_equivalent_classes"] == []

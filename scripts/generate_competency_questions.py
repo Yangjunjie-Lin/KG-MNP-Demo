@@ -42,7 +42,7 @@ ORDER BY ?caseId
 SELECT ?caseId ?reasonCode WHERE {
   ?case a mnp:MNPCase ; mnp:caseIdentifier ?caseId ; mnp:hasEligibilityAssessment ?a .
   FILTER(STR(?caseId) = STR(?requestedCaseId))
-  ?a mnp:producesBlockingReason ?r . ?r mnp:reasonCode ?reasonCode .
+  ?a mnp:producesDecision ?d . ?d mnp:hasBlockingReason ?r . ?r mnp:reasonCode ?reasonCode .
 }
 ORDER BY ?reasonCode
 """,
@@ -50,7 +50,7 @@ ORDER BY ?reasonCode
 SELECT ?caseId ?reasonCode ?evidence ?evidenceStatus WHERE {
   ?case a mnp:MNPCase ; mnp:caseIdentifier ?caseId ; mnp:hasEligibilityAssessment ?a .
   FILTER(STR(?caseId) = STR(?requestedCaseId))
-  ?a mnp:producesBlockingReason ?r .
+  ?a mnp:producesDecision ?d . ?d mnp:hasBlockingReason ?r .
   ?r mnp:reasonCode ?reasonCode .
   OPTIONAL { ?r mnp:supportedByEvidence ?evidence . OPTIONAL { ?evidence mnp:evidenceStatus ?evidenceStatus } }
 }
@@ -72,7 +72,8 @@ SELECT ?caseId ?ruleId ?ruleVersion ?effectiveFrom WHERE {
   ?case a mnp:MNPCase ; mnp:caseIdentifier ?caseId ; mnp:hasEligibilityAssessment ?a .
   FILTER(STR(?caseId) = STR(?requestedCaseId))
   ?a mnp:usesRuleVersion ?rv .
-  OPTIONAL { ?rv mnp:ruleIdentifier ?ruleId }
+  ?rule mnp:hasRuleVersion ?rv ;
+        mnp:ruleIdentifier ?ruleId .
   OPTIONAL { ?rv mnp:ruleVersion ?ruleVersion }
   OPTIONAL { ?rv mnp:effectiveFrom ?effectiveFrom }
 }
@@ -82,7 +83,7 @@ ORDER BY ?ruleId ?ruleVersion
 SELECT ?caseId ?reasonCode ?clauseId WHERE {
   ?case a mnp:MNPCase ; mnp:caseIdentifier ?caseId ; mnp:hasEligibilityAssessment ?a .
   FILTER(STR(?caseId) = STR(?requestedCaseId))
-  ?a mnp:producesBlockingReason ?r .
+  ?a mnp:producesDecision ?d . ?d mnp:hasBlockingReason ?r .
   ?r mnp:reasonCode ?reasonCode ; mnp:citesClause ?c .
   ?c mnp:clauseIdentifier ?clauseId .
 }
@@ -92,7 +93,7 @@ ORDER BY ?clauseId
 SELECT ?caseId ?reasonCode ?actionCode WHERE {
   ?case a mnp:MNPCase ; mnp:caseIdentifier ?caseId ; mnp:hasEligibilityAssessment ?a .
   FILTER(STR(?caseId) = STR(?requestedCaseId))
-  ?a mnp:producesBlockingReason ?r .
+  ?a mnp:producesDecision ?d . ?d mnp:hasBlockingReason ?r .
   ?r mnp:reasonCode ?reasonCode ; mnp:recommendsAction ?act .
   ?act mnp:actionCode ?actionCode .
 }
@@ -135,7 +136,7 @@ SELECT ?caseId ?service ?subscriptionStatus WHERE {
   ?case a mnp:MNPCase ; mnp:caseIdentifier ?caseId ; mnp:requestedBy ?sub .
   FILTER(STR(?caseId) = STR(?requestedCaseId))
   OPTIONAL {
-    ?sub mnp:hasSubscription ?ss .
+    ?sub mnp:holdsSubscription ?ss .
     ?ss mnp:subscribesToService ?service .
     OPTIONAL { ?ss mnp:subscriptionStatusCode ?subscriptionStatus }
   }
@@ -147,7 +148,7 @@ SELECT ?caseId ?contract ?contractStatus ?contractEnd WHERE {
   ?case a mnp:MNPCase ; mnp:caseIdentifier ?caseId ; mnp:requestedBy ?sub .
   FILTER(STR(?caseId) = STR(?requestedCaseId))
   OPTIONAL {
-    ?sub mnp:hasSubscription ?ss .
+    ?sub mnp:holdsSubscription ?ss .
     ?ss mnp:governedByContract ?contract .
     OPTIONAL { ?contract mnp:contractStatusCode ?contractStatus }
     OPTIONAL { ?contract mnp:contractEndTime ?contractEnd }
@@ -173,7 +174,7 @@ ORDER BY ?evidence
 SELECT ?caseId ?reasonCode ?actionCode ?clauseId WHERE {
   ?case a mnp:MNPCase ; mnp:caseIdentifier ?caseId ; mnp:hasEligibilityAssessment ?a .
   FILTER(STR(?caseId) = STR(?requestedCaseId))
-  ?a mnp:producesBlockingReason ?r .
+  ?a mnp:producesDecision ?d . ?d mnp:hasBlockingReason ?r .
   ?r mnp:reasonCode ?reasonCode .
   OPTIONAL { ?r mnp:recommendsAction ?act . ?act mnp:actionCode ?actionCode }
   OPTIONAL { ?r mnp:citesClause ?c . ?c mnp:clauseIdentifier ?clauseId }
@@ -181,15 +182,16 @@ SELECT ?caseId ?reasonCode ?actionCode ?clauseId WHERE {
 ORDER BY ?reasonCode
 """,
     "cq15_affected_assessments.rq": """
-SELECT ?assessment ?oldVersion ?newVersion WHERE {
+SELECT ?assessment ?oldVersion ?newVersion ?requiresReassessment WHERE {
   ?new mnp:supersedesRuleVersion ?old .
   ?assessment mnp:usesRuleVersion ?old .
   OPTIONAL { ?old mnp:ruleVersion ?oldVersion }
   OPTIONAL { ?new mnp:ruleVersion ?newVersion }
-  OPTIONAL {
-    ?case a mnp:MNPCase ; mnp:caseIdentifier ?caseId ; mnp:hasEligibilityAssessment ?assessment .
-    FILTER(STR(?caseId) = STR(?requestedCaseId))
-  }
+  OPTIONAL { ?assessment mnp:requiresReassessment ?requiresReassessment }
+  ?case a mnp:MNPCase ;
+        mnp:caseIdentifier ?caseId ;
+        mnp:hasEligibilityAssessment ?assessment .
+  FILTER(STR(?caseId) = STR(?requestedCaseId))
 }
 ORDER BY ?assessment
 """,
