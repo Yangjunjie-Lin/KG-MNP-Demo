@@ -1,4 +1,4 @@
-.PHONY: install test test-neo4j run-all validate-case03 evaluate-case03 trace-case03 docs check-refs neo4j-up neo4j-ping api frontend fullstack verify-frontend verify-fullstack verify-storage-atomicity verify-docker-runtime verify-repo-hygiene verify-stage-gate
+.PHONY: install test test-neo4j run-all validate-case03 evaluate-case03 trace-case03 docs check-refs neo4j-up neo4j-ping api frontend fullstack verify-frontend verify-fullstack verify-storage-atomicity verify-docker-runtime verify-repo-hygiene verify-unified-graph verify-stage-gate
 
 install:
 	python -m pip install -e ".[dev,api]"
@@ -67,8 +67,16 @@ verify-storage-atomicity:
 verify-docker-runtime:
 	python scripts/verify_docker_runtime.py
 
+verify-unified-graph:
+	python scripts/check_graph_projection.py
+	cd frontend && npm run test -- unified-graph
+	cd frontend && npx playwright test e2e/unified-graph-interaction.spec.ts
+	cd frontend && npx playwright test e2e/business-map.spec.ts
+	cd frontend && npx playwright test e2e/assessment-business-trace.spec.ts
+
 verify-stage-gate:
 	python scripts/check_repo_hygiene.py
+	python scripts/check_graph_projection.py
 	python -m pytest -q
 	python scripts/check_references.py
 	python scripts/check_rule_versions.py
@@ -77,5 +85,6 @@ verify-stage-gate:
 	cd frontend && npm run api:check
 	cd frontend && npm run verify
 	cd frontend && npx playwright install chromium
+	cd frontend && npx playwright test e2e/business-map.spec.ts e2e/assessment-business-trace.spec.ts e2e/unified-graph-interaction.spec.ts
 	python scripts/run_fullstack.py --reset-seed --playwright
 	python scripts/verify_docker_runtime.py

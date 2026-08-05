@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://kg-mnp-demo.local/schemas/business_role_mapping_v1.schema.json",
+  "title": "BusinessRoleMappingV1",
+  "type": "object",
+  "required": ["version", "mapping"],
+  "additionalProperties": false,
+  "properties": {
+    "$schema": { "type": "string" },
+    "version": { "type": "string" },
+    "mapping": {
+      "type": "object",
+      "additionalProperties": {
+        "oneOf": [
+          { "type": "string", "minLength": 1 },
+          {
+            "type": "array",
+            "items": { "type": "string", "minLength": 1 },
+            "minItems": 1
+          }
+        ]
+      }
+    },
+    "laneFallback": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string",
+        "enum": [
+          "USER_IDENTITY",
+          "ACCOUNT_BILLING",
+          "SERVICE_OFFERING",
+          "PORTABILITY_PROCESS",
+          "QUALIFICATION_COMPLIANCE"
+        ]
+      }
+    }
+  }
+}

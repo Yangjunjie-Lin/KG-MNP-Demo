@@ -24,10 +24,11 @@ import {
   ruleLabels,
   stepStatusLabels,
   traceEvidenceLabels,
-  traceNodeTypeLabels,
   translateOrUnknown,
   ui,
 } from "../i18n/zh-CN";
+import { UnifiedBusinessGraph } from "../components/unified-graph/UnifiedBusinessGraph";
+import type { NodeState } from "../unified-graph/graphTypes";
 import { getAssessmentDetail } from "../services/assessmentService";
 import { getCaseHistory } from "../services/caseService";
 import { cn } from "../utils/cn";
@@ -85,37 +86,69 @@ function traceNodeLabel(node: TraceNodeView, detail: AssessmentViewModel): strin
     if (code) return remediationActionLabels[code];
   }
   if (rawType === "BlockingDecision") return "不可携转结论";
-  if (traceNodeTypeLabels[rawType] && ["AssessmentDependency", "RegulatoryDocument", "RuleVersion"].includes(rawType)) {
-    return traceNodeTypeLabels[rawType];
+  if (["AssessmentDependency", "RegulatoryDocument", "RuleVersion"].includes(rawType)) {
+    if (rawType === "AssessmentDependency") return "评估依赖";
+    if (rawType === "RegulatoryDocument") return "监管文件";
+    return "规则版本";
   }
   console.warn("[trace] 未识别追溯节点", { id: node.id, label: node.label, type: node.type });
   return "未识别追溯节点";
 }
 
-function traceNodeTypeLabel(node: TraceNodeView): string {
-  const rawType = localName(node.type);
-  if (["EvidenceRecord", "Evidence"].includes(rawType)) return "证据";
-  if (["BlockingReason", "Reason"].includes(rawType)) return "阻塞原因";
-  if (traceNodeTypeLabels[rawType]) return traceNodeTypeLabels[rawType];
-  return "未识别追溯节点";
-}
-
 function TraceGraph({ detail }: { detail: AssessmentViewModel }) {
-  const [selected, setSelected] = useState<string | null>(null);
-  const nodes = detail.traceNodes;
-  const nodeMap = useMemo(() => Object.fromEntries(nodes.map((node) => [node.id, node])), [nodes]);
-  const relationCounts = useMemo(() => {
-    const counts = new Map<string, number>();
-    detail.traceEdges.forEach((edge) => {
-      counts.set(edge.source, (counts.get(edge.source) ?? 0) + 1);
-      counts.set(edge.target, (counts.get(edge.target) ?? 0) + 1);
-    });
-    return counts;
-  }, [detail.traceEdges]);
+  const nodes = useMemo(
+    () =>
+      detail.traceNodes.map((node) => {
+        const rawType = localName(node.type);
+        let state: NodeState = "ACTIVE";
+        if (detail.decision === "BLOCKED" && /Blocking|Reason/.test(rawType)) {
+          state = "BLOCK";
+        } else if (detail.decision === "ELIGIBLE" && /Decision|Assessment/.test(rawType)) {
+          state = "PASS";
+        } else if (/Evidence/.test(rawType)) {
+          state = "CURRENT";
+        }
+        return {
+          id: node.id,
+          label: traceNodeLabel(node, detail),
+          localName: rawType,
+          module: "COMPLIANCE",
+          type: rawType,
+          state,
+        };
+      }),
+    [detail],
+  );
+  const edges = useMemo(
+    () =>
+      detail.traceEdges.map((edge, index) => ({
+        id: `${edge.source}->${edge.target}:${edge.relation}:${index}`,
+        from: edge.source,
+        to: edge.target,
+        relation: localName(edge.relation),
+        presentationType: "TRACE" as const,
+      })),
+    [detail.traceEdges],
+  );
+  const activeNodeIds = useMemo(
+    () => new Set(detail.traceNodes.map((node) => node.id)),
+    [detail.traceNodes],
+  );
+
   if (!nodes.length) return <EmptyState message="暂无追溯图数据" />;
-  const width = 860; const height = Math.max(420, Math.ceil(nodes.length / 5) * 86 + 80);
-  const selectedNode = selected ? nodeMap[selected] : undefined;
-  return <div className="space-y-3" data-testid="trace-graph"><div className="overflow-x-auto rounded-lg border border-slate-200 bg-white"><svg viewBox={`0 0 ${width} ${height}`} className="min-w-[760px]" style={{ height }}><defs><marker id="trace-arrow" markerWidth="8" markerHeight="8" refX="7" refY="3" orient="auto"><path d="M0,0 L0,6 L8,3 z" fill="#94a3b8" /></marker></defs>{detail.traceEdges.map((edge, index) => { const source = nodeMap[edge.source]; const target = nodeMap[edge.target]; if (!source || !target) return null; const relation = translateOrUnknown(ontologyRelationLabels, localName(edge.relation), ui.unknownOntologyRelation); return <g key={`${edge.source}-${edge.target}-${index}`}><line x1={source.x + 120} y1={source.y + 18} x2={target.x} y2={target.y + 18} stroke="#cbd5e1" markerEnd="url(#trace-arrow)" /><text x={(source.x + target.x + 120) / 2} y={(source.y + target.y) / 2 + 8} textAnchor="middle" fontSize="8" fill="#64748b">{relation}</text></g>; })}{nodes.map((node) => { const label = traceNodeLabel(node, detail); const active = selected === node.id; return <g key={node.id} onClick={() => setSelected(active ? null : node.id)} className="cursor-pointer"><rect x={node.x} y={node.y} width="120" height="36" rx="4" fill={active ? "#dbeafe" : "#f8fafc"} stroke={active ? "#2563eb" : "#cbd5e1"} /><text x={node.x + 60} y={node.y + 22} textAnchor="middle" fontSize="10" fill="#334155">{label.length > 20 ? `${label.slice(0, 20)}…` : label}</text></g>; })}</svg></div>{selectedNode && <section className="rounded-lg border border-blue-200 bg-blue-50 p-4 text-xs text-slate-700" data-testid="trace-node-details"><h3 className="mb-3 text-sm font-semibold text-slate-800">追溯节点详情</h3><dl className="grid gap-2 md:grid-cols-3"><div><dt className="text-slate-500">节点类型</dt><dd className="font-medium">{traceNodeTypeLabel(selectedNode)}</dd></div><div><dt className="text-slate-500">节点名称</dt><dd className="font-medium">{traceNodeLabel(selectedNode, detail)}</dd></div><div><dt className="text-slate-500">关系数量</dt><dd className="font-medium">{relationCounts.get(selectedNode.id) ?? 0}</dd></div></dl></section>}</div>;
+
+  return (
+    <div className="h-[640px]" data-testid="trace-graph">
+      <UnifiedBusinessGraph
+        mode="ASSESSMENT_TRACE"
+        nodes={nodes}
+        edges={edges}
+        activeNodeIds={activeNodeIds}
+        testId="assessment-trace-graph"
+        graphTestId="assessment-trace-svg"
+      />
+    </div>
+  );
 }
 
 interface RuleVersionComparison {

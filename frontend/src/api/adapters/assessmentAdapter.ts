@@ -168,18 +168,17 @@ function pipelineStep(value: unknown): PipelineStep {
 
 function trace(value: unknown): { nodes: TraceNodeView[]; edges: TraceEdgeView[] } {
   const graph = record(value);
-  const nodes = array(graph.nodes).map((raw, index) => {
+  const nodes = array(graph.nodes).map((raw) => {
     const node = record(raw);
-    const col = index % 5;
-    const row = Math.floor(index / 5);
     return {
       id: text(node.id),
       label: text(node.label ?? node.local_id),
       type: text(node.type),
       localId: text(node.local_id) || undefined,
       evidenceType: text(node.evidence_type) || undefined,
-      x: 30 + col * 160,
-      y: 45 + row * 86,
+      // World coordinates are assigned by the unified graph layout — not array index.
+      x: 0,
+      y: 0,
     };
   });
   return {
