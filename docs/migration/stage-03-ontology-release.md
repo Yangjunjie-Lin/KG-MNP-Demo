@@ -16,6 +16,9 @@ self-declared report is not sufficient.
 | Term namespace | `https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#` |
 | Shape namespace | `https://yangjunjie-lin.github.io/KG-MNP-Demo/shapes#` |
 | Instance base | `https://yangjunjie-lin.github.io/KG-MNP-Demo/data/` |
+| Schema base | `https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/` |
+| Modeling Schema namespace | `https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/` |
+| Legacy Schema namespace | `https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/legacy/` |
 | Root ontology | `https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/kg-mnp` |
 | Root version IRI | `https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/1.0.0/kg-mnp` |
 
@@ -34,8 +37,11 @@ release version.
 - `ontology/kg-mnp.ttl` + `catalog-v001.xml`
 - `ontology/mnp-modeling-provenance.ttl`
 - SHACL profiles under `shapes/` and `examples/eligibility-use-case/shapes/`
+- Legacy eligibility JSON Schema under
+  `examples/eligibility-use-case/schemas/mnp_case_input.schema.json`
 - `config/reasoner-allowlist.yaml`
 - `config/legacy-term-allowlist.yaml`
+- `scripts/check_schema_identifiers.py`
 
 Runtime evidence is deliberately separate from formal release proof. A normal
 run writes ignored files under `runtime_reports/ontology/`, including
@@ -44,6 +50,26 @@ run writes ignored files under `runtime_reports/ontology/`, including
 an incoherence explanation, `unsatisfiable-debug.owl`. The debug ontology is
 not treated as a line-oriented class list.
 Normal execution never rewrites either tracked reasoner document.
+
+## Legacy JSON Schema closure
+
+The eligibility input schema was moved out of the repository-level `schemas/`
+directory and into its owning example at
+`examples/eligibility-use-case/schemas/mnp_case_input.schema.json`. There is no
+compatibility copy or symbolic link at the old location. Its identifier is now
+`https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/legacy/eligibility/mnp-case-input/1.0`,
+under the stable `schemas.legacy` namespace.
+
+This file remains the legacy eligibility input contract. It is not a
+`CleanedPartialData` contract and is not an entry point for the future central
+Modeling Pipeline. The root `schemas/` directory and its `schemas.modeling`
+identifier namespace are reserved for Stage 04 Modeling Contracts; Stage 03
+does not create any of those schemas.
+
+`check_schema_identifiers.py` parses repository JSON Schemas, verifies their
+Draft 2020-12 declarations, absolute HTTPS identifiers, uniqueness, and
+category namespace membership. The check is fully offline: it never resolves
+an identifier or downloads a remote schema.
 
 ## ROBOT and HermiT supply chain
 
@@ -127,6 +153,7 @@ For focused diagnosis, run the same ordered components explicitly:
 
 ```bash
 make verify-stage-03-core
+make verify-schema-identifiers
 make verify-robot-checksum
 make reasoner-check
 make verify-reasoner-run
@@ -160,21 +187,26 @@ attested release execution.
 `verify-stage-03` uses recursive Make invocations to enforce this strict order:
 
 1. Stage 03 core, including Stage 01 and Stage 02 regression gates
-2. Fixed ROBOT checksum tests
-3. Actual HermiT execution
-4. Runtime run verification
-5. Formal JSON/Markdown report verification
-6. Runtime legacy-term scan
+2. Offline JSON Schema identifier and schema-governance gate
+3. Fixed ROBOT checksum tests
+4. Actual HermiT execution
+5. Runtime run verification
+6. Formal JSON/Markdown report verification
+7. Runtime legacy-term scan
 
 CI calls this one complete target, then fails if `git diff --exit-code` is
 non-zero or `git status --short` is non-empty. Ignored reasoner runtime evidence
 therefore remains available for diagnosis without contaminating the checkout.
 
-The legacy scan covers current code, ontology, shapes, data, examples, mappings,
-rules, queries, competency questions, tests, and scripts. Historical IRIs or
-deprecated names may remain only where the machine-readable allowlist identifies
-a migration record, declaration, decision/history document, or dedicated test
-fixture. No Neo4j helper modules remain in the current runtime path.
+The legacy scan covers current code, ontology, shapes, data, schemas, examples,
+mappings, rules, queries, competency questions, tests, and scripts. The
+`schemas/` scan root remains configured even when no root schema file exists,
+so future Stage 04 assets cannot silently reintroduce old identifiers. Both the
+old ontology `#` namespace and the HTTP/HTTPS `example.org` document or JSON
+Schema `/` namespaces are rejected. Historical IRIs or deprecated names may
+remain only where the machine-readable allowlist identifies a migration record,
+declaration, decision/history document, or dedicated test fixture. No Neo4j
+helper modules remain in the current runtime path.
 
 ## Out of scope (Stage 04+)
 

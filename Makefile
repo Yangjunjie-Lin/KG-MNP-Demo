@@ -3,7 +3,7 @@
 	verify-ontology-audit verify-ontology-release verify-shacl-profiles \
 	verify-legacy-eligibility verify-stage-03-core reasoner-check \
 	verify-robot-checksum verify-reasoner-run verify-reasoner-report \
-	verify-no-runtime-legacy-terms verify-stage-03
+	verify-no-runtime-legacy-terms verify-schema-identifiers verify-stage-03
 
 PYTHON_CORE_TESTS = \
 	tests/test_ontology.py \
@@ -57,6 +57,10 @@ verify-legacy-eligibility:
 verify-stage-03-core: verify-stage-02 verify-ontology-audit verify-ontology-release \
 	verify-shacl-profiles verify-legacy-eligibility
 
+verify-schema-identifiers:
+	python scripts/check_schema_identifiers.py
+	python -m pytest -q tests/schema_governance
+
 reasoner-check:
 	python scripts/run_reasoner.py
 
@@ -84,6 +88,7 @@ verify-no-runtime-legacy-terms:
 
 verify-stage-03:
 	$(MAKE) verify-stage-03-core
+	$(MAKE) verify-schema-identifiers
 	$(MAKE) verify-robot-checksum
 	$(MAKE) reasoner-check
 	$(MAKE) verify-reasoner-run

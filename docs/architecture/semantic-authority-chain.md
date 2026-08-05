@@ -49,6 +49,21 @@ Frozen Ontology Baseline
 + Versioned Build Policy
 ```
 
+### JSON Schema contract identities
+
+JSON Schema contracts use the project `schemas` namespace family defined in
+`config/namespaces.yaml`:
+
+- `schemas/modeling/` is reserved for the Stage 04 central Modeling Contracts.
+- `schemas/legacy/` is restricted to retained legacy use-case contracts, such
+  as the eligibility input contract.
+
+These Schema identifiers are contract identities, not ontology term IRIs,
+instance IRIs, or named graph IRIs. The legacy eligibility schema therefore
+does not become `CleanedPartialData` and is not an authority or input adapter
+for the future Modeling Pipeline. Stage 03 validates these identities offline
+without resolving `$id` or downloading remote schemas.
+
 ## Authority levels
 
 | Component | Formal semantic authority | Responsibility |

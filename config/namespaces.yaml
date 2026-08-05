@@ -13,6 +13,11 @@ ontology:
 shapes:
   namespace: "https://yangjunjie-lin.github.io/KG-MNP-Demo/shapes#"
 
+schemas:
+  base: "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/"
+  modeling: "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/"
+  legacy: "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/legacy/"
+
 instances:
   base: "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/"
 

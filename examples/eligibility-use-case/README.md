@@ -15,9 +15,27 @@ Loader profile key: `eligibility` (composes
 [`shapes/README.md`](../../shapes/README.md) for the full profile table
 (`foundation`, `eligibility`, `ontology_schema`).
 
-The example currently remains in its original repository locations to avoid
-breaking the established RDF, SHACL, OWL-RL, SPARQL, and rule tests. This is
-the explicit Stage 01 exception to a physical directory move:
+## Legacy eligibility JSON Schema
+
+The legacy input contract now lives at:
+
+- [`schemas/mnp_case_input.schema.json`](schemas/mnp_case_input.schema.json)
+
+Its stable, versioned identifier is
+`https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/legacy/eligibility/mnp-case-input/1.0`.
+The schema remains a Draft 2020-12 contract for the eligibility example. It is
+not the future central `CleanedPartialData` contract and must not be reused as
+the Modeling Pipeline's input schema.
+
+The repository-level `schemas/` path is reserved for Stage 04 Modeling
+Contracts. No Stage 04 schema is created by this migration. The Schema
+Identifier gate validates local schema files and namespace membership entirely
+offline; it does not resolve `$id` or download a remote schema.
+
+The other example assets currently remain in their original repository
+locations to avoid breaking the established RDF, SHACL, OWL-RL, SPARQL, and
+rule tests. This is the explicit Stage 01 exception to a physical directory
+move:
 
 - `inputs/`, `data/`, and `rules/eligibility_rules.yaml`
 - `competency_questions/` and `queries/*.rq`

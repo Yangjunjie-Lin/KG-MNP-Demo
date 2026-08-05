@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "$id": "https://example.org/kg-mnp/schemas/mnp_case_input.schema.json",
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/legacy/eligibility/mnp-case-input/1.0",
   "title": "MNP Case Input",
   "type": "object",
   "additionalProperties": false,

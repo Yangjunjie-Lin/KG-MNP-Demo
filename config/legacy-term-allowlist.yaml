@@ -7,6 +7,7 @@ scan_roots:
   - src
   - ontology
   - shapes
+  - schemas
   - examples
   - data
   - queries
@@ -19,6 +20,8 @@ scan_roots:
 
 legacy_terms:
   - 'http://example.org/kg-mnp#'
+  - 'http://example.org/kg-mnp/'
+  - 'https://example.org/kg-mnp/'
   - 'producesBlockingReason'
   - 'hasSubscription'
   - 'ownsPhoneNumber'
@@ -41,6 +44,19 @@ allowed_occurrences:
     count: 1
     category: migration_tool
     reason: Explicit source namespace handled by the one-way migration tool.
+
+  - term: 'http://example.org/kg-mnp/'
+    path: scripts/stage03_constants.py
+    line_text: 'OLD_MODULE_BASE = "http://example.org/kg-mnp/"'
+    count: 1
+    category: migration_source
+    reason: Canonical old ontology document base for deterministic one-way migration.
+  - term: 'http://example.org/kg-mnp/'
+    path: scripts/build_ontology_release.py
+    line_text: '"old_iri": f"http://example.org/kg-mnp/{old}",'
+    count: 1
+    category: change_log_generator
+    reason: Generates auditable old-to-new ontology document IRI migration rows.
 
   - term: producesBlockingReason
     path: ontology/mnp-compliance.ttl

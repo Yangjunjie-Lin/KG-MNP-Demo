@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Reject unapproved legacy ontology terms in current tracked assets."""
+"""Reject unapproved legacy ontology and schema identifiers in current assets."""
 
 from __future__ import annotations
 
@@ -22,6 +22,8 @@ ALLOWED_CATEGORIES = {
 }
 REQUIRED_LEGACY_TERMS = {
     "http://example.org/" + "kg-mnp#",
+    "http://example.org/" + "kg-mnp/",
+    "https://example.org/" + "kg-mnp/",
     "produces" + "BlockingReason",
     "has" + "Subscription",
     "owns" + "PhoneNumber",
@@ -241,7 +243,7 @@ def audit_repository(
             allowed_by_term[occurrence.term] += 1
             continue
         audit_errors.append(
-            "unapproved legacy term "
+            "unapproved legacy identifier "
             f"{occurrence.term!r} at {occurrence.path}:{occurrence.line_number}: "
             f"{occurrence.line_text}"
         )

@@ -35,12 +35,18 @@ Stage 03 已完成正式 IRI 迁移、模块归属、Protégé catalog、SHACL p
 OWL 推理器；二者的版本在正式证明中分别记录。尚未实施 Modeling Proposal
 Pipeline、Review/Confirm、GraphDB 或 WebVOWL。
 
+Stage 03 收尾还将旧资格判断 JSON Schema 从根 `schemas/` 移至
+`examples/eligibility-use-case/schemas/`，并把 `$id` 迁移到项目稳定的 HTTPS
+Schema namespace。该 legacy eligibility contract 与未来的 `CleanedPartialData`
+contract 不同；根 `schemas/` 保留给 Stage 04 Modeling Contracts，当前并未创建这些合同。
+
 ## 当前边界
 
 - 当前没有前端，也没有 Node、Vite、Playwright 或 Nginx 运行路径。
 - 当前不以携号转网资格判断为中央任务；九个 legacy 案例作为 eligibility profile 回归资产保留。
 - 当前没有 HTTP API 或 SQLite 执行历史服务作为本阶段交付物。
 - GraphDB 和 WebVOWL 是后续阶段目标，本阶段尚未接入。
+- `schemas/modeling/` 是 Stage 04 的保留边界；当前没有建立任何 Stage 04 Modeling Schema。
 - 正式本体发布版本为 **1.0.0**；Python 包版本独立，不因本体版本机械升高。
 
 ## 保留的基础资产
@@ -50,6 +56,8 @@ Pipeline、Review/Confirm、GraphDB 或 WebVOWL。
 | `ontology/` | 正式模块化 OWL/Turtle（含 `kg-mnp.ttl` 与 `catalog-v001.xml`） |
 | `shapes/` | foundation / ontology-schema SHACL |
 | `examples/eligibility-use-case/shapes/` | legacy 资格用例 SHACL |
+| `examples/eligibility-use-case/schemas/` | legacy 资格输入 JSON Schema；不属于中央 Modeling Contract |
+| `schemas/` | Stage 04 Modeling Contracts 的保留位置；本阶段不创建合同文件 |
 | `mappings/` | TM Forum 字段到 KG-MNP 术语的显式映射 |
 | `queries/` | 离线 SPARQL 查询 |
 | `config/ontology_modules.yaml` | 本体模块装载清单（Loader 唯一来源） |
@@ -80,6 +88,7 @@ make install
 make verify-stage-01
 make verify-stage-02
 make verify-stage-03-core
+make verify-schema-identifiers
 make verify-robot-checksum
 make reasoner-check
 make verify-reasoner-run
@@ -89,8 +98,9 @@ make verify-stage-03
 ```
 
 `verify-stage-03` 是 CI 和本地收尾的完整入口，并严格按以下顺序执行：Stage 03
-core（其中包含 Stage 01/02 回归）、ROBOT 校验、HermiT 实际运行、runtime run
-验证、正式报告验证、运行态旧术语扫描。默认 `reasoner-check` 只写已忽略的
+core（其中包含 Stage 01/02 回归）、Schema Identifier 门禁、ROBOT 校验、HermiT 实际运行、runtime run
+验证、正式报告验证、运行态旧术语扫描。Schema Identifier 门禁只解析本地
+`*.schema.json` 与 namespace 配置，不访问 `$id`、不下载远程 Schema。默认 `reasoner-check` 只写已忽略的
 `runtime_reports/ontology/`，不得改动受版本控制文件。
 
 ### Reasoner 产物与哈希
@@ -174,6 +184,11 @@ Reasoner runtime 产物不会污染正式仓库。
 携号转网资格判断仍用于保护已有研究结果，包括九个案例、资格规则、JSON
 输入、RDF 物化、SHACL、OWL-RL 与 SPARQL 追溯测试。它不是新的建模
 Pipeline，也不进入默认 README 工作流。
+
+其 JSON 输入合同位于
+`examples/eligibility-use-case/schemas/mnp_case_input.schema.json`，使用项目
+`schemas.legacy` 下的稳定、带版本 `$id`。它只服务 legacy eligibility 输入，不是
+未来中央 Pipeline 的 `CleanedPartialData` 合同；根 `schemas/` 仍留给尚未开始的 Stage 04。
 
 ```bash
 kg-mnp-eligibility --help

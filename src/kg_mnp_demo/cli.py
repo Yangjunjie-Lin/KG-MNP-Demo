@@ -22,7 +22,17 @@ from kg_mnp_demo.validator import validate_graph
 
 
 def _json_print(payload: Any) -> None:
-    print(json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True))
+    options = {"indent": 2, "sort_keys": True}
+    text = json.dumps(payload, ensure_ascii=False, **options)
+    encoding = getattr(sys.stdout, "encoding", None) or "utf-8"
+    try:
+        text.encode(encoding)
+    except (LookupError, UnicodeEncodeError):
+        # Keep valid JSON on Windows consoles whose active code page cannot
+        # represent bilingual trace labels. JSON consumers recover the same
+        # Unicode values from the escaped form.
+        text = json.dumps(payload, ensure_ascii=True, **options)
+    print(text)
 
 
 def cmd_validate(case_id: str) -> int:

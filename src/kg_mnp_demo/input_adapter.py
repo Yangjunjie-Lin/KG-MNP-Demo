@@ -1,4 +1,8 @@
-"""Validate and normalize external JSON case inputs."""
+"""Validate and normalize the legacy eligibility use-case JSON input.
+
+This adapter is specific to the example eligibility contract and is not an
+entry point for the future central Modeling Pipeline contracts.
+"""
 
 from __future__ import annotations
 
@@ -11,12 +15,17 @@ from pathlib import Path
 from typing import Any
 
 from jsonschema import Draft202012Validator, FormatChecker
-from jsonschema.exceptions import ValidationError
 
 from kg_mnp_demo.loader import project_root
 
 
-SCHEMA_PATH = project_root() / "schemas" / "mnp_case_input.schema.json"
+LEGACY_ELIGIBILITY_SCHEMA_PATH = (
+    project_root()
+    / "examples"
+    / "eligibility-use-case"
+    / "schemas"
+    / "mnp_case_input.schema.json"
+)
 
 
 class InputValidationError(ValueError):
@@ -104,8 +113,16 @@ class NormalizedCaseInput:
         }
 
 
+def load_legacy_eligibility_schema() -> dict[str, Any]:
+    """Load the legacy eligibility input contract from its example use case."""
+
+    return json.loads(LEGACY_ELIGIBILITY_SCHEMA_PATH.read_text(encoding="utf-8"))
+
+
 def load_schema() -> dict[str, Any]:
-    return json.loads(SCHEMA_PATH.read_text(encoding="utf-8"))
+    """Load the legacy eligibility schema (compatibility alias only)."""
+
+    return load_legacy_eligibility_schema()
 
 
 def _format_path(path: list[Any]) -> str:
@@ -122,7 +139,9 @@ def _format_path(path: list[Any]) -> str:
 
 
 def _schema_errors(data: dict[str, Any]) -> list[str]:
-    validator = Draft202012Validator(load_schema(), format_checker=FormatChecker())
+    validator = Draft202012Validator(
+        load_legacy_eligibility_schema(), format_checker=FormatChecker()
+    )
     errors: list[str] = []
     for err in sorted(validator.iter_errors(data), key=lambda e: list(e.path)):
         path = _format_path(list(err.path))
