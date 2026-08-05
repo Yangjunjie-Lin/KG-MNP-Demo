@@ -1,0 +1,19 @@
+{
+  "contract_version": "1.0",
+  "document_id": "synthetic-unmapped-fields",
+  "dataset_id": "stage04-examples",
+  "data": {
+    "experimental": {"campaign_code": "CAMPAIGN-X"},
+    "subscriber": {"id": "SUBSCRIBER-UNMAPPED"}
+  },
+  "sources": [
+    {"source_id": "source-unmapped", "source_type": "SYNTHETIC_FIXTURE", "source_locator": "fixture:unmapped-fields", "source_version": "1.0"}
+  ],
+  "field_metadata": [
+    {"path": "/experimental/campaign_code", "source_refs": ["source-unmapped"], "presence": "PRESENT", "confidence": {"level": "MEDIUM", "score": 0.7, "basis": "SOURCE_DECLARED"}},
+    {"path": "/subscriber/id", "source_refs": ["source-unmapped"], "presence": "PRESENT", "confidence": {"level": "HIGH", "score": 0.9, "basis": "SOURCE_DECLARED"}}
+  ],
+  "declared_missing_items": [],
+  "declared_conflicts": [],
+  "input_context": {"fixture": true}
+}

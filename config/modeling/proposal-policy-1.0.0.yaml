@@ -1,0 +1,31 @@
+policy_version: "1.0.0"
+generator_version: "1.0.0"
+default_run_mode: "DATASET_MODELING"
+confidence_levels:
+  - "HIGH"
+  - "MEDIUM"
+  - "LOW"
+  - "UNKNOWN"
+confidence_score_ranges:
+  HIGH:
+    minimum: 0.80
+    maximum: 1.00
+  MEDIUM:
+    minimum: 0.50
+    maximum: 0.799999999999
+  LOW:
+    minimum: 0.00
+    maximum: 0.499999999999
+  UNKNOWN:
+    score_allowed: false
+confidence_combination_policy: "MINIMUM_AVAILABLE_SCORE"
+issue_severity:
+  - "INFO"
+  - "WARNING"
+  - "ERROR"
+  - "BLOCKING"
+unmapped_field_policy: "RECORD_AND_REQUIRE_REVIEW"
+conflict_policy: "PRESERVE_ALL_AND_REQUIRE_REVIEW"
+null_policy: "PRESERVE_EXPLICIT_NULL"
+missing_policy: "NEVER_TREAT_AS_FALSE"
+tbox_candidate_policy: "FORBIDDEN"

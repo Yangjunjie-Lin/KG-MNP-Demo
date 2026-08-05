@@ -1,0 +1,149 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/mapping-rules/1.0",
+  "title": "MappingRules Contract 1.0",
+  "description": "Versioned finite rules for generating review-only modeling candidates from exact JSON Pointers.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "mapping_set_id",
+    "mapping_set_version",
+    "ontology_baseline_version",
+    "terminology_profile_version",
+    "rules"
+  ],
+  "properties": {
+    "contract_version": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/common/1.0#/$defs/ContractVersion"
+    },
+    "mapping_set_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "mapping_set_version": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/common/1.0#/$defs/SemanticVersion"
+    },
+    "ontology_baseline_version": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/common/1.0#/$defs/SemanticVersion"
+    },
+    "terminology_profile_version": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/common/1.0#/$defs/SemanticVersion"
+    },
+    "rules": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/MappingRule"
+      }
+    }
+  },
+  "$defs": {
+    "MappingRule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "rule_id",
+        "rule_version",
+        "status",
+        "source_selector",
+        "source_value_type",
+        "candidate_kind",
+        "target_term_iri",
+        "transformation_id",
+        "requiredness",
+        "confidence",
+        "modeling_evidence_refs",
+        "description"
+      ],
+      "properties": {
+        "rule_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "rule_version": {
+          "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/common/1.0#/$defs/SemanticVersion"
+        },
+        "status": {
+          "enum": [
+            "CONFIRMED",
+            "DEPRECATED"
+          ]
+        },
+        "source_selector": {
+          "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/common/1.0#/$defs/JsonPointer"
+        },
+        "source_value_type": {
+          "enum": [
+            "object",
+            "array",
+            "string",
+            "number",
+            "integer",
+            "boolean",
+            "null"
+          ]
+        },
+        "candidate_kind": {
+          "enum": [
+            "ENTITY",
+            "CLASS_ASSERTION",
+            "OBJECT_PROPERTY_ASSERTION",
+            "DATA_PROPERTY_ASSERTION",
+            "MAPPING_ASSERTION"
+          ]
+        },
+        "target_term_iri": {
+          "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/common/1.0#/$defs/AbsoluteIRI"
+        },
+        "target_datatype": {
+          "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/common/1.0#/$defs/AbsoluteIRI"
+        },
+        "transformation_id": {
+          "enum": [
+            "IDENTITY",
+            "STRING_TRIM",
+            "STRING_NORMALIZE",
+            "BOOLEAN_STRICT",
+            "INTEGER_STRICT",
+            "DECIMAL_STRICT",
+            "DATETIME_TO_UTC",
+            "CODE_NORMALIZE",
+            "IRI_FROM_STABLE_ID"
+          ]
+        },
+        "requiredness": {
+          "enum": [
+            "OPTIONAL",
+            "EXPECTED",
+            "REQUIRED_FOR_PROPOSAL"
+          ]
+        },
+        "subject_entity_rule_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "object_entity_rule_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "allow_null": {
+          "type": "boolean"
+        },
+        "confidence": {
+          "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/common/1.0#/$defs/Confidence"
+        },
+        "modeling_evidence_refs": {
+          "type": "array",
+          "items": {
+            "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/common/1.0#/$defs/EvidenceReference"
+          },
+          "uniqueItems": true
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    }
+  }
+}

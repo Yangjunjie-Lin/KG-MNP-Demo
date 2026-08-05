@@ -1,0 +1,101 @@
+contract_version: "1.0"
+mapping_set_id: "kg-mnp-stage04-core"
+mapping_set_version: "1.0.0"
+ontology_baseline_version: "1.0.0"
+terminology_profile_version: "1.0.0"
+rules:
+  - rule_id: "subscriber-entity-from-id"
+    rule_version: "1.0.0"
+    status: "CONFIRMED"
+    source_selector: "/subscriber/id"
+    source_value_type: "string"
+    candidate_kind: "ENTITY"
+    target_term_iri: "https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#Subscriber"
+    transformation_id: "IRI_FROM_STABLE_ID"
+    requiredness: "EXPECTED"
+    confidence:
+      level: "MEDIUM"
+      score: 0.70
+      basis: "RULE_DECLARED"
+    modeling_evidence_refs:
+      - "mappings/tmf_to_mnp.yaml#TMF629-Customer-to-Subscriber"
+      - "docs/ontology/term-inventory.csv#Subscriber"
+    description: "Propose a Subscriber entity from the exact cleaned subscriber identifier pointer."
+
+  - rule_id: "telecom-account-entity-from-id"
+    rule_version: "1.0.0"
+    status: "CONFIRMED"
+    source_selector: "/account/account_id"
+    source_value_type: "string"
+    candidate_kind: "ENTITY"
+    target_term_iri: "https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#TelecomAccount"
+    transformation_id: "IRI_FROM_STABLE_ID"
+    requiredness: "EXPECTED"
+    confidence:
+      level: "MEDIUM"
+      score: 0.70
+      basis: "RULE_DECLARED"
+    modeling_evidence_refs:
+      - "mappings/tmf_to_mnp.yaml#TMF629-account-to-TelecomAccount"
+      - "docs/ontology/term-inventory.csv#TelecomAccount"
+    description: "Propose a TelecomAccount entity from the exact cleaned account identifier pointer."
+
+  - rule_id: "service-subscription-entity-from-id"
+    rule_version: "1.0.0"
+    status: "CONFIRMED"
+    source_selector: "/subscription/subscription_id"
+    source_value_type: "string"
+    candidate_kind: "ENTITY"
+    target_term_iri: "https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#ServiceSubscription"
+    transformation_id: "IRI_FROM_STABLE_ID"
+    requiredness: "REQUIRED_FOR_PROPOSAL"
+    confidence:
+      level: "MEDIUM"
+      score: 0.70
+      basis: "RULE_DECLARED"
+    modeling_evidence_refs:
+      - "mappings/tmf_to_mnp.yaml#TMF637-Product-to-ServiceSubscription"
+      - "docs/ontology/term-inventory.csv#ServiceSubscription"
+    description: "Propose a ServiceSubscription entity from the exact cleaned subscription identifier pointer."
+
+  - rule_id: "service-subscription-billed-through-account"
+    rule_version: "1.0.0"
+    status: "CONFIRMED"
+    source_selector: "/account/account_id"
+    source_value_type: "string"
+    candidate_kind: "OBJECT_PROPERTY_ASSERTION"
+    target_term_iri: "https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#billedThrough"
+    transformation_id: "IDENTITY"
+    requiredness: "EXPECTED"
+    subject_entity_rule_id: "service-subscription-entity-from-id"
+    object_entity_rule_id: "telecom-account-entity-from-id"
+    confidence:
+      level: "MEDIUM"
+      score: 0.65
+      basis: "RULE_DECLARED"
+    modeling_evidence_refs:
+      - "mappings/tmf_to_mnp.yaml#TMF629-related-party-to-billed-through"
+      - "docs/ontology/decisions/ODR-001-number-subscription-account-model.md"
+      - "docs/ontology/term-inventory.csv#billedThrough"
+    description: "Propose billedThrough only between the explicitly referenced subscription and account entity rules."
+
+  - rule_id: "service-subscription-status-code"
+    rule_version: "1.0.0"
+    status: "CONFIRMED"
+    source_selector: "/subscription/status"
+    source_value_type: "string"
+    candidate_kind: "DATA_PROPERTY_ASSERTION"
+    target_term_iri: "https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#subscriptionStatusCode"
+    target_datatype: "http://www.w3.org/2001/XMLSchema#string"
+    transformation_id: "CODE_NORMALIZE"
+    requiredness: "EXPECTED"
+    subject_entity_rule_id: "service-subscription-entity-from-id"
+    confidence:
+      level: "HIGH"
+      score: 0.85
+      basis: "RULE_DECLARED"
+    modeling_evidence_refs:
+      - "mappings/tmf_to_mnp.yaml#TMF637-status-to-subscriptionStatusCode"
+      - "docs/ontology/term-inventory.csv#subscriptionStatusCode"
+    description: "Normalize a subscription status with the finite CODE_NORMALIZE transform and propose a data-property assertion."
+

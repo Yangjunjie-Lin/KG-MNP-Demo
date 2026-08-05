@@ -1,0 +1,29 @@
+{
+  "contract_version": "1.0",
+  "document_id": "synthetic-conflicting-values",
+  "dataset_id": "stage04-examples",
+  "data": {
+    "subscriber": {"id": "SUBSCRIBER-CONFLICT"},
+    "subscription": {"subscription_id": "SUBSCRIPTION-CONFLICT"}
+  },
+  "sources": [
+    {"source_id": "source-conflict-a", "source_type": "SYNTHETIC_FIXTURE", "source_locator": "fixture:conflict-a", "source_version": "1.0"},
+    {"source_id": "source-conflict-b", "source_type": "SYNTHETIC_FIXTURE", "source_locator": "fixture:conflict-b", "source_version": "1.0"}
+  ],
+  "field_metadata": [
+    {"path": "/subscriber/id", "source_refs": ["source-conflict-a"], "presence": "PRESENT", "confidence": {"level": "HIGH", "score": 0.9, "basis": "SOURCE_DECLARED"}},
+    {"path": "/subscription/subscription_id", "source_refs": ["source-conflict-a"], "presence": "PRESENT", "confidence": {"level": "HIGH", "score": 0.9, "basis": "SOURCE_DECLARED"}}
+  ],
+  "declared_missing_items": [],
+  "declared_conflicts": [
+    {
+      "conflict_id": "conflict-subscription-status",
+      "path": "/subscription/status",
+      "alternatives": [
+        {"value": "ACTIVE", "source_refs": ["source-conflict-a"]},
+        {"value": "SUSPENDED", "source_refs": ["source-conflict-b"]}
+      ]
+    }
+  ],
+  "input_context": {"fixture": true}
+}

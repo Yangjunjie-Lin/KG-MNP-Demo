@@ -1,0 +1,20 @@
+{
+  "contract_version": "1.0",
+  "document_id": "synthetic-low-confidence",
+  "dataset_id": "stage04-examples",
+  "data": {
+    "subscriber": {"id": "SUBSCRIBER-LOW"},
+    "subscription": {"subscription_id": "SUBSCRIPTION-LOW", "status": "active"}
+  },
+  "sources": [
+    {"source_id": "source-low", "source_type": "SYNTHETIC_FIXTURE", "source_locator": "fixture:low-confidence-source", "source_version": "1.0"}
+  ],
+  "field_metadata": [
+    {"path": "/subscriber/id", "source_refs": ["source-low"], "presence": "PRESENT", "confidence": {"level": "LOW", "score": 0.25, "basis": "SOURCE_DECLARED"}},
+    {"path": "/subscription/subscription_id", "source_refs": ["source-low"], "presence": "PRESENT", "confidence": {"level": "LOW", "score": 0.25, "basis": "SOURCE_DECLARED"}},
+    {"path": "/subscription/status", "source_refs": ["source-low"], "presence": "PRESENT", "confidence": {"level": "LOW", "score": 0.2, "basis": "SOURCE_DECLARED"}}
+  ],
+  "declared_missing_items": [],
+  "declared_conflicts": [],
+  "input_context": {"fixture": true}
+}

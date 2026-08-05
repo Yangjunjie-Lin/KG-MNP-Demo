@@ -3,7 +3,10 @@
 	verify-ontology-audit verify-ontology-release verify-shacl-profiles \
 	verify-legacy-eligibility verify-stage-03-core reasoner-check \
 	verify-robot-checksum verify-reasoner-run verify-reasoner-report \
-	verify-no-runtime-legacy-terms verify-schema-identifiers verify-stage-03
+	verify-no-runtime-legacy-terms verify-schema-identifiers verify-stage-03 \
+	verify-modeling-contracts verify-modeling-dependencies \
+	verify-modeling-proposal verify-modeling-determinism \
+	verify-modeling-cli verify-stage-04
 
 PYTHON_CORE_TESTS = \
 	tests/test_ontology.py \
@@ -94,3 +97,48 @@ verify-stage-03:
 	$(MAKE) verify-reasoner-run
 	$(MAKE) verify-reasoner-report
 	$(MAKE) verify-no-runtime-legacy-terms
+
+verify-modeling-contracts:
+	python scripts/check_schema_identifiers.py
+	python -m pytest -q \
+		tests/modeling/test_contract_registry.py \
+		tests/modeling/test_cleaned_partial_data_contract.py \
+		tests/modeling/test_modeling_proposal_contract.py \
+		tests/modeling/test_review_decision_log_contract.py \
+		tests/modeling/test_confirmed_package_contract.py
+
+verify-modeling-dependencies:
+	python scripts/verify_ontology_baseline_manifest.py
+	python -m pytest -q \
+		tests/modeling/test_ontology_baseline_manifest.py \
+		tests/modeling/test_mapping_rules.py \
+		tests/modeling/test_terminology_profile.py
+
+verify-modeling-proposal:
+	python -m pytest -q \
+		tests/modeling/test_proposal_generation.py \
+		tests/modeling/test_missing_semantics.py \
+		tests/modeling/test_null_semantics.py \
+		tests/modeling/test_conflict_semantics.py \
+		tests/modeling/test_unmapped_fields.py \
+		tests/modeling/test_confidence_semantics.py \
+		tests/modeling/test_no_tbox_generation.py
+
+verify-modeling-determinism:
+	python -m pytest -q \
+		tests/modeling/test_canonical_json.py \
+		tests/modeling/test_stable_identifiers.py \
+		tests/modeling/test_transformations.py \
+		tests/modeling/test_determinism.py
+
+verify-modeling-cli:
+	python -m pytest -q tests/modeling/test_modeling_cli.py
+
+verify-stage-04:
+	$(MAKE) verify-stage-03
+	$(MAKE) verify-modeling-contracts
+	$(MAKE) verify-modeling-dependencies
+	$(MAKE) verify-modeling-proposal
+	$(MAKE) verify-modeling-determinism
+	$(MAKE) verify-modeling-cli
+	python -m pytest -q tests/modeling/test_stage04_boundaries.py

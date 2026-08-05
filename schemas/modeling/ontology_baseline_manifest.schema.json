@@ -1,0 +1,136 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/ontology-baseline-manifest/1.0",
+  "title": "OntologyBaselineManifest Contract 1.0",
+  "description": "A frozen, hash-addressed manifest of the local Stage 03 ontology release; it does not copy ontology axioms.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "manifest_version",
+    "baseline_id",
+    "ontology_version",
+    "root_ontology_iri",
+    "root_version_iri",
+    "release_source_hash",
+    "release_source_includes_optional_alignments",
+    "reasoner_input_semantic_hash",
+    "reasoner_attestation_hash",
+    "term_inventory_hash",
+    "ontology_module_config_hash",
+    "runtime_modules",
+    "optional_modules",
+    "generated_from"
+  ],
+  "properties": {
+    "manifest_version": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/common/1.0#/$defs/ContractVersion"
+    },
+    "baseline_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "ontology_version": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/common/1.0#/$defs/SemanticVersion"
+    },
+    "root_ontology_iri": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/common/1.0#/$defs/AbsoluteIRI"
+    },
+    "root_version_iri": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/common/1.0#/$defs/AbsoluteIRI"
+    },
+    "release_source_hash": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/common/1.0#/$defs/SHA256"
+    },
+    "release_source_includes_optional_alignments": {
+      "type": "boolean"
+    },
+    "reasoner_input_semantic_hash": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/common/1.0#/$defs/SHA256"
+    },
+    "reasoner_attestation_hash": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/common/1.0#/$defs/SHA256"
+    },
+    "term_inventory_hash": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/common/1.0#/$defs/SHA256"
+    },
+    "ontology_module_config_hash": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/common/1.0#/$defs/SHA256"
+    },
+    "runtime_modules": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/Module"
+      }
+    },
+    "optional_modules": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Module"
+      }
+    },
+    "generated_from": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/GeneratedSource"
+      }
+    }
+  },
+  "$defs": {
+    "Module": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "code",
+        "file",
+        "ontology_iri",
+        "version_iri",
+        "source_hash",
+        "included_in_reasoner_input"
+      ],
+      "properties": {
+        "code": {
+          "type": "string",
+          "pattern": "^[A-Z][A-Z0-9_]*$"
+        },
+        "file": {
+          "type": "string",
+          "pattern": "^ontology/[^\\\\]+\\.ttl$"
+        },
+        "ontology_iri": {
+          "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/common/1.0#/$defs/AbsoluteIRI"
+        },
+        "version_iri": {
+          "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/common/1.0#/$defs/AbsoluteIRI"
+        },
+        "source_hash": {
+          "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/common/1.0#/$defs/SHA256"
+        },
+        "included_in_reasoner_input": {
+          "type": "boolean"
+        }
+      }
+    },
+    "GeneratedSource": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "sha256"
+      ],
+      "properties": {
+        "path": {
+          "type": "string",
+          "minLength": 1,
+          "not": {
+            "pattern": "^(?:[A-Za-z]:[\\\\/]|/|file:)"
+          }
+        },
+        "sha256": {
+          "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/common/1.0#/$defs/SHA256"
+        }
+      }
+    }
+  }
+}

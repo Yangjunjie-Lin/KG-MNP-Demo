@@ -1,0 +1,27 @@
+{
+  "contract_version": "1.0",
+  "document_id": "synthetic-partial-basic",
+  "dataset_id": "stage04-examples",
+  "data": {
+    "account": {"account_id": "ACCOUNT-001"},
+    "subscriber": {"id": "SUBSCRIBER-001"},
+    "subscription": {"subscription_id": "SUBSCRIPTION-001", "status": " active "}
+  },
+  "sources": [
+    {
+      "source_id": "source-basic",
+      "source_type": "SYNTHETIC_FIXTURE",
+      "source_locator": "fixture:partial-basic",
+      "source_version": "1.0"
+    }
+  ],
+  "field_metadata": [
+    {"path": "/account/account_id", "source_refs": ["source-basic"], "presence": "PRESENT", "confidence": {"level": "HIGH", "score": 0.95, "basis": "SOURCE_DECLARED"}},
+    {"path": "/subscriber/id", "source_refs": ["source-basic"], "presence": "PRESENT", "confidence": {"level": "HIGH", "score": 0.95, "basis": "SOURCE_DECLARED"}},
+    {"path": "/subscription/subscription_id", "source_refs": ["source-basic"], "presence": "PRESENT", "confidence": {"level": "HIGH", "score": 0.95, "basis": "SOURCE_DECLARED"}},
+    {"path": "/subscription/status", "source_refs": ["source-basic"], "presence": "PRESENT", "confidence": {"level": "HIGH", "score": 0.9, "basis": "SOURCE_DECLARED"}}
+  ],
+  "declared_missing_items": [],
+  "declared_conflicts": [],
+  "input_context": {"fixture": true}
+}

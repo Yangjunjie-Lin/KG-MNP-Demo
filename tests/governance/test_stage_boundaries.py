@@ -1,24 +1,10 @@
-"""Stage boundary guards: Stage 02 must not implement later stages."""
+"""Cross-stage guards retained after the Stage 04 implementation."""
 
 from __future__ import annotations
 
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-
-FORBIDDEN_STAGE_03_PLUS = (
-    "schemas/modeling/modeling_proposal.schema.json",
-    "schemas/modeling/review_decision_log.schema.json",
-    "schemas/modeling/confirmed_modeling_package.schema.json",
-    "schemas/modeling/cleaned_partial_data.schema.json",
-)
-
-
-def test_modeling_schemas_not_introduced():
-    for relative in FORBIDDEN_STAGE_03_PLUS:
-        path = ROOT / relative
-        assert not path.exists(), f"Stage drift: unexpected {relative}"
-
 
 def test_graphdb_and_webvowl_integrations_absent():
     markers = [
@@ -31,14 +17,20 @@ def test_graphdb_and_webvowl_integrations_absent():
         assert not path.exists(), path
 
 
-def test_no_generate_modeling_proposal_implementation():
+def test_no_review_confirmation_or_compiler_implementation():
     src = ROOT / "src" / "kg_mnp_demo"
     matches = []
+    forbidden = (
+        "def build_confirmed_modeling_package",
+        "def auto_confirm",
+        "def confirm_all",
+        "def compile_owl",
+        "def compile_shacl",
+        "def compile_rdf",
+    )
     for path in src.rglob("*.py"):
         text = path.read_text(encoding="utf-8")
-        if "def generate_modeling_proposal" in text:
-            matches.append(path.relative_to(ROOT).as_posix())
-        if "def build_confirmed_modeling_package" in text:
+        if any(marker in text for marker in forbidden):
             matches.append(path.relative_to(ROOT).as_posix())
     assert matches == []
 

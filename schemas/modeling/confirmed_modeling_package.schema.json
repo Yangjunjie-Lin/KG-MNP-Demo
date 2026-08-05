@@ -1,0 +1,220 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/confirmed-modeling-package/1.0",
+  "title": "ConfirmedModelingPackage Contract 1.0",
+  "description": "Contract for a future reviewed package. Stage 04 defines and validates this shape but provides no builder.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "package_id",
+    "package_semantic_hash",
+    "source_proposal_id",
+    "source_proposal_hash",
+    "review_decision_log_id",
+    "review_decision_log_hash",
+    "ontology_baseline",
+    "confirmed_abox_decisions",
+    "confirmed_schema_delta",
+    "rejected_items",
+    "deferred_items",
+    "publication_manifest"
+  ],
+  "properties": {
+    "contract_version": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/common/1.0#/$defs/ContractVersion"
+    },
+    "package_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "package_semantic_hash": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/common/1.0#/$defs/SHA256"
+    },
+    "source_proposal_id": {
+      "type": "string",
+      "pattern": "^urn:kg-mnp:modeling-proposal:[0-9a-f]{64}$"
+    },
+    "source_proposal_hash": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/common/1.0#/$defs/SHA256"
+    },
+    "review_decision_log_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "review_decision_log_hash": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/common/1.0#/$defs/SHA256"
+    },
+    "ontology_baseline": {
+      "allOf": [
+        {
+          "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/common/1.0#/$defs/DependencyReference"
+        },
+        {
+          "required": [
+            "ontology_baseline_id",
+            "ontology_version",
+            "ontology_release_source_hash"
+          ]
+        }
+      ]
+    },
+    "confirmed_abox_decisions": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/ConfirmedAboxItem"
+      }
+    },
+    "confirmed_schema_delta": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/ConfirmedSchemaItem"
+      }
+    },
+    "rejected_items": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/RejectedItem"
+      }
+    },
+    "deferred_items": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/DeferredItem"
+      }
+    },
+    "publication_manifest": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  },
+  "$defs": {
+    "CandidateTarget": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "decision_id",
+        "candidate_id",
+        "decision",
+        "publication_scope"
+      ],
+      "properties": {
+        "decision_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "candidate_id": {
+          "type": "string",
+          "pattern": "^urn:kg-mnp:candidate:[0-9a-f]{64}$"
+        },
+        "decision": {
+          "enum": [
+            "CONFIRM",
+            "MODIFY_AND_CONFIRM"
+          ]
+        },
+        "publication_scope": {
+          "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/common/1.0#/$defs/PublicationScope"
+        },
+        "confirmed_candidate": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
+    },
+    "ConfirmedAboxItem": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/CandidateTarget"
+        },
+        {
+          "properties": {
+            "publication_scope": {
+              "const": "ABOX"
+            }
+          }
+        }
+      ]
+    },
+    "ConfirmedSchemaItem": {
+      "allOf": [
+        {
+          "$ref": "#/$defs/CandidateTarget"
+        },
+        {
+          "properties": {
+            "publication_scope": {
+              "const": "TBOX"
+            }
+          }
+        }
+      ]
+    },
+    "RejectedItem": {
+      "$ref": "#/$defs/NonConfirmedItem",
+      "properties": {
+        "decision": {
+          "const": "REJECT"
+        }
+      }
+    },
+    "DeferredItem": {
+      "$ref": "#/$defs/NonConfirmedItem",
+      "properties": {
+        "decision": {
+          "const": "DEFER"
+        }
+      }
+    },
+    "NonConfirmedItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "decision_id",
+        "decision"
+      ],
+      "properties": {
+        "decision_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "candidate_id": {
+          "type": "string",
+          "pattern": "^urn:kg-mnp:candidate:[0-9a-f]{64}$"
+        },
+        "issue_id": {
+          "type": "string",
+          "pattern": "^urn:kg-mnp:issue:[0-9a-f]{64}$"
+        },
+        "decision": {
+          "enum": [
+            "REJECT",
+            "DEFER"
+          ]
+        }
+      },
+      "oneOf": [
+        {
+          "required": [
+            "candidate_id"
+          ],
+          "not": {
+            "required": [
+              "issue_id"
+            ]
+          }
+        },
+        {
+          "required": [
+            "issue_id"
+          ],
+          "not": {
+            "required": [
+              "candidate_id"
+            ]
+          }
+        }
+      ]
+    }
+  }
+}

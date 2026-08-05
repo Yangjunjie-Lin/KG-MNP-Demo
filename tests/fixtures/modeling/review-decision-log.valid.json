@@ -1,0 +1,27 @@
+{
+  "contract_version": "1.0",
+  "decision_log_id": "stage04-review-log-fixture",
+  "proposal_id": "urn:kg-mnp:modeling-proposal:f558441112f6f38d5b6159280f82fb55dedb693a6923d549f77321b5a7d34980",
+  "proposal_semantic_hash": "f558441112f6f38d5b6159280f82fb55dedb693a6923d549f77321b5a7d34980",
+  "reviewer": {
+    "reviewer_id": "synthetic-reviewer",
+    "role": "ONTOLOGY_REVIEWER"
+  },
+  "review_session": {
+    "session_id": "synthetic-review-session",
+    "started_at": "2026-08-01T00:00:00Z",
+    "completed_at": "2026-08-01T00:05:00Z"
+  },
+  "decisions": [
+    {
+      "decision_id": "synthetic-confirm-decision",
+      "candidate_id": "urn:kg-mnp:candidate:dc4669b61c5efa75eb523192dbd5182cdc10eb51920317c33a4fa52cba6afbc2",
+      "decision": "CONFIRM",
+      "rationale": "Synthetic fixture used only to exercise cross-reference validation.",
+      "reviewer_id": "synthetic-reviewer",
+      "decided_at": "2026-08-01T00:03:00Z",
+      "evidence_refs": ["synthetic-review-evidence"]
+    }
+  ],
+  "log_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+}

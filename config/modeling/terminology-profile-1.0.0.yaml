@@ -1,0 +1,92 @@
+contract_version: "1.0"
+profile_id: "kg-mnp-stage04-core-terminology"
+profile_version: "1.0.0"
+ontology_version: "1.0.0"
+default_locale: "en"
+supported_locales:
+  - "en"
+  - "zh-CN"
+entries:
+  - term_iri: "https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#Subscriber"
+    preferred_labels:
+      en: "Subscriber"
+      zh-CN: "用户"
+    aliases:
+      - "subscriber"
+      - "customer"
+      - "mobile subscriber"
+      - "用户"
+    normalized_forms:
+      - "subscriber"
+      - "customer"
+      - "mobile subscriber"
+      - "用户"
+    language: "en"
+    status: "ACTIVE"
+
+  - term_iri: "https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#TelecomAccount"
+    preferred_labels:
+      en: "Telecom Account"
+      zh-CN: "电信账户"
+    aliases:
+      - "telecom account"
+      - "customer account"
+      - "电信账户"
+    normalized_forms:
+      - "telecom account"
+      - "customer account"
+      - "电信账户"
+    language: "en"
+    status: "ACTIVE"
+
+  - term_iri: "https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#ServiceSubscription"
+    preferred_labels:
+      en: "Service Subscription"
+      zh-CN: "服务订阅"
+    aliases:
+      - "service subscription"
+      - "mobile subscription"
+      - "product subscription"
+      - "服务订阅"
+    normalized_forms:
+      - "service subscription"
+      - "mobile subscription"
+      - "product subscription"
+      - "服务订阅"
+    language: "en"
+    status: "ACTIVE"
+
+  - term_iri: "https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#billedThrough"
+    preferred_labels:
+      en: "billed through"
+      zh-CN: "经账户计费"
+    aliases:
+      - "billed through"
+      - "billing account link"
+      - "经账户计费"
+    normalized_forms:
+      - "billed through"
+      - "billing account link"
+      - "经账户计费"
+    language: "en"
+    status: "ACTIVE"
+
+  - term_iri: "https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#subscriptionStatusCode"
+    preferred_labels:
+      en: "subscription status code"
+      zh-CN: "订阅状态码"
+    aliases:
+      - "subscription status code"
+      - "subscription status"
+      - "product status"
+      - "订阅状态码"
+    normalized_forms:
+      - "subscription status code"
+      - "subscription status"
+      - "product status"
+      - "订阅状态码"
+    language: "en"
+    status: "ACTIVE"
+ambiguity_groups: []
+target_term_exemptions: []
+

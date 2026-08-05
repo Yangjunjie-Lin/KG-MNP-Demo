@@ -1,0 +1,223 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/cleaned-partial-data/1.0",
+  "title": "CleanedPartialData Contract 1.0",
+  "description": "Generic cleaned-but-possibly-partial JSON input for deterministic modeling proposal generation.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "document_id",
+    "dataset_id",
+    "data",
+    "sources"
+  ],
+  "properties": {
+    "contract_version": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/common/1.0#/$defs/ContractVersion"
+    },
+    "document_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "dataset_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "data": {
+      "type": [
+        "object",
+        "array"
+      ]
+    },
+    "sources": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/Source"
+      }
+    },
+    "field_metadata": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/FieldMetadata"
+      }
+    },
+    "declared_missing_items": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/DeclaredMissingItem"
+      }
+    },
+    "declared_conflicts": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/DeclaredConflict"
+      }
+    },
+    "input_context": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  },
+  "$defs": {
+    "Source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "source_id",
+        "source_type",
+        "source_locator",
+        "source_version"
+      ],
+      "properties": {
+        "source_id": {
+          "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/common/1.0#/$defs/SourceReference"
+        },
+        "source_type": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source_locator": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "retrieved_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "observed_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "license_or_terms": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source_hash": {
+          "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/common/1.0#/$defs/SHA256"
+        }
+      }
+    },
+    "FieldMetadata": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "source_refs",
+        "presence"
+      ],
+      "properties": {
+        "path": {
+          "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/common/1.0#/$defs/JsonPointer"
+        },
+        "source_refs": {
+          "type": "array",
+          "items": {
+            "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/common/1.0#/$defs/SourceReference"
+          },
+          "uniqueItems": true
+        },
+        "presence": {
+          "enum": [
+            "PRESENT",
+            "NULL",
+            "UNKNOWN",
+            "REDACTED"
+          ]
+        },
+        "observed_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "confidence": {
+          "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/common/1.0#/$defs/Confidence"
+        }
+      }
+    },
+    "DeclaredMissingItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "missing_id",
+        "expected_path",
+        "reason",
+        "source_refs"
+      ],
+      "properties": {
+        "missing_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "expected_path": {
+          "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/common/1.0#/$defs/JsonPointer"
+        },
+        "reason": {
+          "type": "string",
+          "minLength": 1
+        },
+        "source_refs": {
+          "type": "array",
+          "items": {
+            "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/common/1.0#/$defs/SourceReference"
+          },
+          "uniqueItems": true
+        },
+        "expected_semantic_role": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "ConflictAlternative": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "value",
+        "source_refs"
+      ],
+      "properties": {
+        "value": true,
+        "source_refs": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/common/1.0#/$defs/SourceReference"
+          },
+          "uniqueItems": true
+        },
+        "confidence": {
+          "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/common/1.0#/$defs/Confidence"
+        }
+      }
+    },
+    "DeclaredConflict": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "conflict_id",
+        "path",
+        "alternatives"
+      ],
+      "properties": {
+        "conflict_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "path": {
+          "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/common/1.0#/$defs/JsonPointer"
+        },
+        "alternatives": {
+          "type": "array",
+          "minItems": 2,
+          "items": {
+            "$ref": "#/$defs/ConflictAlternative"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,340 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/common/1.0",
+  "title": "KG-MNP Modeling Contract Common Definitions 1.0",
+  "description": "Reusable value objects for Stage 04 modeling contracts. This schema does not assert ontology facts.",
+  "$defs": {
+    "ContractVersion": {
+      "type": "string",
+      "const": "1.0"
+    },
+    "SemanticVersion": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(?:-[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*)?(?:\\+[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*)?$"
+    },
+    "SHA256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "AbsoluteIRI": {
+      "type": "string",
+      "format": "uri",
+      "pattern": "^[A-Za-z][A-Za-z0-9+.-]*:[^\\s]+$"
+    },
+    "StableIdentifier": {
+      "type": "string",
+      "pattern": "^urn:kg-mnp:(?:input|modeling-proposal|candidate|issue|dependency):[0-9a-f]{64}$"
+    },
+    "JsonPointer": {
+      "type": "string",
+      "pattern": "^(?:/(?:[^~/]|~[01])*)*$"
+    },
+    "SourceReference": {
+      "type": "string",
+      "minLength": 1
+    },
+    "EvidenceReference": {
+      "type": "string",
+      "minLength": 1
+    },
+    "Confidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "level",
+        "basis"
+      ],
+      "properties": {
+        "level": {
+          "enum": [
+            "HIGH",
+            "MEDIUM",
+            "LOW",
+            "UNKNOWN"
+          ]
+        },
+        "score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "basis": {
+          "type": "string",
+          "minLength": 1
+        },
+        "components": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/ConfidenceComponent"
+          }
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "level": {
+                "const": "UNKNOWN"
+              }
+            },
+            "required": [
+              "level"
+            ]
+          },
+          "then": {
+            "not": {
+              "required": [
+                "score"
+              ]
+            }
+          },
+          "else": {
+            "required": [
+              "score"
+            ]
+          }
+        }
+      ]
+    },
+    "ConfidenceComponent": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "component",
+        "level",
+        "basis"
+      ],
+      "properties": {
+        "component": {
+          "enum": [
+            "MAPPING_RULE",
+            "SOURCE_METADATA"
+          ]
+        },
+        "level": {
+          "enum": [
+            "HIGH",
+            "MEDIUM",
+            "LOW",
+            "UNKNOWN"
+          ]
+        },
+        "score": {
+          "type": "number",
+          "minimum": 0,
+          "maximum": 1
+        },
+        "basis": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "CandidateStatus": {
+      "type": "string",
+      "enum": [
+        "PROPOSED",
+        "CONFIRMED",
+        "REJECTED",
+        "DEPRECATED"
+      ]
+    },
+    "PublicationScope": {
+      "type": "string",
+      "enum": [
+        "ABOX",
+        "TBOX",
+        "EVIDENCE",
+        "MAPPING",
+        "REVIEW_ONLY",
+        "NONE"
+      ]
+    },
+    "TypedLiteral": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "value"
+      ],
+      "properties": {
+        "value": {
+          "type": [
+            "string",
+            "number",
+            "integer",
+            "boolean",
+            "null"
+          ]
+        },
+        "datatype_iri": {
+          "$ref": "#/$defs/AbsoluteIRI"
+        },
+        "language": {
+          "type": "string",
+          "pattern": "^[A-Za-z]{2,8}(?:-[A-Za-z0-9]{1,8})*$"
+        }
+      },
+      "oneOf": [
+        {
+          "required": [
+            "datatype_iri"
+          ]
+        },
+        {
+          "required": [
+            "language"
+          ]
+        }
+      ]
+    },
+    "EntityReference": {
+      "anyOf": [
+        {
+          "type": "string",
+          "pattern": "^urn:kg-mnp:candidate:[0-9a-f]{64}$"
+        },
+        {
+          "$ref": "#/$defs/AbsoluteIRI"
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "candidate_id",
+            "proposed_iri"
+          ],
+          "properties": {
+            "candidate_id": {
+              "type": "string",
+              "pattern": "^urn:kg-mnp:candidate:[0-9a-f]{64}$"
+            },
+            "proposed_iri": {
+              "$ref": "#/$defs/AbsoluteIRI"
+            }
+          }
+        }
+      ]
+    },
+    "DependencyReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "dependency_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "dependency_version": {
+          "$ref": "#/$defs/SemanticVersion"
+        },
+        "dependency_hash": {
+          "$ref": "#/$defs/SHA256"
+        },
+        "ontology_baseline_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "ontology_version": {
+          "$ref": "#/$defs/SemanticVersion"
+        },
+        "ontology_release_source_hash": {
+          "$ref": "#/$defs/SHA256"
+        }
+      },
+      "oneOf": [
+        {
+          "required": [
+            "dependency_id",
+            "dependency_version",
+            "dependency_hash"
+          ]
+        },
+        {
+          "required": [
+            "ontology_baseline_id",
+            "ontology_version",
+            "ontology_release_source_hash"
+          ]
+        }
+      ]
+    },
+    "Issue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "issue_id",
+        "issue_type",
+        "severity",
+        "review_status",
+        "publication_scope",
+        "source_paths",
+        "source_refs",
+        "related_candidate_ids",
+        "description",
+        "blocking"
+      ],
+      "properties": {
+        "issue_id": {
+          "type": "string",
+          "pattern": "^urn:kg-mnp:issue:[0-9a-f]{64}$"
+        },
+        "issue_type": {
+          "enum": [
+            "MISSING_INFORMATION",
+            "CONFLICT",
+            "AMBIGUOUS",
+            "UNSUPPORTED",
+            "INCONSISTENT_SOURCE",
+            "LOW_CONFIDENCE"
+          ]
+        },
+        "severity": {
+          "enum": [
+            "INFO",
+            "WARNING",
+            "ERROR",
+            "BLOCKING"
+          ]
+        },
+        "review_status": {
+          "const": "PROPOSED"
+        },
+        "publication_scope": {
+          "const": "REVIEW_ONLY"
+        },
+        "source_paths": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/JsonPointer"
+          },
+          "uniqueItems": true
+        },
+        "source_refs": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/SourceReference"
+          },
+          "uniqueItems": true
+        },
+        "related_candidate_ids": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^urn:kg-mnp:candidate:[0-9a-f]{64}$"
+          },
+          "uniqueItems": true
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1
+        },
+        "blocking": {
+          "type": "boolean"
+        },
+        "details": {
+          "type": "object",
+          "additionalProperties": true
+        }
+      }
+    }
+  }
+}

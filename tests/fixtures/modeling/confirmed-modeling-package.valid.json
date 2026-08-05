@@ -1,0 +1,28 @@
+{
+  "contract_version": "1.0",
+  "package_id": "stage04-confirmed-package-fixture",
+  "package_semantic_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+  "source_proposal_id": "urn:kg-mnp:modeling-proposal:f558441112f6f38d5b6159280f82fb55dedb693a6923d549f77321b5a7d34980",
+  "source_proposal_hash": "f558441112f6f38d5b6159280f82fb55dedb693a6923d549f77321b5a7d34980",
+  "review_decision_log_id": "stage04-review-log-fixture",
+  "review_decision_log_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+  "ontology_baseline": {
+    "ontology_baseline_id": "kg-mnp-ontology-baseline",
+    "ontology_version": "1.0.0",
+    "ontology_release_source_hash": "fa6a74a5fb1e2862e04805de58c2ef67e43920a7be785b2fc370a93df1786bfc"
+  },
+  "confirmed_abox_decisions": [
+    {
+      "decision_id": "synthetic-confirm-decision",
+      "candidate_id": "urn:kg-mnp:candidate:dc4669b61c5efa75eb523192dbd5182cdc10eb51920317c33a4fa52cba6afbc2",
+      "decision": "CONFIRM",
+      "publication_scope": "ABOX"
+    }
+  ],
+  "confirmed_schema_delta": [],
+  "rejected_items": [],
+  "deferred_items": [],
+  "publication_manifest": {
+    "fixture_only": true
+  }
+}

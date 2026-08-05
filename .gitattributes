@@ -1,1 +1,4 @@
 *.sh text eol=lf
+schemas/modeling/*.json text eol=lf
+config/modeling/* text eol=lf
+examples/modeling/**/*.json text eol=lf

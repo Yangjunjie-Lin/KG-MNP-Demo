@@ -35,13 +35,6 @@ def test_legacy_schema_loader_is_explicit_and_compatibility_alias_is_legacy() ->
     assert "compatibility alias" in (input_adapter.load_schema.__doc__ or "").lower()
 
 
-def test_stage_04_modeling_schemas_have_not_been_created() -> None:
-    modeling_schema_names = (
-        "cleaned_partial_data.schema.json",
-        "modeling_proposal.schema.json",
-        "review_decision_log.schema.json",
-        "confirmed_modeling_package.schema.json",
-    )
-
-    for name in modeling_schema_names:
-        assert not (ROOT / "schemas" / "modeling" / name).exists()
+def test_legacy_adapter_does_not_load_central_modeling_contracts() -> None:
+    assert "modeling" not in input_adapter.LEGACY_ELIGIBILITY_SCHEMA_PATH.parts
+    assert "cleaned_partial_data" not in input_adapter.load_schema.__doc__.lower()

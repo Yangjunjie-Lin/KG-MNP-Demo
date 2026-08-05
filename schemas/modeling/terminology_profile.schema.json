@@ -1,0 +1,150 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/terminology-profile/1.0",
+  "title": "TerminologyProfile Contract 1.0",
+  "description": "Versioned labels and aliases for existing ontology terms. Aliases are not OWL equivalence axioms.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "profile_id",
+    "profile_version",
+    "ontology_version",
+    "default_locale",
+    "supported_locales",
+    "entries",
+    "ambiguity_groups"
+  ],
+  "properties": {
+    "contract_version": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/common/1.0#/$defs/ContractVersion"
+    },
+    "profile_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "profile_version": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/common/1.0#/$defs/SemanticVersion"
+    },
+    "ontology_version": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/common/1.0#/$defs/SemanticVersion"
+    },
+    "default_locale": {
+      "$ref": "#/$defs/Locale"
+    },
+    "supported_locales": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/Locale"
+      },
+      "uniqueItems": true
+    },
+    "entries": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/TerminologyEntry"
+      }
+    },
+    "ambiguity_groups": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/AmbiguityGroup"
+      }
+    },
+    "target_term_exemptions": {
+      "type": "array",
+      "items": {
+        "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/common/1.0#/$defs/AbsoluteIRI"
+      },
+      "uniqueItems": true
+    }
+  },
+  "$defs": {
+    "Locale": {
+      "type": "string",
+      "pattern": "^[A-Za-z]{2,8}(?:-[A-Za-z0-9]{1,8})*$"
+    },
+    "TerminologyEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "term_iri",
+        "preferred_labels",
+        "aliases",
+        "normalized_forms",
+        "language",
+        "status"
+      ],
+      "properties": {
+        "term_iri": {
+          "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/common/1.0#/$defs/AbsoluteIRI"
+        },
+        "preferred_labels": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": {
+            "type": "string",
+            "minLength": 1
+          },
+          "propertyNames": {
+            "$ref": "#/$defs/Locale"
+          }
+        },
+        "aliases": {
+          "$ref": "#/$defs/Terms"
+        },
+        "normalized_forms": {
+          "$ref": "#/$defs/Terms"
+        },
+        "language": {
+          "$ref": "#/$defs/Locale"
+        },
+        "status": {
+          "enum": [
+            "ACTIVE",
+            "DEPRECATED"
+          ]
+        }
+      }
+    },
+    "Terms": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "uniqueItems": true
+    },
+    "AmbiguityGroup": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "normalized_form",
+        "term_iris"
+      ],
+      "properties": {
+        "group_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "normalized_form": {
+          "type": "string",
+          "minLength": 1
+        },
+        "term_iris": {
+          "type": "array",
+          "minItems": 2,
+          "items": {
+            "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/common/1.0#/$defs/AbsoluteIRI"
+          },
+          "uniqueItems": true
+        },
+        "rationale": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    }
+  }
+}

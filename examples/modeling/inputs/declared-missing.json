@@ -1,0 +1,32 @@
+{
+  "contract_version": "1.0",
+  "document_id": "synthetic-declared-missing",
+  "dataset_id": "stage04-examples",
+  "data": {
+    "subscriber": {"id": "SUBSCRIBER-MISSING"},
+    "subscription": {"subscription_id": "SUBSCRIPTION-MISSING"}
+  },
+  "sources": [
+    {
+      "source_id": "source-missing",
+      "source_type": "SYNTHETIC_FIXTURE",
+      "source_locator": "fixture:declared-missing",
+      "source_version": "1.0"
+    }
+  ],
+  "field_metadata": [
+    {"path": "/subscriber/id", "source_refs": ["source-missing"], "presence": "PRESENT", "confidence": {"level": "HIGH", "score": 0.9, "basis": "SOURCE_DECLARED"}},
+    {"path": "/subscription/subscription_id", "source_refs": ["source-missing"], "presence": "PRESENT", "confidence": {"level": "HIGH", "score": 0.9, "basis": "SOURCE_DECLARED"}}
+  ],
+  "declared_missing_items": [
+    {
+      "missing_id": "missing-subscription-status",
+      "expected_path": "/subscription/status",
+      "reason": "The synthetic source did not provide a status.",
+      "source_refs": ["source-missing"],
+      "expected_semantic_role": "subscription status"
+    }
+  ],
+  "declared_conflicts": [],
+  "input_context": {"fixture": true}
+}
