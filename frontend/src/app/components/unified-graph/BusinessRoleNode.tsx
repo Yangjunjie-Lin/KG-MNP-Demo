@@ -1,5 +1,6 @@
 import { wrapNodeLabel } from "../../unified-graph/graphLabels";
 import { LAYER_STYLES } from "../../unified-graph/businessLayerConfig";
+import type { CanonicalDiagramStyle } from "../../unified-graph/canonicalDiagramTypes";
 import type { VisualProjection } from "../../unified-graph/graphTypes";
 
 const STATE_STROKE: Record<string, string> = {
@@ -33,6 +34,9 @@ interface BusinessRoleNodeProps {
   selected: boolean;
   opacity: number;
   onSelect: (projectionId: string) => void;
+  subtitle?: string;
+  monochrome?: boolean;
+  canonicalStyle?: CanonicalDiagramStyle;
 }
 
 export function BusinessRoleNode({
@@ -40,12 +44,32 @@ export function BusinessRoleNode({
   selected,
   opacity,
   onSelect,
+  subtitle,
+  monochrome = false,
+  canonicalStyle,
 }: BusinessRoleNodeProps) {
   const style = LAYER_STYLES[node.layerId];
   const state = node.state ?? "DEFAULT";
   const lines = wrapNodeLabel(node.labelZh, node.width > 160 ? 10 : 8);
-  const stroke = selected ? "#2563eb" : STATE_STROKE[state] ?? style.accent;
-  const fill = selected ? "#dbeafe" : STATE_FILL[state] ?? "#ffffff";
+  const canonicalStateStroke =
+    state === "PASS"
+      ? canonicalStyle?.trace.pass ?? "#14532d"
+      : state === "BLOCK"
+        ? canonicalStyle?.trace.block ?? "#7f1d1d"
+        : state === "WARN"
+          ? canonicalStyle?.trace.warning ?? "#9a3412"
+          : canonicalStyle?.node_border ?? "#111111";
+  const stroke = monochrome
+    ? canonicalStateStroke
+    : selected
+      ? "#2563eb"
+      : STATE_STROKE[state] ?? style.accent;
+  const fill = monochrome
+    ? canonicalStyle?.node_background ?? "#ffffff"
+    : selected
+      ? "#dbeafe"
+      : STATE_FILL[state] ?? "#ffffff";
+  const safety = node.roleId === "SAFETY_CHECK";
 
   return (
     <g
@@ -56,6 +80,10 @@ export function BusinessRoleNode({
       data-node-x={node.x}
       data-node-y={node.y}
       data-node-kind={node.kind}
+      data-node-width={node.width}
+      data-node-height={node.height}
+      data-node-background={fill}
+      data-node-radius={monochrome ? canonicalStyle?.node_radius ?? 0 : 6}
       opacity={opacity}
       style={{ cursor: "pointer" }}
       onClick={(event) => {
@@ -67,36 +95,70 @@ export function BusinessRoleNode({
         event.stopPropagation();
       }}
     >
+      {monochrome && node.mappedCount === 0 ? (
+        <title>当前无对应本体概念</title>
+      ) : null}
       <rect
         x={node.x}
         y={node.y}
         width={node.width}
         height={node.height}
-        rx={6}
+        rx={monochrome ? canonicalStyle?.node_radius ?? 0 : 6}
         fill={fill}
         stroke={stroke}
-        strokeWidth={selected ? 2.5 : 1.5}
+        strokeWidth={monochrome ? (safety ? canonicalStyle?.safety_check.node_border_width ?? 3.5 : selected ? 2.5 : canonicalStyle?.node_border_width ?? 1.5) : selected ? 2.5 : 1.5}
         vectorEffect="non-scaling-stroke"
+        data-node-border-width={monochrome ? (safety ? canonicalStyle?.safety_check.node_border_width ?? 3.5 : canonicalStyle?.node_border_width ?? 1.5) : selected ? 2.5 : 1.5}
       />
-      {lines.map((line, index) => (
+      {monochrome ? (
         <text
-          key={`${node.projectionId}-line-${index}`}
           x={node.x + node.width / 2}
-          y={
-            node.y +
-            node.height / 2 -
-            ((lines.length - 1) * 7) / 2 +
-            index * 14
-          }
+          y={node.y + node.height / 2}
           textAnchor="middle"
           dominantBaseline="middle"
-          fontSize={11}
-          fill="#334155"
+          fill={canonicalStateStroke}
+          data-canonical-node-label={node.roleId ?? ""}
         >
-          {line}
+          <tspan
+            x={node.x + node.width / 2}
+            dy={subtitle ? (safety ? -12 : -10) : 0}
+            fontSize={safety ? canonicalStyle?.safety_check.zh_font_size ?? 24 : canonicalStyle?.node_text.zh_font_size ?? 18}
+            fontWeight={safety ? canonicalStyle?.safety_check.font_weight ?? 700 : canonicalStyle?.node_text.zh_font_weight ?? 700}
+          >
+            {node.labelZh}
+          </tspan>
+          {subtitle ? (
+            <tspan
+              x={node.x + node.width / 2}
+              dy={safety ? 28 : 23}
+              fontSize={safety ? canonicalStyle?.safety_check.en_font_size ?? 19 : canonicalStyle?.node_text.en_font_size ?? 15}
+              fontWeight={canonicalStyle?.node_text.en_font_weight ?? 400}
+            >
+              ({subtitle})
+            </tspan>
+          ) : null}
         </text>
-      ))}
-      {typeof node.mappedCount === "number" && node.kind === "CORE_ROLE" ? (
+      ) : (
+        lines.map((line, index) => (
+          <text
+            key={`${node.projectionId}-line-${index}`}
+            x={node.x + node.width / 2}
+            y={
+              node.y +
+              node.height / 2 -
+              ((lines.length - 1) * 7) / 2 +
+              index * 14
+            }
+            textAnchor="middle"
+            dominantBaseline="middle"
+            fontSize={11}
+            fill="#334155"
+          >
+            {line}
+          </text>
+        ))
+      )}
+      {!monochrome && typeof node.mappedCount === "number" && node.kind === "CORE_ROLE" ? (
         <text
           x={node.x + node.width - 8}
           y={node.y + 12}

@@ -28,6 +28,7 @@ interface GraphViewportProps {
   children: ReactNode;
   cursor?: "grab" | "grabbing" | "default";
   graphTestId?: string;
+  canvasBackground?: string;
 }
 
 export function GraphViewport({
@@ -39,6 +40,7 @@ export function GraphViewport({
   children,
   cursor = "grab",
   graphTestId = "unified-business-graph",
+  canvasBackground = "#f1f5f9",
 }: GraphViewportProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const svgRef = useRef<SVGSVGElement | null>(null);
@@ -51,31 +53,34 @@ export function GraphViewport({
         onTransformChange(next);
         return;
       }
-      const viewport: Rect = {
-        x: 0,
-        y: 0,
-        width: rect.width,
-        height: rect.height,
-      };
+      const viewport: Rect = { x: 0, y: 0, width: worldWidth, height: worldHeight };
       const world: Rect = { x: 0, y: 0, width: worldWidth, height: worldHeight };
       onTransformChange(clampTranslation(next, viewport, world));
     },
     [onTransformChange, worldHeight, worldWidth],
   );
 
+  const clientToSvg = useCallback((clientX: number, clientY: number) => {
+    const svg = svgRef.current;
+    const matrix = svg?.getScreenCTM();
+    if (!svg || !matrix) return null;
+    const point = svg.createSVGPoint();
+    point.x = clientX;
+    point.y = clientY;
+    return point.matrixTransform(matrix.inverse());
+  }, []);
+
   const onWheel = (event: ReactWheelEvent<SVGSVGElement>) => {
     event.preventDefault();
     event.stopPropagation();
-    const rect = svgRef.current?.getBoundingClientRect();
-    if (!rect) return;
-    const pointerX = event.clientX - rect.left;
-    const pointerY = event.clientY - rect.top;
+    const pointer = clientToSvg(event.clientX, event.clientY);
+    if (!pointer) return;
     const nextScale = transform.scale * Math.exp(-event.deltaY * 0.0015);
     applyClamped(
       zoomAtPointer({
         transform,
-        pointerX,
-        pointerY,
+        pointerX: pointer.x,
+        pointerY: pointer.y,
         nextScale,
       }),
     );
@@ -112,8 +117,11 @@ export function GraphViewport({
       return;
     }
     drag.moved = true;
-    const dx = event.clientX - drag.startClientX;
-    const dy = event.clientY - drag.startClientY;
+    const start = clientToSvg(drag.startClientX, drag.startClientY);
+    const current = clientToSvg(event.clientX, event.clientY);
+    if (!start || !current) return;
+    const dx = current.x - start.x;
+    const dy = current.y - start.y;
     applyClamped(
       panByDelta(
         {
@@ -151,13 +159,16 @@ export function GraphViewport({
   return (
     <div
       ref={containerRef}
-      className="relative h-full min-h-[480px] w-full overflow-hidden rounded-lg border border-slate-200 bg-slate-100"
+      className="relative h-full min-h-[480px] w-full overflow-hidden border border-slate-200"
+      style={{ background: canvasBackground }}
       data-testid="graph-viewport"
     >
       <svg
         ref={svgRef}
         width="100%"
         height="100%"
+        viewBox={`0 0 ${worldWidth} ${worldHeight}`}
+        preserveAspectRatio="xMidYMid meet"
         className="h-full w-full touch-none"
         style={{ cursor: dragRef.current?.moved ? "grabbing" : cursor }}
         data-testid={graphTestId}
@@ -183,7 +194,7 @@ export function GraphViewport({
             orient="auto"
             markerUnits="strokeWidth"
           >
-            <path d="M0,0 L0,5 L7,2.5 z" fill="context-stroke" />
+            <polygon points="0,0 0,5 7,2.5" fill="context-stroke" />
           </marker>
         </defs>
         <GraphTransformLayer transform={transform}>{children}</GraphTransformLayer>

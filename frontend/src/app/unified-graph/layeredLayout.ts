@@ -5,11 +5,15 @@ import {
   layerIndex,
 } from "./businessLayerConfig";
 import {
+  CANONICAL_BUSES,
+  CANONICAL_CANVAS,
+  CANONICAL_EDGES,
+  CANONICAL_LAYERS,
+} from "./canonicalDiagramConfig";
+import {
   ALL_CORE_ROLES,
-  CORE_ROLE_LABELS,
   ROLE_LAYER,
   STRUCTURAL_RELATIONS,
-  anchorToCenter,
   getCoreRoleDefinitions,
 } from "./businessRoleConfig";
 import {
@@ -27,6 +31,7 @@ import type {
   GraphProjectionResult,
   ProjectedGraphEdge,
   SharedEdgeBus,
+  NodeState,
   UnifiedGraphMode,
   VisualProjection,
 } from "./graphTypes";
@@ -60,12 +65,13 @@ function buildCoreRoleNodes(input: {
   mappingCounts: Map<BusinessRoleId, number>;
   extensionCounts: Map<BusinessRoleId, number>;
   activeRoleIds?: Set<BusinessRoleId>;
+  roleStates?: Map<BusinessRoleId, NodeState>;
+  dimInactive?: boolean;
 }): VisualProjection[] {
   return getCoreRoleDefinitions()
     .sort((a, b) => layerIndex(a.layerId) - layerIndex(b.layerId) || a.id.localeCompare(b.id))
     .map((role, order) => {
-      const { cx, cy } = anchorToCenter(role.anchor);
-      const size = role.size;
+      const state = input.roleStates?.get(role.id);
       return {
         projectionId: `role:${role.id}`,
         sourceNodeId: `role:${role.id}`,
@@ -75,11 +81,17 @@ function buildCoreRoleNodes(input: {
         labelZh: role.labelZh,
         mappedCount: input.mappingCounts.get(role.id) ?? 0,
         extensionCount: input.extensionCounts.get(role.id) ?? 0,
-        state: input.activeRoleIds?.has(role.id) ? "ACTIVE" : "DEFAULT",
-        x: cx - size.width / 2,
-        y: cy - size.height / 2,
-        width: size.width,
-        height: size.height,
+        state:
+          state ??
+          (input.activeRoleIds?.has(role.id)
+            ? "ACTIVE"
+            : input.dimInactive
+              ? "DIMMED"
+              : "DEFAULT"),
+        x: role.x,
+        y: role.y,
+        width: role.size.width,
+        height: role.size.height,
         order,
       };
     });
@@ -185,11 +197,12 @@ function buildCompleteNodes(input: {
   return projections;
 }
 
-function buildStructuralEdges(
-  roleNodes: VisualProjection[],
-): ProjectedGraphEdge[] {
+function buildStructuralEdges(input: {
+  roleNodes: VisualProjection[];
+  dimInactive?: boolean;
+}): ProjectedGraphEdge[] {
   const byRole = new Map(
-    roleNodes
+    input.roleNodes
       .filter((node) => node.roleId)
       .map((node) => [node.roleId as BusinessRoleId, node]),
   );
@@ -209,54 +222,82 @@ function buildStructuralEdges(
       labelZh: relation.labelZh,
       sourceEdgeIds: [relation.id],
       presentationType: "STRUCTURAL" as const,
+      state:
+        input.dimInactive &&
+        (from.state === "DIMMED" || to.state === "DIMMED")
+          ? ("DIMMED" as const)
+          : to.state && to.state !== "DEFAULT"
+            ? to.state
+            : from.state,
     };
   });
 }
 
-function buildServiceBus(nodes: VisualProjection[]): SharedEdgeBus | null {
-  const source = nodes.find(
-    (node) => node.roleId === "MOBILE_NUMBER_IDENTITY",
-  );
-  const targets = (
-    [
-      "TARIFF_PLAN",
-      "CONTRACT",
-      "BROADBAND",
-      "VALUE_ADDED_SERVICE",
-      "USER_RIGHT",
-    ] as BusinessRoleId[]
-  )
-    .map((roleId) => nodes.find((node) => node.roleId === roleId))
-    .filter((node): node is VisualProjection => Boolean(node));
-  if (!source || targets.length < 3) return null;
+function buildCanonicalBuses(): SharedEdgeBus[] {
+  return CANONICAL_BUSES.map((bus) => ({
+    id: bus.id,
+    trunkPath: bus.path,
+    branchPaths: Object.fromEntries(
+      CANONICAL_EDGES.filter((edge) => edge.busId === bus.id).map((edge) => [
+        edge.id,
+        edge.path,
+      ]),
+    ),
+    sourceEdgeIds: [...bus.edgeIds],
+    labelZh: "",
+    labelX: 0,
+    labelY: 0,
+  }));
+}
 
-  const sourceBottom = {
-    x: source.x + source.width / 2,
-    y: source.y + source.height,
-  };
-  const trunkY = Math.max(...targets.map((t) => t.y)) - 28;
-  const leftX = Math.min(...targets.map((t) => t.x + t.width / 2));
-  const rightX = Math.max(...targets.map((t) => t.x + t.width / 2));
-  const trunkPath = `M ${sourceBottom.x} ${sourceBottom.y} V ${trunkY} H ${leftX}`;
-  const branchPaths: Record<string, string> = {
-    trunk: `M ${leftX} ${trunkY} H ${rightX}`,
-  };
-  const sourceEdgeIds: string[] = [];
-  for (const target of targets) {
-    const tx = target.x + target.width / 2;
-    const ty = target.y;
-    branchPaths[target.projectionId] = `M ${tx} ${trunkY} V ${ty}`;
-    sourceEdgeIds.push(`struct-bus-${target.roleId}`);
+function canonicalLayerGeometries() {
+  return CANONICAL_LAYERS.map((layer) => ({
+    id: layer.id,
+    label: layer.titleZh,
+    x: layer.x,
+    y: layer.y,
+    width: layer.width,
+    height: layer.height,
+    contentX: layer.contentX,
+    contentY: layer.y,
+    contentWidth: layer.x + layer.width - layer.contentX,
+    contentHeight: layer.height,
+    routeBottomY: layer.y + layer.height,
+  }));
+}
+
+function canonicalRoleActivity(input: {
+  nodes: GraphBuildInputNode[];
+  assignments: ReturnType<typeof assignNodeRoles>["assignments"];
+  activeNodeIds?: Set<string>;
+}): {
+  activeRoleIds: Set<BusinessRoleId>;
+  roleStates: Map<BusinessRoleId, NodeState>;
+} {
+  const activeRoleIds = new Set<BusinessRoleId>();
+  const roleStates = new Map<BusinessRoleId, NodeState>();
+  const priority: NodeState[] = [
+    "BLOCK",
+    "WARN",
+    "PASS",
+    "CURRENT",
+    "ACTIVE",
+    "DEFAULT",
+  ];
+  for (const node of input.nodes) {
+    if (input.activeNodeIds && !input.activeNodeIds.has(node.id)) continue;
+    const assignment = input.assignments.get(node.id);
+    if (!assignment) continue;
+    for (const roleId of assignment.roles) {
+      activeRoleIds.add(roleId);
+      const next = node.state ?? "ACTIVE";
+      const current = roleStates.get(roleId);
+      if (!current || priority.indexOf(next) < priority.indexOf(current)) {
+        roleStates.set(roleId, next);
+      }
+    }
   }
-  return {
-    id: "service-offering-bus",
-    trunkPath: `${trunkPath} H ${rightX}`,
-    branchPaths,
-    sourceEdgeIds,
-    labelZh: "业务关联",
-    labelX: (leftX + rightX) / 2,
-    labelY: trunkY - 8,
-  };
+  return { activeRoleIds, roleStates };
 }
 
 export function buildUnifiedGraph(input: {
@@ -275,56 +316,27 @@ export function buildUnifiedGraph(input: {
   let buses: SharedEdgeBus[] = [];
   let dangling: Array<{ id: string; from: string; to: string }> = [];
 
-  if (input.mode === "BUSINESS_OVERVIEW") {
-    const activeRoles = new Set<BusinessRoleId>();
-    for (const node of input.nodes) {
-      const assignment = assignments.get(node.id);
-      if (!assignment) continue;
-      if (input.activeNodeIds && !input.activeNodeIds.has(node.id)) continue;
-      for (const role of assignment.roles) activeRoles.add(role);
-    }
+  const canonicalMode = input.mode !== "COMPLETE_ONTOLOGY";
+  if (canonicalMode) {
+    const activity = canonicalRoleActivity({
+      nodes: input.nodes,
+      assignments,
+      activeNodeIds: input.activeNodeIds,
+    });
+    const dimInactive = input.mode !== "BUSINESS_OVERVIEW";
     nodes = buildCoreRoleNodes({
       mappingCounts,
       extensionCounts,
-      activeRoleIds: input.activeNodeIds ? activeRoles : undefined,
+      activeRoleIds: dimInactive ? activity.activeRoleIds : undefined,
+      roleStates: dimInactive ? activity.roleStates : undefined,
+      dimInactive,
     });
-    edges = buildStructuralEdges(nodes).filter((edge) => {
-      const def = STRUCTURAL_RELATIONS.find((item) => item.id === edge.id);
-      return !def?.group;
-    });
-    const bus = buildServiceBus(nodes);
-    if (bus) buses = [bus];
-  } else if (
-    input.mode === "ASSESSMENT_TRACE" ||
-    input.mode === "HISTORY_TRACE"
-  ) {
-    const activeNodes = buildCompleteNodes({
-      nodes: input.nodes,
-      assignments,
-    }).map((node) => ({
-      ...node,
-      state:
-        !input.activeNodeIds || input.activeNodeIds.has(node.sourceNodeId)
-          ? node.state && node.state !== "DEFAULT"
-            ? node.state
-            : ("ACTIVE" as const)
-          : ("DIMMED" as const),
-    }));
-    nodes = activeNodes;
-    const projected = projectOntologyEdges({
-      edges: input.edges,
-      projections: activeNodes,
-      presentationType: "TRACE",
-    });
-    edges = projected.edges;
-    dangling = projected.dangling;
+    edges = buildStructuralEdges({ roleNodes: nodes, dimInactive });
+    buses = buildCanonicalBuses();
   } else {
     nodes = buildCompleteNodes({ nodes: input.nodes, assignments });
     if (input.activeNodeIds) {
       nodes = nodes.map((node) => {
-        if (node.sourceNodeId.startsWith("role:")) {
-          return { ...node, state: "DIMMED" };
-        }
         if (input.activeNodeIds?.has(node.sourceNodeId)) {
           return {
             ...node,
@@ -336,15 +348,16 @@ export function buildUnifiedGraph(input: {
     }
     const projected = projectOntologyEdges({
       edges: input.edges,
-      projections: nodes.filter((node) => !node.sourceNodeId.startsWith("role:")),
-      presentationType:
-        input.mode === "IMPORT_PREVIEW" ? "IMPORT" : "ONTOLOGY",
+      projections: nodes,
+      presentationType: "ONTOLOGY",
     });
     edges = projected.edges;
     dangling = projected.dangling;
   }
 
-  const layers = computeLayerGeometries();
+  const layers = canonicalMode
+    ? canonicalLayerGeometries()
+    : computeLayerGeometries();
   const collapsedEdges = collapseEdges(edges);
   const contentRight =
     Math.max(...nodes.map((node) => node.x + node.width), 0) + 48;
@@ -356,9 +369,11 @@ export function buildUnifiedGraph(input: {
     edges,
     collapsedEdges,
     buses,
-    worldWidth: BUSINESS_WORLD.width,
-    worldHeight: BUSINESS_WORLD.height,
-    contentRight: Math.min(BUSINESS_WORLD.width - 24, Math.max(contentRight, 1400)),
+    worldWidth: canonicalMode ? CANONICAL_CANVAS.width : BUSINESS_WORLD.width,
+    worldHeight: canonicalMode ? CANONICAL_CANVAS.height : BUSINESS_WORLD.height,
+    contentRight: canonicalMode
+      ? CANONICAL_CANVAS.width - 24
+      : Math.min(BUSINESS_WORLD.width - 24, Math.max(contentRight, 1400)),
     unmappedNodeIds: unmapped,
     danglingEdges: dangling.map((item) => ({
       id: item.id,
@@ -371,7 +386,9 @@ export function buildUnifiedGraph(input: {
     })),
     silentlyDroppedNodes: [],
     silentlyDroppedEdges: [],
-    extensionNodeCount: nodes.filter((node) => node.kind === "EXTENSION").length,
+    extensionNodeCount: canonicalMode
+      ? 0
+      : nodes.filter((node) => node.kind === "EXTENSION").length,
     coreRoleCount: ALL_CORE_ROLES.length,
   };
 }

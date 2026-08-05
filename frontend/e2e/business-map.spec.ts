@@ -9,17 +9,27 @@ const LANES = [
 ] as const;
 
 test("业务总览五层结构与核心角色", async ({ page }) => {
-  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.setViewportSize({ width: 1664, height: 960 });
   await page.goto("/ontology");
   await expect(page.getByRole("button", { name: "业务总览" })).toBeVisible();
 
   const graph = page.getByTestId("ontology-overview-graph");
   await expect(graph).toBeVisible();
+  await expect(graph).toHaveAttribute("viewBox", "0 0 1664 900");
+  await expect(graph).toHaveAttribute("data-canonical-canvas-width", "1664");
+  await expect(graph).toHaveAttribute("data-canonical-canvas-height", "900");
+  await expect(graph).toHaveAttribute("data-canonical-core-node-count", "27");
+  await expect(graph).toHaveAttribute("data-canonical-edge-count", "29");
+  await expect(graph).toHaveAttribute("data-canonical-geometry-violation-count", "0");
   await expect(graph).toHaveAttribute("data-graph-dangling-edge-count", "0");
   await expect(graph).toHaveAttribute("data-graph-unmapped-node-count", "0");
 
   for (const lane of LANES) {
     await expect(page.getByTestId(lane)).toBeVisible();
+    const background = page.getByTestId(lane).locator(":scope > rect");
+    await expect(background).toHaveAttribute("fill", "#ffffff");
+    await expect(background).toHaveAttribute("stroke", "#111111");
+    await expect(background).toHaveAttribute("rx", "0");
   }
 
   const laneYs = await page.evaluate((ids) => {
@@ -35,6 +45,9 @@ test("业务总览五层结构与核心角色", async ({ page }) => {
 
   await expect(page.locator("[data-role-id='USER']").first()).toBeVisible();
   await expect(page.locator("[data-role-id='SAFETY_CHECK']").first()).toBeVisible();
+  await expect(graph.locator("[data-role-id]")).toHaveCount(27);
+  await expect(graph.locator("[data-canonical-edge-path]")).toHaveCount(29);
+  await expect(graph.locator("[data-canonical-bus]")).toHaveCount(1);
 
   // No SVG <line> elements in the business graph itself (icons elsewhere may use <line>).
   const lineCount = await page
@@ -44,7 +57,7 @@ test("业务总览五层结构与核心角色", async ({ page }) => {
 });
 
 test("完整本体模式渲染全部投影", async ({ page }) => {
-  await page.setViewportSize({ width: 1440, height: 900 });
+  await page.setViewportSize({ width: 1664, height: 960 });
   await page.goto("/ontology");
   await page.getByRole("button", { name: "完整本体" }).click();
   const graph = page.getByTestId("ontology-complete-graph");

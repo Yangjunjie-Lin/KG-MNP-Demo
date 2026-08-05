@@ -64,7 +64,11 @@ export function GraphNodeDetails({
         </div>
         <div>
           <dt className="text-slate-500">映射数量</dt>
-          <dd className="font-medium text-slate-800">{node.mappedCount ?? 1}</dd>
+          <dd className="font-medium text-slate-800">
+            {node.mappedCount === 0
+              ? "当前无对应本体概念"
+              : node.mappedCount ?? 1}
+          </dd>
         </div>
         <div>
           <dt className="text-slate-500">关系数量</dt>

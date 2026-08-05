@@ -1,5 +1,5 @@
 import type { GraphTransformState, LayerGeometry } from "../../unified-graph/graphTypes";
-import { BUSINESS_WORLD, LAYER_STYLES } from "../../unified-graph/businessLayerConfig";
+import { LAYER_STYLES } from "../../unified-graph/businessLayerConfig";
 
 interface GraphMinimapProps {
   layers: LayerGeometry[];
@@ -8,6 +8,9 @@ interface GraphMinimapProps {
   viewportHeight: number;
   onJump: (worldX: number, worldY: number) => void;
   hidden?: boolean;
+  worldWidth: number;
+  worldHeight: number;
+  monochrome?: boolean;
 }
 
 export function GraphMinimap({
@@ -17,12 +20,15 @@ export function GraphMinimap({
   viewportHeight,
   onJump,
   hidden,
+  worldWidth,
+  worldHeight,
+  monochrome = false,
 }: GraphMinimapProps) {
   if (hidden) return null;
   const width = 180;
-  const height = (BUSINESS_WORLD.height / BUSINESS_WORLD.width) * width;
-  const sx = width / BUSINESS_WORLD.width;
-  const sy = height / BUSINESS_WORLD.height;
+  const height = (worldHeight / worldWidth) * width;
+  const sx = width / worldWidth;
+  const sy = height / worldHeight;
 
   const viewX = -transform.translateX / transform.scale;
   const viewY = -transform.translateY / transform.scale;
@@ -40,8 +46,8 @@ export function GraphMinimap({
         viewBox={`0 0 ${width} ${height}`}
         onClick={(event) => {
           const rect = event.currentTarget.getBoundingClientRect();
-          const x = ((event.clientX - rect.left) / width) * BUSINESS_WORLD.width;
-          const y = ((event.clientY - rect.top) / height) * BUSINESS_WORLD.height;
+          const x = ((event.clientX - rect.left) / width) * worldWidth;
+          const y = ((event.clientY - rect.top) / height) * worldHeight;
           onJump(x, y);
         }}
       >
@@ -52,8 +58,8 @@ export function GraphMinimap({
             y={layer.y * sy}
             width={layer.width * sx}
             height={layer.height * sy}
-            fill={LAYER_STYLES[layer.id].background}
-            stroke={LAYER_STYLES[layer.id].border}
+            fill={monochrome ? "#ffffff" : LAYER_STYLES[layer.id].background}
+            stroke={monochrome ? "#111111" : LAYER_STYLES[layer.id].border}
             strokeWidth={0.5}
           />
         ))}
