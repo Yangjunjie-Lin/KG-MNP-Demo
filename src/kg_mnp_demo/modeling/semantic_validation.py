@@ -6,6 +6,7 @@ import re
 import unicodedata
 from collections import defaultdict
 from collections.abc import Collection, Mapping, Sequence
+from datetime import datetime
 from typing import Any
 
 from .canonical_json import semantic_hash
@@ -471,21 +472,63 @@ def validate_modeling_proposal_semantics(
 def validate_review_decision_log_semantics(
     decision_log: Mapping[str, Any],
     proposal: Mapping[str, Any],
+    cleaned_partial_data: Mapping[str, Any] | None = None,
+    ontology_baseline: Mapping[str, Any] | None = None,
+    mapping_rules: Mapping[str, Any] | None = None,
+    *,
+    review_policy: Mapping[str, Any] | None = None,
+    require_final: bool = False,
+    term_types: Mapping[str, str] | None = None,
 ) -> None:
+    del cleaned_partial_data, ontology_baseline, mapping_rules
     _schema_validate("review-decision-log", decision_log)
     errors: list[str] = []
     if decision_log.get("proposal_id") != proposal.get("proposal_id"):
         errors.append("decision log proposal_id does not match proposal")
     if decision_log.get("proposal_semantic_hash") != proposal.get("proposal_semantic_hash"):
         errors.append("decision log proposal_semantic_hash does not match proposal")
+
+    from .review_identifiers import decision_log_hash, decision_log_id, review_decision_id
+    from .review_log import (
+        decision_sort_key,
+        is_log_completed,
+        review_coverage,
+    )
+    from .review_policy import (
+        decision_allowed_for_target,
+        load_default_review_policy,
+    )
+    from .review_actions import validate_modified_candidate
+
+    policy = review_policy if review_policy is not None else None
+    try:
+        active_policy = policy if policy is not None else load_default_review_policy()
+    except Exception:
+        active_policy = None
+
     candidates = {
-        item["candidate_id"]
+        item["candidate_id"]: item
         for item in [*proposal.get("candidate_entities", []), *proposal.get("candidate_assertions", [])]
     }
-    issues = {item["issue_id"] for item in proposal.get("issues", [])}
+    issues = {item["issue_id"]: item for item in proposal.get("issues", [])}
     decision_ids: list[str] = []
     targets: list[str] = []
     reviewer_id = decision_log.get("reviewer", {}).get("reviewer_id")
+    session = decision_log.get("review_session") or {}
+    started_at = session.get("started_at")
+    completed_at = session.get("completed_at")
+
+    if require_final and not is_log_completed(decision_log):
+        errors.append("final ReviewDecisionLog requires completed_at")
+    if isinstance(started_at, str) and isinstance(completed_at, str):
+        try:
+            start = datetime.fromisoformat(started_at.replace("Z", "+00:00"))
+            end = datetime.fromisoformat(completed_at.replace("Z", "+00:00"))
+            if end < start:
+                errors.append("completed_at must not be earlier than started_at")
+        except ValueError:
+            errors.append("review session timestamps are not valid date-time values")
+
     for decision in decision_log.get("decisions", []):
         decision_ids.append(decision.get("decision_id"))
         target = decision.get("candidate_id") or decision.get("issue_id")
@@ -499,10 +542,84 @@ def validate_review_decision_log_semantics(
         has_modified = "modified_candidate" in decision
         if has_modified != (decision.get("decision") == "MODIFY_AND_CONFIRM"):
             errors.append("modified_candidate is required only for MODIFY_AND_CONFIRM")
+        target_kind = "candidate" if decision.get("candidate_id") else "issue"
+        decision_value = decision.get("decision")
+        if active_policy is not None and isinstance(decision_value, str):
+            if not decision_allowed_for_target(
+                target_kind=target_kind,
+                decision=decision_value,
+                policy=active_policy,
+            ):
+                errors.append(
+                    f"decision {decision_value!r} is not allowed for {target_kind}: {target}"
+                )
+        if decision_value == "DEPRECATE":
+            errors.append(f"DEPRECATE is forbidden in dataset modeling review: {target}")
+        if (
+            decision_value == "MODIFY_AND_CONFIRM"
+            and decision.get("candidate_id") in candidates
+            and isinstance(decision.get("modified_candidate"), Mapping)
+        ):
+            try:
+                validate_modified_candidate(
+                    candidates[decision["candidate_id"]],
+                    decision["modified_candidate"],
+                    term_types=term_types,
+                )
+            except SemanticValidationError as exc:
+                errors.extend(exc.errors)
+        if isinstance(decision.get("decision_id"), str) and isinstance(target, str):
+            expected_decision_id = review_decision_id(
+                proposal_id=str(proposal["proposal_id"]),
+                target_id=target,
+                decision=str(decision.get("decision")),
+                rationale=str(decision.get("rationale")),
+                reviewer_id=str(decision.get("reviewer_id")),
+                decided_at=str(decision.get("decided_at")),
+                evidence_refs=list(decision.get("evidence_refs") or []),
+                modified_candidate=decision.get("modified_candidate"),
+            )
+            if require_final and decision.get("decision_id") != expected_decision_id:
+                errors.append(f"decision_id does not match semantic content: {target}")
+        if isinstance(decision.get("decided_at"), str) and isinstance(started_at, str):
+            try:
+                decided = datetime.fromisoformat(
+                    decision["decided_at"].replace("Z", "+00:00")
+                )
+                start = datetime.fromisoformat(started_at.replace("Z", "+00:00"))
+                if decided < start:
+                    errors.append(f"decided_at earlier than session start: {target}")
+                if isinstance(completed_at, str):
+                    end = datetime.fromisoformat(completed_at.replace("Z", "+00:00"))
+                    if decided > end:
+                        errors.append(f"decided_at later than session completion: {target}")
+            except ValueError:
+                errors.append(f"decision decided_at is not a valid date-time: {target}")
+
     for duplicate in _duplicate_values([item for item in decision_ids if isinstance(item, str)]):
         errors.append(f"duplicate decision_id: {duplicate}")
     for duplicate in _duplicate_values([item for item in targets if isinstance(item, str)]):
         errors.append(f"multiple review decisions target the same proposal item: {duplicate}")
+
+    coverage = review_coverage(proposal, decision_log)
+    if require_final and not coverage["coverage_complete"]:
+        errors.append("final ReviewDecisionLog coverage is incomplete")
+    if require_final:
+        ordered = list(decision_log.get("decisions", []))
+        if ordered != sorted(ordered, key=decision_sort_key):
+            errors.append("final ReviewDecisionLog decisions are not stably sorted")
+        if active_policy is not None:
+            expected_log_id = decision_log_id(
+                proposal_id=str(proposal["proposal_id"]),
+                proposal_semantic_hash=str(proposal["proposal_semantic_hash"]),
+                reviewer_id=str(reviewer_id),
+                session_id=str(session.get("session_id")),
+                review_policy_version=str(active_policy["policy_version"]),
+            )
+            if decision_log.get("decision_log_id") != expected_log_id:
+                errors.append("decision_log_id does not match review session binding")
+        if decision_log.get("log_hash") != decision_log_hash(decision_log):
+            errors.append("log_hash does not match decision log semantic content")
     _raise(errors)
 
 
@@ -510,9 +627,25 @@ def validate_confirmed_modeling_package_semantics(
     package: Mapping[str, Any],
     proposal: Mapping[str, Any],
     decision_log: Mapping[str, Any],
+    cleaned_partial_data: Mapping[str, Any] | None = None,
+    ontology_baseline: Mapping[str, Any] | None = None,
+    mapping_rules: Mapping[str, Any] | None = None,
+    *,
+    review_policy: Mapping[str, Any] | None = None,
+    term_types: Mapping[str, str] | None = None,
+    require_complete: bool = False,
 ) -> None:
     _schema_validate("confirmed-modeling-package", package)
-    validate_review_decision_log_semantics(decision_log, proposal)
+    validate_review_decision_log_semantics(
+        decision_log,
+        proposal,
+        cleaned_partial_data=cleaned_partial_data,
+        ontology_baseline=ontology_baseline,
+        mapping_rules=mapping_rules,
+        review_policy=review_policy,
+        require_final=require_complete,
+        term_types=term_types,
+    )
     errors: list[str] = []
     if package.get("source_proposal_id") != proposal.get("proposal_id"):
         errors.append("package source_proposal_id does not match proposal")
@@ -522,6 +655,15 @@ def validate_confirmed_modeling_package_semantics(
         errors.append("package review_decision_log_id does not match decision log")
     if package.get("review_decision_log_hash") != decision_log.get("log_hash"):
         errors.append("package review_decision_log_hash does not match decision log")
+
+    from .review_identifiers import confirmed_package_id, package_semantic_hash
+
+    if require_complete:
+        if package.get("package_semantic_hash") != package_semantic_hash(package):
+            errors.append("package_semantic_hash does not match package semantic content")
+        if package.get("package_id") != confirmed_package_id(package):
+            errors.append("package_id does not match package semantic hash")
+
     decisions: dict[str, Mapping[str, Any]] = {}
     for decision in decision_log.get("decisions", []):
         target = decision.get("candidate_id") or decision.get("issue_id")
@@ -546,6 +688,11 @@ def validate_confirmed_modeling_package_semantics(
 
     section_targets: dict[str, str] = {}
 
+    if package.get("confirmed_schema_delta") not in (None, []):
+        if require_complete or package.get("confirmed_schema_delta"):
+            if package.get("confirmed_schema_delta") != []:
+                errors.append("confirmed_schema_delta must be empty in Stage 05 dataset modeling")
+
     for section in ("confirmed_abox_decisions", "confirmed_schema_delta"):
         for item in package.get(section, []):
             target = target_id(item)
@@ -566,6 +713,40 @@ def validate_confirmed_modeling_package_semantics(
                 errors.append(f"{section} item decision differs from review log: {target}")
             if section == "confirmed_schema_delta" and item.get("publication_scope") != "TBOX":
                 errors.append(f"confirmed schema delta must have TBOX scope: {target}")
+            if section == "confirmed_abox_decisions" and item.get("publication_scope") != "ABOX":
+                errors.append(f"confirmed abox item must have ABOX scope: {target}")
+            if decision.get("decision") == "REJECT":
+                errors.append(f"REJECT decision cannot enter confirmed section: {target}")
+            if decision.get("decision") == "DEFER":
+                errors.append(f"DEFER decision cannot enter confirmed section: {target}")
+            if target and target.startswith("urn:kg-mnp:issue:"):
+                errors.append(f"issue cannot enter confirmed section: {target}")
+            confirmed = item.get("confirmed_candidate")
+            if require_complete:
+                if not isinstance(confirmed, Mapping):
+                    errors.append(f"confirmed abox item lacks confirmed_candidate envelope: {target}")
+                else:
+                    if confirmed.get("source_candidate_id") != item.get("candidate_id"):
+                        errors.append(
+                            f"confirmed_candidate.source_candidate_id mismatch: {target}"
+                        )
+                    if decision.get("decision") == "CONFIRM":
+                        if confirmed.get("confirmation_mode") != "ORIGINAL":
+                            errors.append(f"CONFIRM must use ORIGINAL confirmation mode: {target}")
+                        if confirmed.get("effective_candidate_id") != item.get("candidate_id"):
+                            errors.append(
+                                f"CONFIRM effective_candidate_id must equal source: {target}"
+                            )
+                    if decision.get("decision") == "MODIFY_AND_CONFIRM":
+                        if confirmed.get("confirmation_mode") != "MODIFIED":
+                            errors.append(
+                                f"MODIFY_AND_CONFIRM must use MODIFIED confirmation mode: {target}"
+                            )
+                        modified = decision.get("modified_candidate") or {}
+                        if confirmed.get("effective_candidate_id") != modified.get("candidate_id"):
+                            errors.append(
+                                f"MODIFY_AND_CONFIRM effective_candidate_id mismatch: {target}"
+                            )
     for section, expected in (("rejected_items", "REJECT"), ("deferred_items", "DEFER")):
         for item in package.get(section, []):
             target = target_id(item)
@@ -582,4 +763,32 @@ def validate_confirmed_modeling_package_semantics(
                 errors.append(f"{section} item lacks {expected} decision: {target}")
             if item.get("decision_id") != decision.get("decision_id"):
                 errors.append(f"{section} item does not reference its review decision: {target}")
+
+    if require_complete:
+        missing = sorted(proposal_items - set(section_targets))
+        for target in missing:
+            errors.append(f"proposal item missing from package sections: {target}")
+        manifest = package.get("publication_manifest") or {}
+        expected_counts = {
+            "confirmed_abox_count": len(package.get("confirmed_abox_decisions", [])),
+            "confirmed_schema_delta_count": len(package.get("confirmed_schema_delta", [])),
+            "rejected_item_count": len(package.get("rejected_items", [])),
+            "deferred_item_count": len(package.get("deferred_items", [])),
+        }
+        for field, expected in expected_counts.items():
+            if manifest.get(field) != expected:
+                errors.append(f"publication_manifest.{field} must equal {expected}")
+        status = manifest.get("package_status")
+        compile_allowed = manifest.get("compile_allowed")
+        if status not in {"READY_FOR_COMPILATION", "BLOCKED"}:
+            errors.append("publication_manifest.package_status is invalid")
+        if status == "READY_FOR_COMPILATION" and compile_allowed is not True:
+            errors.append("READY_FOR_COMPILATION requires compile_allowed=true")
+        if status == "BLOCKED" and compile_allowed is not False:
+            errors.append("BLOCKED requires compile_allowed=false")
+        if manifest.get("review_coverage_complete") is not True:
+            errors.append("publication_manifest.review_coverage_complete must be true")
+        if review_policy is not None:
+            if manifest.get("review_policy_version") != review_policy.get("policy_version"):
+                errors.append("publication_manifest.review_policy_version mismatch")
     _raise(errors)

@@ -18,9 +18,9 @@ For Stage 04:
 ```
 
 `ONTOLOGY_RELEASE` mode and TBox candidates are unsupported. The artifact is
-JSON, not RDF, and is not written into `ontology/`. It cannot drive OWL,
-SHACL, RDF, GraphDB, or WebVOWL publication without later human review and a
-ConfirmedModelingPackage.
+JSON, not RDF, and is not written into `ontology/`. Stage 05 may review it into
+a `ConfirmedModelingPackage`, but that package still cannot drive OWL, SHACL,
+RDF, GraphDB, or WebVOWL publication until a later compiler stage.
 
 Business fact evidence and modeling evidence remain separate fields. Proposal
 values include only what is needed to state a candidate or review issue; the

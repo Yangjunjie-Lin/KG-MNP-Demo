@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/review-policy/1.0",
+  "title": "ReviewPolicy Contract 1.0",
+  "description": "Frozen Stage 05 human-review policy. Automatic, default, and bulk confirmation are forbidden.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "policy_id",
+    "policy_version",
+    "review_mode",
+    "automatic_decisions",
+    "default_decision",
+    "bulk_confirmation",
+    "candidate_decisions",
+    "issue_decisions",
+    "deprecated_decision_policy",
+    "coverage_policy",
+    "completed_log_mutation_policy",
+    "blocking_issue_policy",
+    "schema_delta_policy",
+    "package_builder_mode"
+  ],
+  "properties": {
+    "contract_version": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/review-common/1.0#/$defs/ContractVersion"
+    },
+    "policy_id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "policy_version": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/common/1.0#/$defs/SemanticVersion"
+    },
+    "review_mode": {
+      "const": "SINGLE_REVIEWER_FILE_WORKFLOW"
+    },
+    "automatic_decisions": {
+      "const": "FORBIDDEN"
+    },
+    "default_decision": {
+      "type": "null"
+    },
+    "bulk_confirmation": {
+      "const": "FORBIDDEN"
+    },
+    "candidate_decisions": {
+      "type": "array",
+      "minItems": 4,
+      "maxItems": 4,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/review-common/1.0#/$defs/CandidateDecision"
+      }
+    },
+    "issue_decisions": {
+      "type": "array",
+      "minItems": 2,
+      "maxItems": 2,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/review-common/1.0#/$defs/IssueDecision"
+      }
+    },
+    "deprecated_decision_policy": {
+      "const": "FORBIDDEN_IN_DATASET_MODELING"
+    },
+    "coverage_policy": {
+      "const": "EVERY_PROPOSAL_ITEM_EXACTLY_ONCE"
+    },
+    "completed_log_mutation_policy": {
+      "const": "FORBIDDEN"
+    },
+    "blocking_issue_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "deferred_blocks_compilation",
+        "undecided_blocks_finalization"
+      ],
+      "properties": {
+        "deferred_blocks_compilation": {
+          "const": true
+        },
+        "undecided_blocks_finalization": {
+          "const": true
+        }
+      }
+    },
+    "schema_delta_policy": {
+      "const": "FORBIDDEN"
+    },
+    "package_builder_mode": {
+      "const": "DETERMINISTIC"
+    },
+    "mapping_assertion_term_policy": {
+      "enum": [
+        "REQUIRE_OBJECT_PROPERTY",
+        "FORBIDDEN"
+      ]
+    }
+  }
+}

@@ -1,0 +1,32 @@
+contract_version: "1.0"
+policy_id: "kg-mnp-stage05-review"
+policy_version: "1.0.0"
+
+review_mode: "SINGLE_REVIEWER_FILE_WORKFLOW"
+automatic_decisions: "FORBIDDEN"
+default_decision: null
+bulk_confirmation: "FORBIDDEN"
+
+candidate_decisions:
+  - CONFIRM
+  - MODIFY_AND_CONFIRM
+  - REJECT
+  - DEFER
+
+issue_decisions:
+  - REJECT
+  - DEFER
+
+deprecated_decision_policy: "FORBIDDEN_IN_DATASET_MODELING"
+
+coverage_policy: "EVERY_PROPOSAL_ITEM_EXACTLY_ONCE"
+completed_log_mutation_policy: "FORBIDDEN"
+
+blocking_issue_policy:
+  deferred_blocks_compilation: true
+  undecided_blocks_finalization: true
+
+schema_delta_policy: "FORBIDDEN"
+package_builder_mode: "DETERMINISTIC"
+
+mapping_assertion_term_policy: "REQUIRE_OBJECT_PROPERTY"

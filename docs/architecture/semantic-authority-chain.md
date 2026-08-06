@@ -10,6 +10,8 @@ CleanedPartialData
         ↓
 ModelingProposal
         ↓
+Human Review Actions
+        ↓
 ReviewDecisionLog
         ↓
 ConfirmedModelingPackage
@@ -20,6 +22,11 @@ OntologyBaseline@version
         ↓
 Generated OWL / SHACL / RDF / Provenance / Review Artifacts
 ```
+
+Stage 05 implements the human-review and confirmed-package segment. A
+`ModelingProposal` is never compiled directly. High-confidence candidates are
+never auto-confirmed. `ConfirmedModelingPackage` is still not OWL, SHACL, RDF,
+or a knowledge graph.
 
 ## Input classes
 

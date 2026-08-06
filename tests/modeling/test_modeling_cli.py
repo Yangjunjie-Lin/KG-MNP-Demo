@@ -7,10 +7,10 @@ from kg_mnp_demo.modeling.cli import main
 from ._helpers import ROOT
 
 
-def test_central_cli_lists_eight_contracts(capsys) -> None:
+def test_central_cli_lists_closed_contract_catalog(capsys) -> None:
     assert main(["contracts", "list"]) == 0
     output = json.loads(capsys.readouterr().out)
-    assert len(output["contracts"]) == 8
+    assert len(output["contracts"]) == 11
     assert output["resolution"] == "OFFLINE_ONLY"
 
 

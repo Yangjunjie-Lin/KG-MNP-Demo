@@ -1,0 +1,108 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/review-common/1.0",
+  "title": "KG-MNP Review Common Definitions 1.0",
+  "description": "Shared value objects for Stage 05 human review contracts. Reviewer identity is a declared attribution, not cryptographic authentication.",
+  "$defs": {
+    "ContractVersion": {
+      "type": "string",
+      "const": "1.0"
+    },
+    "ReviewerId": {
+      "type": "string",
+      "pattern": "^urn:kg-mnp:reviewer:[A-Za-z0-9][A-Za-z0-9._-]{0,127}$"
+    },
+    "Reviewer": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "reviewer_id",
+        "display_name",
+        "role"
+      ],
+      "properties": {
+        "reviewer_id": {
+          "$ref": "#/$defs/ReviewerId"
+        },
+        "display_name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "role": {
+          "type": "string",
+          "minLength": 1
+        },
+        "affiliation": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "CandidateDecision": {
+      "type": "string",
+      "enum": [
+        "CONFIRM",
+        "MODIFY_AND_CONFIRM",
+        "REJECT",
+        "DEFER"
+      ]
+    },
+    "IssueDecision": {
+      "type": "string",
+      "enum": [
+        "REJECT",
+        "DEFER"
+      ]
+    },
+    "ActionTarget": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "candidate_id": {
+          "type": "string",
+          "pattern": "^urn:kg-mnp:candidate:[0-9a-f]{64}$"
+        },
+        "issue_id": {
+          "type": "string",
+          "pattern": "^urn:kg-mnp:issue:[0-9a-f]{64}$"
+        }
+      },
+      "oneOf": [
+        {
+          "required": [
+            "candidate_id"
+          ],
+          "not": {
+            "required": [
+              "issue_id"
+            ]
+          }
+        },
+        {
+          "required": [
+            "issue_id"
+          ],
+          "not": {
+            "required": [
+              "candidate_id"
+            ]
+          }
+        }
+      ]
+    },
+    "ConfirmationMode": {
+      "type": "string",
+      "enum": [
+        "ORIGINAL",
+        "MODIFIED"
+      ]
+    },
+    "PackageStatus": {
+      "type": "string",
+      "enum": [
+        "READY_FOR_COMPILATION",
+        "BLOCKED"
+      ]
+    }
+  }
+}

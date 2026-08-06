@@ -29,6 +29,7 @@ ONTOLOGY_BASELINE_PATH = MODELING_CONFIG_DIR / "ontology-baseline-1.0.0.json"
 MAPPING_RULES_PATH = MODELING_CONFIG_DIR / "mapping-rules-1.0.0.yaml"
 TERMINOLOGY_PROFILE_PATH = MODELING_CONFIG_DIR / "terminology-profile-1.0.0.yaml"
 PROPOSAL_POLICY_PATH = MODELING_CONFIG_DIR / "proposal-policy-1.0.0.yaml"
+REVIEW_POLICY_PATH = MODELING_CONFIG_DIR / "review-policy-1.0.0.yaml"
 TERM_INVENTORY_PATH = ROOT / "docs" / "ontology" / "term-inventory.csv"
 REASONER_ATTESTATION_PATH = (
     ROOT / "docs" / "ontology" / "reasoner-attestation.json"
@@ -145,6 +146,10 @@ def load_terminology_profile(
 
 
 def load_proposal_policy(path: Path = PROPOSAL_POLICY_PATH) -> dict[str, Any]:
+    return _read_yaml_object(path)
+
+
+def load_review_policy_document(path: Path = REVIEW_POLICY_PATH) -> dict[str, Any]:
     return _read_yaml_object(path)
 
 

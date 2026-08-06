@@ -1,4 +1,4 @@
-"""Central, offline KG-MNP Modeling CLI for Stage 04."""
+"""Central, offline KG-MNP Modeling CLI for Stage 04–05."""
 
 from __future__ import annotations
 
@@ -11,20 +11,31 @@ from typing import Any
 from jsonschema import ValidationError
 
 from .canonical_json import canonical_json_bytes, semantic_hash
+from .confirmation import PackageBuildError, build_confirmed_modeling_package
 from .contracts import CONTRACT_BY_NAME, ContractRegistryError
 from .dependencies import (
     DependencyError,
     load_modeling_dependencies,
     verify_ontology_baseline_manifest,
 )
+from .package_validation import load_term_type_index
 from .proposal import generate_modeling_proposal
 from .registry import contract_names, validate_contract
+from .review_log import (
+    finalize_review_decision_log,
+    init_review_decision_log,
+    record_review_action,
+    review_status,
+)
+from .review_policy import ReviewPolicyError, load_default_review_policy, review_policy_hash
 from .semantic_validation import (
     SemanticValidationError,
     validate_cleaned_partial_data_semantics,
+    validate_confirmed_modeling_package_semantics,
     validate_mapping_rules_semantics,
     validate_modeling_proposal_semantics,
     validate_proposal_policy_semantics,
+    validate_review_decision_log_semantics,
     validate_terminology_profile_semantics,
 )
 
@@ -70,6 +81,16 @@ def _json_print(payload: Any, *, error: bool = False) -> None:
     print(text, file=stream)
 
 
+def _write_json(path: Path, payload: MappingLike, *, force: bool) -> None:
+    if path.exists() and not force:
+        raise FileExistsError(f"output already exists; pass --force to replace it: {path}")
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_bytes(canonical_json_bytes(payload) + b"\n")
+
+
+MappingLike = dict[str, Any]
+
+
 def _dependency_payload() -> dict[str, Any]:
     values = load_modeling_dependencies()
     baseline = values["ontology_baseline"]
@@ -88,6 +109,8 @@ def _dependency_payload() -> dict[str, Any]:
         profile,
         term_iris=term_iris,
     )
+    values["review_policy"] = load_default_review_policy()
+    values["term_types"] = load_term_type_index()
     return values
 
 
@@ -116,6 +139,10 @@ def cmd_contracts_validate(contract: str, input_path: Path) -> int:
         validate_cleaned_partial_data_semantics(payload)
     elif normalized == "modeling-proposal":
         validate_modeling_proposal_semantics(payload)
+    elif normalized == "review-policy":
+        from .review_policy import validate_review_policy_semantics
+
+        validate_review_policy_semantics(payload)
     _json_print({"contract": normalized, "input": input_path.as_posix(), "valid": True})
     return 0
 
@@ -129,6 +156,7 @@ def cmd_dependencies_verify() -> int:
     rules = dependencies["mapping_rules"]
     profile = dependencies["terminology_profile"]
     policy = dependencies["proposal_policy"]
+    review_policy = dependencies["review_policy"]
     _json_print(
         {
             "valid": True,
@@ -152,6 +180,11 @@ def cmd_dependencies_verify() -> int:
                 "version": policy["policy_version"],
                 "semantic_hash": semantic_hash(policy),
             },
+            "review_policy": {
+                "id": review_policy["policy_id"],
+                "version": review_policy["policy_version"],
+                "semantic_hash": review_policy_hash(review_policy),
+            },
         }
     )
     return 0
@@ -171,10 +204,7 @@ def cmd_propose(input_path: Path, output_path: Path | None, *, force: bool) -> i
     destination = output_path or (
         Path("runtime_outputs") / "modeling" / f"{input_path.stem}.proposal.json"
     )
-    if destination.exists() and not force:
-        raise FileExistsError(f"output already exists; pass --force to replace it: {destination}")
-    destination.parent.mkdir(parents=True, exist_ok=True)
-    destination.write_bytes(canonical_json_bytes(proposal) + b"\n")
+    _write_json(destination, proposal, force=force)
     _json_print(
         {
             "output": destination.as_posix(),
@@ -199,10 +229,245 @@ def cmd_proposal_validate(input_path: Path) -> int:
     return 0
 
 
+def cmd_review_init(
+    *,
+    proposal_path: Path,
+    reviewer_id: str,
+    display_name: str,
+    role: str,
+    started_at: str,
+    output_path: Path | None,
+    session_id: str | None,
+    affiliation: str | None,
+    force: bool,
+) -> int:
+    proposal = _read_json(proposal_path)
+    validate_modeling_proposal_semantics(proposal)
+    draft = init_review_decision_log(
+        proposal,
+        reviewer_id=reviewer_id,
+        display_name=display_name,
+        role=role,
+        started_at=started_at,
+        session_label=session_id,
+        affiliation=affiliation,
+    )
+    destination = output_path or Path("runtime_outputs") / "review" / "review-log.draft.json"
+    _write_json(destination, draft, force=force)
+    _json_print(
+        {
+            "output": destination.as_posix(),
+            "decision_log_id": draft["decision_log_id"],
+            "session_id": draft["review_session"]["session_id"],
+            "decisions": [],
+            "auto_decisions": False,
+        }
+    )
+    return 0
+
+
+def cmd_review_status(*, proposal_path: Path, decision_log_path: Path) -> int:
+    proposal = _read_json(proposal_path)
+    decision_log = _read_json(decision_log_path)
+    status = review_status(proposal, decision_log)
+    _json_print(
+        {
+            "proposal_id": proposal.get("proposal_id"),
+            "decision_log_id": decision_log.get("decision_log_id"),
+            **status,
+        }
+    )
+    return 0
+
+
+def cmd_review_record(
+    *,
+    proposal_path: Path,
+    decision_log_path: Path,
+    action_path: Path,
+    output_path: Path | None,
+    force: bool,
+) -> int:
+    proposal = _read_json(proposal_path)
+    decision_log = _read_json(decision_log_path)
+    action = _read_json(action_path)
+    dependencies = _dependency_payload()
+    next_log = record_review_action(
+        proposal,
+        decision_log,
+        action,
+        review_policy=dependencies["review_policy"],
+        term_types=dependencies["term_types"],
+    )
+    destination = output_path or Path("runtime_outputs") / "review" / "review-log.next.json"
+    _write_json(destination, next_log, force=force)
+    _json_print(
+        {
+            "output": destination.as_posix(),
+            "decision_count": len(next_log["decisions"]),
+            "decision_log_id": next_log["decision_log_id"],
+            "log_hash": next_log["log_hash"],
+        }
+    )
+    return 0
+
+
+def cmd_review_validate(*, proposal_path: Path, decision_log_path: Path) -> int:
+    proposal = _read_json(proposal_path)
+    decision_log = _read_json(decision_log_path)
+    dependencies = _dependency_payload()
+    require_final = bool(decision_log.get("review_session", {}).get("completed_at"))
+    validate_review_decision_log_semantics(
+        decision_log,
+        proposal,
+        review_policy=dependencies["review_policy"],
+        require_final=require_final,
+        term_types=dependencies["term_types"],
+    )
+    _json_print(
+        {
+            "proposal_id": proposal.get("proposal_id"),
+            "decision_log_id": decision_log.get("decision_log_id"),
+            "valid": True,
+            "final": require_final,
+        }
+    )
+    return 0
+
+
+def cmd_review_finalize(
+    *,
+    proposal_path: Path,
+    decision_log_path: Path,
+    completed_at: str,
+    output_path: Path | None,
+    force: bool,
+) -> int:
+    proposal = _read_json(proposal_path)
+    decision_log = _read_json(decision_log_path)
+    final_log = finalize_review_decision_log(
+        proposal,
+        decision_log,
+        completed_at=completed_at,
+    )
+    destination = output_path or Path("runtime_outputs") / "review" / "review-log.final.json"
+    _write_json(destination, final_log, force=force)
+    _json_print(
+        {
+            "output": destination.as_posix(),
+            "decision_log_id": final_log["decision_log_id"],
+            "log_hash": final_log["log_hash"],
+            "decision_count": len(final_log["decisions"]),
+            "completed_at": final_log["review_session"]["completed_at"],
+        }
+    )
+    return 0
+
+
+def cmd_confirm_build(
+    *,
+    input_path: Path,
+    proposal_path: Path,
+    decision_log_path: Path,
+    output_path: Path | None,
+    allow_blocked: bool,
+    force: bool,
+) -> int:
+    cleaned = _read_json(input_path)
+    proposal = _read_json(proposal_path)
+    decision_log = _read_json(decision_log_path)
+    dependencies = _dependency_payload()
+    package = build_confirmed_modeling_package(
+        cleaned,
+        proposal,
+        decision_log,
+        dependencies["ontology_baseline"],
+        dependencies["mapping_rules"],
+        dependencies["terminology_profile"],
+        dependencies["proposal_policy"],
+        dependencies["review_policy"],
+        allow_blocked=allow_blocked,
+        term_types=dependencies["term_types"],
+    )
+    destination = output_path or (
+        Path("runtime_outputs")
+        / "confirmed-packages"
+        / f"{input_path.stem}.package.json"
+    )
+    _write_json(destination, package, force=force)
+    manifest = package["publication_manifest"]
+    _json_print(
+        {
+            "output": destination.as_posix(),
+            "package_id": package["package_id"],
+            "package_semantic_hash": package["package_semantic_hash"],
+            "package_status": manifest["package_status"],
+            "compile_allowed": manifest["compile_allowed"],
+            "confirmed_abox_count": manifest["confirmed_abox_count"],
+            "confirmed_schema_delta_count": manifest["confirmed_schema_delta_count"],
+            "rejected_item_count": manifest["rejected_item_count"],
+            "deferred_item_count": manifest["deferred_item_count"],
+        }
+    )
+    return 0
+
+
+def cmd_package_validate(
+    *,
+    input_path: Path,
+    proposal_path: Path,
+    decision_log_path: Path,
+    package_path: Path,
+) -> int:
+    cleaned = _read_json(input_path)
+    proposal = _read_json(proposal_path)
+    decision_log = _read_json(decision_log_path)
+    package = _read_json(package_path)
+    dependencies = _dependency_payload()
+    validate_confirmed_modeling_package_semantics(
+        package,
+        proposal,
+        decision_log,
+        cleaned_partial_data=cleaned,
+        ontology_baseline=dependencies["ontology_baseline"],
+        mapping_rules=dependencies["mapping_rules"],
+        review_policy=dependencies["review_policy"],
+        term_types=dependencies["term_types"],
+        require_complete=True,
+    )
+    _json_print(
+        {
+            "package_id": package.get("package_id"),
+            "valid": True,
+            "package_status": package.get("publication_manifest", {}).get("package_status"),
+        }
+    )
+    return 0
+
+
+def cmd_package_inspect(*, package_path: Path) -> int:
+    package = _read_json(package_path)
+    manifest = package.get("publication_manifest", {})
+    _json_print(
+        {
+            "package_id": package.get("package_id"),
+            "package_semantic_hash": package.get("package_semantic_hash"),
+            "source_proposal_id": package.get("source_proposal_id"),
+            "review_decision_log_id": package.get("review_decision_log_id"),
+            "confirmed_abox_count": len(package.get("confirmed_abox_decisions", [])),
+            "confirmed_schema_delta_count": len(package.get("confirmed_schema_delta", [])),
+            "rejected_item_count": len(package.get("rejected_items", [])),
+            "deferred_item_count": len(package.get("deferred_items", [])),
+            "publication_manifest": manifest,
+        }
+    )
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="kg-mnp",
-        description="Deterministic, offline KG-MNP ModelingProposal CLI",
+        description="Deterministic, offline KG-MNP modeling and human-review CLI",
     )
     subcommands = parser.add_subparsers(dest="command", required=True)
 
@@ -226,6 +491,62 @@ def build_parser() -> argparse.ArgumentParser:
     proposal_commands = proposal.add_subparsers(dest="proposal_command", required=True)
     proposal_validate = proposal_commands.add_parser("validate")
     proposal_validate.add_argument("--input", required=True, type=Path)
+
+    review = subcommands.add_parser("review", help="explicit human review workflow")
+    review_commands = review.add_subparsers(dest="review_command", required=True)
+
+    review_init = review_commands.add_parser("init", help="create an empty draft decision log")
+    review_init.add_argument("--proposal", required=True, type=Path)
+    review_init.add_argument("--reviewer-id", required=True)
+    review_init.add_argument("--display-name", required=True)
+    review_init.add_argument("--role", required=True)
+    review_init.add_argument("--started-at", required=True)
+    review_init.add_argument("--session-id", help="optional stable session label")
+    review_init.add_argument("--affiliation")
+    review_init.add_argument("--output", type=Path)
+    review_init.add_argument("--force", action="store_true")
+
+    review_status_cmd = review_commands.add_parser("status", help="inspect coverage; no writes")
+    review_status_cmd.add_argument("--proposal", required=True, type=Path)
+    review_status_cmd.add_argument("--decision-log", required=True, type=Path)
+
+    review_record = review_commands.add_parser("record", help="append one explicit review action")
+    review_record.add_argument("--proposal", required=True, type=Path)
+    review_record.add_argument("--decision-log", required=True, type=Path)
+    review_record.add_argument("--action", required=True, type=Path)
+    review_record.add_argument("--output", type=Path)
+    review_record.add_argument("--force", action="store_true")
+
+    review_validate = review_commands.add_parser("validate", help="validate a decision log")
+    review_validate.add_argument("--proposal", required=True, type=Path)
+    review_validate.add_argument("--decision-log", required=True, type=Path)
+
+    review_finalize = review_commands.add_parser("finalize", help="finalize a complete decision log")
+    review_finalize.add_argument("--proposal", required=True, type=Path)
+    review_finalize.add_argument("--decision-log", required=True, type=Path)
+    review_finalize.add_argument("--completed-at", required=True)
+    review_finalize.add_argument("--output", type=Path)
+    review_finalize.add_argument("--force", action="store_true")
+
+    confirm = subcommands.add_parser("confirm", help="build a confirmed modeling package")
+    confirm_commands = confirm.add_subparsers(dest="confirm_command", required=True)
+    confirm_build = confirm_commands.add_parser("build", help="build package from final log")
+    confirm_build.add_argument("--input", required=True, type=Path)
+    confirm_build.add_argument("--proposal", required=True, type=Path)
+    confirm_build.add_argument("--decision-log", required=True, type=Path)
+    confirm_build.add_argument("--output", type=Path)
+    confirm_build.add_argument("--allow-blocked", action="store_true")
+    confirm_build.add_argument("--force", action="store_true")
+
+    package = subcommands.add_parser("package", help="inspect or validate confirmed packages")
+    package_commands = package.add_subparsers(dest="package_command", required=True)
+    package_validate = package_commands.add_parser("validate")
+    package_validate.add_argument("--input", required=True, type=Path)
+    package_validate.add_argument("--proposal", required=True, type=Path)
+    package_validate.add_argument("--decision-log", required=True, type=Path)
+    package_validate.add_argument("--package", required=True, type=Path)
+    package_inspect = package_commands.add_parser("inspect")
+    package_inspect.add_argument("--package", required=True, type=Path)
     return parser
 
 
@@ -243,12 +564,70 @@ def main(argv: list[str] | None = None) -> int:
             return cmd_propose(args.input, args.output, force=args.force)
         if args.command == "proposal" and args.proposal_command == "validate":
             return cmd_proposal_validate(args.input)
+        if args.command == "review" and args.review_command == "init":
+            return cmd_review_init(
+                proposal_path=args.proposal,
+                reviewer_id=args.reviewer_id,
+                display_name=args.display_name,
+                role=args.role,
+                started_at=args.started_at,
+                output_path=args.output,
+                session_id=args.session_id,
+                affiliation=args.affiliation,
+                force=args.force,
+            )
+        if args.command == "review" and args.review_command == "status":
+            return cmd_review_status(
+                proposal_path=args.proposal,
+                decision_log_path=args.decision_log,
+            )
+        if args.command == "review" and args.review_command == "record":
+            return cmd_review_record(
+                proposal_path=args.proposal,
+                decision_log_path=args.decision_log,
+                action_path=args.action,
+                output_path=args.output,
+                force=args.force,
+            )
+        if args.command == "review" and args.review_command == "validate":
+            return cmd_review_validate(
+                proposal_path=args.proposal,
+                decision_log_path=args.decision_log,
+            )
+        if args.command == "review" and args.review_command == "finalize":
+            return cmd_review_finalize(
+                proposal_path=args.proposal,
+                decision_log_path=args.decision_log,
+                completed_at=args.completed_at,
+                output_path=args.output,
+                force=args.force,
+            )
+        if args.command == "confirm" and args.confirm_command == "build":
+            return cmd_confirm_build(
+                input_path=args.input,
+                proposal_path=args.proposal,
+                decision_log_path=args.decision_log,
+                output_path=args.output,
+                allow_blocked=args.allow_blocked,
+                force=args.force,
+            )
+        if args.command == "package" and args.package_command == "validate":
+            return cmd_package_validate(
+                input_path=args.input,
+                proposal_path=args.proposal,
+                decision_log_path=args.decision_log,
+                package_path=args.package,
+            )
+        if args.command == "package" and args.package_command == "inspect":
+            return cmd_package_inspect(package_path=args.package)
     except (
         ContractRegistryError,
         DependencyError,
         DuplicateKeyError,
         FileExistsError,
         OSError,
+        PackageBuildError,
+        ReviewPolicyError,
         SemanticValidationError,
         ValidationError,
         ValueError,

@@ -29,13 +29,16 @@ GraphDB / WebVOWL
 | Stage 02 Semantic Governance | PASS |
 | Stage 03 Formal Ontology Release | PASS |
 | Stage 04 Modeling Contracts and Proposal Generation | PASS |
-| Stage 05–08 | NOT STARTED |
+| Stage 05 Human Review and Confirmed Modeling Package | PASS |
+| Stage 06–08 | NOT STARTED |
 
 Stage 03 已完成正式 IRI 迁移、模块归属、Protégé catalog、SHACL profile 拆分，
-以及 OWL 2 DL 一致性检查。Stage 04 已增加 8 个离线 Modeling Contract、冻结的
-版本化依赖、稳定 ID、语义验证器和确定性 ModelingProposal Generator。ROBOT 是
-固定版本的命令行封装，HermiT 是由它调用的 OWL 推理器；二者的版本在正式证明中
-分别记录。Review/Confirm、正式编译、GraphDB 和 WebVOWL 仍未实施。
+以及 OWL 2 DL 一致性检查。Stage 04 已增加离线 Modeling Contract、冻结的
+版本化依赖、稳定 ID、语义验证器和确定性 ModelingProposal Generator。Stage 05
+已增加冻结 Review Policy、显式人工 Review Action、文件式审核工作流、以及确定性
+`ConfirmedModelingPackage` Builder。ROBOT 是固定版本的命令行封装，HermiT 是由
+它调用的 OWL 推理器；二者的版本在正式证明中分别记录。正式编译、GraphDB 和
+WebVOWL 仍未实施。
 
 Stage 03 收尾还将旧资格判断 JSON Schema 从根 `schemas/` 移至
 `examples/eligibility-use-case/schemas/`，并把 `$id` 迁移到项目稳定的 HTTPS
@@ -48,10 +51,11 @@ contract 不同，且不会被 Modeling Pipeline 当作输入适配器。
 - 当前不以携号转网资格判断为中央任务；九个 legacy 案例作为 eligibility profile 回归资产保留。
 - 当前没有 HTTP API 或 SQLite 执行历史服务作为本阶段交付物。
 - 当前可以从 CleanedPartialData 生成确定性的、仅供审核的 ModelingProposal。
-- 当前不能确认 Proposal，也不能自动生成 ReviewDecisionLog 或 ConfirmedModelingPackage。
-- 当前不能从 Proposal 生成正式 OWL、SHACL 或 RDF。
+- 当前可以人工审核 Proposal，并生成 `ReviewDecisionLog` 与 `ConfirmedModelingPackage`。
+- 当前没有默认决定、批量确认、自动确认或 LLM Reviewer。
+- 当前不能从 Proposal 或 Confirmed Package 生成正式 OWL、SHACL 或 RDF。
 - GraphDB 和 WebVOWL 是后续阶段目标，当前均未接入。
-- `schemas/modeling/` 包含 8 个 Stage 04 Modeling Schema，并由本地 Registry 离线解析。
+- `schemas/modeling/` 包含 11 个 Modeling Schema，并由本地 Registry 离线解析。
 - 正式本体发布版本为 **1.0.0**；Python 包版本独立，不因本体版本机械升高。
 
 ## 保留的基础资产
@@ -62,9 +66,10 @@ contract 不同，且不会被 Modeling Pipeline 当作输入适配器。
 | `shapes/` | foundation / ontology-schema SHACL |
 | `examples/eligibility-use-case/shapes/` | legacy 资格用例 SHACL |
 | `examples/eligibility-use-case/schemas/` | legacy 资格输入 JSON Schema；不属于中央 Modeling Contract |
-| `schemas/modeling/` | Stage 04 中央 Modeling Contracts 与稳定 HTTPS 标识符 |
-| `config/modeling/` | 本体基线、Mapping Rules、Terminology Profile 与 Proposal Policy |
+| `schemas/modeling/` | 中央 Modeling / Review Contracts 与稳定 HTTPS 标识符 |
+| `config/modeling/` | 本体基线、Mapping Rules、Terminology Profile、Proposal/Review Policy |
 | `examples/modeling/` | 六类无真实 PII 的输入与确定性黄金 Proposal |
+| `examples/review/` | 显式人工审核 Action 与黄金 Decision Log / Package |
 | `mappings/` | TM Forum 对齐参考与 modeling evidence；不是中央可执行规则 |
 | `queries/` | 离线 SPARQL 查询 |
 | `config/ontology_modules.yaml` | 本体模块装载清单（Loader 唯一来源） |
@@ -108,11 +113,19 @@ make verify-modeling-proposal
 make verify-modeling-determinism
 make verify-modeling-cli
 make verify-stage-04
+make verify-review-contracts
+make verify-review-policy
+make verify-review-workflow
+make verify-review-determinism
+make verify-confirmed-package
+make verify-package-readiness
+make verify-review-cli
+make verify-stage-05
 ```
 
-`verify-stage-04` 是 CI 和本地收尾的完整入口；它先完整执行 `verify-stage-03`，
-再依次执行 Contracts、Dependencies、Proposal、Determinism、CLI 与 Stage 04
-边界门禁。`verify-stage-03` 内部严格按以下顺序执行：Stage 03
+`verify-stage-05` 是 CI 和本地收尾的完整入口；它先完整执行 `verify-stage-04`，
+再依次执行 Review Contracts、Policy、Workflow、Determinism、Confirmed Package、
+Readiness、CLI 与 Stage 05 边界门禁。`verify-stage-03` 内部严格按以下顺序执行：Stage 03
 core（其中包含 Stage 01/02 回归）、Schema Identifier 门禁、ROBOT 校验、HermiT 实际运行、runtime run
 验证、正式报告验证、运行态旧术语扫描。Schema Identifier 门禁只解析本地
 `*.schema.json` 与 namespace 配置，不访问 `$id`、不下载远程 Schema。默认 `reasoner-check` 只写已忽略的

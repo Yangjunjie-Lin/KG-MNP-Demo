@@ -6,7 +6,10 @@
 	verify-no-runtime-legacy-terms verify-schema-identifiers verify-stage-03 \
 	verify-modeling-contracts verify-modeling-dependencies \
 	verify-modeling-proposal verify-modeling-determinism \
-	verify-modeling-cli verify-stage-04
+	verify-modeling-cli verify-stage-04 \
+	verify-review-contracts verify-review-policy verify-review-workflow \
+	verify-review-determinism verify-confirmed-package verify-package-readiness \
+	verify-review-cli verify-stage-05
 
 PYTHON_CORE_TESTS = \
 	tests/test_ontology.py \
@@ -142,3 +145,58 @@ verify-stage-04:
 	$(MAKE) verify-modeling-determinism
 	$(MAKE) verify-modeling-cli
 	python -m pytest -q tests/modeling/test_stage04_boundaries.py
+
+verify-review-contracts:
+	python scripts/check_schema_identifiers.py
+	python -m pytest -q \
+		tests/review/test_review_action_contract.py \
+		tests/review/test_review_policy.py
+
+verify-review-policy:
+	python -m pytest -q tests/review/test_review_policy.py
+
+verify-review-workflow:
+	python -m pytest -q \
+		tests/review/test_review_init.py \
+		tests/review/test_review_record.py \
+		tests/review/test_review_status.py \
+		tests/review/test_review_finalize.py \
+		tests/review/test_review_coverage.py \
+		tests/review/test_candidate_decisions.py \
+		tests/review/test_issue_decisions.py \
+		tests/review/test_modified_candidate.py
+
+verify-review-determinism:
+	python -m pytest -q \
+		tests/review/test_review_identifiers.py \
+		tests/review/test_review_log_hash.py \
+		tests/review/test_review_log_determinism.py
+
+verify-confirmed-package:
+	python -m pytest -q \
+		tests/review/test_confirmation_builder.py \
+		tests/review/test_confirmed_item_identity.py \
+		tests/review/test_reference_closure.py \
+		tests/review/test_term_type_validation.py \
+		tests/review/test_package_hash.py \
+		tests/review/test_package_determinism.py \
+		tests/review/test_malicious_cases.py
+
+verify-package-readiness:
+	python -m pytest -q tests/review/test_package_readiness.py
+
+verify-review-cli:
+	python -m pytest -q \
+		tests/review/test_review_cli.py \
+		tests/review/test_confirmation_cli.py
+
+verify-stage-05:
+	$(MAKE) verify-stage-04
+	$(MAKE) verify-review-contracts
+	$(MAKE) verify-review-policy
+	$(MAKE) verify-review-workflow
+	$(MAKE) verify-review-determinism
+	$(MAKE) verify-confirmed-package
+	$(MAKE) verify-package-readiness
+	$(MAKE) verify-review-cli
+	python -m pytest -q tests/review/test_stage05_boundaries.py

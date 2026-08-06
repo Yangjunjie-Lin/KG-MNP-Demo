@@ -64,6 +64,21 @@ CONTRACT_SPECS = (
         "terminology_profile.schema.json",
         f"{MODELING_SCHEMA_BASE}terminology-profile/1.0",
     ),
+    ContractSpec(
+        "review-common",
+        "review_common.schema.json",
+        f"{MODELING_SCHEMA_BASE}review-common/1.0",
+    ),
+    ContractSpec(
+        "review-action",
+        "review_action.schema.json",
+        f"{MODELING_SCHEMA_BASE}review-action/1.0",
+    ),
+    ContractSpec(
+        "review-policy",
+        "review_policy.schema.json",
+        f"{MODELING_SCHEMA_BASE}review-policy/1.0",
+    ),
 )
 
 CONTRACT_NAMES = tuple(spec.name for spec in CONTRACT_SPECS)

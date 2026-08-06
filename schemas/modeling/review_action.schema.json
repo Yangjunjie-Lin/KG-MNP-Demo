@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/review-action/1.0",
+  "title": "ReviewAction Contract 1.0",
+  "description": "Explicit human review input for one ModelingProposal item. Decision identifiers are computed by the system and must not be authored here.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "proposal_id",
+    "proposal_semantic_hash",
+    "reviewer_id",
+    "target",
+    "decision",
+    "rationale",
+    "decided_at",
+    "evidence_refs"
+  ],
+  "properties": {
+    "contract_version": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/review-common/1.0#/$defs/ContractVersion"
+    },
+    "proposal_id": {
+      "type": "string",
+      "pattern": "^urn:kg-mnp:modeling-proposal:[0-9a-f]{64}$"
+    },
+    "proposal_semantic_hash": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/common/1.0#/$defs/SHA256"
+    },
+    "reviewer_id": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/review-common/1.0#/$defs/ReviewerId"
+    },
+    "target": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/review-common/1.0#/$defs/ActionTarget"
+    },
+    "decision": {
+      "type": "string",
+      "enum": [
+        "CONFIRM",
+        "MODIFY_AND_CONFIRM",
+        "REJECT",
+        "DEFER"
+      ]
+    },
+    "rationale": {
+      "type": "string",
+      "minLength": 1
+    },
+    "decided_at": {
+      "type": "string",
+      "format": "date-time"
+    },
+    "evidence_refs": {
+      "type": "array",
+      "items": {
+        "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/common/1.0#/$defs/EvidenceReference"
+      },
+      "uniqueItems": true
+    },
+    "modified_candidate": {
+      "oneOf": [
+        {
+          "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/modeling-proposal/1.0#/$defs/CandidateEntity"
+        },
+        {
+          "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/modeling-proposal/1.0#/$defs/CandidateAssertion"
+        }
+      ]
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "decision": {
+            "const": "MODIFY_AND_CONFIRM"
+          }
+        },
+        "required": [
+          "decision"
+        ]
+      },
+      "then": {
+        "required": [
+          "modified_candidate"
+        ]
+      },
+      "else": {
+        "not": {
+          "required": [
+            "modified_candidate"
+          ]
+        }
+      }
+    },
+    {
+      "not": {
+        "required": [
+          "decision_id"
+        ]
+      }
+    }
+  ]
+}

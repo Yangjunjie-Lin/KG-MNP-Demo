@@ -1,4 +1,4 @@
-"""Offline registry coverage for the eight Stage 04 contracts."""
+"""Offline registry coverage for the closed modeling contract catalog."""
 
 from __future__ import annotations
 
@@ -35,7 +35,7 @@ def test_registry_loads_exact_closed_catalog_with_unique_project_ids():
     registry = load_contract_registry()
 
     assert contract_names() == tuple(spec.name for spec in CONTRACT_SPECS)
-    assert len(registry) == len(CONTRACT_SPECS) == 8
+    assert len(registry) == len(CONTRACT_SPECS) == 11
     schemas = [get_contract_schema(spec.name) for spec in CONTRACT_SPECS]
     assert {schema["$id"] for schema in schemas} == {
         spec.schema_id for spec in CONTRACT_SPECS
