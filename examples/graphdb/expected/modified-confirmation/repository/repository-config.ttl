@@ -1,0 +1,31 @@
+@prefix rep: <http://www.openrdf.org/config/repository#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix graphdb: <http://www.ontotext.com/config/graphdb#> .
+@prefix sr: <http://www.openrdf.org/config/repository/sail#> .
+@prefix sail: <http://www.openrdf.org/config/sail#> .
+
+_:repository a rep:Repository ;
+    rep:repositoryID "kg-mnp-cd3494dff3cc7cfe3bb7" ;
+    rdfs:label "KG-MNP Deterministic Knowledge Graph" ;
+    rep:repositoryImpl _:impl .
+
+_:impl rep:repositoryType "graphdb:SailRepository" ;
+    sr:sailImpl _:sail .
+
+_:sail sail:sailType "graphdb:Sail" ;
+    graphdb:read-only "false" ;
+    graphdb:encrypt-storage "false" ;
+    graphdb:ruleset "empty" ;
+    graphdb:disable-sameAs "true" ;
+    graphdb:check-for-inconsistencies "false" ;
+    graphdb:entity-id-size "32" ;
+    graphdb:enable-context-index "true" ;
+    graphdb:enablePredicateList "true" ;
+    graphdb:enable-fts-index "false" ;
+    graphdb:query-timeout "60" ;
+    graphdb:query-limit-results "10000" ;
+    graphdb:throw-QueryEvaluationException-on-timeout "true" ;
+    graphdb:imports "" ;
+    graphdb:repository-type "file-repository" ;
+    graphdb:storage-folder "storage" ;
+    graphdb:enable-literal-index "false" .

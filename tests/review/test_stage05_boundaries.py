@@ -46,7 +46,8 @@ def test_cli_exposes_review_confirm_and_stage06_compile_but_not_integrations():
     names = set(action.choices)
     assert {"review", "confirm", "package"} <= names
     assert "compile" in names
-    assert not {"graphdb", "webvowl", "auto-confirm"} & names
+    assert "graphdb" in names
+    assert not {"webvowl", "auto-confirm"} & names
     review = action.choices["review"]
     review_action = next(
         item for item in review._actions if isinstance(item, argparse._SubParsersAction)

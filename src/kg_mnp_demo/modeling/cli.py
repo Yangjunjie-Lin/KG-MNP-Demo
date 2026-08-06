@@ -46,6 +46,7 @@ from ..compilation.validator import (
     CompilationValidationError,
     validate_compilation_package_against_authorities,
 )
+from ..graphdb.cli import add_graphdb_parser, dispatch_graphdb
 
 
 class DuplicateKeyError(ValueError):
@@ -688,6 +689,7 @@ def build_parser() -> argparse.ArgumentParser:
         "inspect", help="read a manifest summary without validating it"
     )
     compile_inspect.add_argument("--compilation-dir", required=True, type=Path)
+    add_graphdb_parser(subcommands)
     return parser
 
 
@@ -781,6 +783,8 @@ def main(argv: list[str] | None = None) -> int:
             )
         if args.command == "compile" and args.compile_command == "inspect":
             return cmd_compile_inspect(compilation_dir=args.compilation_dir)
+        if args.command == "graphdb":
+            return dispatch_graphdb(args, _json_print)
     except (
         ArtifactWriteError,
         CompilationContractError,
@@ -794,6 +798,7 @@ def main(argv: list[str] | None = None) -> int:
         OSError,
         PackageBuildError,
         ReviewPolicyError,
+        RuntimeError,
         SemanticValidationError,
         ValidationError,
         ValueError,

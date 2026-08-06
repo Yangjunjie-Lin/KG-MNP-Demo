@@ -211,6 +211,12 @@ allowed_occurrences:
     count: 1
     category: migration_test
     reason: Dedicated test verifies that the historical term is explicitly deprecated.
+  - term: relatedAccount
+    path: examples/graphdb/expected/issue-resolution/import/knowledge-graph.nq
+    line_text: '<https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#relatedAccount> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#ObjectProperty> <urn:kg-mnp:graph:tbox:ACCOUNT_BILLING:d6b910f57f374f50aab78bd2d395e6942b8eb50dd87793e1a8df0ffb9feabd> .'
+    count: 1
+    category: deprecated_declaration
+    reason: Deterministic Stage 07 golden includes the frozen Stage 03 runtime TBox declaration.
 
   - term: dependsOn
     path: ontology/mnp-compliance.ttl

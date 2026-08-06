@@ -33,7 +33,7 @@ GraphDB / WebVOWL (future stages)
 | Stage 04 Modeling Contracts and Proposal Generation | PASS |
 | Stage 05 Human Review and Confirmed Modeling Package | PASS |
 | Stage 06 Deterministic Formal Semantic Compilation | PASS |
-| Stage 07 GraphDB Assembly and Import | NOT STARTED |
+| Stage 07 GraphDB Assembly and Import | NOT PASS — LIVE GRAPHDB VERIFICATION INCOMPLETE |
 | Stage 08 WebVOWL and End-to-End Publication | NOT STARTED |
 
 Stage 03 已完成正式 IRI 迁移、模块归属、Protégé catalog、SHACL profile 拆分，
@@ -43,7 +43,8 @@ Stage 03 已完成正式 IRI 迁移、模块归属、Protégé catalog、SHACL p
 `ConfirmedModelingPackage` Builder。Stage 06 增加了 authority-gated、确定性的正式
 OWL ABox、RDF Dataset、建模来源图、审核审计图、SHACL Validation Report、OWL 2 DL
 Consistency Report 和 Compilation Manifest。ROBOT 是固定版本的命令行封装，HermiT 是由
-它调用的 OWL 推理器；二者的版本在正式证明中分别记录。GraphDB 和 WebVOWL 仍未接入。
+它调用的 OWL 推理器；二者的版本在正式证明中分别记录。Stage 07 已接入离线 GraphDB
+包合同和 Docker harness；真实导入仍受外部 license 门禁约束，WebVOWL 仍未接入。
 
 Stage 03 收尾还将旧资格判断 JSON Schema 从根 `schemas/` 移至
 `examples/eligibility-use-case/schemas/`，并把 `$id` 迁移到项目稳定的 HTTPS
@@ -61,7 +62,11 @@ contract 不同，且不会被 Modeling Pipeline 当作输入适配器。
 - 当前可以从完整权威输入编译正式 OWL ABox、RDF Dataset、Provenance 与 Review Audit。
 - 当前可以执行冻结 SHACL 验证和 Package 级 OWL 2 DL consistency check。
 - 当前不能只从 Proposal 编译；BLOCKED ConfirmedModelingPackage 会被拒绝。
-- 当前没有 GraphDB repository、GraphDB import、WebVOWL、HTTP API、前端或数据库。
+- Stage 07 已加入确定性的 runtime TBox/ABox 装配、GraphDB repository 配置、闭包导入包、
+  SPARQL 查询套件、独立包重建校验器、受限 client/importer/verifier、运行时 attestation
+  以及 Docker 集成 harness。GraphDB 11.4.2 的真实导入仍需外部 license；未提供 license
+  时状态必须保持 `NOT PASS`，不能用离线检查替代 live verification。
+- Stage 08 WebVOWL、HTTP API、前端和数据库仍未开始。
 - `schemas/modeling/` 包含 11 个 Modeling Schema，并由本地 Registry 离线解析。
 - 正式本体发布版本为 **1.0.0**；Python 包版本独立，不因本体版本机械升高。
 
@@ -133,6 +138,7 @@ make verify-review-security
 make verify-review-cli
 make verify-stage-05
 make verify-stage-06
+make verify-stage-07
 ```
 
 `verify-stage-06` 是 CI 和本地收尾的完整入口；它先完整执行 `verify-stage-05`，
@@ -147,6 +153,19 @@ core（其中包含 Stage 01/02 回归）、Schema Identifier 门禁、ROBOT 校
 验证、正式报告验证、运行态旧术语扫描。Schema Identifier 门禁只解析本地
 `*.schema.json` 与 namespace 配置，不访问 `$id`、不下载远程 Schema。默认 `reasoner-check` 只写已忽略的
 `runtime_reports/ontology/`，不得改动受版本控制文件。
+
+`verify-stage-07` 会重建四个 Stage 06 authority 场景的 GraphDB 导入包，并运行离线
+契约、策略、装配、闭包包重建、安全和 CLI 检查；最后启动固定的
+`ontotext/graphdb:11.4.2` 镜像执行真实 repository 创建、N-Quads 导入、查询、导出
+和删除。GraphDB 11.4.2 license 必须只通过运行时环境提供，例如：
+
+```bash
+GRAPHDB_LICENSE_FILE=/secure/path/graphdb.license make verify-graphdb-live
+```
+
+`GRAPHDB_LICENSE_FILE` 指向的文件或 `GRAPHDB_LICENSE_CONTENT` 的内容不会写入版本库，
+也不会进入镜像构建上下文。没有外部 license 时，live 目标会明确失败并清理它创建的
+容器、网络和 volume。
 
 ### Reasoner 产物与哈希
 

@@ -1,0 +1,7 @@
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX sh: <http://www.w3.org/ns/shacl#>
+PREFIX prov: <http://www.w3.org/ns/prov#>
+PREFIX mnp: <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#>
+ASK { FILTER NOT EXISTS { GRAPH <urn:kg-mnp:graph:abox:9875793412b7a7323ec735b428456fe9c481c844c8b22758e8b4fb7dd34e991f> { ?s ?p ?o . FILTER(?o IN (owl:Class, owl:ObjectProperty, owl:DatatypeProperty, rdfs:Class) || ?p IN (rdfs:subClassOf, rdfs:domain, rdfs:range, owl:equivalentClass) || ?o = sh:NodeShape) } } }

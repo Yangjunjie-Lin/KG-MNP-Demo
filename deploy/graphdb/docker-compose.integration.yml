@@ -1,0 +1,19 @@
+services:
+  graphdb:
+    image: ontotext/graphdb:11.4.2@sha256:1593f8b5d42acb0f02f11b2a87b87ecbe76dbcec33cea56ca5bc32bebf6a7f12
+    platform: linux/amd64
+    ports:
+      - "127.0.0.1:7200:7200"
+    environment:
+      GDB_JAVA_OPTS: "-Xms512m -Xmx1536m"
+    volumes:
+      - graphdb-data:/opt/graphdb/home
+    healthcheck:
+      test: ["CMD-SHELL", "curl --fail --silent -H 'Accept: application/json' http://127.0.0.1:7200/rest/repositories >/dev/null || exit 1"]
+      interval: 5s
+      timeout: 5s
+      retries: 36
+      start_period: 30s
+
+volumes:
+  graphdb-data:

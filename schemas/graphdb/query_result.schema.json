@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema", "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/graphdb/query-result/1.0",
+  "oneOf": [
+    {"type": "object", "additionalProperties": false, "required": ["boolean"], "properties": {"boolean": {"type": "boolean"}}},
+    {"type": "object", "additionalProperties": false, "required": ["head", "results"], "properties": {
+      "head": {"type": "object", "additionalProperties": false, "required": ["vars"], "properties": {"vars": {"type": "array", "items": {"type": "string"}}}},
+      "results": {"type": "object", "additionalProperties": false, "required": ["bindings"], "properties": {"bindings": {"type": "array", "items": {"type": "object", "patternProperties": {"^[A-Za-z_][A-Za-z0-9_]*$": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/term"}]}}, "additionalProperties": false}}}}
+    }}
+  ],
+  "$defs": {
+    "term": {
+      "type": "object", "additionalProperties": false,
+      "required": ["type", "value"],
+      "properties": {
+        "type": {"enum": ["uri", "literal"]},
+        "value": {"type": "string"},
+        "datatype": {"type": "string", "format": "uri"},
+        "language": {"type": "string", "minLength": 1}
+      },
+      "allOf": [
+        {"if": {"properties": {"type": {"const": "uri"}}}, "then": {"not": {"anyOf": [{"required": ["datatype"]}, {"required": ["language"]}]}}},
+        {"not": {"required": ["datatype", "language"]}}
+      ]
+    }
+  }
+}

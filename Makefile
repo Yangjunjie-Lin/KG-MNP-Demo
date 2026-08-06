@@ -13,7 +13,10 @@
  verify-compiler-contracts verify-compiler-policy verify-compiler-mapping \
  verify-compiler-provenance verify-compiler-rdf verify-compiler-shacl \
  verify-compiler-reasoner verify-compiler-determinism verify-compiler-security \
- verify-compiler-cli verify-compiler-semantic-closure verify-stage-06
+ verify-compiler-cli verify-compiler-semantic-closure verify-stage-06 \
+ verify-graphdb-contracts verify-graphdb-policy verify-graphdb-assembly \
+ verify-graphdb-package verify-graphdb-queries verify-graphdb-security \
+ verify-graphdb-cli verify-graphdb-live verify-stage-07
 
 PYTHON_CORE_TESTS = \
 	tests/test_ontology.py \
@@ -270,3 +273,48 @@ verify-stage-06:
 	$(MAKE) verify-compiler-cli
 	$(MAKE) verify-compiler-semantic-closure
 	python -m pytest -q tests/compilation/test_stage06_boundaries.py
+
+verify-graphdb-contracts:
+	python scripts/check_schema_identifiers.py
+	python -m pytest -q tests/graphdb/test_graphdb_contracts.py
+
+verify-graphdb-policy:
+	python -m pytest -q tests/graphdb/test_graphdb_policy.py
+
+verify-graphdb-assembly:
+	python -m pytest -q \
+		tests/graphdb/test_tbox_assembly.py \
+		tests/graphdb/test_graphdb_dataset_assembly.py \
+		tests/graphdb/test_graphdb_repository_config.py
+
+verify-graphdb-package:
+	python -m pytest -q tests/graphdb/test_graphdb_package_reconstruction.py
+	python scripts/verify_graphdb_goldens.py
+
+verify-graphdb-queries:
+	python -m pytest -q \
+		tests/graphdb/test_graphdb_query_suite.py \
+		tests/graphdb/test_graphdb_query_normalization.py
+
+verify-graphdb-security:
+	python -m pytest -q \
+		tests/graphdb/test_graphdb_client.py \
+		tests/graphdb/test_graphdb_import_security.py
+
+verify-graphdb-cli:
+	python -m pytest -q tests/graphdb/test_graphdb_cli.py
+
+verify-graphdb-live:
+	python scripts/graphdb_integration.py
+
+verify-stage-07:
+	$(MAKE) verify-stage-06
+	$(MAKE) verify-graphdb-contracts
+	$(MAKE) verify-graphdb-policy
+	$(MAKE) verify-graphdb-assembly
+	$(MAKE) verify-graphdb-package
+	$(MAKE) verify-graphdb-queries
+	$(MAKE) verify-graphdb-security
+	$(MAKE) verify-graphdb-cli
+	$(MAKE) verify-graphdb-live
+	python -m pytest -q tests/graphdb/test_stage07_boundaries.py

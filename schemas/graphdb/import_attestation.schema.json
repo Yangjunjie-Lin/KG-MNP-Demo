@@ -1,0 +1,106 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/graphdb/import-attestation/1.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version", "source_publication_id", "source_compilation_id",
+    "repository_config_hash", "import_dataset_hash", "export_dataset_hash",
+    "expected_graph_count", "actual_graph_count", "expected_quad_count",
+    "actual_quad_count", "repository_id", "base_url", "graphdb_version",
+    "oci_image_digest", "started_at", "completed_at", "create_status",
+    "import_status", "verification", "status"
+  ],
+  "properties": {
+    "contract_version": {"const": "1.0"},
+    "source_publication_id": {"type": "string", "pattern": "^urn:kg-mnp:graphdb-publication:[0-9a-f]{64}$"},
+    "source_compilation_id": {"type": "string", "minLength": 1},
+    "repository_config_hash": {"$ref": "#/$defs/hash"},
+    "import_dataset_hash": {"$ref": "#/$defs/hash"},
+    "export_dataset_hash": {"$ref": "#/$defs/hash"},
+    "expected_graph_count": {"type": "integer", "minimum": 0},
+    "actual_graph_count": {"type": "integer", "minimum": 0},
+    "expected_quad_count": {"type": "integer", "minimum": 0},
+    "actual_quad_count": {"type": "integer", "minimum": 0},
+    "repository_id": {"type": "string", "pattern": "^kg-mnp-[0-9a-f]{20}$"},
+    "base_url": {"type": "string", "pattern": "^https?://(127\\.0\\.0\\.1|localhost)(:[0-9]+)?$"},
+    "graphdb_version": {"$ref": "#/$defs/version"},
+    "oci_image_digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "started_at": {"type": "string", "format": "date-time"},
+    "completed_at": {"type": "string", "format": "date-time"},
+    "create_status": {"type": "integer", "minimum": 200, "maximum": 299},
+    "import_status": {"type": "integer", "minimum": 200, "maximum": 299},
+    "verification": {"$ref": "#/$defs/verification"},
+    "status": {"const": "IMPORT_VERIFIED"}
+  },
+  "$defs": {
+    "hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "version": {
+      "type": "object", "additionalProperties": false,
+      "required": ["status", "path", "response"],
+      "properties": {
+        "status": {"type": "integer", "minimum": 200, "maximum": 299},
+        "path": {"type": "string"},
+        "response": {
+          "type": "object", "additionalProperties": false,
+          "required": ["productName", "productVersion", "rdf4jProtocolVersion"],
+          "properties": {
+            "productVersion": {"const": "11.4.2"},
+            "productName": {"const": "GraphDB"},
+            "rdf4jProtocolVersion": {"type": "string", "minLength": 1}
+          }
+        }
+      }
+    },
+    "term": {
+      "type": "object", "additionalProperties": false,
+      "required": ["type", "value"],
+      "properties": {
+        "type": {"enum": ["uri", "literal"]},
+        "value": {"type": "string"},
+        "datatype": {"type": "string", "format": "uri"},
+        "language": {"type": "string", "minLength": 1}
+      },
+      "allOf": [
+        {"if": {"properties": {"type": {"const": "uri"}}}, "then": {"not": {"anyOf": [{"required": ["datatype"]}, {"required": ["language"]}]}}},
+        {"not": {"required": ["datatype", "language"]}}
+      ]
+    },
+    "queryResult": {
+      "oneOf": [
+        {"type": "object", "additionalProperties": false, "required": ["boolean"], "properties": {"boolean": {"type": "boolean"}}},
+        {
+          "type": "object", "additionalProperties": false,
+          "required": ["head", "results"],
+          "properties": {
+            "head": {"type": "object", "additionalProperties": false, "required": ["vars"], "properties": {"vars": {"type": "array", "items": {"type": "string"}}}},
+            "results": {"type": "object", "additionalProperties": false, "required": ["bindings"], "properties": {"bindings": {"type": "array", "items": {"type": "object", "patternProperties": {"^[A-Za-z_][A-Za-z0-9_]*$": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/term"}]}}, "additionalProperties": false}}}}
+          }
+        }
+      ]
+    },
+    "verification": {
+      "type": "object", "additionalProperties": false,
+      "required": [
+        "status", "repository_id", "actual_quad_count", "expected_quad_count",
+        "expected_graph_counts", "actual_graph_counts", "inferred_statement_count",
+        "import_semantic_hash", "export_semantic_hash", "complete_export_semantic_hash",
+        "query_results", "invariant_results"
+      ],
+      "properties": {
+        "status": {"const": "IMPORT_VERIFIED"},
+        "repository_id": {"type": "string", "pattern": "^kg-mnp-[0-9a-f]{20}$"},
+        "actual_quad_count": {"type": "integer", "minimum": 0},
+        "expected_quad_count": {"type": "integer", "minimum": 0},
+        "expected_graph_counts": {"type": "object", "patternProperties": {"^.+$": {"type": "integer", "minimum": 0}}, "additionalProperties": false},
+        "actual_graph_counts": {"type": "object", "patternProperties": {"^.+$": {"type": "integer", "minimum": 0}}, "additionalProperties": false},
+        "inferred_statement_count": {"const": 0},
+        "import_semantic_hash": {"$ref": "#/$defs/hash"},
+        "export_semantic_hash": {"$ref": "#/$defs/hash"},
+        "complete_export_semantic_hash": {"$ref": "#/$defs/hash"},
+        "query_results": {"type": "object", "minProperties": 10, "patternProperties": {"^[0-9]{2}-[a-z0-9-]+$": {"$ref": "#/$defs/queryResult"}}, "additionalProperties": false},
+        "invariant_results": {"type": "object", "minProperties": 4, "patternProperties": {"^[0-9]{2}-[a-z0-9-]+$": {"type": "object", "additionalProperties": false, "required": ["expected", "actual"], "properties": {"expected": {"type": "boolean"}, "actual": {"type": "boolean"}}}}, "additionalProperties": false}
+      }
+    }
+  }
+}

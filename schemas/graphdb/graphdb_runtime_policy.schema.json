@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/graphdb/runtime-policy/1.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["contract_version", "runtime_id", "runtime_version", "graphdb", "network", "repository", "import"],
+  "properties": {
+    "contract_version": {"const": "1.0"},
+    "runtime_id": {"const": "kg-mnp-graphdb-runtime"},
+    "runtime_version": {"const": "1.0.0"},
+    "graphdb": {
+      "type": "object", "additionalProperties": false,
+      "required": ["product_version", "image_repository", "image_tag", "image_digest_amd64", "image_digest_arm64", "image_manifest_digest"],
+      "properties": {
+        "product_version": {"const": "11.4.2"}, "image_repository": {"const": "ontotext/graphdb"}, "image_tag": {"const": "11.4.2"},
+        "image_digest_amd64": {"$ref": "#/$defs/digest"}, "image_digest_arm64": {"$ref": "#/$defs/digest"}, "image_manifest_digest": {"$ref": "#/$defs/digest"}
+      }
+    },
+    "network": {
+      "type": "object", "additionalProperties": false, "required": ["host", "port", "external_exposure"],
+      "properties": {"host": {"const": "127.0.0.1"}, "port": {"const": 7200}, "external_exposure": {"const": "FORBIDDEN"}}
+    },
+    "repository": {
+      "type": "object", "additionalProperties": false,
+      "required": ["ruleset", "inference", "disable_sameAs", "overwrite_existing_repository", "initial_repository_must_be_empty", "context_index", "literal_index", "query_timeout_ms", "query_result_limit"],
+      "properties": {
+        "ruleset": {"const": "empty"}, "inference": {"const": "FORBIDDEN"}, "disable_sameAs": {"const": true}, "overwrite_existing_repository": {"const": "FORBIDDEN"},
+        "initial_repository_must_be_empty": {"const": true}, "context_index": {"const": true}, "literal_index": {"const": false},
+        "query_timeout_ms": {"type": "integer", "minimum": 1, "maximum": 300000}, "query_result_limit": {"type": "integer", "minimum": 1, "maximum": 1000000}
+      }
+    },
+    "import": {
+      "type": "object", "additionalProperties": false, "required": ["authoritative_format", "preserve_named_graphs", "default_graph_import"],
+      "properties": {"authoritative_format": {"const": "NQUADS"}, "preserve_named_graphs": {"const": true}, "default_graph_import": {"const": "FORBIDDEN"}}
+    }
+  },
+  "$defs": {"digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"}}
+}

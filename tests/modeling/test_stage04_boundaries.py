@@ -37,7 +37,8 @@ def test_central_cli_exposes_compile_only_at_stage06_boundary() -> None:
     )
     command_names = set(action.choices)
     assert "compile" in command_names
-    for command in ("graphdb", "webvowl", "auto-confirm"):
+    assert "graphdb" in command_names
+    for command in ("webvowl", "auto-confirm"):
         assert command not in command_names
     # Stage 05 introduces explicit human review and confirmation builders.
     assert "review" in command_names

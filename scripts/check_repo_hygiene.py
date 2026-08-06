@@ -30,6 +30,8 @@ FORBIDDEN_TRACKED_PREFIXES = (
     "dist/",
     "graphdb-data/",
     "graphdb-local/",
+    ".graphdb/",
+    "graphdb-logs/",
     "third_party/bin/",
     "third_party/downloads/",
 )
@@ -120,6 +122,8 @@ def check_tracked_paths(paths: list[str] | None = None) -> list[str]:
             failures.append(f"tracked runtime/build artifact: {path}")
         if normalized.lower().endswith(".jar"):
             failures.append(f"tracked third-party JAR: {path}")
+        if normalized.lower().endswith(".license"):
+            failures.append(f"tracked GraphDB license: {path}")
     return failures
 
 

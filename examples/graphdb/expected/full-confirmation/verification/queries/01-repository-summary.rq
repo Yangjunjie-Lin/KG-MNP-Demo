@@ -1,0 +1,7 @@
+PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX sh: <http://www.w3.org/ns/shacl#>
+PREFIX prov: <http://www.w3.org/ns/prov#>
+PREFIX mnp: <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#>
+SELECT (COUNT(DISTINCT ?g) AS ?namedGraphCount) (COUNT(*) AS ?quadCount) (COUNT(DISTINCT ?s) AS ?subjectCount) (COUNT(DISTINCT ?p) AS ?predicateCount) (COUNT(DISTINCT ?o) AS ?objectCount) WHERE { GRAPH ?g { ?s ?p ?o } }

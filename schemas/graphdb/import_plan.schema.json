@@ -1,0 +1,10 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema", "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/graphdb/import-plan/1.0",
+  "type": "object", "additionalProperties": false, "required": ["contract_version", "plan_id", "publication_id", "repository_id", "query_suite_id", "authoritative_import", "steps", "failure_policy"],
+  "properties": {
+    "contract_version": {"const": "1.0"}, "plan_id": {"type": "string"}, "publication_id": {"type": "string"}, "repository_id": {"type": "string", "pattern": "^kg-mnp-[0-9a-f]{20}$"}, "query_suite_id": {"type": "string", "pattern": "^urn:kg-mnp:graphdb-query-suite:[0-9a-f]{64}$"},
+    "authoritative_import": {"type": "object", "additionalProperties": false, "required": ["path", "format", "preserve_named_graphs"], "properties": {"path": {"const": "import/knowledge-graph.nq"}, "format": {"const": "NQUADS"}, "preserve_named_graphs": {"const": true}}},
+    "steps": {"type": "array", "minItems": 12, "maxItems": 12, "items": {"type": "object", "additionalProperties": false, "required": ["step", "action"], "properties": {"step": {"type": "integer", "minimum": 1, "maximum": 12}, "action": {"type": "string"}}}},
+    "failure_policy": {"type": "object", "additionalProperties": false, "required": ["continue_after_failure", "mark_partial_success", "overwrite_repository", "delete_failed_repository"], "properties": {"continue_after_failure": {"const": false}, "mark_partial_success": {"const": false}, "overwrite_repository": {"const": false}, "delete_failed_repository": {"const": false}}}
+  }
+}

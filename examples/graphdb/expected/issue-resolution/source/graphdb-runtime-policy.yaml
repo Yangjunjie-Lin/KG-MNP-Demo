@@ -1,0 +1,32 @@
+contract_version: "1.0"
+runtime_id: "kg-mnp-graphdb-runtime"
+runtime_version: "1.0.0"
+
+graphdb:
+  product_version: "11.4.2"
+  image_repository: "ontotext/graphdb"
+  image_tag: "11.4.2"
+  image_digest_amd64: "sha256:1593f8b5d42acb0f02f11b2a87b87ecbe76dbcec33cea56ca5bc32bebf6a7f12"
+  image_digest_arm64: "sha256:7ad64e3125012e71ee49b43fced71aa8885c498ab007305a860df2217aa234d8"
+  image_manifest_digest: "sha256:ec7b9cc3546f1bf6c85598a2c29fda3178194c7a97e91f93ee6de2bb225f0f76"
+
+network:
+  host: "127.0.0.1"
+  port: 7200
+  external_exposure: "FORBIDDEN"
+
+repository:
+  ruleset: "empty"
+  inference: "FORBIDDEN"
+  disable_sameAs: true
+  overwrite_existing_repository: "FORBIDDEN"
+  initial_repository_must_be_empty: true
+  context_index: true
+  literal_index: false
+  query_timeout_ms: 60000
+  query_result_limit: 10000
+
+import:
+  authoritative_format: "NQUADS"
+  preserve_named_graphs: true
+  default_graph_import: "FORBIDDEN"

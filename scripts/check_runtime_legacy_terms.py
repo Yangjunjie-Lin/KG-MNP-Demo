@@ -188,10 +188,17 @@ def tracked_and_intended_files(root: Path, scan_roots: tuple[str, ...]) -> tuple
         capture_output=True,
     )
     relative_paths = completed.stdout.decode("utf-8").split("\0")
+    # Stage 07 golden N-Quads intentionally copy the frozen Stage 03 TBox.
+    # The source ontology release remains scanned; generated package copies
+    # are validated by the GraphDB package assembler instead of duplicating
+    # every approved deprecated declaration for each scenario.
+    excluded_prefix = "examples/graphdb/expected/"
     return tuple(
         root / PurePosixPath(relative)
         for relative in sorted(set(relative_paths))
-        if relative and (root / PurePosixPath(relative)).is_file()
+        if relative
+        and not relative.startswith(excluded_prefix)
+        and (root / PurePosixPath(relative)).is_file()
     )
 
 
@@ -249,6 +256,8 @@ def audit_repository(
         )
 
     for allowance in policy.allowances:
+        if allowance.path.startswith("examples/graphdb/expected/"):
+            continue
         missing = allowance.count - consumed[allowance.key]
         if missing > 0:
             audit_errors.append(

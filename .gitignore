@@ -30,6 +30,11 @@ runtime_logs/
 # Local GraphDB and downloaded tools (future optional integrations)
 graphdb-data/
 graphdb-local/
+.graphdb/
+graphdb-logs/
+*.license
+docker-volume-*.tar
+*.http-trace
 third_party/bin/
 third_party/downloads/
 third_party/**/*.jar
