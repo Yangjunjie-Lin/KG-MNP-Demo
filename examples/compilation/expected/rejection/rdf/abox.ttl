@@ -1,0 +1,15 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix mnp: <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#> .
+
+<https://yangjunjie-lin.github.io/KG-MNP-Demo/data/modeled/2993a1403cabddd34da97cacad8c5aa55103903ab9d3a0d831bd9f989f2fc029> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#ServiceSubscription> .
+<https://yangjunjie-lin.github.io/KG-MNP-Demo/data/modeled/2993a1403cabddd34da97cacad8c5aa55103903ab9d3a0d831bd9f989f2fc029> <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#billedThrough> <https://yangjunjie-lin.github.io/KG-MNP-Demo/data/modeled/d688aa45e8311ca4b159d1157f5aaf64998bb077dab54284d7ac145fdff2a005> .
+<https://yangjunjie-lin.github.io/KG-MNP-Demo/data/modeled/2993a1403cabddd34da97cacad8c5aa55103903ab9d3a0d831bd9f989f2fc029> <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#subscriptionStatusCode> "ACTIVE"^^<http://www.w3.org/2001/XMLSchema#string> .
+<https://yangjunjie-lin.github.io/KG-MNP-Demo/data/modeled/d688aa45e8311ca4b159d1157f5aaf64998bb077dab54284d7ac145fdff2a005> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#TelecomAccount> .
+<urn:kg-mnp:compiled-abox:c69c816586344de775b5deaf9eae8ad4dcdd4d4490903645e4d6567a91e9b084> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Ontology> .
+<urn:kg-mnp:compiled-abox:c69c816586344de775b5deaf9eae8ad4dcdd4d4490903645e4d6567a91e9b084> <http://www.w3.org/2002/07/owl#imports> <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/1.0.0/kg-mnp> .

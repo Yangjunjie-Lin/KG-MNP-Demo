@@ -1,0 +1,2 @@
+<urn:kg-mnp:shacl-report:c5fcc545c889bf582714e1c7fc0b2e4f2caa1f9fc79adb3c4ee008240e25d4eb> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/shacl#ValidationReport> .
+<urn:kg-mnp:shacl-report:c5fcc545c889bf582714e1c7fc0b2e4f2caa1f9fc79adb3c4ee008240e25d4eb> <http://www.w3.org/ns/shacl#conforms> "true"^^<http://www.w3.org/2001/XMLSchema#boolean> .

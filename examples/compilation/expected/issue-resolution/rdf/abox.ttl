@@ -1,0 +1,13 @@
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix mnp: <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#> .
+
+<https://yangjunjie-lin.github.io/KG-MNP-Demo/data/modeled/8ee1555e67838156e5c76784455873c4d56fa4299e186d3062ce6aca48ad2f55> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#Subscriber> .
+<https://yangjunjie-lin.github.io/KG-MNP-Demo/data/modeled/cfc77966f56ff74f5535ff9ad9c9d20ae9f0493090f7a16e87dfa6939581c130> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#ServiceSubscription> .
+<urn:kg-mnp:compiled-abox:8ae53bb08ea73496efc34a7247fa94e9c9b46c016d90dd3d2e6cf04feac6392a> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/2002/07/owl#Ontology> .
+<urn:kg-mnp:compiled-abox:8ae53bb08ea73496efc34a7247fa94e9c9b46c016d90dd3d2e6cf04feac6392a> <http://www.w3.org/2002/07/owl#imports> <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/1.0.0/kg-mnp> .

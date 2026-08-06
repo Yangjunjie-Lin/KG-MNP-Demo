@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/shacl-validation-report/1.0",
+  "title": "KG-MNP Stage 06 SHACL Validation Report",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["report_id", "conforms", "status", "results"],
+  "properties": {
+    "report_id": {"type": "string", "pattern": "^urn:kg-mnp:shacl-report:[0-9a-f]{64}$"},
+    "conforms": {"type": "boolean"},
+    "status": {"enum": ["CONFORMS", "VIOLATION", "FAILED"]},
+    "results": {"type": "array"},
+    "violation_count": {"type": "integer", "minimum": 0},
+    "warning_count": {"type": "integer", "minimum": 0},
+    "info_count": {"type": "integer", "minimum": 0},
+    "profile_bundle_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}

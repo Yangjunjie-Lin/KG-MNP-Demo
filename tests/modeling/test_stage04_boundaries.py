@@ -8,7 +8,7 @@ ROOT = Path(__file__).resolve().parents[2]
 
 
 def test_stage04_does_not_implement_compilers_or_auto_confirmation() -> None:
-    """Stage 05 may build packages; compilers and auto-confirm remain forbidden."""
+    """Proposal generation remains a review-only boundary after Stage 06."""
 
     forbidden_definitions = (
         "def auto_confirm",
@@ -21,14 +21,14 @@ def test_stage04_does_not_implement_compilers_or_auto_confirmation() -> None:
         "def webvowl_export",
     )
     matches = []
-    for path in (ROOT / "src" / "kg_mnp_demo").rglob("*.py"):
+    for path in (ROOT / "src" / "kg_mnp_demo" / "modeling").rglob("*.py"):
         text = path.read_text(encoding="utf-8")
         if any(marker in text for marker in forbidden_definitions):
             matches.append(path.relative_to(ROOT).as_posix())
     assert matches == []
 
 
-def test_central_cli_has_no_compile_or_store_commands() -> None:
+def test_central_cli_exposes_compile_only_at_stage06_boundary() -> None:
     from kg_mnp_demo.modeling.cli import build_parser
 
     parser = build_parser()
@@ -36,7 +36,8 @@ def test_central_cli_has_no_compile_or_store_commands() -> None:
         item for item in parser._actions if isinstance(item, argparse._SubParsersAction)
     )
     command_names = set(action.choices)
-    for command in ("compile", "graphdb", "webvowl", "auto-confirm"):
+    assert "compile" in command_names
+    for command in ("graphdb", "webvowl", "auto-confirm"):
         assert command not in command_names
     # Stage 05 introduces explicit human review and confirmation builders.
     assert "review" in command_names

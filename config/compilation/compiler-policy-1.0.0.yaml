@@ -1,0 +1,48 @@
+contract_version: "1.0"
+compiler_policy_id: "kg-mnp-stage06-formal-compiler"
+compiler_policy_version: "1.0.0"
+compiler_version: "1.0.0"
+input_package_status: "READY_FOR_COMPILATION"
+blocked_package_policy: "REJECT"
+schema_delta_policy: "FORBIDDEN"
+
+candidate_compilation:
+  ENTITY: "RDF_TYPE_ASSERTION"
+  CLASS_ASSERTION: "RDF_TYPE_ASSERTION"
+  OBJECT_PROPERTY_ASSERTION: "OBJECT_PROPERTY_TRIPLE"
+  DATA_PROPERTY_ASSERTION: "TYPED_LITERAL_TRIPLE"
+  MAPPING_ASSERTION: "FORBIDDEN_UNTIL_TYPED_OBJECT_CONTRACT"
+
+asserted_graph_policy:
+  inference_materialization: "FORBIDDEN"
+  blank_nodes: "FORBIDDEN"
+  unreviewed_assertions: "FORBIDDEN"
+  rejected_items: "AUDIT_ONLY"
+  deferred_items: "AUDIT_ONLY"
+
+serialization:
+  authoritative_abox: "CANONICAL_NTRIPLES"
+  authoritative_dataset: "CANONICAL_NQUADS"
+  human_readable_abox: "DETERMINISTIC_TURTLE"
+  human_readable_dataset: "DETERMINISTIC_TRIG"
+  line_endings: "LF"
+  encoding: "UTF-8"
+
+shacl:
+  default_profiles:
+    - "foundation-instance"
+  violation_policy: "BLOCK_COMPILATION"
+  warning_policy: "RECORD"
+  info_policy: "RECORD"
+  inference: "RDFS"
+  automatic_repair: "FORBIDDEN"
+
+owl_consistency:
+  required: true
+  unknown_policy: "FAIL"
+  not_run_policy: "FAIL"
+
+graph_separation:
+  business_abox: true
+  modeling_provenance: true
+  review_audit: true

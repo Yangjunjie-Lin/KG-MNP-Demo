@@ -20,7 +20,7 @@ def test_stage05_forbids_compilers_auto_confirm_and_integrations():
         "def llm_reviewer",
     )
     matches = []
-    for path in (ROOT / "src" / "kg_mnp_demo").rglob("*.py"):
+    for path in (ROOT / "src" / "kg_mnp_demo" / "modeling").rglob("*.py"):
         text = path.read_text(encoding="utf-8")
         if any(marker in text for marker in forbidden):
             matches.append(path.relative_to(ROOT).as_posix())
@@ -36,7 +36,7 @@ def test_stage05_forbids_compilers_auto_confirm_and_integrations():
         assert not (ROOT / relative).exists()
 
 
-def test_cli_exposes_review_and_confirm_but_not_auto_or_compile():
+def test_cli_exposes_review_confirm_and_stage06_compile_but_not_integrations():
     from kg_mnp_demo.modeling.cli import build_parser
 
     parser = build_parser()
@@ -45,7 +45,8 @@ def test_cli_exposes_review_and_confirm_but_not_auto_or_compile():
     )
     names = set(action.choices)
     assert {"review", "confirm", "package"} <= names
-    assert not {"compile", "graphdb", "webvowl", "auto-confirm"} & names
+    assert "compile" in names
+    assert not {"graphdb", "webvowl", "auto-confirm"} & names
     review = action.choices["review"]
     review_action = next(
         item for item in review._actions if isinstance(item, argparse._SubParsersAction)

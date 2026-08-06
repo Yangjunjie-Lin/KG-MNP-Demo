@@ -16,9 +16,11 @@ ReviewDecisionLog
         ↓
 ConfirmedModelingPackage
         ↓
-OWL / SHACL / ABox / Provenance / Review Artifacts
+Deterministic Formal Semantic Compiler
         ↓
-GraphDB / WebVOWL
+OWL / RDF Dataset / SHACL / ABox / Provenance / Review Artifacts
+        ↓
+GraphDB / WebVOWL (future stages)
 ```
 
 ## 阶段状态
@@ -30,15 +32,18 @@ GraphDB / WebVOWL
 | Stage 03 Formal Ontology Release | PASS |
 | Stage 04 Modeling Contracts and Proposal Generation | PASS |
 | Stage 05 Human Review and Confirmed Modeling Package | PASS |
-| Stage 06–08 | NOT STARTED |
+| Stage 06 Deterministic Formal Semantic Compilation | PASS |
+| Stage 07 GraphDB Assembly and Import | NOT STARTED |
+| Stage 08 WebVOWL and End-to-End Publication | NOT STARTED |
 
 Stage 03 已完成正式 IRI 迁移、模块归属、Protégé catalog、SHACL profile 拆分，
 以及 OWL 2 DL 一致性检查。Stage 04 已增加离线 Modeling Contract、冻结的
 版本化依赖、稳定 ID、语义验证器和确定性 ModelingProposal Generator。Stage 05
 已增加冻结 Review Policy、显式人工 Review Action、文件式审核工作流、以及确定性
-`ConfirmedModelingPackage` Builder。ROBOT 是固定版本的命令行封装，HermiT 是由
-它调用的 OWL 推理器；二者的版本在正式证明中分别记录。正式编译、GraphDB 和
-WebVOWL 仍未实施。
+`ConfirmedModelingPackage` Builder。Stage 06 增加了 authority-gated、确定性的正式
+OWL ABox、RDF Dataset、建模来源图、审核审计图、SHACL Validation Report、OWL 2 DL
+Consistency Report 和 Compilation Manifest。ROBOT 是固定版本的命令行封装，HermiT 是由
+它调用的 OWL 推理器；二者的版本在正式证明中分别记录。GraphDB 和 WebVOWL 仍未接入。
 
 Stage 03 收尾还将旧资格判断 JSON Schema 从根 `schemas/` 移至
 `examples/eligibility-use-case/schemas/`，并把 `$id` 迁移到项目稳定的 HTTPS
@@ -53,8 +58,10 @@ contract 不同，且不会被 Modeling Pipeline 当作输入适配器。
 - 当前可以从 CleanedPartialData 生成确定性的、仅供审核的 ModelingProposal。
 - 当前可以人工审核 Proposal，并生成 `ReviewDecisionLog` 与 `ConfirmedModelingPackage`。
 - 当前没有默认决定、批量确认、自动确认或 LLM Reviewer。
-- 当前不能从 Proposal 或 Confirmed Package 生成正式 OWL、SHACL 或 RDF。
-- GraphDB 和 WebVOWL 是后续阶段目标，当前均未接入。
+- 当前可以从完整权威输入编译正式 OWL ABox、RDF Dataset、Provenance 与 Review Audit。
+- 当前可以执行冻结 SHACL 验证和 Package 级 OWL 2 DL consistency check。
+- 当前不能只从 Proposal 编译；BLOCKED ConfirmedModelingPackage 会被拒绝。
+- 当前没有 GraphDB repository、GraphDB import、WebVOWL、HTTP API、前端或数据库。
 - `schemas/modeling/` 包含 11 个 Modeling Schema，并由本地 Registry 离线解析。
 - 正式本体发布版本为 **1.0.0**；Python 包版本独立，不因本体版本机械升高。
 
@@ -70,6 +77,9 @@ contract 不同，且不会被 Modeling Pipeline 当作输入适配器。
 | `config/modeling/` | 本体基线、Mapping Rules、Terminology Profile、Proposal/Review Policy |
 | `examples/modeling/` | 六类无真实 PII 的输入与确定性黄金 Proposal |
 | `examples/review/` | 显式人工审核 Action 与黄金 Decision Log / Package |
+| `src/kg_mnp_demo/compilation/` | Stage 06 正式语义编译、canonical RDF、SHACL、OWL consistency 与 validator |
+| `config/compilation/` | 冻结 Compiler Policy 与 SHACL profile bundle |
+| `examples/compilation/` | Stage 06 golden artifact layout 与 invalid authority examples |
 | `mappings/` | TM Forum 对齐参考与 modeling evidence；不是中央可执行规则 |
 | `queries/` | 离线 SPARQL 查询 |
 | `config/ontology_modules.yaml` | 本体模块装载清单（Loader 唯一来源） |
@@ -122,9 +132,13 @@ make verify-package-readiness
 make verify-review-security
 make verify-review-cli
 make verify-stage-05
+make verify-stage-06
 ```
 
-`verify-stage-05` 是 CI 和本地收尾的完整入口；它先完整执行 `verify-stage-04`，
+`verify-stage-06` 是 CI 和本地收尾的完整入口；它先完整执行 `verify-stage-05`，
+再执行 Stage 06 Contracts、Policy、Candidate Mapping、Graph Separation、Canonical
+RDF、SHACL、OWL consistency、Manifest/Determinism、Security、CLI 与 Stage 06 边界门禁。
+`verify-stage-05` 仍完整执行 `verify-stage-04`，
 再依次执行 Review Contracts、Policy、Workflow、Determinism、Confirmed Package、
 Readiness、Security（fail-closed finalize / independent package reconstruction）、
 CLI 与 Stage 05 边界门禁。`review finalize` 执行完整语义验证；`package validate`
@@ -238,6 +252,18 @@ kg-mnp propose --input examples/modeling/inputs/partial-basic.json \
   --output runtime_outputs/modeling/partial-basic.proposal.json
 kg-mnp proposal validate \
   --input examples/modeling/expected-proposals/partial-basic.proposal.json
+kg-mnp compile build \
+  --input examples/modeling/inputs/partial-basic.json \
+  --proposal examples/modeling/expected-proposals/partial-basic.proposal.json \
+  --decision-log examples/review/expected-logs/full-confirmation.log.json \
+  --package examples/review/expected-packages/full-confirmation.package.json \
+  --output-dir runtime_outputs/compilation/full-confirmation
+kg-mnp compile validate \
+  --input examples/modeling/inputs/partial-basic.json \
+  --proposal examples/modeling/expected-proposals/partial-basic.proposal.json \
+  --decision-log examples/review/expected-logs/full-confirmation.log.json \
+  --package examples/review/expected-packages/full-confirmation.package.json \
+  --compilation-dir runtime_outputs/compilation/full-confirmation
 ```
 
 Legacy 边界与显式运行方式见

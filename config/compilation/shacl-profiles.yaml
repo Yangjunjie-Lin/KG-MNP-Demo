@@ -1,0 +1,6 @@
+profiles:
+  foundation-instance:
+    files:
+      - shapes/foundation-instance-shapes.ttl
+    central_default: true
+    legacy: false

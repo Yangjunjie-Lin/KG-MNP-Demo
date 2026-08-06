@@ -9,7 +9,11 @@
 	verify-modeling-cli verify-stage-04 \
 	verify-review-contracts verify-review-policy verify-review-workflow \
 	verify-review-determinism verify-confirmed-package verify-package-readiness \
-	verify-review-security verify-review-cli verify-stage-05
+ verify-review-security verify-review-cli verify-stage-05 \
+ verify-compiler-contracts verify-compiler-policy verify-compiler-mapping \
+ verify-compiler-provenance verify-compiler-rdf verify-compiler-shacl \
+ verify-compiler-reasoner verify-compiler-determinism verify-compiler-security \
+ verify-compiler-cli verify-stage-06
 
 PYTHON_CORE_TESTS = \
 	tests/test_ontology.py \
@@ -210,3 +214,48 @@ verify-stage-05:
 	$(MAKE) verify-review-security
 	$(MAKE) verify-review-cli
 	python -m pytest -q tests/review/test_stage05_boundaries.py
+
+verify-compiler-contracts:
+	python scripts/check_schema_identifiers.py
+	python -m pytest -q tests/compilation/test_compilation_contracts.py tests/compilation/test_compiler_policy.py
+
+verify-compiler-policy:
+	python -m pytest -q tests/compilation/test_compiler_policy.py
+
+verify-compiler-mapping:
+	python -m pytest -q tests/compilation/test_candidate_resolution.py tests/compilation/test_entity_compilation.py tests/compilation/test_class_assertion_compilation.py tests/compilation/test_object_property_compilation.py tests/compilation/test_data_property_compilation.py tests/compilation/test_mapping_assertion_rejected.py tests/compilation/test_tbox_leakage.py
+
+verify-compiler-provenance:
+	python -m pytest -q tests/compilation/test_graph_separation.py tests/compilation/test_provenance_coverage.py tests/compilation/test_review_audit.py
+
+verify-compiler-rdf:
+	python -m pytest -q tests/compilation/test_no_blank_nodes.py tests/compilation/test_canonical_ntriples.py tests/compilation/test_canonical_nquads.py tests/compilation/test_deterministic_turtle.py tests/compilation/test_deterministic_trig.py
+
+verify-compiler-shacl:
+	python -m pytest -q tests/compilation/test_shacl_profile.py tests/compilation/test_shacl_validation.py tests/compilation/test_shacl_report_determinism.py
+
+verify-compiler-reasoner:
+	python -m pytest -q tests/compilation/test_owl_consistency.py
+
+verify-compiler-determinism:
+	python -m pytest -q tests/compilation/test_compilation_manifest.py tests/compilation/test_artifact_hashes.py tests/compilation/test_compilation_determinism.py tests/compilation/test_compilation_reconstruction.py
+
+verify-compiler-security:
+	python -m pytest -q tests/compilation/test_compilation_security.py
+
+verify-compiler-cli:
+	python -m pytest -q tests/compilation/test_compilation_cli.py
+
+verify-stage-06:
+	$(MAKE) verify-stage-05
+	$(MAKE) verify-compiler-contracts
+	$(MAKE) verify-compiler-policy
+	$(MAKE) verify-compiler-mapping
+	$(MAKE) verify-compiler-provenance
+	$(MAKE) verify-compiler-rdf
+	$(MAKE) verify-compiler-shacl
+	$(MAKE) verify-compiler-reasoner
+	$(MAKE) verify-compiler-determinism
+	$(MAKE) verify-compiler-security
+	$(MAKE) verify-compiler-cli
+	python -m pytest -q tests/compilation/test_stage06_boundaries.py

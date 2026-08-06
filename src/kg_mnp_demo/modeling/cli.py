@@ -38,6 +38,14 @@ from .semantic_validation import (
     validate_review_decision_log_semantics,
     validate_terminology_profile_semantics,
 )
+from ..compilation.artifacts import ArtifactWriteError, write_artifact_set
+from ..compilation.compiler import CompilationError, build_artifact_set
+from ..compilation.contracts import CompilationContractError
+from ..compilation.policy import CompilerPolicyError, load_compiler_policy
+from ..compilation.validator import (
+    CompilationValidationError,
+    validate_compilation_package_against_authorities,
+)
 
 
 class DuplicateKeyError(ValueError):
@@ -476,6 +484,98 @@ def cmd_package_inspect(*, package_path: Path) -> int:
     return 0
 
 
+def _compilation_authorities(
+    input_path: Path,
+    proposal_path: Path,
+    decision_log_path: Path,
+    package_path: Path,
+) -> tuple[dict[str, Any], ...]:
+    dependencies = _dependency_payload()
+    return (
+        _read_json(input_path),
+        _read_json(proposal_path),
+        _read_json(decision_log_path),
+        _read_json(package_path),
+        dependencies["ontology_baseline"],
+        dependencies["mapping_rules"],
+        dependencies["terminology_profile"],
+        dependencies["proposal_policy"],
+        dependencies["review_policy"],
+    )
+
+
+def cmd_compile_build(
+    *,
+    input_path: Path,
+    proposal_path: Path,
+    decision_log_path: Path,
+    package_path: Path,
+    output_dir: Path | None,
+    force: bool,
+) -> int:
+    authorities = _compilation_authorities(
+        input_path, proposal_path, decision_log_path, package_path
+    )
+    policy = load_compiler_policy()
+    files, manifest = build_artifact_set(*authorities, policy)
+    destination = output_dir or (
+        Path("runtime_outputs")
+        / "compilation"
+        / str(manifest["compilation_id"]).rsplit(":", 1)[-1]
+    )
+    write_artifact_set(destination, files, force=force)
+    _json_print(
+        {
+            "output": destination.as_posix(),
+            "compilation_id": manifest["compilation_id"],
+            "compilation_semantic_hash": manifest["compilation_semantic_hash"],
+            "source_package_id": manifest["source_package_id"],
+            "asserted_fact_count": manifest["asserted_fact_count"],
+            "shacl_status": manifest["shacl_status"],
+            "owl_consistency_status": manifest["owl_consistency_status"],
+            "release_status": manifest["release_status"],
+        }
+    )
+    return 0
+
+
+def cmd_compile_validate(
+    *,
+    input_path: Path,
+    proposal_path: Path,
+    decision_log_path: Path,
+    package_path: Path,
+    compilation_dir: Path,
+) -> int:
+    authorities = _compilation_authorities(
+        input_path, proposal_path, decision_log_path, package_path
+    )
+    result = validate_compilation_package_against_authorities(
+        compilation_dir, *authorities, load_compiler_policy()
+    )
+    _json_print(result)
+    return 0
+
+
+def cmd_compile_inspect(*, compilation_dir: Path) -> int:
+    manifest_path = compilation_dir / "compilation-manifest.json"
+    manifest = _read_json(manifest_path)
+    _json_print(
+        {
+            "inspection_only": True,
+            "validated": False,
+            "notice": "inspect is not validation",
+            "compilation_id": manifest.get("compilation_id"),
+            "source_package_id": manifest.get("source_package_id"),
+            "release_status_claim": manifest.get("release_status"),
+            "shacl_status_claim": manifest.get("shacl_status"),
+            "owl_consistency_status_claim": manifest.get("owl_consistency_status"),
+            "artifact_count": len(manifest.get("artifact_manifest", [])),
+        }
+    )
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         prog="kg-mnp",
@@ -564,6 +664,30 @@ def build_parser() -> argparse.ArgumentParser:
     package_validate.add_argument("--package", required=True, type=Path)
     package_inspect = package_commands.add_parser("inspect")
     package_inspect.add_argument("--package", required=True, type=Path)
+
+    compile_cmd = subcommands.add_parser(
+        "compile", help="build or validate formal Stage 06 semantic artifacts"
+    )
+    compile_commands = compile_cmd.add_subparsers(dest="compile_command", required=True)
+    compile_build = compile_commands.add_parser("build", help="compile a READY confirmed package")
+    compile_build.add_argument("--input", required=True, type=Path)
+    compile_build.add_argument("--proposal", required=True, type=Path)
+    compile_build.add_argument("--decision-log", required=True, type=Path)
+    compile_build.add_argument("--package", required=True, type=Path)
+    compile_build.add_argument("--output-dir", type=Path)
+    compile_build.add_argument("--force", action="store_true")
+    compile_validate = compile_commands.add_parser(
+        "validate", help="rebuild from authorities and compare all artifacts"
+    )
+    compile_validate.add_argument("--input", required=True, type=Path)
+    compile_validate.add_argument("--proposal", required=True, type=Path)
+    compile_validate.add_argument("--decision-log", required=True, type=Path)
+    compile_validate.add_argument("--package", required=True, type=Path)
+    compile_validate.add_argument("--compilation-dir", required=True, type=Path)
+    compile_inspect = compile_commands.add_parser(
+        "inspect", help="read a manifest summary without validating it"
+    )
+    compile_inspect.add_argument("--compilation-dir", required=True, type=Path)
     return parser
 
 
@@ -638,7 +762,31 @@ def main(argv: list[str] | None = None) -> int:
             )
         if args.command == "package" and args.package_command == "inspect":
             return cmd_package_inspect(package_path=args.package)
+        if args.command == "compile" and args.compile_command == "build":
+            return cmd_compile_build(
+                input_path=args.input,
+                proposal_path=args.proposal,
+                decision_log_path=args.decision_log,
+                package_path=args.package,
+                output_dir=args.output_dir,
+                force=args.force,
+            )
+        if args.command == "compile" and args.compile_command == "validate":
+            return cmd_compile_validate(
+                input_path=args.input,
+                proposal_path=args.proposal,
+                decision_log_path=args.decision_log,
+                package_path=args.package,
+                compilation_dir=args.compilation_dir,
+            )
+        if args.command == "compile" and args.compile_command == "inspect":
+            return cmd_compile_inspect(compilation_dir=args.compilation_dir)
     except (
+        ArtifactWriteError,
+        CompilationContractError,
+        CompilationError,
+        CompilationValidationError,
+        CompilerPolicyError,
         ContractRegistryError,
         DependencyError,
         DuplicateKeyError,

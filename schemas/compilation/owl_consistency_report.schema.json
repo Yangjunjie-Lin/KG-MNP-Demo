@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/owl-consistency-report/1.0",
+  "title": "KG-MNP Stage 06 OWL Consistency Report",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["status", "consistent", "reasoner", "robot_version", "robot_jar_sha256", "ontology_release_source_hash", "abox_semantic_hash", "combined_input_semantic_hash", "source_package_hash", "exit_code"],
+  "properties": {
+    "status": {"enum": ["CONSISTENT", "INCONSISTENT", "FAILED", "UNKNOWN", "NOT_RUN"]},
+    "consistent": {"type": "boolean"},
+    "reasoner": {"type": "string"},
+    "robot_version": {"type": "string"},
+    "robot_jar_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "ontology_release_source_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "abox_semantic_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "combined_input_semantic_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "source_package_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "hermit_dependency_version": {"type": "string"},
+    "exit_code": {"type": ["integer", "null"]}
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-manifest/1.0",
+  "title": "KG-MNP Stage 06 Compilation Manifest",
+  "type": "object",
+  "additionalProperties": true,
+  "required": ["contract_version", "compilation_id", "compilation_semantic_hash", "compiler_policy_id", "compiler_policy_version", "compiler_policy_hash", "compiler_version", "source_package_id", "source_package_semantic_hash", "graph_iris", "artifact_manifest", "release_status"],
+  "properties": {
+    "contract_version": {"const": "1.0"},
+    "compilation_id": {"type": "string", "pattern": "^urn:kg-mnp:compilation:[0-9a-f]{64}$"},
+    "compilation_semantic_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "release_status": {"enum": ["FORMALLY_VALIDATED", "FAILED"]},
+    "artifact_manifest": {"type": "array"},
+    "graph_iris": {"type": "object"}
+  }
+}

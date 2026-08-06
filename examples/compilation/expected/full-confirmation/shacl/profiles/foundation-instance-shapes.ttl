@@ -1,0 +1,123 @@
+@prefix mnp: <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#> .
+@prefix shapes: <https://yangjunjie-lin.github.io/KG-MNP-Demo/shapes#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+#################################################################
+# Foundation instance profile — partial-data friendly ABox hygiene
+# No requirement that cases have evidence; no assessment usesEvidence.
+#################################################################
+
+shapes:FoundationMNPCaseShape a sh:NodeShape ;
+    rdfs:label "Foundation MNP case"@en ;
+    rdfs:label "基础携号转网案件"@zh-CN ;
+    sh:targetClass mnp:MNPCase ;
+    sh:property [
+        sh:path mnp:caseIdentifier ;
+        sh:datatype xsd:string ;
+        sh:nodeKind sh:Literal ;
+        sh:minCount 1 ;
+        sh:maxCount 1 ;
+        sh:severity sh:Violation ;
+        sh:message "Each MNP case must have exactly one string caseIdentifier (literal, not IRI)."@en ;
+        sh:message "每个携号转网案件必须恰好有一个字符串案件编号 caseIdentifier（字面量，非 IRI）。"@zh-CN ;
+    ] ;
+    sh:property [
+        sh:path mnp:concernsNumber ;
+        sh:class mnp:PhoneNumber ;
+        sh:nodeKind sh:IRI ;
+        sh:maxCount 1 ;
+        sh:severity sh:Warning ;
+        sh:message "When present, concernsNumber must be at most one PhoneNumber IRI."@en ;
+        sh:message "若填写 concernsNumber，最多关联一个 PhoneNumber IRI。"@zh-CN ;
+    ] ;
+    sh:property [
+        sh:path mnp:requestedBy ;
+        sh:class mnp:Subscriber ;
+        sh:nodeKind sh:IRI ;
+        sh:maxCount 1 ;
+        sh:severity sh:Warning ;
+        sh:message "When present, requestedBy must be at most one Subscriber IRI."@en ;
+        sh:message "若填写 requestedBy，最多关联一个 Subscriber IRI。"@zh-CN ;
+    ] .
+
+shapes:FoundationEvidenceRecordShape a sh:NodeShape ;
+    rdfs:label "Foundation evidence record"@en ;
+    rdfs:label "基础证据记录"@zh-CN ;
+    sh:targetClass mnp:EvidenceRecord ;
+    sh:property [
+        sh:path mnp:evidenceStatus ;
+        sh:datatype xsd:string ;
+        sh:nodeKind sh:Literal ;
+        sh:maxCount 1 ;
+        sh:in ( "VALID" "EXPIRED" "REVOKED" "UNKNOWN" ) ;
+        sh:severity sh:Warning ;
+        sh:message "When present, evidenceStatus must be VALID, EXPIRED, REVOKED, or UNKNOWN (string literal)."@en ;
+        sh:message "若填写 evidenceStatus，必须为 VALID/EXPIRED/REVOKED/UNKNOWN（字符串字面量）。"@zh-CN ;
+    ] ;
+    sh:property [
+        sh:path mnp:hasSourceSystem ;
+        sh:class mnp:InformationSystem ;
+        sh:nodeKind sh:IRI ;
+        sh:severity sh:Info ;
+        sh:message "When present, hasSourceSystem should reference an InformationSystem."@en ;
+        sh:message "若填写 hasSourceSystem，应引用 InformationSystem。"@zh-CN ;
+    ] .
+
+shapes:FoundationAuthorizationCodeShape a sh:NodeShape ;
+    rdfs:label "Foundation authorization code"@en ;
+    rdfs:label "基础授权码"@zh-CN ;
+    sh:targetClass mnp:AuthorizationCode ;
+    sh:property [
+        sh:path mnp:authCodeStatus ;
+        sh:datatype xsd:string ;
+        sh:nodeKind sh:Literal ;
+        sh:maxCount 1 ;
+        sh:in ( "VALID" "EXPIRED" "MISSING" "USED" "REVOKED" ) ;
+        sh:severity sh:Warning ;
+        sh:message "When present, authCodeStatus must be a controlled string (VALID/EXPIRED/MISSING/USED/REVOKED)."@en ;
+        sh:message "若填写 authCodeStatus，必须为受控字符串（VALID/EXPIRED/MISSING/USED/REVOKED）。"@zh-CN ;
+    ] .
+
+shapes:FoundationMappingRecordShape a sh:NodeShape ;
+    rdfs:label "Foundation mapping record"@en ;
+    rdfs:label "基础映射记录"@zh-CN ;
+    sh:targetClass mnp:MappingRecord ;
+    sh:property [
+        sh:path mnp:sourceApi ;
+        sh:datatype xsd:string ;
+        sh:nodeKind sh:Literal ;
+        sh:minCount 1 ;
+        sh:severity sh:Violation ;
+        sh:message "MappingRecord must include sourceApi as a string literal."@en ;
+        sh:message "映射记录必须包含字符串字面量 sourceApi。"@zh-CN ;
+    ] ;
+    sh:property [
+        sh:path mnp:sourceFieldPath ;
+        sh:datatype xsd:string ;
+        sh:nodeKind sh:Literal ;
+        sh:minCount 1 ;
+        sh:severity sh:Violation ;
+        sh:message "MappingRecord must include sourceFieldPath as a string literal."@en ;
+        sh:message "映射记录必须包含字符串字面量 sourceFieldPath。"@zh-CN ;
+    ] ;
+    sh:property [
+        sh:path mnp:targetTerm ;
+        sh:datatype xsd:string ;
+        sh:nodeKind sh:Literal ;
+        sh:minCount 1 ;
+        sh:severity sh:Violation ;
+        sh:message "MappingRecord must include targetTerm as a string literal."@en ;
+        sh:message "映射记录必须包含字符串字面量 targetTerm。"@zh-CN ;
+    ] ;
+    sh:property [
+        sh:path mnp:mappingReviewStatus ;
+        sh:datatype xsd:string ;
+        sh:nodeKind sh:Literal ;
+        sh:minCount 1 ;
+        sh:severity sh:Violation ;
+        sh:message "MappingRecord must include mappingReviewStatus as a string literal."@en ;
+        sh:message "映射记录必须包含字符串字面量 mappingReviewStatus。"@zh-CN ;
+    ] .
