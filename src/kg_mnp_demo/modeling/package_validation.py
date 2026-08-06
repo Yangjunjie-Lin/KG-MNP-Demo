@@ -73,8 +73,15 @@ def build_confirmed_envelope(
         effective = dict(source_candidate)
         confirmation_mode = "ORIGINAL"
     elif mode == "MODIFY_AND_CONFIRM":
+        from .review_actions import validate_modified_candidate
+
         effective = dict(decision["modified_candidate"])
         confirmation_mode = "MODIFIED"
+        validate_modified_candidate(
+            source_candidate,
+            effective,
+            term_types=term_types,
+        )
         if effective.get("candidate_kind", "ENTITY") != source_candidate.get(
             "candidate_kind", "ENTITY"
         ):
@@ -118,6 +125,58 @@ def build_confirmed_envelope(
             "confirmed_item_id": item_id,
         },
     }
+
+
+def validate_confirmed_candidate_envelope(
+    item: Mapping[str, Any],
+    *,
+    source_candidate: Mapping[str, Any],
+    decision: Mapping[str, Any],
+    term_types: Mapping[str, str],
+) -> None:
+    """Re-validate a confirmed envelope against the authoritative source decision."""
+
+    expected = build_confirmed_envelope(
+        decision=decision,
+        source_candidate=source_candidate,
+        term_types=term_types,
+    )
+    errors: list[str] = []
+    if item.get("decision_id") != expected["decision_id"]:
+        errors.append("confirmed item decision_id mismatch")
+    if item.get("candidate_id") != expected["candidate_id"]:
+        errors.append("confirmed item candidate_id mismatch")
+    if item.get("decision") != expected["decision"]:
+        errors.append("confirmed item decision mismatch")
+    if item.get("publication_scope") != "ABOX":
+        errors.append("confirmed item publication_scope must remain ABOX")
+    confirmed = item.get("confirmed_candidate")
+    expected_confirmed = expected["confirmed_candidate"]
+    if not isinstance(confirmed, Mapping):
+        raise SemanticValidationError(["confirmed item lacks confirmed_candidate envelope"])
+    for field in (
+        "source_candidate_id",
+        "effective_candidate_id",
+        "confirmation_mode",
+        "semantic_content",
+        "semantic_hash",
+        "confirmed_item_id",
+    ):
+        if confirmed.get(field) != expected_confirmed.get(field):
+            errors.append(f"confirmed_candidate.{field} does not match authoritative derivation")
+    if decision.get("decision") == "CONFIRM":
+        if confirmed.get("confirmation_mode") != "ORIGINAL":
+            errors.append("CONFIRM must use ORIGINAL confirmation mode")
+        if confirmed.get("effective_candidate_id") != source_candidate.get("candidate_id"):
+            errors.append("CONFIRM effective_candidate_id must equal source candidate_id")
+    if decision.get("decision") == "MODIFY_AND_CONFIRM":
+        if confirmed.get("confirmation_mode") != "MODIFIED":
+            errors.append("MODIFY_AND_CONFIRM must use MODIFIED confirmation mode")
+        modified = decision.get("modified_candidate") or {}
+        if confirmed.get("effective_candidate_id") != modified.get("candidate_id"):
+            errors.append("MODIFY_AND_CONFIRM effective_candidate_id mismatch")
+    if errors:
+        raise SemanticValidationError(errors)
 
 
 def assertion_subject_id(candidate: Mapping[str, Any]) -> str | None:

@@ -478,6 +478,7 @@ def validate_review_decision_log_semantics(
     *,
     review_policy: Mapping[str, Any] | None = None,
     require_final: bool = False,
+    verify_draft_integrity: bool = False,
     term_types: Mapping[str, str] | None = None,
 ) -> None:
     del cleaned_partial_data, ontology_baseline, mapping_rules
@@ -495,16 +496,27 @@ def validate_review_decision_log_semantics(
         review_coverage,
     )
     from .review_policy import (
+        ReviewPolicyError,
         decision_allowed_for_target,
         load_default_review_policy,
     )
     from .review_actions import validate_modified_candidate
 
-    policy = review_policy if review_policy is not None else None
-    try:
-        active_policy = policy if policy is not None else load_default_review_policy()
-    except Exception:
-        active_policy = None
+    if review_policy is not None:
+        active_policy = review_policy
+    else:
+        try:
+            active_policy = load_default_review_policy()
+        except ReviewPolicyError as exc:
+            raise SemanticValidationError(
+                [f"review policy load failed closed: {exc}"]
+            ) from exc
+        except Exception as exc:
+            raise SemanticValidationError(
+                [f"review policy load failed closed: {exc}"]
+            ) from exc
+
+    enforce_identity = require_final or verify_draft_integrity
 
     candidates = {
         item["candidate_id"]: item
@@ -544,14 +556,14 @@ def validate_review_decision_log_semantics(
             errors.append("modified_candidate is required only for MODIFY_AND_CONFIRM")
         target_kind = "candidate" if decision.get("candidate_id") else "issue"
         decision_value = decision.get("decision")
-        if active_policy is not None and isinstance(decision_value, str):
+        if isinstance(decision_value, str):
             if not decision_allowed_for_target(
                 target_kind=target_kind,
                 decision=decision_value,
                 policy=active_policy,
             ):
                 errors.append(
-                    f"decision {decision_value!r} is not allowed for {target_kind}: {target}"
+                    f"decision {decision_value} is not allowed for {target_kind} targets"
                 )
         if decision_value == "DEPRECATE":
             errors.append(f"DEPRECATE is forbidden in dataset modeling review: {target}")
@@ -579,7 +591,7 @@ def validate_review_decision_log_semantics(
                 evidence_refs=list(decision.get("evidence_refs") or []),
                 modified_candidate=decision.get("modified_candidate"),
             )
-            if require_final and decision.get("decision_id") != expected_decision_id:
+            if enforce_identity and decision.get("decision_id") != expected_decision_id:
                 errors.append(f"decision_id does not match semantic content: {target}")
         if isinstance(decision.get("decided_at"), str) and isinstance(started_at, str):
             try:
@@ -604,22 +616,22 @@ def validate_review_decision_log_semantics(
     coverage = review_coverage(proposal, decision_log)
     if require_final and not coverage["coverage_complete"]:
         errors.append("final ReviewDecisionLog coverage is incomplete")
+    if enforce_identity:
+        expected_log_id = decision_log_id(
+            proposal_id=str(proposal["proposal_id"]),
+            proposal_semantic_hash=str(proposal["proposal_semantic_hash"]),
+            reviewer_id=str(reviewer_id),
+            session_id=str(session.get("session_id")),
+            review_policy_version=str(active_policy["policy_version"]),
+        )
+        if decision_log.get("decision_log_id") != expected_log_id:
+            errors.append("decision_log_id does not match review session binding")
+        if decision_log.get("log_hash") != decision_log_hash(decision_log):
+            errors.append("log_hash does not match decision log semantic content")
     if require_final:
         ordered = list(decision_log.get("decisions", []))
         if ordered != sorted(ordered, key=decision_sort_key):
             errors.append("final ReviewDecisionLog decisions are not stably sorted")
-        if active_policy is not None:
-            expected_log_id = decision_log_id(
-                proposal_id=str(proposal["proposal_id"]),
-                proposal_semantic_hash=str(proposal["proposal_semantic_hash"]),
-                reviewer_id=str(reviewer_id),
-                session_id=str(session.get("session_id")),
-                review_policy_version=str(active_policy["policy_version"]),
-            )
-            if decision_log.get("decision_log_id") != expected_log_id:
-                errors.append("decision_log_id does not match review session binding")
-        if decision_log.get("log_hash") != decision_log_hash(decision_log):
-            errors.append("log_hash does not match decision log semantic content")
     _raise(errors)
 
 
@@ -630,9 +642,12 @@ def validate_confirmed_modeling_package_semantics(
     cleaned_partial_data: Mapping[str, Any] | None = None,
     ontology_baseline: Mapping[str, Any] | None = None,
     mapping_rules: Mapping[str, Any] | None = None,
+    terminology_profile: Mapping[str, Any] | None = None,
+    proposal_policy: Mapping[str, Any] | None = None,
     *,
     review_policy: Mapping[str, Any] | None = None,
     term_types: Mapping[str, str] | None = None,
+    functional_property_iris: frozenset[str] | None = None,
     require_complete: bool = False,
 ) -> None:
     _schema_validate("confirmed-modeling-package", package)
@@ -791,4 +806,124 @@ def validate_confirmed_modeling_package_semantics(
         if review_policy is not None:
             if manifest.get("review_policy_version") != review_policy.get("policy_version"):
                 errors.append("publication_manifest.review_policy_version mismatch")
+            from .review_policy import review_policy_hash
+
+            if manifest.get("review_policy_hash") != review_policy_hash(review_policy):
+                errors.append("publication_manifest.review_policy_hash mismatch")
+
+        authority_missing = [
+            name
+            for name, value in (
+                ("cleaned_partial_data", cleaned_partial_data),
+                ("ontology_baseline", ontology_baseline),
+                ("mapping_rules", mapping_rules),
+                ("terminology_profile", terminology_profile),
+                ("proposal_policy", proposal_policy),
+            )
+            if value is None
+        ]
+        if authority_missing:
+            errors.append(
+                "complete package validation requires authoritative inputs: "
+                + ", ".join(authority_missing)
+            )
+            _raise(errors)
+            return
+
+        from .confirmation import (
+            complete_confirmed_package,
+            derive_confirmed_package_content,
+            packages_deterministically_equal,
+        )
+        from .package_validation import load_functional_property_iris, load_term_type_index
+        from .review_policy import load_default_review_policy
+
+        policy = review_policy if review_policy is not None else load_default_review_policy()
+        types = dict(term_types) if term_types is not None else load_term_type_index()
+        functional = (
+            functional_property_iris
+            if functional_property_iris is not None
+            else load_functional_property_iris()
+        )
+        try:
+            expected_content = derive_confirmed_package_content(
+                cleaned_partial_data,
+                proposal,
+                decision_log,
+                ontology_baseline,
+                mapping_rules,
+                terminology_profile,
+                proposal_policy,
+                policy,
+                allow_blocked=True,
+                term_types=types,
+                functional_property_iris=functional,
+            )
+            expected_package = complete_confirmed_package(expected_content)
+        except SemanticValidationError as exc:
+            errors.extend(exc.errors)
+            _raise(errors)
+            return
+        mismatches = packages_deterministically_equal(package, expected_package)
+        if mismatches:
+            preview = ", ".join(mismatches[:12])
+            errors.append(
+                "package does not match deterministic reconstruction from authoritative "
+                f"inputs; differing paths: {preview}"
+            )
+            expected_manifest = expected_package.get("publication_manifest") or {}
+            if manifest.get("package_status") != expected_manifest.get("package_status"):
+                errors.append(
+                    "publication_manifest.package_status does not match readiness derivation"
+                )
+            if manifest.get("compile_allowed") != expected_manifest.get("compile_allowed"):
+                errors.append(
+                    "publication_manifest.compile_allowed does not match readiness derivation"
+                )
+            if manifest.get("unresolved_blocking_issue_ids") != expected_manifest.get(
+                "unresolved_blocking_issue_ids"
+            ):
+                errors.append(
+                    "publication_manifest.unresolved_blocking_issue_ids does not match "
+                    "readiness derivation"
+                )
+            if manifest.get("unconfirmed_dependency_candidate_ids") != expected_manifest.get(
+                "unconfirmed_dependency_candidate_ids"
+            ):
+                errors.append(
+                    "publication_manifest.unconfirmed_dependency_candidate_ids does not match "
+                    "reference closure derivation"
+                )
     _raise(errors)
+
+
+def validate_confirmed_package_against_authorities(
+    package: Mapping[str, Any],
+    cleaned_partial_data: Mapping[str, Any],
+    proposal: Mapping[str, Any],
+    decision_log: Mapping[str, Any],
+    ontology_baseline: Mapping[str, Any],
+    mapping_rules: Mapping[str, Any],
+    terminology_profile: Mapping[str, Any],
+    proposal_policy: Mapping[str, Any],
+    review_policy: Mapping[str, Any] | None = None,
+    *,
+    term_types: Mapping[str, str] | None = None,
+    functional_property_iris: frozenset[str] | None = None,
+) -> None:
+    """Independently re-derive the expected package and compare byte-for-byte."""
+
+    validate_confirmed_modeling_package_semantics(
+        package,
+        proposal,
+        decision_log,
+        cleaned_partial_data=cleaned_partial_data,
+        ontology_baseline=ontology_baseline,
+        mapping_rules=mapping_rules,
+        terminology_profile=terminology_profile,
+        proposal_policy=proposal_policy,
+        review_policy=review_policy,
+        term_types=term_types,
+        functional_property_iris=functional_property_iris,
+        require_complete=True,
+    )

@@ -28,9 +28,16 @@ New contracts:
 
 ## Compatibility notes
 
-- Draft ReviewDecisionLogs may remain incomplete
-- Final logs require exact-once coverage and self-validating IDs/hashes
+- Draft ReviewDecisionLogs may remain incomplete, but draft integrity still
+  enforces schema, proposal binding, reviewer consistency, policy-legal existing
+  decisions, modified-candidate validity, decision IDs, and log hash
+- `review finalize` runs full semantic validation before returning a final log
 - Confirmed packages require final logs
+- Package Validator independently re-derives the expected package and requires
+  deterministic equality; self-hash alone is not trust
+- All frozen dependencies (ontology baseline, mapping rules, terminology
+  profile, proposal policy, review policy, generator version) must match the
+  proposal snapshot; policy load failures fail closed
 - `confirmed_schema_delta` remains empty for dataset modeling
 - Reviewer identity remains declarative attribution, not authentication
 

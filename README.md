@@ -119,13 +119,16 @@ make verify-review-workflow
 make verify-review-determinism
 make verify-confirmed-package
 make verify-package-readiness
+make verify-review-security
 make verify-review-cli
 make verify-stage-05
 ```
 
 `verify-stage-05` 是 CI 和本地收尾的完整入口；它先完整执行 `verify-stage-04`，
 再依次执行 Review Contracts、Policy、Workflow、Determinism、Confirmed Package、
-Readiness、CLI 与 Stage 05 边界门禁。`verify-stage-03` 内部严格按以下顺序执行：Stage 03
+Readiness、Security（fail-closed finalize / independent package reconstruction）、
+CLI 与 Stage 05 边界门禁。`review finalize` 执行完整语义验证；`package validate`
+从权威输入独立重派生 Expected Package，自洽 self-hash 不是授权证明。`verify-stage-03` 内部严格按以下顺序执行：Stage 03
 core（其中包含 Stage 01/02 回归）、Schema Identifier 门禁、ROBOT 校验、HermiT 实际运行、runtime run
 验证、正式报告验证、运行态旧术语扫描。Schema Identifier 门禁只解析本地
 `*.schema.json` 与 namespace 配置，不访问 `$id`、不下载远程 Schema。默认 `reasoner-check` 只写已忽略的

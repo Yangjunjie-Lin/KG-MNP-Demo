@@ -6,7 +6,7 @@ from collections import defaultdict
 from copy import deepcopy
 from typing import Any, Mapping
 
-from .canonical_json import semantic_hash
+from .canonical_json import canonical_json_bytes, semantic_hash
 from .package_validation import (
     assertion_object_candidate_id,
     assertion_subject_id,
@@ -14,7 +14,9 @@ from .package_validation import (
     load_functional_property_iris,
     load_term_type_index,
     proposal_candidates_by_id,
+    validate_confirmed_candidate_envelope,
 )
+from .proposal import GENERATOR_VERSION
 from .review_identifiers import confirmed_package_id, package_semantic_hash
 from .review_log import (
     decision_target_id,
@@ -25,10 +27,12 @@ from .review_policy import load_default_review_policy, review_policy_hash
 from .semantic_validation import (
     SemanticValidationError,
     validate_cleaned_partial_data_semantics,
-    validate_confirmed_modeling_package_semantics,
     validate_modeling_proposal_semantics,
     validate_review_decision_log_semantics,
 )
+
+# validate_confirmed_modeling_package_semantics is imported lazily in
+# build_confirmed_modeling_package to avoid an import cycle with reconstruction.
 
 
 class PackageBuildError(SemanticValidationError):
@@ -54,7 +58,117 @@ def _effective_candidate(
     return content
 
 
-def build_confirmed_modeling_package(
+def verify_proposal_dependency_snapshot(
+    proposal: Mapping[str, Any],
+    ontology_baseline: Mapping[str, Any],
+    mapping_rules: Mapping[str, Any],
+    terminology_profile: Mapping[str, Any],
+    proposal_policy: Mapping[str, Any],
+) -> None:
+    """Fail closed when frozen authorities diverge from the proposal snapshot."""
+
+    snapshot = proposal.get("dependency_snapshot", {})
+    errors: list[str] = []
+    expected_baseline_id = (
+        ontology_baseline.get("baseline_id")
+        or ontology_baseline.get("manifest_id")
+        or f"ontology-baseline-{ontology_baseline.get('ontology_version')}"
+    )
+    checks = (
+        ("ontology_baseline_id", snapshot.get("ontology_baseline_id"), expected_baseline_id),
+        (
+            "ontology_version",
+            snapshot.get("ontology_version"),
+            ontology_baseline.get("ontology_version"),
+        ),
+        (
+            "ontology_release_source_hash",
+            snapshot.get("ontology_release_source_hash"),
+            ontology_baseline.get("release_source_hash"),
+        ),
+        ("mapping_set_id", snapshot.get("mapping_set_id"), mapping_rules.get("mapping_set_id")),
+        (
+            "mapping_set_version",
+            snapshot.get("mapping_set_version"),
+            mapping_rules.get("mapping_set_version"),
+        ),
+        (
+            "mapping_rules_hash",
+            snapshot.get("mapping_rules_hash"),
+            semantic_hash(mapping_rules),
+        ),
+        (
+            "terminology_profile_id",
+            snapshot.get("terminology_profile_id"),
+            terminology_profile.get("profile_id"),
+        ),
+        (
+            "terminology_profile_version",
+            snapshot.get("terminology_profile_version"),
+            terminology_profile.get("profile_version"),
+        ),
+        (
+            "terminology_profile_hash",
+            snapshot.get("terminology_profile_hash"),
+            semantic_hash(terminology_profile),
+        ),
+        (
+            "proposal_policy_version",
+            snapshot.get("proposal_policy_version"),
+            proposal_policy.get("policy_version"),
+        ),
+        (
+            "proposal_policy_hash",
+            snapshot.get("proposal_policy_hash"),
+            semantic_hash(proposal_policy),
+        ),
+        ("generator_version", snapshot.get("generator_version"), GENERATOR_VERSION),
+    )
+    for field, actual, expected in checks:
+        if actual != expected:
+            if field == "terminology_profile_hash":
+                errors.append("proposal terminology_profile_hash mismatch")
+            elif field == "proposal_policy_hash":
+                errors.append("proposal proposal_policy_hash mismatch")
+            elif field == "mapping_rules_hash":
+                errors.append("proposal mapping rules hash mismatch")
+            elif field.startswith("ontology_"):
+                errors.append(f"proposal ontology baseline {field} mismatch")
+            else:
+                errors.append(f"proposal dependency_snapshot.{field} mismatch")
+    if proposal_policy.get("generator_version") != GENERATOR_VERSION:
+        errors.append("proposal policy generator_version is incompatible")
+    _raise_build(errors)
+
+
+def _diff_paths(actual: Any, expected: Any, prefix: str = "") -> list[str]:
+    if type(actual) is not type(expected) and not (
+        isinstance(actual, (int, float)) and isinstance(expected, (int, float))
+    ):
+        return [prefix or "$"]
+    if isinstance(actual, Mapping) and isinstance(expected, Mapping):
+        paths: list[str] = []
+        keys = sorted(set(actual) | set(expected), key=str)
+        for key in keys:
+            path = f"{prefix}.{key}" if prefix else str(key)
+            if key not in actual or key not in expected:
+                paths.append(path)
+            else:
+                paths.extend(_diff_paths(actual[key], expected[key], path))
+        return paths
+    if isinstance(actual, list) and isinstance(expected, list):
+        if len(actual) != len(expected):
+            return [prefix or "$"]
+        paths = []
+        for index, (left, right) in enumerate(zip(actual, expected)):
+            paths.extend(_diff_paths(left, right, f"{prefix}[{index}]"))
+        return paths
+    if actual != expected:
+        return [prefix or "$"]
+    return []
+
+
+def derive_confirmed_package_content(
     cleaned_partial_data: Mapping[str, Any],
     proposal: Mapping[str, Any],
     decision_log: Mapping[str, Any],
@@ -66,13 +180,18 @@ def build_confirmed_modeling_package(
     *,
     allow_blocked: bool = False,
     term_types: Mapping[str, str] | None = None,
+    functional_property_iris: frozenset[str] | None = None,
 ) -> dict[str, Any]:
-    """Build the unique ConfirmedModelingPackage from a final review log."""
+    """Derive package semantic content without package_id / package_semantic_hash."""
 
-    del terminology_profile, proposal_policy  # binding checked via proposal snapshot
+    del allow_blocked  # readiness is derived; emission gating belongs to the builder
     policy = review_policy if review_policy is not None else load_default_review_policy()
     types = dict(term_types) if term_types is not None else load_term_type_index()
-    functional = load_functional_property_iris()
+    functional = (
+        functional_property_iris
+        if functional_property_iris is not None
+        else load_functional_property_iris()
+    )
 
     validate_cleaned_partial_data_semantics(cleaned_partial_data)
     validate_modeling_proposal_semantics(
@@ -80,18 +199,13 @@ def build_confirmed_modeling_package(
         cleaned_partial_data,
         mapping_rules,
     )
-    snapshot = proposal.get("dependency_snapshot", {})
-    if snapshot.get("ontology_baseline_id") != ontology_baseline.get("baseline_id"):
-        raise PackageBuildError(["proposal ontology baseline id mismatch"])
-    if snapshot.get("ontology_version") != ontology_baseline.get("ontology_version"):
-        raise PackageBuildError(["proposal ontology version mismatch"])
-    if snapshot.get("ontology_release_source_hash") != ontology_baseline.get(
-        "release_source_hash"
-    ):
-        raise PackageBuildError(["proposal ontology release hash mismatch"])
-    if snapshot.get("mapping_rules_hash") != semantic_hash(mapping_rules):
-        raise PackageBuildError(["proposal mapping rules hash mismatch"])
-
+    verify_proposal_dependency_snapshot(
+        proposal,
+        ontology_baseline,
+        mapping_rules,
+        terminology_profile,
+        proposal_policy,
+    )
     validate_review_decision_log_semantics(
         decision_log,
         proposal,
@@ -130,6 +244,12 @@ def build_confirmed_modeling_package(
                         source_candidate=candidates[target],
                         term_types=types,
                     )
+                    validate_confirmed_candidate_envelope(
+                        envelope,
+                        source_candidate=candidates[target],
+                        decision=decision,
+                        term_types=types,
+                    )
                 except SemanticValidationError as exc:
                     errors.extend(exc.errors)
                     continue
@@ -166,15 +286,11 @@ def build_confirmed_modeling_package(
                         in {"MODIFY_AND_CONFIRM", "REJECT"}
                         for candidate_id in related
                     )
-                    # Conflict issues often lack related_candidate_ids; allow
-                    # explicit evidence_refs or any MODIFY/REJECT in the same log
-                    # when evidence is present.
                     if not has_evidence and not related_resolution:
-                        if not has_evidence:
-                            errors.append(
-                                "blocking issue REJECT requires evidence_refs or "
-                                f"related candidate MODIFY_AND_CONFIRM/REJECT: {target}"
-                            )
+                        errors.append(
+                            "blocking issue REJECT requires evidence_refs or "
+                            f"related candidate MODIFY_AND_CONFIRM/REJECT: {target}"
+                        )
                 rejected_items.append(
                     {
                         "decision_id": decision["decision_id"],
@@ -197,9 +313,7 @@ def build_confirmed_modeling_package(
 
     _raise_build(errors)
 
-    # Reference closure over confirmed assertions.
     confirmed_source_ids = set(confirmed_envelopes)
-    # Map effective entity IDs as well for modified subjects/objects.
     confirmed_effective_ids = {
         envelope["confirmed_candidate"]["effective_candidate_id"]
         for envelope in confirmed_envelopes.values()
@@ -251,7 +365,6 @@ def build_confirmed_modeling_package(
                         )
     _raise_build(errors)
 
-    # Duplicate / functional conflicts among confirmed content.
     item_ids = [
         item["confirmed_candidate"]["confirmed_item_id"] for item in confirmed_abox
     ]
@@ -309,22 +422,8 @@ def build_confirmed_modeling_package(
         if detail.get("blocking")
     )
     blocked = bool(unresolved_blocking) or bool(unconfirmed_dependencies)
-    # Dependency on deferred candidates already failed above; blocked also covers
-    # deferred blocking issues.
     package_status = "BLOCKED" if blocked else "READY_FOR_COMPILATION"
     compile_allowed = package_status == "READY_FOR_COMPILATION"
-    if package_status == "BLOCKED" and not allow_blocked:
-        raise PackageBuildError(
-            [
-                "package is BLOCKED; pass allow_blocked=True / --allow-blocked to emit "
-                "an audit-only blocked package",
-                *(
-                    [f"unresolved_blocking_issue_ids={unresolved_blocking}"]
-                    if unresolved_blocking
-                    else []
-                ),
-            ]
-        )
 
     confirmed_abox_sorted = sorted(
         confirmed_abox,
@@ -372,7 +471,7 @@ def build_confirmed_modeling_package(
         "review_policy_hash": review_policy_hash(policy),
     }
 
-    package: dict[str, Any] = {
+    return {
         "contract_version": "1.0",
         "source_proposal_id": proposal["proposal_id"],
         "source_proposal_hash": proposal["proposal_semantic_hash"],
@@ -389,9 +488,72 @@ def build_confirmed_modeling_package(
         "deferred_items": deferred_sorted,
         "publication_manifest": publication_manifest,
     }
+
+
+def complete_confirmed_package(content: Mapping[str, Any]) -> dict[str, Any]:
+    """Attach deterministic package_id and package_semantic_hash."""
+
+    package = deepcopy(dict(content))
     digest = package_semantic_hash(package)
     package["package_semantic_hash"] = digest
     package["package_id"] = confirmed_package_id(digest)
+    return package
+
+
+def build_confirmed_modeling_package(
+    cleaned_partial_data: Mapping[str, Any],
+    proposal: Mapping[str, Any],
+    decision_log: Mapping[str, Any],
+    ontology_baseline: Mapping[str, Any],
+    mapping_rules: Mapping[str, Any],
+    terminology_profile: Mapping[str, Any],
+    proposal_policy: Mapping[str, Any],
+    review_policy: Mapping[str, Any] | None = None,
+    *,
+    allow_blocked: bool = False,
+    term_types: Mapping[str, str] | None = None,
+    functional_property_iris: frozenset[str] | None = None,
+) -> dict[str, Any]:
+    """Build the unique ConfirmedModelingPackage from a final review log."""
+
+    policy = review_policy if review_policy is not None else load_default_review_policy()
+    types = dict(term_types) if term_types is not None else load_term_type_index()
+    functional = (
+        functional_property_iris
+        if functional_property_iris is not None
+        else load_functional_property_iris()
+    )
+    content = derive_confirmed_package_content(
+        cleaned_partial_data,
+        proposal,
+        decision_log,
+        ontology_baseline,
+        mapping_rules,
+        terminology_profile,
+        proposal_policy,
+        policy,
+        allow_blocked=True,
+        term_types=types,
+        functional_property_iris=functional,
+    )
+    if (
+        content["publication_manifest"]["package_status"] == "BLOCKED"
+        and not allow_blocked
+    ):
+        unresolved = content["publication_manifest"]["unresolved_blocking_issue_ids"]
+        raise PackageBuildError(
+            [
+                "package is BLOCKED; pass allow_blocked=True / --allow-blocked to emit "
+                "an audit-only blocked package",
+                *(
+                    [f"unresolved_blocking_issue_ids={unresolved}"]
+                    if unresolved
+                    else []
+                ),
+            ]
+        )
+    package = complete_confirmed_package(content)
+    from .semantic_validation import validate_confirmed_modeling_package_semantics
 
     validate_confirmed_modeling_package_semantics(
         package,
@@ -400,8 +562,22 @@ def build_confirmed_modeling_package(
         cleaned_partial_data=cleaned_partial_data,
         ontology_baseline=ontology_baseline,
         mapping_rules=mapping_rules,
+        terminology_profile=terminology_profile,
+        proposal_policy=proposal_policy,
         review_policy=policy,
         term_types=types,
+        functional_property_iris=functional,
         require_complete=True,
     )
     return package
+
+
+def packages_deterministically_equal(
+    actual: Mapping[str, Any],
+    expected: Mapping[str, Any],
+) -> list[str]:
+    """Return concrete mismatch paths when packages are not byte-identical."""
+
+    if canonical_json_bytes(actual) == canonical_json_bytes(expected):
+        return []
+    return _diff_paths(actual, expected) or ["$"]

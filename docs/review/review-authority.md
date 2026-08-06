@@ -51,3 +51,12 @@ Stage 05 forbids:
 - issue-count auto confirmation
 - LLM reviewers
 - compiling a proposal without a final ReviewDecisionLog
+
+## Verification authority
+
+A ConfirmedModelingPackage is authoritative only when it is the unique
+deterministic reconstruction of the frozen authorities above. Package
+self-hashes are not authorization proofs: an attacker who rewrites readiness or
+confirmed content and recomputes outer hashes still fails independent package
+validation. Review policy loading is fail-closed; missing or invalid policy
+never weakens checks.

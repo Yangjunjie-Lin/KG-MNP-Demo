@@ -342,13 +342,21 @@ def cmd_review_finalize(
     completed_at: str,
     output_path: Path | None,
     force: bool,
+    input_path: Path | None = None,
 ) -> int:
     proposal = _read_json(proposal_path)
     decision_log = _read_json(decision_log_path)
+    dependencies = _dependency_payload()
+    cleaned = _read_json(input_path) if input_path is not None else None
     final_log = finalize_review_decision_log(
         proposal,
         decision_log,
         completed_at=completed_at,
+        review_policy=dependencies["review_policy"],
+        term_types=dependencies["term_types"],
+        cleaned_partial_data=cleaned,
+        ontology_baseline=dependencies["ontology_baseline"],
+        mapping_rules=dependencies["mapping_rules"],
     )
     destination = output_path or Path("runtime_outputs") / "review" / "review-log.final.json"
     _write_json(destination, final_log, force=force)
@@ -431,15 +439,19 @@ def cmd_package_validate(
         cleaned_partial_data=cleaned,
         ontology_baseline=dependencies["ontology_baseline"],
         mapping_rules=dependencies["mapping_rules"],
+        terminology_profile=dependencies["terminology_profile"],
+        proposal_policy=dependencies["proposal_policy"],
         review_policy=dependencies["review_policy"],
         term_types=dependencies["term_types"],
         require_complete=True,
     )
     _json_print(
         {
-            "package_id": package.get("package_id"),
             "valid": True,
+            "deterministic_reconstruction_match": True,
+            "package_id": package.get("package_id"),
             "package_status": package.get("publication_manifest", {}).get("package_status"),
+            "compile_allowed": package.get("publication_manifest", {}).get("compile_allowed"),
         }
     )
     return 0
@@ -525,6 +537,11 @@ def build_parser() -> argparse.ArgumentParser:
     review_finalize.add_argument("--proposal", required=True, type=Path)
     review_finalize.add_argument("--decision-log", required=True, type=Path)
     review_finalize.add_argument("--completed-at", required=True)
+    review_finalize.add_argument(
+        "--input",
+        type=Path,
+        help="optional CleanedPartialData for finalize-time input checks",
+    )
     review_finalize.add_argument("--output", type=Path)
     review_finalize.add_argument("--force", action="store_true")
 
@@ -601,6 +618,7 @@ def main(argv: list[str] | None = None) -> int:
                 completed_at=args.completed_at,
                 output_path=args.output,
                 force=args.force,
+                input_path=getattr(args, "input", None),
             )
         if args.command == "confirm" and args.confirm_command == "build":
             return cmd_confirm_build(

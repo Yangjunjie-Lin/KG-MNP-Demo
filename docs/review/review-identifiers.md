@@ -45,3 +45,8 @@ SHA-256 over the full log excluding only `log_hash`.
 ```text
 urn:kg-mnp:confirmed-modeling-package:<package_semantic_hash>
 ```
+
+Self-hash proves only that the package bytes are self-consistent. It does **not**
+prove the package corresponds to authoritative Proposal / Final ReviewDecisionLog
+/ frozen dependency inputs. Independent reconstruction equality is required for
+that proof. Correctly recomputed outer hashes cannot launder tampered content.

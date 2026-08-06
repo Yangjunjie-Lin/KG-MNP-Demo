@@ -17,6 +17,11 @@ from .review_identifiers import (
 from .review_policy import load_default_review_policy
 from .semantic_validation import SemanticValidationError
 
+try:
+    from jsonschema import ValidationError as JsonSchemaValidationError
+except ImportError:  # pragma: no cover
+    JsonSchemaValidationError = Exception  # type: ignore[misc, assignment]
+
 
 def _parse_datetime(value: str) -> datetime:
     normalized = value.replace("Z", "+00:00")
@@ -183,6 +188,16 @@ def record_review_action(
         raise SemanticValidationError(
             ["completed ReviewDecisionLog cannot accept additional decisions"]
         )
+    from .semantic_validation import validate_review_decision_log_semantics
+
+    validate_review_decision_log_semantics(
+        decision_log,
+        proposal,
+        review_policy=review_policy,
+        require_final=False,
+        verify_draft_integrity=True,
+        term_types=term_types,
+    )
     if decision_log.get("proposal_id") != proposal.get("proposal_id"):
         raise SemanticValidationError(["decision log proposal_id does not match proposal"])
     if decision_log.get("proposal_semantic_hash") != proposal.get("proposal_semantic_hash"):
@@ -253,6 +268,10 @@ def finalize_review_decision_log(
     *,
     completed_at: str,
     review_policy: Mapping[str, Any] | None = None,
+    term_types: Mapping[str, str] | None = None,
+    cleaned_partial_data: Mapping[str, Any] | None = None,
+    ontology_baseline: Mapping[str, Any] | None = None,
+    mapping_rules: Mapping[str, Any] | None = None,
 ) -> dict[str, Any]:
     if is_log_completed(decision_log):
         raise SemanticValidationError(["ReviewDecisionLog is already completed"])
@@ -312,5 +331,25 @@ def finalize_review_decision_log(
         "completed_at": completed_at,
     }
     final_log["log_hash"] = decision_log_hash(final_log)
-    validate_contract("review-decision-log", final_log)
+    try:
+        validate_contract("review-decision-log", final_log)
+    except JsonSchemaValidationError as exc:
+        raise SemanticValidationError(
+            [f"final ReviewDecisionLog schema validation failed: {exc.message}"]
+        ) from exc
+
+    from .package_validation import load_term_type_index
+    from .semantic_validation import validate_review_decision_log_semantics
+
+    types = dict(term_types) if term_types is not None else load_term_type_index()
+    validate_review_decision_log_semantics(
+        final_log,
+        proposal,
+        cleaned_partial_data=cleaned_partial_data,
+        ontology_baseline=ontology_baseline,
+        mapping_rules=mapping_rules,
+        review_policy=policy,
+        require_final=True,
+        term_types=types,
+    )
     return final_log

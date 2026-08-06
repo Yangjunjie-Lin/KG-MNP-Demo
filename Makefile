@@ -9,7 +9,7 @@
 	verify-modeling-cli verify-stage-04 \
 	verify-review-contracts verify-review-policy verify-review-workflow \
 	verify-review-determinism verify-confirmed-package verify-package-readiness \
-	verify-review-cli verify-stage-05
+	verify-review-security verify-review-cli verify-stage-05
 
 PYTHON_CORE_TESTS = \
 	tests/test_ontology.py \
@@ -185,6 +185,15 @@ verify-confirmed-package:
 verify-package-readiness:
 	python -m pytest -q tests/review/test_package_readiness.py
 
+verify-review-security:
+	python -m pytest -q \
+		tests/review/test_review_finalization_fail_closed.py \
+		tests/review/test_package_reconstruction_validation.py \
+		tests/review/test_full_dependency_binding.py \
+		tests/review/test_review_policy_fail_closed.py \
+		tests/review/test_package_validation_cli_security.py \
+		tests/review/test_review_finalize_cli_security.py
+
 verify-review-cli:
 	python -m pytest -q \
 		tests/review/test_review_cli.py \
@@ -198,5 +207,6 @@ verify-stage-05:
 	$(MAKE) verify-review-determinism
 	$(MAKE) verify-confirmed-package
 	$(MAKE) verify-package-readiness
+	$(MAKE) verify-review-security
 	$(MAKE) verify-review-cli
 	python -m pytest -q tests/review/test_stage05_boundaries.py
