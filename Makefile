@@ -13,7 +13,7 @@
  verify-compiler-contracts verify-compiler-policy verify-compiler-mapping \
  verify-compiler-provenance verify-compiler-rdf verify-compiler-shacl \
  verify-compiler-reasoner verify-compiler-determinism verify-compiler-security \
- verify-compiler-cli verify-stage-06
+ verify-compiler-cli verify-compiler-semantic-closure verify-stage-06
 
 PYTHON_CORE_TESTS = \
 	tests/test_ontology.py \
@@ -246,6 +246,16 @@ verify-compiler-security:
 verify-compiler-cli:
 	python -m pytest -q tests/compilation/test_compilation_cli.py
 
+verify-compiler-semantic-closure:
+	python -m pytest -q \
+		tests/compilation/test_data_property_compilation.py \
+		tests/compilation/test_shacl_validation.py \
+		tests/compilation/test_shacl_report_determinism.py \
+		tests/compilation/test_review_audit.py \
+		tests/compilation/test_compilation_contracts.py \
+		tests/compilation/test_compiler_policy.py \
+		tests/compilation/test_compilation_security.py
+
 verify-stage-06:
 	$(MAKE) verify-stage-05
 	$(MAKE) verify-compiler-contracts
@@ -258,4 +268,5 @@ verify-stage-06:
 	$(MAKE) verify-compiler-determinism
 	$(MAKE) verify-compiler-security
 	$(MAKE) verify-compiler-cli
+	$(MAKE) verify-compiler-semantic-closure
 	python -m pytest -q tests/compilation/test_stage06_boundaries.py

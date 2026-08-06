@@ -4,20 +4,105 @@
   "title": "KG-MNP Stage 06 Compiler Policy",
   "type": "object",
   "additionalProperties": false,
-  "required": ["contract_version", "compiler_policy_id", "compiler_policy_version", "compiler_version", "input_package_status", "blocked_package_policy", "schema_delta_policy", "candidate_compilation", "asserted_graph_policy", "serialization", "shacl", "owl_consistency", "graph_separation"],
+  "required": [
+    "contract_version", "compiler_policy_id", "compiler_policy_version",
+    "compiler_version", "input_package_status", "blocked_package_policy",
+    "schema_delta_policy", "literal_validation", "candidate_compilation",
+    "asserted_graph_policy", "serialization", "shacl", "owl_consistency",
+    "graph_separation"
+  ],
   "properties": {
     "contract_version": {"const": "1.0"},
-    "compiler_policy_id": {"type": "string", "minLength": 1},
+    "compiler_policy_id": {"const": "kg-mnp-stage06-formal-compiler"},
     "compiler_policy_version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"},
     "compiler_version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"},
     "input_package_status": {"const": "READY_FOR_COMPILATION"},
     "blocked_package_policy": {"const": "REJECT"},
     "schema_delta_policy": {"const": "FORBIDDEN"},
-    "candidate_compilation": {"type": "object", "additionalProperties": {"type": "string"}},
-    "asserted_graph_policy": {"type": "object", "additionalProperties": {"type": "string"}},
-    "serialization": {"type": "object", "additionalProperties": {"type": "string"}},
-    "shacl": {"type": "object", "additionalProperties": true},
-    "owl_consistency": {"type": "object", "additionalProperties": true},
-    "graph_separation": {"type": "object", "additionalProperties": {"type": "boolean"}}
+    "literal_validation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "xsd_date_lexical", "xsd_datetime_lexical", "xsd_datetime_timezone",
+        "calendar_validation", "cross_datatype_coercion"
+      ],
+      "properties": {
+        "xsd_date_lexical": {"const": "YYYY-MM-DD"},
+        "xsd_datetime_lexical": {"const": "YYYY-MM-DDTHH:MM:SS[.fraction]Z"},
+        "xsd_datetime_timezone": {"const": "UTC_Z_ONLY"},
+        "calendar_validation": {"const": "STRICT"},
+        "cross_datatype_coercion": {"const": "FORBIDDEN"}
+      }
+    },
+    "candidate_compilation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ENTITY", "CLASS_ASSERTION", "OBJECT_PROPERTY_ASSERTION", "DATA_PROPERTY_ASSERTION", "MAPPING_ASSERTION"],
+      "properties": {
+        "ENTITY": {"const": "RDF_TYPE_ASSERTION"},
+        "CLASS_ASSERTION": {"const": "RDF_TYPE_ASSERTION"},
+        "OBJECT_PROPERTY_ASSERTION": {"const": "OBJECT_PROPERTY_TRIPLE"},
+        "DATA_PROPERTY_ASSERTION": {"const": "TYPED_LITERAL_TRIPLE"},
+        "MAPPING_ASSERTION": {"const": "FORBIDDEN_UNTIL_TYPED_OBJECT_CONTRACT"}
+      }
+    },
+    "asserted_graph_policy": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["inference_materialization", "blank_nodes", "unreviewed_assertions", "rejected_items", "deferred_items"],
+      "properties": {
+        "inference_materialization": {"const": "FORBIDDEN"},
+        "blank_nodes": {"const": "FORBIDDEN"},
+        "unreviewed_assertions": {"const": "FORBIDDEN"},
+        "rejected_items": {"const": "AUDIT_ONLY"},
+        "deferred_items": {"const": "AUDIT_ONLY"}
+      }
+    },
+    "serialization": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["authoritative_abox", "authoritative_dataset", "human_readable_abox", "human_readable_dataset", "line_endings", "encoding"],
+      "properties": {
+        "authoritative_abox": {"const": "CANONICAL_NTRIPLES"},
+        "authoritative_dataset": {"const": "CANONICAL_NQUADS"},
+        "human_readable_abox": {"const": "DETERMINISTIC_TURTLE"},
+        "human_readable_dataset": {"const": "DETERMINISTIC_TRIG"},
+        "line_endings": {"const": "LF"},
+        "encoding": {"const": "UTF-8"}
+      }
+    },
+    "shacl": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["default_profiles", "violation_policy", "warning_policy", "info_policy", "inference", "automatic_repair"],
+      "properties": {
+        "default_profiles": {"const": ["foundation-instance"]},
+        "violation_policy": {"const": "BLOCK_COMPILATION"},
+        "warning_policy": {"const": "RECORD"},
+        "info_policy": {"const": "RECORD"},
+        "inference": {"const": "RDFS"},
+        "automatic_repair": {"const": "FORBIDDEN"}
+      }
+    },
+    "owl_consistency": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["required", "unknown_policy", "not_run_policy"],
+      "properties": {
+        "required": {"const": true},
+        "unknown_policy": {"const": "FAIL"},
+        "not_run_policy": {"const": "FAIL"}
+      }
+    },
+    "graph_separation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["business_abox", "modeling_provenance", "review_audit"],
+      "properties": {
+        "business_abox": {"const": true},
+        "modeling_provenance": {"const": true},
+        "review_audit": {"const": true}
+      }
+    }
   }
 }

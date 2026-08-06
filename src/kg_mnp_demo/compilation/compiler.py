@@ -8,6 +8,11 @@ from typing import Any, Mapping
 
 from rdflib import URIRef
 
+from ..modeling.dependencies import (
+    ROOT,
+    TERM_INVENTORY_PATH,
+    verify_ontology_baseline_manifest,
+)
 from ..modeling.package_validation import load_term_type_index
 from ..modeling.semantic_validation import validate_confirmed_modeling_package_semantics
 from .abox_compiler import compile_abox
@@ -16,7 +21,13 @@ from .contracts import validate_compilation_contract
 from .identifiers import graph_iri
 from .manifest import artifact_record, complete_manifest, json_bytes, json_semantic_hash, rdf_semantic_hash
 from .owl_consistency import check_owl_consistency, load_ontology_graph
-from .policy import compiler_policy_hash, load_compiler_policy, validate_compiler_policy
+from .policy import (
+    POLICY_PATH,
+    compiler_policy_hash,
+    load_compiler_policy,
+    profile_files,
+    validate_compiler_policy,
+)
 from .provenance_compiler import compile_modeling_provenance
 from .rdf_canonical import (
     canonical_nquads,
@@ -42,6 +53,8 @@ def validate_ready_package(
     terminology_profile: Mapping[str, Any],
     proposal_policy: Mapping[str, Any],
     review_policy: Mapping[str, Any],
+    *,
+    term_types: Mapping[str, str] | None = None,
 ) -> None:
     validate_confirmed_modeling_package_semantics(
         package,
@@ -53,7 +66,7 @@ def validate_ready_package(
         terminology_profile=terminology_profile,
         proposal_policy=proposal_policy,
         review_policy=review_policy,
-        term_types=load_term_type_index(),
+        term_types=term_types if term_types is not None else load_term_type_index(),
         require_complete=True,
     )
     manifest = package.get("publication_manifest", {})
@@ -63,6 +76,53 @@ def validate_ready_package(
         raise CompilationError("confirmed package compile_allowed must be true")
     if package.get("confirmed_schema_delta") != []:
         raise CompilationError("confirmed_schema_delta must be empty")
+
+
+def validate_compilation_authorities(
+    cleaned_partial_data: Mapping[str, Any],
+    proposal: Mapping[str, Any],
+    decision_log: Mapping[str, Any],
+    package: Mapping[str, Any],
+    ontology_baseline: Mapping[str, Any],
+    mapping_rules: Mapping[str, Any],
+    terminology_profile: Mapping[str, Any],
+    proposal_policy: Mapping[str, Any],
+    review_policy: Mapping[str, Any],
+    compiler_policy: Mapping[str, Any] | None = None,
+    *,
+    authority_root: Path = ROOT,
+) -> dict[str, Any]:
+    """Validate every compiler authority before any execution or artifact work."""
+
+    root = authority_root.resolve()
+    baseline_errors = verify_ontology_baseline_manifest(ontology_baseline, root=root)
+    if baseline_errors:
+        raise CompilationError(
+            "ontology baseline verification failed: " + "; ".join(baseline_errors)
+        )
+    term_inventory = root / "docs" / "ontology" / TERM_INVENTORY_PATH.name
+    term_types = load_term_type_index(term_inventory)
+    validate_ready_package(
+        cleaned_partial_data,
+        proposal,
+        decision_log,
+        package,
+        ontology_baseline,
+        mapping_rules,
+        terminology_profile,
+        proposal_policy,
+        review_policy,
+        term_types=term_types,
+    )
+    policy = (
+        dict(compiler_policy)
+        if compiler_policy is not None
+        else load_compiler_policy(root / "config" / "compilation" / POLICY_PATH.name)
+    )
+    validate_compiler_policy(policy)
+    for profile_id in policy["shacl"]["default_profiles"]:
+        profile_files(profile_id, root=root)
+    return policy
 
 
 def _rdf_hash(data: bytes) -> str:
@@ -80,16 +140,31 @@ def build_artifact_set(
     proposal_policy: Mapping[str, Any],
     review_policy: Mapping[str, Any],
     compiler_policy: Mapping[str, Any] | None = None,
+    *,
+    authority_root: Path = ROOT,
 ) -> tuple[dict[str, bytes], dict[str, Any]]:
-    policy = dict(compiler_policy) if compiler_policy is not None else load_compiler_policy()
-    validate_compiler_policy(policy)
-    validate_ready_package(
-        cleaned_partial_data, proposal, decision_log, package, ontology_baseline,
-        mapping_rules, terminology_profile, proposal_policy, review_policy,
+    policy = validate_compilation_authorities(
+        cleaned_partial_data,
+        proposal,
+        decision_log,
+        package,
+        ontology_baseline,
+        mapping_rules,
+        terminology_profile,
+        proposal_policy,
+        review_policy,
+        compiler_policy,
+        authority_root=authority_root,
     )
     package_hash = str(package["package_semantic_hash"])
     abox_graph, assertions = compile_abox(
-        package, proposal, ontology_baseline, compilation_hash=package_hash,
+        package,
+        proposal,
+        ontology_baseline,
+        compilation_hash=package_hash,
+        term_types=load_term_type_index(
+            authority_root / "docs" / "ontology" / TERM_INVENTORY_PATH.name
+        ),
     )
     provenance_graph = compile_modeling_provenance(assertions)
     review_graph = compile_review_audit(decision_log, package)
@@ -113,15 +188,20 @@ def build_artifact_set(
         for subject, predicate, obj in graph
     ]
     dataset_nq = canonical_nquads(quads)
-    ontology_graph = load_ontology_graph()
+    ontology_graph = load_ontology_graph(root=authority_root)
     shacl_report, shacl_graph, profile_manifest, frozen_profiles = validate_abox(
         abox_graph, ontology_graph,
         profile_ids=tuple(policy["shacl"]["default_profiles"]),
+        repository_root=authority_root,
     )
     if shacl_report["violation_count"]:
         raise CompilationError("SHACL validation reported a Violation")
     consistency = check_owl_consistency(
-        abox_graph, ontology_baseline, package_hash, ontology_graph=ontology_graph,
+        abox_graph,
+        ontology_baseline,
+        package_hash,
+        ontology_graph=ontology_graph,
+        root=authority_root,
     )
     if consistency.get("status") != "CONSISTENT":
         raise CompilationError(f"OWL consistency check did not pass: {consistency.get('status')}")
@@ -235,11 +315,13 @@ def compile_formal_semantics(
     compiler_policy: Mapping[str, Any] | None = None,
     *,
     force: bool = False,
+    authority_root: Path = ROOT,
 ) -> dict[str, Any]:
     files, manifest = build_artifact_set(
         cleaned_partial_data, proposal, decision_log, package, ontology_baseline,
         mapping_rules, terminology_profile, proposal_policy, review_policy,
         compiler_policy,
+        authority_root=authority_root,
     )
     write_artifact_set(output_dir, files, force=force)
     return manifest

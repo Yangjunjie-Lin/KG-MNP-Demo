@@ -61,8 +61,10 @@ def check_owl_consistency(
     source_package_hash: str,
     *,
     ontology_graph: Graph | None = None,
+    root: Path = ROOT,
 ) -> dict[str, Any]:
-    asserted_ontology = ontology_graph if ontology_graph is not None else load_ontology_graph()
+    root = root.resolve()
+    asserted_ontology = ontology_graph if ontology_graph is not None else load_ontology_graph(root=root)
     abox_semantic_hash = hashlib.sha256(canonical_ntriples(abox_graph)).hexdigest()
     combined = Graph()
     for graph in (asserted_ontology, abox_graph):
@@ -81,10 +83,11 @@ def check_owl_consistency(
         "combined_input_semantic_hash": combined_hash,
         "source_package_hash": source_package_hash,
     }
-    if not ROBOT_JAR.is_file() or _sha256(ROBOT_JAR) != ROBOT_SHA256:
+    robot_jar = root / "third_party" / "downloads" / ROBOT_JAR.name
+    if not robot_jar.is_file() or _sha256(robot_jar) != ROBOT_SHA256:
         return {**base, "status": "FAILED", "consistent": False, "exit_code": None}
-    base["hermit_dependency_version"] = _hermit_version(ROBOT_JAR)
-    work = ROOT / "runtime_outputs" / "compilation" / f".reasoner-{combined_hash}"
+    base["hermit_dependency_version"] = _hermit_version(robot_jar)
+    work = root / "runtime_outputs" / "compilation" / f".reasoner-{combined_hash}"
     if work.exists():
         shutil.rmtree(work)
     work.mkdir(parents=True)
@@ -94,7 +97,7 @@ def check_owl_consistency(
     try:
         process = subprocess.run(
             [
-                "java", "-jar", str(ROBOT_JAR), "reason",
+                "java", "-jar", str(robot_jar), "reason",
                 "--input", str(input_path), "--reasoner", "hermit",
                 "--equivalent-classes-allowed", "all", "--output", str(output_path),
             ],

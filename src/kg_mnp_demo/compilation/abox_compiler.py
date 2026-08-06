@@ -4,6 +4,8 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from decimal import Decimal, InvalidOperation
+from datetime import datetime
+import re
 from typing import Any, Mapping
 
 from rdflib import OWL, RDF, RDFS, SH, XSD, Graph, Literal, URIRef
@@ -29,6 +31,45 @@ FORBIDDEN_TYPE_OBJECTS = {
 
 class ABoxCompilationError(ValueError):
     pass
+
+
+_XSD_DATE_RE = re.compile(r"(?P<date>\d{4}-\d{2}-\d{2})")
+_XSD_DATETIME_RE = re.compile(
+    r"(?P<date>\d{4}-\d{2}-\d{2})T(?P<time>\d{2}:\d{2}:\d{2})"
+    r"(?:\.(?P<fraction>\d+))?Z"
+)
+
+
+def _validate_strict_calendar_lexical(raw: str, datatype: str) -> None:
+    if datatype == str(XSD.date):
+        match = _XSD_DATE_RE.fullmatch(raw)
+        if match is None:
+            raise ABoxCompilationError(
+                f"invalid xsd:date lexical value: {raw!r}; expected YYYY-MM-DD"
+            )
+        try:
+            datetime.strptime(match.group("date"), "%Y-%m-%d")
+        except ValueError as exc:
+            raise ABoxCompilationError(
+                f"invalid xsd:date calendar value: {raw!r}"
+            ) from exc
+        return
+
+    match = _XSD_DATETIME_RE.fullmatch(raw)
+    if match is None:
+        raise ABoxCompilationError(
+            "invalid xsd:dateTime lexical value: "
+            f"{raw!r}; expected YYYY-MM-DDTHH:MM:SS[.fraction]Z"
+        )
+    try:
+        datetime.strptime(
+            f"{match.group('date')}T{match.group('time')}",
+            "%Y-%m-%dT%H:%M:%S",
+        )
+    except ValueError as exc:
+        raise ABoxCompilationError(
+            f"invalid xsd:dateTime calendar value: {raw!r}"
+        ) from exc
 
 
 @dataclass(frozen=True)
@@ -114,10 +155,8 @@ def _literal(value: Any) -> Literal:
         return Literal(lexical, datatype=XSD.decimal, normalize=False)
     if not isinstance(raw, str):
         raise ABoxCompilationError("date/dateTime values must use canonical strings")
-    literal = Literal(raw, datatype=URIRef(datatype), normalize=False)
-    if literal.toPython() == raw:
-        raise ABoxCompilationError(f"invalid lexical value for {datatype}")
-    return literal
+    _validate_strict_calendar_lexical(raw, datatype)
+    return Literal(raw, datatype=URIRef(datatype), normalize=False)
 
 
 def _validate_term_type(iri: str, expected: set[str], term_types: Mapping[str, str], field: str) -> None:

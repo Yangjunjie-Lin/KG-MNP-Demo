@@ -6,9 +6,10 @@ import json
 from pathlib import Path
 from typing import Any, Mapping
 
-from .compiler import build_artifact_set, validate_ready_package
+from .compiler import build_artifact_set
+from .contracts import CompilationContractError, validate_compilation_contract
+from ..modeling.dependencies import ROOT
 from .manifest import compilation_manifest_hash
-from .policy import load_compiler_policy
 
 
 class CompilationValidationError(ValueError):
@@ -42,21 +43,21 @@ def validate_compilation_package_against_authorities(
     proposal_policy: Mapping[str, Any],
     review_policy: Mapping[str, Any],
     compiler_policy: Mapping[str, Any] | None = None,
+    *,
+    authority_root: Path = ROOT,
 ) -> dict[str, Any]:
     root = Path(compilation_directory)
     if not root.is_dir():
         raise CompilationValidationError(f"compilation directory is missing: {root}")
-    policy = compiler_policy if compiler_policy is not None else load_compiler_policy()
     try:
-        validate_ready_package(
-            cleaned_partial_data, proposal, final_review_decision_log,
-            confirmed_modeling_package, ontology_baseline, mapping_rules,
-            terminology_profile, proposal_policy, review_policy,
-        )
         expected_files, expected_manifest = build_artifact_set(
             cleaned_partial_data, proposal, final_review_decision_log,
             confirmed_modeling_package, ontology_baseline, mapping_rules,
-            terminology_profile, proposal_policy, review_policy, policy,
+            terminology_profile,
+            proposal_policy,
+            review_policy,
+            compiler_policy,
+            authority_root=authority_root,
         )
     except Exception as exc:
         raise CompilationValidationError(f"authoritative reconstruction failed: {exc}") from exc
@@ -65,6 +66,10 @@ def validate_compilation_package_against_authorities(
     if not actual_manifest_path.is_file():
         raise CompilationValidationError("compilation-manifest.json is missing")
     actual_manifest = _load(actual_manifest_path)
+    try:
+        validate_compilation_contract("compilation-manifest", actual_manifest)
+    except CompilationContractError as exc:
+        raise CompilationValidationError(f"invalid compilation manifest contract: {exc}") from exc
     if compilation_manifest_hash(actual_manifest) != actual_manifest.get("compilation_semantic_hash"):
         raise CompilationValidationError("compilation manifest semantic self-hash mismatch")
     if actual_manifest.get("compilation_id") != expected_manifest.get("compilation_id"):

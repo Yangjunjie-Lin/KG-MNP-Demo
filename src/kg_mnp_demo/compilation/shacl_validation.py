@@ -32,13 +32,18 @@ def _shape_semantic_hash(graph: Graph) -> str:
     return hashlib.sha256((("\n".join(lines) + "\n") if lines else "").encode("utf-8")).hexdigest()
 
 
-def load_shapes(profile_ids: Sequence[str] = ("foundation-instance",)) -> tuple[Graph, dict[str, Any], dict[str, bytes]]:
+def load_shapes(
+    profile_ids: Sequence[str] = ("foundation-instance",),
+    *,
+    repository_root=ROOT,
+) -> tuple[Graph, dict[str, Any], dict[str, bytes]]:
+    repository_root = repository_root.resolve()
     shapes = Graph()
     records: list[dict[str, Any]] = []
     frozen_files: dict[str, bytes] = {}
     for profile_id in sorted(set(profile_ids)):
-        for path in profile_files(profile_id):
-            relative = path.relative_to(ROOT).as_posix()
+        for path in profile_files(profile_id, root=repository_root):
+            relative = path.relative_to(repository_root).as_posix()
             data = _lf(path.read_bytes())
             frozen_files[relative] = data
             file_graph = Graph()
@@ -82,12 +87,47 @@ def _stable_blank_node(graph: Graph, value: BNode, active: set[BNode] | None = N
     return "urn:kg-mnp:shacl-node:" + digest
 
 
-def _node(graph: Graph, value: Any) -> str | None:
+def _node(graph: Graph, value: Any) -> dict[str, Any] | None:
     if value is None:
         return None
     if isinstance(value, BNode):
-        return _stable_blank_node(graph, value)
-    return str(value)
+        return {
+            "term_type": "STRUCTURAL_NODE",
+            "stable_id": _stable_blank_node(graph, value),
+        }
+    if isinstance(value, Literal):
+        return {
+            "term_type": "LITERAL",
+            "lexical_form": str(value),
+            "datatype_iri": (
+                str(RDF.langString)
+                if value.language is not None
+                else (str(value.datatype) if value.datatype is not None else None)
+            ),
+            "language": value.language,
+        }
+    if isinstance(value, URIRef):
+        return {"term_type": "IRI", "value": str(value)}
+    raise SHACLValidationError(f"unsupported SHACL RDF term: {value!r}")
+
+
+def _term_from_projection(value: Mapping[str, Any]) -> URIRef | Literal:
+    term_type = value.get("term_type")
+    if term_type == "IRI":
+        return URIRef(str(value["value"]))
+    if term_type == "STRUCTURAL_NODE":
+        return URIRef(str(value["stable_id"]))
+    if term_type == "LITERAL":
+        language = value.get("language")
+        if language is not None:
+            return Literal(str(value["lexical_form"]), lang=str(language))
+        datatype = value.get("datatype_iri")
+        return Literal(
+            str(value["lexical_form"]),
+            datatype=URIRef(str(datatype)) if datatype is not None else None,
+            normalize=False,
+        )
+    raise SHACLValidationError(f"invalid RDF term projection type: {term_type!r}")
 
 
 def _first(graph: Graph, subject: Any, predicate: Any) -> Any:
@@ -126,7 +166,7 @@ def _deterministic_report_graph(report: Mapping[str, Any]) -> Graph:
         for field, predicate in fields:
             value = result.get(field)
             if value is not None:
-                graph.add((result_iri, predicate, URIRef(str(value))))
+                graph.add((result_iri, predicate, _term_from_projection(value)))
         if result.get("message"):
             graph.add((result_iri, SH.resultMessage, Literal(str(result["message"]))))
     return graph
@@ -137,8 +177,12 @@ def validate_abox(
     ontology_graph: Graph,
     *,
     profile_ids: Sequence[str] = ("foundation-instance",),
+    repository_root=ROOT,
 ) -> tuple[dict[str, Any], Graph, dict[str, Any], dict[str, bytes]]:
-    shapes, profile_manifest, frozen_files = load_shapes(profile_ids)
+    shapes, profile_manifest, frozen_files = load_shapes(
+        profile_ids,
+        repository_root=repository_root,
+    )
     try:
         conforms, raw_results, _ = validate(
             data_graph=data_graph,
@@ -163,7 +207,12 @@ def validate_abox(
         content["result_id"] = shacl_result_id(content)
         results.append(content)
     results.sort(key=lambda item: item["result_id"])
-    severities = [item.get("severity") for item in results]
+    severities = [
+        item.get("severity", {}).get("value")
+        if isinstance(item.get("severity"), Mapping)
+        else None
+        for item in results
+    ]
     violation_count = sum(value == str(SH.Violation) for value in severities)
     warning_count = sum(value == str(SH.Warning) for value in severities)
     info_count = sum(value == str(SH.Info) for value in severities)

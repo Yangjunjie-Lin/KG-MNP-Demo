@@ -10,3 +10,9 @@ The compiler is a deterministic representation step, not a new modeling
 decision-maker. Rejected and deferred items are retained only in the review
 audit graph. Reasoning and SHACL validate the asserted result and never write
 back to it.
+
+Both the compiler and reconstruction validator verify the supplied ontology
+baseline against the current Stage 03 ontology files, module configuration,
+term inventory, and reasoner attestation. This gate is part of the Python API,
+not a CLI precondition. A stale or forged baseline fails before profiles are
+loaded, SHACL or HermiT executes, or any artifact is written.

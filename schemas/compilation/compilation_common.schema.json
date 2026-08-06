@@ -3,9 +3,127 @@
   "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/common/1.0",
   "title": "KG-MNP Stage 06 Common Contract",
   "type": "object",
-  "additionalProperties": true,
+  "additionalProperties": false,
   "$defs": {
-    "SHA256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
-    "URN": {"type": "string", "pattern": "^urn:kg-mnp:[a-z0-9-]+:.+$"}
+    "SHA256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "StableURN": {
+      "type": "string",
+      "pattern": "^urn:kg-mnp:[a-z0-9-]+:[^\\s]+$"
+    },
+    "AbsoluteIRI": {
+      "type": "string",
+      "pattern": "^(?:https?|urn):[^\\s]+$"
+    },
+    "RDFTerm": {
+      "oneOf": [
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["term_type", "value"],
+          "properties": {
+            "term_type": {"const": "IRI"},
+            "value": {"$ref": "#/$defs/AbsoluteIRI"}
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["term_type", "lexical_form", "datatype_iri", "language"],
+          "properties": {
+            "term_type": {"const": "LITERAL"},
+            "lexical_form": {"type": "string"},
+            "datatype_iri": {
+              "anyOf": [
+                {"$ref": "#/$defs/AbsoluteIRI"},
+                {"type": "null"}
+              ]
+            },
+            "language": {
+              "anyOf": [
+                {"type": "string", "pattern": "^[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$"},
+                {"type": "null"}
+              ]
+            }
+          },
+          "allOf": [
+            {
+              "if": {"properties": {"language": {"type": "string"}}, "required": ["language"]},
+              "then": {"properties": {"datatype_iri": {"const": "http://www.w3.org/1999/02/22-rdf-syntax-ns#langString"}}}
+            }
+          ]
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["term_type", "stable_id"],
+          "properties": {
+            "term_type": {"const": "STRUCTURAL_NODE"},
+            "stable_id": {"type": "string", "pattern": "^urn:kg-mnp:shacl-node:[0-9a-f]{64}$"}
+          }
+        }
+      ]
+    },
+    "ArtifactRecord": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "artifact_id", "relative_path", "role", "media_type", "byte_sha256",
+        "semantic_sha256", "size_bytes"
+      ],
+      "properties": {
+        "artifact_id": {"type": "string", "pattern": "^urn:kg-mnp:artifact:[0-9a-f]{64}$"},
+        "relative_path": {"type": "string", "minLength": 1},
+        "role": {
+          "enum": [
+            "SOURCE_PACKAGE", "SOURCE_REVIEW_LOG", "CANONICAL_ABOX", "OWL_ABOX",
+            "MODELING_PROVENANCE", "REVIEW_AUDIT", "CANONICAL_DATASET",
+            "HUMAN_READABLE_DATASET", "SHACL_PROFILE_MANIFEST", "SHACL_PROFILE",
+            "SHACL_REPORT", "OWL_CONSISTENCY_REPORT"
+          ]
+        },
+        "media_type": {
+          "enum": [
+            "application/json", "application/n-triples", "text/turtle",
+            "application/n-quads", "application/trig"
+          ]
+        },
+        "byte_sha256": {"$ref": "#/$defs/SHA256"},
+        "semantic_sha256": {"$ref": "#/$defs/SHA256"},
+        "size_bytes": {"type": "integer", "minimum": 0},
+        "triple_count": {"type": "integer", "minimum": 0},
+        "quad_count": {"type": "integer", "minimum": 0}
+      }
+    },
+    "GraphIRIManifest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["business_abox", "modeling_provenance", "review_audit"],
+      "properties": {
+        "business_abox": {"$ref": "#/$defs/AbsoluteIRI"},
+        "modeling_provenance": {"$ref": "#/$defs/AbsoluteIRI"},
+        "review_audit": {"$ref": "#/$defs/AbsoluteIRI"}
+      }
+    },
+    "SHACLResult": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "result_id", "focus_node", "result_path", "value", "source_shape",
+        "source_constraint_component", "severity", "message"
+      ],
+      "properties": {
+        "result_id": {"type": "string", "pattern": "^urn:kg-mnp:shacl-result:[0-9a-f]{64}$"},
+        "focus_node": {"anyOf": [{"$ref": "#/$defs/RDFTerm"}, {"type": "null"}]},
+        "result_path": {"anyOf": [{"$ref": "#/$defs/RDFTerm"}, {"type": "null"}]},
+        "value": {"anyOf": [{"$ref": "#/$defs/RDFTerm"}, {"type": "null"}]},
+        "source_shape": {"anyOf": [{"$ref": "#/$defs/RDFTerm"}, {"type": "null"}]},
+        "source_constraint_component": {"anyOf": [{"$ref": "#/$defs/RDFTerm"}, {"type": "null"}]},
+        "severity": {"anyOf": [{"$ref": "#/$defs/RDFTerm"}, {"type": "null"}]},
+        "message": {"type": "string"}
+      }
+    }
   }
 }

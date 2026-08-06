@@ -4,15 +4,31 @@
   "title": "KG-MNP Stage 06 SHACL Validation Report",
   "type": "object",
   "additionalProperties": false,
-  "required": ["report_id", "conforms", "status", "results"],
+  "required": [
+    "report_id", "conforms", "status", "results", "violation_count",
+    "warning_count", "info_count", "profile_bundle_hash"
+  ],
   "properties": {
     "report_id": {"type": "string", "pattern": "^urn:kg-mnp:shacl-report:[0-9a-f]{64}$"},
     "conforms": {"type": "boolean"},
     "status": {"enum": ["CONFORMS", "VIOLATION", "FAILED"]},
-    "results": {"type": "array"},
+    "results": {
+      "type": "array",
+      "items": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/common/1.0#/$defs/SHACLResult"}
+    },
     "violation_count": {"type": "integer", "minimum": 0},
     "warning_count": {"type": "integer", "minimum": 0},
     "info_count": {"type": "integer", "minimum": 0},
-    "profile_bundle_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
-  }
+    "profile_bundle_hash": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/common/1.0#/$defs/SHA256"}
+  },
+  "allOf": [
+    {
+      "if": {"properties": {"status": {"const": "CONFORMS"}}, "required": ["status"]},
+      "then": {"properties": {"conforms": {"const": true}}}
+    },
+    {
+      "if": {"properties": {"status": {"const": "CONFORMS"}}, "required": ["status"]},
+      "else": {"properties": {"conforms": {"const": false}}}
+    }
+  ]
 }

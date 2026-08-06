@@ -6,6 +6,13 @@ input_package_status: "READY_FOR_COMPILATION"
 blocked_package_policy: "REJECT"
 schema_delta_policy: "FORBIDDEN"
 
+literal_validation:
+  xsd_date_lexical: "YYYY-MM-DD"
+  xsd_datetime_lexical: "YYYY-MM-DDTHH:MM:SS[.fraction]Z"
+  xsd_datetime_timezone: "UTC_Z_ONLY"
+  calendar_validation: "STRICT"
+  cross_datatype_coercion: "FORBIDDEN"
+
 candidate_compilation:
   ENTITY: "RDF_TYPE_ASSERTION"
   CLASS_ASSERTION: "RDF_TYPE_ASSERTION"
