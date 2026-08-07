@@ -5,7 +5,7 @@
 @prefix sail: <http://www.openrdf.org/config/sail#> .
 
 _:repository a rep:Repository ;
-    rep:repositoryID "kg-mnp-cd3494dff3cc7cfe3bb7" ;
+    rep:repositoryID "kg-mnp-17fcdeeb21014f7b6dbc" ;
     rdfs:label "KG-MNP Deterministic Knowledge Graph" ;
     rep:repositoryImpl _:impl .
 

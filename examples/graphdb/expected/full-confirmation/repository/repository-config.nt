@@ -1,6 +1,6 @@
 _:impl <http://www.openrdf.org/config/repository#repositoryType> "graphdb:SailRepository" .
 _:impl <http://www.openrdf.org/config/repository/sail#sailImpl> _:sail .
-_:repository <http://www.openrdf.org/config/repository#repositoryID> "kg-mnp-04fa226ebaa2946d84a9" .
+_:repository <http://www.openrdf.org/config/repository#repositoryID> "kg-mnp-8e7873f07736e86f7d70" .
 _:repository <http://www.openrdf.org/config/repository#repositoryImpl> _:impl .
 _:repository <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.openrdf.org/config/repository#Repository> .
 _:repository <http://www.w3.org/2000/01/rdf-schema#label> "KG-MNP Deterministic Knowledge Graph" .

@@ -3,5 +3,6 @@ PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
 PREFIX sh: <http://www.w3.org/ns/shacl#>
 PREFIX prov: <http://www.w3.org/ns/prov#>
+PREFIX dcterms: <http://purl.org/dc/terms/>
 PREFIX mnp: <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#>
 ASK { FILTER NOT EXISTS { GRAPH ?g { ?s ?p ?o . FILTER(isBlank(?s) || isBlank(?p) || isBlank(?o) || isBlank(?g)) } } }

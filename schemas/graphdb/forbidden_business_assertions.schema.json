@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/graphdb/forbidden-business-assertions/1.0",
+  "type": "object", "additionalProperties": false,
+  "required": ["contract_version", "forbidden_assertion_count", "projection_record_count", "canonical_ntriples_sha256", "semantic_hash", "records"],
+  "properties": {
+    "contract_version": {"const": "1.0"},
+    "forbidden_assertion_count": {"type": "integer", "minimum": 0},
+    "projection_record_count": {"type": "integer", "minimum": 0},
+    "canonical_ntriples_sha256": {"$ref": "#/$defs/hash"},
+    "semantic_hash": {"$ref": "#/$defs/hash"},
+    "records": {"type": "array", "items": {"$ref": "#/$defs/record"}}
+  },
+  "$defs": {
+    "hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "rdfObject": {
+      "type": "object", "additionalProperties": false,
+      "required": ["term_type", "value"],
+      "properties": {
+        "term_type": {"enum": ["IRI", "LITERAL"]},
+        "value": {"type": "string"},
+        "datatype_iri": {"type": "string", "format": "uri"},
+        "language": {"type": "string", "minLength": 1}
+      },
+      "not": {"required": ["datatype_iri", "language"]}
+    },
+    "record": {
+      "type": "object", "additionalProperties": false,
+      "required": ["decision_id", "decision_outcome", "source_candidate_id", "effective_candidate_id", "candidate_kind", "projection_status", "reason", "subject", "predicate", "object", "canonical_ntriples_line"],
+      "properties": {
+        "decision_id": {"type": "string", "format": "uri"},
+        "decision_outcome": {"enum": ["REJECT", "DEFER"]},
+        "source_candidate_id": {"type": ["string", "null"]},
+        "effective_candidate_id": {"type": ["string", "null"]},
+        "candidate_kind": {"type": "string", "minLength": 1},
+        "projection_status": {"enum": ["PROJECTED", "NOT_APPLICABLE"]},
+        "reason": {"type": ["string", "null"]},
+        "subject": {"type": ["string", "null"]},
+        "predicate": {"type": ["string", "null"]},
+        "object": {"oneOf": [{"type": "null"}, {"$ref": "#/$defs/rdfObject"}]},
+        "canonical_ntriples_line": {"type": ["string", "null"]}
+      }
+    }
+  }
+}

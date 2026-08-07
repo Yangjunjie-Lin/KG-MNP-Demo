@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import hashlib
 import socket
 import time
 from dataclasses import dataclass
@@ -9,12 +10,24 @@ from urllib.error import HTTPError, URLError
 from urllib.parse import quote, urlencode, urlsplit
 from urllib.request import Request, urlopen
 
+from rdflib import BNode, Graph
+
+from ..compilation.rdf_canonical import canonical_ntriples
+
 from ._io import unique_json
 from .identifiers import validate_repository_id
 
 
 class GraphDBClientError(RuntimeError):
     pass
+
+
+@dataclass(frozen=True)
+class DefaultGraphSnapshot:
+    http_status: int
+    statement_count: int
+    semantic_hash: str
+    content_type: str
 
 
 def redact_credentials(value: str) -> str:
@@ -131,6 +144,111 @@ class GraphDBClient:
                 continue
         raise GraphDBClientError("GraphDB version endpoint unavailable")
 
+    @staticmethod
+    def _license_fields(value: Any) -> tuple[str | None, str]:
+        observed_states: list[str] = []
+        edition = "UNKNOWN"
+
+        def walk(item: Any) -> None:
+            nonlocal edition
+            if isinstance(item, Mapping):
+                for key, child in item.items():
+                    normalized = str(key).lower().replace("_", "")
+                    if normalized in {
+                        "edition",
+                        "licensetype",
+                        "productedition",
+                        "producttype",
+                    } and isinstance(child, str):
+                        upper = child.upper()
+                        if upper in {"FREE", "ENTERPRISE"}:
+                            edition = upper
+                    if normalized in {"status", "state", "licensestatus", "licenseaccepted", "valid", "active"}:
+                        if isinstance(child, bool):
+                            observed_states.append("ACCEPTED" if child else "REJECTED")
+                        elif isinstance(child, str):
+                            upper = child.upper()
+                            if upper in {"ACCEPTED", "VALID", "ACTIVE", "OK"}:
+                                observed_states.append("ACCEPTED")
+                            elif upper in {"REJECTED", "INVALID", "EXPIRED", "MISSING"}:
+                                observed_states.append("REJECTED")
+                    if normalized == "present" and child is False:
+                        observed_states.append("REJECTED")
+                    walk(child)
+            elif isinstance(item, list):
+                for child in item:
+                    walk(child)
+
+        walk(value)
+        state = (
+            "REJECTED"
+            if "REJECTED" in observed_states
+            else "ACCEPTED"
+            if "ACCEPTED" in observed_states
+            else None
+        )
+        return state, edition
+
+    def license_discovery(self) -> dict[str, Any]:
+        """Return only sanitized license readiness fields, never raw license data."""
+
+        # GraphDB 11.4.2's shipped Workbench API declares the first endpoint.
+        # Older diagnostic endpoints remain read-only fallbacks.
+        for path in (
+            "/rest/graphdb-settings/license",
+            "/rest/monitor/license",
+            "/rest/info",
+        ):
+            try:
+                status, body, _ = self._request(
+                    "GET", path, accept="application/json"
+                )
+            except GraphDBClientError:
+                continue
+            if status >= 300:
+                continue
+            try:
+                value = json.loads(body.decode("utf-8"), object_pairs_hook=unique_json)
+            except Exception:
+                continue
+            state, edition = self._license_fields(value)
+            if state is not None:
+                return {
+                    "status": status,
+                    "path": path,
+                    "license_state": state,
+                    "edition": edition,
+                }
+        raise GraphDBClientError("GraphDB license acceptance endpoint unavailable")
+
+    def verify_runtime_readiness(self, *, expected_product_version: str) -> dict[str, Any]:
+        health = self.health_check()
+        if not health.get("healthy"):
+            raise GraphDBClientError("GraphDB HTTP server is not healthy")
+        version = self.version_discovery()
+        response = version.get("response", {})
+        if not isinstance(response, Mapping) or response.get("productName") != "GraphDB":
+            raise GraphDBClientError("GraphDB product identity is unavailable")
+        if response.get("productVersion") != expected_product_version:
+            raise GraphDBClientError(
+                f"GraphDB product version mismatch: expected {expected_product_version}"
+            )
+        license_info = self.license_discovery()
+        if license_info.get("license_state") != "ACCEPTED":
+            raise GraphDBClientError("GraphDB license was not accepted")
+        # This proves repository operations are available under the accepted
+        # license without creating or mutating a repository.
+        repositories = self.list_repositories()
+        return {
+            "server_healthy": True,
+            "product_version": response.get("productVersion"),
+            "version": version,
+            "license_state": "ACCEPTED",
+            "edition": license_info.get("edition", "UNKNOWN"),
+            "repository_operations": True,
+            "repository_count": len(repositories),
+        }
+
     def list_repositories(self) -> list[str]:
         status, body, _ = self._request("GET", "/rest/repositories", accept="application/json")
         if status >= 300:
@@ -189,6 +307,95 @@ class GraphDBClient:
         status, _, _ = self._request("POST", "/repositories/" + quote(repository_id, safe="") + "/statements", body=data, content_type="application/n-quads", accept="application/json,text/plain")
         if not 200 <= status < 300:
             raise GraphDBClientError(f"N-Quads import failed with status {status}")
+        return status
+
+    def get_default_graph(self, repository_id: str) -> DefaultGraphSnapshot:
+        """Read only the physical default graph through RDF4J Graph Store."""
+
+        validate_repository_id(repository_id)
+        path = (
+            "/repositories/"
+            + quote(repository_id, safe="")
+            + "/rdf-graphs/service?default"
+        )
+        status, body, headers = self._request(
+            "GET", path, accept="application/n-triples"
+        )
+        if not 200 <= status < 300:
+            raise GraphDBClientError(
+                f"default graph Graph Store read failed with status {status}"
+            )
+        graph = Graph()
+        try:
+            graph.parse(data=body.decode("utf-8"), format="nt")
+        except Exception as exc:
+            raise GraphDBClientError(
+                "default graph Graph Store response is not valid N-Triples"
+            ) from exc
+        if any(isinstance(term, BNode) for triple in graph for term in triple):
+            raise GraphDBClientError("default graph contains a blank node")
+        canonical = canonical_ntriples(graph)
+        content_type = next(
+            (
+                str(value).split(";", 1)[0].strip().lower()
+                for key, value in headers.items()
+                if key.lower() == "content-type"
+            ),
+            "",
+        )
+        return DefaultGraphSnapshot(
+            http_status=status,
+            statement_count=len(graph),
+            semantic_hash=hashlib.sha256(canonical).hexdigest(),
+            content_type=content_type,
+        )
+
+    def count_default_graph_statements(self, repository_id: str) -> int:
+        return self.get_default_graph(repository_id).statement_count
+
+    def assert_default_graph_empty(
+        self, repository_id: str
+    ) -> DefaultGraphSnapshot:
+        snapshot = self.get_default_graph(repository_id)
+        if snapshot.statement_count != 0:
+            raise GraphDBClientError(
+                "physical default graph is not empty: "
+                f"{snapshot.statement_count} statement(s)"
+            )
+        return snapshot
+
+    def replace_graph(
+        self,
+        repository_id: str,
+        data: bytes,
+        *,
+        graph_iri: str | None = None,
+        default: bool = False,
+    ) -> int:
+        """Replace a local test graph through Graph Store Protocol."""
+
+        validate_repository_id(repository_id)
+        if default == (graph_iri is not None):
+            raise GraphDBClientError("choose exactly one of default or graph_iri")
+        if default:
+            suffix = "default"
+        else:
+            suffix = "graph=" + quote(str(graph_iri), safe="")
+        path = (
+            "/repositories/"
+            + quote(repository_id, safe="")
+            + "/rdf-graphs/service?"
+            + suffix
+        )
+        status, _, _ = self._request(
+            "PUT",
+            path,
+            body=data,
+            content_type="application/n-triples",
+            accept="application/json,text/plain",
+        )
+        if not 200 <= status < 300:
+            raise GraphDBClientError(f"Graph Store graph replacement failed with status {status}")
         return status
 
     def sparql_select(self, repository_id: str, query: str) -> dict[str, Any]:

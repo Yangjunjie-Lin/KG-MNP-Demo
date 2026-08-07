@@ -30,7 +30,7 @@ def complete_import_manifest(content: Mapping[str, Any]) -> dict[str, Any]:
     return value
 
 
-def build_import_manifest(*, policy: Mapping[str, Any], compilation_manifest: Mapping[str, Any], source_package: Mapping[str, Any], ontology_baseline: Mapping[str, Any], repository_config_bytes: bytes, repository_config_semantic_hash: str, assembled_data: bytes, assembled_semantic_hash: str, query_suite: Mapping[str, Any], artifacts: Mapping[str, tuple[str, bytes, str | None]], tbox_module_count: int, tbox_triple_count: int, stage06_quad_count: int, assembled_quad_count: int, named_graphs: list[str]) -> dict[str, Any]:
+def build_import_manifest(*, policy: Mapping[str, Any], compilation_manifest: Mapping[str, Any], source_package: Mapping[str, Any], ontology_baseline: Mapping[str, Any], repository_config_bytes: bytes, repository_config_semantic_hash: str, assembled_data: bytes, assembled_semantic_hash: str, query_suite: Mapping[str, Any], forbidden_assertion_set_hash: str, forbidden_assertion_count: int, artifacts: Mapping[str, tuple[str, bytes, str | None]], tbox_module_count: int, tbox_triple_count: int, stage06_quad_count: int, assembled_quad_count: int, named_graphs: list[str]) -> dict[str, Any]:
     content: dict[str, Any] = {
         "contract_version": "1.0",
         "graphdb_policy_id": policy["runtime_id"],
@@ -48,6 +48,8 @@ def build_import_manifest(*, policy: Mapping[str, Any], compilation_manifest: Ma
         "repository_ruleset": "empty",
         "assembled_dataset_byte_hash": hashlib.sha256(assembled_data).hexdigest(),
         "assembled_dataset_semantic_hash": assembled_semantic_hash,
+        "forbidden_assertion_set_hash": forbidden_assertion_set_hash,
+        "forbidden_assertion_count": forbidden_assertion_count,
         "tbox_module_count": tbox_module_count,
         "tbox_triple_count": tbox_triple_count,
         "stage06_quad_count": stage06_quad_count,

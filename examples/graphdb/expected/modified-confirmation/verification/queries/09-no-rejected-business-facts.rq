@@ -3,5 +3,6 @@ PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
 PREFIX sh: <http://www.w3.org/ns/shacl#>
 PREFIX prov: <http://www.w3.org/ns/prov#>
+PREFIX dcterms: <http://purl.org/dc/terms/>
 PREFIX mnp: <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#>
-ASK { FILTER NOT EXISTS { GRAPH <urn:kg-mnp:graph:review-audit:9875793412b7a7323ec735b428456fe9c481c844c8b22758e8b4fb7dd34e991f> { ?candidate ?decisionPredicate ?decisionValue . FILTER(CONTAINS(LCASE(STR(?decisionValue)), "reject") || CONTAINS(LCASE(STR(?decisionValue)), "defer")) } GRAPH <urn:kg-mnp:graph:abox:9875793412b7a7323ec735b428456fe9c481c844c8b22758e8b4fb7dd34e991f> { ?candidate ?p ?o } } }
+SELECT ?s ?p ?o WHERE { GRAPH <urn:kg-mnp:graph:abox:9875793412b7a7323ec735b428456fe9c481c844c8b22758e8b4fb7dd34e991f> { ?s ?p ?o } FILTER(false) } ORDER BY ?s ?p ?o

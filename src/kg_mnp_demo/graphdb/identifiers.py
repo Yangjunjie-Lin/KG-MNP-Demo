@@ -33,6 +33,7 @@ def publication_semantic_content(value: Mapping[str, Any]) -> dict[str, Any]:
         "repository_config_semantic_hash",
         "assembled_dataset_semantic_hash",
         "query_suite_hash",
+        "forbidden_assertion_set_hash",
     )
     missing = [field for field in fields if field not in value]
     if missing:

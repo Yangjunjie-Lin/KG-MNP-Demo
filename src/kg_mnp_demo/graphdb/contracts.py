@@ -19,6 +19,7 @@ SPECS = {
     "query-suite-manifest": ("query_suite_manifest.schema.json", SCHEMA_BASE + "query-suite/1.0"),
     "import-attestation": ("import_attestation.schema.json", SCHEMA_BASE + "import-attestation/1.0"),
     "query-result": ("query_result.schema.json", SCHEMA_BASE + "query-result/1.0"),
+    "forbidden-business-assertions": ("forbidden_business_assertions.schema.json", SCHEMA_BASE + "forbidden-business-assertions/1.0"),
 }
 
 
@@ -73,6 +74,44 @@ def validate_graphdb_contract(name: str, payload: Mapping[str, Any]) -> None:
         _validate_import_plan(payload)
     if name == "query-suite-manifest":
         _validate_query_suite(payload)
+    if name == "forbidden-business-assertions":
+        _validate_forbidden_assertions(payload)
+
+
+def _validate_forbidden_assertions(payload: Mapping[str, Any]) -> None:
+    import hashlib
+    from ..modeling.canonical_json import canonical_json_bytes
+
+    records = list(payload["records"])
+    projected = [
+        record for record in records if record["projection_status"] == "PROJECTED"
+    ]
+    if int(payload["projection_record_count"]) != len(records):
+        raise GraphDBContractError("forbidden assertion projection record count mismatch")
+    if int(payload["forbidden_assertion_count"]) != len(
+        {record["canonical_ntriples_line"] for record in projected}
+    ):
+        raise GraphDBContractError("forbidden assertion count mismatch")
+    for record in records:
+        projected_status = record["projection_status"] == "PROJECTED"
+        projection_fields = (
+            record["subject"], record["predicate"], record["object"],
+            record["canonical_ntriples_line"],
+        )
+        if projected_status != all(value is not None for value in projection_fields):
+            raise GraphDBContractError("forbidden assertion projection fields mismatch")
+        if projected_status != (record["reason"] is None):
+            raise GraphDBContractError("forbidden assertion projection reason mismatch")
+    expected_hash = hashlib.sha256(
+        canonical_json_bytes(
+            {
+                "records": records,
+                "canonical_ntriples_sha256": payload["canonical_ntriples_sha256"],
+            }
+        )
+    ).hexdigest()
+    if payload["semantic_hash"] != expected_hash:
+        raise GraphDBContractError("forbidden assertion semantic hash mismatch")
 
 
 def _validate_import_manifest(payload: Mapping[str, Any]) -> None:
@@ -162,16 +201,34 @@ def _validate_query_suite(payload: Mapping[str, Any]) -> None:
     expected_ids = {f"{index:02d}-{name}" for index, name in enumerate((
         "repository-summary", "named-graph-counts", "business-assertions",
         "provenance-coverage", "review-audit-coverage", "tbox-version",
-        "no-default-graph", "no-tbox-in-business-graph",
+        "default-graph-storage", "no-tbox-in-business-graph",
         "no-rejected-business-facts", "no-blank-nodes",
     ), start=1)}
-    if set(payload["queries"]) != expected_ids:
-        raise GraphDBContractError("GraphDB query suite must contain the frozen ten-query set")
+    query_ids = expected_ids - {"07-default-graph-storage"}
+    if set(payload["queries"]) != query_ids or set(payload["verifications"]) != expected_ids:
+        raise GraphDBContractError(
+            "GraphDB verification suite must contain nine SPARQL checks and one Graph Store check"
+        )
+    graph_store = payload["verifications"]["07-default-graph-storage"]
+    if graph_store != {
+        "verification_type": "GRAPH_STORE_DEFAULT_GRAPH",
+        "expected_statement_count": 0,
+    }:
+        raise GraphDBContractError("physical default graph must use Graph Store Protocol")
     forbidden = {"SERVICE", "LOAD", "INSERT", "DELETE", "CLEAR", "DROP", "CREATE", "MOVE", "COPY", "ADD"}
     for query_id, query in payload["queries"].items():
         tokens = _sparql_tokens(query)
         if forbidden.intersection(tokens) or not ({"SELECT", "ASK"} & set(tokens)):
             raise GraphDBContractError(f"unsafe GraphDB verification query: {query_id}")
+        expected_type = "SPARQL_ASK" if "ASK" in tokens and "SELECT" not in tokens else "SPARQL_SELECT"
+        verification = payload["verifications"].get(query_id)
+        if verification != {
+            "verification_type": expected_type,
+            "query_id": query_id,
+        }:
+            raise GraphDBContractError(
+                f"GraphDB verification type mismatch: {query_id}"
+            )
         try:
             parseQuery(query)
         except Exception as exc:
@@ -181,6 +238,12 @@ def _validate_query_suite(payload: Mapping[str, Any]) -> None:
         raise GraphDBContractError("GraphDB query suite identity mismatch")
     if set(payload["expected"]["named_graphs"]) != set(payload["expected"]["counts"]):
         raise GraphDBContractError("GraphDB query expected graph set/count keys mismatch")
+    if len(payload["expected"]["tbox_versions"]) != int(payload["expected"]["tbox_module_count"]):
+        raise GraphDBContractError("GraphDB TBox expected version set is incomplete")
+    if set(payload["expected"]["ask"]) != {
+        "08-no-tbox-in-business-graph", "10-no-blank-nodes"
+    }:
+        raise GraphDBContractError("GraphDB ASK expectation set mismatch")
 
 
 validate_contract = validate_graphdb_contract

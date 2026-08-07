@@ -2,7 +2,9 @@ name: CI
 
 on:
   push:
+    branches: [main]
   pull_request:
+  workflow_dispatch:
 
 jobs:
   python-core:
@@ -38,7 +40,38 @@ jobs:
             exit 1
           fi
 
+  graphdb-offline:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Set up Java (ROBOT/HermiT)
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[dev]"
+      - name: Verify GraphDB offline closure
+        run: make verify-graphdb-offline
+      - name: Verify clean working tree
+        shell: bash
+        run: |
+          git diff --exit-code
+          if [[ -n "$(git status --short)" ]]; then
+            git status --short
+            exit 1
+          fi
+
   graphdb-integration:
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
@@ -58,10 +91,43 @@ jobs:
           python -m pip install -e ".[dev]"
       - name: Pull pinned GraphDB image
         run: docker pull ontotext/graphdb:11.4.2@sha256:1593f8b5d42acb0f02f11b2a87b87ecbe76dbcec33cea56ca5bc32bebf6a7f12
-      - name: Verify Stage 07
+      - name: Verify Stage 07 with licensed GraphDB
         env:
           GRAPHDB_LICENSE_CONTENT: ${{ secrets.GRAPHDB_LICENSE_CONTENT }}
+          GRAPHDB_LICENSE_B64: ${{ secrets.GRAPHDB_LICENSE_B64 }}
         run: make verify-stage-07
+      - name: Prepare non-sensitive Stage 07 attestation artifact
+        if: success()
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p ci-artifact/query-results
+          report="$(find runtime_reports/graphdb -name graphdb-import-attestation.json -print -quit)"
+          test -n "$report"
+          root="$(dirname "$report")"
+          cp "$report" ci-artifact/graphdb-import-attestation.json
+          cp "$root/verification/graph-counts.json" ci-artifact/graph-counts.json
+          cp "$root/verification/invariant-results.json" ci-artifact/invariant-results.json
+          cp "$root/verification/default-graph-check.json" ci-artifact/default-graph-check.json
+          cp "$root/verification/default-dataset-semantics.json" ci-artifact/default-dataset-semantics.json
+          cp "$root/runtime/graphdb-version.json" ci-artifact/graphdb-version.json
+          cp "$root/runtime/inference-regression.json" ci-artifact/inference-regression.json
+          cp "$root/verification/query-results/"*.json ci-artifact/query-results/
+          if find ci-artifact -type f -printf '%f\n' | grep -Eiq 'license|authorization|cookie|\.env|docker'; then
+            echo 'sensitive artifact filename detected' >&2
+            exit 1
+          fi
+          if grep -RInE 'GRAPHDB_LICENSE|license_content|license_path|authorization:|cookie:' ci-artifact; then
+            echo 'sensitive artifact content detected' >&2
+            exit 1
+          fi
+      - name: Upload Stage 07 attestation artifact
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: stage07-graphdb-attestation-${{ github.sha }}
+          path: ci-artifact
+          if-no-files-found: error
       - name: Verify clean working tree
         shell: bash
         run: |

@@ -44,7 +44,12 @@ def _golden_package():
 
 
 def test_import_refuses_existing_repository_before_create():
-    client = _FakeGraphDB(repositories=["kg-mnp-04fa226ebaa2946d84a9"])
+    import json
+
+    repository_id = json.loads(
+        (_golden_package() / "graphdb-import-manifest.json").read_text(encoding="utf-8")
+    )["repository_id"]
+    client = _FakeGraphDB(repositories=[repository_id])
     with pytest.raises(GraphDBImportError, match="overwrite"):
         import_package(client, _golden_package())
     assert client.created is False

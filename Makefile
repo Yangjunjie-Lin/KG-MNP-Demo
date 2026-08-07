@@ -16,7 +16,7 @@
  verify-compiler-cli verify-compiler-semantic-closure verify-stage-06 \
  verify-graphdb-contracts verify-graphdb-policy verify-graphdb-assembly \
  verify-graphdb-package verify-graphdb-queries verify-graphdb-security \
- verify-graphdb-cli verify-graphdb-live verify-stage-07
+ verify-graphdb-cli verify-graphdb-live verify-graphdb-offline verify-stage-07
 
 PYTHON_CORE_TESTS = \
 	tests/test_ontology.py \
@@ -294,18 +294,34 @@ verify-graphdb-package:
 verify-graphdb-queries:
 	python -m pytest -q \
 		tests/graphdb/test_graphdb_query_suite.py \
-		tests/graphdb/test_graphdb_query_normalization.py
+		tests/graphdb/test_graphdb_query_normalization.py \
+		tests/graphdb/test_graphdb_default_graph_semantics.py \
+		tests/graphdb/test_graphdb_review_audit_semantics.py \
+		tests/graphdb/test_graphdb_tbox_version_semantics.py
 
 verify-graphdb-security:
 	python -m pytest -q \
 		tests/graphdb/test_graphdb_client.py \
-		tests/graphdb/test_graphdb_import_security.py
+		tests/graphdb/test_graphdb_import_security.py \
+		tests/graphdb/test_graphdb_forbidden_assertions.py \
+		tests/graphdb/test_graphdb_live_import.py \
+		-k "not graphdb_live_import_is_fail_closed_without_external_license_or_verifies_with_one"
 
 verify-graphdb-cli:
 	python -m pytest -q tests/graphdb/test_graphdb_cli.py
 
 verify-graphdb-live:
 	python scripts/graphdb_integration.py
+
+verify-graphdb-offline:
+	$(MAKE) verify-graphdb-contracts
+	$(MAKE) verify-graphdb-policy
+	$(MAKE) verify-graphdb-assembly
+	$(MAKE) verify-graphdb-package
+	$(MAKE) verify-graphdb-queries
+	$(MAKE) verify-graphdb-security
+	$(MAKE) verify-graphdb-cli
+	python -m pytest -q tests/graphdb -k "not live_import"
 
 verify-stage-07:
 	$(MAKE) verify-stage-06

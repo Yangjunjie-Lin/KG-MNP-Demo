@@ -1,3 +1,5 @@
+import json
+
 import pytest
 
 from kg_mnp_demo.graphdb.client import GraphDBClient, GraphDBClientError, redact_credentials
@@ -22,3 +24,36 @@ def test_credential_redaction_removes_userinfo_and_query_tokens():
     assert "secret" not in value and "hidden" not in value
     with pytest.raises(GraphDBClientError):
         GraphDBClient("https://alice:secret@example.invalid", allow_remote=True)
+
+
+def test_license_discovery_uses_graphdb_1142_settings_endpoint(monkeypatch):
+    client = GraphDBClient()
+    requested_paths = []
+
+    def request(method, path, **kwargs):
+        requested_paths.append(path)
+        if path != "/rest/graphdb-settings/license":
+            raise GraphDBClientError("unexpected endpoint")
+        return (
+            200,
+            json.dumps(
+                {
+                    "present": True,
+                    "valid": True,
+                    "productType": "ENTERPRISE",
+                    "licensee": "must-not-be-returned",
+                    "installationId": "must-not-be-returned",
+                }
+            ).encode("utf-8"),
+            {"Content-Type": "application/json"},
+        )
+
+    monkeypatch.setattr(client, "_request", request)
+
+    assert client.license_discovery() == {
+        "status": 200,
+        "path": "/rest/graphdb-settings/license",
+        "license_state": "ACCEPTED",
+        "edition": "ENTERPRISE",
+    }
+    assert requested_paths == ["/rest/graphdb-settings/license"]

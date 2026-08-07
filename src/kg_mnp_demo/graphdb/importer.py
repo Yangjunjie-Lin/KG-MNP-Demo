@@ -21,6 +21,22 @@ def _assert_empty_ruleset(repository_info: dict[str, Any]) -> None:
         raise GraphDBImportError("created repository did not report ruleset=empty")
 
 
+def _wait_for_import_count(
+    client: GraphDBClient, repository_id: str, expected: int, *, timeout: float = 90.0
+) -> int:
+    deadline = time.monotonic() + timeout
+    last = -1
+    while True:
+        last = client.count_repository_statements(repository_id)
+        if last == expected:
+            return last
+        if time.monotonic() >= deadline:
+            raise GraphDBImportError(
+                f"GraphDB import did not reach expected count {expected}; observed {last}"
+            )
+        time.sleep(0.5)
+
+
 def import_package(client: GraphDBClient, package_directory: Path, *, cleanup_failed_generated_repository: bool = False) -> dict[str, Any]:
     package_directory = Path(package_directory)
     manifest = read_json(package_directory / "graphdb-import-manifest.json")
@@ -44,7 +60,9 @@ def import_package(client: GraphDBClient, package_directory: Path, *, cleanup_fa
         if initial_count != 0:
             raise GraphDBImportError("fresh GraphDB repository is not empty")
         import_status = client.import_nquads(repository_id, data)
-        final_count = client.count_repository_statements(repository_id)
+        final_count = _wait_for_import_count(
+            client, repository_id, int(manifest["assembled_quad_count"])
+        )
         return {"repository_id": repository_id, "create_status": create_status, "initial_count": initial_count, "repository_ruleset": "empty", "import_status": import_status, "final_count": final_count, "duration_seconds": round(time.monotonic() - started, 6)}
     except Exception:
         if created and cleanup_failed_generated_repository:

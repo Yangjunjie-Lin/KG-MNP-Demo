@@ -35,6 +35,12 @@ def _term(term: Identifier) -> str:
     return term.n3()
 
 
+def canonical_rdf_term(term: Identifier) -> str:
+    """Serialize one RDF term with the canonical Stage 06 safety policy."""
+
+    return _term(term)
+
+
 def canonical_ntriples(triples: Iterable[Triple] | Graph) -> bytes:
     values = triples.triples((None, None, None)) if isinstance(triples, Graph) else triples
     lines = {_term(s) + " " + _term(p) + " " + _term(o) + " ." for s, p, o in values}

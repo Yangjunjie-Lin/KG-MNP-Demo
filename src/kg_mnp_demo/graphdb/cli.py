@@ -133,8 +133,10 @@ def dispatch_graphdb(args: argparse.Namespace, json_print: Callable[..., None]) 
     if command == "runtime" and args.graphdb_runtime_command == "check":
         client = _client(args)
         policy = load_graphdb_policy()
-        version = client.version_discovery()
-        json_print({"healthy": client.health_check()["healthy"], "expected_product_version": policy["graphdb"]["product_version"], "version": version, "base_url": client.base_url})
+        readiness = client.verify_runtime_readiness(
+            expected_product_version=policy["graphdb"]["product_version"]
+        )
+        json_print({"base_url": client.base_url, **readiness})
         return 0
     if command == "repository" and args.graphdb_repository_command == "create":
         client = _client(args)
@@ -160,8 +162,10 @@ def dispatch_graphdb(args: argparse.Namespace, json_print: Callable[..., None]) 
         if command == "verify":
             json_print(verification)
             return 0
-        version = client.version_discovery()
-        attestation = build_import_attestation(source_publication_id=manifest["publication_id"], source_compilation_id=manifest["source_compilation_id"], repository_config_hash=manifest["repository_config_byte_hash"], import_dataset_hash=manifest["assembled_dataset_byte_hash"], export_dataset_hash=verification["export_semantic_hash"], expected_graph_count=len(manifest["named_graphs"]), actual_graph_count=len(verification["actual_graph_counts"]), expected_quad_count=manifest["assembled_quad_count"], actual_quad_count=verification["actual_quad_count"], verification=verification, graphdb_version=version, image_digest=load_graphdb_policy()["graphdb"]["image_digest_amd64"], base_url=client.base_url, repository_id=manifest["repository_id"], create_status=args.create_status, import_status=args.import_status)
+        readiness = client.verify_runtime_readiness(
+            expected_product_version=load_graphdb_policy()["graphdb"]["product_version"]
+        )
+        attestation = build_import_attestation(source_publication_id=manifest["publication_id"], source_compilation_id=manifest["source_compilation_id"], repository_config_hash=manifest["repository_config_byte_hash"], import_dataset_hash=manifest["assembled_dataset_semantic_hash"], export_dataset_hash=verification["export_semantic_hash"], expected_graph_count=len(manifest["named_graphs"]), actual_graph_count=len(verification["actual_graph_counts"]), expected_quad_count=manifest["assembled_quad_count"], actual_quad_count=verification["actual_quad_count"], expected_named_graphs=manifest["named_graphs"], actual_named_graphs=list(verification["actual_graph_counts"]), verification=verification, graphdb_version=readiness["version"], image_digest=load_graphdb_policy()["graphdb"]["image_digest_amd64"], base_url=client.base_url, repository_id=manifest["repository_id"], create_status=args.create_status, import_status=args.import_status, license_state=readiness["license_state"], license_edition=readiness["edition"])
         path = report_dir / "graphdb-import-attestation.json"
         write_import_attestation(path, attestation)
         json_print({"output": path.as_posix(), "status": attestation["status"], "repository_id": manifest["repository_id"]})

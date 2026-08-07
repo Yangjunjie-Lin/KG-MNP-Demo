@@ -3,5 +3,11 @@ PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 PREFIX owl: <http://www.w3.org/2002/07/owl#>
 PREFIX sh: <http://www.w3.org/ns/shacl#>
 PREFIX prov: <http://www.w3.org/ns/prov#>
+PREFIX dcterms: <http://purl.org/dc/terms/>
 PREFIX mnp: <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#>
-ASK { FILTER NOT EXISTS { GRAPH <urn:kg-mnp:graph:review-audit:c69c816586344de775b5deaf9eae8ad4dcdd4d4490903645e4d6567a91e9b084> { ?candidate ?decisionPredicate ?decisionValue . FILTER(CONTAINS(LCASE(STR(?decisionValue)), "reject") || CONTAINS(LCASE(STR(?decisionValue)), "defer")) } GRAPH <urn:kg-mnp:graph:abox:c69c816586344de775b5deaf9eae8ad4dcdd4d4490903645e4d6567a91e9b084> { ?candidate ?p ?o } } }
+SELECT ?s ?p ?o WHERE {
+  VALUES (?s ?p ?o) {
+    (<https://yangjunjie-lin.github.io/KG-MNP-Demo/data/modeled/3c57cca129580c393bb6994fbf088209879907efde712279eb6de9986ba6d457> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#Subscriber>)
+  }
+  GRAPH <urn:kg-mnp:graph:abox:c69c816586344de775b5deaf9eae8ad4dcdd4d4490903645e4d6567a91e9b084> { ?s ?p ?o }
+} ORDER BY ?s ?p ?o

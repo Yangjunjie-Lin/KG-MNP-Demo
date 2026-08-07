@@ -165,6 +165,72 @@ def _validate_term_type(iri: str, expected: set[str], term_types: Mapping[str, s
         raise ABoxCompilationError(f"{field} has invalid ontology term type {actual!r}: {iri}")
 
 
+def candidate_to_rdf_triple(
+    candidate: Mapping[str, Any],
+    entity_iris: Mapping[str, str],
+    term_types: Mapping[str, str],
+) -> tuple[URIRef, URIRef, Any]:
+    """Project one finite ABox Candidate with the authoritative Stage 06 rules."""
+
+    kind = str(candidate.get("candidate_kind", "ENTITY"))
+    if candidate.get("publication_scope") != "ABOX":
+        raise ABoxCompilationError("candidate must remain in ABOX publication scope")
+    if kind == "MAPPING_ASSERTION":
+        raise ABoxCompilationError(
+            "MAPPING_ASSERTION is forbidden until a typed object contract exists"
+        )
+    if kind == "ENTITY":
+        candidate_id = str(candidate.get("candidate_id", ""))
+        iri_value = entity_iris.get(candidate_id) or candidate.get("proposed_iri")
+        subject = _instance_iri(iri_value, "proposed_iri")
+        class_iri = str(candidate.get("class_iri"))
+        _validate_term_type(class_iri, {"Class"}, term_types, "class_iri")
+        triple = (subject, RDF.type, _iri(class_iri, "class_iri"))
+    elif kind == "CLASS_ASSERTION":
+        subject = _iri(
+            resolve_candidate_iri(str(candidate.get("subject_ref")), entity_iris),
+            "subject_ref",
+        )
+        class_iri = str(candidate.get("class_iri"))
+        _validate_term_type(class_iri, {"Class"}, term_types, "class_iri")
+        triple = (subject, RDF.type, _iri(class_iri, "class_iri"))
+    elif kind == "OBJECT_PROPERTY_ASSERTION":
+        subject = _iri(
+            resolve_candidate_iri(str(candidate.get("subject_ref")), entity_iris),
+            "subject_ref",
+        )
+        predicate = str(candidate.get("predicate_iri"))
+        _validate_term_type(
+            predicate, {"ObjectProperty"}, term_types, "predicate_iri"
+        )
+        obj = _iri(
+            resolve_candidate_iri(str(candidate.get("object")), entity_iris),
+            "object",
+        )
+        triple = (subject, _iri(predicate, "predicate_iri"), obj)
+    elif kind == "DATA_PROPERTY_ASSERTION":
+        subject = _iri(
+            resolve_candidate_iri(str(candidate.get("subject_ref")), entity_iris),
+            "subject_ref",
+        )
+        predicate = str(candidate.get("predicate_iri"))
+        _validate_term_type(
+            predicate, {"DatatypeProperty"}, term_types, "predicate_iri"
+        )
+        triple = (
+            subject,
+            _iri(predicate, "predicate_iri"),
+            _literal(candidate.get("object")),
+        )
+    else:
+        raise ABoxCompilationError(f"unsupported candidate kind: {kind}")
+    if triple[1] in FORBIDDEN_PREDICATES or (
+        triple[1] == RDF.type and triple[2] in FORBIDDEN_TYPE_OBJECTS
+    ):
+        raise ABoxCompilationError("TBox declaration leakage is forbidden")
+    return triple
+
+
 def compile_abox(
     package: Mapping[str, Any],
     proposal: Mapping[str, Any],
@@ -193,38 +259,12 @@ def compile_abox(
         candidate = effective.get(source_id) or effective.get(effective_id)
         if candidate is None:
             raise CandidateResolutionError(f"effective candidate not found: {effective_id}")
-        kind = str(candidate.get("candidate_kind", "ENTITY"))
         if item.get("publication_scope") != "ABOX" or candidate.get("publication_scope") != "ABOX":
             raise ABoxCompilationError("confirmed candidates must remain in ABOX publication scope")
-        if kind == "MAPPING_ASSERTION":
-            raise ABoxCompilationError("MAPPING_ASSERTION is forbidden until a typed object contract exists")
-        if kind == "ENTITY":
-            subject = _instance_iri(resolve_candidate_iri(source_id, entity_iris), "proposed_iri")
-            class_iri = str(candidate.get("class_iri"))
-            _validate_term_type(class_iri, {"Class"}, types, "class_iri")
-            triple = (subject, RDF.type, _iri(class_iri, "class_iri"))
-        elif kind == "CLASS_ASSERTION":
-            subject = _iri(resolve_candidate_iri(str(candidate.get("subject_ref")), entity_iris), "subject_ref")
-            class_iri = str(candidate.get("class_iri"))
-            _validate_term_type(class_iri, {"Class"}, types, "class_iri")
-            triple = (subject, RDF.type, _iri(class_iri, "class_iri"))
-        elif kind == "OBJECT_PROPERTY_ASSERTION":
-            subject = _iri(resolve_candidate_iri(str(candidate.get("subject_ref")), entity_iris), "subject_ref")
-            predicate = str(candidate.get("predicate_iri"))
-            _validate_term_type(predicate, {"ObjectProperty"}, types, "predicate_iri")
-            obj = _iri(resolve_candidate_iri(str(candidate.get("object")), entity_iris), "object")
-            triple = (subject, _iri(predicate, "predicate_iri"), obj)
-        elif kind == "DATA_PROPERTY_ASSERTION":
-            subject = _iri(resolve_candidate_iri(str(candidate.get("subject_ref")), entity_iris), "subject_ref")
-            predicate = str(candidate.get("predicate_iri"))
-            _validate_term_type(predicate, {"DatatypeProperty"}, types, "predicate_iri")
-            triple = (subject, _iri(predicate, "predicate_iri"), _literal(candidate.get("object")))
-        else:
-            raise ABoxCompilationError(f"unsupported candidate kind: {kind}")
-        if triple[1] in FORBIDDEN_PREDICATES or (
-            triple[1] == RDF.type and triple[2] in FORBIDDEN_TYPE_OBJECTS
-        ):
-            raise ABoxCompilationError("TBox declaration leakage is forbidden")
+        candidate_with_id = dict(candidate)
+        candidate_with_id.setdefault("candidate_id", effective_id)
+        triple = candidate_to_rdf_triple(candidate_with_id, entity_iris, types)
+        kind = str(candidate.get("candidate_kind", "ENTITY"))
         graph.add(triple)
         assertions.append(CompiledAssertion(
             confirmed_item_id=str(envelope["confirmed_item_id"]),

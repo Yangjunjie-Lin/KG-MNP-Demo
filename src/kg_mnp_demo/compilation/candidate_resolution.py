@@ -45,10 +45,21 @@ def resolve_effective_candidates(package: Mapping[str, Any], proposal: Mapping[s
 
 
 def resolve_effective_entity_iris(package: Mapping[str, Any], proposal: Mapping[str, Any]) -> dict[str, str]:
-    resolved = resolve_effective_candidates(package, proposal)
+    return resolve_entity_iris(resolve_effective_candidates(package, proposal))
+
+
+def resolve_entity_iris(
+    candidates: Mapping[str, Mapping[str, Any]],
+) -> dict[str, str]:
+    """Resolve ENTITY candidate identifiers to IRIs with Stage 06 collision rules.
+
+    The compiler and Stage 07 forbidden-assertion projection share this pure
+    resolver so an audit projection cannot drift from the published ABox.
+    """
+
     entity_iris: dict[str, str] = {}
     by_iri: dict[str, str] = {}
-    for candidate_id, candidate in resolved.items():
+    for candidate_id, candidate in candidates.items():
         if candidate.get("candidate_kind", "ENTITY") != "ENTITY":
             continue
         iri = candidate.get("proposed_iri")
