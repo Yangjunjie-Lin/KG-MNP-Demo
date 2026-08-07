@@ -99,25 +99,27 @@ jobs:
       - name: Prepare non-sensitive Stage 07 attestation artifact
         if: success()
         shell: bash
+        env:
+          ARTIFACT_DIR: ${{ runner.temp }}/stage07-attestation
         run: |
           set -euo pipefail
-          mkdir -p ci-artifact/query-results
+          mkdir -p "$ARTIFACT_DIR/query-results"
           report="$(find runtime_reports/graphdb -name graphdb-import-attestation.json -print -quit)"
           test -n "$report"
           root="$(dirname "$report")"
-          cp "$report" ci-artifact/graphdb-import-attestation.json
-          cp "$root/verification/graph-counts.json" ci-artifact/graph-counts.json
-          cp "$root/verification/invariant-results.json" ci-artifact/invariant-results.json
-          cp "$root/verification/default-graph-check.json" ci-artifact/default-graph-check.json
-          cp "$root/verification/default-dataset-semantics.json" ci-artifact/default-dataset-semantics.json
-          cp "$root/runtime/graphdb-version.json" ci-artifact/graphdb-version.json
-          cp "$root/runtime/inference-regression.json" ci-artifact/inference-regression.json
-          cp "$root/verification/query-results/"*.json ci-artifact/query-results/
-          if find ci-artifact -type f -printf '%f\n' | grep -Eiq 'license|authorization|cookie|\.env|docker'; then
+          cp "$report" "$ARTIFACT_DIR/graphdb-import-attestation.json"
+          cp "$root/verification/graph-counts.json" "$ARTIFACT_DIR/graph-counts.json"
+          cp "$root/verification/invariant-results.json" "$ARTIFACT_DIR/invariant-results.json"
+          cp "$root/verification/default-graph-check.json" "$ARTIFACT_DIR/default-graph-check.json"
+          cp "$root/verification/default-dataset-semantics.json" "$ARTIFACT_DIR/default-dataset-semantics.json"
+          cp "$root/runtime/graphdb-version.json" "$ARTIFACT_DIR/graphdb-version.json"
+          cp "$root/runtime/inference-regression.json" "$ARTIFACT_DIR/inference-regression.json"
+          cp "$root/verification/query-results/"*.json "$ARTIFACT_DIR/query-results/"
+          if find "$ARTIFACT_DIR" -type f -printf '%f\n' | grep -Eiq 'license|authorization|cookie|\.env|docker'; then
             echo 'sensitive artifact filename detected' >&2
             exit 1
           fi
-          if grep -RInE 'GRAPHDB_LICENSE|license_content|license_path|authorization:|cookie:' ci-artifact; then
+          if grep -RInE 'GRAPHDB_LICENSE|license_content|license_path|authorization:|cookie:' "$ARTIFACT_DIR"; then
             echo 'sensitive artifact content detected' >&2
             exit 1
           fi
@@ -126,7 +128,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: stage07-graphdb-attestation-${{ github.sha }}
-          path: ci-artifact
+          path: ${{ runner.temp }}/stage07-attestation
           if-no-files-found: error
       - name: Verify clean working tree
         shell: bash
