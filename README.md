@@ -33,7 +33,7 @@ GraphDB / WebVOWL (future stages)
 | Stage 04 Modeling Contracts and Proposal Generation | PASS |
 | Stage 05 Human Review and Confirmed Modeling Package | PASS |
 | Stage 06 Deterministic Formal Semantic Compilation | PASS |
-| Stage 07 GraphDB Assembly and Import | NOT PASS — LIVE GRAPHDB VERIFICATION INCOMPLETE |
+| Stage 07 GraphDB Assembly and Import | PASS |
 | Stage 08 WebVOWL and End-to-End Publication | NOT STARTED |
 
 Stage 03 已完成正式 IRI 迁移、模块归属、Protégé catalog、SHACL profile 拆分，
@@ -43,8 +43,10 @@ Stage 03 已完成正式 IRI 迁移、模块归属、Protégé catalog、SHACL p
 `ConfirmedModelingPackage` Builder。Stage 06 增加了 authority-gated、确定性的正式
 OWL ABox、RDF Dataset、建模来源图、审核审计图、SHACL Validation Report、OWL 2 DL
 Consistency Report 和 Compilation Manifest。ROBOT 是固定版本的命令行封装，HermiT 是由
-它调用的 OWL 推理器；二者的版本在正式证明中分别记录。Stage 07 已接入离线 GraphDB
-包合同和 Docker harness；真实导入仍受外部 license 门禁约束，WebVOWL 仍未接入。
+它调用的 OWL 推理器；二者的版本在正式证明中分别记录。Stage 07 已使用合法运行时 FREE
+license 在 GraphDB 11.4.2 上完成真实导入：13 个 named graphs 完整保留，physical default graph
+为空，repository ruleset 为 `empty`，无 inferred statements，显式导出与输入 Dataset 语义相等，
+并已验证 Rejected/Deferred exact assertion isolation。Stage 08 WebVOWL 尚未开始。
 
 Stage 03 收尾还将旧资格判断 JSON Schema 从根 `schemas/` 移至
 `examples/eligibility-use-case/schemas/`，并把 `$id` 迁移到项目稳定的 HTTPS
@@ -63,9 +65,9 @@ contract 不同，且不会被 Modeling Pipeline 当作输入适配器。
 - 当前可以执行冻结 SHACL 验证和 Package 级 OWL 2 DL consistency check。
 - 当前不能只从 Proposal 编译；BLOCKED ConfirmedModelingPackage 会被拒绝。
 - Stage 07 已加入确定性的 runtime TBox/ABox 装配、GraphDB repository 配置、闭包导入包、
-  SPARQL 查询套件、独立包重建校验器、受限 client/importer/verifier、运行时 attestation
-  以及 Docker 集成 harness。GraphDB 11.4.2 的真实导入仍需外部 license；未提供 license
-  时状态必须保持 `NOT PASS`，不能用离线检查替代 live verification。
+  SPARQL/Graph Store 验证套件、独立包重建校验器、受限 client/importer/verifier、运行时
+  attestation 以及 Docker 集成 harness，并已在 GraphDB 11.4.2 上完成 licensed live verification。
+  后续重跑若未提供合法外部 license，live 目标仍必须明确失败，不能用离线检查替代。
 - Stage 08 WebVOWL、HTTP API、前端和数据库仍未开始。
 - `schemas/modeling/` 包含 11 个 Modeling Schema，并由本地 Registry 离线解析。
 - 正式本体发布版本为 **1.0.0**；Python 包版本独立，不因本体版本机械升高。
@@ -163,9 +165,15 @@ core（其中包含 Stage 01/02 回归）、Schema Identifier 门禁、ROBOT 校
 GRAPHDB_LICENSE_FILE=/secure/path/graphdb.license make verify-graphdb-live
 ```
 
-`GRAPHDB_LICENSE_FILE` 指向的文件或 `GRAPHDB_LICENSE_CONTENT` 的内容不会写入版本库，
+`GRAPHDB_LICENSE_FILE` 指向的文件、`GRAPHDB_LICENSE_CONTENT` 的内容或严格编码的
+`GRAPHDB_LICENSE_B64` 不会写入版本库，
 也不会进入镜像构建上下文。没有外部 license 时，live 目标会明确失败并清理它创建的
 容器、网络和 volume。
+
+Stage 07 的闭合验证已在 GraphDB 11.4.2 FREE edition 上完成。验证确认 13 个 named graphs、
+2332 个 quads、physical default graph statement count 为 0、repository ruleset 为 `empty`、
+inferred statement count 为 0；显式与完整导出的 semantic hash 均与导入 Dataset 相等，
+Rejected/Deferred exact assertion isolation 以及 fail-closed 攻击回归均通过。
 
 ### Reasoner 产物与哈希
 
@@ -238,10 +246,11 @@ python scripts/check_references.py
 python scripts/check_repo_hygiene.py
 ```
 
-测试与 CI 门禁不依赖 Node、浏览器、Docker、数据库服务或外部 GraphDB/WebVOWL；
-完整 reasoner 只需要 Java 17+ 和固定校验的 ROBOT。CI 执行单一完整门禁
-`make verify-stage-03`，随后断言 `git diff` 与 `git status --short` 均为空，确保
-Reasoner runtime 产物不会污染正式仓库。
+Python core 与 PR 离线门禁不依赖 Node、浏览器或外部 GraphDB/WebVOWL；完整 reasoner
+只需要 Java 17+ 和固定校验的 ROBOT。受信任的 `main` push 与 `workflow_dispatch` 另行执行
+licensed GraphDB integration，许可证只从 GitHub encrypted secret 注入；成功后上传严格闭包、
+经过敏感信息扫描的 Stage 07 Attestation artifact。所有 CI job 最后均断言 `git diff` 与
+`git status --short` 为空，确保 runtime 产物不会污染正式仓库。
 
 ## Legacy Eligibility Use Case
 
