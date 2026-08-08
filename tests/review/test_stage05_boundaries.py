@@ -30,13 +30,12 @@ def test_stage05_forbids_compilers_auto_confirm_and_integrations():
         "webvowl",
         "frontend",
         "src/kg_mnp_demo/graphdb.py",
-        "src/kg_mnp_demo/webvowl.py",
         "src/kg_mnp_demo/api",
     ):
         assert not (ROOT / relative).exists()
 
 
-def test_cli_exposes_review_confirm_and_stage06_compile_but_not_integrations():
+def test_cli_preserves_review_confirm_after_final_extensions():
     from kg_mnp_demo.modeling.cli import build_parser
 
     parser = build_parser()
@@ -47,7 +46,8 @@ def test_cli_exposes_review_confirm_and_stage06_compile_but_not_integrations():
     assert {"review", "confirm", "package"} <= names
     assert "compile" in names
     assert "graphdb" in names
-    assert not {"webvowl", "auto-confirm"} & names
+    assert {"webvowl", "publication"} <= names
+    assert "auto-confirm" not in names
     review = action.choices["review"]
     review_action = next(
         item for item in review._actions if isinstance(item, argparse._SubParsersAction)

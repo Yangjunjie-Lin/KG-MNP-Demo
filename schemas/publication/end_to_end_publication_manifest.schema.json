@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/publication/end-to-end-publication-manifest/1.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version", "publication_id", "publication_semantic_hash",
+    "cleaned_partial_data_hash", "modeling_proposal_id", "modeling_proposal_hash",
+    "review_decision_log_id", "review_decision_log_hash", "confirmed_modeling_package_id",
+    "confirmed_modeling_package_hash", "compilation_id", "compilation_semantic_hash",
+    "graphdb_publication_id", "graphdb_publication_semantic_hash", "visualization_id",
+    "visualization_semantic_hash", "ontology_baseline_id", "ontology_version",
+    "ontology_release_source_hash", "webvowl_upstream_commit", "owl2vowl_upstream_commit",
+    "artifact_manifest", "publication_status"
+  ],
+  "properties": {
+    "contract_version": {"const": "1.0"},
+    "publication_id": {"type": "string", "pattern": "^urn:kg-mnp:e2e-publication:[0-9a-f]{64}$"},
+    "publication_semantic_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "cleaned_partial_data_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "modeling_proposal_id": {"type": "string"},
+    "modeling_proposal_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "review_decision_log_id": {"type": "string"},
+    "review_decision_log_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "confirmed_modeling_package_id": {"type": "string"},
+    "confirmed_modeling_package_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "compilation_id": {"type": "string"},
+    "compilation_semantic_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "graphdb_publication_id": {"type": "string"},
+    "graphdb_publication_semantic_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "visualization_id": {"type": "string"},
+    "visualization_semantic_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "ontology_baseline_id": {"const": "kg-mnp-ontology-baseline"},
+    "ontology_version": {"type": "string"},
+    "ontology_release_source_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "webvowl_upstream_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "owl2vowl_upstream_commit": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "artifact_manifest": {
+      "type": "array",
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["relative_path", "role", "byte_sha256", "semantic_sha256", "artifact_id"],
+        "properties": {
+          "relative_path": {"type": "string", "pattern": "^[^/].*"},
+          "role": {"type": "string"},
+          "byte_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+          "semantic_sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+          "artifact_id": {"type": "string"}
+        }
+      }
+    },
+    "publication_status": {"enum": ["READY_FOR_PRESENTATION", "FAILED"]}
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/webvowl/coverage-report/1.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["contract_version", "expected", "represented", "missing_required_terms", "unexpected_project_terms", "non_visualized_project_terms", "unexpected_external_terms", "semantic_mismatches", "abox_leakage_hits", "status"],
+  "properties": {
+    "contract_version": {"const": "1.0"},
+    "expected": {"type": "array", "items": {"$ref": "#/$defs/term"}},
+    "represented": {"type": "array", "items": {"$ref": "#/$defs/represented"}},
+    "missing_required_terms": {"type": "array", "items": {"type": "string"}},
+    "unexpected_project_terms": {"type": "array", "items": {"type": "string"}},
+    "non_visualized_project_terms": {"type": "array", "items": {"type": "string"}},
+    "unexpected_external_terms": {"type": "array", "items": {"type": "string", "format": "uri"}},
+    "semantic_mismatches": {"type": "array", "items": {"type": "string"}},
+    "abox_leakage_hits": {"type": "array", "items": {"type": "string"}},
+    "status": {"enum": ["PASS", "FAILED"]}
+  },
+  "$defs": {
+    "term": {
+      "type": "object", "additionalProperties": false,
+      "required": ["iri", "ontology_module", "term_type", "expected_labels", "required"],
+      "properties": {
+        "iri": {"type": "string", "format": "uri"},
+        "ontology_module": {"type": "string"},
+        "term_type": {"type": "string"},
+        "expected_labels": {"type": "array", "items": {"type": "string"}},
+        "required": {"type": "boolean"}
+      }
+    },
+    "represented": {
+      "type": "object", "additionalProperties": false,
+      "required": ["iri", "ontology_module", "term_type", "expected_labels", "required", "represented", "vowl_internal_id"],
+      "properties": {
+        "iri": {"type": "string", "format": "uri"},
+        "ontology_module": {"type": "string"},
+        "term_type": {"type": "string"},
+        "expected_labels": {"type": "array", "items": {"type": "string"}},
+        "required": {"type": "boolean"},
+        "represented": {"type": "boolean"},
+        "vowl_internal_id": {"type": ["string", "null"]}
+      }
+    }
+  }
+}

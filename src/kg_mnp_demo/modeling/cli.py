@@ -47,6 +47,8 @@ from ..compilation.validator import (
     validate_compilation_package_against_authorities,
 )
 from ..graphdb.cli import add_graphdb_parser, dispatch_graphdb
+from ..publication.cli import add_publication_parser, dispatch_publication
+from ..webvowl.cli import add_webvowl_parser, dispatch_webvowl
 
 
 class DuplicateKeyError(ValueError):
@@ -690,6 +692,8 @@ def build_parser() -> argparse.ArgumentParser:
     )
     compile_inspect.add_argument("--compilation-dir", required=True, type=Path)
     add_graphdb_parser(subcommands)
+    add_webvowl_parser(subcommands)
+    add_publication_parser(subcommands)
     return parser
 
 
@@ -785,6 +789,10 @@ def main(argv: list[str] | None = None) -> int:
             return cmd_compile_inspect(compilation_dir=args.compilation_dir)
         if args.command == "graphdb":
             return dispatch_graphdb(args, _json_print)
+        if args.command == "webvowl":
+            return dispatch_webvowl(args)
+        if args.command == "publication":
+            return dispatch_publication(args)
     except (
         ArtifactWriteError,
         CompilationContractError,

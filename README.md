@@ -20,7 +20,11 @@ Deterministic Formal Semantic Compiler
         ↓
 OWL / RDF Dataset / SHACL / ABox / Provenance / Review Artifacts
         ↓
-GraphDB / WebVOWL (future stages)
+Verified GraphDB Knowledge Graph
+        ↓
+WebVOWL TBox Visualization
+        ↓
+EndToEndPublicationPackage
 ```
 
 ## 阶段状态
@@ -34,7 +38,37 @@ GraphDB / WebVOWL (future stages)
 | Stage 05 Human Review and Confirmed Modeling Package | PASS |
 | Stage 06 Deterministic Formal Semantic Compilation | PASS |
 | Stage 07 GraphDB Assembly and Import | PASS |
-| Stage 08 WebVOWL and End-to-End Publication | NOT STARTED |
+| Stage 08 WebVOWL and End-to-End Publication | PASS |
+
+**Foundation pipeline status = COMPLETE through Stage 08.**
+
+This completes the ontology and knowledge graph foundation.
+
+### Stage 08 authority boundary
+
+- **ConfirmedModelingPackage** is the semantic decision authority.
+- **OWL/SHACL** is the formal semantic authority.
+- **GraphDB** carries the full verified TBox + ABox + Provenance + Review knowledge graph.
+- **WebVOWL** visualizes the ontology TBox only. WebVOWL JSON is a presentation projection and is not a semantic authority.
+
+The WebVOWL and OWL2VOWL sources are fetched at exact audited commits into the ignored
+`upstream-source/` directory. Conversion reads only the Stage 03 root ontology and frozen local runtime
+dependencies; remote IRI/import resolution is forbidden. WebVOWL's legacy npm graph is installed only by
+`npm ci` from the tracked shrinkwrap (SHA-256
+`74c5094525121337d6b71d0862ec9543a0356e536b00fe67b45f03d031f0fdda`). The formal normalized VOWL
+JSON contains no business instances, review/provenance records, GraphDB runtime metadata, license data, or
+browser artifacts.
+
+```bash
+kg-mnp webvowl package build --output-dir runtime_outputs/webvowl/package
+kg-mnp webvowl package validate --package-dir runtime_outputs/webvowl/package
+kg-mnp publication build --scenario full-confirmation --output-dir runtime_outputs/publication/full-confirmation
+kg-mnp publication validate --scenario full-confirmation --package-dir runtime_outputs/publication/full-confirmation
+make verify-stage-08-offline
+# Requires an external GraphDB license, Docker, Playwright 1.49.1, and
+# Chromium 131.0.6778.33 (revision 1148):
+make verify-stage-08
+```
 
 Stage 03 已完成正式 IRI 迁移、模块归属、Protégé catalog、SHACL profile 拆分，
 以及 OWL 2 DL 一致性检查。Stage 04 已增加离线 Modeling Contract、冻结的
@@ -46,7 +80,10 @@ Consistency Report 和 Compilation Manifest。ROBOT 是固定版本的命令行�
 它调用的 OWL 推理器；二者的版本在正式证明中分别记录。Stage 07 已使用合法运行时 FREE
 license 在 GraphDB 11.4.2 上完成真实导入：13 个 named graphs 完整保留，physical default graph
 为空，repository ruleset 为 `empty`，无 inferred statements，显式导出与输入 Dataset 语义相等，
-并已验证 Rejected/Deferred exact assertion isolation。Stage 08 WebVOWL 尚未开始。
+并已验证 Rejected/Deferred exact assertion isolation。Stage 08 已完成冻结上游、TBox-only 投影、
+coverage / representation-loss / ABox leakage 校验和四场景发布包；真实 Chromium 浏览器在
+127.0.0.1:8080 隔离 runtime 上完成节点/边、恶意标签与外部网络阻断验证，并生成最终
+`PUBLICATION_VERIFIED` attestation。
 
 Stage 03 收尾还将旧资格判断 JSON Schema 从根 `schemas/` 移至
 `examples/eligibility-use-case/schemas/`，并把 `$id` 迁移到项目稳定的 HTTPS
@@ -55,7 +92,9 @@ contract 不同，且不会被 Modeling Pipeline 当作输入适配器。
 
 ## 当前边界
 
-- 当前没有前端，也没有 Node、Vite、Playwright 或 Nginx 运行路径。
+- 当前没有产品或业务前端，也没有 Vite/Nginx application runtime。Node 12 仅存在于固定摘要的
+  WebVOWL 构建镜像及固定目的地 loopback relay；Playwright 1.49.1 / Chromium 131.0.6778.33
+  （revision 1148）仅用于 Stage 08 live 浏览器验收，不进入 Python core、语义权威或产品运行路径。
 - 当前不以携号转网资格判断为中央任务；九个 legacy 案例作为 eligibility profile 回归资产保留。
 - 当前没有 HTTP API 或 SQLite 执行历史服务作为本阶段交付物。
 - 当前可以从 CleanedPartialData 生成确定性的、仅供审核的 ModelingProposal。
@@ -68,7 +107,8 @@ contract 不同，且不会被 Modeling Pipeline 当作输入适配器。
   SPARQL/Graph Store 验证套件、独立包重建校验器、受限 client/importer/verifier、运行时
   attestation 以及 Docker 集成 harness，并已在 GraphDB 11.4.2 上完成 licensed live verification。
   后续重跑若未提供合法外部 license，live 目标仍必须明确失败，不能用离线检查替代。
-- Stage 08 WebVOWL、HTTP API、前端和数据库仍未开始。
+- Stage 08 只增加隔离的 upstream WebVOWL 可视化 runtime、浏览器验证 harness 与 publication CLI；
+  未增加 application business frontend、eligibility decision UI、GraphRAG、LLM、Agent、production API、Neo4j 或 Stage 09。
 - `schemas/modeling/` 包含 11 个 Modeling Schema，并由本地 Registry 离线解析。
 - 正式本体发布版本为 **1.0.0**；Python 包版本独立，不因本体版本机械升高。
 
@@ -141,6 +181,8 @@ make verify-review-cli
 make verify-stage-05
 make verify-stage-06
 make verify-stage-07
+make verify-stage-08-offline
+make verify-stage-08
 ```
 
 `verify-stage-06` 是 CI 和本地收尾的完整入口；它先完整执行 `verify-stage-05`，
@@ -249,8 +291,10 @@ python scripts/check_repo_hygiene.py
 Python core 与 PR 离线门禁不依赖 Node、浏览器或外部 GraphDB/WebVOWL；完整 reasoner
 只需要 Java 17+ 和固定校验的 ROBOT。受信任的 `main` push 与 `workflow_dispatch` 另行执行
 licensed GraphDB integration，许可证只从 GitHub encrypted secret 注入；成功后上传严格闭包、
-经过敏感信息扫描的 Stage 07 Attestation artifact。所有 CI job 最后均断言 `git diff` 与
-`git status --short` 为空，确保 runtime 产物不会污染正式仓库。
+经过大小写不敏感 JSON/文件敏感信息扫描的 Stage 07 Attestation artifact，以及
+`stage08-publication-attestation-<commit SHA>` Stage 08 publication artifact。Stage 08 live job 的
+Node/Playwright 环境与 Python core 隔离，并固定 Playwright/Chromium 版本；所有 CI job 最后均断言
+`git diff` 与 `git status --short` 为空，确保 runtime 产物不会污染正式仓库。
 
 ## Legacy Eligibility Use Case
 

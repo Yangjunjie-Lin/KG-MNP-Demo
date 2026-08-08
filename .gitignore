@@ -26,6 +26,16 @@ runtime_outputs/
 runtime_data/
 runtime_reports/
 runtime_logs/
+runtime_outputs/webvowl/
+runtime_reports/webvowl/
+runtime_outputs/publication/
+runtime_reports/publication/
+.webvowl/
+.owl2vowl/
+playwright-report/
+browser-artifacts/
+upstream-source/
+/.tmp-stage08-*/
 
 # Local GraphDB and downloaded tools (future optional integrations)
 graphdb-data/

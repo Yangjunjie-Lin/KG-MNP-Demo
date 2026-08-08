@@ -28,7 +28,7 @@ def test_stage04_does_not_implement_compilers_or_auto_confirmation() -> None:
     assert matches == []
 
 
-def test_central_cli_exposes_compile_only_at_stage06_boundary() -> None:
+def test_central_cli_preserves_stage04_commands_after_final_extensions() -> None:
     from kg_mnp_demo.modeling.cli import build_parser
 
     parser = build_parser()
@@ -38,21 +38,20 @@ def test_central_cli_exposes_compile_only_at_stage06_boundary() -> None:
     command_names = set(action.choices)
     assert "compile" in command_names
     assert "graphdb" in command_names
-    for command in ("webvowl", "auto-confirm"):
-        assert command not in command_names
+    assert {"webvowl", "publication"} <= command_names
+    assert "auto-confirm" not in command_names
     # Stage 05 introduces explicit human review and confirmation builders.
     assert "review" in command_names
     assert "confirm" in command_names
     assert "package" in command_names
 
 
-def test_no_graphdb_webvowl_frontend_or_http_api_was_added() -> None:
+def test_no_application_frontend_or_http_api_was_added() -> None:
     for relative in (
         "graphdb-local",
         "webvowl",
         "frontend",
         "src/kg_mnp_demo/graphdb.py",
-        "src/kg_mnp_demo/webvowl.py",
         "src/kg_mnp_demo/api",
     ):
         assert not (ROOT / relative).exists()

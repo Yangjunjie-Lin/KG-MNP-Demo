@@ -16,7 +16,11 @@
  verify-compiler-cli verify-compiler-semantic-closure verify-stage-06 \
  verify-graphdb-contracts verify-graphdb-policy verify-graphdb-assembly \
  verify-graphdb-package verify-graphdb-queries verify-graphdb-security \
- verify-graphdb-cli verify-graphdb-live verify-graphdb-offline verify-stage-07
+ verify-graphdb-cli verify-graphdb-live verify-graphdb-offline verify-stage-07 \
+ verify-webvowl-contracts verify-webvowl-policy verify-webvowl-upstream-lock \
+ verify-webvowl-conversion verify-webvowl-determinism verify-webvowl-coverage \
+ verify-webvowl-security verify-publication-package verify-webvowl-live \
+ verify-stage-08-components verify-stage-08-offline verify-stage-08
 
 PYTHON_CORE_TESTS = \
 	tests/test_ontology.py \
@@ -334,3 +338,41 @@ verify-stage-07:
 	$(MAKE) verify-graphdb-cli
 	$(MAKE) verify-graphdb-live
 	python -m pytest -q tests/graphdb/test_stage07_boundaries.py
+
+verify-webvowl-contracts:
+	python scripts/check_schema_identifiers.py
+	python -m pytest -q tests/webvowl/test_stage08_core.py -k "contracts"
+
+verify-webvowl-policy:
+	python -m pytest -q tests/webvowl/test_stage08_core.py -k "policy"
+
+verify-webvowl-upstream-lock:
+	python -m pytest -q tests/webvowl/test_stage08_core.py -k "frozen or mutable or forged"
+
+verify-webvowl-conversion:
+	python scripts/verify_owl2vowl_conversion.py
+
+verify-webvowl-determinism:
+	python -m pytest -q tests/webvowl/test_stage08_core.py -k "deterministic"
+
+verify-webvowl-coverage:
+	python -m pytest -q tests/webvowl/test_stage08_core.py -k "complete or abox"
+
+verify-webvowl-security:
+	python -m pytest -q tests/webvowl/test_stage08_core.py -k "rejects or must_be_compared or validator"
+
+verify-publication-package:
+	python -m pytest -q tests/publication
+
+verify-webvowl-live:
+	python scripts/webvowl_integration.py
+
+verify-stage-08-components: verify-webvowl-contracts verify-webvowl-policy \
+	verify-webvowl-upstream-lock verify-webvowl-determinism \
+	verify-webvowl-coverage verify-webvowl-security verify-publication-package
+	python -m pytest -q tests/webvowl/test_stage08_boundaries.py tests/webvowl/test_stage08_hardening.py
+
+verify-stage-08-offline: verify-stage-06 verify-graphdb-offline verify-stage-08-components
+
+verify-stage-08: verify-stage-07 verify-stage-08-components verify-webvowl-conversion verify-webvowl-live
+	python -m pytest -q tests/webvowl/test_stage08_core.py tests/publication/test_publication_stage08.py

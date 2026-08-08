@@ -1,0 +1,18 @@
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix attack: <urn:kg-mnp:test:malicious-labels#> .
+
+attack:Ontology a owl:Ontology ;
+  dcterms:title "KG-MNP WebVOWL Security Fixture"@en .
+attack:ScriptLike a owl:Class ;
+  rdfs:label "<script>window.__kgMnpInjected=true</script>"@en .
+attack:EventLike a owl:Class ;
+  rdfs:label "<img src=x onerror=window.__kgMnpInjected=true>"@en .
+attack:QuotesAndNewlines a owl:Class ;
+  rdfs:label """quotes " ' and
+newlines"""@en .
+<urn:kg-mnp:test:malicious-labels#hasEncoded%2FValue> a owl:DatatypeProperty ;
+  rdfs:domain attack:ScriptLike ;
+  rdfs:range xsd:string .

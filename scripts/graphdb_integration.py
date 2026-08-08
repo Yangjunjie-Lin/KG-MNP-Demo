@@ -59,6 +59,33 @@ def _assert_default_dataset_semantics(client, repository_id: str) -> dict:
     }
 
 
+def _verify_graphdb_tbox_projection(client, repository_id: str, built: dict) -> dict:
+    """Extract the live repository's TBox named graphs and compare Stage 03."""
+    import hashlib
+    from rdflib import Dataset, URIRef
+    from kg_mnp_demo.compilation.rdf_canonical import canonical_nquads
+    from kg_mnp_demo.webvowl.source import build_visualization_source
+    from kg_mnp_demo.webvowl.verifier import tbox_equivalence
+
+    exported = client.export_nquads(repository_id, include_inferred=False)
+    dataset = Dataset()
+    dataset.parse(data=exported.decode("utf-8"), format="nquads")
+    graph_iris = {URIRef(item["graph_iri"]) for item in built["tbox"]["modules"]}
+    quads = [
+        (subject, predicate, obj, graph.identifier if hasattr(graph, "identifier") else graph)
+        for subject, predicate, obj, graph in dataset.quads((None, None, None, None))
+        if (graph.identifier if hasattr(graph, "identifier") else graph) in graph_iris
+    ]
+    graphdb_hash = hashlib.sha256(canonical_nquads(quads)).hexdigest()
+    stage03 = build_visualization_source()
+    report = tbox_equivalence(
+        stage03_semantic_hash=stage03["tbox_semantic_hash"],
+        graphdb_semantic_hash=graphdb_hash,
+    )
+    report.update({"named_graph_count": len(graph_iris), "tbox_quad_count": len(quads), "source": "LIVE_GRAPHDB_EXPLICIT_EXPORT"})
+    return report
+
+
 def _run_live_inference_regression(client, package_dir: Path, built: dict) -> dict:
     """Prove an inference-enabled repository is rejected by the verifier."""
 
@@ -493,6 +520,12 @@ def main() -> int:
             json_bytes(inference_evidence)
         )
         verification = verify_imported_repository(client, package_dir, report_directory=report_dir)
+        tbox_report = _verify_graphdb_tbox_projection(
+            client, built["manifest"]["repository_id"], built
+        )
+        (verification_dir / "tbox-equivalence.json").write_bytes(
+            json_bytes(tbox_report)
+        )
         policy = load_graphdb_policy()
         attestation = build_import_attestation(
             source_publication_id=built["manifest"]["publication_id"],

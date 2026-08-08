@@ -1,0 +1,65 @@
+contract_version: "1.0"
+runtime_id: "kg-mnp-webvowl-runtime"
+runtime_version: "1.0.0"
+webvowl:
+  repository: "https://github.com/VisualDataWeb/WebVOWL.git"
+  commit_sha: "28e7dd9540622e8cb723dc000824b5eef5ae775f"
+  source_version: "1.1.7"
+owl2vowl:
+  repository: "https://github.com/VisualDataWeb/OWL2VOWL.git"
+  commit_sha: "c6331c4c79b0034b8537a11cccd1a6587cedb0b9"
+  source_version: "0.3.7"
+source_tree_hashes:
+  webvowl: "48eb27270c30aea2f464e2bb142f2142c1d341e4"
+  owl2vowl: "fcac129cfaf33f05ce62fd9c41b9fe05ce260e88"
+network:
+  bind_host: "127.0.0.1"
+  port: 8080
+  external_exposure: "FORBIDDEN"
+  runtime_internet_access: "FORBIDDEN"
+visualization:
+  scope: "TBOX_ONLY"
+  abox_visualization: "FORBIDDEN"
+  graphdb_is_semantic_authority: false
+  ontology_is_semantic_authority: true
+conversion:
+  source: "STAGE03_ROOT_PLUS_RUNTIME_DEPENDENCIES"
+  remote_iri_loading: "FORBIDDEN"
+  external_import_resolution: "FORBIDDEN"
+  deterministic_normalization: "REQUIRED"
+  network_mode: "none"
+  audited_raw_fixture: "examples/publication/fixtures/owl2vowl-0.3.7-raw.json"
+  audited_source_tbox_sha256: "4d66605486f5f581a8d83344e2144639e1c03a8bc8320d1bc30e69ab9058da95"
+  audited_raw_sha256: "c61ea6ff3badeb9e1e89aa06f9faa09086face68197794738b027a785fba750f"
+  audited_normalized_sha256: "461ca94d9034c2ce762fa7a19bfd5cce5bd244ccaf3a970200a632062b0e66b6"
+normalization_exclusion_policy:
+  class_individuals:
+    field: "classAttribute[].individuals"
+    action: "REMOVE_FROM_PRESENTATION_PROJECTION"
+    allowed_iri_prefix: "https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#Code-"
+    reason: "Controlled code-list entries are ontology support individuals, not TBox visualization nodes."
+    evidence: "ontology/mnp-code-list.ttl"
+images:
+  maven:
+    reference: "maven:3.9.16-eclipse-temurin-8-noble"
+    digest: "sha256:0537e78bbba084ec350fcaa0dedef6efa34440e4e464bbb284f0f1e47043f629"
+  node:
+    reference: "node:12-alpine"
+    digest: "sha256:4517380049fc3c9aacceae7764fcf3500354b0ac8a47e4afb35b5bbeb75b9498"
+  tomcat_jdk:
+    reference: "tomcat:9.0.118-jdk8-temurin-noble"
+    digest: "sha256:41836df54c3781e0e835e61a4761b566d0de9187eb6c56340191b343e1fe3101"
+  tomcat_jre:
+    reference: "tomcat:9.0.118-jre8-temurin-noble"
+    digest: "sha256:6ac38ff9831b03e18e83174eca45d746f2accde3a5c8f8bc48ba2c9fd63b8b17"
+build_dependencies:
+  webvowl_npm_shrinkwrap:
+    path: "deploy/webvowl/webvowl-npm-shrinkwrap.json"
+    sha256: "74c5094525121337d6b71d0862ec9543a0356e536b00fe67b45f03d031f0fdda"
+    install_mode: "NPM_CI"
+license:
+  webvowl: "MIT"
+  owl2vowl: "MIT"
+retrieval:
+  method: "ISOLATED_GIT_FETCH_EXACT_COMMIT"
+  fallback_branch: "FORBIDDEN"

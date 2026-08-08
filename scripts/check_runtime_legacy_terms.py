@@ -188,16 +188,24 @@ def tracked_and_intended_files(root: Path, scan_roots: tuple[str, ...]) -> tuple
         capture_output=True,
     )
     relative_paths = completed.stdout.decode("utf-8").split("\0")
-    # Stage 07 golden N-Quads intentionally copy the frozen Stage 03 TBox.
-    # The source ontology release remains scanned; generated package copies
-    # are validated by the GraphDB package assembler instead of duplicating
-    # every approved deprecated declaration for each scenario.
-    excluded_prefix = "examples/graphdb/expected/"
+    # Stage 07 N-Quads and Stage 08 VOWL goldens intentionally copy/project the
+    # frozen Stage 03 TBox. The source ontology release remains scanned; these
+    # generated package copies are validated by their independent authority
+    # reconstruction gates instead of duplicating every approved deprecated
+    # declaration for each scenario and representation.
+    excluded_prefixes = (
+        "examples/graphdb/expected/",
+        "examples/publication/expected/",
+    )
+    excluded_exact = {
+        "examples/publication/fixtures/owl2vowl-0.3.7-raw.json",
+    }
     return tuple(
         root / PurePosixPath(relative)
         for relative in sorted(set(relative_paths))
         if relative
-        and not relative.startswith(excluded_prefix)
+        and not relative.startswith(excluded_prefixes)
+        and relative not in excluded_exact
         and (root / PurePosixPath(relative)).is_file()
     )
 
