@@ -1,0 +1,9 @@
+SELECT ?graph (COUNT(*) AS ?tripleCount)
+WHERE {
+  VALUES ?graph { @@GRAPH_graph@@ }
+  GRAPH ?graph { ?subject ?predicate ?object . }
+}
+GROUP BY ?graph
+ORDER BY ?graph
+LIMIT @@LIMIT@@
+OFFSET @@OFFSET@@

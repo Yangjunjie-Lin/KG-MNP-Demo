@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/application/query-result/1.0",
+  "type": "object", "additionalProperties": false,
+  "required": ["contract_version", "query_id", "query_version", "publication_id", "publication_semantic_hash", "repository_id", "parameters", "variables", "results", "traceability", "result_count", "truncated", "result_semantic_hash", "runtime_metadata"],
+  "properties": {
+    "contract_version": {"const": "1.0"}, "query_id": {"type": "string"},
+    "query_version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"},
+    "publication_id": {"type": "string", "pattern": "^urn:kg-mnp:e2e-publication:[0-9a-f]{64}$"},
+    "publication_semantic_hash": {"$ref": "#/$defs/hash"}, "repository_id": {"type": "string", "pattern": "^kg-mnp-[0-9a-f]{20}$"},
+    "parameters": {"$ref": "#/$defs/parameters"}, "variables": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
+    "results": {"type": "array", "maxItems": 1000, "items": {"$ref": "#/$defs/row"}},
+    "traceability": {"$ref": "#/$defs/traceability"}, "result_count": {"type": "integer", "minimum": 0, "maximum": 1000},
+    "truncated": {"type": "boolean"}, "result_semantic_hash": {"$ref": "#/$defs/hash"},
+    "runtime_metadata": {"$ref": "#/$defs/runtime"}
+  },
+  "$defs": {
+    "hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "inputRdfTerm": {"oneOf": [
+      {"type": "object", "additionalProperties": false, "required": ["term_type", "value"], "properties": {"term_type": {"const": "IRI"}, "value": {"type": "string"}}},
+      {"type": "object", "additionalProperties": false, "required": ["term_type", "value", "datatype_iri", "language"], "properties": {"term_type": {"const": "LITERAL"}, "value": {"type": "string"}, "datatype_iri": {"type": ["string", "null"]}, "language": {"type": ["string", "null"]}}}
+    ]},
+    "parameters": {"type": "object", "additionalProperties": false, "properties": {
+      "iri": {"type": "string"}, "term": {"type": "string"}, "subject": {"type": "string"}, "predicate": {"type": "string"},
+      "object": {"$ref": "#/$defs/inputRdfTerm"}, "resource_id": {"type": "string"}, "source_ref": {"type": "string"}, "evidence_ref": {"type": "string"},
+      "limit": {"type": "integer"}, "offset": {"type": "integer"}
+    }},
+    "iriTerm": {"type": "object", "additionalProperties": false, "required": ["term_type", "iri"], "properties": {"term_type": {"const": "IRI"}, "iri": {"type": "string"}}},
+    "literalTerm": {"type": "object", "additionalProperties": false, "required": ["term_type", "lexical_form", "datatype_iri", "language"], "properties": {"term_type": {"const": "LITERAL"}, "lexical_form": {"type": "string"}, "datatype_iri": {"type": ["string", "null"]}, "language": {"type": ["string", "null"]}}},
+    "binding": {"type": "object", "additionalProperties": false, "required": ["variable", "term"], "properties": {"variable": {"type": "string"}, "term": {"oneOf": [{"$ref": "#/$defs/iriTerm"}, {"$ref": "#/$defs/literalTerm"}]}}},
+    "row": {"type": "object", "additionalProperties": false, "required": ["bindings"], "properties": {"bindings": {"type": "array", "items": {"$ref": "#/$defs/binding"}}}},
+    "fact": {"type": "object", "additionalProperties": false, "required": ["subject", "predicate", "object"], "properties": {"subject": {"$ref": "#/$defs/iriTerm"}, "predicate": {"$ref": "#/$defs/iriTerm"}, "object": {"oneOf": [{"$ref": "#/$defs/iriTerm"}, {"$ref": "#/$defs/literalTerm"}]}}},
+    "modeling": {"type": "object", "additionalProperties": false, "required": ["assertion_id", "candidate_id", "effective_candidate_id"], "properties": {"assertion_id": {"type": "string"}, "candidate_id": {"type": ["string", "null"]}, "effective_candidate_id": {"type": ["string", "null"]}}},
+    "review": {"type": "object", "additionalProperties": false, "required": ["decision_id", "outcome", "reviewer_id", "decided_at"], "properties": {"decision_id": {"type": "string"}, "outcome": {"type": ["string", "null"]}, "reviewer_id": {"type": ["string", "null"]}, "decided_at": {"type": ["string", "null"]}}},
+    "evidence": {"type": "object", "additionalProperties": false, "required": ["evidence_ref"], "properties": {"evidence_ref": {"type": "string"}}},
+    "source": {"type": "object", "additionalProperties": false, "required": ["source_ref"], "properties": {"source_ref": {"type": "string"}}},
+    "publication": {"type": "object", "additionalProperties": false, "required": ["publication_id", "publication_semantic_hash"], "properties": {"publication_id": {"type": "string"}, "publication_semantic_hash": {"$ref": "#/$defs/hash"}}},
+    "compilation": {"type": "object", "additionalProperties": false, "required": ["compilation_id"], "properties": {"compilation_id": {"type": "string"}}},
+    "graphdb": {"type": "object", "additionalProperties": false, "required": ["repository_id", "graph_iris"], "properties": {"repository_id": {"type": "string"}, "graph_iris": {"type": "array", "uniqueItems": true, "items": {"type": "string"}}}},
+    "traceability": {"type": "object", "additionalProperties": false, "required": ["queried_resource", "publication", "compilation", "graphdb", "business_facts", "modeling", "review", "evidence", "source"], "properties": {
+      "queried_resource": {"$ref": "#/$defs/parameters"}, "publication": {"$ref": "#/$defs/publication"}, "compilation": {"$ref": "#/$defs/compilation"}, "graphdb": {"$ref": "#/$defs/graphdb"},
+      "business_facts": {"type": "array", "items": {"$ref": "#/$defs/fact"}}, "modeling": {"type": "array", "items": {"$ref": "#/$defs/modeling"}},
+      "review": {"type": "array", "items": {"$ref": "#/$defs/review"}}, "evidence": {"type": "array", "items": {"$ref": "#/$defs/evidence"}}, "source": {"type": "array", "items": {"$ref": "#/$defs/source"}}
+    }},
+    "runtime": {"type": "object", "additionalProperties": false, "required": ["duration_ms", "served_at"], "properties": {"duration_ms": {"type": "number", "minimum": 0}, "served_at": {"type": "string", "format": "date-time"}}}
+  }
+}

@@ -7,6 +7,15 @@ from typing import Any
 
 
 class ErrorCode(str, Enum):
+    INVALID_QUERY_ID = "INVALID_QUERY_ID"
+    INVALID_PARAMETER = "INVALID_PARAMETER"
+    INVALID_IRI = "INVALID_IRI"
+    QUERY_TIMEOUT = "QUERY_TIMEOUT"
+    RESULT_LIMIT_EXCEEDED = "RESULT_LIMIT_EXCEEDED"
+    FOUNDATION_NOT_VERIFIED = "FOUNDATION_NOT_VERIFIED"
+    PUBLICATION_MISMATCH = "PUBLICATION_MISMATCH"
+    GRAPHDB_UNAVAILABLE = "GRAPHDB_UNAVAILABLE"
+    READ_ONLY_POLICY_VIOLATION = "READ_ONLY_POLICY_VIOLATION"
     INPUT_SCHEMA_ERROR = "INPUT_SCHEMA_ERROR"
     INPUT_GRAPH_INVALID = "INPUT_GRAPH_INVALID"
     RULE_CONFIGURATION_ERROR = "RULE_CONFIGURATION_ERROR"
@@ -27,6 +36,15 @@ class ErrorCode(str, Enum):
 
 
 _MESSAGES_ZH: dict[ErrorCode, str] = {
+    ErrorCode.INVALID_QUERY_ID: "未知或未注册的查询标识。",
+    ErrorCode.INVALID_PARAMETER: "查询参数无效。",
+    ErrorCode.INVALID_IRI: "IRI 无效或不在允许的命名空间内。",
+    ErrorCode.QUERY_TIMEOUT: "查询超过允许的执行时间。",
+    ErrorCode.RESULT_LIMIT_EXCEEDED: "查询结果超过允许上限。",
+    ErrorCode.FOUNDATION_NOT_VERIFIED: "Foundation 尚未通过验证。",
+    ErrorCode.PUBLICATION_MISMATCH: "Publication 与 GraphDB lineage 不匹配。",
+    ErrorCode.GRAPHDB_UNAVAILABLE: "GraphDB 只读服务不可用。",
+    ErrorCode.READ_ONLY_POLICY_VIOLATION: "操作违反只读策略。",
     ErrorCode.INPUT_SCHEMA_ERROR: "输入数据不符合 Schema。",
     ErrorCode.INPUT_GRAPH_INVALID: "输入图未通过 SHACL 验证。",
     ErrorCode.RULE_CONFIGURATION_ERROR: "规则配置无效。",
@@ -48,6 +66,15 @@ _MESSAGES_ZH: dict[ErrorCode, str] = {
 
 
 ERROR_HTTP_STATUS: dict[ErrorCode, int] = {
+    ErrorCode.INVALID_QUERY_ID: 404,
+    ErrorCode.INVALID_PARAMETER: 422,
+    ErrorCode.INVALID_IRI: 422,
+    ErrorCode.QUERY_TIMEOUT: 504,
+    ErrorCode.RESULT_LIMIT_EXCEEDED: 413,
+    ErrorCode.FOUNDATION_NOT_VERIFIED: 503,
+    ErrorCode.PUBLICATION_MISMATCH: 503,
+    ErrorCode.GRAPHDB_UNAVAILABLE: 503,
+    ErrorCode.READ_ONLY_POLICY_VIOLATION: 405,
     ErrorCode.INPUT_SCHEMA_ERROR: 422,
     ErrorCode.INPUT_GRAPH_INVALID: 400,
     ErrorCode.RULE_CONFIGURATION_ERROR: 500,

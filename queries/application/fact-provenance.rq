@@ -1,0 +1,26 @@
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX prov: <http://www.w3.org/ns/prov#>
+PREFIX mnp: <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#>
+SELECT ?businessGraph ?assertion ?subject ?predicate ?object ?candidateId ?effectiveCandidateId ?decisionId ?outcome ?reviewerId ?decidedAt ?evidenceRef ?sourceRef
+WHERE {
+  VALUES (?subject ?predicate ?object) { (@@PARAM_subject@@ @@PARAM_predicate@@ @@PARAM_object@@) }
+  VALUES ?businessGraph { @@GRAPH_businessGraph@@ }
+  VALUES ?provenanceGraph { @@GRAPH_provenanceGraph@@ }
+  VALUES ?reviewGraph { @@GRAPH_reviewGraph@@ }
+  GRAPH ?businessGraph { ?subject ?predicate ?object . }
+  GRAPH ?provenanceGraph {
+    ?assertion a owl:Axiom ; owl:annotatedSource ?subject ; owl:annotatedProperty ?predicate ; owl:annotatedTarget ?object ; mnp:hasReviewDecision ?decisionId ; dcterms:relation ?effectiveCandidateId .
+    OPTIONAL { ?assertion dcterms:source ?candidateId . FILTER(STRSTARTS(STR(?candidateId), "urn:kg-mnp:candidate:")) }
+    OPTIONAL { ?assertion dcterms:source ?sourceRef . FILTER(STRSTARTS(STR(?sourceRef), "urn:kg-mnp:source-")) }
+    OPTIONAL { ?assertion mnp:hasModelingEvidence ?evidenceRef . }
+  }
+  GRAPH ?reviewGraph {
+    ?decisionId a mnp:ReviewDecision ; mnp:reviewOutcomeCode ?outcome ; prov:generatedAtTime ?decidedAt .
+    ?log dcterms:hasPart ?decisionId ; prov:wasGeneratedBy ?session .
+    ?session prov:wasAssociatedWith ?reviewerId .
+  }
+}
+ORDER BY ?assertion ?evidenceRef ?sourceRef
+LIMIT @@LIMIT@@
+OFFSET @@OFFSET@@

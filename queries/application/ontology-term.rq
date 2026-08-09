@@ -1,0 +1,21 @@
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+SELECT ?graph ?term ?termType ?label ?definition ?domain ?range ?subClassOf ?subPropertyOf ?ontology ?ontologyVersion
+WHERE {
+  VALUES ?term { @@PARAM_term@@ }
+  VALUES ?graph { @@GRAPH_graph@@ }
+  GRAPH ?graph {
+    ?term a ?termType .
+    FILTER(?termType IN (owl:Class, owl:ObjectProperty, owl:DatatypeProperty, owl:AnnotationProperty))
+    OPTIONAL { ?term rdfs:label ?label . }
+    OPTIONAL { ?term rdfs:comment ?definition . }
+    OPTIONAL { ?term rdfs:domain ?domain . }
+    OPTIONAL { ?term rdfs:range ?range . }
+    OPTIONAL { ?term rdfs:subClassOf ?subClassOf . FILTER(isIRI(?subClassOf)) }
+    OPTIONAL { ?term rdfs:subPropertyOf ?subPropertyOf . }
+    OPTIONAL { ?ontology a owl:Ontology ; owl:versionIRI ?ontologyVersion . }
+  }
+}
+ORDER BY ?graph ?termType ?label ?domain ?range ?subClassOf ?subPropertyOf
+LIMIT @@LIMIT@@
+OFFSET @@OFFSET@@

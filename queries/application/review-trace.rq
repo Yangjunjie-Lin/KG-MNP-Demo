@@ -1,0 +1,17 @@
+PREFIX dcterms: <http://purl.org/dc/terms/>
+PREFIX prov: <http://www.w3.org/ns/prov#>
+PREFIX mnp: <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#>
+SELECT ?reviewGraph ?decisionId ?subject ?outcome ?reviewerId ?decidedAt
+WHERE {
+  VALUES ?reviewGraph { @@GRAPH_reviewGraph@@ }
+  GRAPH ?reviewGraph {
+    VALUES ?resource { @@PARAM_resource_id@@ }
+    ?decisionId a mnp:ReviewDecision ; dcterms:subject ?subject ; mnp:reviewOutcomeCode ?outcome ; prov:generatedAtTime ?decidedAt .
+    ?log dcterms:hasPart ?decisionId ; prov:wasGeneratedBy ?session .
+    ?session prov:wasAssociatedWith ?reviewerId .
+    FILTER(?resource IN (?decisionId, ?subject))
+  }
+}
+ORDER BY ?decisionId
+LIMIT @@LIMIT@@
+OFFSET @@OFFSET@@

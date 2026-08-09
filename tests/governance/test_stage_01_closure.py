@@ -86,11 +86,12 @@ def test_node_and_playwright_entrypoints_absent():
         assert not (ROOT / relative).exists(), relative
 
 
-def test_neo4j_and_api_dependencies_absent_from_pyproject():
+def test_neo4j_absent_and_phase01_http_dependencies_are_exactly_pinned():
     text = _read_text("pyproject.toml").lower()
     assert "neo4j" not in text
-    assert "fastapi" not in text
-    assert "uvicorn" not in text
+    assert '"fastapi==0.115.0"' in text
+    assert '"uvicorn==0.30.6"' in text
+    assert (ROOT / "src/kg_mnp_demo/application/http.py").is_file()
 
 
 def test_api_and_neo4j_packages_absent():

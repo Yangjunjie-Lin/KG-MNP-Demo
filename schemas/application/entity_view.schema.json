@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/application/entity-view/1.0",
+  "type": "object", "additionalProperties": false,
+  "required": ["contract_version", "entity", "publication_id", "publication_semantic_hash", "repository_id", "facts", "result_semantic_hash"],
+  "properties": {
+    "contract_version": {"const": "1.0"}, "entity": {"type": "string"},
+    "publication_id": {"type": "string"}, "publication_semantic_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "repository_id": {"type": "string"}, "facts": {"type": "array", "maxItems": 1000, "items": {"type": "object", "additionalProperties": false, "required": ["direction", "subject", "predicate", "object"], "properties": {"direction": {"enum": ["INCOMING", "OUTGOING"]}, "subject": {"type": "string"}, "predicate": {"type": "string"}, "object": {"type": "string"}}}},
+    "result_semantic_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}

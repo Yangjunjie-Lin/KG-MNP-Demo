@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/application/application-phase01-attestation/1.0",
+  "type": "object", "additionalProperties": false,
+  "required": ["contract_version", "publication_id", "publication_semantic_hash", "graphdb_semantic_hash_before", "graphdb_semantic_hash_after", "repository_unchanged", "query_registry_hash", "golden_query_count", "golden_query_passed", "mutation_attack_count", "mutation_attack_blocked", "traceability_checks", "http_runtime", "result_determinism", "status"],
+  "properties": {
+    "contract_version": {"const": "1.0"}, "publication_id": {"type": "string"},
+    "publication_semantic_hash": {"$ref": "#/$defs/hash"}, "graphdb_semantic_hash_before": {"$ref": "#/$defs/hash"},
+    "graphdb_semantic_hash_after": {"$ref": "#/$defs/hash"}, "repository_unchanged": {"const": true},
+    "query_registry_hash": {"$ref": "#/$defs/hash"}, "golden_query_count": {"type": "integer", "minimum": 1},
+    "golden_query_passed": {"type": "integer", "minimum": 1}, "mutation_attack_count": {"type": "integer", "minimum": 1},
+    "mutation_attack_blocked": {"type": "integer", "minimum": 1},
+    "traceability_checks": {"type": "object", "additionalProperties": false, "required": ["fact_level", "review", "evidence", "source", "publication_lineage"], "properties": {"fact_level": {"const": "PASS"}, "review": {"const": "PASS"}, "evidence": {"const": "PASS"}, "source": {"const": "PASS"}, "publication_lineage": {"const": "PASS"}}},
+    "http_runtime": {"type": "object", "additionalProperties": false, "required": ["bind_host", "read_only", "golden_http_status"], "properties": {"bind_host": {"const": "127.0.0.1"}, "read_only": {"const": true}, "golden_http_status": {"const": "PASS"}}},
+    "result_determinism": {"const": "PASS"}, "status": {"enum": ["APPLICATION_READONLY_VERIFIED", "FAILED"]}
+  },
+  "$defs": {"hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}
+}

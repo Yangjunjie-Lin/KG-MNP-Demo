@@ -20,7 +20,11 @@
  verify-webvowl-contracts verify-webvowl-policy verify-webvowl-upstream-lock \
  verify-webvowl-conversion verify-webvowl-determinism verify-webvowl-coverage \
  verify-webvowl-security verify-publication-package verify-webvowl-live \
- verify-stage-08-components verify-stage-08-offline verify-stage-08
+ verify-stage-08-components verify-stage-08-offline verify-stage-08 \
+ verify-application-contracts verify-application-query-registry \
+ verify-application-readonly verify-application-traceability \
+ verify-application-security verify-application-http verify-application-live \
+ verify-application-phase-01-offline verify-application-phase-01
 
 PYTHON_CORE_TESTS = \
 	tests/test_ontology.py \
@@ -376,3 +380,41 @@ verify-stage-08-offline: verify-stage-06 verify-graphdb-offline verify-stage-08-
 
 verify-stage-08: verify-stage-07 verify-stage-08-components verify-webvowl-conversion verify-webvowl-live
 	python -m pytest -q tests/webvowl/test_stage08_core.py tests/publication/test_publication_stage08.py
+
+verify-application-contracts:
+	python scripts/check_schema_identifiers.py
+	python -m pytest -q tests/application/test_application_phase01_contracts.py
+
+verify-application-query-registry:
+	python -m pytest -q tests/application/test_query_registry_phase01.py
+
+verify-application-readonly:
+	python -m pytest -q \
+		tests/application/test_readonly_client_phase01.py \
+		tests/application/test_rdf_term_projection_phase01.py
+
+verify-application-traceability:
+	python -m pytest -q \
+		tests/application/test_application_queries_phase01.py \
+		tests/application/test_golden_queries_phase01.py
+
+verify-application-security:
+	python -m pytest -q \
+		tests/application/test_query_validation_phase01.py \
+		tests/application/test_publication_binding_phase01.py \
+		tests/application/test_application_attestation_phase01.py \
+		tests/application/test_application_boundaries_phase01.py
+
+verify-application-http:
+	python -m pytest -q tests/application/test_application_http_phase01.py
+
+verify-application-live:
+	python scripts/application_integration.py
+
+verify-application-phase-01-offline: verify-application-contracts \
+	verify-application-query-registry verify-application-readonly \
+	verify-application-traceability verify-application-security \
+	verify-application-http
+	python -m pytest -q tests/application
+
+verify-application-phase-01: verify-stage-08 verify-application-phase-01-offline verify-application-live

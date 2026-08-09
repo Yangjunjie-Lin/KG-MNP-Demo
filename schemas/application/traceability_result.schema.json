@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/application/traceability-result/1.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["queried_resource", "publication", "compilation", "graphdb", "business_facts", "modeling", "review", "evidence", "source"],
+  "properties": {
+    "queried_resource": {"$ref": "#/$defs/parameters"},
+    "publication": {"$ref": "#/$defs/publication"},
+    "compilation": {"$ref": "#/$defs/compilation"},
+    "graphdb": {"$ref": "#/$defs/graphdb"},
+    "business_facts": {"type": "array", "maxItems": 1000, "items": {"$ref": "#/$defs/fact"}},
+    "modeling": {"type": "array", "maxItems": 1000, "items": {"$ref": "#/$defs/modeling"}},
+    "review": {"type": "array", "maxItems": 1000, "items": {"$ref": "#/$defs/review"}},
+    "evidence": {"type": "array", "maxItems": 1000, "items": {"$ref": "#/$defs/evidence"}},
+    "source": {"type": "array", "maxItems": 1000, "items": {"$ref": "#/$defs/source"}}
+  },
+  "$defs": {
+    "inputObject": {
+      "type": "object", "additionalProperties": false, "required": ["term_type", "value"],
+      "properties": {"term_type": {"enum": ["IRI", "LITERAL"]}, "value": {"type": "string"}, "datatype_iri": {"type": ["string", "null"]}, "language": {"type": ["string", "null"]}}
+    },
+    "parameters": {
+      "type": "object", "additionalProperties": false,
+      "properties": {"iri": {"type": "string"}, "term": {"type": "string"}, "subject": {"type": "string"}, "predicate": {"type": "string"}, "object": {"$ref": "#/$defs/inputObject"}, "resource_id": {"type": "string"}, "source_ref": {"type": "string"}, "evidence_ref": {"type": "string"}, "limit": {"type": "integer"}, "offset": {"type": "integer"}}
+    },
+    "iriTerm": {"type": "object", "additionalProperties": false, "required": ["term_type", "iri"], "properties": {"term_type": {"const": "IRI"}, "iri": {"type": "string"}}},
+    "literalTerm": {"type": "object", "additionalProperties": false, "required": ["term_type", "lexical_form", "datatype_iri", "language"], "properties": {"term_type": {"const": "LITERAL"}, "lexical_form": {"type": "string"}, "datatype_iri": {"type": ["string", "null"]}, "language": {"type": ["string", "null"]}}},
+    "rdfTerm": {"oneOf": [{"$ref": "#/$defs/iriTerm"}, {"$ref": "#/$defs/literalTerm"}]},
+    "publication": {"type": "object", "additionalProperties": false, "required": ["publication_id", "publication_semantic_hash"], "properties": {"publication_id": {"type": "string"}, "publication_semantic_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}},
+    "compilation": {"type": "object", "additionalProperties": false, "required": ["compilation_id"], "properties": {"compilation_id": {"type": "string"}}},
+    "graphdb": {"type": "object", "additionalProperties": false, "required": ["repository_id", "graph_iris"], "properties": {"repository_id": {"type": "string"}, "graph_iris": {"type": "array", "uniqueItems": true, "items": {"type": "string"}}}},
+    "fact": {"type": "object", "additionalProperties": false, "required": ["subject", "predicate", "object"], "properties": {"subject": {"$ref": "#/$defs/iriTerm"}, "predicate": {"$ref": "#/$defs/iriTerm"}, "object": {"$ref": "#/$defs/rdfTerm"}}},
+    "modeling": {"type": "object", "additionalProperties": false, "required": ["assertion_id", "candidate_id", "effective_candidate_id"], "properties": {"assertion_id": {"type": "string"}, "candidate_id": {"type": ["string", "null"]}, "effective_candidate_id": {"type": ["string", "null"]}}},
+    "review": {"type": "object", "additionalProperties": false, "required": ["decision_id", "outcome", "reviewer_id", "decided_at"], "properties": {"decision_id": {"type": "string"}, "outcome": {"type": ["string", "null"]}, "reviewer_id": {"type": ["string", "null"]}, "decided_at": {"type": ["string", "null"]}}},
+    "evidence": {"type": "object", "additionalProperties": false, "required": ["evidence_ref"], "properties": {"evidence_ref": {"type": "string"}}},
+    "source": {"type": "object", "additionalProperties": false, "required": ["source_ref"], "properties": {"source_ref": {"type": "string"}}}
+  }
+}

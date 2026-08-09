@@ -1,16 +1,20 @@
-"""Application services retained for the legacy eligibility example."""
+"""Public surface for the Application Phase 01 read-only projection layer.
 
-from kg_mnp_demo.application.assessment_service import (
-    AssessmentExecution,
-    AssessmentService,
-    evaluate_normalized_case,
-)
+Legacy eligibility examples remain importable from their explicit modules, but are
+intentionally not exported as part of this application-layer authority surface.
+"""
+
 from kg_mnp_demo.application.errors import ApplicationError, ErrorCode
+from kg_mnp_demo.application.publication_binding import PublicationBinding
+from kg_mnp_demo.application.query_registry import QueryRegistry
+from kg_mnp_demo.application.readonly_client import ReadOnlyGraphDBClient
+from kg_mnp_demo.application.service import ApplicationService
 
 __all__ = [
-    "AssessmentExecution",
-    "AssessmentService",
     "ApplicationError",
+    "ApplicationService",
     "ErrorCode",
-    "evaluate_normalized_case",
+    "PublicationBinding",
+    "QueryRegistry",
+    "ReadOnlyGraphDBClient",
 ]

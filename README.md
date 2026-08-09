@@ -1,4 +1,6 @@
-# KG-MNP Ontology and Knowledge Graph Foundation
+# KG-MNP
+
+## Ontology and Knowledge Graph Foundation
 
 KG-MNP 本体与知识图谱基础构建阶段。
 
@@ -43,6 +45,66 @@ EndToEndPublicationPackage
 **Foundation pipeline status = COMPLETE through Stage 08.**
 
 This completes the ontology and knowledge graph foundation.
+
+## Application Layer
+
+### Phase 01 — Read-Only Semantic Query and Traceability Layer
+
+**Application Phase 01 status = PASS.**
+
+The Application API is a read-only projection layer over a verified GraphDB
+repository and its `EndToEndPublicationPackage` / `PublicationAttestation`. It is
+not a semantic authority, decision engine, ontology authority, review authority,
+GraphDB authority, eligibility engine, or source of new business facts.
+
+The runtime starts only after the publication package closure, the
+`PUBLICATION_VERIFIED` attestation, publication semantic hash, compilation
+lineage, GraphDB publication lineage, named-graph set, and repository id all
+match. Every result carries `publication_id`, `publication_semantic_hash`, and a
+deterministic `result_semantic_hash`; timing remains isolated in
+`runtime_metadata` and is excluded from that hash.
+
+Phase 01 contains:
+
+- `config/application/query-registry-1.0.0.yaml`: the only executable query registry;
+- `queries/application/`: 12 versioned SELECT templates covering Foundation metadata,
+  ontology, business facts, provenance, review, source, evidence, and cross-trace;
+- an independent `ReadOnlyGraphDBClient` with only health, repository metadata,
+  SELECT, and ASK capabilities (Phase 01 registers no CONSTRUCT query);
+- exact RDF-term projection preserving IRI/literal identity, lexical form,
+  datatype, and language;
+- exact fact-level `owl:Axiom` traceability to candidate/effective candidate,
+  `ReviewDecision`, reviewer, evidence, source, compilation, graph, and publication;
+- a local-only FastAPI runtime pinned to `fastapi==0.115.0` and
+  `uvicorn==0.30.6`, with no sessions, cookies, accounts, ORM, background jobs,
+  arbitrary SPARQL endpoint, or write route.
+
+GraphDB access is read only. SPARQL UPDATE, `SERVICE`, Graph Store writes,
+repository creation/deletion, and arbitrary query passthrough are rejected before
+transport. The HTTP server accepts only `127.0.0.1`; `0.0.0.0` is forbidden.
+Rejected or deferred candidates are absent from business queries while their
+review-audit history remains available through the registered review trace.
+
+```bash
+kg-mnp application query list
+kg-mnp application query describe provenance.fact
+kg-mnp application publication verify \
+  --publication-package runtime_outputs/publication/full-confirmation \
+  --attestation runtime_reports/publication/<publication-hash>/publication-attestation.json
+kg-mnp application runtime check \
+  --publication-package runtime_outputs/publication/full-confirmation \
+  --attestation runtime_reports/publication/<publication-hash>/publication-attestation.json
+kg-mnp application serve \
+  --publication-package runtime_outputs/publication/full-confirmation \
+  --attestation runtime_reports/publication/<publication-hash>/publication-attestation.json
+make verify-application-phase-01-offline
+# Requires the same legal external GraphDB license as Stage 07/08:
+make verify-application-phase-01
+```
+
+Phase 01 adds no Stage 09, Agent, LLM, GraphRAG, embedding, vector database,
+natural-language-to-SPARQL, MCP, prompt system, reasoning chain, business frontend,
+or eligibility decision authority.
 
 ### Stage 08 authority boundary
 
@@ -96,7 +158,7 @@ contract 不同，且不会被 Modeling Pipeline 当作输入适配器。
   WebVOWL 构建镜像及固定目的地 loopback relay；Playwright 1.49.1 / Chromium 131.0.6778.33
   （revision 1148）仅用于 Stage 08 live 浏览器验收，不进入 Python core、语义权威或产品运行路径。
 - 当前不以携号转网资格判断为中央任务；九个 legacy 案例作为 eligibility profile 回归资产保留。
-- 当前没有 HTTP API 或 SQLite 执行历史服务作为本阶段交付物。
+- Application Phase 01 提供仅绑定 `127.0.0.1` 的 read-only HTTP projection；仍没有 SQLite 执行历史、会话、用户、cookie 或写入服务。
 - 当前可以从 CleanedPartialData 生成确定性的、仅供审核的 ModelingProposal。
 - 当前可以人工审核 Proposal，并生成 `ReviewDecisionLog` 与 `ConfirmedModelingPackage`。
 - 当前没有默认决定、批量确认、自动确认或 LLM Reviewer。
@@ -183,6 +245,14 @@ make verify-stage-06
 make verify-stage-07
 make verify-stage-08-offline
 make verify-stage-08
+make verify-application-contracts
+make verify-application-query-registry
+make verify-application-readonly
+make verify-application-traceability
+make verify-application-security
+make verify-application-http
+make verify-application-phase-01-offline
+make verify-application-phase-01
 ```
 
 `verify-stage-06` 是 CI 和本地收尾的完整入口；它先完整执行 `verify-stage-05`，
@@ -292,7 +362,9 @@ Python core 与 PR 离线门禁不依赖 Node、浏览器或外部 GraphDB/WebVO
 只需要 Java 17+ 和固定校验的 ROBOT。受信任的 `main` push 与 `workflow_dispatch` 另行执行
 licensed GraphDB integration，许可证只从 GitHub encrypted secret 注入；成功后上传严格闭包、
 经过大小写不敏感 JSON/文件敏感信息扫描的 Stage 07 Attestation artifact，以及
-`stage08-publication-attestation-<commit SHA>` Stage 08 publication artifact。Stage 08 live job 的
+`stage08-publication-attestation-<commit SHA>` Stage 08 publication artifact，以及仅含
+`application-attestation.json`、query registry/golden/security summary 和 GraphDB before/after
+hash 的 `application-phase01-attestation-<commit SHA>` artifact。Stage 08/Application live job 的
 Node/Playwright 环境与 Python core 隔离，并固定 Playwright/Chromium 版本；所有 CI job 最后均断言
 `git diff` 与 `git status --short` 为空，确保 runtime 产物不会污染正式仓库。
 

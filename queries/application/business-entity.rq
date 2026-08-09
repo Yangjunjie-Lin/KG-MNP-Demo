@@ -1,0 +1,13 @@
+SELECT ?graph ?direction ?subject ?predicate ?object
+WHERE {
+  VALUES ?entity { @@PARAM_iri@@ }
+  VALUES ?graph { @@GRAPH_graph@@ }
+  GRAPH ?graph {
+    { ?entity ?predicate ?object . BIND("OUTGOING" AS ?direction) BIND(?entity AS ?subject) }
+    UNION
+    { ?subject ?predicate ?entity . BIND("INCOMING" AS ?direction) BIND(?entity AS ?object) }
+  }
+}
+ORDER BY ?direction ?subject ?predicate ?object
+LIMIT @@LIMIT@@
+OFFSET @@OFFSET@@

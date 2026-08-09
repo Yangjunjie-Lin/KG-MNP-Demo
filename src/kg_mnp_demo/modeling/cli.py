@@ -49,6 +49,8 @@ from ..compilation.validator import (
 from ..graphdb.cli import add_graphdb_parser, dispatch_graphdb
 from ..publication.cli import add_publication_parser, dispatch_publication
 from ..webvowl.cli import add_webvowl_parser, dispatch_webvowl
+from ..application.cli import add_application_parser, dispatch_application
+from ..application.errors import ApplicationError
 
 
 class DuplicateKeyError(ValueError):
@@ -694,6 +696,7 @@ def build_parser() -> argparse.ArgumentParser:
     add_graphdb_parser(subcommands)
     add_webvowl_parser(subcommands)
     add_publication_parser(subcommands)
+    add_application_parser(subcommands)
     return parser
 
 
@@ -793,6 +796,8 @@ def main(argv: list[str] | None = None) -> int:
             return dispatch_webvowl(args)
         if args.command == "publication":
             return dispatch_publication(args)
+        if args.command == "application":
+            return dispatch_application(args, _json_print)
     except (
         ArtifactWriteError,
         CompilationContractError,
@@ -810,6 +815,7 @@ def main(argv: list[str] | None = None) -> int:
         SemanticValidationError,
         ValidationError,
         ValueError,
+        ApplicationError,
     ) as exc:
         _json_print({"error": type(exc).__name__, "message": str(exc)}, error=True)
         return 1

@@ -1,0 +1,8 @@
+SELECT ?graph ?subject ?predicate ?object
+WHERE {
+  VALUES (?subject ?predicate ?object) { (@@PARAM_subject@@ @@PARAM_predicate@@ @@PARAM_object@@) }
+  VALUES ?graph { @@GRAPH_graph@@ }
+  GRAPH ?graph { ?subject ?predicate ?object . }
+}
+ORDER BY ?graph
+LIMIT 1

@@ -1,0 +1,15 @@
+PREFIX owl: <http://www.w3.org/2002/07/owl#>
+PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
+SELECT ?graph ?term ?label ?definition ?subClassOf
+WHERE {
+  VALUES ?graph { @@GRAPH_graph@@ }
+  GRAPH ?graph {
+    ?term a owl:Class .
+    OPTIONAL { ?term rdfs:label ?label . }
+    OPTIONAL { ?term rdfs:comment ?definition . }
+    OPTIONAL { ?term rdfs:subClassOf ?subClassOf . FILTER(isIRI(?subClassOf)) }
+  }
+}
+ORDER BY ?term ?label ?subClassOf
+LIMIT @@LIMIT@@
+OFFSET @@OFFSET@@

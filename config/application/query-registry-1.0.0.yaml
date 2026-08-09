@@ -1,0 +1,207 @@
+contract_version: "1.0"
+registry_id: "kg-mnp-application-query-registry"
+registry_version: "1.0.0"
+queries:
+  - query_id: "foundation.metadata"
+    version: "1.0.0"
+    category: "FOUNDATION_METADATA"
+    description: "Count triples in each verified TBox named graph."
+    semantic_purpose: "Expose bounded Foundation repository metadata without reading the default graph."
+    template: "queries/application/foundation-metadata.rq"
+    template_sha256: "6136d854db494245b84cb42176f6984d5be70188d34b92b60f2c8e840a777ef9"
+    query_type: "SELECT"
+    input_parameters:
+      - {name: limit, type: limit, required: false}
+      - {name: offset, type: offset, required: false}
+    output_contract: "query-result"
+    allowed_named_graphs: ["TBOX"]
+    graph_bindings: {graph: "TBOX"}
+    maximum_result_count: 100
+    timeout_seconds: 5
+  - query_id: "ontology.classes"
+    version: "1.0.0"
+    category: "ONTOLOGY"
+    description: "List registered OWL classes from verified TBox graphs."
+    semantic_purpose: "Project ontology class metadata from GraphDB TBox authority."
+    template: "queries/application/ontology-classes.rq"
+    template_sha256: "6773018ef1d3102ae87dbabde098a5b2454782f3cf70f13458c1e60c173207eb"
+    query_type: "SELECT"
+    input_parameters:
+      - {name: limit, type: limit, required: false}
+      - {name: offset, type: offset, required: false}
+    output_contract: "query-result"
+    allowed_named_graphs: ["TBOX"]
+    graph_bindings: {graph: "TBOX"}
+    maximum_result_count: 999
+    timeout_seconds: 5
+  - query_id: "ontology.properties"
+    version: "1.0.0"
+    category: "ONTOLOGY"
+    description: "List registered OWL properties from verified TBox graphs."
+    semantic_purpose: "Project property type, domain, range and hierarchy from GraphDB TBox authority."
+    template: "queries/application/ontology-properties.rq"
+    template_sha256: "7225da60d857c8969a61190aae400cdfb85a49a54c3ef7f47e88983a28f5ce72"
+    query_type: "SELECT"
+    input_parameters:
+      - {name: limit, type: limit, required: false}
+      - {name: offset, type: offset, required: false}
+    output_contract: "query-result"
+    allowed_named_graphs: ["TBOX"]
+    graph_bindings: {graph: "TBOX"}
+    maximum_result_count: 999
+    timeout_seconds: 5
+  - query_id: "ontology.term"
+    version: "1.0.0"
+    category: "ONTOLOGY"
+    description: "Read one ontology term from verified TBox graphs."
+    semantic_purpose: "Return the authoritative definition, type, hierarchy and ontology version for one term."
+    template: "queries/application/ontology-term.rq"
+    template_sha256: "0117e237e042a8c4be515021085bb7b71ff0b85fe3564a66ae1f7f26cae164a5"
+    query_type: "SELECT"
+    input_parameters:
+      - {name: term, type: iri, required: true}
+      - {name: limit, type: limit, required: false}
+      - {name: offset, type: offset, required: false}
+    output_contract: "query-result"
+    allowed_named_graphs: ["TBOX"]
+    graph_bindings: {graph: "TBOX"}
+    maximum_result_count: 100
+    timeout_seconds: 5
+  - query_id: "business.entity"
+    version: "1.0.0"
+    category: "BUSINESS_FACT"
+    description: "Read bounded incoming and outgoing facts for one business entity."
+    semantic_purpose: "Project only facts present in the verified business ABox."
+    template: "queries/application/business-entity.rq"
+    template_sha256: "f18b9c58db028b2432488b2d59f0bc8619ce4f63ea5d6cbece5d61306496a36a"
+    query_type: "SELECT"
+    input_parameters:
+      - {name: iri, type: iri, required: true}
+      - {name: limit, type: limit, required: false}
+      - {name: offset, type: offset, required: false}
+    output_contract: "entity-view"
+    allowed_named_graphs: ["BUSINESS_ABOX"]
+    graph_bindings: {graph: "BUSINESS_ABOX"}
+    maximum_result_count: 100
+    timeout_seconds: 5
+  - query_id: "business.fact"
+    version: "1.0.0"
+    category: "BUSINESS_FACT"
+    description: "Read one exact RDF business fact."
+    semantic_purpose: "Test exact subject, predicate and RDF object-term membership in the business ABox."
+    template: "queries/application/business-fact.rq"
+    template_sha256: "5167be4fa0e9b87e6d0e30ee1c6f8ceaf21596aae6e1aa1bb348ef72e6f9d091"
+    query_type: "SELECT"
+    input_parameters:
+      - {name: subject, type: iri, required: true}
+      - {name: predicate, type: iri, required: true}
+      - {name: object, type: rdf_term, required: true}
+    output_contract: "query-result"
+    allowed_named_graphs: ["BUSINESS_ABOX"]
+    graph_bindings: {graph: "BUSINESS_ABOX"}
+    maximum_result_count: 1
+    timeout_seconds: 5
+  - query_id: "provenance.entity"
+    version: "1.0.0"
+    category: "PROVENANCE"
+    description: "Trace all published facts for one entity."
+    semantic_purpose: "Join business facts to modeling assertions and authoritative review decisions."
+    template: "queries/application/entity-provenance.rq"
+    template_sha256: "fca0c367870447845b6de9c804ba1db458e70e271336d3f360fb4794a17c35bb"
+    query_type: "SELECT"
+    input_parameters:
+      - {name: iri, type: iri, required: true}
+      - {name: limit, type: limit, required: false}
+      - {name: offset, type: offset, required: false}
+    output_contract: "traceability-result"
+    allowed_named_graphs: ["BUSINESS_ABOX", "MODELING_PROVENANCE", "REVIEW_AUDIT"]
+    graph_bindings: {businessGraph: "BUSINESS_ABOX", provenanceGraph: "MODELING_PROVENANCE", reviewGraph: "REVIEW_AUDIT"}
+    maximum_result_count: 100
+    timeout_seconds: 8
+  - query_id: "provenance.fact"
+    version: "1.0.0"
+    category: "PROVENANCE"
+    description: "Trace one exact RDF business fact."
+    semantic_purpose: "Bind an exact RDF object term to its OWL axiom annotation, review, evidence and source lineage."
+    template: "queries/application/fact-provenance.rq"
+    template_sha256: "6350dbb855e5ba4a67a106278622392b03ffd6208efcafad33b7ed2c3a5be828"
+    query_type: "SELECT"
+    input_parameters:
+      - {name: subject, type: iri, required: true}
+      - {name: predicate, type: iri, required: true}
+      - {name: object, type: rdf_term, required: true}
+      - {name: limit, type: limit, required: false}
+      - {name: offset, type: offset, required: false}
+    output_contract: "traceability-result"
+    allowed_named_graphs: ["BUSINESS_ABOX", "MODELING_PROVENANCE", "REVIEW_AUDIT"]
+    graph_bindings: {businessGraph: "BUSINESS_ABOX", provenanceGraph: "MODELING_PROVENANCE", reviewGraph: "REVIEW_AUDIT"}
+    maximum_result_count: 100
+    timeout_seconds: 8
+  - query_id: "review.trace"
+    version: "1.0.0"
+    category: "REVIEW_TRACE"
+    description: "Read review history for a decision or reviewed resource."
+    semantic_purpose: "Expose review audit history without projecting rejected decisions as business facts."
+    template: "queries/application/review-trace.rq"
+    template_sha256: "c01be3f3153ea73a60e616f3a81ba264fb409e657803af986f1e96ee4e3d1c75"
+    query_type: "SELECT"
+    input_parameters:
+      - {name: resource_id, type: iri, required: true}
+      - {name: limit, type: limit, required: false}
+      - {name: offset, type: offset, required: false}
+    output_contract: "traceability-result"
+    allowed_named_graphs: ["REVIEW_AUDIT"]
+    graph_bindings: {reviewGraph: "REVIEW_AUDIT"}
+    maximum_result_count: 100
+    timeout_seconds: 5
+  - query_id: "source.trace"
+    version: "1.0.0"
+    category: "SOURCE_TRACE"
+    description: "Read modeling assertions linked to one published source reference."
+    semantic_purpose: "Project source lineage recorded by compiled axiom annotations."
+    template: "queries/application/source-trace.rq"
+    template_sha256: "24342bbba53fa6ff7b70b006fb25c468aa3621edf0ab381537f888939ce4fa40"
+    query_type: "SELECT"
+    input_parameters:
+      - {name: source_ref, type: iri, required: true}
+      - {name: limit, type: limit, required: false}
+      - {name: offset, type: offset, required: false}
+    output_contract: "traceability-result"
+    allowed_named_graphs: ["MODELING_PROVENANCE"]
+    graph_bindings: {provenanceGraph: "MODELING_PROVENANCE"}
+    maximum_result_count: 100
+    timeout_seconds: 5
+  - query_id: "evidence.trace"
+    version: "1.0.0"
+    category: "EVIDENCE_TRACE"
+    description: "Read modeling assertions linked to one published evidence reference."
+    semantic_purpose: "Project evidence lineage recorded by compiled axiom annotations."
+    template: "queries/application/evidence-trace.rq"
+    template_sha256: "211c2b9a2c6d8a8b430f6f21019f83f1ff581f1069cc1f230364efbea2495e5a"
+    query_type: "SELECT"
+    input_parameters:
+      - {name: evidence_ref, type: iri, required: true}
+      - {name: limit, type: limit, required: false}
+      - {name: offset, type: offset, required: false}
+    output_contract: "traceability-result"
+    allowed_named_graphs: ["MODELING_PROVENANCE"]
+    graph_bindings: {provenanceGraph: "MODELING_PROVENANCE"}
+    maximum_result_count: 100
+    timeout_seconds: 5
+  - query_id: "trace.resource"
+    version: "1.0.0"
+    category: "CROSS_TRACE"
+    description: "Cross-trace a published business, modeling, review, evidence or source resource."
+    semantic_purpose: "Return the closed publication lineage connected to one registered resource identifier."
+    template: "queries/application/cross-trace.rq"
+    template_sha256: "72be8552f3544a646225f72cf80694d826cf3453402de8b4cb9d63ffc0f9f3b8"
+    query_type: "SELECT"
+    input_parameters:
+      - {name: resource_id, type: iri, required: true}
+      - {name: limit, type: limit, required: false}
+      - {name: offset, type: offset, required: false}
+    output_contract: "traceability-result"
+    allowed_named_graphs: ["BUSINESS_ABOX", "MODELING_PROVENANCE", "REVIEW_AUDIT"]
+    graph_bindings: {businessGraph: "BUSINESS_ABOX", provenanceGraph: "MODELING_PROVENANCE", reviewGraph: "REVIEW_AUDIT"}
+    maximum_result_count: 100
+    timeout_seconds: 8

@@ -95,6 +95,31 @@ jobs:
             exit 1
           fi
 
+  application-offline:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[dev]"
+      - name: Verify Application Phase 01 offline
+        run: make verify-application-phase-01-offline
+      - name: Verify clean working tree
+        shell: bash
+        run: |
+          git diff --exit-code
+          if [[ -n "$(git status --short)" ]]; then
+            git status --short
+            exit 1
+          fi
+
   graphdb-integration:
     if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
     runs-on: ubuntu-latest
@@ -311,6 +336,126 @@ jobs:
               cleanup_status=1
             fi
           fi
+          exit "$cleanup_status"
+
+  application-integration:
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
+    needs: [webvowl-publication-integration]
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Set up Java (ROBOT/HermiT)
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - name: Install Python and browser runtime
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[dev,webvowl]"
+          python -m playwright install --with-deps chromium
+      - name: Pull pinned GraphDB image
+        run: docker pull ontotext/graphdb:11.4.2@sha256:1593f8b5d42acb0f02f11b2a87b87ecbe76dbcec33cea56ca5bc32bebf6a7f12
+      - name: Verify Application Phase 01 with licensed GraphDB
+        env:
+          GRAPHDB_LICENSE_CONTENT: ${{ secrets.GRAPHDB_LICENSE_CONTENT }}
+          GRAPHDB_LICENSE_B64: ${{ secrets.GRAPHDB_LICENSE_B64 }}
+        run: make verify-application-phase-01
+      - name: Prepare non-sensitive Application Phase 01 artifact
+        if: success()
+        shell: bash
+        env:
+          ARTIFACT_DIR: ${{ runner.temp }}/application-phase01-attestation
+        run: |
+          set -euo pipefail
+          mkdir -p "$ARTIFACT_DIR"
+          report="$(find runtime_reports/application -name application-attestation.json -printf '%T@ %h\n' | sort -nr | head -1 | cut -d' ' -f2-)"
+          test -n "$report"
+          for name in application-attestation.json query-registry-manifest.json golden-query-summary.json security-summary.json graphdb-before-after.json; do
+            cp "$report/$name" "$ARTIFACT_DIR/$name"
+          done
+          python - "$ARTIFACT_DIR" <<'APPLICATION_PY'
+          import json
+          import re
+          import sys
+          from pathlib import Path
+
+          root = Path(sys.argv[1])
+          expected = {
+              "application-attestation.json",
+              "query-registry-manifest.json",
+              "golden-query-summary.json",
+              "security-summary.json",
+              "graphdb-before-after.json",
+          }
+          actual = {path.name for path in root.iterdir() if path.is_file()}
+          if actual != expected:
+              raise SystemExit("application artifact closed set mismatch")
+          forbidden = re.compile(r"(?i)(authorization|cookie|credential|environment|graphdb_license|password|secret|token|private.?key)")
+          documents = {}
+          def walk(value):
+              if isinstance(value, dict):
+                  for key, child in value.items():
+                      if forbidden.search(key):
+                          raise SystemExit(f"sensitive key: {key}")
+                      walk(child)
+              elif isinstance(value, list):
+                  for child in value:
+                      walk(child)
+              elif isinstance(value, str) and forbidden.search(value):
+                  raise SystemExit("sensitive value marker")
+          for path in sorted(root.iterdir()):
+              document = json.loads(path.read_text(encoding="utf-8"))
+              documents[path.name] = document
+              walk(document)
+          attestation = documents["application-attestation.json"]
+          before_after = documents["graphdb-before-after.json"]
+          if attestation.get("status") != "APPLICATION_READONLY_VERIFIED":
+              raise SystemExit("application attestation is not verified")
+          if attestation.get("repository_unchanged") is not True or before_after.get("equal") is not True:
+              raise SystemExit("GraphDB changed during application tests")
+          from kg_mnp_demo.application.contracts import validate_application_contract
+          validate_application_contract("application-phase01-attestation", attestation)
+          print("application attestation artifact scan: PASS")
+          APPLICATION_PY
+      - name: Upload Application Phase 01 attestation artifact
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: application-phase01-attestation-${{ github.sha }}
+          path: ${{ runner.temp }}/application-phase01-attestation
+          if-no-files-found: error
+      - name: Verify clean working tree
+        shell: bash
+        run: |
+          git diff --exit-code
+          if [[ -n "$(git status --short)" ]]; then
+            git status --short
+            exit 1
+          fi
+      - name: Always stop Application Phase 01 integration resources
+        if: always()
+        shell: bash
+        run: |
+          set -uo pipefail
+          if ! docker info >/dev/null; then
+            exit 1
+          fi
+          projects=""
+          if ! projects="$(docker ps -aq --filter label=com.docker.compose.project | while read -r id; do docker inspect --format '{{ index .Config.Labels "com.docker.compose.project" }}' "$id"; done | grep -E '^kgmnp-app-[0-9a-f]{12}$' | sort -u)"; then
+            projects=""
+          fi
+          cleanup_status=0
+          for project in $projects; do
+            if ! docker compose -p "$project" -f deploy/graphdb/docker-compose.integration.yml down -v --remove-orphans; then
+              cleanup_status=1
+            fi
+          done
           exit "$cleanup_status"
 
   webvowl-publication-integration:
