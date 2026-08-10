@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light">
+    <title>KG-MNP Evidence Workbench</title>
+    <link rel="stylesheet" href="/assets/styles.css">
+    <script type="module" src="/assets/app.js"></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to content</a>
+    <header class="masthead">
+      <div>
+        <p class="eyebrow">KG-MNP · Read-only semantic access</p>
+        <h1>Evidence Workbench</h1>
+      </div>
+      <div id="verification-chip" class="verification-chip" role="status" aria-live="polite">
+        Verifying Phase 01 binding…
+      </div>
+    </header>
+    <nav class="primary-nav" aria-label="Workbench views">
+      <a href="/">Verification</a>
+      <a href="/ontology">Ontology</a>
+      <a href="/entity">Entities</a>
+      <a href="/fact">Facts &amp; provenance</a>
+      <a href="/trace">Evidence trace</a>
+      <a href="/review">Review history</a>
+    </nav>
+    <main id="main-content" tabindex="-1">
+      <section id="blocking-error" class="blocking-error" hidden aria-live="assertive">
+        <p class="eyebrow">Workbench unavailable</p>
+        <h2>Verified publication binding could not be established</h2>
+        <p id="blocking-error-message">WORKBENCH_NOT_READY</p>
+        <p>Browsing is disabled until Phase 01 and the publication identity match again.</p>
+      </section>
+      <div id="view-root" aria-live="polite"></div>
+    </main>
+    <footer>
+      <p>Presentation layer only · No semantic writes · No business decisions</p>
+    </footer>
+  </body>
+</html>

@@ -1,0 +1,44 @@
+contract_version: "1.0"
+runtime_id: "kg-mnp-evidence-workbench"
+workbench_version: "1.0.0"
+network:
+  bind_host: "127.0.0.1"
+  default_port: 8092
+  external_exposure: "FORBIDDEN"
+  runtime_internet_access: "FORBIDDEN"
+  browser_same_origin_only: "REQUIRED"
+relay:
+  phase01_api_only: "REQUIRED"
+  upstream_scheme: "http"
+  upstream_host: "127.0.0.1"
+  allowed_methods:
+    - "GET"
+    - "HEAD"
+  allowed_routes:
+    - "/api/v1/health"
+    - "/api/v1/ontology/classes"
+    - "/api/v1/ontology/properties"
+    - "/api/v1/ontology/term"
+    - "/api/v1/entity"
+    - "/api/v1/entity/provenance"
+    - "/api/v1/fact"
+    - "/api/v1/fact/provenance"
+    - "/api/v1/review-trace"
+    - "/api/v1/source-trace"
+    - "/api/v1/evidence-trace"
+    - "/api/v1/trace"
+  redirects: "FORBIDDEN"
+  arbitrary_targets: "FORBIDDEN"
+  maximum_response_bytes: 2097152
+authority:
+  direct_graphdb_access: "FORBIDDEN"
+  semantic_writes: "FORBIDDEN"
+  review_actions: "FORBIDDEN"
+  business_decisions: "FORBIDDEN"
+  persistent_semantic_cache: "FORBIDDEN"
+presentation:
+  external_links: "FORBIDDEN"
+  service_workers: "FORBIDDEN"
+  local_storage: "FORBIDDEN"
+  indexed_db: "FORBIDDEN"
+  rdf_text_rendering: "TEXT_ONLY"

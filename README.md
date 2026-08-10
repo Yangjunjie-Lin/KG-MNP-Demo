@@ -116,6 +116,67 @@ Phase 01 adds no Stage 09, Agent, LLM, GraphRAG, embedding, vector database,
 natural-language-to-SPARQL, MCP, prompt system, reasoning chain, business frontend,
 or eligibility decision authority.
 
+### Phase 02 — Read-Only Semantic Exploration and Evidence Workbench
+
+**Application Phase 02 status = PASS.**
+
+Phase 02 adds a human-facing, loopback-only inspection workbench over the frozen
+Phase 01 API. It is a presentation layer, not a semantic, review, GraphDB, or
+business-decision authority. The browser talks only to the same-origin Phase 02
+runtime. The Phase 02 runtime uses a startup-frozen IPv4 loopback Phase 01 URL
+and an exact GET/HEAD route allowlist; it has no generic proxy, raw SPARQL,
+Graph Store access, mutation route, external link, telemetry, service worker, or
+persistent semantic cache.
+
+Startup independently validates the closed five-file
+`ApplicationPhase01Attestation` artifact, binds its digest, publication ID and
+semantic hash, repository semantic hash, and query registry hash, then verifies
+the live Phase 01 health identity. Any unavailable, stale, or mismatched identity
+returns `WORKBENCH_NOT_READY` and disables browsing.
+
+The workbench contains:
+
+- verification and publication identity status;
+- ontology class/property/term exploration sourced only from registered Phase 01 queries;
+- entity exploration with exact incoming/outgoing RDF bindings and named graphs;
+- exact fact inspection preserving IRI/literal kind, lexical form, datatype, and language;
+- fact-level graph → candidate → decision → evidence → source → publication traceability;
+- an explicitly separate Review History view where rejected/deferred records cannot
+  masquerade as asserted business facts;
+- deterministic server-side ViewModels bound to each Phase 01
+  `result_semantic_hash`, with no dropped rows or rewritten RDF terms.
+
+The frontend is native semantic HTML, local CSS, and local ES modules. It adds no
+npm dependency graph, framework, bundler, CDN, remote font, or inline executable
+content. All RDF and review text is rendered through text DOM APIs. A strict CSP,
+same-origin browser interception, real Chromium smoke, XSS fixtures, relay and
+authority-tamper attacks, zero service-worker/localStorage/IndexedDB checks, and
+GraphDB before/after hash equality close the live gate.
+
+```bash
+kg-mnp workbench package build \
+  --phase01-artifact-dir runtime_reports/application/<publication-hash> \
+  --output-dir runtime_outputs/workbench/package
+kg-mnp workbench package validate \
+  --phase01-artifact-dir runtime_reports/application/<publication-hash> \
+  --package-dir runtime_outputs/workbench/package
+kg-mnp workbench runtime check \
+  --phase01-artifact-dir runtime_reports/application/<publication-hash> \
+  --phase01-url http://127.0.0.1:<phase01-port>
+kg-mnp workbench serve \
+  --phase01-artifact-dir runtime_reports/application/<publication-hash> \
+  --phase01-url http://127.0.0.1:<phase01-port> \
+  --package-dir runtime_outputs/workbench/package \
+  --port <workbench-port>
+make verify-application-phase-02-offline
+# Requires the same legal external GraphDB license and pinned Chromium as Phase 01:
+make verify-application-phase-02
+```
+
+Phase 02 adds no Phase 03, ontology editor, review workflow, business eligibility
+engine, AI, LLM, Agent, GraphRAG, RAG, embedding, vector database, or
+natural-language query system.
+
 ### Stage 08 authority boundary
 
 - **ConfirmedModelingPackage** is the semantic decision authority.
@@ -164,9 +225,9 @@ contract 不同，且不会被 Modeling Pipeline 当作输入适配器。
 
 ## 当前边界
 
-- 当前没有产品或业务前端，也没有 Vite/Nginx application runtime。Node 12 仅存在于固定摘要的
+- 当前只有只读语义探索与证据追溯 Workbench；没有业务决策前端，也没有 Vite/Nginx application runtime。Node 12 仅存在于固定摘要的
   WebVOWL 构建镜像及固定目的地 loopback relay；Playwright 1.49.1 / Chromium 131.0.6778.33
-  （revision 1148）仅用于 Stage 08 live 浏览器验收，不进入 Python core、语义权威或产品运行路径。
+  （revision 1148）仅用于 Stage 08 与 Application Phase 02 live 浏览器验收，不进入 Python core、语义权威或产品运行路径。
 - 当前不以携号转网资格判断为中央任务；九个 legacy 案例作为 eligibility profile 回归资产保留。
 - Application Phase 01 提供仅绑定 `127.0.0.1` 的 read-only HTTP projection；仍没有 SQLite 执行历史、会话、用户、cookie 或写入服务。
 - 当前可以从 CleanedPartialData 生成确定性的、仅供审核的 ModelingProposal。

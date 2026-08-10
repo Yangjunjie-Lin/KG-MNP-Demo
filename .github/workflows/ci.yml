@@ -340,6 +340,114 @@ jobs:
           fi
           exit "$cleanup_status"
 
+  workbench-offline:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[dev]"
+      - name: Verify Application Phase 02 offline
+        run: make verify-application-phase-02-offline
+      - name: Verify clean working tree
+        shell: bash
+        run: |
+          git diff --exit-code
+          if [[ -n "$(git status --short)" ]]; then
+            git status --short
+            exit 1
+          fi
+
+  workbench-integration:
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
+    needs: [application-integration]
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Set up Java (ROBOT/HermiT)
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - name: Install Python and browser runtime
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[dev,webvowl]"
+          python -m playwright install --with-deps chromium
+      - name: Pull pinned GraphDB image
+        run: docker pull ontotext/graphdb:11.4.2@sha256:1593f8b5d42acb0f02f11b2a87b87ecbe76dbcec33cea56ca5bc32bebf6a7f12
+      - name: Verify Application Phase 02 with licensed GraphDB and Chromium
+        env:
+          GRAPHDB_LICENSE_CONTENT: ${{ secrets.GRAPHDB_LICENSE_CONTENT }}
+          GRAPHDB_LICENSE_B64: ${{ secrets.GRAPHDB_LICENSE_B64 }}
+        run: make verify-application-phase-02
+      - name: Prepare closed Application Phase 02 artifact
+        if: success()
+        shell: bash
+        env:
+          ARTIFACT_DIR: ${{ runner.temp }}/application-phase02-attestation
+        run: |
+          set -euo pipefail
+          mkdir -p "$ARTIFACT_DIR"
+          report="$(find runtime_reports/workbench -name application-phase02-attestation.json -printf '%T@ %h\n' | sort -nr | head -1 | cut -d' ' -f2-)"
+          test -n "$report"
+          for name in application-phase02-attestation.json browser-smoke.json security-summary.json binding-summary.json graphdb-before-after.json; do
+            cp "$report/$name" "$ARTIFACT_DIR/$name"
+          done
+          python scripts/verify_application_phase02_artifact.py "$ARTIFACT_DIR"
+      - name: Upload Application Phase 02 attestation artifact
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: application-phase02-attestation-${{ github.sha }}
+          path: ${{ runner.temp }}/application-phase02-attestation
+          if-no-files-found: error
+      - name: Verify clean working tree
+        shell: bash
+        run: |
+          git diff --exit-code
+          if [[ -n "$(git status --short)" ]]; then
+            git status --short
+            exit 1
+          fi
+      - name: Always stop Application Phase 02 integration resources
+        if: always()
+        shell: bash
+        run: |
+          set -uo pipefail
+          cleanup_status=0
+          if ! docker info >/dev/null; then
+            echo 'Docker daemon unavailable during Phase 02 cleanup' >&2
+            exit 1
+          fi
+          mapfile -t projects < <(
+            docker ps -aq --filter label=com.docker.compose.project | while read -r id; do
+              docker inspect --format '{{ index .Config.Labels "com.docker.compose.project" }}' "$id"
+            done | grep -E '^kgmnp-workbench-[0-9a-f]{12}$' | sort -u
+          )
+          for project in "${projects[@]}"; do
+            if ! docker compose -p "$project" -f deploy/graphdb/docker-compose.integration.yml down -v --remove-orphans; then
+              cleanup_status=1
+            fi
+          done
+          exit "$cleanup_status"
+
   application-integration:
     if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
     needs: [webvowl-publication-integration]

@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/workbench/manifest/1.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["contract_version", "workbench_version", "frontend_build_hash", "phase01_attestation_hash", "publication_id", "publication_semantic_hash", "repository_semantic_hash", "query_registry_hash", "runtime_policy_hash", "allowed_routes", "view_model_contract_hash", "semantic_authority", "release_status", "status"],
+  "properties": {
+    "contract_version": {"const": "1.0"},
+    "workbench_version": {"const": "1.0.0"},
+    "frontend_build_hash": {"$ref": "#/$defs/hash"},
+    "phase01_attestation_hash": {"$ref": "#/$defs/hash"},
+    "publication_id": {"type": "string", "pattern": "^urn:kg-mnp:e2e-publication:[0-9a-f]{64}$"},
+    "publication_semantic_hash": {"$ref": "#/$defs/hash"},
+    "repository_semantic_hash": {"$ref": "#/$defs/hash"},
+    "query_registry_hash": {"$ref": "#/$defs/hash"},
+    "runtime_policy_hash": {"$ref": "#/$defs/hash"},
+    "allowed_routes": {"type": "array", "minItems": 12, "uniqueItems": true, "items": {"type": "string"}},
+    "view_model_contract_hash": {"$ref": "#/$defs/hash"},
+    "semantic_authority": {"const": false},
+    "release_status": {"const": "WORKBENCH_PACKAGE_VALIDATED"},
+    "status": {"const": "WORKBENCH_PACKAGE_VALIDATED"}
+  },
+  "$defs": {"hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}
+}

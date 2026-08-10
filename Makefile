@@ -26,7 +26,11 @@
  verify-application-security verify-application-http verify-application-live \
  verify-application-authority-binding verify-application-live-binding \
  verify-application-rehash-attacks verify-application-foundation-freeze \
- verify-application-phase-01-offline verify-application-phase-01
+ verify-application-phase-01-offline verify-application-phase-01 \
+ verify-workbench-contracts verify-workbench-runtime-policy \
+ verify-workbench-phase01-freeze verify-workbench-view-model \
+ verify-workbench-security verify-workbench-browser verify-workbench-live \
+ verify-application-phase-02-offline verify-application-phase-02
 
 PYTHON_CORE_TESTS = \
 	tests/test_ontology.py \
@@ -438,3 +442,42 @@ verify-application-phase-01-offline: verify-application-contracts \
 	python -m pytest -q tests/application
 
 verify-application-phase-01: verify-stage-08 verify-application-phase-01-offline verify-application-live
+
+verify-workbench-contracts:
+	python scripts/check_schema_identifiers.py
+	python -m pytest -q \
+		tests/workbench/test_workbench_contracts.py \
+		tests/workbench/test_workbench_package.py
+
+verify-workbench-runtime-policy:
+	python -m pytest -q \
+		tests/workbench/test_runtime_policy.py \
+		tests/workbench/test_runtime_http.py
+
+verify-workbench-phase01-freeze:
+	python -m pytest -q tests/workbench/test_phase01_freeze_phase02.py
+
+verify-workbench-view-model:
+	python -m pytest -q tests/workbench/test_view_model_fidelity.py
+
+verify-workbench-security:
+	python -m pytest -q \
+		tests/workbench/test_publication_binding.py \
+		tests/workbench/test_relay_security.py \
+		tests/workbench/test_xss_security.py \
+		tests/workbench/test_phase02_boundaries.py
+
+verify-workbench-browser:
+	python -m pytest -q tests/workbench/test_browser_smoke.py
+
+verify-workbench-live:
+	python scripts/workbench_integration.py
+
+verify-application-phase-02-offline: verify-application-phase-01-offline \
+	verify-workbench-contracts verify-workbench-runtime-policy \
+	verify-workbench-phase01-freeze verify-workbench-view-model \
+	verify-workbench-security verify-workbench-browser
+	python -m pytest -q tests/workbench
+
+verify-application-phase-02: verify-application-phase-01 \
+	verify-application-phase-02-offline verify-workbench-live

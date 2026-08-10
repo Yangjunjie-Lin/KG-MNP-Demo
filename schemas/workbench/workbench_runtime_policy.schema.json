@@ -1,0 +1,62 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/workbench/runtime-policy/1.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["contract_version", "runtime_id", "workbench_version", "network", "relay", "authority", "presentation"],
+  "properties": {
+    "contract_version": {"const": "1.0"},
+    "runtime_id": {"const": "kg-mnp-evidence-workbench"},
+    "workbench_version": {"const": "1.0.0"},
+    "network": {
+      "type": "object", "additionalProperties": false,
+      "required": ["bind_host", "default_port", "external_exposure", "runtime_internet_access", "browser_same_origin_only"],
+      "properties": {
+        "bind_host": {"const": "127.0.0.1"},
+        "default_port": {"type": "integer", "minimum": 1, "maximum": 65535},
+        "external_exposure": {"const": "FORBIDDEN"},
+        "runtime_internet_access": {"const": "FORBIDDEN"},
+        "browser_same_origin_only": {"const": "REQUIRED"}
+      }
+    },
+    "relay": {
+      "type": "object", "additionalProperties": false,
+      "required": ["phase01_api_only", "upstream_scheme", "upstream_host", "allowed_methods", "allowed_routes", "redirects", "arbitrary_targets", "maximum_response_bytes"],
+      "properties": {
+        "phase01_api_only": {"const": "REQUIRED"},
+        "upstream_scheme": {"const": "http"},
+        "upstream_host": {"const": "127.0.0.1"},
+        "allowed_methods": {"const": ["GET", "HEAD"]},
+        "allowed_routes": {
+          "type": "array", "minItems": 12, "maxItems": 12, "uniqueItems": true,
+          "items": {"type": "string", "pattern": "^/api/v1/[a-z/-]+$"}
+        },
+        "redirects": {"const": "FORBIDDEN"},
+        "arbitrary_targets": {"const": "FORBIDDEN"},
+        "maximum_response_bytes": {"type": "integer", "minimum": 1024, "maximum": 4194304}
+      }
+    },
+    "authority": {
+      "type": "object", "additionalProperties": false,
+      "required": ["direct_graphdb_access", "semantic_writes", "review_actions", "business_decisions", "persistent_semantic_cache"],
+      "properties": {
+        "direct_graphdb_access": {"const": "FORBIDDEN"},
+        "semantic_writes": {"const": "FORBIDDEN"},
+        "review_actions": {"const": "FORBIDDEN"},
+        "business_decisions": {"const": "FORBIDDEN"},
+        "persistent_semantic_cache": {"const": "FORBIDDEN"}
+      }
+    },
+    "presentation": {
+      "type": "object", "additionalProperties": false,
+      "required": ["external_links", "service_workers", "local_storage", "indexed_db", "rdf_text_rendering"],
+      "properties": {
+        "external_links": {"const": "FORBIDDEN"},
+        "service_workers": {"const": "FORBIDDEN"},
+        "local_storage": {"const": "FORBIDDEN"},
+        "indexed_db": {"const": "FORBIDDEN"},
+        "rdf_text_rendering": {"const": "TEXT_ONLY"}
+      }
+    }
+  }
+}

@@ -14,6 +14,11 @@ def main(argv: list[str] | None = None) -> int:
 
         return application_main(arguments[1:])
 
+    if arguments and arguments[0] == "workbench":
+        from .workbench.cli import main as workbench_main
+
+        return workbench_main(arguments[1:])
+
     from .modeling.cli import main as modeling_main
 
     return modeling_main(arguments)

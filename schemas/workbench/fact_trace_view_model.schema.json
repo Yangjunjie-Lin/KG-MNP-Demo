@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/workbench/fact-trace-view-model/1.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["contract_version", "view_type", "query_id", "publication_id", "publication_semantic_hash", "repository_id", "parameters", "variables", "rows", "traceability", "result_count", "truncated", "source_result_hash", "view_model_hash"],
+  "properties": {
+    "contract_version": {"const": "1.0"},
+    "view_type": {"const": "FACT_TRACE"},
+    "query_id": {"const": "provenance.fact"},
+    "publication_id": {"type": "string"},
+    "publication_semantic_hash": {"$ref": "#/$defs/hash"},
+    "repository_id": {"type": "string"},
+    "parameters": {"type": "object"},
+    "variables": {"type": "array", "uniqueItems": true, "items": {"type": "string"}},
+    "rows": {"type": "array", "maxItems": 1000, "items": {"$ref": "#/$defs/row"}},
+    "traceability": {
+      "type": "object",
+      "required": ["queried_resource", "publication", "compilation", "graphdb", "business_facts", "modeling", "review", "evidence", "source"]
+    },
+    "result_count": {"type": "integer", "minimum": 0, "maximum": 1000},
+    "truncated": {"type": "boolean"},
+    "source_result_hash": {"$ref": "#/$defs/hash"},
+    "view_model_hash": {"$ref": "#/$defs/hash"}
+  },
+  "$defs": {
+    "hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "iri": {"type": "object", "additionalProperties": false, "required": ["term_type", "iri"], "properties": {"term_type": {"const": "IRI"}, "iri": {"type": "string"}}},
+    "literal": {"type": "object", "additionalProperties": false, "required": ["term_type", "lexical_form", "datatype_iri", "language"], "properties": {"term_type": {"const": "LITERAL"}, "lexical_form": {"type": "string"}, "datatype_iri": {"type": ["string", "null"]}, "language": {"type": ["string", "null"]}}},
+    "binding": {"type": "object", "additionalProperties": false, "required": ["variable", "term"], "properties": {"variable": {"type": "string"}, "term": {"oneOf": [{"$ref": "#/$defs/iri"}, {"$ref": "#/$defs/literal"}]}}},
+    "row": {"type": "object", "additionalProperties": false, "required": ["bindings"], "properties": {"bindings": {"type": "array", "items": {"$ref": "#/$defs/binding"}}}}
+  }
+}
