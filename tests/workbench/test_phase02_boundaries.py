@@ -43,3 +43,12 @@ def test_browser_bundle_has_only_local_assets_and_internal_navigation() -> None:
     assert "http://" not in html
     assert "target=" not in html
     assert "<form" not in html
+
+
+def test_live_harness_uses_an_isolated_dynamic_graphdb_host_port() -> None:
+    script = (ROOT / "scripts/workbench_integration.py").read_text(encoding="utf-8")
+    assert "graphdb_port = _free_port()" in script
+    assert "ports: !override" in script
+    assert "_assert_port_free(7200)" not in script
+    assert "GraphDBClient(base_url=graphdb_base_url" in script
+    assert "ReadOnlyGraphDBClient(base_url=graphdb_base_url" in script

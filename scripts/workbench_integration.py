@@ -350,21 +350,25 @@ def main() -> int:
     verify_application_phase01_artifact(phase01_artifact)
     binding = WorkbenchBinding.load(phase01_artifact)
     license_path, generated_license = phase01_harness._license()
+    graphdb_port = _free_port()
+    graphdb_base_url = f"http://127.0.0.1:{graphdb_port}"
     override = ROOT / "runtime_outputs/workbench/.compose-license.yml"
     override.parent.mkdir(parents=True, exist_ok=True)
     override.write_text(
-        "services:\n  graphdb:\n    volumes:\n"
+        "services:\n  graphdb:\n    ports: !override\n"
+        f"      - '127.0.0.1:{graphdb_port}:7200'\n"
+        "    volumes:\n"
         f"      - '{license_path.as_posix()}:/opt/graphdb/home/conf/graphdb.license:ro'\n",
         encoding="utf-8",
     )
     compose_files = [phase01_harness.COMPOSE, override]
     project = "kgmnp-workbench-" + publication_hash[:12]
-    setup = GraphDBClient(timeout=60.0, retries=0)
+    setup = GraphDBClient(base_url=graphdb_base_url, timeout=60.0, retries=0)
     phase01_server: _Server | None = None
     workbench_server: _Server | None = None
     imported = False
     try:
-        phase01_harness._assert_port_free(7200)
+        phase01_harness._assert_port_free(graphdb_port)
         phase01_harness._compose(project, compose_files, "up", "-d")
         phase01_harness._wait_graphdb(setup)
         setup.verify_runtime_readiness(
@@ -374,7 +378,7 @@ def main() -> int:
         )
         import_package(setup, graphdb_package)
         imported = True
-        readonly = ReadOnlyGraphDBClient(timeout=8.0)
+        readonly = ReadOnlyGraphDBClient(base_url=graphdb_base_url, timeout=8.0)
         service = ApplicationService(
             binding=publication_binding,
             registry=QueryRegistry.load(),
