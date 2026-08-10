@@ -5,7 +5,6 @@ from __future__ import annotations
 from datetime import datetime, timezone
 from pathlib import Path
 
-from rdflib import URIRef
 
 from kg_mnp_demo.pipeline import run_pipeline
 from kg_mnp_demo.trace_graph import edges_exist_in_graph

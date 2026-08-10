@@ -20,7 +20,6 @@ sys.path.insert(0, str(ROOT / "scripts"))
 from stage03_constants import (  # noqa: E402
     DATA_NS,
     OLD_TERM_NS,
-    SHAPE_NS,
     TERM_NS,
 )
 

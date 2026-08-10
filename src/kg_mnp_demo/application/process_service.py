@@ -5,8 +5,7 @@ from __future__ import annotations
 from datetime import datetime, timezone
 from typing import Any
 
-from rdflib import Graph, Literal
-from rdflib.namespace import XSD
+from rdflib import Graph
 
 from kg_mnp_demo.application.errors import ApplicationError, ErrorCode
 from kg_mnp_demo.application.serializers import json_safe, to_iso_utc

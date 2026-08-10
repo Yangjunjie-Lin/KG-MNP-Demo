@@ -4,8 +4,11 @@ from __future__ import annotations
 
 import re
 from collections.abc import Iterable
+from urllib.parse import parse_qsl, quote, unquote, urlsplit
 
+from ..graphdb.identifiers import validate_repository_id
 from .errors import ApplicationError, ErrorCode
+from .policy import MAX_QUERY_TIMEOUT_SECONDS
 
 FORBIDDEN_TOKENS = frozenset(
     {
@@ -172,16 +175,112 @@ def validate_query_text(
     return actual_type
 
 
-def assert_readonly_http_request(method: str, path: str, content_type: str | None) -> None:
+def _transport_target(path: str) -> tuple[str, list[tuple[str, str]]]:
+    if not isinstance(path, str) or not path.startswith("/"):
+        raise ApplicationError(ErrorCode.READ_ONLY_POLICY_VIOLATION)
+    parsed = urlsplit(path)
+    if parsed.scheme or parsed.netloc or parsed.fragment:
+        raise ApplicationError(ErrorCode.READ_ONLY_POLICY_VIOLATION)
+    try:
+        query = parse_qsl(
+            parsed.query,
+            keep_blank_values=True,
+            strict_parsing=True,
+            max_num_fields=2,
+        )
+    except (TypeError, ValueError) as exc:
+        raise ApplicationError(ErrorCode.READ_ONLY_POLICY_VIOLATION) from exc
+    return parsed.path, query
+
+
+def _transport_repository_id(segment: str) -> str:
+    try:
+        repository_id = unquote(segment, encoding="utf-8", errors="strict")
+        if quote(repository_id, safe="") != segment:
+            raise ValueError("repository path segment is not canonical")
+        validate_repository_id(repository_id)
+    except Exception as exc:
+        raise ApplicationError(ErrorCode.READ_ONLY_POLICY_VIOLATION) from exc
+    return repository_id
+
+
+def assert_readonly_http_request(
+    method: str,
+    path: str,
+    content_type: str | None,
+    *,
+    body: bytes | None = None,
+    accept: str | None = None,
+) -> None:
+    """Validate the complete RDF4J request target and any SPARQL body.
+
+    This is the final transport boundary.  It intentionally repeats query
+    validation so a caller cannot bypass ``select``/``ask`` by invoking the
+    low-level request method directly.
+    """
+
     normalized_method = method.upper()
-    if normalized_method == "GET" and path == "/rest/repositories":
+    target_path, query = _transport_target(path)
+    media_type = content_type.strip().lower() if isinstance(content_type, str) else None
+    accepted_type = accept.strip().lower() if isinstance(accept, str) else None
+    if normalized_method == "GET" and target_path == "/rest/repositories":
+        if (
+            query
+            or body is not None
+            or media_type is not None
+            or accepted_type != "application/json"
+        ):
+            raise ApplicationError(ErrorCode.READ_ONLY_POLICY_VIOLATION)
         return
-    if normalized_method == "GET" and path.startswith("/rest/repositories/"):
+    repository_match = re.fullmatch(r"/rest/repositories/([^/]+)", target_path)
+    if normalized_method == "GET" and repository_match:
+        _transport_repository_id(repository_match.group(1))
+        if (
+            query
+            or body is not None
+            or media_type is not None
+            or accepted_type != "application/json"
+        ):
+            raise ApplicationError(ErrorCode.READ_ONLY_POLICY_VIOLATION)
         return
+    statements_match = re.fullmatch(r"/repositories/([^/]+)/statements", target_path)
+    if normalized_method == "GET" and statements_match:
+        _transport_repository_id(statements_match.group(1))
+        if (
+            query != [("infer", "false")]
+            or body is not None
+            or media_type is not None
+            or accepted_type != "application/n-quads"
+        ):
+            raise ApplicationError(ErrorCode.READ_ONLY_POLICY_VIOLATION)
+        return
+    query_match = re.fullmatch(r"/repositories/([^/]+)", target_path)
     if (
         normalized_method == "POST"
-        and path.startswith("/repositories/")
-        and content_type == "application/sparql-query"
+        and query_match
+        and media_type == "application/sparql-query"
+        and accepted_type == "application/sparql-results+json"
     ):
+        _transport_repository_id(query_match.group(1))
+        if len(query) != 1 or query[0][0] != "timeout":
+            raise ApplicationError(ErrorCode.READ_ONLY_POLICY_VIOLATION)
+        try:
+            timeout = int(query[0][1])
+        except (TypeError, ValueError) as exc:
+            raise ApplicationError(ErrorCode.READ_ONLY_POLICY_VIOLATION) from exc
+        if str(timeout) != query[0][1] or not 0 < timeout <= MAX_QUERY_TIMEOUT_SECONDS:
+            raise ApplicationError(ErrorCode.READ_ONLY_POLICY_VIOLATION)
+        if not isinstance(body, bytes):
+            raise ApplicationError(ErrorCode.READ_ONLY_POLICY_VIOLATION)
+        try:
+            query_text = body.decode("utf-8", errors="strict")
+        except UnicodeDecodeError as exc:
+            raise ApplicationError(ErrorCode.READ_ONLY_POLICY_VIOLATION) from exc
+        validate_query_text(
+            query_text,
+            allowed_types=("SELECT", "ASK"),
+            graph_variables=graph_variables_in(query_text),
+            allowed_graph_iris=graph_iris_in(query_text),
+        )
         return
     raise ApplicationError(ErrorCode.READ_ONLY_POLICY_VIOLATION)

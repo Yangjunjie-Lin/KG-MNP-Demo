@@ -2,11 +2,9 @@ from __future__ import annotations
 
 import copy
 
-import pytest
 
 from kg_mnp_demo.modeling.identifiers import candidate_id
 from kg_mnp_demo.modeling.review_actions import validate_candidate_term_types
-from kg_mnp_demo.modeling.semantic_validation import SemanticValidationError
 
 from ._helpers import dependencies, load_proposal
 

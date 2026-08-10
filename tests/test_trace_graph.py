@@ -11,11 +11,10 @@ from rdflib.namespace import RDF
 from kg_mnp_demo.evaluator import evaluate_case, materialize_assessment
 from kg_mnp_demo.inference import apply_owlrl
 from kg_mnp_demo.loader import load_case_graph, query_path
-from kg_mnp_demo.namespaces import DATA, MNP
+from kg_mnp_demo.namespaces import MNP
 from kg_mnp_demo.trace import affected_assessments
 from kg_mnp_demo.trace_graph import (
     SUBGRAPH_QUERY_FILE,
-    TraceSubgraphIntegrityError,
     build_assessment_subgraph,
     edges_exist_in_graph,
     format_subgraph_tree,

@@ -39,9 +39,12 @@ def test_all_ten_golden_case_directories_are_present_and_deterministic():
                 item = request[f"{plane}_query"]
                 result = service.run(item["query_id"], item["parameters"])
                 assert result["result_count"] == expected[plane]["result_count"]
+                assert result["publication_id"] == service.binding.publication_id
                 assert result["result_semantic_hash"] == expected[plane]["result_semantic_hash"]
             continue
-        result = _service(request["scenario"]).run(request["query_id"], request["parameters"])
+        service = _service(request["scenario"])
+        result = service.run(request["query_id"], request["parameters"])
         assert result["result_count"] == expected["result_count"]
+        assert result["publication_id"] == service.binding.publication_id
         assert result["result_semantic_hash"] == expected["result_semantic_hash"]
         assert result["truncated"] is expected["truncated"]

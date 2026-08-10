@@ -1,6 +1,6 @@
 """Ontology load and basic structure tests."""
 
-from rdflib.namespace import OWL, RDF, RDFS
+from rdflib.namespace import OWL, RDF
 
 from kg_mnp_demo.loader import load_ontology_graph
 from kg_mnp_demo.namespaces import MNP

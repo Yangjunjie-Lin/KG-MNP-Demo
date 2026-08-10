@@ -4,7 +4,6 @@
 from __future__ import annotations
 
 import re
-import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -62,7 +61,6 @@ def rewrite_case(text: str) -> str:
     # Split by blank-line-ish turtle subjects is hard; do line-based pass
     billing_moves: list[tuple[str, str]] = []
     lines = text.splitlines()
-    current_subject = None
     is_subscriber = False
     subscr = None
     bill = None
@@ -73,7 +71,6 @@ def rewrite_case(text: str) -> str:
             # flush previous subscriber billing
             if is_subscriber and subscr and bill:
                 billing_moves.append((subscr, bill))
-            current_subject = subj_m.group(1)
             is_subscriber = subj_m.group(2) == "Subscriber"
             subscr = None
             bill = None

@@ -11,7 +11,10 @@ SRC = ROOT / "src"
 if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 
-from kg_mnp_demo.rule_engine import RuleConfigurationError, validate_rule_configuration
+from kg_mnp_demo.rule_engine import (  # noqa: E402
+    RuleConfigurationError,
+    validate_rule_configuration,
+)
 
 
 def main() -> int:

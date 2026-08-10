@@ -4,8 +4,10 @@ from __future__ import annotations
 
 import hashlib
 import json
+from collections.abc import Mapping
 from dataclasses import dataclass
 from pathlib import Path
+from types import MappingProxyType
 from typing import Any
 
 from .._path_security import UnsafePathError, closed_regular_files, safe_artifact_path, validated_directory
@@ -14,8 +16,21 @@ from ..publication.contracts import (
     validate_publication_attestation_evidence,
     validate_publication_contract,
 )
+from ..publication.package_validator import (
+    validate_end_to_end_publication_package_against_authorities,
+)
 from .errors import ApplicationError, ErrorCode
 from .policy import GraphRole, graph_role_for_iri
+
+
+PUBLICATION_SCENARIOS = frozenset(
+    {
+        "full-confirmation",
+        "modified-confirmation",
+        "rejection",
+        "issue-resolution",
+    }
+)
 
 
 def _unique(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
@@ -37,15 +52,20 @@ def _json(path: Path) -> dict[str, Any]:
     return value
 
 
-@dataclass(frozen=True)
+@dataclass(frozen=True, init=False)
 class PublicationBinding:
     package_directory: Path
     attestation_directory: Path
-    manifest: dict[str, Any]
-    attestation: dict[str, Any]
-    graphdb_manifest: dict[str, Any]
-    compilation_manifest: dict[str, Any]
-    graphs: dict[GraphRole, tuple[str, ...]]
+    manifest: Mapping[str, Any]
+    attestation: Mapping[str, Any]
+    graphdb_manifest: Mapping[str, Any]
+    compilation_manifest: Mapping[str, Any]
+    graphs: Mapping[GraphRole, tuple[str, ...]]
+    publication_scenario: str
+    _authority_reconstruction: Mapping[str, Any]
+
+    def __init__(self, *_args: Any, **_kwargs: Any) -> None:
+        raise TypeError("PublicationBinding must be created by verify()")
 
     @property
     def publication_id(self) -> str:
@@ -67,6 +87,12 @@ class PublicationBinding:
     def graphdb_semantic_hash(self) -> str:
         return str(self.graphdb_manifest["assembled_dataset_semantic_hash"])
 
+    @property
+    def publication_authority_reconstruction(self) -> dict[str, Any]:
+        """Return the immutable facts established by the Stage 08 validator."""
+
+        return dict(self._authority_reconstruction)
+
     def graph_iris(self, role: GraphRole) -> tuple[str, ...]:
         values = self.graphs.get(role, ())
         if not values:
@@ -79,6 +105,7 @@ class PublicationBinding:
         package_directory: Path,
         attestation_path: Path,
         *,
+        publication_scenario: str | None = None,
         expected_repository_id: str | None = None,
     ) -> "PublicationBinding":
         try:
@@ -90,6 +117,11 @@ class PublicationBinding:
             manifest_path = safe_artifact_path(package, "publication-manifest.json", label="publication manifest")
         except (OSError, UnsafePathError) as exc:
             raise ApplicationError(ErrorCode.PUBLICATION_MISMATCH) from exc
+        if (
+            not isinstance(publication_scenario, str)
+            or publication_scenario not in PUBLICATION_SCENARIOS
+        ):
+            raise ApplicationError(ErrorCode.FOUNDATION_NOT_VERIFIED)
         manifest = _json(manifest_path)
         attestation = _json(attestation_file)
         validate_publication_contract("end-to-end-publication-manifest", manifest)
@@ -157,6 +189,24 @@ class PublicationBinding:
             raise ApplicationError(ErrorCode.PUBLICATION_MISMATCH)
         if expected_repository_id and graphdb_manifest.get("repository_id") != expected_repository_id:
             raise ApplicationError(ErrorCode.PUBLICATION_MISMATCH)
+        try:
+            reconstruction = validate_end_to_end_publication_package_against_authorities(
+                package,
+                scenario=publication_scenario,
+            )
+        except Exception as exc:
+            raise ApplicationError(ErrorCode.FOUNDATION_NOT_VERIFIED) from exc
+        required_reconstruction = {
+            "valid": True,
+            "deterministic_reconstruction_match": True,
+            "publication_status": "READY_FOR_PRESENTATION",
+            "publication_id": manifest.get("publication_id"),
+        }
+        if any(
+            reconstruction.get(key) != expected
+            for key, expected in required_reconstruction.items()
+        ):
+            raise ApplicationError(ErrorCode.FOUNDATION_NOT_VERIFIED)
         graphs: dict[GraphRole, list[str]] = {role: [] for role in GraphRole}
         for iri in graphdb_manifest.get("named_graphs", []):
             role = graph_role_for_iri(str(iri))
@@ -167,12 +217,32 @@ class PublicationBinding:
             raise ApplicationError(ErrorCode.PUBLICATION_MISMATCH)
         if any(len(graphs[role]) != 1 for role in GraphRole if role is not GraphRole.TBOX):
             raise ApplicationError(ErrorCode.PUBLICATION_MISMATCH)
-        return cls(
-            package_directory=package,
-            attestation_directory=report,
-            manifest=manifest,
-            attestation=attestation,
-            graphdb_manifest=graphdb_manifest,
-            compilation_manifest=compilation_manifest,
-            graphs={role: tuple(sorted(values)) for role, values in graphs.items()},
-        )
+        binding = object.__new__(cls)
+        values = {
+            "package_directory": package,
+            "attestation_directory": report,
+            "manifest": MappingProxyType(dict(manifest)),
+            "attestation": MappingProxyType(dict(attestation)),
+            "graphdb_manifest": MappingProxyType(dict(graphdb_manifest)),
+            "compilation_manifest": MappingProxyType(dict(compilation_manifest)),
+            "graphs": MappingProxyType(
+                {
+                    role: tuple(sorted(graph_values))
+                    for role, graph_values in graphs.items()
+                }
+            ),
+            "publication_scenario": publication_scenario,
+            "_authority_reconstruction": MappingProxyType(
+                {
+                    "status": "PASS",
+                    "scenario": publication_scenario,
+                    "publication_id": reconstruction["publication_id"],
+                    "deterministic_reconstruction_match": reconstruction[
+                        "deterministic_reconstruction_match"
+                    ],
+                }
+            ),
+        }
+        for name, value in values.items():
+            object.__setattr__(binding, name, value)
+        return binding

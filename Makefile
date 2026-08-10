@@ -24,6 +24,8 @@
  verify-application-contracts verify-application-query-registry \
  verify-application-readonly verify-application-traceability \
  verify-application-security verify-application-http verify-application-live \
+ verify-application-authority-binding verify-application-live-binding \
+ verify-application-rehash-attacks verify-application-foundation-freeze \
  verify-application-phase-01-offline verify-application-phase-01
 
 PYTHON_CORE_TESTS = \
@@ -391,6 +393,7 @@ verify-application-query-registry:
 verify-application-readonly:
 	python -m pytest -q \
 		tests/application/test_readonly_client_phase01.py \
+		tests/application/test_readonly_transport_defense_phase01.py \
 		tests/application/test_rdf_term_projection_phase01.py
 
 verify-application-traceability:
@@ -403,10 +406,25 @@ verify-application-security:
 		tests/application/test_query_validation_phase01.py \
 		tests/application/test_publication_binding_phase01.py \
 		tests/application/test_application_attestation_phase01.py \
+		tests/application/test_application_artifact_verifier_phase01.py \
 		tests/application/test_application_boundaries_phase01.py
 
 verify-application-http:
 	python -m pytest -q tests/application/test_application_http_phase01.py
+
+verify-application-authority-binding:
+	python -m pytest -q tests/application/test_publication_authority_reconstruction_phase01.py
+
+verify-application-live-binding:
+	python -m pytest -q tests/application/test_live_repository_binding_phase01.py
+
+verify-application-rehash-attacks:
+	python -m pytest -q tests/application/test_rehash_attacks_phase01.py
+
+verify-application-foundation-freeze:
+	python -m pytest -q \
+		tests/application/test_foundation_freeze_phase01.py \
+		tests/application/test_root_cli_phase01.py
 
 verify-application-live:
 	python scripts/application_integration.py
@@ -414,7 +432,9 @@ verify-application-live:
 verify-application-phase-01-offline: verify-application-contracts \
 	verify-application-query-registry verify-application-readonly \
 	verify-application-traceability verify-application-security \
-	verify-application-http
+	verify-application-http verify-application-authority-binding \
+	verify-application-live-binding verify-application-rehash-attacks \
+	verify-application-foundation-freeze
 	python -m pytest -q tests/application
 
 verify-application-phase-01: verify-stage-08 verify-application-phase-01-offline verify-application-live

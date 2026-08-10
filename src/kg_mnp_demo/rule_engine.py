@@ -11,7 +11,7 @@ import yaml
 from rdflib import Graph, URIRef
 
 from kg_mnp_demo.loader import rules_path
-from kg_mnp_demo.namespaces import DATA, MNP
+from kg_mnp_demo.namespaces import DATA
 
 ASSESSMENT_TIME = datetime(2026, 7, 1, 0, 0, 0, tzinfo=timezone.utc)
 

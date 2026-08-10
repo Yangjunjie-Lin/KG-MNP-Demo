@@ -7,7 +7,12 @@ import socket
 from typing import Any
 from urllib.error import HTTPError, URLError
 from urllib.parse import quote, urlencode, urlsplit
-from urllib.request import Request, urlopen
+from urllib.request import (
+    HTTPRedirectHandler,
+    ProxyHandler,
+    Request,
+    build_opener,
+)
 
 from ..graphdb.identifiers import validate_repository_id
 from .errors import ApplicationError, ErrorCode
@@ -29,6 +34,19 @@ def _unique(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
     return result
 
 
+class _NoRedirectHandler(HTTPRedirectHandler):
+    def redirect_request(
+        self,
+        _request: Request,
+        _file_pointer: Any,
+        _code: int,
+        _message: str,
+        _headers: Any,
+        _new_url: str,
+    ) -> None:
+        return None
+
+
 class ReadOnlyGraphDBClient:
     """Only health, repository metadata, SELECT and ASK.
 
@@ -37,14 +55,21 @@ class ReadOnlyGraphDBClient:
 
     def __init__(self, base_url: str = "http://127.0.0.1:7200", *, timeout: float = 5.0):
         parsed = urlsplit(base_url)
-        if parsed.scheme != "http" or parsed.hostname not in {"127.0.0.1", "localhost"}:
+        if parsed.scheme != "http" or parsed.hostname not in {"127.0.0.1", "localhost", "::1"}:
             raise ApplicationError(ErrorCode.READ_ONLY_POLICY_VIOLATION)
-        if parsed.username or parsed.password or parsed.query or parsed.fragment:
+        if (
+            parsed.username
+            or parsed.password
+            or parsed.query
+            or parsed.fragment
+            or parsed.path not in {"", "/"}
+        ):
             raise ApplicationError(ErrorCode.READ_ONLY_POLICY_VIOLATION)
         if not 0 < float(timeout) <= MAX_QUERY_TIMEOUT_SECONDS:
             raise ApplicationError(ErrorCode.INVALID_PARAMETER)
         self.base_url = base_url.rstrip("/")
         self.timeout = float(timeout)
+        self._opener = build_opener(ProxyHandler({}), _NoRedirectHandler())
 
     def _request(
         self,
@@ -56,7 +81,13 @@ class ReadOnlyGraphDBClient:
         accept: str = "application/json",
         timeout: float | None = None,
     ) -> tuple[int, bytes, str]:
-        assert_readonly_http_request(method, path.split("?", 1)[0], content_type)
+        assert_readonly_http_request(
+            method,
+            path,
+            content_type,
+            body=body,
+            accept=accept,
+        )
         if body is not None and len(body) > 65536:
             raise ApplicationError(ErrorCode.READ_ONLY_POLICY_VIOLATION)
         request = Request(
@@ -69,7 +100,9 @@ class ReadOnlyGraphDBClient:
             },
         )
         try:
-            with urlopen(request, timeout=timeout or self.timeout) as response:
+            with self._opener.open(
+                request, timeout=timeout or self.timeout
+            ) as response:
                 data = response.read(MAX_RESPONSE_BODY_BYTES + 1)
                 if len(data) > MAX_RESPONSE_BODY_BYTES:
                     raise ApplicationError(ErrorCode.RESULT_LIMIT_EXCEEDED)
@@ -87,7 +120,9 @@ class ReadOnlyGraphDBClient:
             payload = json.loads(body.decode("utf-8"), object_pairs_hook=_unique)
         except Exception as exc:
             raise ApplicationError(ErrorCode.GRAPHDB_UNAVAILABLE) from exc
-        return {"healthy": True, "repository_count": len(payload) if isinstance(payload, list) else 0}
+        if not isinstance(payload, list):
+            raise ApplicationError(ErrorCode.GRAPHDB_UNAVAILABLE)
+        return {"healthy": True, "repository_count": len(payload)}
 
     def repository_info(self, repository_id: str) -> dict[str, Any]:
         validate_repository_id(repository_id)
@@ -103,6 +138,24 @@ class ReadOnlyGraphDBClient:
         if not isinstance(value, dict):
             raise ApplicationError(ErrorCode.GRAPHDB_UNAVAILABLE)
         return value
+
+    def export_explicit_nquads(self, repository_id: str) -> bytes:
+        """Read the bounded explicit dataset through the sole snapshot endpoint."""
+
+        validate_repository_id(repository_id)
+        status, body, content_type = self._request(
+            "GET",
+            "/repositories/"
+            + quote(repository_id, safe="")
+            + "/statements?infer=false",
+            accept="application/n-quads",
+        )
+        if status != 200:
+            raise ApplicationError(ErrorCode.GRAPHDB_UNAVAILABLE)
+        media_type = content_type.split(";", 1)[0].strip().lower()
+        if media_type != "application/n-quads":
+            raise ApplicationError(ErrorCode.GRAPHDB_UNAVAILABLE)
+        return body
 
     def _query(self, repository_id: str, query: str, *, query_kind: str, timeout: float) -> tuple[bytes, str]:
         validate_repository_id(repository_id)

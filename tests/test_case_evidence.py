@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from rdflib import Literal, URIRef
+from rdflib import Literal
 from rdflib.namespace import RDF
 
 from kg_mnp_demo.evaluator import evaluate_case

@@ -8,6 +8,7 @@ from typing import Any
 
 from rdflib import URIRef
 
+from ..graphdb.rdf_semantics import graphdb_semantic_hash_nquads
 from ..modeling.canonical_json import semantic_hash
 from .errors import ApplicationError, ErrorCode
 from .contracts import validate_application_contract
@@ -21,7 +22,7 @@ from .identifiers import (
     validate_stable_identifier,
 )
 from .policy import DEFAULT_RESULT_LIMIT
-from .publication_binding import PublicationBinding
+from .publication_binding import PUBLICATION_SCENARIOS, PublicationBinding
 from .query_registry import ParameterSpec, QueryDefinition, QueryRegistry
 from .query_validator import validate_bound_graph_values, validate_query_text
 from .readonly_client import ReadOnlyGraphDBClient
@@ -50,17 +51,48 @@ class ApplicationService:
         self.client = client
 
     def runtime_check(self) -> dict[str, Any]:
-        health = self.client.health()
-        info = self.client.repository_info(self.binding.repository_id)
-        reported_id = info.get("id") or info.get("repositoryID")
-        if reported_id is not None and reported_id != self.binding.repository_id:
-            raise ApplicationError(ErrorCode.PUBLICATION_MISMATCH)
+        try:
+            health = self.client.health()
+            if not isinstance(health, dict) or health.get("healthy") is not True:
+                raise ApplicationError(ErrorCode.APPLICATION_NOT_READY)
+            info = self.client.repository_info(self.binding.repository_id)
+            reported_id = info.get("id") or info.get("repositoryID")
+            if reported_id != self.binding.repository_id:
+                raise ApplicationError(ErrorCode.APPLICATION_NOT_READY)
+            if self.binding.attestation.get("status") != "PUBLICATION_VERIFIED":
+                raise ApplicationError(ErrorCode.APPLICATION_NOT_READY)
+            reconstruction = self.binding.publication_authority_reconstruction
+            if (
+                reconstruction.get("status") != "PASS"
+                or reconstruction.get("scenario") not in PUBLICATION_SCENARIOS
+                or reconstruction.get("scenario")
+                != self.binding.publication_scenario
+                or reconstruction.get("publication_id") != self.binding.publication_id
+                or reconstruction.get("deterministic_reconstruction_match") is not True
+            ):
+                raise ApplicationError(ErrorCode.APPLICATION_NOT_READY)
+            explicit_nquads = self.client.export_explicit_nquads(
+                self.binding.repository_id
+            )
+            live_semantic_hash = graphdb_semantic_hash_nquads(explicit_nquads)
+            if live_semantic_hash != self.binding.graphdb_semantic_hash:
+                raise ApplicationError(ErrorCode.APPLICATION_NOT_READY)
+        except ApplicationError as exc:
+            if exc.code == ErrorCode.APPLICATION_NOT_READY:
+                raise
+            raise ApplicationError(ErrorCode.APPLICATION_NOT_READY) from exc
+        except Exception as exc:
+            raise ApplicationError(ErrorCode.APPLICATION_NOT_READY) from exc
         return {
             "status": "APPLICATION_READY",
             "read_only": True,
             "publication_id": self.binding.publication_id,
             "publication_semantic_hash": self.binding.publication_semantic_hash,
             "repository_id": self.binding.repository_id,
+            "expected_graphdb_semantic_hash": self.binding.graphdb_semantic_hash,
+            "live_graphdb_semantic_hash": live_semantic_hash,
+            "repository_semantic_identity_verified": True,
+            "publication_authority_reconstruction": reconstruction,
             "health": health,
         }
 

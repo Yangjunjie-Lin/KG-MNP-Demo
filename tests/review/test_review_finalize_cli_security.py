@@ -8,7 +8,7 @@ from pathlib import Path
 from kg_mnp_demo.modeling.cli import main
 from kg_mnp_demo.modeling.review_identifiers import decision_log_hash, review_decision_id
 
-from ._helpers import EXAMPLES, ROOT, load_expected_log, load_proposal
+from ._helpers import ROOT, load_expected_log, load_proposal
 
 
 def test_review_finalize_cli_rejects_issue_confirm(tmp_path: Path, capsys):

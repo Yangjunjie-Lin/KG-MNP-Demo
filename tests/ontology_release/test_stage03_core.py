@@ -19,7 +19,7 @@ from kg_mnp_demo.loader import (
     shape_paths,
 )
 from kg_mnp_demo.namespaces import BASE, MNP
-from kg_mnp_demo.validator import validate_graph, validate_ontology_schema
+from kg_mnp_demo.validator import validate_graph
 
 ROOT = Path(__file__).resolve().parents[2]
 TERM_NS = "https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#"

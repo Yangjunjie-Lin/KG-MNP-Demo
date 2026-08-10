@@ -7,7 +7,6 @@ from typing import Any
 
 import yaml
 from rdflib import OWL, RDF, RDFS, Graph, Literal, URIRef
-from rdflib.namespace import XSD
 
 from kg_mnp_demo.application.serializers import json_safe
 from kg_mnp_demo.loader import (

@@ -35,9 +35,9 @@ def _load_pyproject() -> dict:
     return {"scripts": scripts}
 
 
-def test_kg_mnp_console_entry_is_reserved_for_the_central_modeling_cli():
+def test_kg_mnp_console_entry_uses_the_application_aware_root_dispatcher():
     scripts = _load_pyproject()["scripts"]
-    assert scripts.get("kg-mnp") == "kg_mnp_demo.modeling.cli:main"
+    assert scripts.get("kg-mnp") == "kg_mnp_demo.root_cli:main"
 
 
 def test_kg_mnp_eligibility_console_entry_present():

@@ -4,6 +4,8 @@
 Always uses the in-memory RDF backend.
 """
 
+# ruff: noqa: E402
+
 from __future__ import annotations
 
 import argparse
@@ -771,8 +773,6 @@ def render_html_report(
     inference = primary["inference"]
     evaluation = primary["evaluation"]
     trace = primary.get("trace") or {}
-    chains = trace.get("human_chains") or []
-
     def esc(v: Any) -> str:
         return html.escape("" if v is None else str(v))
 

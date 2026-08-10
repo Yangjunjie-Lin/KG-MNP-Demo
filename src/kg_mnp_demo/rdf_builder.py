@@ -89,7 +89,6 @@ def build_case_graph(
     process: dict | None = None,
 ) -> Graph:
     """Build instance RDF only (no assessment, no eligibility conclusion)."""
-    from typing import Any
 
     g = Graph()
     g.bind("mnp", MNP)

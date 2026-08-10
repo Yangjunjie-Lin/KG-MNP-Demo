@@ -13,8 +13,12 @@ from pathlib import Path
 from typing import Any
 
 from fastapi.testclient import TestClient
+from rdflib import Dataset, Graph, URIRef
 
 from kg_mnp_demo.application.attestation import build_application_attestation
+from kg_mnp_demo.application.artifact_verifier import (
+    verify_application_phase01_artifact,
+)
 from kg_mnp_demo.application.errors import ApplicationError, ErrorCode
 from kg_mnp_demo.application.http import create_app
 from kg_mnp_demo.application.publication_binding import PublicationBinding
@@ -25,7 +29,6 @@ from kg_mnp_demo.compilation.manifest import json_bytes
 from kg_mnp_demo.graphdb.client import GraphDBClient
 from kg_mnp_demo.graphdb.importer import import_package
 from kg_mnp_demo.graphdb.policy import load_graphdb_policy
-from kg_mnp_demo.graphdb.rdf_semantics import graphdb_semantic_hash_nquads
 
 ROOT = Path(__file__).resolve().parents[1]
 COMPOSE = ROOT / "deploy/graphdb/docker-compose.integration.yml"
@@ -149,6 +152,12 @@ def _mutation_attacks(client: ReadOnlyGraphDBClient, repository_id: str, service
         ("DELETE", f"/rest/repositories/{repository_id}", None, None),
         ("POST", f"/repositories/{repository_id}/statements", b"", "application/n-quads"),
         ("POST", f"/repositories/{repository_id}", b"INSERT DATA {}", "application/sparql-update"),
+        (
+            "POST",
+            f"/repositories/{repository_id}?timeout=5",
+            b"INSERT DATA { <urn:attack:s> <urn:attack:p> <urn:attack:o> }",
+            "application/sparql-query",
+        ),
     ]
     blocked = 0
     for method, path, body, content_type in attacks:
@@ -175,6 +184,115 @@ def _mutation_attacks(client: ReadOnlyGraphDBClient, repository_id: str, service
     return len(attacks) + 4 + len(query_attacks) + 3, int(blocked)
 
 
+def _live_repository_tamper_attacks(
+    setup: GraphDBClient,
+    service: ApplicationService,
+    repository_id: str,
+) -> tuple[int, int]:
+    """Mutate the live fixture and require ordinary startup to fail immediately."""
+
+    original = setup.export_nquads(repository_id, include_inferred=False)
+    baseline_statement_count = setup.count_repository_statements(repository_id)
+    dataset = Dataset()
+    dataset.parse(data=original.decode("utf-8"), format="nquads")
+    selected = next(
+        (
+            (subject, predicate, obj, graph)
+            for subject, predicate, obj, graph in dataset.quads(
+                (None, None, None, None)
+            )
+            if isinstance(subject, URIRef)
+            and isinstance(predicate, URIRef)
+            and isinstance(obj, URIRef)
+            and isinstance(graph, URIRef)
+        ),
+        None,
+    )
+    if selected is None:
+        raise RuntimeError("live GraphDB fixture has no removable named-graph quad")
+    subject, predicate, obj, graph = selected
+    original_graph = Graph()
+    for triple in dataset.graph(graph):
+        original_graph.add(triple)
+    removed_graph = Graph()
+    for triple in original_graph:
+        if triple != (subject, predicate, obj):
+            removed_graph.add(triple)
+    attack_triple = (
+        URIRef("urn:kg-mnp:phase01-tamper:subject"),
+        URIRef("urn:kg-mnp:phase01-tamper:predicate"),
+        URIRef("urn:kg-mnp:phase01-tamper:object"),
+    )
+    replacement_graph = Graph()
+    for triple in removed_graph:
+        replacement_graph.add(triple)
+    replacement_graph.add(attack_triple)
+
+    def ntriples(value: Graph) -> bytes:
+        serialized = value.serialize(format="nt")
+        if isinstance(serialized, bytes):
+            return serialized
+        return serialized.encode("utf-8")
+
+    attack_nquad = (
+        f"{attack_triple[0].n3()} {attack_triple[1].n3()} "
+        f"{attack_triple[2].n3()} {graph.n3()} .\n"
+    ).encode("utf-8")
+    original_graph_bytes = ntriples(original_graph)
+    removed_graph_bytes = ntriples(removed_graph)
+    replacement_graph_bytes = ntriples(replacement_graph)
+    if len(removed_graph) != len(original_graph) - 1 or len(replacement_graph) != len(
+        original_graph
+    ):
+        raise RuntimeError("live GraphDB tamper fixtures have invalid statement counts")
+
+    def replace(data: bytes) -> None:
+        setup.replace_graph(repository_id, data, graph_iri=str(graph))
+
+    def restore() -> None:
+        replace(original_graph_bytes)
+        restored = service.runtime_check()
+        if restored.get("status") != "APPLICATION_READY":
+            raise RuntimeError("live GraphDB fixture restoration was not verified")
+
+    attacks = (
+        (
+            lambda: setup.import_nquads(repository_id, attack_nquad),
+            baseline_statement_count + 1,
+        ),
+        (
+            lambda: replace(removed_graph_bytes),
+            baseline_statement_count - 1,
+        ),
+        (
+            lambda: replace(replacement_graph_bytes),
+            baseline_statement_count,
+        ),
+    )
+    blocked = 0
+    for attack, expected_statement_count in attacks:
+        try:
+            attack()
+            if (
+                setup.count_repository_statements(repository_id)
+                != expected_statement_count
+            ):
+                raise RuntimeError("live repository tamper was not established")
+            try:
+                service.runtime_check()
+            except ApplicationError as exc:
+                if exc.code != ErrorCode.APPLICATION_NOT_READY:
+                    raise RuntimeError(
+                        "live repository tamper produced the wrong startup failure"
+                    ) from exc
+                blocked += 1
+            else:
+                raise RuntimeError("live repository tamper passed runtime startup")
+        finally:
+            restore()
+    return len(attacks), blocked
+
+
 def main() -> int:
     package = ROOT / "runtime_outputs/publication/full-confirmation"
     manifest = _json(package / "publication-manifest.json")
@@ -182,7 +300,11 @@ def main() -> int:
     attestation = ROOT / f"runtime_reports/publication/{publication_hash}/publication-attestation.json"
     graphdb_hash = manifest["graphdb_publication_semantic_hash"]
     graphdb_package = ROOT / f"runtime_outputs/graphdb/{graphdb_hash}"
-    binding = PublicationBinding.verify(package, attestation)
+    binding = PublicationBinding.verify(
+        package,
+        attestation,
+        publication_scenario="full-confirmation",
+    )
     if graphdb_package.resolve() == package.resolve() or not graphdb_package.is_dir():
         raise RuntimeError("Stage 08 GraphDB package is unavailable")
     _assert_port_free(7200)
@@ -209,13 +331,19 @@ def main() -> int:
         imported = True
         if binding.repository_id not in setup.list_repositories():
             raise RuntimeError("publication repository lineage is unavailable")
-        before = graphdb_semantic_hash_nquads(setup.export_nquads(binding.repository_id, include_inferred=False))
         registry = QueryRegistry.load()
         readonly = ReadOnlyGraphDBClient(timeout=8.0)
         service = ApplicationService(binding=binding, registry=registry, client=readonly)
-        service.runtime_check()
+        runtime_before = service.runtime_check()
+        if runtime_before.get("status") != "APPLICATION_READY":
+            raise RuntimeError("ordinary Application startup is not ready")
+        expected_hash = runtime_before["expected_graphdb_semantic_hash"]
+        before = runtime_before["live_graphdb_semantic_hash"]
         golden_count, golden_passed, fact_trace = _golden_http(service)
         attacks, blocked = _mutation_attacks(readonly, binding.repository_id, service)
+        tamper_attacks, tamper_blocked = _live_repository_tamper_attacks(
+            setup, service, binding.repository_id
+        )
         parameters = {"iri": "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/modeled/2993a1403cabddd34da97cacad8c5aa55103903ab9d3a0d831bd9f989f2fc029", "limit": 100, "offset": 0}
         first = service.run("business.entity", parameters)
         second = service.run("business.entity", parameters)
@@ -228,27 +356,86 @@ def main() -> int:
             "source": "PASS" if trace.get("source") else "FAILED",
             "publication_lineage": "PASS" if trace.get("publication", {}).get("publication_id") == binding.publication_id else "FAILED",
         }
-        after = graphdb_semantic_hash_nquads(setup.export_nquads(binding.repository_id, include_inferred=False))
+        runtime_after = service.runtime_check()
+        if runtime_after.get("status") != "APPLICATION_READY":
+            raise RuntimeError("final ordinary Application startup is not ready")
+        if runtime_after["expected_graphdb_semantic_hash"] != expected_hash:
+            raise RuntimeError("Application expected GraphDB hash changed during run")
+        after = runtime_after["live_graphdb_semantic_hash"]
         report = ROOT / f"runtime_reports/application/{publication_hash}"
         attestation_payload = build_application_attestation(
             binding=binding,
             registry=registry,
-            graphdb_hash_before=before,
-            graphdb_hash_after=after,
+            live_graphdb_semantic_hash_before=before,
+            live_graphdb_semantic_hash_after=after,
             golden_query_count=golden_count,
             golden_query_passed=golden_passed,
             mutation_attack_count=attacks,
             mutation_attack_blocked=blocked,
+            live_repository_tamper_attack_count=tamper_attacks,
+            live_repository_tamper_attack_blocked=tamper_blocked,
             traceability_checks=traceability_checks,
             http_runtime={"bind_host": "127.0.0.1", "read_only": True, "golden_http_status": "PASS" if golden_count == golden_passed else "FAILED"},
             result_determinism=deterministic,
         )
         _write(report / "application-attestation.json", attestation_payload)
         _write(report / "query-registry-manifest.json", registry.manifest())
-        _write(report / "golden-query-summary.json", {"contract_version": "1.0", "golden_query_count": golden_count, "golden_query_passed": golden_passed})
-        _write(report / "security-summary.json", {"contract_version": "1.0", "mutation_attack_count": attacks, "mutation_attack_blocked": blocked, "status": "PASS" if attacks == blocked else "FAILED"})
-        _write(report / "graphdb-before-after.json", {"contract_version": "1.0", "graphdb_semantic_hash_before": before, "graphdb_semantic_hash_after": after, "equal": before == after})
-        print(json.dumps({"status": attestation_payload["status"], "publication_id": binding.publication_id, "repository_id": binding.repository_id, "graphdb_semantic_hash_before": before, "graphdb_semantic_hash_after": after, "repository_unchanged": before == after, "golden_query_count": golden_count, "mutation_attack_count": attacks}, sort_keys=True))
+        _write(
+            report / "golden-query-summary.json",
+            {
+                "contract_version": "1.0",
+                "publication_id": binding.publication_id,
+                "query_registry_hash": registry.document_hash,
+                "golden_query_count": golden_count,
+                "golden_query_passed": golden_passed,
+                "status": "PASS" if golden_count == golden_passed else "FAILED",
+            },
+        )
+        _write(
+            report / "security-summary.json",
+            {
+                "contract_version": "1.0",
+                "publication_id": binding.publication_id,
+                "repository_id": binding.repository_id,
+                "mutation_attack_count": attacks,
+                "mutation_attack_blocked": blocked,
+                "live_repository_tamper_attack_count": tamper_attacks,
+                "live_repository_tamper_attack_blocked": tamper_blocked,
+                "status": "PASS"
+                if attacks == blocked and tamper_attacks == tamper_blocked
+                else "FAILED",
+            },
+        )
+        _write(
+            report / "graphdb-before-after.json",
+            {
+                "contract_version": "1.0",
+                "publication_id": binding.publication_id,
+                "repository_id": binding.repository_id,
+                "expected_graphdb_semantic_hash": expected_hash,
+                "live_graphdb_semantic_hash_before": before,
+                "live_graphdb_semantic_hash_after": after,
+                "publication_authority_reconstruction": (
+                    attestation_payload["publication_authority_reconstruction"]
+                ),
+                "repository_semantic_identity_verified": (
+                    expected_hash == before == after
+                ),
+                "repository_unchanged": before == after,
+            },
+        )
+        verified_artifact = verify_application_phase01_artifact(report)
+        print(
+            json.dumps(
+                {
+                    **verified_artifact,
+                    "golden_query_count": golden_count,
+                    "mutation_attack_count": attacks,
+                    "live_repository_tamper_attack_count": tamper_attacks,
+                },
+                sort_keys=True,
+            )
+        )
         return 0 if attestation_payload["status"] == "APPLICATION_READONLY_VERIFIED" else 1
     finally:
         if imported:
@@ -256,10 +443,30 @@ def main() -> int:
                 setup.delete_generated_repository(binding.repository_id)
             except Exception:
                 pass
-        _compose(project, files, "down", "-v", "--remove-orphans", check=False)
-        override.unlink(missing_ok=True)
-        if generated_license is not None:
-            generated_license.unlink(missing_ok=True)
+        cleanup_error: Exception | None = None
+        try:
+            cleanup = _compose(
+                project,
+                files,
+                "down",
+                "-v",
+                "--remove-orphans",
+                check=False,
+            )
+            if cleanup.returncode != 0:
+                cleanup_error = RuntimeError(
+                    "Application integration resource cleanup failed"
+                )
+        except Exception as exc:
+            cleanup_error = exc
+        finally:
+            override.unlink(missing_ok=True)
+            if generated_license is not None:
+                generated_license.unlink(missing_ok=True)
+        if cleanup_error is not None:
+            raise RuntimeError(
+                "Application integration resource cleanup failed"
+            ) from cleanup_error
 
 
 if __name__ == "__main__":

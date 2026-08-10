@@ -8,7 +8,7 @@ import pytest
 from kg_mnp_demo.application.errors import ApplicationError, ErrorCode
 from kg_mnp_demo.application.publication_binding import PublicationBinding
 
-from ._phase01_helpers import ROOT
+from ._phase01_helpers import ROOT, publication_attestation_report
 
 
 def test_missing_or_non_verified_attestation_fails_closed(tmp_path: Path):
@@ -19,12 +19,21 @@ def test_missing_or_non_verified_attestation_fails_closed(tmp_path: Path):
     attestation = tmp_path / "publication-attestation.json"
     attestation.write_text(json.dumps({"status": "FAILED"}), encoding="utf-8")
     with pytest.raises(ApplicationError):
-        PublicationBinding.verify(package, attestation)
+        PublicationBinding.verify(
+            package,
+            attestation,
+            publication_scenario="full-confirmation",
+        )
 
 
 def test_repository_mismatch_fails_before_runtime_queries(tmp_path: Path):
     package = ROOT / "examples/publication/expected/full-confirmation"
-    attestation = tmp_path / "publication-attestation.json"
-    attestation.write_text("{}", encoding="utf-8")
-    with pytest.raises(ApplicationError):
-        PublicationBinding.verify(package, attestation, expected_repository_id="kg-mnp-" + "0" * 20)
+    attestation = publication_attestation_report(tmp_path / "report", "full-confirmation")
+    with pytest.raises(ApplicationError) as caught:
+        PublicationBinding.verify(
+            package,
+            attestation,
+            publication_scenario="full-confirmation",
+            expected_repository_id="kg-mnp-" + "0" * 20,
+        )
+    assert caught.value.code == ErrorCode.PUBLICATION_MISMATCH

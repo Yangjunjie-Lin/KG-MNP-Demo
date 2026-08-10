@@ -57,10 +57,14 @@ repository and its `EndToEndPublicationPackage` / `PublicationAttestation`. It i
 not a semantic authority, decision engine, ontology authority, review authority,
 GraphDB authority, eligibility engine, or source of new business facts.
 
-The runtime starts only after the publication package closure, the
-`PUBLICATION_VERIFIED` attestation, publication semantic hash, compilation
-lineage, GraphDB publication lineage, named-graph set, and repository id all
-match. Every result carries `publication_id`, `publication_semantic_hash`, and a
+The runtime starts only after the publication package is deterministically
+reconstructed by the frozen Stage 08 authority validator for an explicit,
+controlled publication scenario; the `PUBLICATION_VERIFIED` attestation,
+publication semantic hash, compilation lineage, GraphDB publication lineage,
+named-graph set, and repository id must all match. Startup then exports the live
+explicit dataset through the fixed `infer=false` read-only endpoint and compares
+the frozen Stage 07 semantic hash with the publication-bound GraphDB semantic
+hash. Every result carries `publication_id`, `publication_semantic_hash`, and a
 deterministic `result_semantic_hash`; timing remains isolated in
 `runtime_metadata` and is excluded from that hash.
 
@@ -70,7 +74,8 @@ Phase 01 contains:
 - `queries/application/`: 12 versioned SELECT templates covering Foundation metadata,
   ontology, business facts, provenance, review, source, evidence, and cross-trace;
 - an independent `ReadOnlyGraphDBClient` with only health, repository metadata,
-  SELECT, and ASK capabilities (Phase 01 registers no CONSTRUCT query);
+  explicit `infer=false` N-Quads snapshot, SELECT, and ASK capabilities (Phase 01
+  registers no CONSTRUCT query);
 - exact RDF-term projection preserving IRI/literal identity, lexical form,
   datatype, and language;
 - exact fact-level `owl:Axiom` traceability to candidate/effective candidate,
@@ -81,7 +86,9 @@ Phase 01 contains:
 
 GraphDB access is read only. SPARQL UPDATE, `SERVICE`, Graph Store writes,
 repository creation/deletion, and arbitrary query passthrough are rejected before
-transport. The HTTP server accepts only `127.0.0.1`; `0.0.0.0` is forbidden.
+transport. The low-level SPARQL POST transport independently revalidates the body
+as SELECT or ASK, so direct `application/sparql-query` UPDATE attempts also fail
+closed. The HTTP server accepts only `127.0.0.1`; `0.0.0.0` is forbidden.
 Rejected or deferred candidates are absent from business queries while their
 review-audit history remains available through the registered review trace.
 
@@ -90,13 +97,16 @@ kg-mnp application query list
 kg-mnp application query describe provenance.fact
 kg-mnp application publication verify \
   --publication-package runtime_outputs/publication/full-confirmation \
-  --attestation runtime_reports/publication/<publication-hash>/publication-attestation.json
+  --attestation runtime_reports/publication/<publication-hash>/publication-attestation.json \
+  --publication-scenario full-confirmation
 kg-mnp application runtime check \
   --publication-package runtime_outputs/publication/full-confirmation \
-  --attestation runtime_reports/publication/<publication-hash>/publication-attestation.json
+  --attestation runtime_reports/publication/<publication-hash>/publication-attestation.json \
+  --publication-scenario full-confirmation
 kg-mnp application serve \
   --publication-package runtime_outputs/publication/full-confirmation \
-  --attestation runtime_reports/publication/<publication-hash>/publication-attestation.json
+  --attestation runtime_reports/publication/<publication-hash>/publication-attestation.json \
+  --publication-scenario full-confirmation
 make verify-application-phase-01-offline
 # Requires the same legal external GraphDB license as Stage 07/08:
 make verify-application-phase-01
@@ -251,6 +261,10 @@ make verify-application-readonly
 make verify-application-traceability
 make verify-application-security
 make verify-application-http
+make verify-application-authority-binding
+make verify-application-live-binding
+make verify-application-rehash-attacks
+make verify-application-foundation-freeze
 make verify-application-phase-01-offline
 make verify-application-phase-01
 ```
@@ -364,7 +378,10 @@ licensed GraphDB integration，许可证只从 GitHub encrypted secret 注入；
 经过大小写不敏感 JSON/文件敏感信息扫描的 Stage 07 Attestation artifact，以及
 `stage08-publication-attestation-<commit SHA>` Stage 08 publication artifact，以及仅含
 `application-attestation.json`、query registry/golden/security summary 和 GraphDB before/after
-hash 的 `application-phase01-attestation-<commit SHA>` artifact。Stage 08/Application live job 的
+hash 的 `application-phase01-attestation-<commit SHA>` artifact。Application artifact 在上传前会
+独立重新校验五文件 closed set、publication authority reconstruction、expected/before/after
+GraphDB semantic hash 三者相等、query registry hash，以及 golden/mutation/live-tamper count
+闭合，不只信任 attestation status。Stage 08/Application live job 的
 Node/Playwright 环境与 Python core 隔离，并固定 Playwright/Chromium 版本；所有 CI job 最后均断言
 `git diff` 与 `git status --short` 为空，确保 runtime 产物不会污染正式仓库。
 

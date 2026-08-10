@@ -8,7 +8,7 @@ import sys
 from collections import defaultdict
 from pathlib import Path
 
-from rdflib import OWL, RDF, RDFS, SKOS, Graph, Literal, URIRef
+from rdflib import OWL, RDF, RDFS, SKOS, Graph, Literal
 from rdflib.namespace import XSD
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -76,10 +76,23 @@ def main() -> int:
                 pass
             labels = list(g.objects(s, RDFS.label))
             defs = list(g.objects(s, SKOS.definition))
-            has_en = any(isinstance(l, Literal) and l.language == "en" for l in labels)
-            has_zh = any(isinstance(l, Literal) and l.language in {"zh-CN", "zh"} for l in labels)
-            def_en = any(isinstance(l, Literal) and l.language == "en" for l in defs)
-            def_zh = any(isinstance(l, Literal) and l.language in {"zh-CN", "zh"} for l in defs)
+            has_en = any(
+                isinstance(label, Literal) and label.language == "en"
+                for label in labels
+            )
+            has_zh = any(
+                isinstance(label, Literal) and label.language in {"zh-CN", "zh"}
+                for label in labels
+            )
+            def_en = any(
+                isinstance(definition, Literal) and definition.language == "en"
+                for definition in defs
+            )
+            def_zh = any(
+                isinstance(definition, Literal)
+                and definition.language in {"zh-CN", "zh"}
+                for definition in defs
+            )
             if not (has_en and has_zh and def_en and def_zh):
                 errors.append(f"Missing bilingual label/definition: {s}")
 

@@ -87,16 +87,6 @@ def compare_rule_results(
     before: list[dict[str, Any]] | None,
     after: list[dict[str, Any]] | None,
 ) -> list[dict[str, Any]]:
-    left = {
-        (r.get("rule_id"), r.get("version") or r.get("rule_version")): r
-        for r in (before or [])
-        if isinstance(r, dict) and r.get("rule_id")
-    }
-    right = {
-        (r.get("rule_id"), r.get("version") or r.get("rule_version")): r
-        for r in (after or [])
-        if isinstance(r, dict) and r.get("rule_id")
-    }
     # Index also by rule_id for status comparison across same id
     left_by_id = {r.get("rule_id"): r for r in (before or []) if isinstance(r, dict)}
     right_by_id = {r.get("rule_id"): r for r in (after or []) if isinstance(r, dict)}

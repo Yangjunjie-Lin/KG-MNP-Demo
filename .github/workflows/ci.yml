@@ -101,6 +101,8 @@ jobs:
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -345,6 +347,8 @@ jobs:
     timeout-minutes: 120
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
@@ -379,50 +383,7 @@ jobs:
           for name in application-attestation.json query-registry-manifest.json golden-query-summary.json security-summary.json graphdb-before-after.json; do
             cp "$report/$name" "$ARTIFACT_DIR/$name"
           done
-          python - "$ARTIFACT_DIR" <<'APPLICATION_PY'
-          import json
-          import re
-          import sys
-          from pathlib import Path
-
-          root = Path(sys.argv[1])
-          expected = {
-              "application-attestation.json",
-              "query-registry-manifest.json",
-              "golden-query-summary.json",
-              "security-summary.json",
-              "graphdb-before-after.json",
-          }
-          actual = {path.name for path in root.iterdir() if path.is_file()}
-          if actual != expected:
-              raise SystemExit("application artifact closed set mismatch")
-          forbidden = re.compile(r"(?i)(authorization|cookie|credential|environment|graphdb_license|password|secret|token|private.?key)")
-          documents = {}
-          def walk(value):
-              if isinstance(value, dict):
-                  for key, child in value.items():
-                      if forbidden.search(key):
-                          raise SystemExit(f"sensitive key: {key}")
-                      walk(child)
-              elif isinstance(value, list):
-                  for child in value:
-                      walk(child)
-              elif isinstance(value, str) and forbidden.search(value):
-                  raise SystemExit("sensitive value marker")
-          for path in sorted(root.iterdir()):
-              document = json.loads(path.read_text(encoding="utf-8"))
-              documents[path.name] = document
-              walk(document)
-          attestation = documents["application-attestation.json"]
-          before_after = documents["graphdb-before-after.json"]
-          if attestation.get("status") != "APPLICATION_READONLY_VERIFIED":
-              raise SystemExit("application attestation is not verified")
-          if attestation.get("repository_unchanged") is not True or before_after.get("equal") is not True:
-              raise SystemExit("GraphDB changed during application tests")
-          from kg_mnp_demo.application.contracts import validate_application_contract
-          validate_application_contract("application-phase01-attestation", attestation)
-          print("application attestation artifact scan: PASS")
-          APPLICATION_PY
+          python scripts/verify_application_phase01_artifact.py "$ARTIFACT_DIR"
       - name: Upload Application Phase 01 attestation artifact
         if: success()
         uses: actions/upload-artifact@v4
@@ -443,19 +404,87 @@ jobs:
         shell: bash
         run: |
           set -uo pipefail
+          container_projects() {
+            local ids id project
+            if ! ids="$(docker ps -aq --filter label=com.docker.compose.project)"; then
+              return 1
+            fi
+            while IFS= read -r id; do
+              [[ -z "$id" ]] && continue
+              if ! project="$(docker inspect --format '{{ index .Config.Labels "com.docker.compose.project" }}' "$id")"; then
+                return 1
+              fi
+              printf '%s\n' "$project"
+            done <<< "$ids"
+          }
+          network_projects() {
+            local ids id project
+            if ! ids="$(docker network ls -q --filter label=com.docker.compose.project)"; then
+              return 1
+            fi
+            while IFS= read -r id; do
+              [[ -z "$id" ]] && continue
+              if ! project="$(docker network inspect --format '{{ index .Labels "com.docker.compose.project" }}' "$id")"; then
+                return 1
+              fi
+              printf '%s\n' "$project"
+            done <<< "$ids"
+          }
+          volume_projects() {
+            local ids id project
+            if ! ids="$(docker volume ls -q --filter label=com.docker.compose.project)"; then
+              return 1
+            fi
+            while IFS= read -r id; do
+              [[ -z "$id" ]] && continue
+              if ! project="$(docker volume inspect --format '{{ index .Labels "com.docker.compose.project" }}' "$id")"; then
+                return 1
+              fi
+              printf '%s\n' "$project"
+            done <<< "$ids"
+          }
+          discover_projects() {
+            local containers networks volumes
+            if ! containers="$(container_projects)"; then
+              return 1
+            fi
+            if ! networks="$(network_projects)"; then
+              return 1
+            fi
+            if ! volumes="$(volume_projects)"; then
+              return 1
+            fi
+            printf '%s\n%s\n%s\n' "$containers" "$networks" "$volumes" |
+              awk '/^kgmnp-app-[0-9a-f]{12}$/' | sort -u
+          }
           if ! docker info >/dev/null; then
+            echo 'Docker daemon unavailable during Application cleanup' >&2
             exit 1
           fi
-          projects=""
-          if ! projects="$(docker ps -aq --filter label=com.docker.compose.project | while read -r id; do docker inspect --format '{{ index .Config.Labels "com.docker.compose.project" }}' "$id"; done | grep -E '^kgmnp-app-[0-9a-f]{12}$' | sort -u)"; then
-            projects=""
+          if ! projects_output="$(discover_projects)"; then
+            echo 'Could not discover Application Compose resources' >&2
+            exit 1
+          fi
+          projects=()
+          if [[ -n "$projects_output" ]]; then
+            mapfile -t projects <<< "$projects_output"
           fi
           cleanup_status=0
-          for project in $projects; do
+          for project in "${projects[@]}"; do
             if ! docker compose -p "$project" -f deploy/graphdb/docker-compose.integration.yml down -v --remove-orphans; then
               cleanup_status=1
             fi
           done
+          if ! docker info >/dev/null; then
+            echo 'Docker daemon unavailable while verifying Application cleanup' >&2
+            cleanup_status=1
+          elif ! remaining_output="$(discover_projects)"; then
+            echo 'Could not verify Application Compose resource cleanup' >&2
+            cleanup_status=1
+          elif [[ -n "$remaining_output" ]]; then
+            echo "Application Compose resources remain after cleanup: $remaining_output" >&2
+            cleanup_status=1
+          fi
           exit "$cleanup_status"
 
   webvowl-publication-integration:

@@ -451,7 +451,7 @@ def write_modules(terms: list[Term]) -> dict[str, str]:
 def write_root() -> Path:
     imports = RUNTIME_MODULES  # not alignments
     lines = [
-        f"@prefix owl: <http://www.w3.org/2002/07/owl#> .",
+        "@prefix owl: <http://www.w3.org/2002/07/owl#> .",
         "@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .",
         "@prefix dcterms: <http://purl.org/dc/terms/> .",
         "",

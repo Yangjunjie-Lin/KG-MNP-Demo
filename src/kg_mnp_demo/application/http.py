@@ -36,11 +36,15 @@ def _object_parameter(
 
 
 def create_app(service: ApplicationService) -> FastAPI:
+    readiness = service.runtime_check()
+    if readiness.get("status") != "APPLICATION_READY":
+        raise ApplicationError(ErrorCode.APPLICATION_NOT_READY)
     app = FastAPI(
         title="KG-MNP Read-Only Semantic Application",
         version="1.0.0",
         description="Read-only projection bound to a verified Foundation publication.",
     )
+    app.state.startup_readiness = readiness
 
     @app.middleware("http")
     async def readonly_limits(request: Request, call_next):

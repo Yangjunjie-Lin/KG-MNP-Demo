@@ -11,7 +11,9 @@ def test_public_client_surface_has_no_write_methods():
     client = ReadOnlyGraphDBClient()
     for name in ("create_repository", "delete_repository", "import_nquads", "replace_graph", "update", "graph_store"):
         assert not hasattr(client, name)
-    assert {"health", "repository_info", "select", "ask"} <= set(dir(client))
+    assert {"health", "repository_info", "export_explicit_nquads", "select", "ask"} <= set(
+        dir(client)
+    )
     assert not hasattr(client, "construct")
 
 

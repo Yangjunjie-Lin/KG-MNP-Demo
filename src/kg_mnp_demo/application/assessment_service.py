@@ -10,7 +10,6 @@ import json
 import uuid
 from copy import deepcopy
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -34,7 +33,6 @@ from kg_mnp_demo.inference import apply_owlrl
 from kg_mnp_demo.input_adapter import (
     InputValidationError,
     NormalizedCaseInput,
-    load_and_normalize,
     normalize_case_input,
 )
 from kg_mnp_demo.loader import merge_reference_graph, project_root
