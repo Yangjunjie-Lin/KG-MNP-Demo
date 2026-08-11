@@ -256,6 +256,11 @@ def normalized_facts(
             "value_state": str(fact.get("value_state", "KNOWN")).upper(),
         }
         result[(record["focus_node"], record["path"])].append(record)
-    for key in result:
-        result[key].sort(key=lambda record: (semantic_hash(record["value"]), record["assertion_ref"]))
+    for records in result.values():
+        records.sort(
+            key=lambda record: (
+                semantic_hash(record["value"]),
+                record["assertion_ref"],
+            ),
+        )
     return dict(result)
