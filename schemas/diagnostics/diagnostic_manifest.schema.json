@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/diagnostics/diagnostic-manifest/1.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["contract_version", "package_id", "package_semantic_hash", "diagnostic_policy_version", "diagnostic_policy_hash", "diagnostic_basis_hash", "issues_total", "issue_ids", "status"],
+  "properties": {
+    "contract_version": {"const": "1.0"},
+    "package_id": {"type": "string", "pattern": "^urn:kg-mnp:diagnostic-package:[0-9a-f]{64}$"},
+    "package_semantic_hash": {"$ref": "#/$defs/hash"},
+    "diagnostic_policy_version": {"const": "1.0.0"},
+    "diagnostic_policy_hash": {"$ref": "#/$defs/hash"},
+    "diagnostic_basis_hash": {"$ref": "#/$defs/hash"},
+    "issues_total": {"type": "integer", "minimum": 0},
+    "issue_ids": {"type": "array", "items": {"type": "string", "pattern": "^urn:kg-mnp:diagnostic:[0-9a-f]{64}$"}, "uniqueItems": true},
+    "status": {"const": "DIAGNOSTICS_VALIDATED"}
+  },
+  "$defs": {"hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}
+}

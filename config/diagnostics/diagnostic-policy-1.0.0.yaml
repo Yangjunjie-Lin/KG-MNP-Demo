@@ -1,0 +1,50 @@
+contract_version: "1.0"
+policy_id: "kg-mnp-diagnostics"
+policy_version: "1.0.0"
+classifications:
+  REQUIRED_VALUE_MISSING:
+    severity: VIOLATION
+    template_id: REQUIRED_PROPERTY_MISSING
+  OPTIONAL_VALUE_ABSENT:
+    severity: INFO
+    template_id: OPTIONAL_PROPERTY_ABSENT
+  VALUE_UNKNOWN:
+    severity: INFO
+    template_id: VALUE_UNKNOWN
+  VALUE_UNCERTAIN:
+    severity: WARNING
+    template_id: VALUE_UNCERTAIN
+  VALUE_NOT_APPLICABLE:
+    severity: INFO
+    template_id: VALUE_NOT_APPLICABLE
+  FORMAL_CONSTRAINT_VIOLATION:
+    severity: VIOLATION
+    template_id: FORMAL_CONSTRAINT_RESULT
+  FORMAL_CONSTRAINT_WARNING:
+    severity: WARNING
+    template_id: FORMAL_CONSTRAINT_RESULT
+  FORMAL_CONSTRAINT_INFO:
+    severity: INFO
+    template_id: FORMAL_CONSTRAINT_RESULT
+  CONFIRMED_VALUE_CONFLICT:
+    severity: VIOLATION
+    template_id: CONFIRMED_VALUE_CONFLICT
+  HISTORICAL_REVIEW_CONFLICT:
+    severity: INFO
+    template_id: HISTORICAL_REVIEW_CONFLICT
+  EVIDENCE_REQUIRED_MISSING:
+    severity: VIOLATION
+    template_id: REQUIRED_EVIDENCE_MISSING
+  SOURCE_REQUIRED_MISSING:
+    severity: VIOLATION
+    template_id: REQUIRED_SOURCE_MISSING
+  REJECTED_CANDIDATE_HISTORY:
+    severity: INFO
+    template_id: REJECTED_CANDIDATE_HISTORY
+  DEFERRED_CANDIDATE_HISTORY:
+    severity: INFO
+    template_id: DEFERRED_CANDIDATE_HISTORY
+shacl_severity_mapping:
+  Violation: FORMAL_CONSTRAINT_VIOLATION
+  Warning: FORMAL_CONSTRAINT_WARNING
+  Info: FORMAL_CONSTRAINT_INFO

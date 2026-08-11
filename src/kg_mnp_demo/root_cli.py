@@ -19,6 +19,11 @@ def main(argv: list[str] | None = None) -> int:
 
         return workbench_main(arguments[1:])
 
+    if arguments and arguments[0] == "diagnostics":
+        from .diagnostics.cli import main as diagnostics_main
+
+        return diagnostics_main(arguments[1:])
+
     from .modeling.cli import main as modeling_main
 
     return modeling_main(arguments)

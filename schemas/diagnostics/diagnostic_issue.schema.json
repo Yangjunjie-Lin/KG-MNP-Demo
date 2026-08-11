@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/diagnostics/diagnostic-issue/1.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["contract_version", "diagnostic_id", "classification", "severity", "scope", "focus_node", "path", "observed_values", "authority_basis", "source_assertions", "candidate_refs", "review_decision_refs", "evidence_refs", "source_refs", "publication_id", "publication_semantic_hash", "repository_semantic_hash", "phase01_attestation_hash", "diagnostic_policy_version", "diagnostic_basis_hash", "template_id", "template_parameters", "explanation"],
+  "properties": {
+    "contract_version": {"const": "1.0"},
+    "diagnostic_id": {"type": "string", "pattern": "^urn:kg-mnp:diagnostic:[0-9a-f]{64}$"},
+    "classification": {"enum": ["REQUIRED_VALUE_MISSING", "OPTIONAL_VALUE_ABSENT", "VALUE_UNKNOWN", "VALUE_UNCERTAIN", "VALUE_NOT_APPLICABLE", "FORMAL_CONSTRAINT_VIOLATION", "FORMAL_CONSTRAINT_WARNING", "FORMAL_CONSTRAINT_INFO", "CONFIRMED_VALUE_CONFLICT", "HISTORICAL_REVIEW_CONFLICT", "EVIDENCE_REQUIRED_MISSING", "SOURCE_REQUIRED_MISSING", "REJECTED_CANDIDATE_HISTORY", "DEFERRED_CANDIDATE_HISTORY"]},
+    "severity": {"enum": ["INFO", "WARNING", "VIOLATION"]},
+    "scope": {"enum": ["CURRENT_DIAGNOSTIC", "HISTORICAL_REVIEW_CONTEXT"]},
+    "focus_node": {"type": "string", "minLength": 1},
+    "path": {"type": ["string", "null"]},
+    "observed_values": {"type": "array"},
+    "authority_basis": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/authority"}},
+    "source_assertions": {"$ref": "#/$defs/references"},
+    "candidate_refs": {"$ref": "#/$defs/references"},
+    "review_decision_refs": {"$ref": "#/$defs/references"},
+    "evidence_refs": {"$ref": "#/$defs/references"},
+    "source_refs": {"$ref": "#/$defs/references"},
+    "publication_id": {"type": "string", "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$"},
+    "publication_semantic_hash": {"$ref": "#/$defs/hash"},
+    "repository_semantic_hash": {"$ref": "#/$defs/hash"},
+    "phase01_attestation_hash": {"$ref": "#/$defs/hash"},
+    "diagnostic_policy_version": {"const": "1.0.0"},
+    "diagnostic_basis_hash": {"$ref": "#/$defs/hash"},
+    "template_id": {"type": "string", "pattern": "^[A-Z][A-Z0-9_]*$"},
+    "template_parameters": {"type": "object"},
+    "explanation": {"type": "string"},
+    "constraint_result": {"type": "object", "additionalProperties": false, "required": ["source_shape", "source_constraint_component", "severity", "message", "value", "named_graph"], "properties": {"source_shape": {"type": ["string", "null"]}, "source_constraint_component": {"type": ["string", "null"]}, "severity": {"enum": ["Violation", "Warning", "Info"]}, "message": {"type": ["string", "null"]}, "value": {}, "named_graph": {"type": ["string", "null"]}}}
+  },
+  "$defs": {
+    "hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "references": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+    "authority": {"type": "object", "additionalProperties": false, "required": ["requirement_type", "authority_iri", "shape_iri", "constraint_iri", "module", "publication_id"], "properties": {"requirement_type": {"type": "string", "minLength": 1}, "authority_iri": {"type": "string", "minLength": 1}, "shape_iri": {"type": ["string", "null"]}, "constraint_iri": {"type": ["string", "null"]}, "module": {"type": "string", "minLength": 1}, "publication_id": {"type": "string", "minLength": 1}}}
+  }
+}

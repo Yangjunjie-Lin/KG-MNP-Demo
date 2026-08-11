@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>KG-MNP Diagnostics</title>
+  <link rel="stylesheet" href="/assets/styles.css">
+</head>
+<body>
+  <header>
+    <p class="eyebrow">KG-MNP APPLICATION PHASE 03</p>
+    <h1>Deterministic Diagnostics</h1>
+    <p class="subtitle">Read-only observations of missingness, constraints, conflicts and evidence lineage.</p>
+  </header>
+  <main>
+    <section id="verification" class="panel">
+      <h2>Verification</h2>
+      <p id="status" role="status">Loading verified package…</p>
+      <dl id="identity"></dl>
+    </section>
+    <section id="summary" class="panel">
+      <h2>Diagnostics Summary</h2>
+      <div id="summary-grid" class="cards"></div>
+    </section>
+    <section id="issues" class="panel">
+      <h2>Diagnostic Issues</h2>
+      <p class="note">Current diagnostic state and historical review context are labelled separately.</p>
+      <div id="issue-list"></div>
+    </section>
+    <section id="detail" class="panel">
+      <h2>Diagnostic Detail</h2>
+      <p id="detail-empty">Select an issue to inspect its formal authority and trace references.</p>
+      <article id="detail-card" hidden></article>
+    </section>
+  </main>
+  <script src="/assets/app.js"></script>
+</body>
+</html>

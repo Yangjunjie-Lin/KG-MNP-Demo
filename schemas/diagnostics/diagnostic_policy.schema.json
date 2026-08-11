@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/diagnostics/diagnostic-policy/1.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["contract_version", "policy_id", "policy_version", "classifications", "shacl_severity_mapping"],
+  "properties": {
+    "contract_version": {"const": "1.0"},
+    "policy_id": {"const": "kg-mnp-diagnostics"},
+    "policy_version": {"const": "1.0.0"},
+    "classifications": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["REQUIRED_VALUE_MISSING", "OPTIONAL_VALUE_ABSENT", "VALUE_UNKNOWN", "VALUE_UNCERTAIN", "VALUE_NOT_APPLICABLE", "FORMAL_CONSTRAINT_VIOLATION", "FORMAL_CONSTRAINT_WARNING", "FORMAL_CONSTRAINT_INFO", "CONFIRMED_VALUE_CONFLICT", "HISTORICAL_REVIEW_CONFLICT", "EVIDENCE_REQUIRED_MISSING", "SOURCE_REQUIRED_MISSING", "REJECTED_CANDIDATE_HISTORY", "DEFERRED_CANDIDATE_HISTORY"],
+      "properties": {
+        "REQUIRED_VALUE_MISSING": {"$ref": "#/$defs/mapping"},
+        "OPTIONAL_VALUE_ABSENT": {"$ref": "#/$defs/mapping"},
+        "VALUE_UNKNOWN": {"$ref": "#/$defs/mapping"},
+        "VALUE_UNCERTAIN": {"$ref": "#/$defs/mapping"},
+        "VALUE_NOT_APPLICABLE": {"$ref": "#/$defs/mapping"},
+        "FORMAL_CONSTRAINT_VIOLATION": {"$ref": "#/$defs/mapping"},
+        "FORMAL_CONSTRAINT_WARNING": {"$ref": "#/$defs/mapping"},
+        "FORMAL_CONSTRAINT_INFO": {"$ref": "#/$defs/mapping"},
+        "CONFIRMED_VALUE_CONFLICT": {"$ref": "#/$defs/mapping"},
+        "HISTORICAL_REVIEW_CONFLICT": {"$ref": "#/$defs/mapping"},
+        "EVIDENCE_REQUIRED_MISSING": {"$ref": "#/$defs/mapping"},
+        "SOURCE_REQUIRED_MISSING": {"$ref": "#/$defs/mapping"},
+        "REJECTED_CANDIDATE_HISTORY": {"$ref": "#/$defs/mapping"},
+        "DEFERRED_CANDIDATE_HISTORY": {"$ref": "#/$defs/mapping"}
+      }
+    },
+    "shacl_severity_mapping": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["Violation", "Warning", "Info"],
+      "properties": {
+        "Violation": {"const": "FORMAL_CONSTRAINT_VIOLATION"},
+        "Warning": {"const": "FORMAL_CONSTRAINT_WARNING"},
+        "Info": {"const": "FORMAL_CONSTRAINT_INFO"}
+      }
+    }
+  },
+  "$defs": {
+    "mapping": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["severity", "template_id"],
+      "properties": {
+        "severity": {"enum": ["INFO", "WARNING", "VIOLATION"]},
+        "template_id": {"type": "string", "pattern": "^[A-Z][A-Z0-9_]*$"}
+      }
+    }
+  }
+}

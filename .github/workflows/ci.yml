@@ -367,6 +367,34 @@ jobs:
             exit 1
           fi
 
+  diagnostics-offline:
+    if: github.event_name == 'pull_request'
+    needs: [workbench-offline]
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[dev]"
+      - name: Verify Application Phase 03 offline
+        run: make verify-application-phase-03-offline
+      - name: Verify clean working tree
+        shell: bash
+        run: |
+          git diff --exit-code
+          if [[ -n "$(git status --short)" ]]; then
+            git status --short
+            exit 1
+          fi
+
   workbench-integration:
     if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
     needs: [application-integration]
@@ -447,6 +475,93 @@ jobs:
             fi
           done
           exit "$cleanup_status"
+
+  diagnostics-integration:
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
+    needs: [workbench-integration]
+    runs-on: ubuntu-latest
+    timeout-minutes: 210
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Set up Java (ROBOT/HermiT)
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - name: Install Python and browser runtime
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[dev,webvowl]"
+          python -m playwright install --with-deps chromium
+      - name: Pull pinned GraphDB image
+        run: docker pull ontotext/graphdb:11.4.2@sha256:1593f8b5d42acb0f02f11b2a87b87ecbe76dbcec33cea56ca5bc32bebf6a7f12
+      - name: Reconstruct verified lower application lineage
+        env:
+          GRAPHDB_LICENSE_CONTENT: ${{ secrets.GRAPHDB_LICENSE_CONTENT }}
+          GRAPHDB_LICENSE_B64: ${{ secrets.GRAPHDB_LICENSE_B64 }}
+        run: make verify-application-phase-02
+      - name: Verify Application Phase 03 offline gates
+        run: make verify-application-phase-03-offline
+      - name: Verify Application Phase 03 live diagnostics and Chromium
+        run: python scripts/diagnostics_integration.py
+      - name: Prepare exact Application Phase 03 artifact
+        if: success()
+        shell: bash
+        env:
+          ARTIFACT_DIR: ${{ runner.temp }}/application-phase03-attestation
+        run: |
+          set -euo pipefail
+          mkdir -p "$ARTIFACT_DIR"
+          report="$(find runtime_reports/diagnostics -name application-phase03-attestation.json -printf '%T@ %h\n' | sort -nr | head -1 | cut -d' ' -f2-)"
+          test -n "$report"
+          for name in application-phase03-attestation.json diagnostics-summary.json diagnostic-determinism.json authority-binding.json security-summary.json; do
+            cp "$report/$name" "$ARTIFACT_DIR/$name"
+          done
+          python scripts/verify_application_phase03_artifact.py "$ARTIFACT_DIR" --expected-commit-sha "${GITHUB_SHA}"
+      - name: Upload Application Phase 03 attestation artifact
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: application-phase03-attestation-${{ github.sha }}
+          path: ${{ runner.temp }}/application-phase03-attestation
+          if-no-files-found: error
+      - name: Verify clean working tree
+        shell: bash
+        run: |
+          git diff --exit-code
+          if [[ -n "$(git status --short)" ]]; then
+            git status --short
+            exit 1
+          fi
+      - name: Verify no integration resources remain
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! docker info >/dev/null; then
+            echo 'Docker daemon unavailable during Phase 03 cleanup verification' >&2
+            exit 1
+          fi
+          set +e
+          remaining="$(docker ps -aq --filter label=com.docker.compose.project | while read -r id; do
+            docker inspect --format '{{ index .Config.Labels "com.docker.compose.project" }}' "$id"
+          done | grep -E '^kgmnp-((app|workbench|webvowl)-)?[0-9a-f]{12}$')"
+          discovery_status=$?
+          set -e
+          if (( discovery_status > 1 )); then
+            echo 'Could not verify Phase 03 integration resource cleanup' >&2
+            exit 1
+          fi
+          if [[ -n "$remaining" ]]; then
+            echo "Integration resources remain after Phase 03: $remaining" >&2
+            exit 1
+          fi
 
   application-integration:
     if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/main')

@@ -30,7 +30,13 @@
  verify-workbench-contracts verify-workbench-runtime-policy \
  verify-workbench-phase01-freeze verify-workbench-view-model \
  verify-workbench-security verify-workbench-browser verify-workbench-live \
- verify-application-phase-02-offline verify-application-phase-02
+ verify-application-phase-02-offline verify-application-phase-02 \
+ verify-diagnostics-contracts verify-diagnostics-policy \
+ verify-diagnostics-authority-binding verify-diagnostics-missingness \
+ verify-diagnostics-conflicts verify-diagnostics-evidence \
+ verify-diagnostics-determinism verify-diagnostics-security \
+ verify-diagnostics-browser verify-diagnostics-live \
+ verify-application-phase-03-offline verify-application-phase-03
 
 PYTHON_CORE_TESTS = \
 	tests/test_ontology.py \
@@ -481,3 +487,46 @@ verify-application-phase-02-offline: verify-application-phase-01-offline \
 
 verify-application-phase-02: verify-application-phase-01 \
 	verify-application-phase-02-offline verify-workbench-live
+
+verify-diagnostics-contracts:
+	python scripts/check_schema_identifiers.py
+	python -m pytest -q tests/diagnostics/test_contracts.py
+
+verify-diagnostics-policy: verify-diagnostics-contracts
+	python -m pytest -q tests/diagnostics/test_contracts.py -k policy
+
+verify-diagnostics-authority-binding: verify-diagnostics-contracts
+	python -m pytest -q tests/diagnostics/test_deterministic_diagnostics.py -k reconstruction
+
+verify-diagnostics-missingness: verify-diagnostics-contracts
+	python -m pytest -q tests/diagnostics/test_deterministic_diagnostics.py -k rejection
+
+verify-diagnostics-conflicts: verify-diagnostics-contracts
+	python -m pytest -q tests/diagnostics/test_deterministic_diagnostics.py -k conflict
+
+verify-diagnostics-evidence: verify-diagnostics-contracts
+	python -m pytest -q tests/diagnostics/test_deterministic_diagnostics.py
+
+verify-diagnostics-determinism: verify-diagnostics-contracts
+	python -m pytest -q tests/diagnostics/test_deterministic_diagnostics.py -k permutation
+
+verify-diagnostics-security: verify-diagnostics-contracts
+	python -m pytest -q tests/diagnostics/test_deterministic_diagnostics.py -k rehash
+	ruff check src/kg_mnp_demo/diagnostics scripts/diagnostics_integration.py scripts/verify_application_phase03_artifact.py
+
+verify-diagnostics-browser: verify-diagnostics-contracts
+	python -m pytest -q tests/diagnostics/test_runtime_security.py
+
+verify-diagnostics-live: verify-diagnostics-browser
+	python scripts/diagnostics_integration.py
+
+verify-application-phase-03-offline: verify-application-phase-02-offline \
+	verify-diagnostics-contracts \
+	verify-diagnostics-policy verify-diagnostics-authority-binding \
+	verify-diagnostics-missingness verify-diagnostics-conflicts \
+	verify-diagnostics-evidence verify-diagnostics-determinism \
+	verify-diagnostics-security verify-diagnostics-browser
+	python -m pytest -q tests/diagnostics
+
+verify-application-phase-03: verify-application-phase-02 \
+	verify-application-phase-03-offline verify-diagnostics-live

@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/diagnostics/diagnostic-package/1.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["contract_version", "manifest", "issues", "summary", "authority_bindings", "coverage", "status"],
+  "properties": {
+    "contract_version": {"const": "1.0"},
+    "manifest": {"type": "object"},
+    "issues": {"type": "array", "items": {"type": "object"}},
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["issues_total", "issues_by_classification", "issues_by_severity", "current_diagnostics", "historical_review_context"],
+      "properties": {
+        "issues_total": {"type": "integer", "minimum": 0},
+        "issues_by_classification": {"type": "object", "additionalProperties": {"type": "integer", "minimum": 0}},
+        "issues_by_severity": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["INFO", "WARNING", "VIOLATION"],
+          "properties": {
+            "INFO": {"type": "integer", "minimum": 0},
+            "WARNING": {"type": "integer", "minimum": 0},
+            "VIOLATION": {"type": "integer", "minimum": 0}
+          }
+        },
+        "current_diagnostics": {"type": "integer", "minimum": 0},
+        "historical_review_context": {"type": "integer", "minimum": 0}
+      }
+    },
+    "authority_bindings": {"$ref": "#/$defs/bindings"},
+    "coverage": {"$ref": "#/$defs/coverage"},
+    "status": {"const": "DIAGNOSTICS_VALIDATED"}
+  },
+  "$defs": {
+    "hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "bindings": {"type": "object", "additionalProperties": false, "required": ["publication_id", "publication_semantic_hash", "phase01_attestation_hash", "phase02_attestation_hash", "query_registry_hash", "repository_semantic_hash", "diagnostic_policy_hash"], "properties": {"publication_id": {"type": "string", "minLength": 1}, "publication_semantic_hash": {"$ref": "#/$defs/hash"}, "phase01_attestation_hash": {"$ref": "#/$defs/hash"}, "phase02_attestation_hash": {"$ref": "#/$defs/hash"}, "query_registry_hash": {"$ref": "#/$defs/hash"}, "repository_semantic_hash": {"$ref": "#/$defs/hash"}, "diagnostic_policy_hash": {"$ref": "#/$defs/hash"}}},
+    "coverage": {"type": "object", "additionalProperties": false, "required": ["formal_requirement_count", "requirements_evaluated", "shacl_constraints_evaluated", "focus_nodes_evaluated", "confirmed_assertions_evaluated", "review_decisions_considered", "evidence_requirements_evaluated", "source_requirements_evaluated", "diagnostic_classifications_exercised"], "properties": {"formal_requirement_count": {"type": "integer", "minimum": 0}, "requirements_evaluated": {"type": "integer", "minimum": 0}, "shacl_constraints_evaluated": {"type": "integer", "minimum": 0}, "focus_nodes_evaluated": {"type": "integer", "minimum": 0}, "confirmed_assertions_evaluated": {"type": "integer", "minimum": 0}, "review_decisions_considered": {"type": "integer", "minimum": 0}, "evidence_requirements_evaluated": {"type": "integer", "minimum": 0}, "source_requirements_evaluated": {"type": "integer", "minimum": 0}, "diagnostic_classifications_exercised": {"type": "array", "items": {"type": "string"}, "uniqueItems": true}}}
+  }
+}

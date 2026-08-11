@@ -173,9 +173,65 @@ make verify-application-phase-02-offline
 make verify-application-phase-02
 ```
 
-Phase 02 adds no Phase 03, ontology editor, review workflow, business eligibility
+Phase 02 adds no ontology editor, review workflow, business eligibility
 engine, AI, LLM, Agent, GraphRAG, RAG, embedding, vector database, or
 natural-language query system.
+
+### Phase 03 — Deterministic Data Quality, Missingness, Conflict and Evidence Diagnostics
+
+**Application Phase 03 status = PASS.**
+
+Phase 03 is a derived, read-only diagnostic observation layer over frozen,
+verified Stage 08, Phase 01, and Phase 02 identities. It detects and explains
+formal missingness, constraint results, current confirmed-value conflicts,
+historical review conflicts, and explicit evidence/source gaps. It never writes
+to OWL, SHACL, RDF, the repository, a review log, or a confirmed package.
+
+The layer preserves the open-world boundary: absence is never converted to
+negation. `REQUIRED_VALUE_MISSING` requires a cited formal requirement;
+otherwise absence is optional or produces no issue. Rejected and deferred
+candidates remain visible as historical context but never satisfy a current
+requirement. Multiple current values become a conflict only when a frozen
+`maxCount`, functional property, or other explicit incompatibility authority
+applies. Formal Violation, Warning, and Info severities are preserved exactly.
+
+Every issue is bound to the publication, repository, Phase 01 attestation, and
+versioned diagnostic policy. Its ID and explanation are produced from semantic
+fields and fixed templates only. Packages use canonical issue ordering and
+canonical JSON, and the independent validator rebuilds all issues from the
+authority snapshot, so a self-consistent rehash of forged diagnostics fails.
+
+The loopback inspection UI distinguishes `CURRENT DIAGNOSTIC` from
+`HISTORICAL REVIEW CONTEXT` in text, renders untrusted values with text DOM
+operations, performs no external requests, and exposes only GET/HEAD routes.
+
+```bash
+kg-mnp diagnostics build \
+  --publication-package runtime_outputs/publication/full-confirmation \
+  --publication-attestation runtime_reports/publication/<publication-hash>/publication-attestation.json \
+  --publication-scenario full-confirmation \
+  --phase01-artifact-dir <phase01-artifact> \
+  --phase02-artifact-dir <phase02-artifact> \
+  --output-dir runtime_outputs/diagnostics
+kg-mnp diagnostics validate \
+  --publication-package runtime_outputs/publication/full-confirmation \
+  --publication-attestation runtime_reports/publication/<publication-hash>/publication-attestation.json \
+  --publication-scenario full-confirmation \
+  --phase01-artifact-dir <phase01-artifact> \
+  --phase02-artifact-dir <phase02-artifact> \
+  --package runtime_outputs/diagnostics/deterministic-diagnostic-package.json
+kg-mnp diagnostics inspect \
+  --package runtime_outputs/diagnostics/deterministic-diagnostic-package.json
+kg-mnp diagnostics runtime check \
+  --package runtime_outputs/diagnostics/deterministic-diagnostic-package.json
+make verify-application-phase-03-offline
+# The full gate retains all licensed lower-layer integration prerequisites:
+make verify-application-phase-03
+```
+
+Phase 03 adds no repair, autofill, approval, resolution, ranking, score,
+business recommendation, persistent diagnostic database, AI, LLM, Agent,
+GraphRAG, RAG, embedding, vector database, or natural-language query system.
 
 ### Stage 08 authority boundary
 
