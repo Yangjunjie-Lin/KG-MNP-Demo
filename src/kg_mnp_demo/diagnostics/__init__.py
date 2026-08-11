@@ -1,7 +1,7 @@
 """Deterministic data quality, missingness, conflict and lineage diagnostics."""
 
-from .authority_binding import AuthorityBindings
 from .attestation import build_application_phase03_attestation
+from .authority_binding import AuthorityBindings
 from .engine import AuthoritySnapshot, build_diagnostics, reconstruct_diagnostics
 from .issue import DiagnosticIssue, build_diagnostic_issue
 from .package import DeterministicDiagnosticPackage, build_diagnostic_package
@@ -19,10 +19,10 @@ __all__ = [
     "DiagnosticIssue",
     "DiagnosticScope",
     "DiagnosticSeverity",
+    "build_application_phase03_attestation",
     "build_diagnostic_issue",
     "build_diagnostic_package",
     "build_diagnostics",
-    "build_application_phase03_attestation",
     "reconstruct_diagnostics",
     "validate_diagnostic_package",
     "validate_diagnostic_package_against_authorities",

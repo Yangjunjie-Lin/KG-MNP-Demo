@@ -17,7 +17,6 @@ from .validator import (
     validate_diagnostic_package_against_authorities,
 )
 
-
 PACKAGE_FILENAME = "deterministic-diagnostic-package.json"
 
 

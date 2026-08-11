@@ -12,7 +12,6 @@ from jsonschema import Draft202012Validator, FormatChecker
 
 from kg_mnp_demo.modeling.dependencies import ROOT
 
-
 DIAGNOSTIC_SCHEMAS = {
     "diagnostic-policy": (
         "diagnostic_policy.schema.json",
@@ -65,7 +64,7 @@ def strict_json_bytes(raw: bytes) -> Any:
 def strict_json_file(path: Path) -> dict[str, Any]:
     value = strict_json_bytes(Path(path).read_bytes())
     if not isinstance(value, dict):
-        raise ValueError("JSON root must be an object")
+        raise TypeError("JSON root must be an object")
     return value
 
 

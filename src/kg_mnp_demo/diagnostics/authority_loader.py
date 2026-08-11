@@ -3,10 +3,11 @@
 from __future__ import annotations
 
 import hashlib
+from collections.abc import Mapping
 from pathlib import Path
-from typing import Any, Mapping
+from typing import Any
 
-from rdflib import Graph, Literal, RDF, URIRef
+from rdflib import RDF, Graph, Literal, URIRef
 
 from kg_mnp_demo.application.artifact_verifier import (
     verify_application_phase01_artifact,

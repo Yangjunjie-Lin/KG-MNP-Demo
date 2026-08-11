@@ -29,7 +29,7 @@ class ConflictRule:
     incompatible_values: tuple[Any, ...] = ()
 
     @classmethod
-    def from_dict(cls, value: Mapping[str, Any]) -> "ConflictRule":
+    def from_dict(cls, value: Mapping[str, Any]) -> ConflictRule:
         rule_type = str(value["rule_type"])
         allowed = {
             "FORMAL_MAX_COUNT",

@@ -128,7 +128,7 @@ class DiagnosticIssue:
         scope: DiagnosticScope | str = DiagnosticScope.CURRENT_DIAGNOSTIC,
         constraint_result: Mapping[str, Any] | None = None,
         template_parameters: Mapping[str, Any] | None = None,
-    ) -> "DiagnosticIssue":
+    ) -> DiagnosticIssue:
         classification_value = DiagnosticClassification(classification)
         scope_value = DiagnosticScope(scope)
         mapping = classification_mapping(classification_value)

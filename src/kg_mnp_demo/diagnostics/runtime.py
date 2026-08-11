@@ -16,22 +16,19 @@ from .authority_binding import AuthorityBindings
 from .errors import DiagnosticError, DiagnosticErrorCode
 from .validator import validate_diagnostic_package
 
-
-CSP = "; ".join(
-    (
-        "default-src 'self'",
-        "script-src 'self'",
-        "style-src 'self'",
-        "connect-src 'self'",
-        "img-src 'self'",
-        "font-src 'self'",
-        "object-src 'none'",
-        "frame-src 'none'",
-        "base-uri 'none'",
-        "form-action 'none'",
-        "frame-ancestors 'none'",
-        "worker-src 'none'",
-    )
+CSP = (
+    "default-src 'self'; "
+    "script-src 'self'; "
+    "style-src 'self'; "
+    "connect-src 'self'; "
+    "img-src 'self'; "
+    "font-src 'self'; "
+    "object-src 'none'; "
+    "frame-src 'none'; "
+    "base-uri 'none'; "
+    "form-action 'none'; "
+    "frame-ancestors 'none'; "
+    "worker-src 'none'"
 )
 PAGE_ROUTES = (
     "/",

@@ -31,7 +31,6 @@ from kg_mnp_demo.diagnostics.authority_loader import (
 from kg_mnp_demo.diagnostics.runtime import create_diagnostics_app
 from kg_mnp_demo.modeling.canonical_json import canonical_json_bytes
 
-
 ROOT = Path(__file__).resolve().parents[1]
 
 

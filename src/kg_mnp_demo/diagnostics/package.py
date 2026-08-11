@@ -3,10 +3,10 @@
 from __future__ import annotations
 
 from collections import Counter
-from collections.abc import Iterable, Mapping
+from collections.abc import Iterable, Iterator, Mapping
 from copy import deepcopy
 from dataclasses import dataclass
-from typing import Any, Iterator
+from typing import Any
 
 from kg_mnp_demo.modeling.canonical_json import canonical_json_bytes, semantic_hash
 

@@ -2,11 +2,12 @@
 
 from __future__ import annotations
 
-from enum import Enum
+from collections.abc import Mapping
 from copy import deepcopy
+from enum import Enum
 from functools import lru_cache
 from pathlib import Path
-from typing import Any, Mapping
+from typing import Any
 
 import yaml
 
@@ -14,7 +15,6 @@ from kg_mnp_demo.modeling.canonical_json import semantic_hash
 from kg_mnp_demo.modeling.dependencies import ROOT, _UniqueKeyLoader
 
 from .contracts import validate_diagnostic_contract
-
 
 POLICY_VERSION = "1.0.0"
 POLICY_PATH = ROOT / "config" / "diagnostics" / "diagnostic-policy-1.0.0.yaml"
@@ -58,7 +58,7 @@ def _load_diagnostic_policy_cached(path: Path = POLICY_PATH) -> dict[str, Any]:
     except (OSError, UnicodeError, yaml.YAMLError) as exc:
         raise ValueError("cannot load diagnostic policy") from exc
     if not isinstance(value, dict):
-        raise ValueError("diagnostic policy root must be an object")
+        raise TypeError("diagnostic policy root must be an object")
     validate_diagnostic_contract("diagnostic-policy", value)
     if set(value["classifications"]) != {
         classification.value for classification in DiagnosticClassification

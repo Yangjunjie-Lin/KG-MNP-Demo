@@ -7,7 +7,7 @@ from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
 from typing import Any
 
-from rdflib import Graph, Literal, RDF, URIRef
+from rdflib import RDF, Graph, Literal, URIRef
 from rdflib.namespace import OWL, SH
 
 from kg_mnp_demo.modeling.canonical_json import semantic_hash
@@ -54,7 +54,7 @@ class Requirement:
             raise ValueError("lineage requirement counts must be positive")
 
     @classmethod
-    def from_dict(cls, value: Mapping[str, Any]) -> "Requirement":
+    def from_dict(cls, value: Mapping[str, Any]) -> Requirement:
         focus_node = value.get("focus_node", value.get("focusNode"))
         path = value.get("path", value.get("resultPath"))
         authority_iri = (

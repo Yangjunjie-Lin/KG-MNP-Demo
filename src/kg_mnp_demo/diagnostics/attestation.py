@@ -10,7 +10,6 @@ from .contracts import validate_diagnostic_contract
 from .package import DeterministicDiagnosticPackage
 from .validator import validate_diagnostic_package
 
-
 STAGE08_BASELINE_SHA = "4dc09d9cfb15da3746f108755593ceb9fe805cd7"
 PHASE01_BASELINE_SHA = "79b7d34125b0c5cb2d5fe8546e1f4e6a95ca8106"
 PHASE02_BASELINE_SHA = "3ef40b9cfbd657b55d8c5f446cfc247335db87f0"

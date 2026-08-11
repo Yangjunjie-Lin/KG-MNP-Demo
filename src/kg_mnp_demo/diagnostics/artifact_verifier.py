@@ -9,7 +9,6 @@ from typing import Any
 from .contracts import strict_json_bytes, validate_diagnostic_contract
 from .policy import diagnostic_policy_hash
 
-
 ARTIFACT_FILES = frozenset(
     {
         "application-phase03-attestation.json",

@@ -10,7 +10,11 @@ from typing import Any
 from kg_mnp_demo.modeling.canonical_json import canonical_json_bytes, semantic_hash
 
 from .authority_binding import AuthorityBindings
-from .conflicts import ConflictRule, detect_candidate_history, detect_confirmed_conflicts
+from .conflicts import (
+    ConflictRule,
+    detect_candidate_history,
+    detect_confirmed_conflicts,
+)
 from .constraints import diagnostics_from_constraint_results
 from .evidence import detect_evidence_gaps
 from .missingness import detect_missingness
@@ -29,7 +33,7 @@ class AuthoritySnapshot:
     conflict_rules: tuple[Mapping[str, Any], ...] = ()
 
     @classmethod
-    def from_dict(cls, value: Mapping[str, Any]) -> "AuthoritySnapshot":
+    def from_dict(cls, value: Mapping[str, Any]) -> AuthoritySnapshot:
         allowed = {
             "authority_bindings",
             "requirements",
