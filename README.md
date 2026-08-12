@@ -235,7 +235,20 @@ GraphRAG, RAG, embedding, vector database, or natural-language query system.
 
 ### Phase 04 — Human-Governed Diagnostic Resolution Proposal and Review Workflow
 
-**Application Phase 04 implementation is complete; final-SHA licensed CI verification is pending.**
+**Application Phase 04 status = PASS.**
+
+```text
+KG-MNP Ontology and Knowledge Graph Foundation
+Stage 01–08 = COMPLETE
+
+Application Phase 01 = PASS
+Application Phase 02 = PASS
+Application Phase 03 = PASS
+Application Phase 04
+Human-Governed Diagnostic Resolution
+Proposal and Review Workflow
+= PASS
+```
 
 Phase 04 accepts only a Phase 03 `DiagnosticIssue` that has been independently
 reconstructed from its frozen authority snapshot. Every `ResolutionProposal`
