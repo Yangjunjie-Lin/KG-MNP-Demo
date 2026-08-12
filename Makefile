@@ -36,7 +36,12 @@
  verify-diagnostics-conflicts verify-diagnostics-evidence \
  verify-diagnostics-determinism verify-diagnostics-security \
  verify-diagnostics-browser verify-diagnostics-live \
- verify-application-phase-03-offline verify-application-phase-03
+	 verify-application-phase-03-offline verify-application-phase-03 \
+	 verify-governance-contracts verify-governance-state-machine \
+	 verify-governance-authority-binding verify-governance-event-chain \
+	 verify-governance-stale-protection verify-governance-security \
+	 verify-governance-browser verify-governance-live \
+	 verify-application-phase-04-offline verify-application-phase-04
 
 PYTHON_CORE_TESTS = \
 	tests/test_ontology.py \
@@ -530,3 +535,40 @@ verify-application-phase-03-offline: verify-application-phase-02-offline \
 
 verify-application-phase-03: verify-application-phase-02 \
 	verify-application-phase-03-offline verify-diagnostics-live
+
+verify-governance-contracts:
+	python scripts/check_schema_identifiers.py
+	python -m pytest -q tests/application_governance/test_contracts.py tests/application_governance/test_cli_boundaries.py
+
+verify-governance-state-machine:
+	python -m pytest -q tests/application_governance/test_state_machine.py
+
+verify-governance-authority-binding:
+	python -m pytest -q tests/application_governance/test_authority_binding.py \
+		tests/application_governance/test_contracts.py -k "current_verified or operator_label or phase03 or rehash or publication"
+
+verify-governance-event-chain:
+	python -m pytest -q tests/application_governance/test_event_chain.py -k "event_chain or rehash"
+
+verify-governance-stale-protection:
+	python -m pytest -q tests/application_governance/test_event_chain.py -k "stale_replay"
+
+verify-governance-security:
+	python -m pytest -q tests/application_governance/test_runtime_security.py
+	ruff check src/kg_mnp_demo/governance scripts/governance_integration.py scripts/verify_application_phase04_artifact.py tests/application_governance
+
+verify-governance-browser:
+	python -m pytest -q tests/application_governance/test_runtime_security.py -k "xss or pages"
+
+verify-governance-live: verify-governance-browser
+	python scripts/governance_integration.py
+
+verify-application-phase-04-offline: verify-application-phase-03-offline \
+	verify-governance-contracts verify-governance-state-machine \
+	verify-governance-authority-binding verify-governance-event-chain \
+	verify-governance-stale-protection verify-governance-security \
+	verify-governance-browser
+	python -m pytest -q tests/application_governance
+
+verify-application-phase-04: verify-application-phase-03 \
+	verify-application-phase-04-offline verify-governance-live

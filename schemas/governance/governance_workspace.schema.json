@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/governance/governance-workspace/1.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["contract_version", "workspace_id", "authority_binding", "events", "workspace_revision", "head_event_hash", "workspace_hash", "status"],
+  "properties": {
+    "contract_version": {"const": "1.0"},
+    "workspace_id": {"type": "string", "pattern": "^urn:kg-mnp:governance-workspace:[0-9a-f]{64}$"},
+    "authority_binding": {
+      "type": "object", "additionalProperties": false,
+      "required": ["publication_id", "publication_semantic_hash", "repository_semantic_hash", "phase03_attestation_hash", "diagnostic_package_hash"],
+      "properties": {
+        "publication_id": {"type": "string"}, "publication_semantic_hash": {"$ref": "#/$defs/hash"},
+        "repository_semantic_hash": {"$ref": "#/$defs/hash"}, "phase03_attestation_hash": {"$ref": "#/$defs/hash"},
+        "diagnostic_package_hash": {"$ref": "#/$defs/hash"}
+      }
+    },
+    "events": {"type": "array", "items": {"type": "object"}},
+    "workspace_revision": {"type": "integer", "minimum": 0},
+    "head_event_hash": {"type": "string", "pattern": "^(GENESIS|[0-9a-f]{64})$"},
+    "workspace_hash": {"$ref": "#/$defs/hash"},
+    "status": {"const": "GOVERNANCE_WORKSPACE_ACTIVE"}
+  },
+  "$defs": {"hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}
+}

@@ -24,6 +24,11 @@ def main(argv: list[str] | None = None) -> int:
 
         return diagnostics_main(arguments[1:])
 
+    if arguments and arguments[0] == "governance":
+        from .governance.cli import main as governance_main
+
+        return governance_main(arguments[1:])
+
     from .modeling.cli import main as modeling_main
 
     return modeling_main(arguments)

@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="referrer" content="no-referrer">
+  <title>KG-MNP Human Governance</title>
+  <link rel="stylesheet" href="/assets/styles.css">
+</head>
+<body>
+  <header>
+    <div class="eyebrow">KG-MNP · APPLICATION PHASE 04</div>
+    <h1>Human-Governed Diagnostic Resolution</h1>
+    <p class="lede">Proposals and explicit review for future semantic amendment processing.</p>
+    <div class="boundary">Proposal ≠ Fact · Approval ≠ KG Update · Diagnostic remains current</div>
+  </header>
+  <nav aria-label="Governance sections">
+    <button type="button" data-view="verification">Verification</button>
+    <button type="button" data-view="inbox">Diagnostic Inbox</button>
+    <button type="button" data-view="detail">Diagnostic Detail</button>
+    <button type="button" data-view="create">Create Resolution Proposal</button>
+    <button type="button" data-view="review">Proposal Review</button>
+    <button type="button" data-view="approved">Approved Amendment Requests</button>
+    <button type="button" data-view="audit">Governance Audit Trail</button>
+  </nav>
+  <main>
+    <section id="verification" class="view active">
+      <h2>Verification</h2>
+      <dl id="verification-data"></dl>
+    </section>
+    <section id="inbox" class="view">
+      <h2>Diagnostic Inbox</h2>
+      <div id="diagnostic-list" class="cards"></div>
+    </section>
+    <section id="detail" class="view">
+      <h2>Diagnostic Detail</h2>
+      <pre id="diagnostic-detail">Select a verified diagnostic.</pre>
+    </section>
+    <section id="create" class="view">
+      <h2>Create Resolution Proposal</h2>
+      <p class="notice">Any value entered here is <strong>PROPOSED</strong> and <strong>NOT YET SEMANTICALLY CONFIRMED</strong>.</p>
+      <form id="proposal-form">
+        <label>Diagnostic <select id="proposal-diagnostic" required></select></label>
+        <label>Proposal type
+          <select id="proposal-type" required>
+            <option>PROPOSE_VALUE_CANDIDATE</option><option>PROPOSE_EVIDENCE_ATTACHMENT</option>
+            <option>PROPOSE_SOURCE_ATTACHMENT</option><option>REQUEST_REVIEW_REOPEN</option>
+            <option>PROPOSE_CONSTRAINT_REVIEW</option><option>NO_CHANGE_RECOMMENDED</option>
+          </select>
+        </label>
+        <label>Proposed Value <input id="proposed-value" maxlength="2000" autocomplete="off"></label>
+        <label>Rationale <textarea id="rationale" maxlength="10000" required></textarea></label>
+        <label>Operator-supplied label <input id="creator-label" maxlength="200" required autocomplete="off"></label>
+        <button type="submit">Create Draft Proposal</button>
+      </form>
+    </section>
+    <section id="review" class="view">
+      <h2>Proposal Review</h2>
+      <div id="proposal-list" class="cards"></div>
+      <form id="review-form">
+        <label>Submitted proposal <select id="review-proposal" required></select></label>
+        <label>Decision <select id="review-decision"><option>APPROVE_FOR_AMENDMENT</option><option>REJECT</option><option>DEFER</option></select></label>
+        <label>Review note <textarea id="review-note" maxlength="10000" required></textarea></label>
+        <label>Operator-supplied reviewer label <input id="reviewer-label" maxlength="200" required autocomplete="off"></label>
+        <label class="confirm"><input id="explicit-action" type="checkbox" required> I am explicitly performing this human/operator review action.</label>
+        <button type="submit">Record Human Review</button>
+      </form>
+    </section>
+    <section id="approved" class="view">
+      <h2>Approved for Future Amendment</h2>
+      <p class="disclaimer">This approval does not modify the authoritative ontology, confirmed modeling package, RDF dataset, or GraphDB repository.<br>It authorizes only a future semantic amendment request.</p>
+      <div id="amendment-list" class="cards"></div>
+    </section>
+    <section id="audit" class="view">
+      <h2>Governance Audit Trail</h2>
+      <ol id="event-list"></ol>
+    </section>
+    <output id="message" aria-live="polite"></output>
+  </main>
+  <script src="/assets/app.js" defer></script>
+</body>
+</html>

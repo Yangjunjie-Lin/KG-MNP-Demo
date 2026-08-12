@@ -7,6 +7,132 @@ on:
   workflow_dispatch:
 
 jobs:
+  governance-offline:
+    if: github.event_name == 'pull_request'
+    needs: [diagnostics-offline]
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[dev]"
+      - name: Verify Application Phase 04 offline
+        run: make verify-application-phase-04-offline
+      - name: Verify clean working tree
+        shell: bash
+        run: |
+          git diff --exit-code
+          if [[ -n "$(git status --short)" ]]; then
+            git status --short
+            exit 1
+          fi
+
+  governance-integration:
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
+    needs: [diagnostics-integration]
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Set up Java (ROBOT/HermiT)
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - name: Install Python and browser runtime
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[dev,webvowl]"
+          python -m playwright install --with-deps chromium
+      - name: Pull pinned GraphDB image
+        run: docker pull ontotext/graphdb:11.4.2@sha256:1593f8b5d42acb0f02f11b2a87b87ecbe76dbcec33cea56ca5bc32bebf6a7f12
+      - name: Reconstruct verified Phase 03 authority at exact SHA
+        env:
+          GRAPHDB_LICENSE_CONTENT: ${{ secrets.GRAPHDB_LICENSE_CONTENT }}
+          GRAPHDB_LICENSE_B64: ${{ secrets.GRAPHDB_LICENSE_B64 }}
+        run: make verify-application-phase-03
+      - name: Verify Application Phase 04 offline gates
+        run: make verify-application-phase-04-offline
+      - name: Verify Application Phase 04 licensed governance closure
+        id: phase04
+        env:
+          GRAPHDB_LICENSE_CONTENT: ${{ secrets.GRAPHDB_LICENSE_CONTENT }}
+          GRAPHDB_LICENSE_B64: ${{ secrets.GRAPHDB_LICENSE_B64 }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python scripts/governance_integration.py
+          report="$(find runtime_reports/governance -name application-phase04-attestation.json -printf '%T@ %p\n' | sort -nr | head -1 | cut -d' ' -f2-)"
+          test -n "$report"
+          workspace_hash="$(python -c 'import json,sys; print(json.load(open(sys.argv[1], encoding="utf-8"))["governance_workspace_hash"])' "$report")"
+          test "${#workspace_hash}" -eq 64
+          echo "workspace_hash=$workspace_hash" >> "$GITHUB_OUTPUT"
+      - name: Prepare and independently verify exact Phase 04 artifact
+        if: success()
+        shell: bash
+        env:
+          ARTIFACT_DIR: ${{ runner.temp }}/application-phase04-attestation
+        run: |
+          set -euo pipefail
+          mkdir -p "$ARTIFACT_DIR"
+          report="$(find runtime_reports/governance -name application-phase04-attestation.json -printf '%T@ %h\n' | sort -nr | head -1 | cut -d' ' -f2-)"
+          test -n "$report"
+          for name in application-phase04-attestation.json governance-summary.json state-machine-summary.json authority-binding.json security-summary.json; do
+            cp "$report/$name" "$ARTIFACT_DIR/$name"
+          done
+          controlled="runtime_outputs/governance/controlled-authority"
+          python scripts/verify_application_phase04_artifact.py "$ARTIFACT_DIR" \
+            --diagnostic-package "$controlled/deterministic-diagnostic-package.json" \
+            --phase03-attestation "$controlled/application-phase03-attestation.json" \
+            --authority-snapshot "$controlled/authority-snapshot.json" \
+            --expected-commit-sha "${GITHUB_SHA}" \
+            --expected-workspace-hash "${{ steps.phase04.outputs.workspace_hash }}"
+      - name: Upload Application Phase 04 attestation artifact
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: application-phase04-attestation-${{ github.sha }}
+          path: ${{ runner.temp }}/application-phase04-attestation
+          if-no-files-found: error
+      - name: Verify clean working tree
+        shell: bash
+        run: |
+          git diff --exit-code
+          if [[ -n "$(git status --short)" ]]; then
+            git status --short
+            exit 1
+          fi
+      - name: Verify no Phase 04 integration resources remain
+        if: always()
+        shell: bash
+        run: |
+          set -euo pipefail
+          if ! docker info >/dev/null; then
+            echo 'Docker daemon unavailable during Phase 04 cleanup verification' >&2
+            exit 1
+          fi
+          remaining="$(docker ps -aq --filter label=com.docker.compose.project | while read -r id; do
+            docker inspect --format '{{ index .Config.Labels "com.docker.compose.project" }}' "$id"
+          done | grep -E '^kgmnp-governance-[0-9a-f]{12}$' || true)"
+          if [[ -n "$remaining" ]]; then
+            echo "Phase 04 integration resources remain: $remaining" >&2
+            exit 1
+          fi
+
   python-core:
     runs-on: ubuntu-latest
     timeout-minutes: 30

@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/governance/approved-amendment-request/1.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["contract_version", "amendment_request_id", "proposal_id", "review_decision_id", "target_diagnostic_id", "publication_id", "publication_semantic_hash", "repository_semantic_hash", "phase03_attestation_hash", "diagnostic_package_hash", "amendment_type", "structured_proposed_payload", "provenance_chain", "governance_status", "status"],
+  "properties": {
+    "contract_version": {"const": "1.0"},
+    "amendment_request_id": {"type": "string", "pattern": "^urn:kg-mnp:approved-amendment-request:[0-9a-f]{64}$"},
+    "proposal_id": {"type": "string"}, "review_decision_id": {"type": "string"},
+    "target_diagnostic_id": {"type": "string"}, "publication_id": {"type": "string"},
+    "publication_semantic_hash": {"$ref": "#/$defs/hash"}, "repository_semantic_hash": {"$ref": "#/$defs/hash"},
+    "phase03_attestation_hash": {"$ref": "#/$defs/hash"}, "diagnostic_package_hash": {"$ref": "#/$defs/hash"},
+    "amendment_type": {"enum": ["PROPOSE_VALUE_CANDIDATE", "PROPOSE_EVIDENCE_ATTACHMENT", "PROPOSE_SOURCE_ATTACHMENT", "REQUEST_REVIEW_REOPEN", "PROPOSE_CONSTRAINT_REVIEW", "NO_CHANGE_RECOMMENDED"]},
+    "structured_proposed_payload": {"type": "object"},
+    "provenance_chain": {"type": "array", "minItems": 2, "items": {"type": "string"}},
+    "governance_status": {"const": "APPROVED_FOR_FUTURE_AMENDMENT"},
+    "status": {"const": "APPROVED_FOR_FUTURE_MODELING_AMENDMENT"}
+  },
+  "$defs": {"hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}
+}

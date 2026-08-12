@@ -36,6 +36,7 @@ playwright-report/
 browser-artifacts/
 upstream-source/
 /.tmp-stage08-*/
+/.tmp-phase04-*/
 
 # Local GraphDB and downloaded tools (future optional integrations)
 graphdb-data/

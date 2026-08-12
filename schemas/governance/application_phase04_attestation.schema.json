@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/governance/application-phase04-attestation/1.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["contract_version", "commit_sha", "stage08_baseline", "phase01_baseline", "phase02_baseline", "phase03_baseline", "upstream_verification_mode", "publication_id", "publication_semantic_hash", "repository_semantic_hash", "phase03_attestation_hash", "diagnostic_package_hash", "governance_contract_hash", "governance_workspace_hash", "proposals_created", "proposals_submitted", "reviews_approved", "reviews_rejected", "reviews_deferred", "approved_amendment_requests", "illegal_transition_attempts", "illegal_transition_blocked", "stale_binding_attempts", "stale_binding_blocked", "replay_attempts", "replay_blocked", "concurrency_conflicts", "concurrency_conflicts_blocked", "csrf_attempts", "csrf_blocked", "xss_attempts", "xss_blocked", "direct_graphdb_attempts", "direct_graphdb_blocked", "rdf_mutation_attempts", "rdf_mutation_blocked", "repository_expected_hash", "repository_before_hash", "repository_after_hash", "repository_unchanged", "diagnostic_hash_before", "diagnostic_hash_after", "diagnostic_unchanged", "status"],
+  "properties": {
+    "contract_version": {"const": "1.0"},
+    "commit_sha": {"type": "string", "pattern": "^[0-9a-f]{40}$"},
+    "stage08_baseline": {"const": "4dc09d9cfb15da3746f108755593ceb9fe805cd7"},
+    "phase01_baseline": {"const": "79b7d34125b0c5cb2d5fe8546e1f4e6a95ca8106"},
+    "phase02_baseline": {"const": "3ef40b9cfbd657b55d8c5f446cfc247335db87f0"},
+    "phase03_baseline": {"const": "06898e8ef3fbe93bd7e7a030f4361c0bef7a76c9"},
+    "upstream_verification_mode": {"enum": ["LOCAL_LICENSED", "EXACT_SHA_REMOTE_LICENSED_EVIDENCE"]},
+    "publication_id": {"type": "string", "minLength": 1},
+    "publication_semantic_hash": {"$ref": "#/$defs/hash"},
+    "repository_semantic_hash": {"$ref": "#/$defs/hash"},
+    "phase03_attestation_hash": {"$ref": "#/$defs/hash"},
+    "diagnostic_package_hash": {"$ref": "#/$defs/hash"},
+    "governance_contract_hash": {"$ref": "#/$defs/hash"},
+    "governance_workspace_hash": {"$ref": "#/$defs/hash"},
+    "proposals_created": {"$ref": "#/$defs/count"}, "proposals_submitted": {"$ref": "#/$defs/count"},
+    "reviews_approved": {"$ref": "#/$defs/count"}, "reviews_rejected": {"$ref": "#/$defs/count"}, "reviews_deferred": {"$ref": "#/$defs/count"},
+    "approved_amendment_requests": {"$ref": "#/$defs/count"},
+    "illegal_transition_attempts": {"$ref": "#/$defs/count"}, "illegal_transition_blocked": {"$ref": "#/$defs/count"},
+    "stale_binding_attempts": {"$ref": "#/$defs/count"}, "stale_binding_blocked": {"$ref": "#/$defs/count"},
+    "replay_attempts": {"$ref": "#/$defs/count"}, "replay_blocked": {"$ref": "#/$defs/count"},
+    "concurrency_conflicts": {"$ref": "#/$defs/count"}, "concurrency_conflicts_blocked": {"$ref": "#/$defs/count"},
+    "csrf_attempts": {"$ref": "#/$defs/count"}, "csrf_blocked": {"$ref": "#/$defs/count"},
+    "xss_attempts": {"$ref": "#/$defs/count"}, "xss_blocked": {"$ref": "#/$defs/count"},
+    "direct_graphdb_attempts": {"$ref": "#/$defs/count"}, "direct_graphdb_blocked": {"$ref": "#/$defs/count"},
+    "rdf_mutation_attempts": {"$ref": "#/$defs/count"}, "rdf_mutation_blocked": {"$ref": "#/$defs/count"},
+    "repository_expected_hash": {"$ref": "#/$defs/hash"}, "repository_before_hash": {"$ref": "#/$defs/hash"}, "repository_after_hash": {"$ref": "#/$defs/hash"},
+    "repository_unchanged": {"type": "boolean"}, "diagnostic_hash_before": {"$ref": "#/$defs/hash"}, "diagnostic_hash_after": {"$ref": "#/$defs/hash"}, "diagnostic_unchanged": {"type": "boolean"},
+    "status": {"enum": ["APPLICATION_HUMAN_GOVERNANCE_VERIFIED", "FAILED"]}
+  },
+  "$defs": {
+    "hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "count": {"type": "integer", "minimum": 0}
+  }
+}

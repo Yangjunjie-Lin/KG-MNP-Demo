@@ -233,6 +233,61 @@ Phase 03 adds no repair, autofill, approval, resolution, ranking, score,
 business recommendation, persistent diagnostic database, AI, LLM, Agent,
 GraphRAG, RAG, embedding, vector database, or natural-language query system.
 
+### Phase 04 — Human-Governed Diagnostic Resolution Proposal and Review Workflow
+
+**Application Phase 04 implementation is complete; final-SHA licensed CI verification is pending.**
+
+Phase 04 accepts only a Phase 03 `DiagnosticIssue` that has been independently
+reconstructed from its frozen authority snapshot. Every `ResolutionProposal`
+binds the publication ID/hash, repository semantic hash, Phase 03 attestation
+hash, diagnostic package hash, diagnostic ID, and diagnostic basis hash. Those
+identities are rechecked before create, submit, and review; stale bindings fail
+closed. Proposed RDF values preserve IRI/literal, lexical, datatype, and language
+identity and remain explicitly proposed rather than confirmed facts.
+
+The governance workspace is canonical JSON with an append-only event hash chain.
+It enforces `DRAFT -> SUBMITTED` followed by exactly one explicit human decision:
+`APPROVED_FOR_AMENDMENT`, `REJECTED`, or `DEFERRED`. Terminal proposals are
+immutable, optimistic concurrency is required, and replay is rejected. Only an
+`APPROVE_FOR_AMENDMENT` decision produces an `ApprovedAmendmentRequest` with
+status `APPROVED_FOR_FUTURE_MODELING_AMENDMENT`.
+
+An approved request is not an RDF patch and does not resolve its diagnostic. The
+loopback UI and CLI cannot write GraphDB, RDF, OWL, SHACL,
+`ConfirmedModelingPackage`, `ReviewDecisionLog`, or any Phase 01–03 artifact.
+The HTTP runtime allows only the three proposal lifecycle POST routes, validates
+same-origin and an ephemeral anti-CSRF token, rejects unexpected content types,
+oversized/duplicate-key JSON, path input, and arbitrary mutation payloads, and
+does not treat the token or operator-supplied labels as authenticated identity.
+
+> This approval does not modify the authoritative ontology, confirmed modeling
+> package, RDF dataset, or GraphDB repository. It authorizes only a future
+> semantic amendment request.
+
+```bash
+kg-mnp governance initialize \
+  --diagnostic-package <verified-phase03-package> \
+  --phase03-attestation <phase03-attestation> \
+  --authority-snapshot <verified-authority-snapshot> \
+  --workspace <startup-frozen-directory>/governance-workspace.json
+kg-mnp governance proposal create <authority-and-workspace-arguments> \
+  --request resolution-proposal-request.json
+kg-mnp governance proposal submit <authority-and-workspace-arguments> \
+  --proposal-id <proposal-id> --expected-workspace-revision <revision>
+kg-mnp governance proposal review <authority-and-workspace-arguments> \
+  --proposal-id <proposal-id> --request explicit-human-review-request.json
+kg-mnp governance verify <authority-and-workspace-arguments>
+kg-mnp governance inspect <authority-and-workspace-arguments>
+kg-mnp governance serve <authority-and-workspace-arguments> --host 127.0.0.1
+make verify-application-phase-04-offline
+# Requires the legal external GraphDB license and pinned Chromium:
+make verify-application-phase-04
+```
+
+Phase 04 adds no semantic repair, RDF compiler, automatic approval, automatic
+republication, database, AI, LLM, Agent, GraphRAG, RAG, embedding, vector
+database, or AI-generated rationale/review.
+
 ### Stage 08 authority boundary
 
 - **ConfirmedModelingPackage** is the semantic decision authority.

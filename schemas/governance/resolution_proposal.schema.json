@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/governance/resolution-proposal/1.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["contract_version", "proposal_id", "target_diagnostic_id", "target_diagnostic_basis_hash", "publication_id", "publication_semantic_hash", "repository_semantic_hash", "phase03_attestation_hash", "diagnostic_package_hash", "proposal_type", "proposed_payload", "rationale", "created_by_label", "proposal_revision", "status"],
+  "properties": {
+    "contract_version": {"const": "1.0"},
+    "proposal_id": {"type": "string", "pattern": "^urn:kg-mnp:resolution-proposal:[0-9a-f]{64}$"},
+    "target_diagnostic_id": {"type": "string", "pattern": "^urn:kg-mnp:diagnostic:[0-9a-f]{64}$"},
+    "target_diagnostic_basis_hash": {"$ref": "#/$defs/hash"},
+    "publication_id": {"type": "string", "minLength": 1},
+    "publication_semantic_hash": {"$ref": "#/$defs/hash"},
+    "repository_semantic_hash": {"$ref": "#/$defs/hash"},
+    "phase03_attestation_hash": {"$ref": "#/$defs/hash"},
+    "diagnostic_package_hash": {"$ref": "#/$defs/hash"},
+    "proposal_type": {"enum": ["PROPOSE_VALUE_CANDIDATE", "PROPOSE_EVIDENCE_ATTACHMENT", "PROPOSE_SOURCE_ATTACHMENT", "REQUEST_REVIEW_REOPEN", "PROPOSE_CONSTRAINT_REVIEW", "NO_CHANGE_RECOMMENDED"]},
+    "proposed_payload": {"$ref": "#/$defs/payload"},
+    "rationale": {"type": "string", "minLength": 1, "maxLength": 10000},
+    "created_by_label": {"type": "string", "minLength": 1, "maxLength": 200},
+    "proposal_revision": {"type": "integer", "minimum": 1},
+    "status": {"enum": ["DRAFT", "SUBMITTED", "APPROVED_FOR_AMENDMENT", "REJECTED", "DEFERRED"]}
+  },
+  "$defs": {
+    "hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "rdfTerm": {
+      "type": "object", "additionalProperties": false,
+      "required": ["term_type", "iri", "lexical_form", "datatype_iri", "language"],
+      "properties": {
+        "term_type": {"enum": ["IRI", "LITERAL"]},
+        "iri": {"type": ["string", "null"]},
+        "lexical_form": {"type": ["string", "null"]},
+        "datatype_iri": {"type": ["string", "null"]},
+        "language": {"type": ["string", "null"]}
+      }
+    },
+    "payload": {
+      "type": "object", "additionalProperties": false,
+      "required": ["rdf_term", "evidence_refs", "source_refs", "candidate_refs", "constraint_refs", "review_reopen_reason"],
+      "properties": {
+        "rdf_term": {"anyOf": [{"type": "null"}, {"$ref": "#/$defs/rdfTerm"}]},
+        "evidence_refs": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+        "source_refs": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+        "candidate_refs": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+        "constraint_refs": {"type": "array", "items": {"type": "string"}, "uniqueItems": true},
+        "review_reopen_reason": {"type": ["string", "null"], "maxLength": 10000}
+      }
+    }
+  }
+}

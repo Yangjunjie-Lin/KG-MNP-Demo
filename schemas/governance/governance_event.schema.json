@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/governance/governance-event/1.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["contract_version", "event_id", "sequence", "previous_event_hash", "event_type", "payload", "payload_hash", "observed_at"],
+  "properties": {
+    "contract_version": {"const": "1.0"},
+    "event_id": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "sequence": {"type": "integer", "minimum": 1},
+    "previous_event_hash": {"type": "string", "pattern": "^(GENESIS|[0-9a-f]{64})$"},
+    "event_type": {"enum": ["ProposalCreated", "ProposalSubmitted", "ReviewApproved", "ReviewRejected", "ReviewDeferred", "AmendmentRequestProduced"]},
+    "payload": {"type": "object"},
+    "payload_hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "observed_at": {"type": ["string", "null"], "format": "date-time"}
+  }
+}
