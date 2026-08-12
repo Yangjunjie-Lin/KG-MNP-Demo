@@ -125,9 +125,16 @@ jobs:
             echo 'Docker daemon unavailable during Phase 04 cleanup verification' >&2
             exit 1
           fi
+          set +e
           remaining="$(docker ps -aq --filter label=com.docker.compose.project | while read -r id; do
             docker inspect --format '{{ index .Config.Labels "com.docker.compose.project" }}' "$id"
-          done | grep -E '^kgmnp-governance-[0-9a-f]{12}$' || true)"
+          done | grep -E '^kgmnp-governance-[0-9a-f]{12}$')"
+          discovery_status=$?
+          set -e
+          if (( discovery_status > 1 )); then
+            echo 'Could not verify Phase 04 integration resource cleanup' >&2
+            exit 1
+          fi
           if [[ -n "$remaining" ]]; then
             echo "Phase 04 integration resources remain: $remaining" >&2
             exit 1
