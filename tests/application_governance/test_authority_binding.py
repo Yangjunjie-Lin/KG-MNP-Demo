@@ -8,7 +8,6 @@ from kg_mnp_demo.diagnostics.attestation import build_application_phase03_attest
 from kg_mnp_demo.diagnostics.engine import reconstruct_diagnostics
 from kg_mnp_demo.governance.authority_binding import load_verified_phase03_authority
 from kg_mnp_demo.governance.errors import GovernanceError, GovernanceErrorCode
-
 from tests.diagnostics._helpers import bindings
 
 

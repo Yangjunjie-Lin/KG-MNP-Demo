@@ -8,9 +8,13 @@ import json
 from pathlib import Path
 
 from kg_mnp_demo.diagnostics.engine import AuthoritySnapshot
-from kg_mnp_demo.governance.artifact_verifier import verify_application_phase04_artifact
+from kg_mnp_demo.governance.artifact_verifier import (
+    Phase04ArtifactVerificationError,
+    verify_application_phase04_artifact,
+)
 from kg_mnp_demo.governance.authority_binding import load_verified_phase03_authority
 from kg_mnp_demo.governance.contracts import strict_json_file
+from kg_mnp_demo.governance.errors import GovernanceError
 
 
 def main() -> int:
@@ -36,7 +40,13 @@ def main() -> int:
             expected_commit_sha=arguments.expected_commit_sha,
             expected_workspace_hash=arguments.expected_workspace_hash,
         )
-    except Exception as exc:
+    except (
+        GovernanceError,
+        Phase04ArtifactVerificationError,
+        ValueError,
+        TypeError,
+        OSError,
+    ) as exc:
         print(json.dumps({"status": "FAILED", "detail": str(exc)}, sort_keys=True))
         return 2
     print(json.dumps(result, sort_keys=True))

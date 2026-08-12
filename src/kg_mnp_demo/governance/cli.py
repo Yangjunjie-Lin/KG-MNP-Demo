@@ -83,9 +83,7 @@ def main(argv: list[str] | None = None) -> int:
                 "workspace_hash": workspace.value["workspace_hash"],
                 "status": "GOVERNANCE_WORKSPACE_ACTIVE",
             }
-        elif arguments.command == "verify":
-            result = store.load().reconstruct()
-        elif arguments.command == "inspect":
+        elif arguments.command in {"verify", "inspect"}:
             result = store.load().reconstruct()
         elif arguments.command == "proposal" and arguments.proposal_command == "create":
             request = strict_json_file(arguments.request)

@@ -14,11 +14,11 @@ from kg_mnp_demo.governance.attestation import (
     CATEGORY_FIELDS,
     build_application_phase04_attestation,
 )
+from kg_mnp_demo.governance.errors import GovernanceError
 from kg_mnp_demo.governance.workspace import GovernanceWorkspace
 from kg_mnp_demo.modeling.canonical_json import canonical_json_bytes, semantic_hash
 
 from ._helpers import authority, proposal_arguments
-
 
 COMMIT = "1" * 40
 
@@ -206,7 +206,7 @@ def test_self_consistent_workspace_rehash_fails_attested_head_anchor(
     attestation = copy.deepcopy(documents["application-phase04-attestation.json"])
     attestation["governance_workspace_hash"] = workspace["workspace_hash"]
     rewrite(root, "application-phase04-attestation.json", attestation)
-    with pytest.raises(Exception):
+    with pytest.raises((GovernanceError, Phase04ArtifactVerificationError)):
         verify_application_phase04_artifact(
             root,
             authority=auth,

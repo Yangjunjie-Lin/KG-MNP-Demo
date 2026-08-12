@@ -9,14 +9,15 @@ import socket
 import subprocess
 import threading
 import time
+from collections.abc import Callable
 from pathlib import Path
-from typing import Any, Callable
+from typing import Any
 
+import application_integration as phase01_harness
 import httpx
 import uvicorn
 from fastapi.testclient import TestClient
 
-import application_integration as phase01_harness
 from kg_mnp_demo.application.publication_binding import PublicationBinding
 from kg_mnp_demo.application.query_registry import QueryRegistry
 from kg_mnp_demo.application.readonly_client import ReadOnlyGraphDBClient
@@ -44,7 +45,7 @@ from kg_mnp_demo.governance.workspace import (
     GovernanceWorkspace,
     GovernanceWorkspaceStore,
 )
-from kg_mnp_demo.graphdb.client import GraphDBClient
+from kg_mnp_demo.graphdb.client import GraphDBClient, GraphDBClientError
 from kg_mnp_demo.graphdb.importer import import_package
 from kg_mnp_demo.graphdb.policy import load_graphdb_policy
 from kg_mnp_demo.modeling.canonical_json import canonical_json_bytes, semantic_hash
@@ -218,8 +219,6 @@ def _record(
         actual = action()
     except GovernanceError as exc:
         actual = exc.code.value
-    except Exception as exc:
-        actual = type(exc).__name__
     passed = actual == expected
     probe = {
         "probe_id": "urn:kg-mnp:phase04-probe:"
@@ -987,17 +986,24 @@ def main() -> int:
         )
         return 0
     finally:
+        cleanup_failure: Exception | None = None
         if imported:
             try:
                 setup.delete_generated_repository(binding.repository_id)
-            except Exception:
-                pass
-        phase01_harness._compose(
+            except GraphDBClientError as exc:
+                cleanup_failure = exc
+        cleanup = phase01_harness._compose(
             project, files, "down", "-v", "--remove-orphans", check=False
         )
+        if cleanup.returncode != 0 and cleanup_failure is None:
+            cleanup_failure = RuntimeError("Phase04 Compose cleanup failed")
         override.unlink(missing_ok=True)
         if generated_license is not None:
             generated_license.unlink(missing_ok=True)
+        if cleanup_failure is not None:
+            raise RuntimeError(
+                "Phase04 integration cleanup failed"
+            ) from cleanup_failure
 
 
 if __name__ == "__main__":
