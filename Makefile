@@ -555,7 +555,7 @@ verify-governance-stale-protection:
 
 verify-governance-security:
 	python -m pytest -q tests/application_governance/test_runtime_security.py
-	ruff check src/kg_mnp_demo/governance scripts/governance_integration.py scripts/verify_application_phase04_artifact.py tests/application_governance
+	ruff check src/kg_mnp_demo/governance scripts/governance_integration.py scripts/governance_controlled_fixture.py scripts/verify_application_phase04_artifact.py tests/application_governance
 
 verify-governance-browser:
 	python -m pytest -q tests/application_governance/test_runtime_security.py -k "xss or pages"

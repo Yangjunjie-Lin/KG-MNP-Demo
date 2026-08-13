@@ -1,135 +1,458 @@
-"""Exact binding to an independently reconstructed Phase 03 diagnostic package."""
+"""Closed production binding to the exact verified Phase 03 artifact lineage."""
 
 from __future__ import annotations
 
 import hashlib
+import re
 from collections.abc import Mapping
 from copy import deepcopy
 from dataclasses import dataclass
 from pathlib import Path
+from types import MappingProxyType
 from typing import Any
 
-from kg_mnp_demo.diagnostics.contracts import (
-    strict_json_file,
-    validate_diagnostic_contract,
+from kg_mnp_demo.diagnostics.artifact_verifier import (
+    verify_application_phase03_artifact,
 )
-from kg_mnp_demo.diagnostics.engine import AuthoritySnapshot
-from kg_mnp_demo.diagnostics.validator import (
-    validate_diagnostic_package_against_authorities,
+from kg_mnp_demo.diagnostics.authority_loader import (
+    load_verified_authority_snapshot,
 )
+from kg_mnp_demo.diagnostics.contracts import strict_json_bytes
+from kg_mnp_demo.diagnostics.engine import reconstruct_diagnostics
 from kg_mnp_demo.modeling.canonical_json import canonical_json_bytes
+from kg_mnp_demo.workbench.artifact_verifier import (
+    verify_application_phase02_artifact,
+)
 
 from .errors import GovernanceError, GovernanceErrorCode
 
-
-def _document_and_hash(
-    value: Mapping[str, Any] | Path | str,
-) -> tuple[dict[str, Any], str]:
-    if isinstance(value, (Path, str)):
-        path = Path(value)
-        raw = path.read_bytes()
-        document = strict_json_file(path)
-    else:
-        document = deepcopy(dict(value))
-        raw = canonical_json_bytes(document) + b"\n"
-    return document, hashlib.sha256(raw).hexdigest()
+PRODUCTION_AUTHORITY_TYPE = "PRODUCTION_EXACT_PHASE03"
+CONTROLLED_HARNESS_AUTHORITY_TYPE = "CONTROLLED_TEST_HARNESS"
+_HASH = re.compile(r"^[0-9a-f]{64}$")
+_COMMIT = re.compile(r"^[0-9a-f]{40}$")
+_TEST_FIXTURE_MARKERS = {
+    "PHASE04_CONTROLLED_DIAGNOSTIC_FIXTURE",
+    "CONTROLLED_DIAGNOSTIC_FIXTURE",
+}
+_PRODUCTION_CONSTRUCTION_CAPABILITY = object()
 
 
-@dataclass(frozen=True)
+def _fixture_marker(value: Any, name: str) -> Any:
+    if isinstance(value, Mapping):
+        return value.get(name)
+    return getattr(value, name, None)
+
+
+def _reject_test_fixture(value: Any) -> None:
+    """Recognize the public fixture contract before attempting path coercion."""
+
+    fixture_type = _fixture_marker(value, "fixture_type")
+    status = _fixture_marker(value, "status")
+    if (
+        fixture_type in _TEST_FIXTURE_MARKERS
+        or status in _TEST_FIXTURE_MARKERS
+        or _fixture_marker(value, "test_only") is True
+        or _fixture_marker(value, "production_authority") is False
+    ):
+        raise GovernanceError(
+            GovernanceErrorCode.TEST_FIXTURE_NOT_ALLOWED_AS_PRODUCTION_AUTHORITY
+        )
+
+
+def _valid_hash(value: Any) -> bool:
+    return isinstance(value, str) and _HASH.fullmatch(value) is not None
+
+
+def _artifact_tree_digest(path: Path) -> str:
+    """Freeze a regular-file tree without following links or special entries."""
+
+    supplied = Path(path)
+    if supplied.is_symlink():
+        raise ValueError("upstream artifact tree is unsafe")
+    root = supplied.resolve(strict=True)
+    if not root.is_dir():
+        raise ValueError("upstream artifact tree is unsafe")
+    records: list[dict[str, str]] = []
+    for entry in root.rglob("*"):
+        if entry.is_symlink():
+            raise ValueError("upstream artifact tree contains an unsafe entry")
+        if entry.is_dir():
+            continue
+        if not entry.is_file():
+            raise ValueError("upstream artifact tree contains an unsafe entry")
+        records.append(
+            {
+                "relative_path": entry.relative_to(root).as_posix(),
+                "byte_sha256": hashlib.sha256(entry.read_bytes()).hexdigest(),
+            }
+        )
+    content = sorted(records, key=lambda row: row["relative_path"])
+    return hashlib.sha256(canonical_json_bytes(content)).hexdigest()
+
+
+@dataclass(frozen=True, init=False)
 class GovernanceAuthority:
+    """Governance target identity.
+
+    Production instances are deliberately not publicly constructible.  The public
+    constructor exists only for the isolated controlled test harness and requires
+    that mode to be stated explicitly.
+    """
+
+    authority_type: str
     publication_id: str
     publication_semantic_hash: str
     repository_semantic_hash: str
-    phase03_attestation_hash: str
-    diagnostic_package_hash: str
-    issues: Mapping[str, Mapping[str, Any]]
+    upstream_phase03_attestation_sha256: str
+    upstream_phase03_diagnostic_package_hash: str
+    _issue_documents: Mapping[str, bytes]
+
+    def __init__(
+        self,
+        *,
+        authority_type: str,
+        publication_id: str,
+        publication_semantic_hash: str,
+        repository_semantic_hash: str,
+        upstream_phase03_attestation_sha256: str,
+        upstream_phase03_diagnostic_package_hash: str,
+        issues: Mapping[str, Mapping[str, Any]],
+    ) -> None:
+        if authority_type != CONTROLLED_HARNESS_AUTHORITY_TYPE:
+            raise GovernanceError(
+                GovernanceErrorCode.AUTHORITY_MISMATCH,
+                "production governance authority must be loaded from exact artifacts",
+            )
+        self._assign(
+            authority_type=authority_type,
+            publication_id=publication_id,
+            publication_semantic_hash=publication_semantic_hash,
+            repository_semantic_hash=repository_semantic_hash,
+            upstream_phase03_attestation_sha256=(
+                upstream_phase03_attestation_sha256
+            ),
+            upstream_phase03_diagnostic_package_hash=(
+                upstream_phase03_diagnostic_package_hash
+            ),
+            issues=issues,
+        )
+
+    def _assign(
+        self,
+        *,
+        authority_type: str,
+        publication_id: str,
+        publication_semantic_hash: str,
+        repository_semantic_hash: str,
+        upstream_phase03_attestation_sha256: str,
+        upstream_phase03_diagnostic_package_hash: str,
+        issues: Mapping[str, Mapping[str, Any]],
+        _capability: object | None = None,
+    ) -> None:
+        if authority_type not in {
+            PRODUCTION_AUTHORITY_TYPE,
+            CONTROLLED_HARNESS_AUTHORITY_TYPE,
+        }:
+            raise GovernanceError(GovernanceErrorCode.AUTHORITY_MISMATCH)
+        if (
+            authority_type == PRODUCTION_AUTHORITY_TYPE
+            and _capability is not _PRODUCTION_CONSTRUCTION_CAPABILITY
+        ):
+            raise GovernanceError(
+                GovernanceErrorCode.AUTHORITY_MISMATCH,
+                "production governance authority must be loaded from exact artifacts",
+            )
+        hashes = (
+            publication_semantic_hash,
+            repository_semantic_hash,
+            upstream_phase03_attestation_sha256,
+            upstream_phase03_diagnostic_package_hash,
+        )
+        if (
+            not isinstance(publication_id, str)
+            or not publication_id.endswith(publication_semantic_hash)
+            or not all(_valid_hash(value) for value in hashes)
+            or not isinstance(issues, Mapping)
+        ):
+            raise GovernanceError(GovernanceErrorCode.AUTHORITY_MISMATCH)
+        normalized: dict[str, bytes] = {}
+        for diagnostic_id, issue in issues.items():
+            if (
+                not isinstance(diagnostic_id, str)
+                or not isinstance(issue, Mapping)
+                or issue.get("diagnostic_id") != diagnostic_id
+            ):
+                raise GovernanceError(GovernanceErrorCode.AUTHORITY_MISMATCH)
+            normalized[diagnostic_id] = canonical_json_bytes(dict(issue))
+        object.__setattr__(self, "authority_type", authority_type)
+        object.__setattr__(self, "publication_id", publication_id)
+        object.__setattr__(self, "publication_semantic_hash", publication_semantic_hash)
+        object.__setattr__(self, "repository_semantic_hash", repository_semantic_hash)
+        object.__setattr__(
+            self,
+            "upstream_phase03_attestation_sha256",
+            upstream_phase03_attestation_sha256,
+        )
+        object.__setattr__(
+            self,
+            "upstream_phase03_diagnostic_package_hash",
+            upstream_phase03_diagnostic_package_hash,
+        )
+        object.__setattr__(self, "_issue_documents", MappingProxyType(normalized))
+
+    @property
+    def issues(self) -> Mapping[str, Mapping[str, Any]]:
+        """Return a defensive projection of the immutable authority issues."""
+
+        return MappingProxyType(
+            {
+                diagnostic_id: strict_json_bytes(document)
+                for diagnostic_id, document in self._issue_documents.items()
+            }
+        )
 
     @property
     def binding(self) -> dict[str, str]:
         return {
+            "authority_type": self.authority_type,
             "publication_id": self.publication_id,
             "publication_semantic_hash": self.publication_semantic_hash,
             "repository_semantic_hash": self.repository_semantic_hash,
-            "phase03_attestation_hash": self.phase03_attestation_hash,
-            "diagnostic_package_hash": self.diagnostic_package_hash,
+            "upstream_phase03_attestation_sha256": (
+                self.upstream_phase03_attestation_sha256
+            ),
+            "upstream_phase03_diagnostic_package_hash": (
+                self.upstream_phase03_diagnostic_package_hash
+            ),
         }
+
+    @property
+    def upstream_phase03_issues_total(self) -> int:
+        return len(self._issue_documents)
 
     def require_issue(
         self, diagnostic_id: str, diagnostic_basis_hash: str | None = None
     ) -> dict[str, Any]:
-        issue = self.issues.get(diagnostic_id)
-        if issue is None:
+        document = self._issue_documents.get(diagnostic_id)
+        if document is None:
             raise GovernanceError(GovernanceErrorCode.UNKNOWN_DIAGNOSTIC)
+        issue = strict_json_bytes(document)
+        if not isinstance(issue, dict):  # pragma: no cover - construction invariant
+            raise GovernanceError(GovernanceErrorCode.AUTHORITY_MISMATCH)
         if (
             diagnostic_basis_hash is not None
             and issue.get("diagnostic_basis_hash") != diagnostic_basis_hash
         ):
             raise GovernanceError(GovernanceErrorCode.STALE_DIAGNOSTIC_BINDING)
-        return deepcopy(dict(issue))
+        return issue
 
     def assert_same_current_authority(self, expected: Mapping[str, Any]) -> None:
         if any(expected.get(key) != value for key, value in self.binding.items()):
             raise GovernanceError(GovernanceErrorCode.STALE_DIAGNOSTIC_BINDING)
 
 
-def load_verified_phase03_authority(
+def load_production_phase03_authority(
     *,
-    diagnostic_package: Mapping[str, Any] | Path | str,
-    phase03_attestation: Mapping[str, Any] | Path | str,
-    authority_snapshot: AuthoritySnapshot | Mapping[str, Any] | Path | str,
+    publication_package_directory: Path,
+    publication_attestation_path: Path,
+    phase01_artifact_directory: Path,
+    phase02_artifact_directory: Path,
+    phase03_artifact_directory: Path,
+    expected_commit_sha: str,
+    publication_scenario: str = "full-confirmation",
 ) -> GovernanceAuthority:
-    """Rebuild Phase03 before exposing any diagnostic as a governance target."""
+    """Reconstruct and bind the sole production Phase 03 authority.
 
+    No authority snapshot, diagnostic package, attestation mapping, or opaque
+    ``GovernanceAuthority`` is accepted from the caller.  Every semantic value is
+    reconstructed from the exact verified Stage08/Phase01/Phase02 artifacts and
+    compared with the exact five-file Phase03 artifact.
+    """
+
+    values = (
+        publication_package_directory,
+        publication_attestation_path,
+        phase01_artifact_directory,
+        phase02_artifact_directory,
+        phase03_artifact_directory,
+    )
+    for value in values:
+        _reject_test_fixture(value)
     try:
-        package_value, _ = _document_and_hash(diagnostic_package)
-        attestation, attestation_hash = _document_and_hash(phase03_attestation)
-        validate_diagnostic_contract("diagnostic-attestation", attestation)
-        reconstruction = validate_diagnostic_package_against_authorities(
-            package_value, authority_snapshot
+        if not isinstance(expected_commit_sha, str) or _COMMIT.fullmatch(
+            expected_commit_sha
+        ) is None:
+            raise ValueError("invalid expected commit SHA")
+
+        publication_manifest_path = (
+            Path(publication_package_directory) / "publication-manifest.json"
         )
-        bindings = package_value["authority_bindings"]
-        expected = (
-            (attestation.get("status"), "APPLICATION_DIAGNOSTICS_VERIFIED"),
-            (
-                attestation.get("diagnostic_package_hash"),
-                reconstruction["package_semantic_hash"],
-            ),
-            (attestation.get("publication_id"), bindings["publication_id"]),
-            (
-                attestation.get("publication_semantic_hash"),
-                bindings["publication_semantic_hash"],
-            ),
-            (
-                attestation.get("repository_expected_hash"),
-                bindings["repository_semantic_hash"],
-            ),
-            (
-                attestation.get("repository_before_hash"),
-                bindings["repository_semantic_hash"],
-            ),
-            (
-                attestation.get("repository_after_hash"),
-                bindings["repository_semantic_hash"],
-            ),
-            (attestation.get("repository_unchanged"), True),
+        publication_attestation_file = Path(publication_attestation_path)
+        phase01_attestation_path = (
+            Path(phase01_artifact_directory) / "application-attestation.json"
         )
-        if any(left != right for left, right in expected):
-            raise ValueError("Phase03 attestation/package authority mismatch")
+        publication_manifest_bytes = publication_manifest_path.read_bytes()
+        publication_attestation_bytes = publication_attestation_file.read_bytes()
+        phase01_attestation_bytes = phase01_attestation_path.read_bytes()
+        phase02_root = Path(phase02_artifact_directory)
+        phase02_attestation_path = (
+            phase02_root / "application-phase02-attestation.json"
+        )
+        upstream_tree_digests_before = (
+            _artifact_tree_digest(Path(publication_package_directory)),
+            _artifact_tree_digest(publication_attestation_file.parent),
+            _artifact_tree_digest(Path(phase01_artifact_directory)),
+            _artifact_tree_digest(phase02_root),
+        )
+        phase02_bytes_before = phase02_attestation_path.read_bytes()
+        verified_phase02 = verify_application_phase02_artifact(phase02_root)
+        phase02_bytes_after = phase02_attestation_path.read_bytes()
+        if phase02_bytes_before != phase02_bytes_after:
+            raise ValueError("Phase02 attestation changed during verification")
+        phase02_attestation = strict_json_bytes(phase02_bytes_after)
+        if not isinstance(phase02_attestation, dict):
+            raise TypeError("Phase02 attestation root is not an object")
+        if (
+            verified_phase02.get("status") != "APPLICATION_WORKBENCH_VERIFIED"
+            or verified_phase02.get("commit_sha") != expected_commit_sha
+            or phase02_attestation.get("commit_sha") != expected_commit_sha
+        ):
+            raise ValueError("Phase02 commit SHA binding mismatch")
+
+        snapshot = load_verified_authority_snapshot(
+            publication_package_directory=Path(publication_package_directory),
+            publication_attestation_path=Path(publication_attestation_path),
+            publication_scenario=publication_scenario,
+            phase01_artifact_directory=Path(phase01_artifact_directory),
+            phase02_artifact_directory=phase02_root,
+        )
+        stable_inputs = (
+            (publication_manifest_path.read_bytes(), publication_manifest_bytes),
+            (
+                publication_attestation_file.read_bytes(),
+                publication_attestation_bytes,
+            ),
+            (phase01_attestation_path.read_bytes(), phase01_attestation_bytes),
+            (phase02_attestation_path.read_bytes(), phase02_bytes_after),
+        )
+        if any(current != frozen for current, frozen in stable_inputs):
+            raise ValueError("upstream authority changed during reconstruction")
+        upstream_tree_digests_after = (
+            _artifact_tree_digest(Path(publication_package_directory)),
+            _artifact_tree_digest(publication_attestation_file.parent),
+            _artifact_tree_digest(Path(phase01_artifact_directory)),
+            _artifact_tree_digest(phase02_root),
+        )
+        if upstream_tree_digests_after != upstream_tree_digests_before:
+            raise ValueError("upstream artifact tree changed during reconstruction")
+        package = reconstruct_diagnostics(snapshot).to_dict()
+        package_hash = package["manifest"]["package_semantic_hash"]
+        bindings = snapshot.authority_bindings
+        if (
+            hashlib.sha256(phase01_attestation_bytes).hexdigest()
+            != bindings.phase01_attestation_hash
+            or hashlib.sha256(phase02_bytes_after).hexdigest()
+            != bindings.phase02_attestation_hash
+        ):
+            raise ValueError("upstream application physical lineage mismatch")
+
+        phase03_root = Path(phase03_artifact_directory)
+        phase03_attestation_path = (
+            phase03_root / "application-phase03-attestation.json"
+        )
+        attestation_bytes_before = phase03_attestation_path.read_bytes()
+        verified_phase03 = verify_application_phase03_artifact(
+            phase03_root,
+            expected_commit_sha=expected_commit_sha,
+        )
+        attestation_bytes = phase03_attestation_path.read_bytes()
+        if attestation_bytes_before != attestation_bytes:
+            raise ValueError("Phase03 attestation changed during verification")
+        phase03_attestation = strict_json_bytes(attestation_bytes)
+        if not isinstance(phase03_attestation, dict):
+            raise TypeError("Phase03 attestation root is not an object")
+        attestation_sha256 = hashlib.sha256(attestation_bytes).hexdigest()
+
+        coverage = package["coverage"]
+        summary = package["summary"]
+        expected_pairs = (
+            (verified_phase03.get("status"), "APPLICATION_DIAGNOSTICS_VERIFIED"),
+            (verified_phase03.get("commit_sha"), expected_commit_sha),
+            (verified_phase03.get("diagnostic_package_hash"), package_hash),
+            (verified_phase03.get("issues_total"), summary["issues_total"]),
+            (phase03_attestation.get("status"), "APPLICATION_DIAGNOSTICS_VERIFIED"),
+            (phase03_attestation.get("commit_sha"), expected_commit_sha),
+            (phase03_attestation.get("publication_id"), bindings.publication_id),
+            (
+                phase03_attestation.get("publication_semantic_hash"),
+                bindings.publication_semantic_hash,
+            ),
+            (
+                phase03_attestation.get("phase01_attestation_hash"),
+                bindings.phase01_attestation_hash,
+            ),
+            (
+                phase03_attestation.get("phase02_attestation_hash"),
+                bindings.phase02_attestation_hash,
+            ),
+            (
+                phase03_attestation.get("query_registry_hash"),
+                bindings.query_registry_hash,
+            ),
+            (
+                phase03_attestation.get("repository_expected_hash"),
+                bindings.repository_semantic_hash,
+            ),
+            (
+                phase03_attestation.get("repository_before_hash"),
+                bindings.repository_semantic_hash,
+            ),
+            (
+                phase03_attestation.get("repository_after_hash"),
+                bindings.repository_semantic_hash,
+            ),
+            (phase03_attestation.get("repository_unchanged"), True),
+            (
+                phase03_attestation.get("diagnostic_policy_hash"),
+                bindings.diagnostic_policy_hash,
+            ),
+            (phase03_attestation.get("diagnostic_package_hash"), package_hash),
+            (phase03_attestation.get("issues_total"), summary["issues_total"]),
+            (
+                phase03_attestation.get("issues_by_classification"),
+                summary["issues_by_classification"],
+            ),
+            (
+                phase03_attestation.get("requirements_evaluated"),
+                coverage["requirements_evaluated"],
+            ),
+            (
+                phase03_attestation.get("constraints_evaluated"),
+                coverage["shacl_constraints_evaluated"],
+            ),
+        )
+        if any(left != right for left, right in expected_pairs):
+            raise ValueError("exact Phase03 authority lineage mismatch")
+
         issues = {
-            issue["diagnostic_id"]: deepcopy(issue) for issue in package_value["issues"]
+            issue["diagnostic_id"]: deepcopy(issue) for issue in package["issues"]
         }
-        return GovernanceAuthority(
-            publication_id=bindings["publication_id"],
-            publication_semantic_hash=bindings["publication_semantic_hash"],
-            repository_semantic_hash=bindings["repository_semantic_hash"],
-            phase03_attestation_hash=attestation_hash,
-            diagnostic_package_hash=reconstruction["package_semantic_hash"],
+        authority = object.__new__(GovernanceAuthority)
+        authority._assign(
+            authority_type=PRODUCTION_AUTHORITY_TYPE,
+            publication_id=bindings.publication_id,
+            publication_semantic_hash=bindings.publication_semantic_hash,
+            repository_semantic_hash=bindings.repository_semantic_hash,
+            upstream_phase03_attestation_sha256=attestation_sha256,
+            upstream_phase03_diagnostic_package_hash=package_hash,
             issues=issues,
+            _capability=_PRODUCTION_CONSTRUCTION_CAPABILITY,
         )
+        return authority
     except GovernanceError:
         raise
     except Exception as exc:
         raise GovernanceError(
             GovernanceErrorCode.AUTHORITY_MISMATCH,
-            "Phase03 authority reconstruction failed",
+            "exact production Phase03 authority reconstruction failed",
         ) from exc

@@ -4,26 +4,17 @@ from copy import deepcopy
 
 from kg_mnp_demo.governance.authority_binding import GovernanceAuthority
 from kg_mnp_demo.governance.proposal import empty_payload
+from scripts.governance_controlled_fixture import (
+    ControlledDiagnosticFixture,
+    controlled_governance_authority_for_test_harness,
+)
 
 
 def authority() -> GovernanceAuthority:
-    publication_hash = "a" * 64
-    basis_hash = "f" * 64
-    diagnostic_id = f"urn:kg-mnp:diagnostic:{basis_hash}"
-    issue = {
-        "diagnostic_id": diagnostic_id,
-        "diagnostic_basis_hash": basis_hash,
-        "classification": "REQUIRED_VALUE_MISSING",
-        "scope": "CURRENT_DIAGNOSTIC",
-        "explanation": "untrusted <img src=x onerror=window.__xss=1>",
-    }
-    return GovernanceAuthority(
-        publication_id=f"urn:kg-mnp:e2e-publication:{publication_hash}",
-        publication_semantic_hash=publication_hash,
-        repository_semantic_hash="b" * 64,
-        phase03_attestation_hash="c" * 64,
-        diagnostic_package_hash="d" * 64,
-        issues={diagnostic_id: issue},
+    """Return authority only through the explicitly TEST-ONLY fixture adapter."""
+
+    return controlled_governance_authority_for_test_harness(
+        ControlledDiagnosticFixture.create()
     )
 
 
@@ -59,9 +50,13 @@ def proposal_arguments(authority_value: GovernanceAuthority | None = None):
 
 def stale(authority_value: GovernanceAuthority) -> GovernanceAuthority:
     return GovernanceAuthority(
-        **{
-            **authority_value.binding,
-            "diagnostic_package_hash": "e" * 64,
-            "issues": deepcopy(authority_value.issues),
-        }
+        authority_type="CONTROLLED_TEST_HARNESS",
+        publication_id=authority_value.publication_id,
+        publication_semantic_hash=authority_value.publication_semantic_hash,
+        repository_semantic_hash=authority_value.repository_semantic_hash,
+        upstream_phase03_attestation_sha256=(
+            authority_value.upstream_phase03_attestation_sha256
+        ),
+        upstream_phase03_diagnostic_package_hash="e" * 64,
+        issues=deepcopy(dict(authority_value.issues)),
     )

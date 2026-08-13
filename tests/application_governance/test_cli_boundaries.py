@@ -29,6 +29,26 @@ def test_root_cli_exposes_only_governance_lifecycle_commands() -> None:
         assert forbidden not in help_result.stdout.casefold()
 
 
+def test_governance_cli_accepts_only_exact_upstream_authority_inputs() -> None:
+    help_result = run("governance", "initialize", "--help")
+    assert help_result.returncode == 0
+    for required in (
+        "--publication-package",
+        "--publication-attestation",
+        "--phase01-artifact-dir",
+        "--phase02-artifact-dir",
+        "--phase03-artifact-dir",
+        "--expected-commit-sha",
+    ):
+        assert required in help_result.stdout
+    for forbidden in (
+        "--authority-snapshot",
+        "--diagnostic-package",
+        "--phase03-attestation",
+    ):
+        assert forbidden not in help_result.stdout
+
+
 def test_unavailable_mutation_commands_fail_closed() -> None:
     for command in ("repair", "resolve", "graph", "rdf"):
         result = run("governance", command)

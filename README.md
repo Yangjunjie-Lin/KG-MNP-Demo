@@ -250,13 +250,22 @@ Proposal and Review Workflow
 = PASS
 ```
 
-Phase 04 accepts only a Phase 03 `DiagnosticIssue` that has been independently
-reconstructed from its frozen authority snapshot. Every `ResolutionProposal`
-binds the publication ID/hash, repository semantic hash, Phase 03 attestation
-hash, diagnostic package hash, diagnostic ID, and diagnostic basis hash. Those
-identities are rechecked before create, submit, and review; stale bindings fail
-closed. Proposed RDF values preserve IRI/literal, lexical, datatype, and language
-identity and remain explicitly proposed rather than confirmed facts.
+Production Phase 04 authority binds only to the exact verified Stage 08,
+Phase 01, Phase 02, and Phase 03 artifacts for the same commit. The production
+loader reconstructs those authorities from their physical artifact directories;
+it does not accept a caller-provided authority snapshot, diagnostic package, or
+opaque `GovernanceAuthority`. The binding includes the byte SHA-256 of the exact
+Phase 03 attestation and the independently reconstructed diagnostic package hash.
+An exact Phase 03 package with zero issues is valid and produces an empty
+production governance workspace.
+
+Controlled diagnostic fixtures are TEST ONLY and cannot become production
+semantic or governance authorities. They use the
+`urn:kg-mnp:test-fixture:phase04:` namespace, status
+`CONTROLLED_DIAGNOSTIC_FIXTURE`, and a dedicated controlled harness for proposal,
+review, state-machine, and security scenarios. They never receive
+`APPLICATION_DIAGNOSTICS_VERIFIED`, and their identities never appear in the
+production `authority-binding.json`.
 
 The governance workspace is canonical JSON with an append-only event hash chain.
 It enforces `DRAFT -> SUBMITTED` followed by exactly one explicit human decision:
@@ -279,9 +288,12 @@ does not treat the token or operator-supplied labels as authenticated identity.
 
 ```bash
 kg-mnp governance initialize \
-  --diagnostic-package <verified-phase03-package> \
-  --phase03-attestation <phase03-attestation> \
-  --authority-snapshot <verified-authority-snapshot> \
+  --publication-package <exact-stage08-publication-package> \
+  --publication-attestation <exact-stage08-publication-attestation> \
+  --phase01-artifact-dir <exact-phase01-artifact> \
+  --phase02-artifact-dir <exact-phase02-artifact> \
+  --phase03-artifact-dir <exact-phase03-artifact> \
+  --expected-commit-sha <final-sha> \
   --workspace <startup-frozen-directory>/governance-workspace.json
 kg-mnp governance proposal create <authority-and-workspace-arguments> \
   --request resolution-proposal-request.json

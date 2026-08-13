@@ -26,11 +26,16 @@ def build_approved_amendment_request(
         "proposal_id": proposal["proposal_id"],
         "review_decision_id": decision["review_decision_id"],
         "target_diagnostic_id": proposal["target_diagnostic_id"],
+        "authority_type": proposal["authority_type"],
         "publication_id": proposal["publication_id"],
         "publication_semantic_hash": proposal["publication_semantic_hash"],
         "repository_semantic_hash": proposal["repository_semantic_hash"],
-        "phase03_attestation_hash": proposal["phase03_attestation_hash"],
-        "diagnostic_package_hash": proposal["diagnostic_package_hash"],
+        "upstream_phase03_attestation_sha256": proposal[
+            "upstream_phase03_attestation_sha256"
+        ],
+        "upstream_phase03_diagnostic_package_hash": proposal[
+            "upstream_phase03_diagnostic_package_hash"
+        ],
         "amendment_type": proposal["proposal_type"],
         "structured_proposed_payload": proposal["proposed_payload"],
         "provenance_chain": [

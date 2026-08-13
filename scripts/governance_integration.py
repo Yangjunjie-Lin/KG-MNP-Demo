@@ -4,9 +4,12 @@
 from __future__ import annotations
 
 import copy
+import hashlib
 import json
+import shutil
 import socket
 import subprocess
+import tempfile
 import threading
 import time
 from collections.abc import Callable
@@ -17,19 +20,25 @@ import application_integration as phase01_harness
 import httpx
 import uvicorn
 from fastapi.testclient import TestClient
+from governance_controlled_fixture import (
+    ControlledDiagnosticFixture,
+    controlled_governance_authority_for_test_harness,
+)
 
 from kg_mnp_demo.application.publication_binding import PublicationBinding
 from kg_mnp_demo.application.query_registry import QueryRegistry
 from kg_mnp_demo.application.readonly_client import ReadOnlyGraphDBClient
 from kg_mnp_demo.application.service import ApplicationService
-from kg_mnp_demo.diagnostics.attestation import build_application_phase03_attestation
-from kg_mnp_demo.diagnostics.authority_loader import load_verified_authority_snapshot
+from kg_mnp_demo.diagnostics.artifact_verifier import (
+    verify_application_phase03_artifact,
+)
+from kg_mnp_demo.diagnostics.authority_binding import AuthorityBindings
 from kg_mnp_demo.diagnostics.engine import reconstruct_diagnostics
 from kg_mnp_demo.governance.artifact_verifier import verify_application_phase04_artifact
 from kg_mnp_demo.governance.attestation import build_application_phase04_attestation
 from kg_mnp_demo.governance.authority_binding import (
     GovernanceAuthority,
-    load_verified_phase03_authority,
+    load_production_phase03_authority,
 )
 from kg_mnp_demo.governance.contracts import strict_json_file
 from kg_mnp_demo.governance.errors import GovernanceError
@@ -62,117 +71,6 @@ def _free_port() -> int:
     with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as server:
         server.bind(("127.0.0.1", 0))
         return int(server.getsockname()[1])
-
-
-def _controlled_snapshot(bindings) -> dict[str, Any]:
-    publication = bindings.publication_id
-
-    def requirement(name: str, *, maximum: int | None = 1):
-        focus = f"urn:kg-mnp:phase04:{name}"
-        if name == "missing":
-            focus += ":<img src=x onerror=window.__xss=1>"
-        return {
-            "focus_node": focus,
-            "path": "urn:kg-mnp:phase04:controlled-property",
-            "requirement_type": "CONTROLLED_SHACL_MIN_MAX_COUNT",
-            "authority_iri": f"urn:kg-mnp:phase04:constraint:{name}",
-            "shape_iri": f"urn:kg-mnp:phase04:shape:{name}",
-            "constraint_iri": f"urn:kg-mnp:phase04:constraint:{name}",
-            "module": "phase04-controlled-scenario",
-            "publication_id": publication,
-            "min_count": 1,
-            "max_count": maximum,
-        }
-
-    conflict_focus = "urn:kg-mnp:phase04:conflict"
-    predicate = "urn:kg-mnp:phase04:controlled-property"
-    rejected_focus = "urn:kg-mnp:phase04:rejected"
-    return {
-        "authority_bindings": bindings.to_dict(),
-        "requirements": [
-            requirement("missing"),
-            requirement("rejected"),
-            requirement("conflict"),
-        ],
-        "facts": [
-            {
-                "subject": conflict_focus,
-                "predicate": predicate,
-                "object": "confirmed-a",
-            },
-            {
-                "subject": conflict_focus,
-                "predicate": predicate,
-                "object": "confirmed-b",
-            },
-        ],
-        "constraint_results": [],
-        "candidates": [
-            {
-                "focus_node": rejected_focus,
-                "path": predicate,
-                "value": "rejected-value",
-                "outcome": "REJECT",
-                "candidate_ref": "urn:kg-mnp:phase04:candidate:rejected",
-                "review_decision_ref": "urn:kg-mnp:phase04:decision:rejected",
-                "evidence_refs": [],
-                "source_refs": [],
-            }
-        ],
-        "conflict_rules": [],
-    }
-
-
-def _controlled_phase03_authority(
-    snapshot, source_attestation: dict[str, Any], output: Path
-):
-    controlled = _controlled_snapshot(snapshot.authority_bindings)
-    package = reconstruct_diagnostics(controlled)
-    repeated = reconstruct_diagnostics(controlled)
-    if package.canonical_bytes() != repeated.canonical_bytes():
-        raise RuntimeError("controlled Phase03 reconstruction is not deterministic")
-    attacked = copy.deepcopy(controlled)
-    attacked["requirements"].reverse()
-    if package.canonical_bytes() != reconstruct_diagnostics(attacked).canonical_bytes():
-        raise RuntimeError("controlled Phase03 permutation changed diagnostics")
-    attestation = build_application_phase03_attestation(
-        commit_sha=source_attestation["commit_sha"],
-        authority_bindings=snapshot.authority_bindings,
-        package=package,
-        repository_before_hash=source_attestation["repository_before_hash"],
-        repository_after_hash=source_attestation["repository_after_hash"],
-        controlled_scenarios_total=source_attestation["controlled_scenarios_total"],
-        controlled_scenarios_passed=source_attestation["controlled_scenarios_passed"],
-        determinism_runs=max(2, source_attestation["determinism_runs"]),
-        determinism_passed=True,
-        permutation_attacks=max(1, source_attestation["permutation_attacks"]),
-        permutation_passed=True,
-        authority_tamper_attempts=source_attestation["authority_tamper_attempts"],
-        authority_tamper_blocked=source_attestation["authority_tamper_blocked"],
-        missingness_attacks=source_attestation["missingness_attacks"],
-        missingness_expected_results=source_attestation["missingness_expected_results"],
-        conflict_attacks=source_attestation["conflict_attacks"],
-        conflict_expected_results=source_attestation["conflict_expected_results"],
-        evidence_attacks=source_attestation["evidence_attacks"],
-        evidence_expected_results=source_attestation["evidence_expected_results"],
-        xss_attempts=source_attestation["xss_attempts"],
-        xss_blocked=source_attestation["xss_blocked"],
-        external_requests=source_attestation["external_requests"],
-        direct_graphdb_attempts=source_attestation["direct_graphdb_attempts"],
-        direct_graphdb_blocked=source_attestation["direct_graphdb_blocked"],
-    )
-    package_path = output / "deterministic-diagnostic-package.json"
-    attestation_path = output / "application-phase03-attestation.json"
-    snapshot_path = output / "authority-snapshot.json"
-    _write(package_path, package.to_dict())
-    _write(attestation_path, attestation)
-    _write(snapshot_path, controlled)
-    authority = load_verified_phase03_authority(
-        diagnostic_package=package_path,
-        phase03_attestation=attestation_path,
-        authority_snapshot=controlled,
-    )
-    return authority, package_path, attestation_path, snapshot_path
 
 
 def _payload(value: str = "proposed-value") -> dict[str, Any]:
@@ -221,7 +119,7 @@ def _record(
         actual = exc.code.value
     passed = actual == expected
     probe = {
-        "probe_id": "urn:kg-mnp:phase04-probe:"
+        "probe_id": "urn:kg-mnp:test-fixture:phase04:probe:"
         + semantic_hash({"category": category, "attack": attack, "expected": expected}),
         "category": category,
         "attack": attack,
@@ -233,6 +131,255 @@ def _record(
     probes.append(probe)
     if not passed:
         raise RuntimeError(f"probe failed: {attack}: expected {expected}, got {actual}")
+
+
+def _verify_laundering_attacks(
+    *,
+    production_authority: GovernanceAuthority,
+    fixture: ControlledDiagnosticFixture,
+    publication_package: Path,
+    publication_attestation: Path,
+    phase01: Path,
+    phase02: Path,
+    phase03: Path,
+    expected_commit_sha: str,
+    probes: list[dict[str, Any]],
+) -> None:
+    """Execute the laundering matrix against the closed production loader."""
+
+    def fixture_substitution() -> str:
+        try:
+            load_production_phase03_authority(
+                publication_package_directory=publication_package,
+                publication_attestation_path=publication_attestation,
+                phase01_artifact_directory=phase01,
+                phase02_artifact_directory=phase02,
+                phase03_artifact_directory=fixture,
+                expected_commit_sha=expected_commit_sha,
+            )
+        except GovernanceError as exc:
+            return exc.code.value
+        return "ACCEPTED"
+
+    _record(
+        probes,
+        "AUTHORITY_LAUNDERING",
+        "fixture_to_production_substitution",
+        "TEST_FIXTURE_NOT_ALLOWED_AS_PRODUCTION_AUTHORITY",
+        fixture_substitution,
+    )
+
+    binding_document = strict_json_file(phase03 / "authority-binding.json")
+    bindings = AuthorityBindings.from_dict(
+        {
+            key: value
+            for key, value in binding_document.items()
+            if key not in {"contract_version", "status"}
+        }
+    )
+    if (
+        bindings.publication_id != production_authority.publication_id
+        or bindings.publication_semantic_hash
+        != production_authority.publication_semantic_hash
+        or bindings.repository_semantic_hash
+        != production_authority.repository_semantic_hash
+    ):
+        raise RuntimeError("Phase03 attack source is not the production authority")
+
+    attacks = (
+        "self_minted_phase03_attestation",
+        "synthetic_requirement_snapshot",
+        "synthetic_fact_snapshot",
+        "copied_publication_identity",
+        "copied_repository_hash",
+        "self_consistent_full_rehash",
+    )
+    with tempfile.TemporaryDirectory(
+        prefix="kg-mnp-phase04-laundering-"
+    ) as temporary:
+        for attack in attacks:
+            snapshot = _laundering_snapshot(
+                attack=attack,
+                bindings=bindings,
+                fixture=fixture,
+            )
+            package = reconstruct_diagnostics(snapshot).to_dict()
+            synthetic_hash = package["manifest"]["package_semantic_hash"]
+            if (
+                synthetic_hash
+                == production_authority.upstream_phase03_diagnostic_package_hash
+                or package["authority_bindings"] != bindings.to_dict()
+            ):
+                raise RuntimeError("synthetic Phase03 package was not a replacement")
+
+            attacked_root = Path(temporary) / attack
+            _write_self_minted_phase03_artifact(
+                source=phase03,
+                destination=attacked_root,
+                package=package,
+                expected_commit_sha=expected_commit_sha,
+            )
+            verified = verify_application_phase03_artifact(
+                attacked_root,
+                expected_commit_sha=expected_commit_sha,
+            )
+            if (
+                verified["status"] != "APPLICATION_DIAGNOSTICS_VERIFIED"
+                or verified["diagnostic_package_hash"] != synthetic_hash
+            ):
+                raise RuntimeError(
+                    "self-minted Phase03 artifact was not independently verified"
+                )
+
+            def rejected(value=attacked_root) -> str:
+                try:
+                    load_production_phase03_authority(
+                        publication_package_directory=publication_package,
+                        publication_attestation_path=publication_attestation,
+                        phase01_artifact_directory=phase01,
+                        phase02_artifact_directory=phase02,
+                        phase03_artifact_directory=value,
+                        expected_commit_sha=expected_commit_sha,
+                    )
+                except GovernanceError as exc:
+                    return exc.code.value
+                return "ACCEPTED"
+
+            _record(
+                probes,
+                "AUTHORITY_LAUNDERING",
+                attack,
+                "AUTHORITY_MISMATCH",
+                rejected,
+            )
+
+    if production_authority.authority_type != "PRODUCTION_EXACT_PHASE03":
+        raise RuntimeError("production authority type was not exact Phase03")
+
+
+def _laundering_snapshot(
+    *,
+    attack: str,
+    bindings: AuthorityBindings,
+    fixture: ControlledDiagnosticFixture,
+) -> dict[str, Any]:
+    """Construct attacker-authored inputs carrying copied production bindings."""
+
+    namespace = f"urn:kg-mnp:test-fixture:phase04:laundering:{attack}:"
+    if attack == "self_consistent_full_rehash":
+        snapshot = fixture.authority_snapshot
+        snapshot["authority_bindings"] = bindings.to_dict()
+        for collection in ("requirements", "conflict_rules"):
+            for row in snapshot[collection]:
+                row["publication_id"] = bindings.publication_id
+        return snapshot
+
+    requirement = {
+        "focus_node": namespace + "requirement-focus",
+        "path": namespace + "property",
+        "requirement_type": "ATTACKER_SYNTHETIC_MIN_COUNT",
+        "authority_iri": namespace + "constraint",
+        "shape_iri": namespace + "shape",
+        "constraint_iri": namespace + "constraint",
+        "module": "phase04-authority-laundering-attack",
+        "publication_id": bindings.publication_id,
+        "min_count": 1,
+        "max_count": 1,
+    }
+    fact = {
+        "subject": namespace + "fact-focus",
+        "predicate": namespace + "property",
+        "object": "attacker-authored-value",
+        "assertion_ref": namespace + "assertion",
+    }
+    candidate = {
+        "focus_node": namespace + "candidate-focus",
+        "path": namespace + "property",
+        "value": "attacker-authored-candidate",
+        "outcome": "REJECT",
+        "candidate_ref": namespace + "candidate",
+        "review_decision_ref": namespace + "decision",
+        "evidence_refs": [],
+        "source_refs": [],
+    }
+    snapshot = {
+        "authority_bindings": bindings.to_dict(),
+        "requirements": [],
+        "facts": [],
+        "constraint_results": [],
+        "candidates": [],
+        "conflict_rules": [],
+    }
+    if attack == "synthetic_fact_snapshot":
+        snapshot["facts"] = [fact]
+    elif attack == "copied_repository_hash":
+        snapshot["facts"] = [fact]
+        snapshot["candidates"] = [candidate]
+    else:
+        snapshot["requirements"] = [requirement]
+        if attack == "self_minted_phase03_attestation":
+            snapshot["candidates"] = [candidate]
+    return snapshot
+
+
+def _write_self_minted_phase03_artifact(
+    *,
+    source: Path,
+    destination: Path,
+    package: dict[str, Any],
+    expected_commit_sha: str,
+) -> None:
+    """Rehash a five-file Phase03 replacement exactly as an attacker would."""
+
+    shutil.copytree(source, destination)
+    attestation_path = destination / "application-phase03-attestation.json"
+    summary_path = destination / "diagnostics-summary.json"
+    determinism_path = destination / "diagnostic-determinism.json"
+    attestation = strict_json_file(attestation_path)
+    summary = strict_json_file(summary_path)
+    determinism = strict_json_file(determinism_path)
+    package_hash = package["manifest"]["package_semantic_hash"]
+    package_summary = package["summary"]
+    package_coverage = package["coverage"]
+    attestation.update(
+        {
+            "commit_sha": expected_commit_sha,
+            "diagnostic_package_hash": package_hash,
+            "issues_total": package_summary["issues_total"],
+            "issues_by_classification": package_summary[
+                "issues_by_classification"
+            ],
+            "requirements_evaluated": package_coverage[
+                "requirements_evaluated"
+            ],
+            "constraints_evaluated": package_coverage[
+                "shacl_constraints_evaluated"
+            ],
+            "status": "APPLICATION_DIAGNOSTICS_VERIFIED",
+        }
+    )
+    summary.update(
+        {
+            "diagnostic_package_hash": package_hash,
+            "issues_total": package_summary["issues_total"],
+            "issues_by_classification": package_summary[
+                "issues_by_classification"
+            ],
+            "requirements_evaluated": package_coverage[
+                "requirements_evaluated"
+            ],
+            "constraints_evaluated": package_coverage[
+                "shacl_constraints_evaluated"
+            ],
+        }
+    )
+    determinism["diagnostic_package_hash"] = package_hash
+    determinism["canonical_hashes"] = [package_hash] * determinism[
+        "determinism_runs"
+    ]
+    _write(attestation_path, attestation)
+    _write(summary_path, summary)
+    _write(determinism_path, determinism)
 
 
 def _expect_validation(workspace, authority, *, anchor=None) -> str:
@@ -417,7 +564,7 @@ def _run_governance(authority: GovernanceAuthority, output: Path):
     stale = GovernanceAuthority(
         **{
             **authority.binding,
-            "diagnostic_package_hash": "0" * 64,
+            "upstream_phase03_diagnostic_package_hash": "0" * 64,
             "issues": authority.issues,
         }
     )
@@ -823,22 +970,34 @@ def main() -> int:
     phase01 = ROOT / "runtime_reports/application" / publication_hash
     phase02 = ROOT / "runtime_reports/workbench" / publication_hash
     phase03_report = ROOT / "runtime_reports/diagnostics" / publication_hash
-    source_phase03_attestation = strict_json_file(
-        phase03_report / "application-phase03-attestation.json"
-    )
-    snapshot = load_verified_authority_snapshot(
+    workspace_dir = ROOT / "runtime_outputs/governance/controlled-workspace"
+    if workspace_dir.exists():
+        shutil.rmtree(workspace_dir)
+    commit_sha = subprocess.run(
+        ["git", "rev-parse", "HEAD"],
+        cwd=ROOT,
+        check=True,
+        capture_output=True,
+        text=True,
+    ).stdout.strip()
+    production_authority = load_production_phase03_authority(
         publication_package_directory=publication_package,
         publication_attestation_path=publication_attestation,
-        publication_scenario="full-confirmation",
         phase01_artifact_directory=phase01,
         phase02_artifact_directory=phase02,
+        phase03_artifact_directory=phase03_report,
+        expected_commit_sha=commit_sha,
     )
-    controlled_dir = ROOT / "runtime_outputs/governance/controlled-authority"
-    authority, package_path, _, _ = _controlled_phase03_authority(
-        snapshot, source_phase03_attestation, controlled_dir
+    production_workspace = GovernanceWorkspace.initialize(production_authority)
+    fixture = ControlledDiagnosticFixture.create()
+    controlled_authority = controlled_governance_authority_for_test_harness(fixture)
+    upstream_phase03_attestation_path = (
+        phase03_report / "application-phase03-attestation.json"
     )
-    diagnostic_before_bytes = package_path.read_bytes()
-    diagnostic_before = authority.diagnostic_package_hash
+    upstream_phase03_attestation_before = upstream_phase03_attestation_path.read_bytes()
+    upstream_phase03_before = (
+        production_authority.upstream_phase03_diagnostic_package_hash
+    )
 
     binding = PublicationBinding.verify(
         publication_package,
@@ -879,55 +1038,117 @@ def main() -> int:
         )
         before_status = service.runtime_check()
         repository_before = before_status["live_graphdb_semantic_hash"]
-        workspace_dir = ROOT / "runtime_outputs/governance/workspace"
-        store, workspace, probes, _ = _run_governance(authority, workspace_dir)
+        store, controlled_workspace, probes, _ = _run_governance(
+            controlled_authority, workspace_dir
+        )
         external_requests, service_workers = _http_and_browser_probes(store, probes)
+        _verify_laundering_attacks(
+            production_authority=production_authority,
+            fixture=fixture,
+            publication_package=publication_package,
+            publication_attestation=publication_attestation,
+            phase01=phase01,
+            phase02=phase02,
+            phase03=phase03_report,
+            expected_commit_sha=commit_sha,
+            probes=probes,
+        )
         after_status = service.runtime_check()
         repository_after = after_status["live_graphdb_semantic_hash"]
-        if package_path.read_bytes() != diagnostic_before_bytes:
-            raise RuntimeError("Phase03 controlled diagnostic package bytes changed")
-        diagnostic_after = load_verified_phase03_authority(
-            diagnostic_package=package_path,
-            phase03_attestation=controlled_dir / "application-phase03-attestation.json",
-            authority_snapshot=strict_json_file(
-                controlled_dir / "authority-snapshot.json"
+        upstream_phase03_attestation_after = (
+            upstream_phase03_attestation_path.read_bytes()
+        )
+        if upstream_phase03_attestation_after != upstream_phase03_attestation_before:
+            raise RuntimeError("real upstream Phase03 attestation bytes changed")
+        upstream_phase03_after = load_production_phase03_authority(
+            publication_package_directory=publication_package,
+            publication_attestation_path=publication_attestation,
+            phase01_artifact_directory=phase01,
+            phase02_artifact_directory=phase02,
+            phase03_artifact_directory=phase03_report,
+            expected_commit_sha=commit_sha,
+        ).upstream_phase03_diagnostic_package_hash
+        if (
+            production_authority.upstream_phase03_attestation_sha256
+            != hashlib.sha256(upstream_phase03_attestation_after).hexdigest()
+        ):
+            raise RuntimeError("real upstream Phase03 physical binding changed")
+        controlled_state = controlled_workspace.reconstruct()
+        controlled_summary = {
+            "fixture_type": fixture.fixture_type,
+            "test_only": fixture.test_only,
+            "production_authority": fixture.production_authority,
+            "controlled_fixture_hash": fixture.controlled_fixture_hash,
+            "controlled_fixture_diagnostic_package_hash": (
+                fixture.controlled_fixture_diagnostic_package_hash
             ),
-        ).diagnostic_package_hash
-        commit_sha = subprocess.run(
-            ["git", "rev-parse", "HEAD"],
-            cwd=ROOT,
-            check=True,
-            capture_output=True,
-            text=True,
-        ).stdout.strip()
+            "controlled_fixture_status": fixture.status,
+            "diagnostic_issues": len(controlled_authority.issues),
+            "proposals_created": len(controlled_state["proposals"]),
+            "proposals_submitted": sum(
+                proposal["status"] != "DRAFT"
+                for proposal in controlled_state["proposals"]
+            ),
+            "reviews_approved": sum(
+                decision["decision"] == "APPROVE_FOR_AMENDMENT"
+                for decision in controlled_state["review_decisions"]
+            ),
+            "reviews_rejected": sum(
+                decision["decision"] == "REJECT"
+                for decision in controlled_state["review_decisions"]
+            ),
+            "reviews_deferred": sum(
+                decision["decision"] == "DEFER"
+                for decision in controlled_state["review_decisions"]
+            ),
+            "amendment_requests": len(
+                controlled_state["approved_amendment_requests"]
+            ),
+            "status": "PASS",
+        }
         attestation = build_application_phase04_attestation(
             commit_sha=commit_sha,
             upstream_verification_mode="LOCAL_LICENSED",
-            authority=authority,
-            workspace=workspace.value,
+            authority=production_authority,
+            production_workspace=production_workspace.value,
+            controlled_scenario_summary=controlled_summary,
             probes=probes,
             repository_before_hash=repository_before,
             repository_after_hash=repository_after,
-            diagnostic_hash_before=diagnostic_before,
-            diagnostic_hash_after=diagnostic_after,
+            upstream_phase03_hash_before=upstream_phase03_before,
+            upstream_phase03_hash_after=upstream_phase03_after,
         )
-        state = workspace.reconstruct()
         report = ROOT / "runtime_reports/governance" / publication_hash
         documents = {
             "application-phase04-attestation.json": attestation,
             "governance-summary.json": {
                 "contract_version": "1.0",
-                "workspace": workspace.value,
-                "workspace_hash": workspace.value["workspace_hash"],
-                "workspace_revision": workspace.value["workspace_revision"],
-                "proposals_created": attestation["proposals_created"],
-                "proposals_submitted": attestation["proposals_submitted"],
-                "reviews_approved": attestation["reviews_approved"],
-                "reviews_rejected": attestation["reviews_rejected"],
-                "reviews_deferred": attestation["reviews_deferred"],
-                "approved_amendment_requests": attestation[
-                    "approved_amendment_requests"
+                "production_workspace": production_workspace.value,
+                "production_workspace_hash": attestation[
+                    "production_workspace_hash"
                 ],
+                "production_workspace_revision": attestation[
+                    "production_workspace_revision"
+                ],
+                "production_issues_total": attestation[
+                    "upstream_phase03_issues_total"
+                ],
+                "production_proposals_created": attestation[
+                    "production_proposals_created"
+                ],
+                "production_reviews_approved": attestation[
+                    "production_reviews_approved"
+                ],
+                "production_reviews_rejected": attestation[
+                    "production_reviews_rejected"
+                ],
+                "production_reviews_deferred": attestation[
+                    "production_reviews_deferred"
+                ],
+                "production_amendment_requests": attestation[
+                    "production_amendment_requests"
+                ],
+                "controlled_scenario_summary": controlled_summary,
                 "status": "PASS",
             },
             "state-machine-summary.json": {
@@ -947,29 +1168,36 @@ def main() -> int:
             },
             "authority-binding.json": {
                 "contract_version": "1.0",
-                **authority.binding,
+                **production_authority.binding,
                 "status": "PASS",
             },
             "security-summary.json": {
                 "contract_version": "1.0",
+                "probe_authority_mode": "CONTROLLED_TEST_FIXTURE",
+                "production_authority": False,
+                "test_only": True,
                 "probes": probes,
                 "external_requests": external_requests,
                 "service_workers": service_workers,
                 "status": "PASS",
             },
         }
-        if (
-            len(state["approved_amendment_requests"])
-            != attestation["approved_amendment_requests"]
-        ):
+        if controlled_summary["amendment_requests"] != controlled_summary[
+            "reviews_approved"
+        ]:
             raise RuntimeError("amendment aggregation mismatch")
         for name, value in documents.items():
             _write(report / name, value)
         verified = verify_application_phase04_artifact(
             report,
-            authority=authority,
+            publication_package_directory=publication_package,
+            publication_attestation_path=publication_attestation,
+            publication_scenario="full-confirmation",
+            phase01_artifact_directory=phase01,
+            phase02_artifact_directory=phase02,
+            phase03_artifact_directory=phase03_report,
             expected_commit_sha=commit_sha,
-            expected_workspace_hash=workspace.value["workspace_hash"],
+            expected_workspace_hash=production_workspace.value["workspace_hash"],
         )
         print(
             json.dumps(
@@ -977,8 +1205,8 @@ def main() -> int:
                     **verified,
                     "repository_before": repository_before,
                     "repository_after": repository_after,
-                    "diagnostic_before": diagnostic_before,
-                    "diagnostic_after": diagnostic_after,
+                    "upstream_phase03_before": upstream_phase03_before,
+                    "upstream_phase03_after": upstream_phase03_after,
                     "probe_count": len(probes),
                 },
                 sort_keys=True,

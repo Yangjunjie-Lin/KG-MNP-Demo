@@ -78,7 +78,7 @@ jobs:
           python scripts/governance_integration.py
           report="$(find runtime_reports/governance -name application-phase04-attestation.json -printf '%T@ %p\n' | sort -nr | head -1 | cut -d' ' -f2-)"
           test -n "$report"
-          workspace_hash="$(python -c 'import json,sys; print(json.load(open(sys.argv[1], encoding="utf-8"))["governance_workspace_hash"])' "$report")"
+          workspace_hash="$(python -c 'import json,sys; print(json.load(open(sys.argv[1], encoding="utf-8"))["production_workspace_hash"])' "$report")"
           test "${#workspace_hash}" -eq 64
           echo "workspace_hash=$workspace_hash" >> "$GITHUB_OUTPUT"
       - name: Prepare and independently verify exact Phase 04 artifact
@@ -94,11 +94,15 @@ jobs:
           for name in application-phase04-attestation.json governance-summary.json state-machine-summary.json authority-binding.json security-summary.json; do
             cp "$report/$name" "$ARTIFACT_DIR/$name"
           done
-          controlled="runtime_outputs/governance/controlled-authority"
+          publication_manifest="runtime_outputs/publication/full-confirmation/publication-manifest.json"
+          publication_hash="$(python -c 'import json,sys; print(json.load(open(sys.argv[1], encoding="utf-8"))["publication_semantic_hash"])' "$publication_manifest")"
           python scripts/verify_application_phase04_artifact.py "$ARTIFACT_DIR" \
-            --diagnostic-package "$controlled/deterministic-diagnostic-package.json" \
-            --phase03-attestation "$controlled/application-phase03-attestation.json" \
-            --authority-snapshot "$controlled/authority-snapshot.json" \
+            --publication-package runtime_outputs/publication/full-confirmation \
+            --publication-attestation "runtime_reports/publication/$publication_hash/publication-attestation.json" \
+            --publication-scenario full-confirmation \
+            --phase01-artifact-dir "runtime_reports/application/$publication_hash" \
+            --phase02-artifact-dir "runtime_reports/workbench/$publication_hash" \
+            --phase03-artifact-dir "runtime_reports/diagnostics/$publication_hash" \
             --expected-commit-sha "${GITHUB_SHA}" \
             --expected-workspace-hash "${{ steps.phase04.outputs.workspace_hash }}"
       - name: Upload Application Phase 04 attestation artifact

@@ -6,9 +6,7 @@ import argparse
 import json
 from pathlib import Path
 
-from kg_mnp_demo.diagnostics.engine import AuthoritySnapshot
-
-from .authority_binding import load_verified_phase03_authority
+from .authority_binding import load_production_phase03_authority
 from .contracts import strict_json_file
 from .errors import GovernanceError
 from .runtime import create_governance_app
@@ -23,9 +21,22 @@ def _parser() -> argparse.ArgumentParser:
     commands = parser.add_subparsers(dest="command", required=True)
 
     def authority(command: argparse.ArgumentParser) -> None:
-        command.add_argument("--diagnostic-package", required=True, type=Path)
-        command.add_argument("--phase03-attestation", required=True, type=Path)
-        command.add_argument("--authority-snapshot", required=True, type=Path)
+        command.add_argument("--publication-package", required=True, type=Path)
+        command.add_argument("--publication-attestation", required=True, type=Path)
+        command.add_argument(
+            "--publication-scenario",
+            default="full-confirmation",
+            choices=(
+                "full-confirmation",
+                "modified-confirmation",
+                "rejection",
+                "issue-resolution",
+            ),
+        )
+        command.add_argument("--phase01-artifact-dir", required=True, type=Path)
+        command.add_argument("--phase02-artifact-dir", required=True, type=Path)
+        command.add_argument("--phase03-artifact-dir", required=True, type=Path)
+        command.add_argument("--expected-commit-sha", required=True)
         command.add_argument("--workspace", required=True, type=Path)
 
     initialize = commands.add_parser("initialize")
@@ -58,15 +69,15 @@ def _parser() -> argparse.ArgumentParser:
 
 
 def _context(arguments):
-    snapshot = AuthoritySnapshot.from_dict(
-        strict_json_file(arguments.authority_snapshot)
-    )
-
     def current():
-        return load_verified_phase03_authority(
-            diagnostic_package=arguments.diagnostic_package,
-            phase03_attestation=arguments.phase03_attestation,
-            authority_snapshot=snapshot,
+        return load_production_phase03_authority(
+            publication_package_directory=arguments.publication_package,
+            publication_attestation_path=arguments.publication_attestation,
+            publication_scenario=arguments.publication_scenario,
+            phase01_artifact_directory=arguments.phase01_artifact_dir,
+            phase02_artifact_directory=arguments.phase02_artifact_dir,
+            phase03_artifact_directory=arguments.phase03_artifact_dir,
+            expected_commit_sha=arguments.expected_commit_sha,
         )
 
     return current, GovernanceWorkspaceStore(arguments.workspace, current)

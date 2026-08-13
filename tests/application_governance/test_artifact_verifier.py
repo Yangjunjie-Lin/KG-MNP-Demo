@@ -1,34 +1,49 @@
 from __future__ import annotations
 
 import copy
+import inspect
 from pathlib import Path
 
 import pytest
 
+import kg_mnp_demo.governance.artifact_verifier as verifier_module
 from kg_mnp_demo.governance.artifact_verifier import (
+    AUTHORITY_LAUNDERING_ATTACKS,
+    AUTHORITY_LAUNDERING_OUTCOMES,
     FILES,
     Phase04ArtifactVerificationError,
     verify_application_phase04_artifact,
 )
-from kg_mnp_demo.governance.attestation import (
-    CATEGORY_FIELDS,
-    build_application_phase04_attestation,
-)
-from kg_mnp_demo.governance.errors import GovernanceError
+from kg_mnp_demo.governance.attestation import CATEGORY_FIELDS
 from kg_mnp_demo.governance.workspace import GovernanceWorkspace
 from kg_mnp_demo.modeling.canonical_json import canonical_json_bytes, semantic_hash
+from scripts.governance_controlled_fixture import ControlledDiagnosticFixture
 
-from ._helpers import authority, proposal_arguments
+from ._helpers import authority
 
 COMMIT = "1" * 40
+UPSTREAM = {
+    "publication_package_directory": Path("publication-package"),
+    "publication_attestation_path": Path("publication-attestation.json"),
+    "publication_scenario": "full-confirmation",
+    "phase01_artifact_directory": Path("phase01"),
+    "phase02_artifact_directory": Path("phase02"),
+    "phase03_artifact_directory": Path("phase03"),
+    "expected_commit_sha": COMMIT,
+}
 
 
-def probe(category: str) -> dict:
-    outcome = f"{category}_BLOCKED"
+def _probe(category: str, attack: str) -> dict:
+    outcome = (
+        AUTHORITY_LAUNDERING_OUTCOMES[attack]
+        if category == "AUTHORITY_LAUNDERING"
+        else f"{category}_BLOCKED"
+    )
+    content = {"category": category, "attack": attack, "expected": outcome}
     return {
-        "probe_id": "urn:kg-mnp:phase04-probe:" + semantic_hash({"category": category}),
+        "probe_id": ("urn:kg-mnp:test-fixture:phase04:probe:" + semantic_hash(content)),
         "category": category,
-        "attack": f"executed {category} attack",
+        "attack": attack,
         "expected_outcome": outcome,
         "actual_outcome": outcome,
         "blocked": True,
@@ -36,62 +51,137 @@ def probe(category: str) -> dict:
     }
 
 
-def artifact(tmp_path: Path):
-    auth = authority()
-    workspace = GovernanceWorkspace.initialize(auth)
-    decisions = [
-        "APPROVE_FOR_AMENDMENT",
-        "APPROVE_FOR_AMENDMENT",
-        "APPROVE_FOR_AMENDMENT",
-        "REJECT",
-        "DEFER",
+def _probes() -> list[dict]:
+    result = [
+        _probe(category, category.casefold())
+        for category in CATEGORY_FIELDS
+        if category != "AUTHORITY_LAUNDERING"
     ]
-    for index, decision in enumerate(decisions, start=1):
-        arguments = proposal_arguments(auth)
-        arguments["rationale"] += f" Proposal lineage {index}."
-        proposal = workspace.create_proposal(
-            expected_workspace_revision=workspace.value["workspace_revision"],
-            **arguments,
-        )
-        workspace.submit_proposal(
-            proposal["proposal_id"],
-            expected_workspace_revision=workspace.value["workspace_revision"],
-        )
-        workspace.review_proposal(
-            proposal["proposal_id"],
-            decision=decision,
-            review_note="Explicit human review for future amendment only",
-            reviewed_by_label="operator-supplied reviewer label",
-            explicit_human_action=True,
-            expected_workspace_revision=workspace.value["workspace_revision"],
-        )
-    probes = [probe(category) for category in CATEGORY_FIELDS]
-    attestation = build_application_phase04_attestation(
-        commit_sha=COMMIT,
-        upstream_verification_mode="EXACT_SHA_REMOTE_LICENSED_EVIDENCE",
-        authority=auth,
-        workspace=workspace.value,
-        probes=probes,
-        repository_before_hash=auth.repository_semantic_hash,
-        repository_after_hash=auth.repository_semantic_hash,
-        diagnostic_hash_before=auth.diagnostic_package_hash,
-        diagnostic_hash_after=auth.diagnostic_package_hash,
+    result.extend(
+        _probe("AUTHORITY_LAUNDERING", attack)
+        for attack in sorted(AUTHORITY_LAUNDERING_ATTACKS)
     )
-    result = workspace.reconstruct()
-    root = tmp_path / "artifact"
+    return result
+
+
+def _attestation(auth, workspace: dict, fixture, probes):
+    probe_counts = {
+        field: sum(probe["category"] == category for probe in probes)
+        for category, fields in CATEGORY_FIELDS.items()
+        for field in fields
+    }
+    laundering = sum(probe["category"] == "AUTHORITY_LAUNDERING" for probe in probes)
+    return {
+        "contract_version": "1.0",
+        "commit_sha": COMMIT,
+        "stage08_baseline": "4dc09d9cfb15da3746f108755593ceb9fe805cd7",
+        "phase01_baseline": "79b7d34125b0c5cb2d5fe8546e1f4e6a95ca8106",
+        "phase02_baseline": "3ef40b9cfbd657b55d8c5f446cfc247335db87f0",
+        "phase03_baseline": "06898e8ef3fbe93bd7e7a030f4361c0bef7a76c9",
+        "upstream_verification_mode": "EXACT_SHA_REMOTE_LICENSED_EVIDENCE",
+        **auth.binding,
+        "upstream_phase03_issues_total": auth.upstream_phase03_issues_total,
+        # Tests patch this to the real contract hash after contract migration.
+        "governance_contract_hash": verifier_module.governance_contract_hash(),
+        "production_workspace_hash": workspace["workspace_hash"],
+        "production_workspace_revision": workspace["workspace_revision"],
+        "production_proposals_created": 0,
+        "production_reviews_approved": 0,
+        "production_reviews_rejected": 0,
+        "production_reviews_deferred": 0,
+        "production_amendment_requests": 0,
+        "controlled_fixture_hash": fixture.controlled_fixture_hash,
+        "controlled_fixture_diagnostic_package_hash": (
+            fixture.controlled_fixture_diagnostic_package_hash
+        ),
+        "controlled_fixture_status": fixture.status,
+        "controlled_scenarios_total": len(probes),
+        "controlled_scenarios_passed": len(probes),
+        "authority_laundering_attempts": laundering,
+        "authority_laundering_blocked": laundering,
+        **probe_counts,
+        "repository_expected_hash": auth.repository_semantic_hash,
+        "repository_before_hash": auth.repository_semantic_hash,
+        "repository_after_hash": auth.repository_semantic_hash,
+        "repository_unchanged": True,
+        "upstream_phase03_hash_before": (auth.upstream_phase03_diagnostic_package_hash),
+        "upstream_phase03_hash_after": (auth.upstream_phase03_diagnostic_package_hash),
+        "upstream_phase03_unchanged": True,
+        "status": "APPLICATION_HUMAN_GOVERNANCE_VERIFIED",
+    }
+
+
+def artifact(tmp_path: Path):
+    # Production zero-issue authority is legal. The independent-loader unit tests
+    # use this structural stub as the loader's result; construction security is
+    # covered separately by the exact-upstream loader tests.
+    controlled = authority()
+
+    class VerifiedProductionAuthorityStub:
+        authority_type = "PRODUCTION_EXACT_PHASE03"
+        publication_id = controlled.publication_id
+        publication_semantic_hash = controlled.publication_semantic_hash
+        repository_semantic_hash = controlled.repository_semantic_hash
+        upstream_phase03_attestation_sha256 = "1" * 64
+        upstream_phase03_diagnostic_package_hash = "0" * 64
+        upstream_phase03_issues_total = 0
+
+        @property
+        def binding(self):
+            return {
+                "authority_type": self.authority_type,
+                "publication_id": self.publication_id,
+                "publication_semantic_hash": self.publication_semantic_hash,
+                "repository_semantic_hash": self.repository_semantic_hash,
+                "upstream_phase03_attestation_sha256": (
+                    self.upstream_phase03_attestation_sha256
+                ),
+                "upstream_phase03_diagnostic_package_hash": (
+                    self.upstream_phase03_diagnostic_package_hash
+                ),
+            }
+
+        def assert_same_current_authority(self, expected):
+            if expected != self.binding:
+                raise AssertionError("authority binding mismatch")
+
+    auth = VerifiedProductionAuthorityStub()
+    workspace = GovernanceWorkspace.initialize(auth).value
+    fixture = ControlledDiagnosticFixture.create()
+    probes = _probes()
+    attestation = _attestation(auth, workspace, fixture, probes)
+    controlled_summary = {
+        "fixture_type": fixture.fixture_type,
+        "test_only": True,
+        "production_authority": False,
+        "controlled_fixture_hash": fixture.controlled_fixture_hash,
+        "controlled_fixture_diagnostic_package_hash": (
+            fixture.controlled_fixture_diagnostic_package_hash
+        ),
+        "controlled_fixture_status": fixture.status,
+        "diagnostic_issues": 4,
+        "proposals_created": 5,
+        "proposals_submitted": 5,
+        "reviews_approved": 3,
+        "reviews_rejected": 1,
+        "reviews_deferred": 1,
+        "amendment_requests": 3,
+        "status": "PASS",
+    }
     documents = {
         "application-phase04-attestation.json": attestation,
         "governance-summary.json": {
             "contract_version": "1.0",
-            "workspace": workspace.value,
-            "workspace_hash": workspace.value["workspace_hash"],
-            "workspace_revision": workspace.value["workspace_revision"],
-            "proposals_created": attestation["proposals_created"],
-            "proposals_submitted": attestation["proposals_submitted"],
-            "reviews_approved": attestation["reviews_approved"],
-            "reviews_rejected": attestation["reviews_rejected"],
-            "reviews_deferred": attestation["reviews_deferred"],
-            "approved_amendment_requests": attestation["approved_amendment_requests"],
+            "production_workspace": workspace,
+            "production_workspace_hash": workspace["workspace_hash"],
+            "production_workspace_revision": workspace["workspace_revision"],
+            "production_issues_total": 0,
+            "production_proposals_created": 0,
+            "production_reviews_approved": 0,
+            "production_reviews_rejected": 0,
+            "production_reviews_deferred": 0,
+            "production_amendment_requests": 0,
+            "controlled_scenario_summary": controlled_summary,
             "status": "PASS",
         },
         "state-machine-summary.json": {
@@ -103,9 +193,9 @@ def artifact(tmp_path: Path):
                 "SUBMITTED->DEFERRED",
             ],
             "invalid_transition_probes": [
-                item["probe_id"]
-                for item in probes
-                if item["category"] == "ILLEGAL_TRANSITION"
+                probe["probe_id"]
+                for probe in probes
+                if probe["category"] == "ILLEGAL_TRANSITION"
             ],
             "status": "PASS",
         },
@@ -116,111 +206,202 @@ def artifact(tmp_path: Path):
         },
         "security-summary.json": {
             "contract_version": "1.0",
+            "probe_authority_mode": "CONTROLLED_TEST_FIXTURE",
+            "production_authority": False,
+            "test_only": True,
             "probes": probes,
             "external_requests": 0,
             "service_workers": 0,
             "status": "PASS",
         },
     }
-    root.mkdir()
+    root = tmp_path / "artifact"
+    root.mkdir(parents=True)
     for name, value in documents.items():
         (root / name).write_bytes(canonical_json_bytes(value) + b"\n")
     assert set(documents) == FILES
-    assert len(result["approved_amendment_requests"]) == 3
     return root, auth, documents
 
 
-def rewrite(root: Path, name: str, value: dict) -> None:
+def _rewrite(root: Path, name: str, value: dict) -> None:
     (root / name).write_bytes(canonical_json_bytes(value) + b"\n")
 
 
-def test_exact_artifact_reconstructs(tmp_path: Path) -> None:
+def _verify(monkeypatch, root: Path, auth, **kwargs):
+    seen = []
+
+    def load(**arguments):
+        seen.append(arguments)
+        return auth
+
+    monkeypatch.setattr(verifier_module, "load_production_phase03_authority", load)
+    arguments = {**UPSTREAM, **kwargs}
+    result = verify_application_phase04_artifact(root, **arguments)
+    assert seen == [UPSTREAM]
+    return result
+
+
+def test_verifier_api_has_no_authority_injection() -> None:
+    parameters = inspect.signature(verify_application_phase04_artifact).parameters
+    assert "authority" not in parameters
+    assert "authority_snapshot" not in parameters
+    assert "diagnostic_package" not in parameters
+    assert set(UPSTREAM) <= set(parameters)
+
+
+def test_verifier_rejects_controlled_authority_from_loader(
+    tmp_path: Path, monkeypatch
+) -> None:
+    root, _, _ = artifact(tmp_path)
+    monkeypatch.setattr(
+        verifier_module,
+        "load_production_phase03_authority",
+        lambda **_arguments: authority(),
+    )
+    with pytest.raises(
+        Phase04ArtifactVerificationError,
+        match="TEST_FIXTURE_NOT_ALLOWED_AS_PRODUCTION_AUTHORITY",
+    ):
+        verify_application_phase04_artifact(root, **UPSTREAM)
+
+
+def test_exact_artifact_reconstructs_zero_issue_production_authority(
+    tmp_path: Path, monkeypatch
+) -> None:
     root, auth, documents = artifact(tmp_path)
-    result = verify_application_phase04_artifact(
+    result = _verify(
+        monkeypatch,
         root,
-        authority=auth,
-        expected_commit_sha=COMMIT,
-        expected_workspace_hash=documents["governance-summary.json"]["workspace_hash"],
+        auth,
+        expected_workspace_hash=documents["governance-summary.json"][
+            "production_workspace_hash"
+        ],
     )
     assert result["status"] == "APPLICATION_HUMAN_GOVERNANCE_VERIFIED"
     assert result["artifact_files"] == sorted(FILES)
+    assert documents["governance-summary.json"]["production_issues_total"] == 0
+    assert documents["governance-summary.json"]["production_proposals_created"] == 0
 
 
-def test_closed_set_and_commit_binding_fail_closed(tmp_path: Path) -> None:
+def test_closed_set_and_commit_binding_fail_closed(tmp_path: Path, monkeypatch) -> None:
     root, auth, _ = artifact(tmp_path)
     (root / "unexpected.json").write_text("{}", encoding="utf-8")
     with pytest.raises(Phase04ArtifactVerificationError, match="closed set"):
-        verify_application_phase04_artifact(root, authority=auth)
+        _verify(monkeypatch, root, auth)
     (root / "unexpected.json").unlink()
+    documents = copy.deepcopy(artifact(tmp_path / "second")[2])
+    # The loader sees the trusted SHA; the independently read attestation does not.
+    documents["application-phase04-attestation.json"]["commit_sha"] = "2" * 40
+    attacked = tmp_path / "attacked"
+    attacked.mkdir()
+    for name, value in documents.items():
+        _rewrite(attacked, name, value)
     with pytest.raises(Phase04ArtifactVerificationError, match="commit"):
-        verify_application_phase04_artifact(
-            root, authority=auth, expected_commit_sha="2" * 40
-        )
+        _verify(monkeypatch, attacked, auth)
 
 
-def test_probe_counters_cannot_be_filled_or_forged(tmp_path: Path) -> None:
-    root, auth, documents = artifact(tmp_path)
-    security = copy.deepcopy(documents["security-summary.json"])
-    security["probes"][0]["blocked"] = False
-    rewrite(root, "security-summary.json", security)
-    with pytest.raises(Phase04ArtifactVerificationError, match="probe"):
-        verify_application_phase04_artifact(root, authority=auth)
-
-
-def test_self_consistent_workspace_rehash_fails_attested_head_anchor(
-    tmp_path: Path,
+def test_fixture_authority_full_rehash_substitution_rejected(
+    tmp_path: Path, monkeypatch
 ) -> None:
-    root, auth, documents = artifact(tmp_path)
-    trusted_head = documents["governance-summary.json"]["workspace_hash"]
-    summary = copy.deepcopy(documents["governance-summary.json"])
-    workspace = summary["workspace"]
-    workspace["events"][2]["payload"]["review_note"] = "changed and rehashed"
-    previous = "GENESIS"
-    for sequence, event in enumerate(workspace["events"], start=1):
-        event["sequence"] = sequence
-        event["previous_event_hash"] = previous
-        event["payload_hash"] = semantic_hash(event["payload"])
-        event["event_id"] = semantic_hash(
-            {
-                "sequence": sequence,
-                "previous_event_hash": previous,
-                "event_type": event["event_type"],
-                "payload_hash": event["payload_hash"],
-            }
-        )
-        previous = event["event_id"]
-    workspace["head_event_hash"] = previous
-    workspace["workspace_hash"] = semantic_hash(
+    root, real, documents = artifact(tmp_path)
+    fixture = ControlledDiagnosticFixture.create()
+    replacement = copy.deepcopy(documents)
+    fake_hash = fixture.controlled_fixture_diagnostic_package_hash
+    fake_attestation = semantic_hash({"fake": True, "package": fake_hash})
+    binding = replacement["authority-binding.json"]
+    binding["authority_type"] = "PRODUCTION_EXACT_PHASE03"
+    binding["upstream_phase03_attestation_sha256"] = fake_attestation
+    binding["upstream_phase03_diagnostic_package_hash"] = fake_hash
+    replacement["application-phase04-attestation.json"].update(
         {
-            "contract_version": workspace["contract_version"],
-            "workspace_id": workspace["workspace_id"],
-            "authority_binding": workspace["authority_binding"],
-            "events": workspace["events"],
-            "workspace_revision": workspace["workspace_revision"],
-            "head_event_hash": workspace["head_event_hash"],
-            "status": workspace["status"],
+            "upstream_phase03_attestation_sha256": fake_attestation,
+            "upstream_phase03_diagnostic_package_hash": fake_hash,
+            "upstream_phase03_hash_before": fake_hash,
+            "upstream_phase03_hash_after": fake_hash,
         }
     )
-    summary["workspace_hash"] = workspace["workspace_hash"]
-    rewrite(root, "governance-summary.json", summary)
-    attestation = copy.deepcopy(documents["application-phase04-attestation.json"])
-    attestation["governance_workspace_hash"] = workspace["workspace_hash"]
-    rewrite(root, "application-phase04-attestation.json", attestation)
-    with pytest.raises((GovernanceError, Phase04ArtifactVerificationError)):
-        verify_application_phase04_artifact(
-            root,
-            authority=auth,
-            expected_workspace_hash=trusted_head,
+    workspace = replacement["governance-summary.json"]["production_workspace"]
+    workspace["authority_binding"] = {key: binding[key] for key in real.binding}
+    workspace["workspace_id"] = "urn:kg-mnp:governance-workspace:" + semantic_hash(
+        workspace["authority_binding"]
+    )
+    from kg_mnp_demo.governance.validator import workspace_semantic_content
+
+    workspace["workspace_hash"] = semantic_hash(workspace_semantic_content(workspace))
+    replacement["governance-summary.json"]["production_workspace_hash"] = workspace[
+        "workspace_hash"
+    ]
+    replacement["application-phase04-attestation.json"]["production_workspace_hash"] = (
+        workspace["workspace_hash"]
+    )
+    for name, value in replacement.items():
+        _rewrite(root, name, value)
+    with pytest.raises(
+        Phase04ArtifactVerificationError,
+        match="UPSTREAM_PHASE03_AUTHORITY_MISMATCH",
+    ):
+        _verify(monkeypatch, root, real)
+
+
+def test_authority_laundering_matrix_is_exact(tmp_path: Path, monkeypatch) -> None:
+    root, auth, documents = artifact(tmp_path)
+    security = copy.deepcopy(documents["security-summary.json"])
+    attack = next(
+        probe
+        for probe in security["probes"]
+        if probe["category"] == "AUTHORITY_LAUNDERING"
+    )
+    attack["attack"] = "self_consistent_but_incomplete_matrix"
+    attack["probe_id"] = (
+        "urn:kg-mnp:test-fixture:phase04:probe:"
+        + semantic_hash(
+            {
+                "category": attack["category"],
+                "attack": attack["attack"],
+                "expected": attack["expected_outcome"],
+            }
         )
+    )
+    _rewrite(root, "security-summary.json", security)
+    with pytest.raises(Phase04ArtifactVerificationError, match="attack matrix"):
+        _verify(monkeypatch, root, auth)
+
+
+def test_laundering_outcomes_cannot_be_self_reported_as_accepted(
+    tmp_path: Path, monkeypatch
+) -> None:
+    root, auth, documents = artifact(tmp_path)
+    security = copy.deepcopy(documents["security-summary.json"])
+    for probe in security["probes"]:
+        if probe["category"] != "AUTHORITY_LAUNDERING":
+            continue
+        probe["expected_outcome"] = "ACCEPTED"
+        probe["actual_outcome"] = "ACCEPTED"
+        probe["probe_id"] = (
+            "urn:kg-mnp:test-fixture:phase04:probe:"
+            + semantic_hash(
+                {
+                    "category": probe["category"],
+                    "attack": probe["attack"],
+                    "expected": "ACCEPTED",
+                }
+            )
+        )
+    _rewrite(root, "security-summary.json", security)
+    with pytest.raises(Phase04ArtifactVerificationError, match="attack matrix"):
+        _verify(monkeypatch, root, auth)
 
 
 @pytest.mark.parametrize(
     "value", ["C:/Users/alice/private", "GRAPHDB_LICENSE_CONTENT=secret"]
 )
-def test_absolute_paths_and_secrets_are_rejected(tmp_path: Path, value: str) -> None:
+def test_absolute_paths_and_secrets_are_rejected(
+    tmp_path: Path, monkeypatch, value: str
+) -> None:
     root, auth, documents = artifact(tmp_path)
     security = copy.deepcopy(documents["security-summary.json"])
-    security["probes"][0]["attack"] = value
-    rewrite(root, "security-summary.json", security)
+    security["probes"][0]["expected_outcome"] = value
+    security["probes"][0]["actual_outcome"] = value
+    _rewrite(root, "security-summary.json", security)
     with pytest.raises(Phase04ArtifactVerificationError, match="secret or absolute"):
-        verify_application_phase04_artifact(root, authority=auth)
+        _verify(monkeypatch, root, auth)

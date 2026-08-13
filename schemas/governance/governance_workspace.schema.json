@@ -9,11 +9,13 @@
     "workspace_id": {"type": "string", "pattern": "^urn:kg-mnp:governance-workspace:[0-9a-f]{64}$"},
     "authority_binding": {
       "type": "object", "additionalProperties": false,
-      "required": ["publication_id", "publication_semantic_hash", "repository_semantic_hash", "phase03_attestation_hash", "diagnostic_package_hash"],
+      "required": ["authority_type", "publication_id", "publication_semantic_hash", "repository_semantic_hash", "upstream_phase03_attestation_sha256", "upstream_phase03_diagnostic_package_hash"],
       "properties": {
+        "authority_type": {"enum": ["PRODUCTION_EXACT_PHASE03", "CONTROLLED_TEST_HARNESS"]},
         "publication_id": {"type": "string"}, "publication_semantic_hash": {"$ref": "#/$defs/hash"},
-        "repository_semantic_hash": {"$ref": "#/$defs/hash"}, "phase03_attestation_hash": {"$ref": "#/$defs/hash"},
-        "diagnostic_package_hash": {"$ref": "#/$defs/hash"}
+        "repository_semantic_hash": {"$ref": "#/$defs/hash"},
+        "upstream_phase03_attestation_sha256": {"$ref": "#/$defs/hash"},
+        "upstream_phase03_diagnostic_package_hash": {"$ref": "#/$defs/hash"}
       }
     },
     "events": {"type": "array", "items": {"type": "object"}},
