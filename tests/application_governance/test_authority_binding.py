@@ -322,24 +322,118 @@ def test_direct_construction_cannot_mint_production_authority(exact_upstream) ->
 
 def test_governance_authority_exposes_no_production_factory() -> None:
     assert not hasattr(GovernanceAuthority, "_from_verified_production")
+    assert not hasattr(authority_binding_module, "_PRODUCTION_CONSTRUCTION_CAPABILITY")
+    assert load_production_phase03_authority.__closure__ is None
 
 
 def test_internal_assignment_cannot_mint_production_authority(
     exact_upstream,
 ) -> None:
+    value = object.__new__(GovernanceAuthority)
+    assert not hasattr(value, "_assign")
+
+
+def test_imported_internal_helpers_cannot_register_forged_production_authority(
+    exact_upstream,
+) -> None:
     bindings = exact_upstream["snapshot"].authority_bindings
     value = object.__new__(GovernanceAuthority)
+    for name, content in {
+        "authority_type": PRODUCTION_AUTHORITY_TYPE,
+        "publication_id": bindings.publication_id,
+        "publication_semantic_hash": bindings.publication_semantic_hash,
+        "repository_semantic_hash": bindings.repository_semantic_hash,
+        "upstream_phase03_attestation_sha256": "a" * 64,
+        "upstream_phase03_diagnostic_package_hash": "b" * 64,
+        "_issue_documents": {},
+    }.items():
+        object.__setattr__(value, name, content)
     with pytest.raises(GovernanceError) as caught:
-        value._assign(
-            authority_type=PRODUCTION_AUTHORITY_TYPE,
-            publication_id=bindings.publication_id,
-            publication_semantic_hash=bindings.publication_semantic_hash,
-            repository_semantic_hash=bindings.repository_semantic_hash,
-            upstream_phase03_attestation_sha256="a" * 64,
-            upstream_phase03_diagnostic_package_hash="b" * 64,
-            issues={},
-        )
+        GovernanceWorkspace.initialize(value)
     assert caught.value.code == GovernanceErrorCode.AUTHORITY_MISMATCH
+
+
+def test_copied_exact_source_cannot_authorize_synthetic_diagnostics(
+    exact_upstream, monkeypatch
+) -> None:
+    real = _load(exact_upstream, monkeypatch)
+    forged = object.__new__(GovernanceAuthority)
+    for name, content in {
+        "authority_type": PRODUCTION_AUTHORITY_TYPE,
+        "publication_id": real.publication_id,
+        "publication_semantic_hash": real.publication_semantic_hash,
+        "repository_semantic_hash": real.repository_semantic_hash,
+        "upstream_phase03_attestation_sha256": (
+            real.upstream_phase03_attestation_sha256
+        ),
+        "upstream_phase03_diagnostic_package_hash": "b" * 64,
+        "_issue_documents": {
+            "urn:kg-mnp:test-fixture:phase04:synthetic-issue": (
+                canonical_json_bytes(
+                    {
+                        "diagnostic_id": (
+                            "urn:kg-mnp:test-fixture:phase04:synthetic-issue"
+                        ),
+                        "classification": "REQUIRED_VALUE_MISSING",
+                    }
+                )
+            )
+        },
+        # The attacker may inspect and copy this descriptor.  It is not a
+        # credential: the production gate repeats the exact reconstruction.
+        "_production_source": real._production_source,
+    }.items():
+        object.__setattr__(forged, name, content)
+
+    with pytest.raises(GovernanceError) as caught:
+        GovernanceWorkspace.initialize(forged)
+    assert caught.value.code == GovernanceErrorCode.AUTHORITY_MISMATCH
+
+
+def test_verified_gate_never_returns_caller_owned_mapping_semantics(
+    exact_upstream, monkeypatch
+) -> None:
+    real = _load(exact_upstream, monkeypatch)
+    synthetic_id = "urn:kg-mnp:test-fixture:phase04:synthetic-issue"
+    synthetic_issue = {
+        "diagnostic_id": synthetic_id,
+        "diagnostic_basis_hash": "c" * 64,
+        "classification": "REQUIRED_VALUE_MISSING",
+    }
+
+    class SplitViewIssues(Mapping):
+        def __getitem__(self, key):
+            if key == synthetic_id:
+                return canonical_json_bytes(synthetic_issue)
+            raise KeyError(key)
+
+        def __iter__(self):
+            return iter(())
+
+        def __len__(self):
+            return 0
+
+        def items(self):
+            return ().__iter__()
+
+        def get(self, key, default=None):
+            return self[key] if key == synthetic_id else default
+
+    forged = object.__new__(GovernanceAuthority)
+    for name, content in {
+        "authority_type": PRODUCTION_AUTHORITY_TYPE,
+        **real.binding,
+        "_issue_documents": SplitViewIssues(),
+        "_production_source": real._production_source,
+    }.items():
+        object.__setattr__(forged, name, content)
+
+    verified = authority_binding_module._require_verified_production_authority(forged)
+    assert verified is not forged
+    assert verified.issues == {}
+    with pytest.raises(GovernanceError) as caught:
+        verified.require_issue(synthetic_id)
+    assert caught.value.code == GovernanceErrorCode.UNKNOWN_DIAGNOSTIC
 
 
 def test_authority_issue_projection_cannot_mutate_loaded_authority(
@@ -424,6 +518,48 @@ def test_upstream_artifact_tree_change_during_reconstruction_is_rejected(
                 phase03_artifact_directory=exact_upstream["phase03"],
                 expected_commit_sha=COMMIT,
             )
+        assert caught.value.code == GovernanceErrorCode.AUTHORITY_MISMATCH
+    finally:
+        marker.write_bytes(original)
+
+
+def test_phase03_artifact_tree_change_during_verification_is_rejected(
+    exact_upstream, monkeypatch
+) -> None:
+    marker = exact_upstream["phase03"] / "security-summary.json"
+    original = marker.read_bytes()
+    real_verify = authority_binding_module.verify_application_phase03_artifact
+
+    def mutate_phase03(*arguments, **keywords):
+        verified = real_verify(*arguments, **keywords)
+        marker.write_bytes(original + b" ")
+        return verified
+
+    monkeypatch.setattr(
+        authority_binding_module,
+        "verify_application_phase03_artifact",
+        mutate_phase03,
+    )
+    try:
+        with pytest.raises(GovernanceError) as caught:
+            _load(exact_upstream, monkeypatch)
+        assert caught.value.code == GovernanceErrorCode.AUTHORITY_MISMATCH
+    finally:
+        marker.write_bytes(original)
+
+
+def test_loaded_authority_is_reverified_before_production_workspace_use(
+    exact_upstream, monkeypatch
+) -> None:
+    authority = _load(exact_upstream, monkeypatch)
+    marker = (
+        exact_upstream["phase03"] / "application-phase03-attestation.json"
+    )
+    original = marker.read_bytes()
+    marker.write_bytes(original + b" ")
+    try:
+        with pytest.raises(GovernanceError) as caught:
+            GovernanceWorkspace.initialize(authority)
         assert caught.value.code == GovernanceErrorCode.AUTHORITY_MISMATCH
     finally:
         marker.write_bytes(original)

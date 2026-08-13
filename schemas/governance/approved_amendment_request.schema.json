@@ -6,7 +6,7 @@
   "required": ["contract_version", "amendment_request_id", "proposal_id", "review_decision_id", "target_diagnostic_id", "authority_type", "publication_id", "publication_semantic_hash", "repository_semantic_hash", "upstream_phase03_attestation_sha256", "upstream_phase03_diagnostic_package_hash", "amendment_type", "structured_proposed_payload", "provenance_chain", "governance_status", "status"],
   "properties": {
     "contract_version": {"const": "1.0"},
-    "amendment_request_id": {"type": "string", "pattern": "^urn:kg-mnp:approved-amendment-request:[0-9a-f]{64}$"},
+    "amendment_request_id": {"type": "string", "pattern": "^urn:kg-mnp:(?:approved-amendment-request|test-fixture:phase04:approved-amendment-request):[0-9a-f]{64}$"},
     "proposal_id": {"type": "string"}, "review_decision_id": {"type": "string"},
     "target_diagnostic_id": {"type": "string"},
     "authority_type": {"enum": ["PRODUCTION_EXACT_PHASE03", "CONTROLLED_TEST_HARNESS"]},

@@ -9,15 +9,15 @@ from kg_mnp_demo.governance.validator import (
     validate_governance_workspace_against_authorities,
     workspace_semantic_content,
 )
-from kg_mnp_demo.governance.workspace import GovernanceWorkspace
 from kg_mnp_demo.modeling.canonical_json import semantic_hash
 
 from ._helpers import authority, proposal_arguments, stale
+from ._helpers import workspace as controlled_workspace
 
 
 def _approved():
     auth = authority()
-    workspace = GovernanceWorkspace.initialize(auth)
+    workspace = controlled_workspace(auth)
     proposal = workspace.create_proposal(
         expected_workspace_revision=0, **proposal_arguments(auth)
     )
@@ -84,7 +84,7 @@ def test_self_consistent_rehash_is_rejected_by_trusted_head_anchor() -> None:
 def test_stale_replay_and_optimistic_concurrency_fail_closed() -> None:
     auth = authority()
     current = [auth]
-    workspace = GovernanceWorkspace.initialize(auth, lambda: current[0])
+    workspace = controlled_workspace(auth, lambda: current[0])
     proposal = workspace.create_proposal(
         expected_workspace_revision=0, **proposal_arguments(auth)
     )

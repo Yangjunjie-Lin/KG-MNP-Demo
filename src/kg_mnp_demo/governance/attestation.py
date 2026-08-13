@@ -6,7 +6,10 @@ from collections import Counter
 from collections.abc import Mapping, Sequence
 from typing import Any
 
-from .authority_binding import GovernanceAuthority
+from .authority_binding import (
+    GovernanceAuthority,
+    _require_verified_production_authority,
+)
 from .contracts import governance_contract_hash, validate_governance_contract
 from .validator import validate_governance_workspace_against_authorities
 
@@ -123,6 +126,7 @@ def build_application_phase04_attestation(
 ) -> dict[str, Any]:
     """Build success evidence without treating controlled diagnostics as authority."""
 
+    authority = _require_verified_production_authority(authority)
     reconstructed = validate_governance_workspace_against_authorities(
         production_workspace, authority
     )

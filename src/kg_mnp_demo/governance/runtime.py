@@ -10,7 +10,10 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from kg_mnp_demo.modeling.dependencies import ROOT
 
-from .authority_binding import GovernanceAuthority
+from .authority_binding import (
+    GovernanceAuthority,
+    _require_verified_production_authority,
+)
 from .contracts import strict_json_bytes
 from .errors import GovernanceError, GovernanceErrorCode
 from .security import MAX_BODY_BYTES, csrf_token, exact_fields, proposal_identifier
@@ -40,6 +43,18 @@ def create_governance_app(
     web_root: Path | None = None,
     csrf_value: str | None = None,
 ) -> FastAPI:
+    supplied_authority = _require_verified_production_authority(
+        store.current_authority()
+    )
+    if type(store) is not GovernanceWorkspaceStore:
+        raise GovernanceError(
+            GovernanceErrorCode.AUTHORITY_MISMATCH,
+            "production runtime requires the closed production workspace store",
+        )
+    # Do not retain a caller-controlled store object whose methods could be
+    # overridden after startup.  The runtime owns a fresh closed store and a
+    # production authority that is reverified by every store load/mutation.
+    store = GovernanceWorkspaceStore(store.path, lambda: supplied_authority)
     root = Path(web_root or ROOT / "web" / "governance").resolve(strict=True)
     if not (root / "index.html").is_file():
         raise GovernanceError(GovernanceErrorCode.GOVERNANCE_NOT_READY)
@@ -126,7 +141,10 @@ def create_governance_app(
         return JSONResponse(error.to_dict(), status_code=500)
 
     def authority() -> GovernanceAuthority:
-        return store.current_authority()
+        return _require_verified_production_authority(store.current_authority())
+
+    def proposal_id(digest: str) -> str:
+        return proposal_identifier(digest)
 
     async def strict_body(request: Request):
         try:
@@ -216,7 +234,7 @@ def create_governance_app(
         )
         return store.mutate(
             lambda workspace: workspace.submit_proposal(
-                proposal_identifier(proposal_digest), **body
+                proposal_id(proposal_digest), **body
             )
         )
 
@@ -236,7 +254,7 @@ def create_governance_app(
         )
         return store.mutate(
             lambda workspace: workspace.review_proposal(
-                proposal_identifier(proposal_digest), **body
+                proposal_id(proposal_digest), **body
             )
         )
 

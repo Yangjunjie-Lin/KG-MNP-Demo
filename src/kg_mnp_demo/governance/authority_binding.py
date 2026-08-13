@@ -34,7 +34,36 @@ _TEST_FIXTURE_MARKERS = {
     "PHASE04_CONTROLLED_DIAGNOSTIC_FIXTURE",
     "CONTROLLED_DIAGNOSTIC_FIXTURE",
 }
-_PRODUCTION_CONSTRUCTION_CAPABILITY = object()
+
+
+@dataclass(frozen=True, slots=True)
+class _ProductionAuthoritySource:
+    """Exact artifact locations needed to repeat production verification.
+
+    This descriptor is intentionally not a credential.  It may be inspected or
+    copied by a caller: production acceptance depends on re-verifying the files
+    it names and comparing the reconstructed authority, never on object identity
+    or a secret in-process capability.
+    """
+
+    publication_package_directory: Path
+    publication_attestation_path: Path
+    phase01_artifact_directory: Path
+    phase02_artifact_directory: Path
+    phase03_artifact_directory: Path
+    expected_commit_sha: str
+    publication_scenario: str
+
+    def loader_arguments(self) -> dict[str, Any]:
+        return {
+            "publication_package_directory": self.publication_package_directory,
+            "publication_attestation_path": self.publication_attestation_path,
+            "phase01_artifact_directory": self.phase01_artifact_directory,
+            "phase02_artifact_directory": self.phase02_artifact_directory,
+            "phase03_artifact_directory": self.phase03_artifact_directory,
+            "expected_commit_sha": self.expected_commit_sha,
+            "publication_scenario": self.publication_scenario,
+        }
 
 
 def _fixture_marker(value: Any, name: str) -> Any:
@@ -106,6 +135,7 @@ class GovernanceAuthority:
     upstream_phase03_attestation_sha256: str
     upstream_phase03_diagnostic_package_hash: str
     _issue_documents: Mapping[str, bytes]
+    _production_source: _ProductionAuthoritySource | None
 
     def __init__(
         self,
@@ -123,8 +153,7 @@ class GovernanceAuthority:
                 GovernanceErrorCode.AUTHORITY_MISMATCH,
                 "production governance authority must be loaded from exact artifacts",
             )
-        self._assign(
-            authority_type=authority_type,
+        normalized = _normalize_authority_values(
             publication_id=publication_id,
             publication_semantic_hash=publication_semantic_hash,
             repository_semantic_hash=repository_semantic_hash,
@@ -136,57 +165,11 @@ class GovernanceAuthority:
             ),
             issues=issues,
         )
-
-    def _assign(
-        self,
-        *,
-        authority_type: str,
-        publication_id: str,
-        publication_semantic_hash: str,
-        repository_semantic_hash: str,
-        upstream_phase03_attestation_sha256: str,
-        upstream_phase03_diagnostic_package_hash: str,
-        issues: Mapping[str, Mapping[str, Any]],
-        _capability: object | None = None,
-    ) -> None:
-        if authority_type not in {
-            PRODUCTION_AUTHORITY_TYPE,
-            CONTROLLED_HARNESS_AUTHORITY_TYPE,
-        }:
-            raise GovernanceError(GovernanceErrorCode.AUTHORITY_MISMATCH)
-        if (
-            authority_type == PRODUCTION_AUTHORITY_TYPE
-            and _capability is not _PRODUCTION_CONSTRUCTION_CAPABILITY
-        ):
-            raise GovernanceError(
-                GovernanceErrorCode.AUTHORITY_MISMATCH,
-                "production governance authority must be loaded from exact artifacts",
-            )
-        hashes = (
-            publication_semantic_hash,
-            repository_semantic_hash,
-            upstream_phase03_attestation_sha256,
-            upstream_phase03_diagnostic_package_hash,
-        )
-        if (
-            not isinstance(publication_id, str)
-            or not publication_id.endswith(publication_semantic_hash)
-            or not all(_valid_hash(value) for value in hashes)
-            or not isinstance(issues, Mapping)
-        ):
-            raise GovernanceError(GovernanceErrorCode.AUTHORITY_MISMATCH)
-        normalized: dict[str, bytes] = {}
-        for diagnostic_id, issue in issues.items():
-            if (
-                not isinstance(diagnostic_id, str)
-                or not isinstance(issue, Mapping)
-                or issue.get("diagnostic_id") != diagnostic_id
-            ):
-                raise GovernanceError(GovernanceErrorCode.AUTHORITY_MISMATCH)
-            normalized[diagnostic_id] = canonical_json_bytes(dict(issue))
         object.__setattr__(self, "authority_type", authority_type)
         object.__setattr__(self, "publication_id", publication_id)
-        object.__setattr__(self, "publication_semantic_hash", publication_semantic_hash)
+        object.__setattr__(
+            self, "publication_semantic_hash", publication_semantic_hash
+        )
         object.__setattr__(self, "repository_semantic_hash", repository_semantic_hash)
         object.__setattr__(
             self,
@@ -199,6 +182,7 @@ class GovernanceAuthority:
             upstream_phase03_diagnostic_package_hash,
         )
         object.__setattr__(self, "_issue_documents", MappingProxyType(normalized))
+        object.__setattr__(self, "_production_source", None)
 
     @property
     def issues(self) -> Mapping[str, Mapping[str, Any]]:
@@ -251,7 +235,41 @@ class GovernanceAuthority:
             raise GovernanceError(GovernanceErrorCode.STALE_DIAGNOSTIC_BINDING)
 
 
-def load_production_phase03_authority(
+def _normalize_authority_values(
+    *,
+    publication_id: str,
+    publication_semantic_hash: str,
+    repository_semantic_hash: str,
+    upstream_phase03_attestation_sha256: str,
+    upstream_phase03_diagnostic_package_hash: str,
+    issues: Mapping[str, Mapping[str, Any]],
+) -> dict[str, bytes]:
+    hashes = (
+        publication_semantic_hash,
+        repository_semantic_hash,
+        upstream_phase03_attestation_sha256,
+        upstream_phase03_diagnostic_package_hash,
+    )
+    if (
+        not isinstance(publication_id, str)
+        or not publication_id.endswith(publication_semantic_hash)
+        or not all(_valid_hash(value) for value in hashes)
+        or not isinstance(issues, Mapping)
+    ):
+        raise GovernanceError(GovernanceErrorCode.AUTHORITY_MISMATCH)
+    normalized: dict[str, bytes] = {}
+    for diagnostic_id, issue in issues.items():
+        if (
+            not isinstance(diagnostic_id, str)
+            or not isinstance(issue, Mapping)
+            or issue.get("diagnostic_id") != diagnostic_id
+        ):
+            raise GovernanceError(GovernanceErrorCode.AUTHORITY_MISMATCH)
+        normalized[diagnostic_id] = canonical_json_bytes(dict(issue))
+    return normalized
+
+
+def _load_production_phase03_authority_impl(
     *,
     publication_package_directory: Path,
     publication_attestation_path: Path,
@@ -260,7 +278,7 @@ def load_production_phase03_authority(
     phase03_artifact_directory: Path,
     expected_commit_sha: str,
     publication_scenario: str = "full-confirmation",
-) -> GovernanceAuthority:
+) -> dict[str, Any]:
     """Reconstruct and bind the sole production Phase 03 authority.
 
     No authority snapshot, diagnostic package, attestation mapping, or opaque
@@ -357,6 +375,7 @@ def load_production_phase03_authority(
             raise ValueError("upstream application physical lineage mismatch")
 
         phase03_root = Path(phase03_artifact_directory)
+        phase03_tree_digest_before = _artifact_tree_digest(phase03_root)
         phase03_attestation_path = (
             phase03_root / "application-phase03-attestation.json"
         )
@@ -433,22 +452,20 @@ def load_production_phase03_authority(
         )
         if any(left != right for left, right in expected_pairs):
             raise ValueError("exact Phase03 authority lineage mismatch")
+        if _artifact_tree_digest(phase03_root) != phase03_tree_digest_before:
+            raise ValueError("Phase03 artifact tree changed during verification")
 
         issues = {
             issue["diagnostic_id"]: deepcopy(issue) for issue in package["issues"]
         }
-        authority = object.__new__(GovernanceAuthority)
-        authority._assign(
-            authority_type=PRODUCTION_AUTHORITY_TYPE,
-            publication_id=bindings.publication_id,
-            publication_semantic_hash=bindings.publication_semantic_hash,
-            repository_semantic_hash=bindings.repository_semantic_hash,
-            upstream_phase03_attestation_sha256=attestation_sha256,
-            upstream_phase03_diagnostic_package_hash=package_hash,
-            issues=issues,
-            _capability=_PRODUCTION_CONSTRUCTION_CAPABILITY,
-        )
-        return authority
+        return {
+            "publication_id": bindings.publication_id,
+            "publication_semantic_hash": bindings.publication_semantic_hash,
+            "repository_semantic_hash": bindings.repository_semantic_hash,
+            "upstream_phase03_attestation_sha256": attestation_sha256,
+            "upstream_phase03_diagnostic_package_hash": package_hash,
+            "issues": issues,
+        }
     except GovernanceError:
         raise
     except Exception as exc:
@@ -456,3 +473,113 @@ def load_production_phase03_authority(
             GovernanceErrorCode.AUTHORITY_MISMATCH,
             "exact production Phase03 authority reconstruction failed",
         ) from exc
+
+
+def _construct_production_authority(
+    values: Mapping[str, Any], source: _ProductionAuthoritySource
+) -> GovernanceAuthority:
+    """Materialize values only after the exact loader has reconstructed them."""
+
+    normalized = _normalize_authority_values(**values)
+    authority = object.__new__(GovernanceAuthority)
+    object.__setattr__(authority, "authority_type", PRODUCTION_AUTHORITY_TYPE)
+    for field in (
+        "publication_id",
+        "publication_semantic_hash",
+        "repository_semantic_hash",
+        "upstream_phase03_attestation_sha256",
+        "upstream_phase03_diagnostic_package_hash",
+    ):
+        object.__setattr__(authority, field, values[field])
+    object.__setattr__(authority, "_issue_documents", MappingProxyType(normalized))
+    object.__setattr__(authority, "_production_source", source)
+    return authority
+
+
+def load_production_phase03_authority(
+    *,
+    publication_package_directory: Path,
+    publication_attestation_path: Path,
+    phase01_artifact_directory: Path,
+    phase02_artifact_directory: Path,
+    phase03_artifact_directory: Path,
+    expected_commit_sha: str,
+    publication_scenario: str = "full-confirmation",
+) -> GovernanceAuthority:
+    """Load production authority exclusively from independently verified files."""
+
+    values = _load_production_phase03_authority_impl(
+        publication_package_directory=publication_package_directory,
+        publication_attestation_path=publication_attestation_path,
+        phase01_artifact_directory=phase01_artifact_directory,
+        phase02_artifact_directory=phase02_artifact_directory,
+        phase03_artifact_directory=phase03_artifact_directory,
+        expected_commit_sha=expected_commit_sha,
+        publication_scenario=publication_scenario,
+    )
+    source = _ProductionAuthoritySource(
+        publication_package_directory=Path(publication_package_directory).absolute(),
+        publication_attestation_path=Path(publication_attestation_path).absolute(),
+        phase01_artifact_directory=Path(phase01_artifact_directory).absolute(),
+        phase02_artifact_directory=Path(phase02_artifact_directory).absolute(),
+        phase03_artifact_directory=Path(phase03_artifact_directory).absolute(),
+        expected_commit_sha=expected_commit_sha,
+        publication_scenario=publication_scenario,
+    )
+    return _construct_production_authority(values, source)
+
+
+def _authority_semantic_values(authority: GovernanceAuthority) -> dict[str, Any]:
+    return {
+        "publication_id": authority.publication_id,
+        "publication_semantic_hash": authority.publication_semantic_hash,
+        "repository_semantic_hash": authority.repository_semantic_hash,
+        "upstream_phase03_attestation_sha256": (
+            authority.upstream_phase03_attestation_sha256
+        ),
+        "upstream_phase03_diagnostic_package_hash": (
+            authority.upstream_phase03_diagnostic_package_hash
+        ),
+        "issues": dict(authority.issues),
+    }
+
+
+def _require_verified_production_authority(authority: object) -> GovernanceAuthority:
+    _reject_test_fixture(authority)
+    if (
+        isinstance(authority, GovernanceAuthority)
+        and authority.authority_type == CONTROLLED_HARNESS_AUTHORITY_TYPE
+    ):
+        raise GovernanceError(
+            GovernanceErrorCode.TEST_FIXTURE_NOT_ALLOWED_AS_PRODUCTION_AUTHORITY
+        )
+    if type(authority) is not GovernanceAuthority:
+        raise GovernanceError(
+            GovernanceErrorCode.AUTHORITY_MISMATCH,
+            "production governance authority must be loaded from exact artifacts",
+        )
+    try:
+        if authority.authority_type != PRODUCTION_AUTHORITY_TYPE:
+            raise ValueError("not a production authority")
+        source = authority._production_source
+        if not isinstance(source, _ProductionAuthoritySource):
+            raise TypeError("missing exact artifact source")
+        reconstructed = _load_production_phase03_authority_impl(
+            **source.loader_arguments()
+        )
+        if canonical_json_bytes(reconstructed) != canonical_json_bytes(
+            _authority_semantic_values(authority)
+        ):
+            raise ValueError("authority differs from exact artifact reconstruction")
+    except GovernanceError:
+        raise
+    except Exception as exc:
+        raise GovernanceError(
+            GovernanceErrorCode.AUTHORITY_MISMATCH,
+            "production governance authority differs from exact artifacts",
+        ) from exc
+    # Never continue with the caller-owned object.  Python mappings and private
+    # attributes are reflectable and may expose inconsistent ``items``/``get``
+    # behavior.  The only authority returned across this gate is rebuilt from
+    # the just-verified exact artifact values.
+    return _construct_production_authority(reconstructed, source)

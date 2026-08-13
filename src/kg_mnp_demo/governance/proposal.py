@@ -7,11 +7,10 @@ from collections.abc import Mapping
 from copy import deepcopy
 from typing import Any
 
-from kg_mnp_demo.modeling.canonical_json import stable_urn
-
 from .authority_binding import GovernanceAuthority
 from .contracts import validate_governance_contract
 from .errors import GovernanceError, GovernanceErrorCode
+from .identity import governance_urn
 
 PROPOSAL_TYPES = frozenset(
     {
@@ -174,7 +173,9 @@ def create_resolution_proposal(
     }
     proposal = {
         "contract_version": "1.0",
-        "proposal_id": stable_urn("resolution-proposal", semantic),
+        "proposal_id": governance_urn(
+            "resolution-proposal", semantic, authority.authority_type
+        ),
         "target_diagnostic_id": target_diagnostic_id,
         "target_diagnostic_basis_hash": target_diagnostic_basis_hash,
         **authority.binding,

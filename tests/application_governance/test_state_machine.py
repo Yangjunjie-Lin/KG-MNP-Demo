@@ -4,14 +4,14 @@ import pytest
 
 from kg_mnp_demo.governance.errors import GovernanceError, GovernanceErrorCode
 from kg_mnp_demo.governance.state_machine import require_transition
-from kg_mnp_demo.governance.workspace import GovernanceWorkspace
 
 from ._helpers import authority, proposal_arguments
+from ._helpers import workspace as controlled_workspace
 
 
 def _submitted():
     auth = authority()
-    workspace = GovernanceWorkspace.initialize(auth)
+    workspace = controlled_workspace(auth)
     proposal = workspace.create_proposal(
         expected_workspace_revision=0, **proposal_arguments(auth)
     )

@@ -5,10 +5,9 @@ from __future__ import annotations
 from collections.abc import Mapping
 from typing import Any
 
-from kg_mnp_demo.modeling.canonical_json import stable_urn
-
 from .contracts import validate_governance_contract
 from .errors import GovernanceError, GovernanceErrorCode
+from .identity import governance_urn
 
 DECISIONS = {
     "APPROVE_FOR_AMENDMENT": ("APPROVED_FOR_AMENDMENT", "ReviewApproved"),
@@ -58,7 +57,9 @@ def build_review_decision(
     }
     value = {
         "contract_version": "1.0",
-        "review_decision_id": stable_urn("resolution-review-decision", semantic),
+        "review_decision_id": governance_urn(
+            "resolution-review-decision", semantic, str(proposal["authority_type"])
+        ),
         "proposal_id": proposal["proposal_id"],
         "proposal_revision": proposal["proposal_revision"],
         "decision": decision,

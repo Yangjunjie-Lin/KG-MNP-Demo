@@ -7,6 +7,7 @@ from pathlib import Path
 import pytest
 
 import kg_mnp_demo.governance.artifact_verifier as verifier_module
+import kg_mnp_demo.governance.validator as validator_module
 from kg_mnp_demo.governance.artifact_verifier import (
     AUTHORITY_LAUNDERING_ATTACKS,
     AUTHORITY_LAUNDERING_OUTCOMES,
@@ -15,7 +16,6 @@ from kg_mnp_demo.governance.artifact_verifier import (
     verify_application_phase04_artifact,
 )
 from kg_mnp_demo.governance.attestation import CATEGORY_FIELDS
-from kg_mnp_demo.governance.workspace import GovernanceWorkspace
 from kg_mnp_demo.modeling.canonical_json import canonical_json_bytes, semantic_hash
 from scripts.governance_controlled_fixture import ControlledDiagnosticFixture
 
@@ -146,7 +146,20 @@ def artifact(tmp_path: Path):
                 raise AssertionError("authority binding mismatch")
 
     auth = VerifiedProductionAuthorityStub()
-    workspace = GovernanceWorkspace.initialize(auth).value
+    binding = auth.binding
+    workspace = {
+        "contract_version": "1.0",
+        "workspace_id": "urn:kg-mnp:governance-workspace:" + semantic_hash(binding),
+        "authority_binding": binding,
+        "events": [],
+        "workspace_revision": 0,
+        "head_event_hash": "GENESIS",
+        "workspace_hash": "0" * 64,
+        "status": "GOVERNANCE_WORKSPACE_ACTIVE",
+    }
+    workspace["workspace_hash"] = semantic_hash(
+        {key: value for key, value in workspace.items() if key != "workspace_hash"}
+    )
     fixture = ControlledDiagnosticFixture.create()
     probes = _probes()
     attestation = _attestation(auth, workspace, fixture, probes)
@@ -235,6 +248,14 @@ def _verify(monkeypatch, root: Path, auth, **kwargs):
         return auth
 
     monkeypatch.setattr(verifier_module, "load_production_phase03_authority", load)
+    # This unit isolates the Phase04 file verifier after its exact loader trust
+    # boundary. Exact production construction/reverification is exercised by
+    # test_authority_binding and the licensed integration, never by this stub.
+    monkeypatch.setattr(
+        validator_module,
+        "_require_verified_production_authority",
+        lambda supplied: auth if supplied is auth else supplied,
+    )
     arguments = {**UPSTREAM, **kwargs}
     result = verify_application_phase04_artifact(root, **arguments)
     assert seen == [UPSTREAM]

@@ -6,7 +6,7 @@
   "required": ["contract_version", "workspace_id", "authority_binding", "events", "workspace_revision", "head_event_hash", "workspace_hash", "status"],
   "properties": {
     "contract_version": {"const": "1.0"},
-    "workspace_id": {"type": "string", "pattern": "^urn:kg-mnp:governance-workspace:[0-9a-f]{64}$"},
+    "workspace_id": {"type": "string", "pattern": "^urn:kg-mnp:(?:governance-workspace|test-fixture:phase04:governance-workspace):[0-9a-f]{64}$"},
     "authority_binding": {
       "type": "object", "additionalProperties": false,
       "required": ["authority_type", "publication_id", "publication_semantic_hash", "repository_semantic_hash", "upstream_phase03_attestation_sha256", "upstream_phase03_diagnostic_package_hash"],

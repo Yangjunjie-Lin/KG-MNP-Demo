@@ -8,19 +8,40 @@ explicitly named test-harness adapter at the bottom of this file.
 
 from __future__ import annotations
 
-from collections.abc import Mapping
+from collections.abc import Callable, Mapping
 from copy import deepcopy
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Any
+
+from fastapi import FastAPI, Request
+from fastapi.responses import FileResponse, JSONResponse
+from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from kg_mnp_demo.diagnostics.authority_binding import AuthorityBindings
 from kg_mnp_demo.diagnostics.engine import reconstruct_diagnostics
 from kg_mnp_demo.diagnostics.issue import diagnostic_semantic_basis
 from kg_mnp_demo.diagnostics.policy import diagnostic_policy_hash
 from kg_mnp_demo.governance.authority_binding import GovernanceAuthority
+from kg_mnp_demo.governance.contracts import strict_json_bytes, strict_json_file
+from kg_mnp_demo.governance.errors import GovernanceError, GovernanceErrorCode
+from kg_mnp_demo.governance.identity import CONTROLLED_FIXTURE_NAMESPACE
+from kg_mnp_demo.governance.runtime import CSP, PAGES
+from kg_mnp_demo.governance.security import (
+    MAX_BODY_BYTES,
+    csrf_token,
+    exact_fields,
+    proposal_identifier,
+)
+from kg_mnp_demo.governance.workspace import (
+    GovernanceWorkspace,
+    GovernanceWorkspaceStore,
+    _workspace_value,
+)
 from kg_mnp_demo.modeling.canonical_json import semantic_hash
+from kg_mnp_demo.modeling.dependencies import ROOT
 
-FIXTURE_NAMESPACE = "urn:kg-mnp:test-fixture:phase04:"
+FIXTURE_NAMESPACE = CONTROLLED_FIXTURE_NAMESPACE
 FIXTURE_TYPE = "PHASE04_CONTROLLED_DIAGNOSTIC_FIXTURE"
 FIXTURE_STATUS = "CONTROLLED_DIAGNOSTIC_FIXTURE"
 
@@ -290,9 +311,7 @@ def controlled_governance_authority_for_test_harness(
     issues: dict[str, dict[str, Any]] = {}
     for fixture_issue in package["issues"]:
         issue = deepcopy(fixture_issue)
-        diagnostic_id = f"urn:kg-mnp:diagnostic:{issue['diagnostic_basis_hash']}"
-        issue["diagnostic_id"] = diagnostic_id
-        issues[diagnostic_id] = issue
+        issues[issue["diagnostic_id"]] = issue
     return GovernanceAuthority(
         authority_type="CONTROLLED_TEST_HARNESS",
         publication_id=bindings["publication_id"],
@@ -310,3 +329,293 @@ def controlled_governance_authority_for_test_harness(
         ),
         issues=issues,
     )
+
+
+def controlled_governance_workspace_for_test_harness(
+    authority: GovernanceAuthority,
+    current_authority=None,
+) -> GovernanceWorkspace:
+    """Create an in-memory workspace through the explicit TEST-ONLY harness."""
+
+    if authority.authority_type != "CONTROLLED_TEST_HARNESS":
+        raise ValueError("controlled authority required")
+    return ControlledGovernanceWorkspaceForTestHarness(
+        _workspace_value(authority), current_authority or (lambda: authority)
+    )
+
+
+class ControlledGovernanceWorkspaceForTestHarness(GovernanceWorkspace):
+    """TEST-ONLY adapter over the shared governance state-machine logic."""
+
+    def _require_current_authority_mode(self) -> GovernanceAuthority:
+        authority = self.current_authority()
+        mode = self.value.get("authority_binding", {}).get("authority_type")
+        if (
+            mode != "CONTROLLED_TEST_HARNESS"
+            or authority.authority_type != "CONTROLLED_TEST_HARNESS"
+        ):
+            raise GovernanceError(GovernanceErrorCode.AUTHORITY_MISMATCH)
+        return authority
+
+
+class ControlledGovernanceWorkspaceStoreForTestHarness(GovernanceWorkspaceStore):
+    """TEST-ONLY persistence adapter, outside the production package."""
+
+    def _validate_authority(
+        self, authority: GovernanceAuthority
+    ) -> GovernanceAuthority:
+        if authority.authority_type != "CONTROLLED_TEST_HARNESS":
+            raise GovernanceError(GovernanceErrorCode.AUTHORITY_MISMATCH)
+        return authority
+
+    def initialize(self, authority: GovernanceAuthority) -> GovernanceWorkspace:
+        with self._lock:
+            self._validate_authority(authority)
+            if self.path.exists():
+                raise GovernanceError(
+                    GovernanceErrorCode.REPLAY_DETECTED, "workspace already exists"
+                )
+            workspace = controlled_governance_workspace_for_test_harness(
+                authority, self.current_authority
+            )
+            self._persist(workspace.value)
+            return workspace
+
+    def load(self) -> GovernanceWorkspace:
+        with self._lock:
+            self._validate_authority(self.current_authority())
+            self._assert_safe_path(for_write=False)
+            workspace = ControlledGovernanceWorkspaceForTestHarness(
+                strict_json_file(self.path), self.current_authority
+            )
+            workspace.reconstruct()
+            return workspace
+
+
+def controlled_governance_store_for_test_harness(
+    path,
+    current_authority: Callable[[], GovernanceAuthority],
+) -> ControlledGovernanceWorkspaceStoreForTestHarness:
+    """Create a store that is unreachable from the production runtime API."""
+
+    if current_authority().authority_type != "CONTROLLED_TEST_HARNESS":
+        raise ValueError("controlled authority required")
+    return ControlledGovernanceWorkspaceStoreForTestHarness(
+        path, current_authority
+    )
+
+
+def controlled_governance_app_for_test_harness(
+    store: ControlledGovernanceWorkspaceStoreForTestHarness,
+    *,
+    expected_origin: str | None = None,
+    web_root: Path | None = None,
+    csrf_value: str | None = None,
+) -> FastAPI:
+    """Serve TEST-ONLY probes without importing a production app factory."""
+
+    if type(store) is not ControlledGovernanceWorkspaceStoreForTestHarness:
+        raise ValueError("controlled store required")
+    if store.current_authority().authority_type != "CONTROLLED_TEST_HARNESS":
+        raise ValueError("controlled authority required")
+    root = Path(web_root or ROOT / "web" / "governance").resolve(strict=True)
+    if not (root / "index.html").is_file():
+        raise GovernanceError(GovernanceErrorCode.GOVERNANCE_NOT_READY)
+    token = csrf_value or csrf_token()
+    app = FastAPI(
+        title="KG-MNP Controlled Governance Test Harness",
+        version="1.0.0",
+        docs_url=None,
+        redoc_url=None,
+        openapi_url=None,
+    )
+    app.state.csrf_token = token
+
+    @app.middleware("http")
+    async def security_boundary(request: Request, call_next):
+        host = request.headers.get("host", "").split(":", 1)[0]
+        if (
+            host not in {"127.0.0.1", "testserver"}
+            or "x-forwarded-host" in request.headers
+            or "forwarded" in request.headers
+            or request.headers.get("upgrade", "").casefold() == "websocket"
+        ):
+            error = GovernanceError(GovernanceErrorCode.ORIGIN_REJECTED)
+            return JSONResponse(error.to_dict(), status_code=error.http_status)
+        if request.method not in {"GET", "HEAD", "POST"}:
+            error = GovernanceError(GovernanceErrorCode.METHOD_NOT_ALLOWED)
+            return JSONResponse(error.to_dict(), status_code=error.http_status)
+        if request.method == "POST":
+            origin = request.headers.get("origin")
+            same_origin = expected_origin or f"http://{request.headers.get('host', '')}"
+            if origin != same_origin:
+                error = GovernanceError(GovernanceErrorCode.ORIGIN_REJECTED)
+                return JSONResponse(error.to_dict(), status_code=error.http_status)
+            if request.headers.get("x-csrf-token") != token:
+                error = GovernanceError(GovernanceErrorCode.CSRF_REJECTED)
+                return JSONResponse(error.to_dict(), status_code=error.http_status)
+            if request.headers.get("content-type", "").casefold() != "application/json":
+                error = GovernanceError(GovernanceErrorCode.CONTENT_TYPE_REJECTED)
+                return JSONResponse(error.to_dict(), status_code=error.http_status)
+            declared = request.headers.get("content-length")
+            try:
+                if declared is not None and int(declared) > MAX_BODY_BYTES:
+                    raise GovernanceError(GovernanceErrorCode.BODY_TOO_LARGE)
+            except GovernanceError as error:
+                return JSONResponse(error.to_dict(), status_code=error.http_status)
+            except ValueError:
+                error = GovernanceError(GovernanceErrorCode.INVALID_REQUEST)
+                return JSONResponse(error.to_dict(), status_code=error.http_status)
+            if len(await request.body()) > MAX_BODY_BYTES:
+                error = GovernanceError(GovernanceErrorCode.BODY_TOO_LARGE)
+                return JSONResponse(error.to_dict(), status_code=error.http_status)
+        response = await call_next(request)
+        response.headers["Cache-Control"] = "no-store, max-age=0"
+        response.headers["Content-Security-Policy"] = CSP
+        response.headers["X-Content-Type-Options"] = "nosniff"
+        response.headers["Referrer-Policy"] = "no-referrer"
+        response.headers["Permissions-Policy"] = (
+            "camera=(), microphone=(), geolocation=(), payment=()"
+        )
+        response.headers["Cross-Origin-Resource-Policy"] = "same-origin"
+        response.headers["Cross-Origin-Opener-Policy"] = "same-origin"
+        return response
+
+    @app.exception_handler(GovernanceError)
+    async def governance_error(_request: Request, exc: GovernanceError):
+        return JSONResponse(exc.to_dict(), status_code=exc.http_status)
+
+    @app.exception_handler(StarletteHTTPException)
+    async def route_error(_request: Request, exc: StarletteHTTPException):
+        code = (
+            GovernanceErrorCode.METHOD_NOT_ALLOWED
+            if exc.status_code == 405
+            else GovernanceErrorCode.INVALID_REQUEST
+        )
+        error = GovernanceError(code)
+        return JSONResponse(error.to_dict(), status_code=error.http_status)
+
+    @app.exception_handler(Exception)
+    async def internal_error(_request: Request, _exc: Exception):
+        error = GovernanceError(GovernanceErrorCode.GOVERNANCE_NOT_READY)
+        return JSONResponse(error.to_dict(), status_code=500)
+
+    def authority() -> GovernanceAuthority:
+        current = store.current_authority()
+        store._validate_authority(current)
+        return current
+
+    async def strict_body(request: Request):
+        try:
+            return strict_json_bytes(await request.body())
+        except (ValueError, TypeError) as exc:
+            raise GovernanceError(
+                GovernanceErrorCode.INVALID_REQUEST,
+                "invalid strict JSON request body",
+            ) from exc
+
+    def page():
+        store.load()
+        return FileResponse(root / "index.html", media_type="text/html")
+
+    for route in PAGES:
+        app.add_api_route(route, page, methods=["GET", "HEAD"], include_in_schema=False)
+
+    @app.api_route("/assets/app.js", methods=["GET", "HEAD"])
+    def javascript():
+        return FileResponse(root / "assets" / "app.js", media_type="text/javascript")
+
+    @app.api_route("/assets/styles.css", methods=["GET", "HEAD"])
+    def styles():
+        return FileResponse(root / "assets" / "styles.css", media_type="text/css")
+
+    @app.api_route("/governance/api/bootstrap", methods=["GET", "HEAD"])
+    def bootstrap():
+        workspace = store.load()
+        return {
+            "contract_version": "1.0",
+            "csrf_token": token,
+            "csrf_token_authority": "ANTI_CSRF_ONLY_NOT_AUTHENTICATED_IDENTITY",
+            "workspace_revision": workspace.value["workspace_revision"],
+            "head_event_hash": workspace.value["head_event_hash"],
+            "status": "GOVERNANCE_READY",
+        }
+
+    @app.api_route("/governance/api/status", methods=["GET", "HEAD"])
+    def status():
+        workspace = store.load()
+        current = authority()
+        return {
+            "contract_version": "1.0",
+            **current.binding,
+            "workspace_id": workspace.value["workspace_id"],
+            "workspace_revision": workspace.value["workspace_revision"],
+            "head_event_hash": workspace.value["head_event_hash"],
+            "semantic_authority": "NON_AUTHORITATIVE_FUTURE_AMENDMENT_GOVERNANCE_ONLY",
+            "status": "GOVERNANCE_READY",
+        }
+
+    @app.api_route("/governance/api/diagnostics", methods=["GET", "HEAD"])
+    def diagnostics():
+        return {"contract_version": "1.0", "issues": list(authority().issues.values())}
+
+    @app.api_route("/governance/api/workspace", methods=["GET", "HEAD"])
+    def workspace_state():
+        workspace = store.load()
+        return {**workspace.reconstruct(), "events": workspace.value["events"]}
+
+    @app.post("/governance/api/proposals", status_code=201)
+    async def create_proposal(request: Request):
+        body = exact_fields(
+            await strict_body(request),
+            {
+                "expected_workspace_revision",
+                "expected_head_hash",
+                "target_diagnostic_id",
+                "target_diagnostic_basis_hash",
+                "proposal_type",
+                "proposed_payload",
+                "rationale",
+                "created_by_label",
+                "proposal_revision",
+            },
+            "proposal request",
+        )
+        return store.mutate(lambda workspace: workspace.create_proposal(**body))
+
+    @app.post("/governance/api/proposals/{proposal_digest}/submit")
+    async def submit(proposal_digest: str, request: Request):
+        body = exact_fields(
+            await strict_body(request),
+            {"expected_workspace_revision", "expected_head_hash"},
+            "submit request",
+        )
+        proposal_id = proposal_identifier(
+            proposal_digest, controlled_test_harness=True
+        )
+        return store.mutate(
+            lambda workspace: workspace.submit_proposal(proposal_id, **body)
+        )
+
+    @app.post("/governance/api/proposals/{proposal_digest}/review")
+    async def review(proposal_digest: str, request: Request):
+        body = exact_fields(
+            await strict_body(request),
+            {
+                "expected_workspace_revision",
+                "expected_head_hash",
+                "decision",
+                "review_note",
+                "reviewed_by_label",
+                "explicit_human_action",
+            },
+            "review request",
+        )
+        proposal_id = proposal_identifier(
+            proposal_digest, controlled_test_harness=True
+        )
+        return store.mutate(
+            lambda workspace: workspace.review_proposal(proposal_id, **body)
+        )
+
+    return app

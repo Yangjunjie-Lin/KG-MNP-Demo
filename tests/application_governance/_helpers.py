@@ -7,6 +7,7 @@ from kg_mnp_demo.governance.proposal import empty_payload
 from scripts.governance_controlled_fixture import (
     ControlledDiagnosticFixture,
     controlled_governance_authority_for_test_harness,
+    controlled_governance_workspace_for_test_harness,
 )
 
 
@@ -16,6 +17,11 @@ def authority() -> GovernanceAuthority:
     return controlled_governance_authority_for_test_harness(
         ControlledDiagnosticFixture.create()
     )
+
+
+def workspace(authority_value: GovernanceAuthority | None = None, current_authority=None):
+    value = authority_value or authority()
+    return controlled_governance_workspace_for_test_harness(value, current_authority)
 
 
 def issue(authority_value: GovernanceAuthority | None = None):

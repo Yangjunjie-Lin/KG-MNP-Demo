@@ -22,7 +22,10 @@ import uvicorn
 from fastapi.testclient import TestClient
 from governance_controlled_fixture import (
     ControlledDiagnosticFixture,
+    controlled_governance_app_for_test_harness,
     controlled_governance_authority_for_test_harness,
+    controlled_governance_store_for_test_harness,
+    controlled_governance_workspace_for_test_harness,
 )
 
 from kg_mnp_demo.application.publication_binding import PublicationBinding
@@ -44,7 +47,6 @@ from kg_mnp_demo.governance.contracts import strict_json_file
 from kg_mnp_demo.governance.errors import GovernanceError
 from kg_mnp_demo.governance.event_log import event_identity_content
 from kg_mnp_demo.governance.proposal import empty_payload
-from kg_mnp_demo.governance.runtime import create_governance_app
 from kg_mnp_demo.governance.state_machine import require_transition
 from kg_mnp_demo.governance.validator import (
     validate_governance_workspace_against_authorities,
@@ -404,7 +406,7 @@ def _rehash_workspace(value: dict[str, Any]) -> None:
 
 def _run_governance(authority: GovernanceAuthority, output: Path):
     current = [authority]
-    store = GovernanceWorkspaceStore(
+    store = controlled_governance_store_for_test_harness(
         output / "governance-workspace.json", lambda: current[0]
     )
     workspace = store.initialize(authority)
@@ -501,7 +503,7 @@ def _run_governance(authority: GovernanceAuthority, output: Path):
             lambda c=current_state, t=target: (require_transition(c, t), "ACCEPTED")[1],
         )
 
-    replay_workspace = GovernanceWorkspace.initialize(authority)
+    replay_workspace = controlled_governance_workspace_for_test_harness(authority)
     replay_proposal = replay_workspace.create_proposal(
         expected_workspace_revision=0, **_proposal_args(missing)
     )
@@ -569,7 +571,7 @@ def _run_governance(authority: GovernanceAuthority, output: Path):
         }
     )
     stale_current = [authority]
-    stale_workspace = GovernanceWorkspace.initialize(
+    stale_workspace = controlled_governance_workspace_for_test_harness(
         authority, lambda: stale_current[0]
     )
     stale_current[0] = stale
@@ -740,7 +742,7 @@ def _http_and_browser_probes(
     store: GovernanceWorkspaceStore, probes: list[dict[str, Any]]
 ):
     token = "phase04-integration-csrf"
-    app = create_governance_app(store, csrf_value=token)
+    app = controlled_governance_app_for_test_harness(store, csrf_value=token)
     with TestClient(app, raise_server_exceptions=False) as http:
 
         def outcome(response):

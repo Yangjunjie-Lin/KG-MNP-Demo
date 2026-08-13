@@ -6,17 +6,25 @@ from pathlib import Path
 import pytest
 
 import kg_mnp_demo.governance as governance_api
+import kg_mnp_demo.governance.runtime as production_runtime
 import scripts.governance_controlled_fixture as controlled_fixture_module
 from kg_mnp_demo.governance.authority_binding import GovernanceAuthority
 from kg_mnp_demo.governance.errors import GovernanceError, GovernanceErrorCode
-from kg_mnp_demo.governance.workspace import GovernanceWorkspace
+from kg_mnp_demo.governance.runtime import create_governance_app
+from kg_mnp_demo.governance.workspace import (
+    GovernanceWorkspace,
+    GovernanceWorkspaceStore,
+)
 from scripts.governance_controlled_fixture import (
     FIXTURE_NAMESPACE,
     FIXTURE_STATUS,
     FIXTURE_TYPE,
     ControlledDiagnosticFixture,
     controlled_governance_authority_for_test_harness,
+    controlled_governance_workspace_for_test_harness,
 )
+
+from ._helpers import proposal_arguments
 
 
 def _caller_authored_iris(value, field: str | None = None):
@@ -95,8 +103,12 @@ def test_controlled_fixture_is_deterministic_and_uses_test_namespace() -> None:
 def test_fixture_only_enters_governance_through_named_test_adapter() -> None:
     fixture = ControlledDiagnosticFixture.create()
     assert not isinstance(fixture, GovernanceAuthority)
-    with pytest.raises((AttributeError, TypeError)):
+    with pytest.raises(GovernanceError) as raw_caught:
         GovernanceWorkspace.initialize(fixture)  # type: ignore[arg-type]
+    assert (
+        raw_caught.value.code
+        == GovernanceErrorCode.TEST_FIXTURE_NOT_ALLOWED_AS_PRODUCTION_AUTHORITY
+    )
     authority = controlled_governance_authority_for_test_harness(fixture)
     assert authority.authority_type == "CONTROLLED_TEST_HARNESS"
     assert authority.publication_id.startswith(FIXTURE_NAMESPACE)
@@ -105,9 +117,60 @@ def test_fixture_only_enters_governance_through_named_test_adapter() -> None:
         == fixture.controlled_fixture_diagnostic_package_hash
     )
     assert len(authority.issues) == 4
-    workspace = GovernanceWorkspace.initialize(authority)
+    with pytest.raises(GovernanceError) as caught:
+        GovernanceWorkspace.initialize(authority)
+    assert (
+        caught.value.code
+        == GovernanceErrorCode.TEST_FIXTURE_NOT_ALLOWED_AS_PRODUCTION_AUTHORITY
+    )
+    workspace = controlled_governance_workspace_for_test_harness(authority)
     assert workspace.value["workspace_revision"] == 0
     assert workspace.value["events"] == []
+    assert workspace.value["workspace_id"].startswith(FIXTURE_NAMESPACE)
+    assert all(key.startswith(FIXTURE_NAMESPACE) for key in authority.issues)
+
+
+def test_production_runtime_rejects_controlled_harness(
+    tmp_path: Path,
+) -> None:
+    authority = controlled_governance_authority_for_test_harness(
+        ControlledDiagnosticFixture.create()
+    )
+    store = GovernanceWorkspaceStore(
+        tmp_path / "governance-workspace.json", lambda: authority
+    )
+    with pytest.raises(GovernanceError) as caught:
+        create_governance_app(store)
+    assert (
+        caught.value.code
+        == GovernanceErrorCode.TEST_FIXTURE_NOT_ALLOWED_AS_PRODUCTION_AUTHORITY
+    )
+    assert not hasattr(production_runtime, "_create_governance_app_core")
+
+
+def test_controlled_governance_outputs_keep_test_fixture_namespace() -> None:
+    authority = controlled_governance_authority_for_test_harness(
+        ControlledDiagnosticFixture.create()
+    )
+    workspace = controlled_governance_workspace_for_test_harness(authority)
+    proposal = workspace.create_proposal(
+        expected_workspace_revision=0,
+        **proposal_arguments(authority),
+    )
+    workspace.submit_proposal(
+        proposal["proposal_id"], expected_workspace_revision=1
+    )
+    workspace.review_proposal(
+        proposal["proposal_id"],
+        decision="APPROVE_FOR_AMENDMENT",
+        review_note="Explicit controlled-harness review",
+        reviewed_by_label="controlled operator label",
+        explicit_human_action=True,
+        expected_workspace_revision=2,
+    )
+    urns = list(_all_urns(workspace.value))
+    assert urns
+    assert all(value.startswith(FIXTURE_NAMESPACE) for value in urns)
 
 
 def test_fixture_cannot_construct_a_production_governance_authority() -> None:

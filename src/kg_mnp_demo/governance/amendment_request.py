@@ -6,10 +6,9 @@ from collections.abc import Mapping
 from copy import deepcopy
 from typing import Any
 
-from kg_mnp_demo.modeling.canonical_json import stable_urn
-
 from .contracts import validate_governance_contract
 from .errors import GovernanceError, GovernanceErrorCode
+from .identity import governance_urn
 
 
 def build_approved_amendment_request(
@@ -47,7 +46,9 @@ def build_approved_amendment_request(
     }
     value = {
         "contract_version": "1.0",
-        "amendment_request_id": stable_urn("approved-amendment-request", semantic),
+        "amendment_request_id": governance_urn(
+            "approved-amendment-request", semantic, str(proposal["authority_type"])
+        ),
         **deepcopy(semantic),
         "governance_status": "APPROVED_FOR_FUTURE_AMENDMENT",
         "status": "APPROVED_FOR_FUTURE_MODELING_AMENDMENT",

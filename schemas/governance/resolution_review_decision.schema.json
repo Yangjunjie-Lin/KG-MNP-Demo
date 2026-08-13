@@ -6,8 +6,8 @@
   "required": ["contract_version", "review_decision_id", "proposal_id", "proposal_revision", "decision", "review_note", "reviewed_by_label", "explicit_human_action"],
   "properties": {
     "contract_version": {"const": "1.0"},
-    "review_decision_id": {"type": "string", "pattern": "^urn:kg-mnp:resolution-review-decision:[0-9a-f]{64}$"},
-    "proposal_id": {"type": "string", "pattern": "^urn:kg-mnp:resolution-proposal:[0-9a-f]{64}$"},
+    "review_decision_id": {"type": "string", "pattern": "^urn:kg-mnp:(?:resolution-review-decision|test-fixture:phase04:resolution-review-decision):[0-9a-f]{64}$"},
+    "proposal_id": {"type": "string", "pattern": "^urn:kg-mnp:(?:resolution-proposal|test-fixture:phase04:resolution-proposal):[0-9a-f]{64}$"},
     "proposal_revision": {"type": "integer", "minimum": 1},
     "decision": {"enum": ["APPROVE_FOR_AMENDMENT", "REJECT", "DEFER"]},
     "review_note": {"type": "string", "minLength": 1, "maxLength": 10000},

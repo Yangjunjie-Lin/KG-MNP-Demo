@@ -20,7 +20,7 @@ from .authority_binding import (
 )
 from .contracts import (
     governance_contract_hash,
-    strict_json_file,
+    strict_json_bytes,
     validate_governance_contract,
 )
 from .validator import validate_governance_workspace_against_authorities
@@ -79,29 +79,41 @@ def _documents(directory: Path) -> dict[str, dict[str, Any]]:
         raise Phase04ArtifactVerificationError("artifact is unavailable") from exc
     if not root.is_dir():
         raise Phase04ArtifactVerificationError("artifact is not a directory")
-    entries = list(root.iterdir())
-    if (
-        len(entries) != len(FILES)
-        or {path.name for path in entries} != FILES
-        or any(path.is_symlink() or not path.is_file() for path in entries)
-    ):
-        raise Phase04ArtifactVerificationError(
-            "artifact exact five-file closed set mismatch"
-        )
+    def exact_entries() -> list[Path]:
+        current = list(root.iterdir())
+        if (
+            len(current) != len(FILES)
+            or {path.name for path in current} != FILES
+            or any(path.is_symlink() or not path.is_file() for path in current)
+        ):
+            raise Phase04ArtifactVerificationError(
+                "artifact exact five-file closed set mismatch"
+            )
+        return current
+
+    entries = exact_entries()
     documents: dict[str, dict[str, Any]] = {}
+    frozen_bytes: dict[str, bytes] = {}
     for path in entries:
         raw = path.read_bytes()
+        frozen_bytes[path.name] = raw
         if len(raw) > MAX_ARTIFACT_FILE_BYTES:
             raise Phase04ArtifactVerificationError("artifact file is too large")
         text = raw.decode("utf-8", errors="strict")
         if ABSOLUTE_PATH.search(text) or SECRET.search(text):
             raise Phase04ArtifactVerificationError("secret or absolute path detected")
         try:
-            documents[path.name] = strict_json_file(path)
+            document = strict_json_bytes(raw)
+            if not isinstance(document, dict):
+                raise TypeError("JSON root must be an object")
+            documents[path.name] = document
         except Exception as exc:
             raise Phase04ArtifactVerificationError(
                 "invalid strict JSON artifact"
             ) from exc
+    after = exact_entries()
+    if any(path.read_bytes() != frozen_bytes[path.name] for path in after):
+        raise Phase04ArtifactVerificationError("artifact changed during verification")
     return documents
 
 

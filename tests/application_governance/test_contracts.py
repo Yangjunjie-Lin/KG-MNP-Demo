@@ -5,9 +5,8 @@ import pytest
 from kg_mnp_demo.governance.contracts import SCHEMAS, load_governance_schema
 from kg_mnp_demo.governance.errors import GovernanceError, GovernanceErrorCode
 from kg_mnp_demo.governance.proposal import create_resolution_proposal, empty_payload
-from kg_mnp_demo.governance.workspace import GovernanceWorkspace
 
-from ._helpers import authority, proposal_arguments, value_payload
+from ._helpers import authority, proposal_arguments, value_payload, workspace
 
 
 def test_six_contracts_are_closed_draft_2020_12_https() -> None:
@@ -52,13 +51,13 @@ def test_rdf_term_fidelity_and_patch_content_policy() -> None:
     bad = proposal_arguments(auth)
     bad["proposed_payload"] = value_payload("INSERT DATA { <x> <y> <z> }")
     with pytest.raises(GovernanceError, match="mutation content"):
-        GovernanceWorkspace.initialize(auth).create_proposal(
+        workspace(auth).create_proposal(
             expected_workspace_revision=0, **bad
         )
     missing_term = proposal_arguments(auth)
     missing_term["proposed_payload"] = empty_payload()
     with pytest.raises(GovernanceError, match="does not match type"):
-        GovernanceWorkspace.initialize(auth).create_proposal(
+        workspace(auth).create_proposal(
             expected_workspace_revision=0, **missing_term
         )
 
@@ -68,14 +67,14 @@ def test_only_a_current_verified_issue_can_be_targeted() -> None:
     arguments = proposal_arguments(auth)
     arguments["target_diagnostic_id"] = "urn:kg-mnp:diagnostic:" + "1" * 64
     with pytest.raises(GovernanceError) as caught:
-        GovernanceWorkspace.initialize(auth).create_proposal(
+        workspace(auth).create_proposal(
             expected_workspace_revision=0, **arguments
         )
     assert caught.value.code == GovernanceErrorCode.UNKNOWN_DIAGNOSTIC
     arguments = proposal_arguments(auth)
     arguments["target_diagnostic_basis_hash"] = "2" * 64
     with pytest.raises(GovernanceError) as caught:
-        GovernanceWorkspace.initialize(auth).create_proposal(
+        workspace(auth).create_proposal(
             expected_workspace_revision=0, **arguments
         )
     assert caught.value.code == GovernanceErrorCode.STALE_DIAGNOSTIC_BINDING

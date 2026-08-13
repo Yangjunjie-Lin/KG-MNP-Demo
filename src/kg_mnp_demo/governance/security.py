@@ -31,11 +31,16 @@ def exact_fields(value: Any, fields: set[str], label: str) -> dict[str, Any]:
     return dict(value)
 
 
-def proposal_identifier(digest: str) -> str:
+def proposal_identifier(digest: str, *, controlled_test_harness: bool = False) -> str:
     if len(digest) != 64 or any(
         character not in "0123456789abcdef" for character in digest
     ):
         raise GovernanceError(
             GovernanceErrorCode.INVALID_REQUEST, "invalid proposal identifier"
         )
-    return f"urn:kg-mnp:resolution-proposal:{digest}"
+    namespace = (
+        "urn:kg-mnp:test-fixture:phase04:resolution-proposal:"
+        if controlled_test_harness
+        else "urn:kg-mnp:resolution-proposal:"
+    )
+    return namespace + digest

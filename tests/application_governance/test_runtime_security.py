@@ -6,20 +6,30 @@ import pytest
 from fastapi.testclient import TestClient
 
 from kg_mnp_demo.governance.errors import GovernanceError
-from kg_mnp_demo.governance.runtime import create_governance_app
 from kg_mnp_demo.governance.security import MAX_BODY_BYTES
 from kg_mnp_demo.governance.workspace import GovernanceWorkspaceStore
+from scripts.governance_controlled_fixture import (
+    controlled_governance_app_for_test_harness,
+    controlled_governance_store_for_test_harness,
+)
 
 from ._helpers import authority, proposal_arguments
 
 
 def client(tmp_path: Path) -> tuple[TestClient, GovernanceWorkspaceStore]:
     auth = authority()
-    store = GovernanceWorkspaceStore(
+    store = controlled_governance_store_for_test_harness(
         tmp_path / "governance-workspace.json", lambda: auth
     )
     store.initialize(auth)
-    return TestClient(create_governance_app(store, csrf_value="test-csrf-token")), store
+    return (
+        TestClient(
+            controlled_governance_app_for_test_harness(
+                store, csrf_value="test-csrf-token"
+            )
+        ),
+        store,
+    )
 
 
 def headers(**extra):

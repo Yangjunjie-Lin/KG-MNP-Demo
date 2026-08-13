@@ -13,10 +13,14 @@ from typing import Any
 from kg_mnp_demo.modeling.canonical_json import canonical_json_bytes, semantic_hash
 
 from .amendment_request import build_approved_amendment_request
-from .authority_binding import GovernanceAuthority
+from .authority_binding import (
+    GovernanceAuthority,
+    _require_verified_production_authority,
+)
 from .contracts import strict_json_file, validate_governance_contract
 from .errors import GovernanceError, GovernanceErrorCode
 from .event_log import build_event
+from .identity import governance_urn
 from .proposal import create_resolution_proposal
 from .review import build_review_decision
 from .state_machine import require_transition
@@ -36,11 +40,13 @@ def _finalize(value: dict[str, Any]) -> dict[str, Any]:
     return value
 
 
-def new_workspace(authority: GovernanceAuthority) -> dict[str, Any]:
+def _workspace_value(authority: GovernanceAuthority) -> dict[str, Any]:
     binding = authority.binding
     value = {
         "contract_version": "1.0",
-        "workspace_id": "urn:kg-mnp:governance-workspace:" + semantic_hash(binding),
+        "workspace_id": governance_urn(
+            "governance-workspace", binding, authority.authority_type
+        ),
         "authority_binding": binding,
         "events": [],
         "workspace_revision": 0,
@@ -49,6 +55,11 @@ def new_workspace(authority: GovernanceAuthority) -> dict[str, Any]:
         "status": "GOVERNANCE_WORKSPACE_ACTIVE",
     }
     return _finalize(value)
+
+
+def new_workspace(authority: GovernanceAuthority) -> dict[str, Any]:
+    authority = _require_verified_production_authority(authority)
+    return _workspace_value(authority)
 
 
 @dataclass
@@ -62,12 +73,25 @@ class GovernanceWorkspace:
         authority: GovernanceAuthority,
         current_authority: Callable[[], GovernanceAuthority] | None = None,
     ) -> GovernanceWorkspace:
-        return cls(new_workspace(authority), current_authority or (lambda: authority))
+        authority = _require_verified_production_authority(authority)
+        supplied_current = current_authority or (lambda: authority)
+        return cls(
+            _workspace_value(authority),
+            lambda: _require_verified_production_authority(supplied_current()),
+        )
 
     def reconstruct(self) -> dict[str, Any]:
+        authority = self._require_current_authority_mode()
         return validate_governance_workspace_against_authorities(
-            self.value, self.current_authority()
+            self.value, authority
         )
+
+    def _require_current_authority_mode(self) -> GovernanceAuthority:
+        authority = _require_verified_production_authority(self.current_authority())
+        mode = self.value.get("authority_binding", {}).get("authority_type")
+        if mode != "PRODUCTION_EXACT_PHASE03":
+            raise GovernanceError(GovernanceErrorCode.AUTHORITY_MISMATCH)
+        return authority
 
     def _current(
         self, expected_workspace_revision: int, expected_head_hash: str | None
@@ -79,7 +103,7 @@ class GovernanceWorkspace:
             and expected_head_hash != self.value["head_event_hash"]
         ):
             raise GovernanceError(GovernanceErrorCode.CONCURRENCY_CONFLICT)
-        authority = self.current_authority()
+        authority = self._require_current_authority_mode()
         authority.assert_same_current_authority(self.value["authority_binding"])
         self.reconstruct()
         return authority
@@ -230,23 +254,30 @@ class GovernanceWorkspaceStore:
 
     def initialize(self, authority: GovernanceAuthority) -> GovernanceWorkspace:
         with self._lock:
+            authority = self._validate_authority(authority)
             if self.path.exists():
                 raise GovernanceError(
                     GovernanceErrorCode.REPLAY_DETECTED, "workspace already exists"
                 )
             workspace = GovernanceWorkspace.initialize(
-                authority, self.current_authority
+                authority, lambda: self._validate_authority(self.current_authority())
             )
             self._persist(workspace.value)
             return workspace
 
     def load(self) -> GovernanceWorkspace:
         with self._lock:
+            authority = self._validate_authority(self.current_authority())
             self._assert_safe_path(for_write=False)
             value = strict_json_file(self.path)
-            workspace = GovernanceWorkspace(value, self.current_authority)
+            workspace = GovernanceWorkspace(value, lambda: authority)
             workspace.reconstruct()
             return workspace
+
+    def _validate_authority(
+        self, authority: GovernanceAuthority
+    ) -> GovernanceAuthority:
+        return _require_verified_production_authority(authority)
 
     def mutate(self, operation: Callable[[GovernanceWorkspace], Any]) -> Any:
         with self._lock:

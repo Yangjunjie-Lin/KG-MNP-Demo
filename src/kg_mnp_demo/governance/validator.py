@@ -10,10 +10,15 @@ from typing import Any
 from kg_mnp_demo.modeling.canonical_json import canonical_json_bytes, semantic_hash
 
 from .amendment_request import build_approved_amendment_request
-from .authority_binding import GovernanceAuthority
+from .authority_binding import (
+    PRODUCTION_AUTHORITY_TYPE,
+    GovernanceAuthority,
+    _require_verified_production_authority,
+)
 from .contracts import strict_json_file, validate_governance_contract
 from .errors import GovernanceError, GovernanceErrorCode
 from .event_log import validate_event_chain
+from .identity import governance_urn
 from .proposal import create_resolution_proposal
 from .review import build_review_decision
 from .state_machine import require_transition
@@ -47,14 +52,16 @@ def validate_governance_workspace_against_authorities(
 ) -> dict[str, Any]:
     """Reconstruct every identity and transition, then bind every target to Phase03."""
 
+    if authority.authority_type == PRODUCTION_AUTHORITY_TYPE:
+        authority = _require_verified_production_authority(authority)
     value = _value(workspace)
     try:
         validate_governance_contract("governance-workspace", value)
         for event in value["events"]:
             validate_governance_contract("governance-event", event)
         authority.assert_same_current_authority(value["authority_binding"])
-        expected_workspace_id = "urn:kg-mnp:governance-workspace:" + semantic_hash(
-            authority.binding
+        expected_workspace_id = governance_urn(
+            "governance-workspace", authority.binding, authority.authority_type
         )
         if value["workspace_id"] != expected_workspace_id:
             raise ValueError("workspace identity mismatch")
