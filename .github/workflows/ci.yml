@@ -477,6 +477,87 @@ jobs:
           fi
           exit "$cleanup_status"
 
+  amendment-offline:
+    if: github.event_name == 'pull_request'
+    needs: [governance-offline]
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[dev]"
+      - name: Verify Application Phase 05 offline
+        run: make verify-application-phase-05-offline
+      - name: Verify clean working tree
+        shell: bash
+        run: |
+          git diff --exit-code
+          test -z "$(git status --short)"
+
+  amendment-republication-integration:
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
+    needs: [governance-integration]
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[dev,webvowl]"
+          python -m playwright install --with-deps chromium
+      - name: Set up Java (ROBOT/HermiT)
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - name: Pull pinned GraphDB image
+        run: docker pull ontotext/graphdb:11.4.2@sha256:1593f8b5d42acb0f02f11b2a87b87ecbe76dbcec33cea56ca5bc32bebf6a7f12
+      - name: Verify Phase 05 licensed upstream and controlled re-publication
+        env:
+          GRAPHDB_LICENSE_CONTENT: ${{ secrets.GRAPHDB_LICENSE_CONTENT }}
+          GRAPHDB_LICENSE_B64: ${{ secrets.GRAPHDB_LICENSE_B64 }}
+        run: make verify-application-phase-05
+      - name: Independently verify Phase 05 exact artifact
+        shell: bash
+        run: |
+          set -euo pipefail
+          publication_hash="$(python -c 'import json; print(json.load(open("runtime_outputs/publication/full-confirmation/publication-manifest.json"))["publication_semantic_hash"])')"
+          phase04_dir="$(find runtime_reports/governance -name application-phase04-attestation.json -printf '%T@ %h\n' | sort -nr | head -1 | cut -d' ' -f2-)"
+          python scripts/verify_application_phase05_artifact.py "runtime_reports/amendment/$GITHUB_SHA" \
+            --stage08-artifact runtime_outputs/publication/full-confirmation \
+            --publication-attestation "runtime_reports/publication/$publication_hash/publication-attestation.json" \
+            --phase01-artifact "runtime_reports/application/$publication_hash" \
+            --phase02-artifact "runtime_reports/workbench/$publication_hash" \
+            --phase03-artifact "runtime_reports/diagnostics/$publication_hash" \
+            --phase04-artifact "$phase04_dir" \
+            --expected-commit-sha "$GITHUB_SHA"
+      - name: Upload Application Phase 05 attestation artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: application-phase05-attestation-${{ github.sha }}
+          path: runtime_reports/amendment/${{ github.sha }}
+          if-no-files-found: error
+      - name: Verify clean working tree
+        shell: bash
+        run: |
+          git diff --exit-code
+          test -z "$(git status --short)"
+
   workbench-offline:
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest

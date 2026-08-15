@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/amendment/republication-result/1.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["contract_version", "status", "base_publication_id", "new_publication_id", "base_publication_semantic_hash", "new_publication_semantic_hash", "modeling_proposal_hash", "review_decision_log_hash", "confirmed_modeling_package_hash", "compilation_semantic_hash", "new_repository_id", "base_publication_immutable", "base_repository_immutable", "tbox_unchanged", "shacl_unchanged", "abox_changed", "webvowl_unchanged", "test_only"],
+  "properties": {
+    "contract_version": {"const": "1.0"},
+    "status": {"enum": ["APPLICATION_AMENDMENT_REPUBLICATION_VERIFIED", "NO_REENTRY_REQUIRED", "REVIEW_REJECTED", "REVIEW_DEFERRED"]},
+    "base_publication_id": {"type": "string", "minLength": 1},
+    "new_publication_id": {"type": ["string", "null"]},
+    "base_publication_semantic_hash": {"$ref": "#/$defs/hash"},
+    "new_publication_semantic_hash": {"anyOf": [{"$ref": "#/$defs/hash"}, {"type": "null"}]},
+    "modeling_proposal_hash": {"anyOf": [{"$ref": "#/$defs/hash"}, {"type": "null"}]},
+    "review_decision_log_hash": {"anyOf": [{"$ref": "#/$defs/hash"}, {"type": "null"}]},
+    "confirmed_modeling_package_hash": {"anyOf": [{"$ref": "#/$defs/hash"}, {"type": "null"}]},
+    "compilation_semantic_hash": {"anyOf": [{"$ref": "#/$defs/hash"}, {"type": "null"}]},
+    "new_repository_id": {"type": ["string", "null"]},
+    "amendment_lineage": {"type": ["object", "null"], "additionalProperties": true},
+    "base_publication_immutable": {"const": true},
+    "base_repository_immutable": {"const": true},
+    "tbox_unchanged": {"const": true},
+    "shacl_unchanged": {"const": true},
+    "abox_changed": {"type": "boolean"},
+    "webvowl_unchanged": {"const": true},
+    "test_only": {"const": true}
+  },
+  "$defs": {"hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}
+}

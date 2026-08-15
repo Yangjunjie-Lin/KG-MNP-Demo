@@ -313,6 +313,51 @@ Phase 04 adds no semantic repair, RDF compiler, automatic approval, automatic
 republication, database, AI, LLM, Agent, GraphRAG, RAG, embedding, vector
 database, or AI-generated rationale/review.
 
+### Application Phase 05 — Controlled ABox Amendment Re-entry and Deterministic Re-publication
+
+Application Phase 05 status = PASS.
+
+Phase 04 approval remains an approval of an amendment request, never a
+semantic fact or a Stage 05 confirmation. Phase 05 requires human-supplied
+revised CleanedPartialData, independently computes the complete JSON diff
+(including metadata, presence, source and evidence references), and sends that
+input through the existing ModelingProposal generator, ReviewDecisionLog
+workflow, ConfirmedModelingPackage builder, deterministic compiler, GraphDB
+publication package, and WebVOWL verification. Completed review logs and old
+publications are immutable. No direct RDF edit, in-place repository mutation,
+current-pointer cutover, or custom amendment compiler exists.
+
+Production Phase 05 is bound to the exact Stage 08, Phase 01, Phase 02,
+Phase 03, and Phase 04 artifacts at one commit. The current production
+lineage has zero approved amendment requests; NO_PENDING_APPROVED_AMENDMENTS
+is a valid PASS state and does not justify using a fixture. Controlled
+re-publication scenarios are explicitly test_only=true,
+production_authority=false, and use the
+urn:kg-mnp:test-fixture:phase05: namespace.
+
+Application Phase05
+Controlled ABox Amendment Re-entry
+and Deterministic Re-publication Lifecycle
+= PASS
+
+    kg-mnp amendment upstream verify <exact Stage08–Phase04 arguments>
+    kg-mnp amendment intake validate --manifest <manifest> --base-input <base-cleaned.json> --revised-input <revised-cleaned.json>
+    kg-mnp amendment reentry verify <approved-request/manifest/input arguments>
+    make verify-application-phase-05-offline
+
+Phase 05 never makes the new semantic decision. Human review continues through:
+
+    kg-mnp review init
+    kg-mnp review record
+    kg-mnp review validate
+    kg-mnp review finalize
+    kg-mnp confirm build
+    kg-mnp package validate
+
+Licensed CI is required for the final live integration gate. Phase 05 stops
+at a verified, not activated, new publication. Production current-pointer
+cutover and TBox/SHACL evolution are outside this phase.
+
 ### Stage 08 authority boundary
 
 - **ConfirmedModelingPackage** is the semantic decision authority.

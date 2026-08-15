@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/amendment/verified-amendment-intake/1.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["contract_version", "intake", "approved_amendment_request", "base_publication", "revised_cleaned_data_hash", "status"],
+  "properties": {
+    "contract_version": {"const": "1.0"},
+    "intake": {"type": "object", "additionalProperties": true},
+    "approved_amendment_request": {"type": "object", "additionalProperties": true},
+    "base_publication": {"type": "object", "additionalProperties": true},
+    "revised_cleaned_data_hash": {"$ref": "#/$defs/hash"},
+    "status": {"const": "VERIFIED_AMENDMENT_INTAKE"}
+  },
+  "$defs": {"hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"}}
+}

@@ -572,3 +572,41 @@ verify-application-phase-04-offline: verify-application-phase-03-offline \
 
 verify-application-phase-04: verify-application-phase-03 \
 	verify-application-phase-04-offline verify-governance-live
+
+.PHONY: verify-amendment-contracts verify-amendment-authority-binding verify-amendment-input-diff verify-amendment-scope verify-amendment-reentry verify-amendment-review-boundary verify-amendment-determinism verify-amendment-security verify-amendment-republication verify-application-phase-05-offline verify-application-phase-05
+
+verify-amendment-contracts:
+	python scripts/check_schema_identifiers.py
+	python -m pytest -q tests/amendment/test_contracts.py
+
+verify-amendment-authority-binding:
+	python -m pytest -q tests/amendment/test_artifact_closed_set.py
+
+verify-amendment-input-diff:
+	python -m pytest -q tests/amendment/test_diff_and_scope.py -k "diff or undeclared"
+
+verify-amendment-scope:
+	python -m pytest -q tests/amendment/test_diff_and_scope.py -k "scope or tbox or reopen"
+
+verify-amendment-reentry:
+	python -m pytest -q tests/amendment/test_reentry_boundaries.py
+
+verify-amendment-review-boundary:
+	python -m pytest -q tests/amendment/test_review_boundary.py
+
+verify-amendment-determinism:
+	python -m pytest -q tests/amendment/test_reentry_boundaries.py -k "identity or invariants"
+
+verify-amendment-security:
+	ruff check src/kg_mnp_demo/amendment scripts/amendment_controlled_fixture.py scripts/amendment_integration.py scripts/verify_application_phase05_artifact.py tests/amendment
+	python -m pytest -q tests/amendment
+
+verify-amendment-republication:
+	python -m pytest -q tests/amendment/test_reentry_boundaries.py tests/amendment/test_review_boundary.py
+	python scripts/amendment_controlled_fixture.py
+
+verify-application-phase-05-offline: verify-application-phase-04-offline verify-amendment-contracts verify-amendment-authority-binding verify-amendment-input-diff verify-amendment-scope verify-amendment-reentry verify-amendment-review-boundary verify-amendment-determinism verify-amendment-security verify-amendment-republication
+	python -m pytest -q tests/amendment
+
+verify-application-phase-05: verify-application-phase-04 verify-application-phase-05-offline
+	python scripts/amendment_integration.py

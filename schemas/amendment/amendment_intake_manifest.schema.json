@@ -1,0 +1,37 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/amendment/amendment-intake-manifest/1.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version", "intake_id", "base_publication_id",
+    "base_publication_semantic_hash", "phase04_attestation_sha256",
+    "phase04_workspace_hash", "approved_amendment_request_id",
+    "base_cleaned_data_hash", "revised_cleaned_data_hash",
+    "declared_changed_json_pointers", "actual_changed_json_pointers",
+    "target_json_pointers", "proposal_type", "target_diagnostic_id",
+    "expected_semantic_effect", "status"
+  ],
+  "properties": {
+    "contract_version": {"const": "1.0"},
+    "intake_id": {"type": "string", "pattern": "^urn:kg-mnp:amendment-intake:[0-9a-f]{64}$"},
+    "base_publication_id": {"type": "string", "minLength": 1},
+    "base_publication_semantic_hash": {"$ref": "#/$defs/hash"},
+    "phase04_attestation_sha256": {"$ref": "#/$defs/hash"},
+    "phase04_workspace_hash": {"$ref": "#/$defs/hash"},
+    "approved_amendment_request_id": {"type": "string", "minLength": 1},
+    "base_cleaned_data_hash": {"$ref": "#/$defs/hash"},
+    "revised_cleaned_data_hash": {"$ref": "#/$defs/hash"},
+    "declared_changed_json_pointers": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/jsonPointer"}},
+    "actual_changed_json_pointers": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/jsonPointer"}},
+    "target_json_pointers": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/jsonPointer"}},
+    "proposal_type": {"enum": ["PROPOSE_VALUE_CANDIDATE", "PROPOSE_EVIDENCE_ATTACHMENT", "PROPOSE_SOURCE_ATTACHMENT", "REQUEST_REVIEW_REOPEN", "PROPOSE_CONSTRAINT_REVIEW", "NO_CHANGE_RECOMMENDED"]},
+    "target_diagnostic_id": {"type": "string", "minLength": 1},
+    "expected_semantic_effect": {"type": "string", "minLength": 1},
+    "status": {"enum": ["DRAFT", "VALIDATED", "REJECTED", "REPLAY_DETECTED"]}
+  },
+  "$defs": {
+    "hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "jsonPointer": {"type": "string", "pattern": "^$|^(?:/([^~/]|~[01])*)+$"}
+  }
+}
