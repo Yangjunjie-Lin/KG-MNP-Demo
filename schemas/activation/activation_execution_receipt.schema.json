@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/activation/activation-execution-receipt/1.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "execution_id",
+    "proposal_id",
+    "review_decision_id",
+    "old_pointer_hash",
+    "new_pointer_hash",
+    "old_generation",
+    "new_generation",
+    "target_publication_id",
+    "target_publication_semantic_hash",
+    "target_repository_id",
+    "target_repository_semantic_hash",
+    "target_publication_attestation_sha256",
+    "verification_evidence_hashes",
+    "event_id",
+    "semantic_authority",
+    "deployment_governance_only",
+    "test_only",
+    "production_authority",
+    "status"
+  ],
+  "properties": {
+    "contract_version": {"const": "1.0"},
+    "execution_id": {
+      "type": "string",
+      "pattern": "^urn:kg-mnp:(?:activation-execution|test-fixture:phase06:activation-execution):[0-9a-f]{64}$"
+    },
+    "proposal_id": {
+      "type": "string",
+      "pattern": "^urn:kg-mnp:(?:activation-proposal|test-fixture:phase06:activation-proposal):[0-9a-f]{64}$"
+    },
+    "review_decision_id": {
+      "type": "string",
+      "pattern": "^urn:kg-mnp:(?:activation-review-decision|test-fixture:phase06:activation-review-decision):[0-9a-f]{64}$"
+    },
+    "old_pointer_hash": {"$ref": "#/$defs/hash"},
+    "new_pointer_hash": {"$ref": "#/$defs/hash"},
+    "old_generation": {"type": "integer", "minimum": 0},
+    "new_generation": {"type": "integer", "minimum": 1},
+    "target_publication_id": {"type": "string", "minLength": 1, "maxLength": 2048},
+    "target_publication_semantic_hash": {"$ref": "#/$defs/hash"},
+    "target_repository_id": {"type": "string", "minLength": 1, "maxLength": 512},
+    "target_repository_semantic_hash": {"$ref": "#/$defs/hash"},
+    "target_publication_attestation_sha256": {"$ref": "#/$defs/hash"},
+    "verification_evidence_hashes": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "publication_tree_sha256",
+        "publication_attestation_sha256",
+        "expected_repository_semantic_hash",
+        "live_repository_semantic_hash"
+      ],
+      "properties": {
+        "publication_tree_sha256": {"$ref": "#/$defs/hash"},
+        "publication_attestation_sha256": {"$ref": "#/$defs/hash"},
+        "expected_repository_semantic_hash": {"$ref": "#/$defs/hash"},
+        "live_repository_semantic_hash": {"$ref": "#/$defs/hash"}
+      }
+    },
+    "event_id": {
+      "type": "string",
+      "pattern": "^urn:kg-mnp:(?:activation-event|test-fixture:phase06:activation-event):[0-9a-f]{64}$"
+    },
+    "semantic_authority": {"const": false},
+    "deployment_governance_only": {"const": true},
+    "test_only": {"type": "boolean"},
+    "production_authority": {"type": "boolean"},
+    "status": {"enum": ["ACTIVATION_APPLIED", "ROLLBACK_APPLIED"]}
+  },
+  "$defs": {
+    "hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}

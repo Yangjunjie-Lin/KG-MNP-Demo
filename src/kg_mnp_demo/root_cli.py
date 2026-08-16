@@ -34,6 +34,11 @@ def main(argv: list[str] | None = None) -> int:
 
         return amendment_main(arguments[1:])
 
+    if arguments and arguments[0] == "activation":
+        from .activation.cli import main as activation_main
+
+        return activation_main(arguments[1:])
+
     from .modeling.cli import main as modeling_main
 
     return modeling_main(arguments)

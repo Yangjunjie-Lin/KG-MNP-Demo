@@ -1,0 +1,71 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/activation/activation-proposal/1.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "activation_proposal_id",
+    "activation_kind",
+    "target_publication_id",
+    "target_publication_semantic_hash",
+    "target_repository_id",
+    "target_repository_semantic_hash",
+    "target_publication_attestation_sha256",
+    "target_lineage_source_type",
+    "target_lineage_source_attestation_sha256",
+    "target_authority_binding_hash",
+    "base_pointer_hash",
+    "base_generation",
+    "rationale",
+    "created_by_label",
+    "explicit_human_intent",
+    "semantic_authority",
+    "deployment_governance_only",
+    "test_only",
+    "production_authority",
+    "status"
+  ],
+  "properties": {
+    "contract_version": {"const": "1.0"},
+    "activation_proposal_id": {
+      "type": "string",
+      "pattern": "^urn:kg-mnp:(?:activation-proposal|test-fixture:phase06:activation-proposal):[0-9a-f]{64}$"
+    },
+    "activation_kind": {
+      "enum": [
+        "ACTIVATE_NEW_VERIFIED_PUBLICATION",
+        "ROLLBACK_TO_PRIOR_VERIFIED_PUBLICATION"
+      ]
+    },
+    "target_publication_id": {"type": "string", "minLength": 1, "maxLength": 2048},
+    "target_publication_semantic_hash": {"$ref": "#/$defs/hash"},
+    "target_repository_id": {"type": "string", "minLength": 1, "maxLength": 512},
+    "target_repository_semantic_hash": {"$ref": "#/$defs/hash"},
+    "target_publication_attestation_sha256": {"$ref": "#/$defs/hash"},
+    "target_lineage_source_type": {"type": "string", "minLength": 1, "maxLength": 200},
+    "target_lineage_source_attestation_sha256": {"$ref": "#/$defs/hash"},
+    "target_authority_binding_hash": {"$ref": "#/$defs/hash"},
+    "base_pointer_hash": {"$ref": "#/$defs/hash"},
+    "base_generation": {"type": "integer", "minimum": 0},
+    "rationale": {"type": "string", "minLength": 1, "maxLength": 10000},
+    "created_by_label": {"type": "string", "minLength": 1, "maxLength": 200},
+    "explicit_human_intent": {"const": true},
+    "semantic_authority": {"const": false},
+    "deployment_governance_only": {"const": true},
+    "test_only": {"type": "boolean"},
+    "production_authority": {"type": "boolean"},
+    "status": {
+      "enum": [
+        "DRAFT",
+        "SUBMITTED",
+        "APPROVED_FOR_ACTIVATION",
+        "REJECTED",
+        "DEFERRED"
+      ]
+    }
+  },
+  "$defs": {
+    "hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}

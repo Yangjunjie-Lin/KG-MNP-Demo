@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/activation/activation-review-decision/1.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "activation_review_decision_id",
+    "activation_proposal_id",
+    "decision",
+    "resulting_status",
+    "reviewed_by_label",
+    "review_note",
+    "explicit_human_action",
+    "operator_identity_claim",
+    "semantic_authority",
+    "deployment_governance_only",
+    "test_only",
+    "production_authority"
+  ],
+  "properties": {
+    "contract_version": {"const": "1.0"},
+    "activation_review_decision_id": {
+      "type": "string",
+      "pattern": "^urn:kg-mnp:(?:activation-review-decision|test-fixture:phase06:activation-review-decision):[0-9a-f]{64}$"
+    },
+    "activation_proposal_id": {
+      "type": "string",
+      "pattern": "^urn:kg-mnp:(?:activation-proposal|test-fixture:phase06:activation-proposal):[0-9a-f]{64}$"
+    },
+    "decision": {"enum": ["APPROVE_FOR_ACTIVATION", "REJECT", "DEFER"]},
+    "resulting_status": {
+      "enum": ["APPROVED_FOR_ACTIVATION", "REJECTED", "DEFERRED"]
+    },
+    "reviewed_by_label": {"type": "string", "minLength": 1, "maxLength": 200},
+    "review_note": {"type": "string", "minLength": 1, "maxLength": 10000},
+    "explicit_human_action": {"const": true},
+    "operator_identity_claim": {"const": "OPERATOR_SUPPLIED_LABEL_ONLY"},
+    "semantic_authority": {"const": false},
+    "deployment_governance_only": {"const": true},
+    "test_only": {"type": "boolean"},
+    "production_authority": {"type": "boolean"}
+  }
+}

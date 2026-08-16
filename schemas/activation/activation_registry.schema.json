@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/activation/activation-registry/1.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "registry_id",
+    "authority_binding_hash",
+    "bootstrap_pointer",
+    "events",
+    "registry_revision",
+    "head_event_hash",
+    "current_pointer_hash",
+    "registry_hash",
+    "semantic_authority",
+    "deployment_governance_only",
+    "test_only",
+    "production_authority",
+    "status"
+  ],
+  "properties": {
+    "contract_version": {"const": "1.0"},
+    "registry_id": {
+      "type": "string",
+      "pattern": "^urn:kg-mnp:(?:activation-registry|test-fixture:phase06:activation-registry):[0-9a-f]{64}$"
+    },
+    "authority_binding_hash": {"$ref": "#/$defs/hash"},
+    "bootstrap_pointer": {"type": "object"},
+    "events": {"type": "array", "items": {"type": "object"}},
+    "registry_revision": {"type": "integer", "minimum": 1},
+    "head_event_hash": {"$ref": "#/$defs/hash"},
+    "current_pointer_hash": {"$ref": "#/$defs/hash"},
+    "registry_hash": {"$ref": "#/$defs/hash"},
+    "semantic_authority": {"const": false},
+    "deployment_governance_only": {"const": true},
+    "test_only": {"type": "boolean"},
+    "production_authority": {"type": "boolean"},
+    "status": {"const": "ACTIVATION_REGISTRY_ACTIVE"}
+  },
+  "$defs": {
+    "hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/activation/activation-event/1.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "event_id",
+    "event_hash",
+    "sequence",
+    "previous_event_hash",
+    "event_type",
+    "payload",
+    "payload_hash",
+    "test_only",
+    "production_authority",
+    "observed_at"
+  ],
+  "properties": {
+    "contract_version": {"const": "1.0"},
+    "event_id": {
+      "type": "string",
+      "pattern": "^urn:kg-mnp:(?:activation-event|test-fixture:phase06:activation-event):[0-9a-f]{64}$"
+    },
+    "event_hash": {"$ref": "#/$defs/hash"},
+    "sequence": {"type": "integer", "minimum": 1},
+    "previous_event_hash": {
+      "type": "string",
+      "pattern": "^(?:GENESIS|[0-9a-f]{64})$"
+    },
+    "event_type": {
+      "enum": [
+        "RegistryBootstrapped",
+        "ActivationProposalCreated",
+        "ActivationProposalSubmitted",
+        "ActivationReviewApproved",
+        "ActivationReviewRejected",
+        "ActivationReviewDeferred",
+        "ActivationApplied",
+        "RollbackApplied"
+      ]
+    },
+    "payload": {"type": "object"},
+    "payload_hash": {"$ref": "#/$defs/hash"},
+    "test_only": {"type": "boolean"},
+    "production_authority": {"type": "boolean"},
+    "observed_at": {"type": ["string", "null"], "format": "date-time"}
+  },
+  "$defs": {
+    "hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}

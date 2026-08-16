@@ -1,0 +1,49 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/activation/current-publication-pointer/1.0",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "contract_version",
+    "pointer_id",
+    "generation",
+    "active_publication_id",
+    "active_publication_semantic_hash",
+    "active_repository_id",
+    "active_repository_semantic_hash",
+    "active_publication_attestation_sha256",
+    "lineage_source_type",
+    "lineage_source_attestation_sha256",
+    "previous_pointer_hash",
+    "pointer_hash",
+    "semantic_authority",
+    "deployment_selection_metadata",
+    "status"
+  ],
+  "properties": {
+    "contract_version": {"const": "1.0"},
+    "pointer_id": {
+      "type": "string",
+      "pattern": "^urn:kg-mnp:(?:current-publication-pointer|test-fixture:phase06:current-publication-pointer):[0-9a-f]{64}$"
+    },
+    "generation": {"type": "integer", "minimum": 0},
+    "active_publication_id": {"type": "string", "minLength": 1, "maxLength": 2048},
+    "active_publication_semantic_hash": {"$ref": "#/$defs/hash"},
+    "active_repository_id": {"type": "string", "minLength": 1, "maxLength": 512},
+    "active_repository_semantic_hash": {"$ref": "#/$defs/hash"},
+    "active_publication_attestation_sha256": {"$ref": "#/$defs/hash"},
+    "lineage_source_type": {"type": "string", "minLength": 1, "maxLength": 200},
+    "lineage_source_attestation_sha256": {"$ref": "#/$defs/hash"},
+    "previous_pointer_hash": {
+      "type": "string",
+      "pattern": "^(?:GENESIS|[0-9a-f]{64})$"
+    },
+    "pointer_hash": {"$ref": "#/$defs/hash"},
+    "semantic_authority": {"const": false},
+    "deployment_selection_metadata": {"const": true},
+    "status": {"const": "ACTIVE_VERIFIED_PUBLICATION"}
+  },
+  "$defs": {
+    "hash": {"type": "string", "pattern": "^[0-9a-f]{64}$"}
+  }
+}

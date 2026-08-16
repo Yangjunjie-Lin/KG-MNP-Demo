@@ -558,6 +558,172 @@ jobs:
           git diff --exit-code
           test -z "$(git status --short)"
 
+  activation-offline:
+    if: github.event_name == 'pull_request'
+    needs: [amendment-offline]
+    runs-on: ubuntu-latest
+    timeout-minutes: 75
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[dev]"
+      - name: Verify Application Phase 06 offline
+        run: make verify-application-phase-06-offline
+      - name: Verify clean working tree
+        shell: bash
+        run: |
+          git diff --exit-code
+          test -z "$(git status --short)"
+
+  activation-integration:
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'push' && github.ref == 'refs/heads/main')
+    needs: [amendment-republication-integration]
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Set up Java (ROBOT/HermiT)
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - name: Install Python and browser runtime
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[dev,webvowl]"
+          python -m playwright install --with-deps chromium
+      - name: Pull pinned GraphDB image
+        run: docker pull ontotext/graphdb:11.4.2@sha256:1593f8b5d42acb0f02f11b2a87b87ecbe76dbcec33cea56ca5bc32bebf6a7f12
+      - name: Verify Phase 06 licensed activation and rollback closure
+        id: phase06
+        env:
+          GRAPHDB_LICENSE_CONTENT: ${{ secrets.GRAPHDB_LICENSE_CONTENT }}
+          GRAPHDB_LICENSE_B64: ${{ secrets.GRAPHDB_LICENSE_B64 }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          make verify-application-phase-06
+          report="runtime_reports/activation/$GITHUB_SHA"
+          summary="$report/activation-summary.json"
+          registry_state="runtime_outputs/activation/controlled/$GITHUB_SHA/main-state/activation-registry.json"
+          test -f "$summary"
+          test -f "$registry_state"
+          registry_hash="$(python -c 'import json,sys; print(json.load(open(sys.argv[1], encoding="utf-8"))["registry_hash"])' "$registry_state")"
+          head_event_hash="$(python -c 'import json,sys; print(json.load(open(sys.argv[1], encoding="utf-8"))["head_event_hash"])' "$registry_state")"
+          [[ "$registry_hash" =~ ^[0-9a-f]{64}$ ]]
+          [[ "$head_event_hash" =~ ^[0-9a-f]{64}$ ]]
+          test "$(python -c 'import json,sys; print(json.load(open(sys.argv[1], encoding="utf-8"))["controlled_registry_hash"])' "$summary")" = "$registry_hash"
+          test "$(python -c 'import json,sys; print(json.load(open(sys.argv[1], encoding="utf-8"))["controlled_head_event_hash"])' "$summary")" = "$head_event_hash"
+          echo "registry_hash=$registry_hash" >> "$GITHUB_OUTPUT"
+          echo "head_event_hash=$head_event_hash" >> "$GITHUB_OUTPUT"
+      - name: Stage and independently verify exact Phase 06 artifact
+        if: success()
+        shell: bash
+        env:
+          ARTIFACT_DIR: ${{ runner.temp }}/application-phase06-attestation
+        run: |
+          set -euo pipefail
+          test ! -e "$ARTIFACT_DIR"
+          mkdir -p "$ARTIFACT_DIR"
+          report="runtime_reports/activation/$GITHUB_SHA"
+          test -d "$report"
+          for name in application-phase06-attestation.json activation-summary.json rollback-summary.json authority-binding.json security-summary.json; do
+            test -f "$report/$name"
+            cp "$report/$name" "$ARTIFACT_DIR/$name"
+          done
+          publication_manifest="runtime_outputs/publication/full-confirmation/publication-manifest.json"
+          publication_hash="$(python -c 'import json,sys; print(json.load(open(sys.argv[1], encoding="utf-8"))["publication_semantic_hash"])' "$publication_manifest")"
+          phase04_dir="$(find runtime_reports/governance -name application-phase04-attestation.json -printf '%T@ %h\n' | sort -nr | head -1 | cut -d' ' -f2-)"
+          test -n "$phase04_dir"
+          python scripts/verify_application_phase06_artifact.py "$ARTIFACT_DIR" \
+            --publication-package runtime_outputs/publication/full-confirmation \
+            --publication-attestation "runtime_reports/publication/$publication_hash/publication-attestation.json" \
+            --publication-scenario full-confirmation \
+            --phase01-artifact-dir "runtime_reports/application/$publication_hash" \
+            --phase02-artifact-dir "runtime_reports/workbench/$publication_hash" \
+            --phase03-artifact-dir "runtime_reports/diagnostics/$publication_hash" \
+            --phase04-artifact-dir "$phase04_dir" \
+            --phase05-artifact-dir "runtime_reports/amendment/$GITHUB_SHA" \
+            --expected-commit-sha "$GITHUB_SHA" \
+            --expected-registry-hash "${{ steps.phase06.outputs.registry_hash }}" \
+            --expected-head-event-hash "${{ steps.phase06.outputs.head_event_hash }}"
+      - name: Upload Application Phase 06 attestation artifact
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: application-phase06-attestation-${{ github.sha }}
+          path: ${{ runner.temp }}/application-phase06-attestation
+          if-no-files-found: error
+      - name: Verify clean working tree
+        shell: bash
+        run: |
+          git diff --exit-code
+          test -z "$(git status --short)"
+      - name: Always remove and verify Phase 06 controlled resources
+        if: always()
+        shell: bash
+        run: |
+          set -uo pipefail
+          discover_projects() {
+            {
+              docker ps -aq --filter label=com.docker.compose.project | while read -r id; do
+                docker inspect --format '{{ index .Config.Labels "com.docker.compose.project" }}' "$id"
+              done
+              docker network ls -q --filter label=com.docker.compose.project | while read -r id; do
+                docker network inspect --format '{{ index .Labels "com.docker.compose.project" }}' "$id"
+              done
+              docker volume ls -q --filter label=com.docker.compose.project | while read -r id; do
+                docker volume inspect --format '{{ index .Labels "com.docker.compose.project" }}' "$id"
+              done
+            } | awk '/^kgmnp-activation-[0-9a-f]{12}$/' | sort -u
+          }
+          cleanup_status=0
+          if ! docker info >/dev/null; then
+            echo 'Docker daemon unavailable during Phase 06 cleanup' >&2
+            exit 1
+          fi
+          if ! projects_output="$(discover_projects)"; then
+            echo 'Could not discover Phase 06 controlled resources' >&2
+            exit 1
+          fi
+          projects=()
+          if [[ -n "$projects_output" ]]; then
+            mapfile -t projects <<< "$projects_output"
+          fi
+          for project in "${projects[@]}"; do
+            if ! docker compose -p "$project" -f deploy/graphdb/docker-compose.integration.yml down -v --remove-orphans; then
+              cleanup_status=1
+            fi
+          done
+          if ! docker info >/dev/null; then
+            echo 'Docker daemon unavailable while verifying Phase 06 cleanup' >&2
+            cleanup_status=1
+          elif ! remaining_output="$(discover_projects)"; then
+            echo 'Could not verify Phase 06 controlled resource cleanup' >&2
+            cleanup_status=1
+          elif [[ -n "$remaining_output" ]]; then
+            echo "Phase 06 controlled resources remain: $remaining_output" >&2
+            cleanup_status=1
+          fi
+          if (( cleanup_status != 0 )); then
+            echo 'INTEGRATION_CLEANUP_FAILED' >&2
+          fi
+          exit "$cleanup_status"
+
   workbench-offline:
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest

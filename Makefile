@@ -610,3 +610,62 @@ verify-application-phase-05-offline: verify-application-phase-04-offline verify-
 
 verify-application-phase-05: verify-application-phase-04 verify-application-phase-05-offline
 	python scripts/amendment_integration.py
+
+.PHONY: verify-activation-contracts verify-activation-authority-binding \
+	verify-activation-state-machine verify-activation-event-chain \
+	verify-activation-pointer verify-activation-concurrency \
+	verify-activation-rollback verify-activation-security \
+	verify-activation-resolver verify-application-phase-06-offline \
+	verify-application-phase-06
+
+verify-activation-contracts:
+	python scripts/check_schema_identifiers.py
+	python -m pytest -q tests/activation/test_contracts.py
+
+verify-activation-authority-binding:
+	python -m pytest -q tests/activation/test_authority_binding.py \
+		tests/activation/test_phase06_freeze_lower_layers.py \
+		tests/activation/test_phase05_public_surface_freeze.py
+
+verify-activation-state-machine:
+	python -m pytest -q tests/activation/test_registry_and_validator.py
+
+verify-activation-event-chain:
+	python -m pytest -q tests/activation/test_registry_and_validator.py \
+		-k "registry or event or rehash"
+
+verify-activation-pointer:
+	python -m pytest -q tests/activation/test_registry_and_validator.py \
+		tests/activation/test_persistence_and_concurrency.py \
+		-k "pointer or generation or state_files or prepared_pair"
+
+verify-activation-concurrency:
+	python -m pytest -q tests/activation/test_persistence_and_concurrency.py \
+		tests/activation/test_execution_and_resolver.py \
+		-k "multiprocessing or concurrency or stale_cas or replay or prepared_pair"
+
+verify-activation-rollback:
+	python -m pytest -q tests/activation/test_registry_and_validator.py \
+		-k "rollback"
+
+verify-activation-security:
+	ruff check src/kg_mnp_demo/activation scripts/activation_controlled_fixture.py \
+		scripts/activation_integration.py \
+		scripts/verify_application_phase06_artifact.py tests/activation
+	python -m pytest -q tests/activation
+
+verify-activation-resolver:
+	python -m pytest -q tests/activation/test_execution_and_resolver.py \
+		-k "resolver or read_graphdb"
+
+verify-application-phase-06-offline: verify-application-phase-05-offline \
+	verify-activation-contracts verify-activation-authority-binding \
+	verify-activation-state-machine verify-activation-event-chain \
+	verify-activation-pointer verify-activation-concurrency \
+	verify-activation-rollback verify-activation-security \
+	verify-activation-resolver
+	python -m pytest -q tests/activation
+
+verify-application-phase-06: verify-application-phase-05 \
+	verify-application-phase-06-offline
+	python scripts/activation_integration.py
