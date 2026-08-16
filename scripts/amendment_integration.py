@@ -15,11 +15,13 @@ from kg_mnp_demo.amendment.errors import AmendmentError, AmendmentErrorCode
 from kg_mnp_demo.modeling.canonical_json import canonical_json_bytes
 
 if __package__:
+    from scripts import graphdb_integration as graphdb_runtime
     from scripts.amendment_controlled_fixture import (
         build_controlled_publication_pair,
         run_controlled_republication_harness,
     )
 else:
+    import graphdb_integration as graphdb_runtime  # type: ignore[import-not-found]
     from amendment_controlled_fixture import (  # type: ignore[import-not-found]
         build_controlled_publication_pair,
         run_controlled_republication_harness,
@@ -35,7 +37,6 @@ def _verify_live_graphdb(
     from kg_mnp_demo.graphdb.client import GraphDBClient, GraphDBClientError
     from kg_mnp_demo.graphdb.importer import import_package
     from kg_mnp_demo.graphdb.verifier import verify_imported_repository
-    from scripts import graphdb_integration as graphdb_runtime
 
     digest = evidence["controlled_fixture_hash"]
     project = "kgmnp-amendment-" + digest[:12]
