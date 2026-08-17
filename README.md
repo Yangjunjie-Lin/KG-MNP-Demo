@@ -358,6 +358,17 @@ Licensed CI is required for the final live integration gate. Phase 05 stops
 at a verified, not activated, new publication. Production current-pointer
 cutover and TBox/SHACL evolution are outside this phase.
 
+### Application Phase 06 — Controlled Publication Activation, Current-Head Selection and Rollback Governance
+
+Application Phase06
+Controlled Publication Activation,
+Current-Head Selection and Rollback Governance
+= PASS
+
+Phase 06 is deployment governance only. Production semantic publications remain
+immutable. Activation changes only deployment selection metadata. Rollback selects a
+previously verified immutable publication; it never reverses RDF changes.
+
 ### Stage 08 authority boundary
 
 - **ConfirmedModelingPackage** is the semantic decision authority.
