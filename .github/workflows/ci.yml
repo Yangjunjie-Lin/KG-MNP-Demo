@@ -635,10 +635,13 @@ jobs:
         shell: bash
         env:
           ARTIFACT_DIR: ${{ runner.temp }}/application-phase06-attestation
+          UPSTREAM_EVIDENCE_DIR: ${{ runner.temp }}/application-phase06-upstream-evidence
         run: |
           set -euo pipefail
           test ! -e "$ARTIFACT_DIR"
+          test ! -e "$UPSTREAM_EVIDENCE_DIR"
           mkdir -p "$ARTIFACT_DIR"
+          mkdir -p "$UPSTREAM_EVIDENCE_DIR"
           report="runtime_reports/activation/$GITHUB_SHA"
           test -d "$report"
           for name in application-phase06-attestation.json activation-summary.json rollback-summary.json authority-binding.json security-summary.json; do
@@ -649,15 +652,22 @@ jobs:
           publication_hash="$(python -c 'import json,sys; print(json.load(open(sys.argv[1], encoding="utf-8"))["publication_semantic_hash"])' "$publication_manifest")"
           phase04_dir="$(find runtime_reports/governance -name application-phase04-attestation.json -printf '%T@ %h\n' | sort -nr | head -1 | cut -d' ' -f2-)"
           test -n "$phase04_dir"
+          cp -a runtime_outputs/publication/full-confirmation "$UPSTREAM_EVIDENCE_DIR/publication-package"
+          cp -a "runtime_reports/publication/$publication_hash" "$UPSTREAM_EVIDENCE_DIR/publication-attestation"
+          cp -a "runtime_reports/application/$publication_hash" "$UPSTREAM_EVIDENCE_DIR/phase01"
+          cp -a "runtime_reports/workbench/$publication_hash" "$UPSTREAM_EVIDENCE_DIR/phase02"
+          cp -a "runtime_reports/diagnostics/$publication_hash" "$UPSTREAM_EVIDENCE_DIR/phase03"
+          cp -a "$phase04_dir" "$UPSTREAM_EVIDENCE_DIR/phase04"
+          cp -a "runtime_reports/amendment/$GITHUB_SHA" "$UPSTREAM_EVIDENCE_DIR/phase05"
           python scripts/verify_application_phase06_artifact.py "$ARTIFACT_DIR" \
-            --publication-package runtime_outputs/publication/full-confirmation \
-            --publication-attestation "runtime_reports/publication/$publication_hash/publication-attestation.json" \
+            --publication-package "$UPSTREAM_EVIDENCE_DIR/publication-package" \
+            --publication-attestation "$UPSTREAM_EVIDENCE_DIR/publication-attestation/publication-attestation.json" \
             --publication-scenario full-confirmation \
-            --phase01-artifact-dir "runtime_reports/application/$publication_hash" \
-            --phase02-artifact-dir "runtime_reports/workbench/$publication_hash" \
-            --phase03-artifact-dir "runtime_reports/diagnostics/$publication_hash" \
-            --phase04-artifact-dir "$phase04_dir" \
-            --phase05-artifact-dir "runtime_reports/amendment/$GITHUB_SHA" \
+            --phase01-artifact-dir "$UPSTREAM_EVIDENCE_DIR/phase01" \
+            --phase02-artifact-dir "$UPSTREAM_EVIDENCE_DIR/phase02" \
+            --phase03-artifact-dir "$UPSTREAM_EVIDENCE_DIR/phase03" \
+            --phase04-artifact-dir "$UPSTREAM_EVIDENCE_DIR/phase04" \
+            --phase05-artifact-dir "$UPSTREAM_EVIDENCE_DIR/phase05" \
             --expected-commit-sha "$GITHUB_SHA" \
             --expected-registry-hash "${{ steps.phase06.outputs.registry_hash }}" \
             --expected-head-event-hash "${{ steps.phase06.outputs.head_event_hash }}"
@@ -667,6 +677,13 @@ jobs:
         with:
           name: application-phase06-attestation-${{ github.sha }}
           path: ${{ runner.temp }}/application-phase06-attestation
+          if-no-files-found: error
+      - name: Upload Application Phase 06 upstream evidence artifact
+        if: success()
+        uses: actions/upload-artifact@v4
+        with:
+          name: application-phase06-upstream-evidence-${{ github.sha }}
+          path: ${{ runner.temp }}/application-phase06-upstream-evidence
           if-no-files-found: error
       - name: Verify clean working tree
         shell: bash
