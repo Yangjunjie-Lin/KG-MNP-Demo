@@ -4,15 +4,21 @@ import json
 
 from kg_mnp import root_cli
 from kg_mnp.application import cli as application_cli
+from kg_mnp.contracts import cli as contracts_cli
 from kg_mnp.modeling import cli as modeling_cli
 
 
-def test_root_cli_routes_only_application_first_token(monkeypatch) -> None:
+def test_root_cli_routes_public_contracts_and_preserves_foundation_tokens(monkeypatch) -> None:
     calls: list[tuple[str, list[str]]] = []
     monkeypatch.setattr(
         application_cli,
         "main",
         lambda argv: calls.append(("application", argv)) or 17,
+    )
+    monkeypatch.setattr(
+        contracts_cli,
+        "main",
+        lambda argv: calls.append(("contracts", argv)) or 19,
     )
     monkeypatch.setattr(
         modeling_cli,
@@ -21,10 +27,12 @@ def test_root_cli_routes_only_application_first_token(monkeypatch) -> None:
     )
 
     assert root_cli.main(["application", "query", "list"]) == 17
-    assert root_cli.main(["contracts", "list"]) == 23
+    assert root_cli.main(["contracts", "list"]) == 19
+    assert root_cli.main(["proposal", "validate"]) == 23
     assert calls == [
         ("application", ["query", "list"]),
-        ("foundation", ["contracts", "list"]),
+        ("contracts", ["list"]),
+        ("foundation", ["proposal", "validate"]),
     ]
 
 

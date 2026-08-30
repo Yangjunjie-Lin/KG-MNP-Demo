@@ -11,6 +11,7 @@ from kg_mnp import root_cli
 from kg_mnp.activation import cli
 from kg_mnp.activation.errors import ActivationError, ActivationErrorCode
 from kg_mnp.activation.runtime import ActivationRuntimeConfig
+from kg_mnp.contracts import cli as contracts_cli
 from kg_mnp.modeling import cli as modeling_cli
 
 RUNTIME_ARGUMENTS = [
@@ -257,7 +258,7 @@ def test_main_serializes_activation_errors_canonically(
     }
 
 
-def test_root_cli_routes_only_the_activation_first_token(
+def test_root_cli_routes_activation_and_public_contract_first_tokens(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     calls: list[tuple[str, list[str]]] = []
@@ -267,13 +268,20 @@ def test_root_cli_routes_only_the_activation_first_token(
         lambda argv: calls.append(("activation", argv)) or 17,
     )
     monkeypatch.setattr(
+        contracts_cli,
+        "main",
+        lambda argv: calls.append(("contracts", argv)) or 19,
+    )
+    monkeypatch.setattr(
         modeling_cli,
         "main",
         lambda argv: calls.append(("foundation", argv)) or 23,
     )
     assert root_cli.main(["activation", "status"]) == 17
-    assert root_cli.main(["contracts", "list"]) == 23
+    assert root_cli.main(["contracts", "list"]) == 19
+    assert root_cli.main(["proposal", "validate"]) == 23
     assert calls == [
         ("activation", ["status"]),
-        ("foundation", ["contracts", "list"]),
+        ("contracts", ["list"]),
+        ("foundation", ["proposal", "validate"]),
     ]

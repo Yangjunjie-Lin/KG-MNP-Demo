@@ -9,6 +9,20 @@ def main(argv: list[str] | None = None) -> int:
     """Route Application commands and preserve every Foundation argument verbatim."""
 
     arguments = list(sys.argv[1:] if argv is None else argv)
+    if arguments and arguments[0] == "contracts":
+        from .contracts.cli import main as contracts_main
+
+        return contracts_main(arguments[1:])
+
+    if arguments and arguments[0] == "domain-pack":
+        from .domain_packs.cli import main as domain_pack_main
+
+        return domain_pack_main(arguments[1:])
+
+    if arguments and arguments[0] == "workspace":
+        from .workspace.cli import main as workspace_main
+
+        return workspace_main(arguments[1:])
     if arguments and arguments[0] == "application":
         from .application.cli import main as application_main
 
