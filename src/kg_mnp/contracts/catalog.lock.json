@@ -1,0 +1,151 @@
+{
+  "canonicalization_profile": "KG-MNP Canonical JSON v1",
+  "catalog_file_sha256": "2f5cc83ec4e494db66b43e4e8f140c1d9e16c3964934c387b9d5385384bb0d8c",
+  "catalog_semantic_sha256": "b6bf0748a8330f2841eb5d1ce1cf93f8d7bd21e37f763d4a283527e513080f45",
+  "content_digest": "2dbcfc6d639e7b0b2beef415c1fc4a8b43a0bb096840916f12d35fc1fef0bf70",
+  "contracts": [
+    {
+      "name": "cleaned-partial-data",
+      "resource_path": "schemas/modeling/cleaned_partial_data.schema.json",
+      "schema_id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/cleaned-partial-data/1.0",
+      "sha256": "7fafb0921bd0f6f28fc0f879e0eec4ec8a426c0b49c30991421e28ef1cf531b7",
+      "version": "1.0.0"
+    },
+    {
+      "name": "common",
+      "resource_path": "schemas/modeling/common.schema.json",
+      "schema_id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/common/1.0",
+      "sha256": "7c50453e35e0a3b3868d9480e35c75cb126b04355c96b5ff887995ae41c61e7c",
+      "version": "1.0.0"
+    },
+    {
+      "name": "confirmed-modeling-package",
+      "resource_path": "schemas/modeling/confirmed_modeling_package.schema.json",
+      "schema_id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/confirmed-modeling-package/1.0",
+      "sha256": "e8dfd1ce630f6c7e93a7e49691de7fac100895d143dc500afe1903a3e0107146",
+      "version": "1.0.0"
+    },
+    {
+      "name": "mapping-rules",
+      "resource_path": "schemas/modeling/mapping_rules.schema.json",
+      "schema_id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/mapping-rules/1.0",
+      "sha256": "57b5de7e6f2f9a2eb4735ef6b386016934186f29843f9dd9e21647b08f387137",
+      "version": "1.0.0"
+    },
+    {
+      "name": "modeling-proposal",
+      "resource_path": "schemas/modeling/modeling_proposal.schema.json",
+      "schema_id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/modeling-proposal/1.0",
+      "sha256": "e7139bfd7402d6ba362134c3fa5537b478c0a42805b971ed54e701b513cdcd3b",
+      "version": "1.0.0"
+    },
+    {
+      "name": "ontology-baseline-manifest",
+      "resource_path": "schemas/modeling/ontology_baseline_manifest.schema.json",
+      "schema_id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/ontology-baseline-manifest/1.0",
+      "sha256": "54adc74ba2bfd638ef2d8de805ea3c2ae6da114129396b9bb385f576a5de2781",
+      "version": "1.0.0"
+    },
+    {
+      "name": "review-action",
+      "resource_path": "schemas/modeling/review_action.schema.json",
+      "schema_id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/review-action/1.0",
+      "sha256": "b2c041c9f1a6cb33b67fdf34b317b780112ca677b2e3f5013f15355a4ab939d3",
+      "version": "1.0.0"
+    },
+    {
+      "name": "review-common",
+      "resource_path": "schemas/modeling/review_common.schema.json",
+      "schema_id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/review-common/1.0",
+      "sha256": "69b3af6bd9c70f17524d311d29aa5abcc7d066a01f992ca45885fba3448a3b7c",
+      "version": "1.0.0"
+    },
+    {
+      "name": "review-decision-log",
+      "resource_path": "schemas/modeling/review_decision_log.schema.json",
+      "schema_id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/review-decision-log/1.0",
+      "sha256": "ef24e251d4bbb4cbc12b081f6f371ec0e294c240a76151bada870b7f66c21ada",
+      "version": "1.0.0"
+    },
+    {
+      "name": "review-policy",
+      "resource_path": "schemas/modeling/review_policy.schema.json",
+      "schema_id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/review-policy/1.0",
+      "sha256": "5b252e1f0b558ad2fc9592a975c6ce9003a8152077ce631101418f5a1828ae54",
+      "version": "1.0.0"
+    },
+    {
+      "name": "terminology-profile",
+      "resource_path": "schemas/modeling/terminology_profile.schema.json",
+      "schema_id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/terminology-profile/1.0",
+      "sha256": "49841b8bc0089a562a314edfcd8740b41742a1d4a5278825075ed3a444cd1b69",
+      "version": "1.0.0"
+    },
+    {
+      "name": "artifact-manifest",
+      "resource_path": "schemas/toolchain/artifact_manifest.schema.json",
+      "schema_id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/artifact-manifest/1.0",
+      "sha256": "052ddeb56d9bb57f6774669699fc41d30c7a7a435d5a4d20e462400eca4c2fed",
+      "version": "1.0.0"
+    },
+    {
+      "name": "artifact-reference",
+      "resource_path": "schemas/toolchain/artifact_reference.schema.json",
+      "schema_id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/artifact-reference/1.0",
+      "sha256": "7c4905674ce71d049371cbc6a78b02c5d42ec6b589a64ce059b396f0ce30be74",
+      "version": "1.0.0"
+    },
+    {
+      "name": "contract-catalog",
+      "resource_path": "schemas/toolchain/contract_catalog.schema.json",
+      "schema_id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/contract-catalog/1.0",
+      "sha256": "a08301069e73efb6b763ab925bd86169c269d4bbd5a878c8c5770ff8b169c065",
+      "version": "1.0.0"
+    },
+    {
+      "name": "domain-pack-lock",
+      "resource_path": "schemas/toolchain/domain_pack_lock.schema.json",
+      "schema_id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/domain-pack-lock/1.0",
+      "sha256": "44748143bd9edecc72f2a07a06537fd3f0374c72eeaa474b0808a2257fba2038",
+      "version": "1.0.0"
+    },
+    {
+      "name": "domain-pack-manifest",
+      "resource_path": "schemas/toolchain/domain_pack_manifest.schema.json",
+      "schema_id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/domain-pack-manifest/1.0",
+      "sha256": "1659bf5f43cde32a255d66946cd5e7e0eb2ccdbf712e939b4260bbef01e5a0d2",
+      "version": "1.0.0"
+    },
+    {
+      "name": "project-lock",
+      "resource_path": "schemas/toolchain/project_lock.schema.json",
+      "schema_id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/project-lock/1.0",
+      "sha256": "987475fdd410b6f5ee2a0f4445486c3ce2712f6ac604b1bf778f3fe647387399",
+      "version": "1.0.0"
+    },
+    {
+      "name": "project-manifest",
+      "resource_path": "schemas/toolchain/project_manifest.schema.json",
+      "schema_id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/project-manifest/1.0",
+      "sha256": "91c400c463a018f66da4ed85a395b4a4ab767a5e987d1bea655d3e20eaf2e161",
+      "version": "1.0.0"
+    },
+    {
+      "name": "toolchain-common",
+      "resource_path": "schemas/toolchain/toolchain_common.schema.json",
+      "schema_id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0",
+      "sha256": "26ab63f196d0bfa47a35fc3577e27123d594932537c96bee0de18a17301f0200",
+      "version": "1.0.0"
+    },
+    {
+      "name": "validation-report",
+      "resource_path": "schemas/toolchain/validation_report.schema.json",
+      "schema_id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/validation-report/1.0",
+      "sha256": "7ff6c26195db212b5bad45f344953cb5eeea3fefcab50291754bef8b53947d93",
+      "version": "1.0.0"
+    }
+  ],
+  "lock_id": "urn:kg-mnp:contract-catalog-lock:acb509211fa9ab18afd6628201859d10dd78ffff2acb563aa435b44e64fa86bc",
+  "manifest_kind": "KG_MNP_CONTRACT_CATALOG_LOCK",
+  "schema_version": "1.0.0"
+}

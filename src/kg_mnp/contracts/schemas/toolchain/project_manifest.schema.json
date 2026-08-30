@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/project-manifest/1.0",
+  "title": "KG-MNP ProjectManifest 1.0",
+  "description": "A project declaration selecting exact local Domain Packs and controlled profiles.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["manifest_kind", "schema_version", "project_id", "project_version", "display_name", "description", "workspace_layout_version", "domain_packs", "primary_domain_pack", "profiles", "settings", "extensions"],
+  "properties": {
+    "manifest_kind": {"const": "KG_MNP_PROJECT"},
+    "schema_version": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/schemaVersion"},
+    "project_id": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/projectId"},
+    "project_version": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/semanticVersion"},
+    "display_name": {"type": "string", "minLength": 1, "maxLength": 200},
+    "description": {"type": "string", "minLength": 1, "maxLength": 1000},
+    "workspace_layout_version": {"const": "1.0.0"},
+    "domain_packs": {
+      "type": "array", "minItems": 1,
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["pack_id", "pack_version", "required_capabilities"],
+        "properties": {
+          "pack_id": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/packId"},
+          "pack_version": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/semanticVersion"},
+          "required_capabilities": {"type": "array", "items": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/capabilityId"}, "uniqueItems": true},
+          "selected_entrypoints": {"type": "array", "items": {"type": "string", "pattern": "^[a-z][a-z0-9-]*$"}, "uniqueItems": true}
+        }
+      }
+    },
+    "primary_domain_pack": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/packId"},
+    "profiles": {
+      "type": "object",
+      "propertyNames": {"pattern": "^[a-z][a-z0-9-]*$"},
+      "additionalProperties": {
+        "type": "object", "additionalProperties": false,
+        "required": ["pack_id", "entrypoints"],
+        "properties": {
+          "pack_id": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/packId"},
+          "entrypoints": {"type": "array", "items": {"type": "string", "pattern": "^[a-z][a-z0-9-]*$"}, "uniqueItems": true}
+        }
+      }
+    },
+    "settings": {
+      "type": "object", "additionalProperties": false,
+      "required": ["offline_only", "strict_validation"],
+      "properties": {"offline_only": {"const": true}, "strict_validation": {"const": true}}
+    },
+    "extensions": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/extensionMap"}
+  }
+}

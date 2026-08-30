@@ -1,4 +1,13 @@
 *.sh text eol=lf
 schemas/modeling/*.json text eol=lf
+src/kg_mnp/contracts/*.json text eol=lf
+src/kg_mnp/contracts/schemas/**/*.json text eol=lf
+domain_packs/**/*.json text eol=lf
+domain_packs/**/*.md text eol=lf
+domain_packs/**/*.rq text eol=lf
+domain_packs/**/*.ttl text eol=lf
+domain_packs/**/*.xml text eol=lf
+domain_packs/**/*.yaml text eol=lf
+domain_packs/**/*.yml text eol=lf
 config/modeling/* text eol=lf
 examples/modeling/**/*.json text eol=lf

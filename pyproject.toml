@@ -36,6 +36,14 @@ kg-mnp = "kg_mnp.root_cli:main"
 [tool.setuptools.packages.find]
 where = ["src"]
 
+[tool.setuptools.package-data]
+"kg_mnp.contracts" = [
+  "catalog.json",
+  "catalog.lock.json",
+  "schemas/toolchain/*.schema.json",
+  "schemas/modeling/*.schema.json",
+]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["src"]

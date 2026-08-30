@@ -21,7 +21,7 @@ from kg_mnp.modeling.registry import (
 )
 
 ROOT = Path(__file__).resolve().parents[2]
-SCHEMA_DIR = ROOT / "schemas" / "modeling"
+SCHEMA_DIR = ROOT / "src" / "kg_mnp" / "contracts" / "schemas" / "modeling"
 
 
 def _contract_copy(tmp_path: Path) -> Path:

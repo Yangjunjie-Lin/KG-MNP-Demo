@@ -1,0 +1,90 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0",
+  "title": "KG-MNP Toolchain Common Contract 1.0",
+  "description": "Closed reusable definitions for public KG-MNP toolchain contracts.",
+  "$defs": {
+    "schemaVersion": {"type": "string", "const": "1.0.0"},
+    "semanticVersion": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(?:-[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*)?(?:\\+[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*)?$"
+    },
+    "projectId": {"type": "string", "pattern": "^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$"},
+    "packId": {"type": "string", "pattern": "^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$"},
+    "assetId": {"type": "string", "pattern": "^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$"},
+    "capabilityId": {
+      "enum": ["ontology", "shacl", "terminology", "mappings", "rules", "competency-questions", "queries", "fixtures"]
+    },
+    "contractName": {"type": "string", "pattern": "^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$"},
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "digest": {"type": "string", "pattern": "^sha256:[0-9a-f]{64}$"},
+    "stableUrn": {"type": "string", "pattern": "^urn:kg-mnp:[a-z][a-z0-9-]*:[0-9a-f]{64}$"},
+    "iri": {"type": "string", "format": "uri", "minLength": 1},
+    "mediaType": {"type": "string", "pattern": "^[a-z0-9!#$&^_.+-]+/[a-z0-9!#$&^_.+-]+(?:;[ -~]+)?$"},
+    "safeRelativePosixPath": {
+      "type": "string",
+      "minLength": 1,
+      "pattern": "^(?!/)(?![A-Za-z]:)(?!.*(?:^|/)\\.\\.(?:/|$))(?!.*//)(?!.*\\\\)(?!.*[\\u0000-\\u001f\\u007f])[^/]+(?:/[^/]+)*$"
+    },
+    "jsonValue": {
+      "oneOf": [
+        {"type": ["string", "number", "integer", "boolean", "null"]},
+        {"type": "array", "items": {"$ref": "#/$defs/jsonValue"}},
+        {"type": "object", "additionalProperties": {"$ref": "#/$defs/jsonValue"}}
+      ]
+    },
+    "extensionMap": {
+      "type": "object",
+      "propertyNames": {"pattern": "^x-[a-z0-9]+(?:-[a-z0-9]+)*$"},
+      "additionalProperties": {"$ref": "#/$defs/jsonValue"}
+    },
+    "dependencyReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["pack_id", "pack_version", "content_digest", "required_capabilities"],
+      "properties": {
+        "pack_id": {"$ref": "#/$defs/packId"},
+        "pack_version": {"$ref": "#/$defs/semanticVersion"},
+        "content_digest": {"$ref": "#/$defs/sha256"},
+        "required_capabilities": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/capabilityId"},
+          "uniqueItems": true
+        }
+      }
+    },
+    "artifactReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "manifest_kind", "schema_version", "artifact_id", "artifact_type",
+        "contract_name", "contract_version", "schema_id", "path", "media_type",
+        "size_bytes", "sha256", "dependencies", "provenance_refs"
+      ],
+      "properties": {
+        "manifest_kind": {"const": "KG_MNP_ARTIFACT_REFERENCE"},
+        "schema_version": {"$ref": "#/$defs/schemaVersion"},
+        "artifact_id": {"$ref": "#/$defs/stableUrn"},
+        "artifact_type": {"type": "string", "pattern": "^[a-z][a-z0-9-]*$"},
+        "contract_name": {"$ref": "#/$defs/contractName"},
+        "contract_version": {"$ref": "#/$defs/semanticVersion"},
+        "schema_id": {"$ref": "#/$defs/iri"},
+        "path": {"$ref": "#/$defs/safeRelativePosixPath"},
+        "media_type": {"$ref": "#/$defs/mediaType"},
+        "size_bytes": {"type": "integer", "minimum": 0},
+        "sha256": {"$ref": "#/$defs/sha256"},
+        "semantic_hash": {"$ref": "#/$defs/sha256"},
+        "dependencies": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/stableUrn"},
+          "uniqueItems": true
+        },
+        "provenance_refs": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/stableUrn"},
+          "uniqueItems": true
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/domain-pack-lock/1.0",
+  "title": "KG-MNP DomainPackLock 1.0",
+  "description": "A deterministic content lock for a local Domain Pack and dependency closure.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["manifest_kind", "schema_version", "pack_id", "pack_version", "manifest_file_sha256", "manifest_semantic_sha256", "assets", "dependencies", "content_digest", "lock_id", "canonicalization_profile"],
+  "properties": {
+    "manifest_kind": {"const": "KG_MNP_DOMAIN_PACK_LOCK"},
+    "schema_version": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/schemaVersion"},
+    "pack_id": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/packId"},
+    "pack_version": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/semanticVersion"},
+    "manifest_file_sha256": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/sha256"},
+    "manifest_semantic_sha256": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/sha256"},
+    "assets": {
+      "type": "array",
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["asset_id", "path", "media_type", "size_bytes", "sha256"],
+        "properties": {
+          "asset_id": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/assetId"},
+          "path": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/safeRelativePosixPath"},
+          "media_type": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/mediaType"},
+          "size_bytes": {"type": "integer", "minimum": 0},
+          "sha256": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/sha256"}
+        }
+      }
+    },
+    "dependencies": {"type": "array", "items": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/dependencyReference"}},
+    "content_digest": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/sha256"},
+    "lock_id": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/stableUrn"},
+    "canonicalization_profile": {"const": "KG-MNP Canonical JSON v1"}
+  }
+}

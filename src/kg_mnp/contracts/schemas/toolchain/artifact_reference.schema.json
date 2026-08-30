@@ -1,0 +1,7 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/artifact-reference/1.0",
+  "title": "KG-MNP Artifact Reference 1.0",
+  "description": "A content-bound artifact reference; it does not confer confirmed semantic authority.",
+  "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/artifactReference"
+}

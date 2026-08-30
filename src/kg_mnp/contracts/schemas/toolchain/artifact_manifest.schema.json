@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/artifact-manifest/1.0",
+  "title": "KG-MNP Artifact Manifest 1.0",
+  "description": "A closed immutable artifact set, not a final Versioned Ontology Package.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["manifest_kind", "schema_version", "artifact_set_id", "artifacts", "root_artifacts", "dependencies", "contract_catalog_digest", "extensions"],
+  "properties": {
+    "manifest_kind": {"const": "KG_MNP_ARTIFACT_MANIFEST"},
+    "schema_version": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/schemaVersion"},
+    "artifact_set_id": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/stableUrn"},
+    "artifacts": {"type": "array", "items": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/artifactReference"}},
+    "root_artifacts": {"type": "array", "items": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/stableUrn"}, "uniqueItems": true},
+    "dependencies": {"type": "array", "items": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/stableUrn"}, "uniqueItems": true},
+    "contract_catalog_digest": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/sha256"},
+    "extensions": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/extensionMap"}
+  }
+}

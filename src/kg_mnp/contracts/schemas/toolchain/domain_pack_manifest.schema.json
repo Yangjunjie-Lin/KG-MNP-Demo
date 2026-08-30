@@ -1,0 +1,65 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/domain-pack-manifest/1.0",
+  "title": "KG-MNP DomainPackManifest 1.0",
+  "description": "A data-only local Domain Pack declaration.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["manifest_kind", "schema_version", "pack_id", "pack_version", "display_name", "description", "lifecycle", "compatibility", "license", "capabilities", "namespaces", "assets", "entrypoints", "dependencies", "extensions"],
+  "properties": {
+    "manifest_kind": {"const": "KG_MNP_DOMAIN_PACK"},
+    "schema_version": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/schemaVersion"},
+    "pack_id": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/packId"},
+    "pack_version": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/semanticVersion"},
+    "display_name": {"type": "string", "minLength": 1, "maxLength": 200},
+    "description": {"type": "string", "minLength": 1, "maxLength": 1000},
+    "lifecycle": {"enum": ["PLANNED", "SCAFFOLD", "EXPERIMENTAL", "MIGRATED_BASELINE", "STABLE", "DEPRECATED"]},
+    "compatibility": {
+      "type": "object", "additionalProperties": false,
+      "required": ["contract_major", "minimum_toolchain_version"],
+      "properties": {
+        "contract_major": {"type": "integer", "const": 1},
+        "minimum_toolchain_version": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/semanticVersion"}
+      }
+    },
+    "license": {
+      "type": "object", "additionalProperties": false,
+      "required": ["expression", "notice_files"],
+      "properties": {
+        "expression": {"type": "string", "minLength": 1, "maxLength": 100},
+        "notice_files": {"type": "array", "items": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/safeRelativePosixPath"}, "uniqueItems": true}
+      }
+    },
+    "capabilities": {"type": "array", "items": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/capabilityId"}, "uniqueItems": true},
+    "namespaces": {
+      "type": "object",
+      "propertyNames": {"pattern": "^[a-z][a-z0-9-]*$"},
+      "additionalProperties": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/iri"}
+    },
+    "assets": {
+      "type": "array",
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["asset_id", "kind", "path", "media_type", "required", "description"],
+        "properties": {
+          "asset_id": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/assetId"},
+          "kind": {"enum": ["ontology-root", "ontology-module", "ontology-catalog", "ontology-alignment", "shacl-shapes", "terminology", "mapping-rules", "domain-rules", "competency-questions", "query", "fixture", "documentation", "source-notice"]},
+          "path": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/safeRelativePosixPath"},
+          "media_type": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/mediaType"},
+          "required": {"type": "boolean"},
+          "description": {"type": "string", "minLength": 1, "maxLength": 500},
+          "ontology_iri": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/iri"},
+          "version_iri": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/iri"},
+          "profile": {"type": "string", "pattern": "^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$"}
+        }
+      }
+    },
+    "entrypoints": {
+      "type": "object",
+      "propertyNames": {"pattern": "^[a-z][a-z0-9-]*$"},
+      "additionalProperties": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/assetId"}
+    },
+    "dependencies": {"type": "array", "items": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/dependencyReference"}},
+    "extensions": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/extensionMap"}
+  }
+}

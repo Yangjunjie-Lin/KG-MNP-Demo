@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/validation-report/1.0",
+  "title": "KG-MNP ValidationReport 1.0",
+  "description": "A deterministic, path-redacted structural and semantic validation report.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["manifest_kind", "schema_version", "validator", "validator_version", "subject", "status", "checks", "summary"],
+  "properties": {
+    "manifest_kind": {"const": "KG_MNP_VALIDATION_REPORT"},
+    "schema_version": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/schemaVersion"},
+    "validator": {"type": "string", "pattern": "^[a-z][a-z0-9-]*$"},
+    "validator_version": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/semanticVersion"},
+    "subject": {"type": "string", "minLength": 1, "maxLength": 500},
+    "status": {"enum": ["VALID", "INVALID"]},
+    "checks": {
+      "type": "array",
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["code", "severity", "path", "message", "contract_name"],
+        "properties": {
+          "code": {"type": "string", "pattern": "^[A-Z][A-Z0-9_]*$"},
+          "severity": {"enum": ["ERROR", "WARNING", "INFO"]},
+          "path": {"type": "string", "minLength": 1, "maxLength": 500},
+          "message": {"type": "string", "minLength": 1, "maxLength": 2000},
+          "contract_name": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/contractName"},
+          "context": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/extensionMap"}
+        }
+      }
+    },
+    "summary": {
+      "type": "object", "additionalProperties": false,
+      "required": ["error_count", "warning_count", "info_count"],
+      "properties": {
+        "error_count": {"type": "integer", "minimum": 0},
+        "warning_count": {"type": "integer", "minimum": 0},
+        "info_count": {"type": "integer", "minimum": 0}
+      }
+    }
+  }
+}
