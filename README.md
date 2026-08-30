@@ -2,7 +2,7 @@
 
 > Evidence-bound, review-governed and deterministic ontology engineering toolchain
 
-**Current status:** Toolchain Refactor Foundation — Prompt 1
+**Current status:** Toolchain Contract Kernel — Prompt 2
 
 KG-MNP is being repositioned as a pluggable, verifiable and traceable ontology
 engineering toolchain. It converts heterogeneous source material into
@@ -10,10 +10,11 @@ evidence-bound modeling candidates, subjects those candidates to formal checks
 and human review, and allows only a deterministic semantic compiler to produce
 authoritative ontology artifacts.
 
-The core product deliverable is a **Versioned Ontology Package**. Prompt 1
-defines that product boundary and establishes the repository foundation; it
-does not yet freeze the final public artifact contract or replace the existing
-compiler.
+The core product deliverable remains a future **Versioned Ontology Package**.
+Prompt 2 freezes the shared contracts beneath that future package: one public
+Contract Catalog and offline Registry, formal Domain Pack manifests and locks,
+and a deterministic Project Workspace v1. It does not redefine the retained
+compiler or claim the final package contract.
 
 ## What is implemented now
 
@@ -25,7 +26,14 @@ compiler.
 - modeling provenance and review-audit artifacts;
 - publication reconstruction and verification;
 - activation and rollback governance;
-- offline GraphDB packaging and a read-only application/workbench baseline.
+- offline GraphDB packaging and a read-only application/workbench baseline;
+- a packaged Public Contract Catalog with 20 Draft 2020-12 schemas and a
+  fully offline Registry;
+- Artifact Reference, Artifact Manifest, and Validation Report v1 contracts;
+- formal DomainPackManifest/DomainPackLock v1 contracts, local discovery,
+  exact-version dependency resolution, validation, and deterministic locks;
+- ProjectManifest/ProjectLock and transactional Project Workspace v1; and
+- `kg-mnp contracts`, `kg-mnp domain-pack`, and `kg-mnp workspace` CLI routes.
 
 These capabilities are retained from the historical implementation. Some are
 still coupled to MNP paths or the former staged command structure and therefore
@@ -33,11 +41,11 @@ remain refactor targets.
 
 ## What is not implemented yet
 
-The repository does not yet provide the final Project Workspace contract,
-Domain Pack schema and validator, Plugin SDK, multimodal ingestion, an
-evidence-bound KG-IR contract, an LLM proposal provider, semantic diff, a
-unified REST API or unified Workbench. The Forestry Domain Pack is a planning
-scaffold only. No Agent or LLM is an ontology authority.
+The repository does not yet provide a Plugin SDK, multimodal ingestion, the
+final Evidence Record or KG-IR contract, an LLM proposal provider, a compiler
+rewrite, the final Versioned Ontology Package, semantic diff, a unified REST
+API, a unified Workbench, or a generic GraphDB backend. The Forestry Domain
+Pack remains a planning scaffold only. No Agent or LLM is an ontology authority.
 
 ## Semantic authority
 
@@ -67,12 +75,12 @@ for the control, artifact, authority, plugin, and domain boundaries.
 ## Repository structure
 
 ```text
-src/kg_mnp/             Python package and retained semantic kernel
-domain_packs/           provisional Domain Pack bootstrap layout
-  minimal/              cross-domain contract-test scaffold
-  mnp/                  migrated historical MNP assets
+src/kg_mnp/             Python package, Contract Kernel, Workspace, and retained semantic kernel
+domain_packs/           formal data-only DomainPackManifest v1 layout
+  minimal/              experimental industry-neutral contract-test assets
+  mnp/                  locked migrated historical MNP assets
   forestry/             planned scaffold; no forestry ontology or data
-schemas/                retained formal schemas pending later contract work
+schemas/                retained internal Stage/Phase schemas; public Modeling schemas are packaged
 config/                 generic policies and integration configuration
 examples/               reviewed deterministic golden artifacts
 tests/                  retained regression suite plus Prompt 1 foundation gates
@@ -98,12 +106,16 @@ and is pending relocation or removal in a later Prompt.
 
 ## Verification
 
-The foundation gate is offline and requires no GraphDB service or browser:
+The Prompt 2 gates are offline and require no GraphDB service or browser:
 
 ```bash
 python -m ruff check .
 make verify-repo-hygiene
 make verify-toolchain-foundation
+make verify-contract-catalog
+make verify-domain-packs
+make verify-project-workspace
+make verify-prompt-02-offline
 make verify-stage-06
 make verify-application-phase-06-offline
 python -m pytest -q
@@ -116,8 +128,8 @@ as passing unless their prerequisites are actually available.
 
 | Pack | Status | Meaning |
 |---|---|---|
-| `minimal` | `SCAFFOLD` | Minimal bootstrap manifest for later cross-domain contract tests; no ontology is claimed. |
-| `mnp` | `MIGRATED_BASELINE` | Historical MNP ontology, fixtures, mappings, shapes, rules, queries, and evidence moved from generic roots; not yet compliant with the final contract. |
+| `minimal` | `EXPERIMENTAL` | Real, minimal, industry-neutral assets for contract and boundary tests; not a production ontology. |
+| `mnp` | `MIGRATED_BASELINE` | Historical MNP assets enumerated by a formal manifest and deterministic lock; not cross-industry or `STABLE`. |
 | `forestry` | `PLANNED` | Placeholder for the forestry pilot requirement; contains no fabricated ontology, data, or validation result. |
 
 ## Documentation
@@ -126,7 +138,12 @@ as passing unless their prerequisites are actually available.
 - [Current Capability Matrix](docs/product/current-capability-matrix.md)
 - [Research-to-Product Alignment](docs/product/research-to-product-alignment.md)
 - [Target Architecture](docs/architecture/ontology-toolchain-target-architecture.md)
+- [Contract and Workspace Kernel](docs/architecture/contract-and-workspace-kernel.md)
+- [Public Contract Policy](docs/contracts/public-contract-policy.md)
+- [Domain Pack Contract v1](docs/domain-packs/domain-pack-contract-v1.md)
+- [Project Workspace v1](docs/workspaces/project-workspace-v1.md)
 - [ADR-0001](docs/adr/ADR-0001-reposition-as-ontology-toolchain.md)
+- [ADR-0002](docs/adr/ADR-0002-public-contract-domain-pack-and-workspace.md)
 - [Prompt 1 Baseline Audit](docs/refactor/prompt-01-baseline-audit.md)
 - [Repository Migration Matrix](docs/refactor/repository-migration-matrix.md)
 - [Domain Packs](docs/domain-packs/README.md)

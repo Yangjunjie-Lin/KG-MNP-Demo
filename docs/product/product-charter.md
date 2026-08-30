@@ -35,8 +35,10 @@ contract is expected to describe, as applicable:
 - a Release Attestation; and
 - a Semantic Diff.
 
-Prompt 1 defines this boundary only. The final artifact contract, schema, and
-workspace model are later work and are not implied by the bootstrap manifests.
+Prompt 2 establishes Artifact Reference/Manifest v1 and Project Workspace v1
+as shared identity, containment, and locking contracts. Artifact Manifest v1
+is deliberately not the final Versioned Ontology Package contract; it does not
+imply review, confirmation, release, or publication authority.
 
 ## Product principles
 
@@ -60,15 +62,16 @@ Unreviewed candidates never cross this boundary.
 Domain vocabulary, mappings, shapes, rules, evidence profiles, competency
 questions, and fixtures belong in Domain Packs. MNP, forestry, and future
 industries extend the toolchain without becoming hard-coded core authorities.
-Prompt 1 manifests are provisional; the formal Domain Pack contract follows in
-Prompt 2.
+Prompt 2 formalizes DomainPackManifest/DomainPackLock v1, local exact-version
+resolution, and data-only validation. A Pack supplies content and constraints;
+its manifest or lock does not make that content confirmed semantic authority.
 
 ### Plugin principle
 
 Replaceable ingestion, extraction, proposal, storage, visualization, and
 integration providers will use explicit contracts and capability declarations.
 Plugins cannot bypass confirmation, deterministic compilation, validation, or
-release controls. Prompt 1 does not implement a Plugin SDK.
+release controls. Prompt 2 does not implement a Plugin SDK.
 
 ### Traceability principle
 
@@ -96,13 +99,16 @@ new controlled release. Published artifacts are never self-mutated.
 - autonomous ontology deployment after execution failure;
 - claims of universal multimodal or cross-industry support;
 - a new numbered Stage or Application Phase;
-- the final public artifact, workspace, Domain Pack, or Plugin SDK contract in
-  Prompt 1.
+- treating Artifact Manifest v1 as the final Versioned Ontology Package;
+- treating Workspace directory creation as implementation of ingestion, IR,
+  review, compilation, publication, or registry behavior; and
+- a Plugin SDK in Prompt 2.
 
 ## 2026–2027 research and product scope
 
-The planned scope is to stabilize public artifact and workspace contracts;
-formalize Domain Packs and plugins; add evidence-bound ingestion and KG-IR;
+The current foundation includes stable public artifact/workspace contracts and
+formal local Domain Packs. The planned scope is to formalize plugins; add
+evidence-bound ingestion and KG-IR;
 support constrained LLM proposal providers; consolidate review, compilation,
 validation, registry, diff, release, and rollback experiences; and validate the
 architecture with an honest forestry pilot Domain Pack. Delivery remains

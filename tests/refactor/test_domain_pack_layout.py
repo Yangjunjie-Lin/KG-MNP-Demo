@@ -36,13 +36,15 @@ def _manifest(pack: str) -> dict[str, object]:
     return value
 
 
-def test_bootstrap_pack_layout_and_honest_statuses() -> None:
-    assert _manifest("minimal")["status"] == "SCAFFOLD"
-    assert _manifest("mnp")["status"] == "MIGRATED_BASELINE"
-    assert _manifest("forestry")["status"] == "PLANNED"
+def test_formal_pack_layout_and_honest_lifecycles() -> None:
+    assert _manifest("minimal")["lifecycle"] == "EXPERIMENTAL"
+    assert _manifest("mnp")["lifecycle"] == "MIGRATED_BASELINE"
+    assert _manifest("forestry")["lifecycle"] == "PLANNED"
     for pack in ("minimal", "mnp", "forestry"):
         manifest = _manifest(pack)
-        assert manifest["provisional"] is True
+        assert manifest["manifest_kind"] == "KG_MNP_DOMAIN_PACK"
+        assert manifest["schema_version"] == "1.0.0"
+        assert (ROOT / "domain_packs" / pack / "pack.lock.json").is_file()
         assert (ROOT / "domain_packs" / pack / "README.md").is_file()
 
 

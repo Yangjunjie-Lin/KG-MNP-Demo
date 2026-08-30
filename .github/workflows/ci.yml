@@ -33,6 +33,33 @@ jobs:
             exit 1
           fi
 
+  toolchain-contracts:
+    name: toolchain-contracts
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install toolchain development dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[dev]"
+      - name: Verify Prompt 2 Contract Kernel offline
+        run: make verify-prompt-02-offline
+      - name: Verify clean working tree
+        shell: bash
+        run: |
+          git diff --exit-code
+          if [[ -n "$(git status --short)" ]]; then
+            git status --short
+            exit 1
+          fi
+
   governance-offline:
     if: github.event_name == 'pull_request'
     needs: [diagnostics-offline]

@@ -1,6 +1,6 @@
 # Current Capability Matrix
 
-This matrix records repository state at Prompt 1. “Implemented” means exercised
+This matrix records repository state at Prompt 2. “Implemented” means exercised
 by retained code and tests; it does not mean the capability is already generic,
 packaged as a stable public API, or validated across industries.
 
@@ -16,6 +16,16 @@ packaged as a stable public API, or validated across industries.
 | Provenance | Modeling provenance and review-audit graphs are compiled and coverage-tested. |
 | Publication verification | Publication packages can be reconstructed, verified, and attested offline. |
 | Activation/rollback governance | Registry, state transition, pointer, concurrency, rollback, resolver, and attestation logic exist. |
+| Public Contract Catalog | One packaged Catalog and deterministic Catalog Lock bind 20 public Draft 2020-12 schemas. |
+| Offline Contract Registry | Package-local `$ref` resolution, schema self-validation, and payload validation run without network retrieval. |
+| Artifact Reference/Manifest v1 | Public identity and constrained immutable-file-set contracts exist; they do not represent review or the final ontology package. |
+| Formal DomainPackManifest v1 | Formal manifests govern `minimal`, `mnp`, and `forestry` with explicit honest lifecycle states. |
+| DomainPackLock v1 | Deterministic raw/semantic manifest hashes, asset hashes, dependency closure, content digest, and lock identity are implemented. |
+| Local Domain Pack Registry | Explicit local roots, exact versions, capability checks, dependency closure, and cycle/conflict rejection are implemented; remote download is not. |
+| ProjectManifest v1 | Exact Pack selection, profiles, and closed offline/strict settings are implemented. |
+| ProjectLock v1 | The Project manifest, Contract Catalog, and resolved Pack closure are deterministically bound without time or absolute paths. |
+| Project Workspace v1 | Transactional init, exact layout, open/validate/status/inspect/lock, and path/symlink/authority checks are implemented. Empty future artifact directories do not imply their later capabilities. |
+| Contract/Pack/Workspace CLI | `kg-mnp contracts`, `domain-pack`, and `workspace` provide stable JSON envelopes and documented exit codes. |
 
 ## IMPLEMENTED_BUT_REQUIRES_REFACTOR
 
@@ -35,15 +45,19 @@ packaged as a stable public API, or validated across industries.
 
 | Capability | Status |
 |---|---|
-| Project Workspace | Planned; no final contract in Prompt 1. |
-| Formal Domain Pack contract | Planned for Prompt 2; current manifests are provisional. |
-| Plugin SDK and provider registry | Planned; no placeholder API is claimed. |
-| Multimodal ingestion | Planned research/product work; not implemented. |
-| Evidence-bound KG-IR | Planned; current evidence models are inputs to later design. |
-| LLM proposal provider | Planned and constrained to proposal authority. |
-| Unified Workbench and REST API | Planned after contracts stabilize. |
+| Plugin SDK | Planned; no placeholder API or provider registry is claimed. |
+| Multimodal Ingestion | Planned research/product work; not implemented. |
+| Evidence Record final contract | Planned; Artifact Reference v1 is not the final Evidence Record. |
+| KG-IR | Planned; current evidence models are inputs to later design. |
+| LLM Proposal Provider | Planned and constrained to proposal authority. |
+| Unified Review Experience | Planned; retained review behavior has not been rewritten. |
+| New Compiler Kernel | Planned; the retained deterministic compiler remains in place. |
+| Final Versioned Ontology Package | Planned; Artifact Manifest v1 is only a constrained file-set manifest. |
 | Semantic Diff | Planned for controlled evolution; existing amendment diff is not represented as the final semantic diff. |
-| Forestry Domain Pack | Planned scaffold only; no forestry ontology, data, or validation exists. |
+| Unified REST API | Planned after contracts stabilize. |
+| Unified Workbench | Planned; current read-only Workbench is retained and has not been rewritten. |
+| Forestry Domain Pack Implementation | Planned; the formal manifest declares zero capabilities and assets, with no fabricated forestry content. |
+| Generic GraphDB Backend | Planned; the retained concrete GraphDB integration is not a generic backend abstraction. |
 
 ## OUT_OF_SCOPE
 

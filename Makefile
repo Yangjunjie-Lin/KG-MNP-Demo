@@ -676,3 +676,39 @@ verify-application-phase-06-offline: verify-application-phase-05-offline \
 verify-application-phase-06: verify-application-phase-05 \
 	verify-application-phase-06-offline
 	python scripts/activation_integration.py
+
+.PHONY: verify-contract-catalog verify-domain-packs \
+	verify-project-workspace verify-prompt-02-offline
+
+verify-contract-catalog:
+	python scripts/generate_contract_catalog.py --check
+	python -m pytest -q tests/contracts \
+		tests/security/test_contract_document_security.py \
+		tests/cli/test_contract_cli.py
+	kg-mnp contracts list --json
+	kg-mnp contracts verify-catalog
+
+verify-domain-packs:
+	python scripts/generate_prompt02_pack_manifests.py --check
+	python scripts/generate_mnp_prompt01_content_golden.py --check
+	python scripts/normalize_domain_pack_text.py --check
+	python -m pytest -q tests/domain_packs \
+		tests/security/test_domain_pack_security.py \
+		tests/cli/test_domain_pack_cli.py
+	kg-mnp domain-pack validate domain_packs/minimal
+	kg-mnp domain-pack verify-lock domain_packs/minimal
+	kg-mnp domain-pack validate domain_packs/mnp
+	kg-mnp domain-pack verify-lock domain_packs/mnp
+	kg-mnp domain-pack validate domain_packs/forestry
+	kg-mnp domain-pack verify-lock domain_packs/forestry
+
+verify-project-workspace:
+	python -m pytest -q tests/workspace \
+		tests/security/test_workspace_security.py \
+		tests/cli/test_workspace_cli.py
+
+verify-prompt-02-offline: verify-toolchain-foundation \
+	verify-contract-catalog verify-domain-packs verify-project-workspace
+	python -m pytest -q tests/refactor/test_product_docs.py \
+		tests/refactor/test_domain_pack_layout.py
+	git diff --exit-code

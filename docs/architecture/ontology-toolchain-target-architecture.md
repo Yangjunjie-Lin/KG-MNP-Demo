@@ -3,7 +3,9 @@
 This is the target product architecture. Shaded boundaries distinguish the
 deterministic semantic authority, plugin extension points, and domain content.
 Solid arrows carry governed artifacts; dashed arrows carry control or adapter
-requests. Prompt 1 establishes boundaries and migration foundations only.
+requests. Prompt 2 implements the Contract Kernel, local Domain Pack Registry,
+and Project Workspace control-plane foundation. The remaining target boxes are
+not implied to be implemented by their presence in this diagram.
 
 ```mermaid
 flowchart TB
@@ -15,7 +17,9 @@ flowchart TB
   end
 
   subgraph CP[Project Control Plane]
-    PROJECT[Project / Configuration]
+    PROJECT[Project Workspace v1]
+    CONTRACTS[Contract Catalog / Offline Registry]
+    LOCKS[Project and Pack Locks]
     POLICY[Policy and Quality Gates]
     REVIEW[Human Review]
   end
@@ -77,6 +81,9 @@ flowchart TB
   CLI -. control .-> PROJECT
   REST -. control .-> PROJECT
   SDK -. control .-> PROJECT
+  CONTRACTS -. validates .-> PROJECT
+  PROJECT -. binds .-> LOCKS
+  LOCKS -. pins .-> DREG
   PROJECT -. orchestrates .-> INGEST
   PROJECT -. applies .-> POLICY
   POLICY -. gates .-> PREVALIDATE
@@ -134,3 +141,19 @@ flowchart TB
   integrate, but cannot bypass authority gates.
 - **Domain content** is supplied by Domain Packs. No domain pack becomes the
   core compiler or a universal ontology.
+
+## Prompt 2 implemented slice
+
+The Contract Catalog and all public schemas are package resources accessed via
+`importlib.resources`; they do not depend on the repository root or current
+working directory. Registry resolution is package-local and offline. Formal
+Domain Pack manifests are data-only, validated against executable content and
+path escape, and locked to exact bytes and dependency closure. Project
+Workspace v1 transactionally creates the filesystem boundary and binds its
+Project Manifest to the Contract Catalog and exact Pack locks.
+
+The `sources`, evidence, IR, proposal, review, confirmed, build, validation,
+package, and registry directories are boundary reservations only. Prompt 2
+does not implement multimodal ingestion, KG-IR, an LLM provider, a new review
+experience, a compiler rewrite, final package assembly, semantic diff, REST,
+Workbench replacement, Forestry content, or a generic GraphDB backend.

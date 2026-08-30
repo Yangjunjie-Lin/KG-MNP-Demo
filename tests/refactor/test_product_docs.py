@@ -20,14 +20,49 @@ def test_product_foundation_documents_exist() -> None:
 def test_readme_states_current_identity_and_capability_limits() -> None:
     readme = (ROOT / "README.md").read_text(encoding="utf-8")
     assert "# KG-MNP Ontology Toolchain" in readme
-    assert "Toolchain Refactor Foundation — Prompt 1" in readme
+    assert "Toolchain Contract Kernel — Prompt 2" in readme
     assert "What is implemented now" in readme
     assert "What is not implemented yet" in readme
-    assert "Forestry Domain Pack is a planning" in readme
-    assert "scaffold only" in readme
+    assert "Forestry Domain" in readme
+    assert "planning scaffold only" in readme
     assert "No Agent or LLM is an ontology authority" in readme
     assert "Stage 09" not in readme
     assert "Phase 07" not in readme
+
+
+def test_prompt02_documents_state_implemented_and_deferred_capabilities() -> None:
+    matrix = (ROOT / "docs/product/current-capability-matrix.md").read_text(
+        encoding="utf-8"
+    )
+    for capability in (
+        "Public Contract Catalog",
+        "Offline Contract Registry",
+        "DomainPackLock v1",
+        "Project Workspace v1",
+    ):
+        assert capability in matrix
+    for planned in (
+        "Plugin SDK",
+        "Multimodal Ingestion",
+        "Final Versioned Ontology Package",
+        "Forestry Domain Pack Implementation",
+    ):
+        assert planned in matrix
+
+    required_prompt02_docs = (
+        "docs/contracts/public-contract-policy.md",
+        "docs/contracts/schema-catalog.md",
+        "docs/contracts/artifact-model-v1.md",
+        "docs/contracts/canonicalization-and-digests.md",
+        "docs/domain-packs/domain-pack-contract-v1.md",
+        "docs/domain-packs/domain-pack-lock-v1.md",
+        "docs/workspaces/project-manifest-v1.md",
+        "docs/workspaces/project-workspace-v1.md",
+        "docs/workspaces/project-lock-v1.md",
+        "docs/architecture/contract-and-workspace-kernel.md",
+        "docs/adr/ADR-0002-public-contract-domain-pack-and-workspace.md",
+    )
+    assert all((ROOT / path).is_file() for path in required_prompt02_docs)
 
 
 def test_current_product_documents_do_not_extend_retired_route() -> None:

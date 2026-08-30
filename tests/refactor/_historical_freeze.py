@@ -16,11 +16,12 @@ from pathlib import Path, PurePosixPath
 ROOT = Path(__file__).resolve().parents[2]
 BASELINE_SHA = "e45da340267de8d4b7b3a54177822aa641e3a601"
 BASELINE_TAG = "kg-mnp-phase06-baseline-2026-08-30"
+PROMPT01_HEAD_SHA = "a7114eef25f2f2a262cd69793a8d3e2b444836fc"
 PROTECTED_ROOTS = (
     "src/kg_mnp",
     "schemas",
     "config",
-    "domain_packs/mnp",
+    "domain_packs",
     "deploy",
     "scripts",
     "tests",
@@ -29,11 +30,12 @@ PROTECTED_ROOTS = (
 )
 SELF_PATH = "tests/refactor/_historical_freeze.py"
 
-# Updated only after the sanctioned Prompt 1 migration passes the retained
-# semantic validators.  The helper excludes itself to avoid a self-referential
+# Updated only after the sanctioned Prompt 2 Contract Kernel, Domain Pack and
+# Workspace changes passed their locks, MNP preservation gate, and retained
+# semantic validators. The helper excludes itself to avoid a self-referential
 # digest; every other intended repository file below PROTECTED_ROOTS is bound.
-EXPECTED_FILE_COUNT = 978
-EXPECTED_TREE_SHA256 = "25bb5818de52132f71056d543f3b019aeb8bbbe9a04bf2b82ff522b89e7c4c24"
+EXPECTED_FILE_COUNT = 1052
+EXPECTED_TREE_SHA256 = "e39390641d4518c8e56614637a06dfe29d7c8a1d8fb9275ef40376bc2e500fe1"
 
 
 def _git(*arguments: str, check: bool = True) -> subprocess.CompletedProcess[bytes]:
@@ -77,7 +79,7 @@ def assert_prompt01_semantic_snapshot(historical_commit: str) -> None:
     assert baseline_target == BASELINE_SHA, (
         f"immutable baseline tag target changed: {baseline_target or '<missing>'}"
     )
-    for commit in (historical_commit, BASELINE_SHA):
+    for commit in (historical_commit, PROMPT01_HEAD_SHA, BASELINE_SHA):
         exists = _git("cat-file", "-e", f"{commit}^{{commit}}", check=False)
         assert exists.returncode == 0, f"historical authority commit unavailable: {commit}"
         ancestry = _git("merge-base", "--is-ancestor", commit, "HEAD", check=False)
