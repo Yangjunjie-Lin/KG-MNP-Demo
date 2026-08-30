@@ -1,6 +1,6 @@
 # Current Capability Matrix
 
-This matrix records repository state at Prompt 2. “Implemented” means exercised
+This matrix records repository state at Prompt 3. “Implemented” means exercised
 by retained code and tests; it does not mean the capability is already generic,
 packaged as a stable public API, or validated across industries.
 
@@ -16,7 +16,7 @@ packaged as a stable public API, or validated across industries.
 | Provenance | Modeling provenance and review-audit graphs are compiled and coverage-tested. |
 | Publication verification | Publication packages can be reconstructed, verified, and attested offline. |
 | Activation/rollback governance | Registry, state transition, pointer, concurrency, rollback, resolver, and attestation logic exist. |
-| Public Contract Catalog | One packaged Catalog and deterministic Catalog Lock bind 20 public Draft 2020-12 schemas. |
+| Public Contract Catalog | One packaged Catalog and deterministic Catalog Lock bind 34 public Draft 2020-12 schemas; the frozen 1.0 catalog schema remains byte-identical and catalog schema 1.1 adds `ingestion`. |
 | Offline Contract Registry | Package-local `$ref` resolution, schema self-validation, and payload validation run without network retrieval. |
 | Artifact Reference/Manifest v1 | Public identity and constrained immutable-file-set contracts exist; they do not represent review or the final ontology package. |
 | Formal DomainPackManifest v1 | Formal manifests govern `minimal`, `mnp`, and `forestry` with explicit honest lifecycle states. |
@@ -26,6 +26,13 @@ packaged as a stable public API, or validated across industries.
 | ProjectLock v1 | The Project manifest, Contract Catalog, and resolved Pack closure are deterministically bound without time or absolute paths. |
 | Project Workspace v1 | Transactional init, exact layout, open/validate/status/inspect/lock, and path/symlink/authority checks are implemented. Empty future artifact directories do not imply their later capabilities. |
 | Contract/Pack/Workspace CLI | `kg-mnp contracts`, `domain-pack`, and `workspace` provide stable JSON envelopes and documented exit codes. |
+| Plugin SDK v1 and Local Plugin Registry | Frozen request/response models, Protocols, metadata-only discovery, explicit external allowlisting, deterministic selection, snapshots and conformance are implemented. Installed Python plugins are trusted code, not an OS sandbox. |
+| Source Content Store | SourceAsset/SourceBatch records bind content-addressed blobs without absolute source paths or timestamps. |
+| SourceLocator and EvidenceRecord | Fourteen locator types and core-authoritative deterministic evidence/transformation closure are implemented. Evidence is observation, not confirmed knowledge. |
+| Deterministic Ingestion Planner | The core planner binds finite limits, selected provider snapshots and policies. It is not an Agent or LLM planner. |
+| Structured document parsers | TXT, Markdown, JSON, CSV/TSV, XLSX, DOCX and PDF text parsing plus image/WAV metadata are implemented with bounded security checks. OCR, ASR and video understanding are absent. |
+| KG-IR and structural quality gate | Every intermediate item is evidence-bound; ontology/business-object kinds are prohibited. PASS/REVIEW_REQUIRED/FAIL are structural policy outcomes, not semantic accuracy. |
+| Ingestion CLI | `kg-mnp plugin`, `source`, `ingest` and `ir` expose stable JSON envelopes and trace KG-IR to source blobs, snapshots and transformations. |
 
 ## IMPLEMENTED_BUT_REQUIRES_REFACTOR
 
@@ -45,10 +52,9 @@ packaged as a stable public API, or validated across industries.
 
 | Capability | Status |
 |---|---|
-| Plugin SDK | Planned; no placeholder API or provider registry is claimed. |
-| Multimodal Ingestion | Planned research/product work; not implemented. |
-| Evidence Record final contract | Planned; Artifact Reference v1 is not the final Evidence Record. |
-| KG-IR | Planned; current evidence models are inputs to later design. |
+| LLM Ingestion Planner | Planned; Prompt 3 implements only the deterministic core planner. |
+| OCR/Vision/ASR/Video providers | Planned optional providers; metadata parsers do not claim semantic understanding. |
+| Field-to-Ontology Mapping | Planned for Prompt 4 proposal and human-review work. |
 | LLM Proposal Provider | Planned and constrained to proposal authority. |
 | Unified Review Experience | Planned; retained review behavior has not been rewritten. |
 | New Compiler Kernel | Planned; the retained deterministic compiler remains in place. |

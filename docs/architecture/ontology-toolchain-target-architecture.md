@@ -3,9 +3,10 @@
 This is the target product architecture. Shaded boundaries distinguish the
 deterministic semantic authority, plugin extension points, and domain content.
 Solid arrows carry governed artifacts; dashed arrows carry control or adapter
-requests. Prompt 2 implements the Contract Kernel, local Domain Pack Registry,
-and Project Workspace control-plane foundation. The remaining target boxes are
-not implied to be implemented by their presence in this diagram.
+requests. Prompts 2 and 3 implement the Contract Kernel, local Domain Pack
+Registry, Project Workspace control plane, local Plugin Registry, and the
+evidence-bound ingestion slice. The remaining target boxes are not implied to
+be implemented by their presence in this diagram.
 
 ```mermaid
 flowchart TB
@@ -26,7 +27,7 @@ flowchart TB
 
   subgraph DATA[Data and Evidence Pipeline]
     SOURCE[Source Assets]
-    INGEST[Ingestion Providers]
+    INGEST[Deterministic Ingestion Plan and Providers]
     EVIDENCE[Evidence Records]
     KGIR[Evidence-bound KG-IR]
   end
@@ -52,8 +53,8 @@ flowchart TB
   end
 
   subgraph PLUG[Plugin Extension Boundary]
-    PREG[Plugin Registry]
-    PROVIDERS[Ingestion / Proposal / Store / Visualization Providers]
+    PREG[Local Plugin Registry - Ingestion Implemented]
+    PROVIDERS[Ingestion Implemented / Other Providers Planned]
   end
 
   subgraph DOMAIN[Domain Content Boundary]
@@ -99,7 +100,7 @@ flowchart TB
   EVIDENCE --> STORE
   PROPOSAL --> STORE
 
-  PREG -. loads .-> PROVIDERS
+  PREG -. explicitly enables .-> PROVIDERS
   PROVIDERS -. extends .-> INGEST
   PROVIDERS -. proposes only .-> PROPOSAL
   DREG -. selects .-> MNP
@@ -142,7 +143,7 @@ flowchart TB
 - **Domain content** is supplied by Domain Packs. No domain pack becomes the
   core compiler or a universal ontology.
 
-## Prompt 2 implemented slice
+## Prompt 2 and Prompt 3 implemented slice
 
 The Contract Catalog and all public schemas are package resources accessed via
 `importlib.resources`; they do not depend on the repository root or current
@@ -152,8 +153,19 @@ path escape, and locked to exact bytes and dependency closure. Project
 Workspace v1 transactionally creates the filesystem boundary and binds its
 Project Manifest to the Contract Catalog and exact Pack locks.
 
-The `sources`, evidence, IR, proposal, review, confirmed, build, validation,
-package, and registry directories are boundary reservations only. Prompt 2
-does not implement multimodal ingestion, KG-IR, an LLM provider, a new review
-experience, a compiler rewrite, final package assembly, semantic diff, REST,
-Workbench replacement, Forestry content, or a generic GraphDB backend.
+Prompt 3 activates only the `sources`, `artifacts/evidence`, `artifacts/ir`, and
+`artifacts/validation` ingestion paths. The Source Store is content-addressed;
+the deterministic planner binds provider snapshots; Core binds every accepted
+observation to a SourceLocator, EvidenceRecord, and TransformationRecord before
+building KG-IR. Structural quality can pass, require review, or fail. Image and
+WAV support is metadata-only, while unsupported video, non-WAV audio, scanned
+documents, and unavailable semantic providers remain unresolved or require
+review without invented text.
+
+The `proposal`, `review`, `confirmed`, `build`, `package`, and release-registry
+authority boundaries remain unchanged. Prompt 3 does not implement an LLM
+planner, OCR, vision, ASR, video understanding, a new review experience, an
+ontology-modeling rewrite, final package assembly, semantic diff, REST,
+Workbench replacement, Forestry content, or a generic GraphDB backend. For the
+detailed implemented control and artifact flow, see
+`plugin-driven-ingestion-architecture.md`.

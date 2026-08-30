@@ -36,9 +36,11 @@ contract is expected to describe, as applicable:
 - a Semantic Diff.
 
 Prompt 2 establishes Artifact Reference/Manifest v1 and Project Workspace v1
-as shared identity, containment, and locking contracts. Artifact Manifest v1
-is deliberately not the final Versioned Ontology Package contract; it does not
-imply review, confirmation, release, or publication authority.
+as shared identity, containment, and locking contracts. Prompt 3 adds the
+Plugin SDK, content-addressed sources, Evidence Records, structural quality
+gates, and evidence-bound KG-IR. Artifact Manifest v1 remains distinct from the
+final Versioned Ontology Package contract; neither ingestion nor KG-IR implies
+review, confirmation, release, or publication authority.
 
 ## Product principles
 
@@ -69,9 +71,14 @@ its manifest or lock does not make that content confirmed semantic authority.
 ### Plugin principle
 
 Replaceable ingestion, extraction, proposal, storage, visualization, and
-integration providers will use explicit contracts and capability declarations.
-Plugins cannot bypass confirmation, deterministic compilation, validation, or
-release controls. Prompt 2 does not implement a Plugin SDK.
+integration providers use explicit contracts and capability declarations.
+Prompt 3 implements Plugin SDK v1 for local source, detection, parsing,
+normalization, and structural-quality providers. Discovery reads metadata
+without importing external implementations; external installed code is disabled
+until explicitly allowed. A Python Plugin is trusted installed code, not an OS
+sandbox, and cannot own authoritative Evidence or KG-IR identifiers. Plugins
+cannot bypass confirmation, deterministic compilation, validation, or release
+controls.
 
 ### Traceability principle
 
@@ -100,16 +107,20 @@ new controlled release. Published artifacts are never self-mutated.
 - claims of universal multimodal or cross-industry support;
 - a new numbered Stage or Application Phase;
 - treating Artifact Manifest v1 as the final Versioned Ontology Package;
-- treating Workspace directory creation as implementation of ingestion, IR,
-  review, compilation, publication, or registry behavior; and
-- a Plugin SDK in Prompt 2.
+- treating ingestion observations or KG-IR as reviewed ontology or business
+  objects;
+- an LLM planner or fabricated OCR, vision, ASR, or video understanding;
+- treating Workspace directory creation as implementation of review,
+  compilation, publication, or package-registry behavior; and
+- a general-purpose Python security sandbox.
 
 ## 2026–2027 research and product scope
 
-The current foundation includes stable public artifact/workspace contracts and
-formal local Domain Packs. The planned scope is to formalize plugins; add
-evidence-bound ingestion and KG-IR;
-support constrained LLM proposal providers; consolidate review, compilation,
-validation, registry, diff, release, and rollback experiences; and validate the
-architecture with an honest forestry pilot Domain Pack. Delivery remains
-incremental, and planned capabilities must not be represented as implemented.
+The current foundation includes stable public artifact/workspace contracts,
+formal local Domain Packs, Plugin SDK v1, deterministic local ingestion,
+Evidence Records, structural quality gates, and evidence-bound KG-IR. The
+planned scope is to support constrained LLM proposal providers; consolidate
+review, compilation, validation, registry, diff, release, and rollback
+experiences; and validate the architecture with an honest forestry pilot Domain
+Pack. Delivery remains incremental, and planned capabilities must not be
+represented as implemented.

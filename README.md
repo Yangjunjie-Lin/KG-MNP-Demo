@@ -2,7 +2,7 @@
 
 > Evidence-bound, review-governed and deterministic ontology engineering toolchain
 
-**Current status:** Toolchain Contract Kernel — Prompt 2
+**Current status:** Evidence-Bound Ingestion Kernel — Prompt 3
 
 KG-MNP is being repositioned as a pluggable, verifiable and traceable ontology
 engineering toolchain. It converts heterogeneous source material into
@@ -27,13 +27,24 @@ compiler or claim the final package contract.
 - publication reconstruction and verification;
 - activation and rollback governance;
 - offline GraphDB packaging and a read-only application/workbench baseline;
-- a packaged Public Contract Catalog with 20 Draft 2020-12 schemas and a
+- a packaged Public Contract Catalog with 34 Draft 2020-12 schemas and a
   fully offline Registry;
 - Artifact Reference, Artifact Manifest, and Validation Report v1 contracts;
 - formal DomainPackManifest/DomainPackLock v1 contracts, local discovery,
   exact-version dependency resolution, validation, and deterministic locks;
 - ProjectManifest/ProjectLock and transactional Project Workspace v1; and
-- `kg-mnp contracts`, `kg-mnp domain-pack`, and `kg-mnp workspace` CLI routes.
+- Plugin SDK v1, metadata-only installed-distribution discovery, explicit
+  external allowlisting, deterministic provider selection and snapshots;
+- content-addressed SourceAsset/SourceBatch storage with bounded local file and
+  directory registration;
+- deterministic media detection and real TXT, Markdown, JSON, CSV/TSV, XLSX,
+  DOCX, PDF, image-metadata and WAV-metadata parsers;
+- core-authoritative SourceLocator, TransformationRecord, EvidenceRecord,
+  structural QualityReport, IngestionPlan/Run and evidence-bound KG-IR;
+- transactional ingestion artifacts integrated with ArtifactReference and
+  ArtifactManifest; and
+- `kg-mnp plugin`, `source`, `ingest`, and `ir` CLI routes in addition to the
+  Prompt 2 routes.
 
 These capabilities are retained from the historical implementation. Some are
 still coupled to MNP paths or the former staged command structure and therefore
@@ -41,11 +52,13 @@ remain refactor targets.
 
 ## What is not implemented yet
 
-The repository does not yet provide a Plugin SDK, multimodal ingestion, the
-final Evidence Record or KG-IR contract, an LLM proposal provider, a compiler
-rewrite, the final Versioned Ontology Package, semantic diff, a unified REST
-API, a unified Workbench, or a generic GraphDB backend. The Forestry Domain
-Pack remains a planning scaffold only. No Agent or LLM is an ontology authority.
+The repository does not provide an LLM planner, OCR, vision classification,
+ASR, video understanding, field-to-ontology mapping, a compiler rewrite, the
+final Versioned Ontology Package, semantic diff, a unified REST API, a unified
+Workbench, or a generic GraphDB backend. Image and WAV support is metadata-only;
+scanned PDFs and unsupported audio/video require review or a missing provider.
+The Forestry Domain Pack remains a planning scaffold only.
+No Agent or LLM is an ontology authority.
 
 ## Semantic authority
 
@@ -116,6 +129,13 @@ make verify-contract-catalog
 make verify-domain-packs
 make verify-project-workspace
 make verify-prompt-02-offline
+make verify-plugin-sdk
+make verify-source-store
+make verify-ingestion-contracts
+make verify-ingestion-parsers
+make verify-evidence-kgir
+make verify-ingestion-security
+make verify-prompt-03-offline
 make verify-stage-06
 make verify-application-phase-06-offline
 python -m pytest -q
