@@ -13,6 +13,11 @@ from generic repository roots. Migrated asset types include:
 - SHACL shapes and eligibility rules;
 - competency questions and application/domain queries.
 
-The move preserves source, copyright, license, and semantic content. Historical
-IRIs remain unchanged. This layout does **not** claim compliance with the final
-Domain Pack contract; `pack.yaml` is a provisional bootstrap manifest only.
+The formal `pack.yaml` enumerates the frozen Prompt 1 assets and
+`pack.lock.json` binds their exact content deterministically. The migration
+preserves historical IRIs and normalized semantic content; a dedicated golden
+inventory rejects changes to the 84 Prompt 1 assets.
+
+`MIGRATED_BASELINE` does not mean `STABLE`, cross-industry, production-ready,
+or independently revalidated. The Manifest and Lock do not elevate retained
+eligibility behavior into the toolchain product core.

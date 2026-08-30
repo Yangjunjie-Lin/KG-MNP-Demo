@@ -1,0 +1,13 @@
+{
+  "assets": [],
+  "canonicalization_profile": "KG-MNP Canonical JSON v1",
+  "content_digest": "58dbf2ab75189ecefdaf79e6c5e49ae7c796471e9be65aa48cbf0e21a21d66e9",
+  "dependencies": [],
+  "lock_id": "urn:kg-mnp:domain-pack-lock:ad767d64635dee7c8329c7d370b20acedbb85cf6b9ce3f50173ba7aa92cdb055",
+  "manifest_file_sha256": "f3697fb644cc661831cb551992dd576d262a368fd9820444a0f9819e83ca5481",
+  "manifest_kind": "KG_MNP_DOMAIN_PACK_LOCK",
+  "manifest_semantic_sha256": "ca8bfa6e1bc608997da3ed09f576e96f2e9498ced48afb99a2f720ba92797426",
+  "pack_id": "forestry",
+  "pack_version": "0.1.0",
+  "schema_version": "1.0.0"
+}

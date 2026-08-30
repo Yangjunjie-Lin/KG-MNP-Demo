@@ -1,8 +1,13 @@
 # Minimal Domain Pack
 
-Status: **SCAFFOLD**
+Status: **EXPERIMENTAL**
 
-This pack intentionally contains only a provisional bootstrap manifest. It
-does not claim an ontology, mapping set, fixture, or validation result. A later
-prompt will use it for cross-domain contract tests after the public Domain Pack
-schema is defined.
+This Pack is a deliberately tiny, industry-neutral Contract Test Pack. Its
+formal v1 manifest and lock enumerate one ontology, one SHACL shapes graph, one
+terminology file, one competency-question file, one read-only query, and one
+RDF fixture. The assets exercise real parsing, capability, entrypoint, path,
+and lock behavior.
+
+`EXPERIMENTAL` does not mean production-ready or domain-validated. The Pack is
+not MNP, forestry, or any other industry ontology, and its valid lock proves
+only deterministic content identity.

@@ -1,0 +1,5 @@
+@prefix min: <https://yangjunjie-lin.github.io/KG-MNP-Demo/domain-packs/minimal/terms#> .
+
+<urn:kg-mnp:minimal-fixture:entity-1>
+    a min:Entity ;
+    min:label "Example entity"@en .

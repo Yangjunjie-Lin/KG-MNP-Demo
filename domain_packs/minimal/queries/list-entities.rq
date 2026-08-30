@@ -1,0 +1,8 @@
+PREFIX min: <https://yangjunjie-lin.github.io/KG-MNP-Demo/domain-packs/minimal/terms#>
+
+SELECT ?entity ?label
+WHERE {
+  ?entity a min:Entity ;
+          min:label ?label .
+}
+ORDER BY ?entity ?label

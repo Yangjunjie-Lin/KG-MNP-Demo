@@ -1,0 +1,56 @@
+{
+  "assets": [
+    {
+      "asset_id": "minimal-competency-questions",
+      "media_type": "application/yaml",
+      "path": "competency_questions/questions.yaml",
+      "sha256": "7375d7dab5adac3da701e29fd9547e944c2672d42a6000d571f8be84b5ed92f6",
+      "size_bytes": 154
+    },
+    {
+      "asset_id": "minimal-instance-fixture",
+      "media_type": "text/turtle",
+      "path": "fixtures/minimal-instance.ttl",
+      "sha256": "b919b8373a9cfe35e6f125a5097198fd0f9693eb417c51bc5af7208adaa77bdd",
+      "size_bytes": 184
+    },
+    {
+      "asset_id": "minimal-ontology",
+      "media_type": "text/turtle",
+      "path": "ontology/minimal.ttl",
+      "sha256": "31cce13da8e84d72a269a08705dfb15c417375a6bec2392d0943b85a605addf0",
+      "size_bytes": 587
+    },
+    {
+      "asset_id": "minimal-query-list-entities",
+      "media_type": "application/sparql-query",
+      "path": "queries/list-entities.rq",
+      "sha256": "22fa7bf94d247b04275b1b122446b1166e7143fad4ad02f4c7b1821703bcf805",
+      "size_bytes": 198
+    },
+    {
+      "asset_id": "minimal-shapes",
+      "media_type": "text/turtle",
+      "path": "shapes/minimal-shapes.ttl",
+      "sha256": "fad5654cadd22dc42c2cddc66fd8530b6525ece6ec6be997af2fd8e72465d947",
+      "size_bytes": 282
+    },
+    {
+      "asset_id": "minimal-terminology",
+      "media_type": "application/yaml",
+      "path": "terminology/terms.yaml",
+      "sha256": "4ea4c556eadf018d66e50d11c24368fee88ab74705b839a44a51e47ffad9ed75",
+      "size_bytes": 212
+    }
+  ],
+  "canonicalization_profile": "KG-MNP Canonical JSON v1",
+  "content_digest": "9243d8a995a4a87b8d2048bf7cb0069203e3d7d528e57409e6d3f985ac11e014",
+  "dependencies": [],
+  "lock_id": "urn:kg-mnp:domain-pack-lock:e099a6552f126713430a5df8e39605f0ba69a89822b2e8cf3de6b681429a65e2",
+  "manifest_file_sha256": "65955da85a8fbfd08deb5578092e3c5160e68457afb8526d18caad226ef17c06",
+  "manifest_kind": "KG_MNP_DOMAIN_PACK_LOCK",
+  "manifest_semantic_sha256": "efd669effdbaa65e1311b2d08a03e66e01ae8fb38a590344796efce4dd38c3f9",
+  "pack_id": "minimal",
+  "pack_version": "0.1.0",
+  "schema_version": "1.0.0"
+}

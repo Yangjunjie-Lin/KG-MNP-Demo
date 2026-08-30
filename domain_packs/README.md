@@ -1,11 +1,14 @@
 # Domain Packs
 
-This directory contains domain-owned assets for KG-MNP Ontology Toolchain.
-Prompt 1 manifests are provisional bootstrap metadata, not the final
-`DomainPackManifest` contract and not evidence of a complete pack validator.
+This directory contains data-only domain-owned assets governed by formal
+`DomainPackManifest` and deterministic `DomainPackLock` v1 contracts. Local
+validation rejects path escape, unsafe manifests, undeclared semantic files,
+and executable content. No Pack content is executed or fetched remotely.
 
-- `minimal`: `SCAFFOLD` for later cross-domain contract tests;
-- `mnp`: `MIGRATED_BASELINE` from the historical repository layout;
-- `forestry`: `PLANNED` scaffold for a future forestry pilot.
+- `minimal`: `EXPERIMENTAL`, six industry-neutral contract-test assets;
+- `mnp`: `MIGRATED_BASELINE`, formally enumerated and locked historical assets;
+- `forestry`: `PLANNED`, zero-content intent for a future forestry pilot.
 
-See `docs/domain-packs/README.md` for authority and lifecycle boundaries.
+See `docs/domain-packs/README.md` for authority and lifecycle boundaries. A
+Manifest or Lock establishes identity and closure; it does not establish
+confirmation, publication, production readiness, or universal validity.

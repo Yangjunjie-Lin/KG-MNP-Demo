@@ -1,0 +1,344 @@
+{
+  "assets": [
+    {
+      "path": "domain_packs/mnp/competency_questions/queries/cq01_current_eligibility.rq",
+      "sha256": "250fae2e9f4b6990baff93536fa28a1448f21fb111e1ccd983dda30eb9e65a9a"
+    },
+    {
+      "path": "domain_packs/mnp/competency_questions/queries/cq02_blocking_reasons.rq",
+      "sha256": "3716a0a751198913bafa8080fddc373cbd8b3619fccbb02f45daa58f951c698b"
+    },
+    {
+      "path": "domain_packs/mnp/competency_questions/queries/cq03_blocking_evidence.rq",
+      "sha256": "9d8bc124a62dcba7f1e6c5cb3661c424ca36c3ad8af50755c854cd6e40519907"
+    },
+    {
+      "path": "domain_packs/mnp/competency_questions/queries/cq04_evidence_provenance.rq",
+      "sha256": "6a5757407e5574fd6349dd124e35f0c89bc616f233377e865e1bc57642f4ba9e"
+    },
+    {
+      "path": "domain_packs/mnp/competency_questions/queries/cq05_rule_versions.rq",
+      "sha256": "636741c8cfc464ac7bb84e19161b3ac2f0c313dbd35555d1dbde0c4a3616e08c"
+    },
+    {
+      "path": "domain_packs/mnp/competency_questions/queries/cq06_regulatory_clauses.rq",
+      "sha256": "e364f3b7a66a48b5b05ebd731915ec2b9bac166e8cd6ae84d41ce171f93ab533"
+    },
+    {
+      "path": "domain_packs/mnp/competency_questions/queries/cq07_remediation_actions.rq",
+      "sha256": "9f3ebee5f7a565f8404e0a99b5aec07bca896f2224a485aa5782a537daa94707"
+    },
+    {
+      "path": "domain_packs/mnp/competency_questions/queries/cq08_current_process_step.rq",
+      "sha256": "b17fa5e51a0c59cb5b59590ecdbd046a4f27765461e4aa835886dab234c77766"
+    },
+    {
+      "path": "domain_packs/mnp/competency_questions/queries/cq09_process_blocks.rq",
+      "sha256": "a5ecc382fbbfc5e1499f3f9ac5c35d0ee5badfa9139922bfc30a6c3751133b95"
+    },
+    {
+      "path": "domain_packs/mnp/competency_questions/queries/cq10_auth_code_validity.rq",
+      "sha256": "8ba0148644db1bfc689207ce457afb00bf54a843c1007f21cade3ace33417b4f"
+    },
+    {
+      "path": "domain_packs/mnp/competency_questions/queries/cq11_related_services.rq",
+      "sha256": "4a173087b1ff4bb9e51a541f0a3fcae058c7c0283465111aeb4b57d674a623ec"
+    },
+    {
+      "path": "domain_packs/mnp/competency_questions/queries/cq12_affecting_contracts.rq",
+      "sha256": "054468ec7ed023858f9bdd0bd429451bc7a41acce3671d536bb310ff942a5190"
+    },
+    {
+      "path": "domain_packs/mnp/competency_questions/queries/cq13_billing_evidence_expiry.rq",
+      "sha256": "33a75fd5dd63caff754560742c956ec08705c049c522920b99b863bae54f711d"
+    },
+    {
+      "path": "domain_packs/mnp/competency_questions/queries/cq14_multi_block_actions.rq",
+      "sha256": "0bca0af34112927e30d8f9f33d99b8bf4d2329d15075c3de6ab232c15860a7f0"
+    },
+    {
+      "path": "domain_packs/mnp/competency_questions/queries/cq15_affected_assessments.rq",
+      "sha256": "b0853c6c502a905cb4bb4bf3c6ba55c95733a642739f76d2f9a1e1e30ef8a131"
+    },
+    {
+      "path": "domain_packs/mnp/competency_questions/registry.yaml",
+      "sha256": "b39abf083d34486396823a63e4888df06428f6ba4437b5c8da83a8d4ecb17669"
+    },
+    {
+      "path": "domain_packs/mnp/fixtures/data/CASE-01-eligible.ttl",
+      "sha256": "afe72cf6704be2bc29373162c78a3f7b7211463f4234c841f1fcb72db7e019d7"
+    },
+    {
+      "path": "domain_packs/mnp/fixtures/data/CASE-02-billing-block.ttl",
+      "sha256": "4ef217f9914244004d6d41c3de01a90254104438e84924133f3044cc9936126d"
+    },
+    {
+      "path": "domain_packs/mnp/fixtures/data/CASE-03-contract-block.ttl",
+      "sha256": "a68dc42e3ecc4ec98769e034f3a6df878f9817b414a385008fdc70e96df5e105"
+    },
+    {
+      "path": "domain_packs/mnp/fixtures/data/CASE-04-multiple-blocks.ttl",
+      "sha256": "dc4af8ae39d95fc21784779bf32822904d4728ede82a47e02d9a5ac96934ca0a"
+    },
+    {
+      "path": "domain_packs/mnp/fixtures/data/CASE-05-missing-evidence.ttl",
+      "sha256": "a4b5163e0f5d055a73eab561df57cac5258f92acef95d7f300c7addcdb24d3c1"
+    },
+    {
+      "path": "domain_packs/mnp/fixtures/data/CASE-06-rule-update.ttl",
+      "sha256": "85660042b857e28ded4f9966cfb77b16d0fe9b6c30250ff7be436e8f244dc2be"
+    },
+    {
+      "path": "domain_packs/mnp/fixtures/data/CASE-07-auth-expired.ttl",
+      "sha256": "a854a5653b756b88a73c49617a3626aea5ec0e32a5b7923ec6bd9a2d808bd6fa"
+    },
+    {
+      "path": "domain_packs/mnp/fixtures/data/CASE-08-termination-pending.ttl",
+      "sha256": "68a8e422e0eede6ad68f4aede7e0e0547db2c7bffb1bd6453de1e485b639bc50"
+    },
+    {
+      "path": "domain_packs/mnp/fixtures/data/CASE-09-identity-conflict.ttl",
+      "sha256": "1dd36e0c4565271d1425cf14fc05dcafd1b5544af95bb2a099a0de2c45ae6391"
+    },
+    {
+      "path": "domain_packs/mnp/fixtures/data/reference_systems.ttl",
+      "sha256": "d85a1c76e4042b0d943d9065c7c0bc6030a422a45b1c520b9362b8b30c7cac3a"
+    },
+    {
+      "path": "domain_packs/mnp/fixtures/data/regulations.ttl",
+      "sha256": "b344eeb8fd013f53059e874347cb45235bf3c81ae08d7cea0b0279676bdcb3b0"
+    },
+    {
+      "path": "domain_packs/mnp/fixtures/eligibility-use-case/README.md",
+      "sha256": "cdfbbb0ebeba6ff74a696399f579386639b887d102c2ba6dc2bda231e023242c"
+    },
+    {
+      "path": "domain_packs/mnp/fixtures/eligibility-use-case/schemas/mnp_case_input.schema.json",
+      "sha256": "1cb087aa3f0d7b3b177586c2598215266ffaf8dec25eca29d80d1d0cb0b36c74"
+    },
+    {
+      "path": "domain_packs/mnp/fixtures/eligibility-use-case/shapes/eligibility-instance-shapes.ttl",
+      "sha256": "7fbf46fd1415e9811662e8e5ce298c914748797589c14a822e0bca3d446fa719"
+    },
+    {
+      "path": "domain_packs/mnp/fixtures/inputs/case01.json",
+      "sha256": "b5b5487e4e794328bc9e9673735f66fa296278d86d17629d1caf16a07be7e35f"
+    },
+    {
+      "path": "domain_packs/mnp/fixtures/inputs/case02.json",
+      "sha256": "5f6197b3973c313b1b2c1b75fca59c2632ad49fc9d739c50350294925af27662"
+    },
+    {
+      "path": "domain_packs/mnp/fixtures/inputs/case03.json",
+      "sha256": "b56d3ff4da4998bfa013c734cb90a181f3efb3adbe116280d9b50e84b35e560d"
+    },
+    {
+      "path": "domain_packs/mnp/fixtures/inputs/case04.json",
+      "sha256": "f382ea19b4c857caa87ffdb03f4b3ed9ba72a46a4508e79783af86e02ee37c74"
+    },
+    {
+      "path": "domain_packs/mnp/fixtures/inputs/case05.json",
+      "sha256": "cff743fd62f750baff3cdf6fc5ac0df52b4b8e27e970a9168325985b4b51c059"
+    },
+    {
+      "path": "domain_packs/mnp/fixtures/inputs/case06.json",
+      "sha256": "651f57b193a79aba8d3acbb32c8f86af6466a31f2d060504b0dbc07e22766224"
+    },
+    {
+      "path": "domain_packs/mnp/fixtures/inputs/case06_history.json",
+      "sha256": "68d9dbec781af6c0c1d50703570966797652c184dbc16a6b5ee9a0691bbeed80"
+    },
+    {
+      "path": "domain_packs/mnp/fixtures/inputs/case07.json",
+      "sha256": "1b1e3758ee26ea0a65b12f3752c9dc311c9569052485d3b78181981759559227"
+    },
+    {
+      "path": "domain_packs/mnp/fixtures/inputs/case08.json",
+      "sha256": "1dcf0ea93ab2f5790f70ff1e5d705ce6b0d19b3c609f8dcc2c8006b0cc011b56"
+    },
+    {
+      "path": "domain_packs/mnp/fixtures/inputs/case09.json",
+      "sha256": "b87d2b3d64936139a17620f5b2fb3febc1c2079236508b3ce6ae1b869e0c3959"
+    },
+    {
+      "path": "domain_packs/mnp/fixtures/inputs/invalid_missing_source.json",
+      "sha256": "8d943b148fcf570830736e4056968378ef0d81c63f342fa77308764061d79a87"
+    },
+    {
+      "path": "domain_packs/mnp/mappings/modeling-rules-1.0.0.yaml",
+      "sha256": "48d827798a4331060fb32717a09a5e45cfad5338d9bd68e2fe43e5bd3cc82fd6"
+    },
+    {
+      "path": "domain_packs/mnp/mappings/tmf_to_mnp.yaml",
+      "sha256": "377d8ff3cdfbc1032759e99400512fcb150da6e224f8b78ce7e535e70dd67fbc"
+    },
+    {
+      "path": "domain_packs/mnp/ontology/README.md",
+      "sha256": "656f2d945c7fc5ca388ad55cbfb440eb379cf30be7a3cfdf434a9f4f9a881776"
+    },
+    {
+      "path": "domain_packs/mnp/ontology/catalog-v001.xml",
+      "sha256": "d6e9fe3ce8c706e7c42f0116ec71eebcce6176fd29619c6e5ca26cff38007e92"
+    },
+    {
+      "path": "domain_packs/mnp/ontology/kg-mnp.ttl",
+      "sha256": "4f6f9365eab9935bb48c4c4f4ad03780d8b645309c3080e4a8f53e0fc931d622"
+    },
+    {
+      "path": "domain_packs/mnp/ontology/mnp-account-billing.ttl",
+      "sha256": "d6b910f57f374f50aab78bd2d395e6942b8eb50ddcd87793e1a8df0ffb9feabd"
+    },
+    {
+      "path": "domain_packs/mnp/ontology/mnp-alignments.ttl",
+      "sha256": "8a64ae94d71f70cae405bff851fee3b47e2ec45b3c5d72c29ea6cf77eed6c3c6"
+    },
+    {
+      "path": "domain_packs/mnp/ontology/mnp-code-list.ttl",
+      "sha256": "da581690236659f7304b622b6773a276b1db84321174557906382fc56f22ba6a"
+    },
+    {
+      "path": "domain_packs/mnp/ontology/mnp-compliance.ttl",
+      "sha256": "7c820b67a9767f58b1fd7b00b4b89e6016ab87a985687f3ed0fe6d0a9ef2755d"
+    },
+    {
+      "path": "domain_packs/mnp/ontology/mnp-core.ttl",
+      "sha256": "a4e638f9ee4bb502dc2227cc2158eb23eb86f8051f08896780b1ffcecf219c3c"
+    },
+    {
+      "path": "domain_packs/mnp/ontology/mnp-evidence-time.ttl",
+      "sha256": "7c43c985d03884ba57b475222dbe20a711aab1d7da04394907810f6a05aeee2d"
+    },
+    {
+      "path": "domain_packs/mnp/ontology/mnp-identity.ttl",
+      "sha256": "7c6cab926d90fa3ddf8d0c6856fd2e2dcce4511db0843d411b9b8dec02e014f1"
+    },
+    {
+      "path": "domain_packs/mnp/ontology/mnp-modeling-provenance.ttl",
+      "sha256": "8252667c1f35386367b7c1373aecefa508067d7341d73a04d38522cefb299c6b"
+    },
+    {
+      "path": "domain_packs/mnp/ontology/mnp-process.ttl",
+      "sha256": "3970ff5b06724efdf0672346be6cc9cd33e7314b4f91b7df8fa4a9a441c720f1"
+    },
+    {
+      "path": "domain_packs/mnp/ontology/mnp-service-contract.ttl",
+      "sha256": "b519eac7d3a1619bbbb6f838ee23c7fd1f1e59403c696a67832c646f932ec93a"
+    },
+    {
+      "path": "domain_packs/mnp/ontology/modules.yaml",
+      "sha256": "60fabe1dfe616938ed17a3c4662ac59348e619771241c4bdb1e839ddbea9b3f1"
+    },
+    {
+      "path": "domain_packs/mnp/ontology/ontology-baseline-1.0.0.json",
+      "sha256": "86a1ec7e9628b8ca489c4a6d75ee9b007c7de36a131011e9b17f043229506bd4"
+    },
+    {
+      "path": "domain_packs/mnp/queries/affected_assessments.rq",
+      "sha256": "400a05bddbcbe963322a9eca21b840bf9530adafbb7c5297a2505e2d21b14b4a"
+    },
+    {
+      "path": "domain_packs/mnp/queries/application/business-entity.rq",
+      "sha256": "f18b9c58db028b2432488b2d59f0bc8619ce4f63ea5d6cbece5d61306496a36a"
+    },
+    {
+      "path": "domain_packs/mnp/queries/application/business-fact.rq",
+      "sha256": "5167be4fa0e9b87e6d0e30ee1c6f8ceaf21596aae6e1aa1bb348ef72e6f9d091"
+    },
+    {
+      "path": "domain_packs/mnp/queries/application/cross-trace.rq",
+      "sha256": "72be8552f3544a646225f72cf80694d826cf3453402de8b4cb9d63ffc0f9f3b8"
+    },
+    {
+      "path": "domain_packs/mnp/queries/application/entity-provenance.rq",
+      "sha256": "fca0c367870447845b6de9c804ba1db458e70e271336d3f360fb4794a17c35bb"
+    },
+    {
+      "path": "domain_packs/mnp/queries/application/evidence-trace.rq",
+      "sha256": "211c2b9a2c6d8a8b430f6f21019f83f1ff581f1069cc1f230364efbea2495e5a"
+    },
+    {
+      "path": "domain_packs/mnp/queries/application/fact-provenance.rq",
+      "sha256": "6350dbb855e5ba4a67a106278622392b03ffd6208efcafad33b7ed2c3a5be828"
+    },
+    {
+      "path": "domain_packs/mnp/queries/application/foundation-metadata.rq",
+      "sha256": "6136d854db494245b84cb42176f6984d5be70188d34b92b60f2c8e840a777ef9"
+    },
+    {
+      "path": "domain_packs/mnp/queries/application/ontology-classes.rq",
+      "sha256": "6773018ef1d3102ae87dbabde098a5b2454782f3cf70f13458c1e60c173207eb"
+    },
+    {
+      "path": "domain_packs/mnp/queries/application/ontology-properties.rq",
+      "sha256": "7225da60d857c8969a61190aae400cdfb85a49a54c3ef7f47e88983a28f5ce72"
+    },
+    {
+      "path": "domain_packs/mnp/queries/application/ontology-term.rq",
+      "sha256": "0117e237e042a8c4be515021085bb7b71ff0b85fe3564a66ae1f7f26cae164a5"
+    },
+    {
+      "path": "domain_packs/mnp/queries/application/review-trace.rq",
+      "sha256": "c01be3f3153ea73a60e616f3a81ba264fb409e657803af986f1e96ee4e3d1c75"
+    },
+    {
+      "path": "domain_packs/mnp/queries/application/source-trace.rq",
+      "sha256": "24342bbba53fa6ff7b70b006fb25c468aa3621edf0ab381537f888939ce4fa40"
+    },
+    {
+      "path": "domain_packs/mnp/queries/assessment_subgraph.rq",
+      "sha256": "1233f3e0fa4f3f86e9a8842345719f5fdc2164233a434ac6d3d4e0b736c9533a"
+    },
+    {
+      "path": "domain_packs/mnp/queries/blocking_reasons.rq",
+      "sha256": "682f38e47327b828b37f076725d753dab84096ce4fde82d03c91ef40d23cccd8"
+    },
+    {
+      "path": "domain_packs/mnp/queries/decision_trace.rq",
+      "sha256": "3d2476e6f5382e1a69d515ff77249eaddfb605fe24a80f0a7aab63a0167467a3"
+    },
+    {
+      "path": "domain_packs/mnp/queries/query-registry-1.0.0.yaml",
+      "sha256": "527e7b3fc1a2103348fc78afee8e10f1478173c93e4304b05fcdfe3ce6a8d661"
+    },
+    {
+      "path": "domain_packs/mnp/queries/source_alignment.rq",
+      "sha256": "17280b9c0b02998208d88beff8c487be6a1beaa7199913de77b8694f0f3bba85"
+    },
+    {
+      "path": "domain_packs/mnp/rules/eligibility_rules.yaml",
+      "sha256": "c8943ded35d0082c7214f4c7b5eaccf7d501e2c84a440f53851ef38a8200d784"
+    },
+    {
+      "path": "domain_packs/mnp/shapes/README.md",
+      "sha256": "a79eaea6d92fc6128aa42fef1cdc88b6ea38d753f44333faf36bd8927c77c23c"
+    },
+    {
+      "path": "domain_packs/mnp/shapes/foundation-instance-shapes.ttl",
+      "sha256": "8956bb351475025786b2f66228ce393ddc394b8c52429bc16513e3bbfc66cbdb"
+    },
+    {
+      "path": "domain_packs/mnp/shapes/ontology-schema-shapes.ttl",
+      "sha256": "b84824150823c19e40654d83c5a9f470be3f0b5cc424684074deb4e77533d787"
+    },
+    {
+      "path": "domain_packs/mnp/terminology/cto_review.md",
+      "sha256": "a46533a2a5a144dc71dcfd4069bfddd89c4bbdcf444b7f6ced667eeb33436612"
+    },
+    {
+      "path": "domain_packs/mnp/terminology/source_manifest.yaml",
+      "sha256": "f15277d6cd9755c977040086c37b6fc1ab8aa064478b748818fea34d50d4b0b5"
+    },
+    {
+      "path": "domain_packs/mnp/terminology/terminology-profile-1.0.0.yaml",
+      "sha256": "9151b2d30c05617e6c61dda1b22172d3db3f8d73265b1fe5da02de75aa0980aa"
+    },
+    {
+      "path": "domain_packs/mnp/terminology/tmf_field_review.md",
+      "sha256": "c831b88578cd34b17a2a6ff5a38626515490d8c1343b9f0fb7cc265c8717297c"
+    }
+  ],
+  "manifest_kind": "KG_MNP_PROMPT01_CONTENT_GOLDEN",
+  "normalization": "TEXT_CRLF_TO_LF",
+  "schema_version": "1.0.0",
+  "source_commit": "a7114eef25f2f2a262cd69793a8d3e2b444836fc"
+}

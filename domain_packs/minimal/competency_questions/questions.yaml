@@ -1,0 +1,4 @@
+questions:
+  - question_id: cq-list-entities
+    question: Which example entities and labels are present?
+    query_asset_id: minimal-query-list-entities

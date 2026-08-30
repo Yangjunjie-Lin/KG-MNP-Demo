@@ -1,0 +1,10 @@
+@prefix min: <https://yangjunjie-lin.github.io/KG-MNP-Demo/domain-packs/minimal/terms#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+
+min:EntityShape
+    a sh:NodeShape ;
+    sh:targetClass min:Entity ;
+    sh:property [
+        sh:path min:label ;
+        sh:minCount 1 ;
+    ] .

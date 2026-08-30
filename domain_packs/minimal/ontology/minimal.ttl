@@ -1,0 +1,11 @@
+@prefix min: <https://yangjunjie-lin.github.io/KG-MNP-Demo/domain-packs/minimal/terms#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+
+<https://yangjunjie-lin.github.io/KG-MNP-Demo/domain-packs/minimal/ontology>
+    a owl:Ontology ;
+    owl:versionIRI <https://yangjunjie-lin.github.io/KG-MNP-Demo/domain-packs/minimal/0.1.0/ontology> ;
+    rdfs:label "Minimal contract-test ontology"@en .
+
+min:Entity a owl:Class ; rdfs:label "Entity"@en .
+min:label a owl:DatatypeProperty ; rdfs:domain min:Entity ; rdfs:range rdfs:Literal .

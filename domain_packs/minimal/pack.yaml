@@ -1,9 +1,72 @@
-manifest_kind: PROVISIONAL_DOMAIN_PACK_BOOTSTRAP
-manifest_version: "prompt-01"
+manifest_kind: KG_MNP_DOMAIN_PACK
+schema_version: 1.0.0
 pack_id: minimal
-display_name: Minimal Contract-Test Scaffold
-status: SCAFFOLD
-provisional: true
-contract_note: >-
-  Prompt 2 will define the DomainPackManifest schema; this file is not validated
-  against a final public contract.
+pack_version: 0.1.0
+display_name: Minimal Contract-Test Domain Pack
+description: Industry-neutral, non-production semantic assets for Contract Kernel boundary tests.
+lifecycle: EXPERIMENTAL
+compatibility:
+  contract_major: 1
+  minimum_toolchain_version: 0.2.0
+license:
+  expression: Apache-2.0
+  notice_files: []
+capabilities:
+  - competency-questions
+  - fixtures
+  - ontology
+  - queries
+  - shacl
+  - terminology
+namespaces:
+  ontology: https://yangjunjie-lin.github.io/KG-MNP-Demo/domain-packs/minimal/ontology
+  terms: https://yangjunjie-lin.github.io/KG-MNP-Demo/domain-packs/minimal/terms#
+assets:
+  - asset_id: minimal-competency-questions
+    kind: competency-questions
+    path: competency_questions/questions.yaml
+    media_type: application/yaml
+    required: true
+    description: One reviewed contract-test competency question.
+  - asset_id: minimal-instance-fixture
+    kind: fixture
+    path: fixtures/minimal-instance.ttl
+    media_type: text/turtle
+    required: true
+    description: One non-production example entity.
+  - asset_id: minimal-ontology
+    kind: ontology-root
+    path: ontology/minimal.ttl
+    media_type: text/turtle
+    required: true
+    description: Minimal industry-neutral class and property vocabulary.
+    ontology_iri: https://yangjunjie-lin.github.io/KG-MNP-Demo/domain-packs/minimal/ontology
+    version_iri: https://yangjunjie-lin.github.io/KG-MNP-Demo/domain-packs/minimal/0.1.0/ontology
+  - asset_id: minimal-query-list-entities
+    kind: query
+    path: queries/list-entities.rq
+    media_type: application/sparql-query
+    required: true
+    description: Read-only query listing minimal example entities.
+  - asset_id: minimal-shapes
+    kind: shacl-shapes
+    path: shapes/minimal-shapes.ttl
+    media_type: text/turtle
+    required: true
+    description: Minimal SHACL constraint for example entity labels.
+    profile: default
+  - asset_id: minimal-terminology
+    kind: terminology
+    path: terminology/terms.yaml
+    media_type: application/yaml
+    required: true
+    description: Minimal reviewed terminology entry.
+entrypoints:
+  competency-questions: minimal-competency-questions
+  fixtures: minimal-instance-fixture
+  ontology: minimal-ontology
+  queries: minimal-query-list-entities
+  shacl: minimal-shapes
+  terminology: minimal-terminology
+dependencies: []
+extensions: {}

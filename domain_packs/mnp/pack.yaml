@@ -1,18 +1,570 @@
-manifest_kind: PROVISIONAL_DOMAIN_PACK_BOOTSTRAP
-manifest_version: "prompt-01"
+manifest_kind: KG_MNP_DOMAIN_PACK
+schema_version: 1.0.0
 pack_id: mnp
+pack_version: 1.0.0
 display_name: Mobile Number Portability Baseline
-status: MIGRATED_BASELINE
-provisional: true
-asset_roots:
-  ontology: ontology
-  terminology: terminology
-  mappings: mappings
-  shapes: shapes
-  rules: rules
-  competency_questions: competency_questions
-  queries: queries
-  fixtures: fixtures
-contract_note: >-
-  Prompt 2 will define the DomainPackManifest schema and validation rules. This
-  bootstrap file is descriptive and is not a final compatibility claim.
+description: Migrated historical MNP semantic baseline; domain-specific and not a cross-industry or final
+  stability claim.
+lifecycle: MIGRATED_BASELINE
+compatibility:
+  contract_major: 1
+  minimum_toolchain_version: 0.2.0
+license:
+  expression: Apache-2.0
+  notice_files: []
+capabilities:
+- competency-questions
+- fixtures
+- mappings
+- ontology
+- queries
+- rules
+- shacl
+- terminology
+namespaces:
+  ontology: https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/
+  terms: https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#
+assets:
+- asset_id: mnp-competency-questions-queries-cq01-current-eligibility
+  kind: competency-questions
+  path: competency_questions/queries/cq01_current_eligibility.rq
+  media_type: application/sparql-query
+  required: true
+  description: 'Frozen Prompt 1 MNP baseline asset: competency_questions/queries/cq01_current_eligibility.rq.'
+- asset_id: mnp-competency-questions-queries-cq02-blocking-reasons
+  kind: competency-questions
+  path: competency_questions/queries/cq02_blocking_reasons.rq
+  media_type: application/sparql-query
+  required: true
+  description: 'Frozen Prompt 1 MNP baseline asset: competency_questions/queries/cq02_blocking_reasons.rq.'
+- asset_id: mnp-competency-questions-queries-cq03-blocking-evidence
+  kind: competency-questions
+  path: competency_questions/queries/cq03_blocking_evidence.rq
+  media_type: application/sparql-query
+  required: true
+  description: 'Frozen Prompt 1 MNP baseline asset: competency_questions/queries/cq03_blocking_evidence.rq.'
+- asset_id: mnp-competency-questions-queries-cq04-evidence-provenance
+  kind: competency-questions
+  path: competency_questions/queries/cq04_evidence_provenance.rq
+  media_type: application/sparql-query
+  required: true
+  description: 'Frozen Prompt 1 MNP baseline asset: competency_questions/queries/cq04_evidence_provenance.rq.'
+- asset_id: mnp-competency-questions-queries-cq05-rule-versions
+  kind: competency-questions
+  path: competency_questions/queries/cq05_rule_versions.rq
+  media_type: application/sparql-query
+  required: true
+  description: 'Frozen Prompt 1 MNP baseline asset: competency_questions/queries/cq05_rule_versions.rq.'
+- asset_id: mnp-competency-questions-queries-cq06-regulatory-clauses
+  kind: competency-questions
+  path: competency_questions/queries/cq06_regulatory_clauses.rq
+  media_type: application/sparql-query
+  required: true
+  description: 'Frozen Prompt 1 MNP baseline asset: competency_questions/queries/cq06_regulatory_clauses.rq.'
+- asset_id: mnp-competency-questions-queries-cq07-remediation-actions
+  kind: competency-questions
+  path: competency_questions/queries/cq07_remediation_actions.rq
+  media_type: application/sparql-query
+  required: true
+  description: 'Frozen Prompt 1 MNP baseline asset: competency_questions/queries/cq07_remediation_actions.rq.'
+- asset_id: mnp-competency-questions-queries-cq08-current-process-step
+  kind: competency-questions
+  path: competency_questions/queries/cq08_current_process_step.rq
+  media_type: application/sparql-query
+  required: true
+  description: 'Frozen Prompt 1 MNP baseline asset: competency_questions/queries/cq08_current_process_step.rq.'
+- asset_id: mnp-competency-questions-queries-cq09-process-blocks
+  kind: competency-questions
+  path: competency_questions/queries/cq09_process_blocks.rq
+  media_type: application/sparql-query
+  required: true
+  description: 'Frozen Prompt 1 MNP baseline asset: competency_questions/queries/cq09_process_blocks.rq.'
+- asset_id: mnp-competency-questions-queries-cq10-auth-code-validity
+  kind: competency-questions
+  path: competency_questions/queries/cq10_auth_code_validity.rq
+  media_type: application/sparql-query
+  required: true
+  description: 'Frozen Prompt 1 MNP baseline asset: competency_questions/queries/cq10_auth_code_validity.rq.'
+- asset_id: mnp-competency-questions-queries-cq11-related-services
+  kind: competency-questions
+  path: competency_questions/queries/cq11_related_services.rq
+  media_type: application/sparql-query
+  required: true
+  description: 'Frozen Prompt 1 MNP baseline asset: competency_questions/queries/cq11_related_services.rq.'
+- asset_id: mnp-competency-questions-queries-cq12-affecting-contracts
+  kind: competency-questions
+  path: competency_questions/queries/cq12_affecting_contracts.rq
+  media_type: application/sparql-query
+  required: true
+  description: 'Frozen Prompt 1 MNP baseline asset: competency_questions/queries/cq12_affecting_contracts.rq.'
+- asset_id: mnp-competency-questions-queries-cq13-billing-evidence-expiry
+  kind: competency-questions
+  path: competency_questions/queries/cq13_billing_evidence_expiry.rq
+  media_type: application/sparql-query
+  required: true
+  description: 'Frozen Prompt 1 MNP baseline asset: competency_questions/queries/cq13_billing_evidence_expiry.rq.'
+- asset_id: mnp-competency-questions-queries-cq14-multi-block-actions
+  kind: competency-questions
+  path: competency_questions/queries/cq14_multi_block_actions.rq
+  media_type: application/sparql-query
+  required: true
+  description: 'Frozen Prompt 1 MNP baseline asset: competency_questions/queries/cq14_multi_block_actions.rq.'
+- asset_id: mnp-competency-questions-queries-cq15-affected-assessments
+  kind: competency-questions
+  path: competency_questions/queries/cq15_affected_assessments.rq
+  media_type: application/sparql-query
+  required: true
+  description: 'Frozen Prompt 1 MNP baseline asset: competency_questions/queries/cq15_affected_assessments.rq.'
+- asset_id: mnp-competency-questions-registry
+  kind: competency-questions
+  path: competency_questions/registry.yaml
+  media_type: application/yaml
+  required: true
+  description: 'Frozen Prompt 1 MNP baseline asset: competency_questions/registry.yaml.'
+- asset_id: mnp-fixtures-data-case-01-eligible
+  kind: fixture
+  path: fixtures/data/CASE-01-eligible.ttl
+  media_type: text/turtle
+  required: true
+  description: 'Frozen Prompt 1 MNP baseline asset: fixtures/data/CASE-01-eligible.ttl.'
+- asset_id: mnp-fixtures-data-case-02-billing-block
+  kind: fixture
+  path: fixtures/data/CASE-02-billing-block.ttl
+  media_type: text/turtle
+  required: true
+  description: 'Frozen Prompt 1 MNP baseline asset: fixtures/data/CASE-02-billing-block.ttl.'
+- asset_id: mnp-fixtures-data-case-03-contract-block
+  kind: fixture
+  path: fixtures/data/CASE-03-contract-block.ttl
+  media_type: text/turtle
+  required: true
+  description: 'Frozen Prompt 1 MNP baseline asset: fixtures/data/CASE-03-contract-block.ttl.'
+- asset_id: mnp-fixtures-data-case-04-multiple-blocks
+  kind: fixture
+  path: fixtures/data/CASE-04-multiple-blocks.ttl
+  media_type: text/turtle
+  required: true
+  description: 'Frozen Prompt 1 MNP baseline asset: fixtures/data/CASE-04-multiple-blocks.ttl.'
+- asset_id: mnp-fixtures-data-case-05-missing-evidence
+  kind: fixture
+  path: fixtures/data/CASE-05-missing-evidence.ttl
+  media_type: text/turtle
+  required: true
+  description: 'Frozen Prompt 1 MNP baseline asset: fixtures/data/CASE-05-missing-evidence.ttl.'
+- asset_id: mnp-fixtures-data-case-06-rule-update
+  kind: fixture
+  path: fixtures/data/CASE-06-rule-update.ttl
+  media_type: text/turtle
+  required: true
+  description: 'Frozen Prompt 1 MNP baseline asset: fixtures/data/CASE-06-rule-update.ttl.'
+- asset_id: mnp-fixtures-data-case-07-auth-expired
+  kind: fixture
+  path: fixtures/data/CASE-07-auth-expired.ttl
+  media_type: text/turtle
+  required: true
+  description: 'Frozen Prompt 1 MNP baseline asset: fixtures/data/CASE-07-auth-expired.ttl.'
+- asset_id: mnp-fixtures-data-case-08-termination-pending
+  kind: fixture
+  path: fixtures/data/CASE-08-termination-pending.ttl
+  media_type: text/turtle
+  required: true
+  description: 'Frozen Prompt 1 MNP baseline asset: fixtures/data/CASE-08-termination-pending.ttl.'
+- asset_id: mnp-fixtures-data-case-09-identity-conflict
+  kind: fixture
+  path: fixtures/data/CASE-09-identity-conflict.ttl
+  media_type: text/turtle
+  required: true
+  description: 'Frozen Prompt 1 MNP baseline asset: fixtures/data/CASE-09-identity-conflict.ttl.'
+- asset_id: mnp-fixtures-data-reference-systems
+  kind: fixture
+  path: fixtures/data/reference_systems.ttl
+  media_type: text/turtle
+  required: true
+  description: 'Frozen Prompt 1 MNP baseline asset: fixtures/data/reference_systems.ttl.'
+- asset_id: mnp-fixtures-data-regulations
+  kind: fixture
+  path: fixtures/data/regulations.ttl
+  media_type: text/turtle
+  required: true
+  description: 'Frozen Prompt 1 MNP baseline asset: fixtures/data/regulations.ttl.'
+- asset_id: mnp-fixtures-eligibility-use-case-readme
+  kind: documentation
+  path: fixtures/eligibility-use-case/README.md
+  media_type: text/markdown
+  required: true
+  description: 'Frozen Prompt 1 MNP baseline asset: fixtures/eligibility-use-case/README.md.'
+- asset_id: mnp-fixtures-eligibility-use-case-schemas-mnp-case-input
+  kind: fixture
+  path: fixtures/eligibility-use-case/schemas/mnp_case_input.schema.json
+  media_type: application/schema+json
+  required: true
+  description: 'Frozen Prompt 1 MNP baseline asset: fixtures/eligibility-use-case/schemas/mnp_case_input.schema.json.'
+- asset_id: mnp-fixtures-eligibility-use-case-shapes-eligibility-instance-shapes
+  kind: fixture
+  path: fixtures/eligibility-use-case/shapes/eligibility-instance-shapes.ttl
+  media_type: text/turtle
+  required: true
+  description: 'Frozen Prompt 1 MNP baseline asset: fixtures/eligibility-use-case/shapes/eligibility-instance-shapes.ttl.'
+- asset_id: mnp-fixtures-inputs-case01
+  kind: fixture
+  path: fixtures/inputs/case01.json
+  media_type: application/json
+  required: true
+  description: 'Frozen Prompt 1 MNP baseline asset: fixtures/inputs/case01.json.'
+- asset_id: mnp-fixtures-inputs-case02
+  kind: fixture
+  path: fixtures/inputs/case02.json
+  media_type: application/json
+  required: true
+  description: 'Frozen Prompt 1 MNP baseline asset: fixtures/inputs/case02.json.'
+- asset_id: mnp-fixtures-inputs-case03
+  kind: fixture
+  path: fixtures/inputs/case03.json
+  media_type: application/json
+  required: true
+  description: 'Frozen Prompt 1 MNP baseline asset: fixtures/inputs/case03.json.'
+- asset_id: mnp-fixtures-inputs-case04
+  kind: fixture
+  path: fixtures/inputs/case04.json
+  media_type: application/json
+  required: true
+  description: 'Frozen Prompt 1 MNP baseline asset: fixtures/inputs/case04.json.'
+- asset_id: mnp-fixtures-inputs-case05
+  kind: fixture
+  path: fixtures/inputs/case05.json
+  media_type: application/json
+  required: true
+  description: 'Frozen Prompt 1 MNP baseline asset: fixtures/inputs/case05.json.'
+- asset_id: mnp-fixtures-inputs-case06
+  kind: fixture
+  path: fixtures/inputs/case06.json
+  media_type: application/json
+  required: true
+  description: 'Frozen Prompt 1 MNP baseline asset: fixtures/inputs/case06.json.'
+- asset_id: mnp-fixtures-inputs-case06-history
+  kind: fixture
+  path: fixtures/inputs/case06_history.json
+  media_type: application/json
+  required: true
+  description: 'Frozen Prompt 1 MNP baseline asset: fixtures/inputs/case06_history.json.'
+- asset_id: mnp-fixtures-inputs-case07
+  kind: fixture
+  path: fixtures/inputs/case07.json
+  media_type: application/json
+  required: true
+  description: 'Frozen Prompt 1 MNP baseline asset: fixtures/inputs/case07.json.'
+- asset_id: mnp-fixtures-inputs-case08
+  kind: fixture
+  path: fixtures/inputs/case08.json
+  media_type: application/json
+  required: true
+  description: 'Frozen Prompt 1 MNP baseline asset: fixtures/inputs/case08.json.'
+- asset_id: mnp-fixtures-inputs-case09
+  kind: fixture
+  path: fixtures/inputs/case09.json
+  media_type: application/json
+  required: true
+  description: 'Frozen Prompt 1 MNP baseline asset: fixtures/inputs/case09.json.'
+- asset_id: mnp-fixtures-inputs-invalid-missing-source
+  kind: fixture
+  path: fixtures/inputs/invalid_missing_source.json
+  media_type: application/json
+  required: true
+  description: 'Frozen Prompt 1 MNP baseline asset: fixtures/inputs/invalid_missing_source.json.'
+- asset_id: mnp-mappings-modeling-rules-1-0-0
+  kind: mapping-rules
+  path: mappings/modeling-rules-1.0.0.yaml
+  media_type: application/yaml
+  required: true
+  description: 'Frozen Prompt 1 MNP baseline asset: mappings/modeling-rules-1.0.0.yaml.'
+- asset_id: mnp-mappings-tmf-to-mnp
+  kind: mapping-rules
+  path: mappings/tmf_to_mnp.yaml
+  media_type: application/yaml
+  required: true
+  description: 'Frozen Prompt 1 MNP baseline asset: mappings/tmf_to_mnp.yaml.'
+- asset_id: mnp-ontology-catalog-v001
+  kind: ontology-catalog
+  path: ontology/catalog-v001.xml
+  media_type: application/xml
+  required: true
+  description: 'Frozen Prompt 1 MNP baseline asset: ontology/catalog-v001.xml.'
+- asset_id: mnp-ontology-kg-mnp
+  kind: ontology-root
+  path: ontology/kg-mnp.ttl
+  media_type: text/turtle
+  required: true
+  description: 'Frozen Prompt 1 MNP baseline asset: ontology/kg-mnp.ttl.'
+  ontology_iri: https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/kg-mnp
+  version_iri: https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/1.0.0/kg-mnp
+- asset_id: mnp-ontology-mnp-account-billing
+  kind: ontology-module
+  path: ontology/mnp-account-billing.ttl
+  media_type: text/turtle
+  required: true
+  description: 'Frozen Prompt 1 MNP baseline asset: ontology/mnp-account-billing.ttl.'
+  ontology_iri: https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/mnp-account-billing
+  version_iri: https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/1.0.0/mnp-account-billing
+- asset_id: mnp-ontology-mnp-alignments
+  kind: ontology-alignment
+  path: ontology/mnp-alignments.ttl
+  media_type: text/turtle
+  required: true
+  description: 'Frozen Prompt 1 MNP baseline asset: ontology/mnp-alignments.ttl.'
+  ontology_iri: https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/mnp-alignments
+  version_iri: https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/1.0.0/mnp-alignments
+- asset_id: mnp-ontology-mnp-code-list
+  kind: ontology-module
+  path: ontology/mnp-code-list.ttl
+  media_type: text/turtle
+  required: true
+  description: 'Frozen Prompt 1 MNP baseline asset: ontology/mnp-code-list.ttl.'
+  ontology_iri: https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/mnp-code-list
+  version_iri: https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/1.0.0/mnp-code-list
+- asset_id: mnp-ontology-mnp-compliance
+  kind: ontology-module
+  path: ontology/mnp-compliance.ttl
+  media_type: text/turtle
+  required: true
+  description: 'Frozen Prompt 1 MNP baseline asset: ontology/mnp-compliance.ttl.'
+  ontology_iri: https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/mnp-compliance
+  version_iri: https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/1.0.0/mnp-compliance
+- asset_id: mnp-ontology-mnp-core
+  kind: ontology-module
+  path: ontology/mnp-core.ttl
+  media_type: text/turtle
+  required: true
+  description: 'Frozen Prompt 1 MNP baseline asset: ontology/mnp-core.ttl.'
+  ontology_iri: https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/mnp-core
+  version_iri: https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/1.0.0/mnp-core
+- asset_id: mnp-ontology-mnp-evidence-time
+  kind: ontology-module
+  path: ontology/mnp-evidence-time.ttl
+  media_type: text/turtle
+  required: true
+  description: 'Frozen Prompt 1 MNP baseline asset: ontology/mnp-evidence-time.ttl.'
+  ontology_iri: https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/mnp-evidence-time
+  version_iri: https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/1.0.0/mnp-evidence-time
+- asset_id: mnp-ontology-mnp-identity
+  kind: ontology-module
+  path: ontology/mnp-identity.ttl
+  media_type: text/turtle
+  required: true
+  description: 'Frozen Prompt 1 MNP baseline asset: ontology/mnp-identity.ttl.'
+  ontology_iri: https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/mnp-identity
+  version_iri: https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/1.0.0/mnp-identity
+- asset_id: mnp-ontology-mnp-modeling-provenance
+  kind: ontology-module
+  path: ontology/mnp-modeling-provenance.ttl
+  media_type: text/turtle
+  required: true
+  description: 'Frozen Prompt 1 MNP baseline asset: ontology/mnp-modeling-provenance.ttl.'
+  ontology_iri: https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/mnp-modeling-provenance
+  version_iri: https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/1.0.0/mnp-modeling-provenance
+- asset_id: mnp-ontology-mnp-process
+  kind: ontology-module
+  path: ontology/mnp-process.ttl
+  media_type: text/turtle
+  required: true
+  description: 'Frozen Prompt 1 MNP baseline asset: ontology/mnp-process.ttl.'
+  ontology_iri: https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/mnp-process
+  version_iri: https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/1.0.0/mnp-process
+- asset_id: mnp-ontology-mnp-service-contract
+  kind: ontology-module
+  path: ontology/mnp-service-contract.ttl
+  media_type: text/turtle
+  required: true
+  description: 'Frozen Prompt 1 MNP baseline asset: ontology/mnp-service-contract.ttl.'
+  ontology_iri: https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/mnp-service-contract
+  version_iri: https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/1.0.0/mnp-service-contract
+- asset_id: mnp-ontology-modules
+  kind: ontology-catalog
+  path: ontology/modules.yaml
+  media_type: application/yaml
+  required: true
+  description: 'Frozen Prompt 1 MNP baseline asset: ontology/modules.yaml.'
+- asset_id: mnp-ontology-ontology-baseline-1-0-0
+  kind: ontology-catalog
+  path: ontology/ontology-baseline-1.0.0.json
+  media_type: application/json
+  required: true
+  description: 'Frozen Prompt 1 MNP baseline asset: ontology/ontology-baseline-1.0.0.json.'
+- asset_id: mnp-ontology-readme
+  kind: documentation
+  path: ontology/README.md
+  media_type: text/markdown
+  required: true
+  description: 'Frozen Prompt 1 MNP baseline asset: ontology/README.md.'
+- asset_id: mnp-queries-affected-assessments
+  kind: query
+  path: queries/affected_assessments.rq
+  media_type: application/sparql-query
+  required: true
+  description: 'Frozen Prompt 1 MNP baseline asset: queries/affected_assessments.rq.'
+- asset_id: mnp-queries-application-business-entity
+  kind: query
+  path: queries/application/business-entity.rq
+  media_type: application/sparql-query
+  required: true
+  description: 'Frozen Prompt 1 MNP baseline asset: queries/application/business-entity.rq.'
+- asset_id: mnp-queries-application-business-fact
+  kind: query
+  path: queries/application/business-fact.rq
+  media_type: application/sparql-query
+  required: true
+  description: 'Frozen Prompt 1 MNP baseline asset: queries/application/business-fact.rq.'
+- asset_id: mnp-queries-application-cross-trace
+  kind: query
+  path: queries/application/cross-trace.rq
+  media_type: application/sparql-query
+  required: true
+  description: 'Frozen Prompt 1 MNP baseline asset: queries/application/cross-trace.rq.'
+- asset_id: mnp-queries-application-entity-provenance
+  kind: query
+  path: queries/application/entity-provenance.rq
+  media_type: application/sparql-query
+  required: true
+  description: 'Frozen Prompt 1 MNP baseline asset: queries/application/entity-provenance.rq.'
+- asset_id: mnp-queries-application-evidence-trace
+  kind: query
+  path: queries/application/evidence-trace.rq
+  media_type: application/sparql-query
+  required: true
+  description: 'Frozen Prompt 1 MNP baseline asset: queries/application/evidence-trace.rq.'
+- asset_id: mnp-queries-application-fact-provenance
+  kind: query
+  path: queries/application/fact-provenance.rq
+  media_type: application/sparql-query
+  required: true
+  description: 'Frozen Prompt 1 MNP baseline asset: queries/application/fact-provenance.rq.'
+- asset_id: mnp-queries-application-foundation-metadata
+  kind: query
+  path: queries/application/foundation-metadata.rq
+  media_type: application/sparql-query
+  required: true
+  description: 'Frozen Prompt 1 MNP baseline asset: queries/application/foundation-metadata.rq.'
+- asset_id: mnp-queries-application-ontology-classes
+  kind: query
+  path: queries/application/ontology-classes.rq
+  media_type: application/sparql-query
+  required: true
+  description: 'Frozen Prompt 1 MNP baseline asset: queries/application/ontology-classes.rq.'
+- asset_id: mnp-queries-application-ontology-properties
+  kind: query
+  path: queries/application/ontology-properties.rq
+  media_type: application/sparql-query
+  required: true
+  description: 'Frozen Prompt 1 MNP baseline asset: queries/application/ontology-properties.rq.'
+- asset_id: mnp-queries-application-ontology-term
+  kind: query
+  path: queries/application/ontology-term.rq
+  media_type: application/sparql-query
+  required: true
+  description: 'Frozen Prompt 1 MNP baseline asset: queries/application/ontology-term.rq.'
+- asset_id: mnp-queries-application-review-trace
+  kind: query
+  path: queries/application/review-trace.rq
+  media_type: application/sparql-query
+  required: true
+  description: 'Frozen Prompt 1 MNP baseline asset: queries/application/review-trace.rq.'
+- asset_id: mnp-queries-application-source-trace
+  kind: query
+  path: queries/application/source-trace.rq
+  media_type: application/sparql-query
+  required: true
+  description: 'Frozen Prompt 1 MNP baseline asset: queries/application/source-trace.rq.'
+- asset_id: mnp-queries-assessment-subgraph
+  kind: query
+  path: queries/assessment_subgraph.rq
+  media_type: application/sparql-query
+  required: true
+  description: 'Frozen Prompt 1 MNP baseline asset: queries/assessment_subgraph.rq.'
+- asset_id: mnp-queries-blocking-reasons
+  kind: query
+  path: queries/blocking_reasons.rq
+  media_type: application/sparql-query
+  required: true
+  description: 'Frozen Prompt 1 MNP baseline asset: queries/blocking_reasons.rq.'
+- asset_id: mnp-queries-decision-trace
+  kind: query
+  path: queries/decision_trace.rq
+  media_type: application/sparql-query
+  required: true
+  description: 'Frozen Prompt 1 MNP baseline asset: queries/decision_trace.rq.'
+- asset_id: mnp-queries-query-registry-1-0-0
+  kind: query
+  path: queries/query-registry-1.0.0.yaml
+  media_type: application/yaml
+  required: true
+  description: 'Frozen Prompt 1 MNP baseline asset: queries/query-registry-1.0.0.yaml.'
+- asset_id: mnp-queries-source-alignment
+  kind: query
+  path: queries/source_alignment.rq
+  media_type: application/sparql-query
+  required: true
+  description: 'Frozen Prompt 1 MNP baseline asset: queries/source_alignment.rq.'
+- asset_id: mnp-readme
+  kind: documentation
+  path: README.md
+  media_type: text/markdown
+  required: true
+  description: 'Frozen Prompt 1 MNP baseline asset: README.md.'
+- asset_id: mnp-rules-eligibility-rules
+  kind: domain-rules
+  path: rules/eligibility_rules.yaml
+  media_type: application/yaml
+  required: true
+  description: 'Frozen Prompt 1 MNP baseline asset: rules/eligibility_rules.yaml.'
+- asset_id: mnp-shapes-foundation-instance-shapes
+  kind: shacl-shapes
+  path: shapes/foundation-instance-shapes.ttl
+  media_type: text/turtle
+  required: true
+  description: 'Frozen Prompt 1 MNP baseline asset: shapes/foundation-instance-shapes.ttl.'
+- asset_id: mnp-shapes-ontology-schema-shapes
+  kind: shacl-shapes
+  path: shapes/ontology-schema-shapes.ttl
+  media_type: text/turtle
+  required: true
+  description: 'Frozen Prompt 1 MNP baseline asset: shapes/ontology-schema-shapes.ttl.'
+- asset_id: mnp-shapes-readme
+  kind: documentation
+  path: shapes/README.md
+  media_type: text/markdown
+  required: true
+  description: 'Frozen Prompt 1 MNP baseline asset: shapes/README.md.'
+- asset_id: mnp-terminology-cto-review
+  kind: documentation
+  path: terminology/cto_review.md
+  media_type: text/markdown
+  required: true
+  description: 'Frozen Prompt 1 MNP baseline asset: terminology/cto_review.md.'
+- asset_id: mnp-terminology-source-manifest
+  kind: terminology
+  path: terminology/source_manifest.yaml
+  media_type: application/yaml
+  required: true
+  description: 'Frozen Prompt 1 MNP baseline asset: terminology/source_manifest.yaml.'
+- asset_id: mnp-terminology-terminology-profile-1-0-0
+  kind: terminology
+  path: terminology/terminology-profile-1.0.0.yaml
+  media_type: application/yaml
+  required: true
+  description: 'Frozen Prompt 1 MNP baseline asset: terminology/terminology-profile-1.0.0.yaml.'
+- asset_id: mnp-terminology-tmf-field-review
+  kind: documentation
+  path: terminology/tmf_field_review.md
+  media_type: text/markdown
+  required: true
+  description: 'Frozen Prompt 1 MNP baseline asset: terminology/tmf_field_review.md.'
+entrypoints:
+  competency-questions: mnp-competency-questions-registry
+  fixtures: mnp-fixtures-data-case-01-eligible
+  mappings: mnp-mappings-modeling-rules-1-0-0
+  ontology: mnp-ontology-kg-mnp
+  queries: mnp-queries-query-registry-1-0-0
+  rules: mnp-rules-eligibility-rules
+  shacl: mnp-shapes-foundation-instance-shapes
+  terminology: mnp-terminology-terminology-profile-1-0-0
+dependencies: []
+extensions: {}
