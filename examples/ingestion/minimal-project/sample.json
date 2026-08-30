@@ -1,0 +1,11 @@
+{
+  "project": "KG-MNP Prompt 3",
+  "measurements": [
+    {
+      "name": "canopy-cover",
+      "value": 42.50,
+      "unit": "percent"
+    }
+  ],
+  "reviewed": false
+}

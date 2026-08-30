@@ -1,0 +1,2 @@
+KG-MNP Prompt 3 ingestion sample.
+Every observation remains bound to this source and is not confirmed knowledge.

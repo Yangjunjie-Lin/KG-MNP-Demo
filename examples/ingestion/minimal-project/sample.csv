@@ -1,0 +1,3 @@
+record_id,label,value,review_status
+sample-001,canopy-cover,42.50,pending
+sample-002,tree-count,12,pending
