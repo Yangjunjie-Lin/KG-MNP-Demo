@@ -19,18 +19,20 @@ def test_product_foundation_documents_exist() -> None:
 
 def test_readme_states_current_identity_and_capability_limits() -> None:
     readme = (ROOT / "README.md").read_text(encoding="utf-8")
+    normalized = " ".join(readme.split())
     assert "# KG-MNP Ontology Toolchain" in readme
-    assert "Toolchain Contract Kernel — Prompt 2" in readme
+    assert "Evidence-Bound Ingestion Kernel — Prompt 3" in readme
     assert "What is implemented now" in readme
     assert "What is not implemented yet" in readme
     assert "Forestry Domain" in readme
     assert "planning scaffold only" in readme
-    assert "No Agent or LLM is an ontology authority" in readme
+    assert "No Agent or LLM is an ontology authority" in normalized
+    assert "Image and WAV support is metadata-only" in readme
     assert "Stage 09" not in readme
     assert "Phase 07" not in readme
 
 
-def test_prompt02_documents_state_implemented_and_deferred_capabilities() -> None:
+def test_prompt03_documents_state_implemented_and_deferred_capabilities() -> None:
     matrix = (ROOT / "docs/product/current-capability-matrix.md").read_text(
         encoding="utf-8"
     )
@@ -39,11 +41,18 @@ def test_prompt02_documents_state_implemented_and_deferred_capabilities() -> Non
         "Offline Contract Registry",
         "DomainPackLock v1",
         "Project Workspace v1",
+        "Plugin SDK v1",
+        "Source Content Store",
+        "EvidenceRecord",
+        "Deterministic Ingestion Planner",
+        "KG-IR",
+        "Ingestion CLI",
     ):
         assert capability in matrix
     for planned in (
-        "Plugin SDK",
-        "Multimodal Ingestion",
+        "LLM Ingestion Planner",
+        "OCR/Vision/ASR/Video providers",
+        "Field-to-Ontology Mapping",
         "Final Versioned Ontology Package",
         "Forestry Domain Pack Implementation",
     ):
@@ -63,6 +72,22 @@ def test_prompt02_documents_state_implemented_and_deferred_capabilities() -> Non
         "docs/adr/ADR-0002-public-contract-domain-pack-and-workspace.md",
     )
     assert all((ROOT / path).is_file() for path in required_prompt02_docs)
+
+    required_prompt03_docs = (
+        "docs/plugins/plugin-sdk-v1.md",
+        "docs/plugins/plugin-manifest-v1.md",
+        "docs/plugins/plugin-trust-and-security.md",
+        "docs/ingestion/source-asset-v1.md",
+        "docs/ingestion/source-locator-v1.md",
+        "docs/ingestion/evidence-record-v1.md",
+        "docs/ingestion/kg-ir-v1.md",
+        "docs/ingestion/ingestion-plan-and-run-v1.md",
+        "docs/ingestion/quality-gates-v1.md",
+        "docs/ingestion/supported-format-matrix.md",
+        "docs/architecture/plugin-driven-ingestion-architecture.md",
+        "docs/adr/ADR-0003-plugin-driven-evidence-bound-ingestion.md",
+    )
+    assert all((ROOT / path).is_file() for path in required_prompt03_docs)
 
 
 def test_current_product_documents_do_not_extend_retired_route() -> None:

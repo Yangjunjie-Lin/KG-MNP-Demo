@@ -30,12 +30,13 @@ PROTECTED_ROOTS = (
 )
 SELF_PATH = "tests/refactor/_historical_freeze.py"
 
-# Updated only after the sanctioned Prompt 2 Contract Kernel, Domain Pack and
-# Workspace changes passed their locks, MNP preservation gate, and retained
-# semantic validators. The helper excludes itself to avoid a self-referential
-# digest; every other intended repository file below PROTECTED_ROOTS is bound.
-EXPECTED_FILE_COUNT = 1052
-EXPECTED_TREE_SHA256 = "e39390641d4518c8e56614637a06dfe29d7c8a1d8fb9275ef40376bc2e500fe1"
+# Updated only after the sanctioned Prompt 3 Contract Catalog migration,
+# Plugin SDK, Source Store, evidence/KG-IR, security, Prompt 2 regressions,
+# immutable Pack Locks and MNP 84/84 preservation gates passed. The helper
+# excludes itself to avoid a self-referential digest; every other intended
+# repository file below PROTECTED_ROOTS remains bound.
+EXPECTED_FILE_COUNT = 1161
+EXPECTED_TREE_SHA256 = "1e57eb06d004c7f2f3e42ddabd51ac2c3957dfc0fba77000aa0e95530f3d77eb"
 
 
 def _git(*arguments: str, check: bool = True) -> subprocess.CompletedProcess[bytes]:

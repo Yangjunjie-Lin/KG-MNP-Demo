@@ -712,3 +712,43 @@ verify-prompt-02-offline: verify-toolchain-foundation \
 	python -m pytest -q tests/refactor/test_product_docs.py \
 		tests/refactor/test_domain_pack_layout.py
 	git diff --exit-code
+
+.PHONY: verify-plugin-sdk verify-source-store verify-ingestion-contracts \
+	verify-ingestion-parsers verify-evidence-kgir verify-ingestion-security \
+	verify-prompt-03-offline
+
+verify-plugin-sdk:
+	python -m pytest -q tests/plugins tests/cli/test_plugin_cli.py \
+		tests/security/test_plugin_security.py
+
+verify-source-store:
+	python -m pytest -q tests/sources tests/cli/test_source_cli.py \
+		tests/security/test_source_security.py
+
+verify-ingestion-contracts:
+	python scripts/generate_contract_catalog.py --check
+	python -m pytest -q tests/contracts/test_ingestion_contracts.py \
+		tests/contracts/test_catalog.py tests/contracts/test_wheel_packaging.py
+
+verify-ingestion-parsers:
+	python -m pytest -q tests/ingestion/test_parsers_and_media.py \
+		tests/security/test_document_parser_security.py
+
+verify-evidence-kgir:
+	python -m pytest -q tests/evidence tests/kgir tests/quality \
+		tests/cli/test_ingestion_cli.py tests/cli/test_ir_cli.py
+
+verify-ingestion-security:
+	python -m pytest -q tests/security/test_plugin_security.py \
+		tests/security/test_source_security.py \
+		tests/security/test_ingestion_security.py \
+		tests/security/test_document_parser_security.py \
+		tests/ingestion/test_planner_executor.py
+
+verify-prompt-03-offline: verify-toolchain-foundation verify-contract-catalog \
+	verify-domain-packs verify-project-workspace verify-plugin-sdk \
+	verify-source-store verify-ingestion-contracts verify-ingestion-parsers \
+	verify-evidence-kgir verify-ingestion-security
+	python scripts/generate_contract_catalog.py --check
+	python scripts/generate_ingestion_examples.py --check
+	git diff --exit-code
