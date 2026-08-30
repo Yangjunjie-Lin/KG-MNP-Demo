@@ -50,6 +50,9 @@ def test_wheel_contains_catalog_and_schemas_and_loads_outside_source_tree(
         *(f"kg_mnp/contracts/{spec.resource_path}" for spec in ContractCatalog.load().specs),
     }
     assert expected <= names
+    assert "kg_mnp/ingestion/executor.py" in names
+    assert "kg_mnp/plugins/registry.py" in names
+    assert "kg_mnp/plugins/builtin/manifests/plain-text-parser.json" in names
     assert not any(name.startswith(("runtime_reports/", "runtime_outputs/")) for name in names)
     assert not any(name.startswith("domain_packs/") for name in names)
     assert not any("graphdb.license" in name.casefold() for name in names)
@@ -87,6 +90,6 @@ def test_wheel_contains_catalog_and_schemas_and_loads_outside_source_tree(
     completed = _run("-I", "-c", probe, cwd=probe_cwd)
     assert json.loads(completed.stdout) == {
         "catalog": True,
-        "count": 20,
+        "count": 34,
         "title": "KG-MNP ProjectLock 1.0",
     }

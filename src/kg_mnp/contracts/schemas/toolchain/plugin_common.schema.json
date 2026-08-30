@@ -1,0 +1,36 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/plugin-common/1.0",
+  "title": "KG-MNP Plugin Common 1.0",
+  "$defs": {
+    "pluginId": {"type": "string", "pattern": "^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$"},
+    "pluginApiVersion": {"const": "1.0.0"},
+    "pluginKind": {"enum": ["source-adapter", "media-detector", "parser", "normalizer", "quality-evaluator"]},
+    "capabilityId": {"type": "string", "pattern": "^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$"},
+    "distributionName": {"type": "string", "pattern": "^[A-Za-z0-9](?:[A-Za-z0-9._-]*[A-Za-z0-9])?$"},
+    "entryPointName": {"type": "string", "pattern": "^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$"},
+    "deterministicMode": {"enum": ["DETERMINISTIC", "SEEDED", "NONDETERMINISTIC"]},
+    "sideEffectClass": {"enum": ["PURE", "READ_LOCAL_INPUT", "TEMPORARY_LOCAL_WRITE", "NETWORK"]},
+    "implementationFile": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/safeRelativePosixPath"},
+    "safeConfigurationValue": {
+      "oneOf": [
+        {"type": ["string", "integer", "boolean", "null"]},
+        {"type": "array", "items": {"type": ["string", "integer", "boolean", "null"]}, "maxItems": 128}
+      ]
+    },
+    "resourceLimit": {"type": "integer", "minimum": 1, "maximum": 9007199254740991},
+    "mediaTypePattern": {"type": "string", "pattern": "^(?:\\*|[a-z0-9!#$&^_.+-]+)/(?:\\*|[a-z0-9!#$&^_.+-]+)$"},
+    "issue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["code", "message", "severity"],
+      "properties": {
+        "code": {"type": "string", "pattern": "^[A-Z][A-Z0-9_]*$"},
+        "message": {"type": "string", "minLength": 1, "maxLength": 4096},
+        "severity": {"enum": ["INFO", "WARNING", "ERROR"]}
+      }
+    }
+  },
+  "type": "object",
+  "additionalProperties": false
+}

@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/contract-catalog/1.1",
+  "title": "KG-MNP Public Contract Catalog 1.1",
+  "description": "Compatible additive catalog revision adding the ingestion scope.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["manifest_kind", "schema_version", "canonicalization_profile", "contracts"],
+  "properties": {
+    "manifest_kind": {"const": "KG_MNP_CONTRACT_CATALOG"},
+    "schema_version": {"const": "1.1.0"},
+    "canonicalization_profile": {"const": "KG-MNP Canonical JSON v1"},
+    "contracts": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "version", "schema_id", "resource_path", "scope", "stability", "authority_level", "sha256"],
+        "properties": {
+          "name": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/contractName"},
+          "version": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/semanticVersion"},
+          "schema_id": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/iri"},
+          "resource_path": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/safeRelativePosixPath"},
+          "scope": {"enum": ["toolchain", "modeling", "ingestion"]},
+          "stability": {"enum": ["stable", "retained", "experimental"]},
+          "authority_level": {"enum": ["descriptive", "proposal", "confirmed-input", "control", "lock"]},
+          "sha256": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/sha256"}
+        }
+      }
+    }
+  }
+}

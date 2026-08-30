@@ -11,7 +11,7 @@ ROOT = Path(__file__).resolve().parents[2]
 def test_contract_help_list_show_and_catalog_smokes(capsys) -> None:
     assert root_cli.main(["contracts", "list", "--json"]) == 0
     listed = json.loads(capsys.readouterr().out)
-    assert len(listed["result"]) == 20
+    assert len(listed["result"]) == 34
     assert listed["command"] == "contracts list"
     assert root_cli.main(["contracts", "show", "domain-pack-manifest"]) == 0
     shown = json.loads(capsys.readouterr().out)
@@ -38,4 +38,3 @@ def test_contract_invalid_and_document_security_have_stable_nonzero_codes(tmp_pa
     duplicate.write_text("x: 1\nx: 2\n", encoding="utf-8")
     assert root_cli.main(["contracts", "validate", "project-manifest", str(duplicate)]) == 4
     assert "Traceback" not in capsys.readouterr().err
-

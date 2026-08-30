@@ -23,7 +23,7 @@ from kg_mnp.contracts.catalog import DRAFT_2020_12, regenerate_catalog_files
 
 def test_catalog_is_the_unique_closed_public_authority() -> None:
     catalog = ContractCatalog.load()
-    assert len(catalog.specs) == 20
+    assert len(catalog.specs) == 34
     assert contract_names() == tuple(spec.name for spec in catalog.specs)
     for attribute in ("name", "schema_id", "resource_path"):
         values = [getattr(spec, attribute) for spec in catalog.specs]
@@ -34,7 +34,7 @@ def test_catalog_is_the_unique_closed_public_authority() -> None:
 
 def test_catalog_self_validates_and_all_schemas_are_draft_2020_12() -> None:
     catalog = ContractCatalog.load()
-    validate_contract("contract-catalog", catalog.document)
+    validate_contract("contract-catalog-v1-1", catalog.document)
     for spec in catalog.specs:
         schema = get_contract_schema(spec.name)
         assert schema["$id"] == spec.schema_id

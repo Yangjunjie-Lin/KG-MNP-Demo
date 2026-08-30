@@ -1,9 +1,100 @@
 {
   "canonicalization_profile": "KG-MNP Canonical JSON v1",
-  "catalog_file_sha256": "2f5cc83ec4e494db66b43e4e8f140c1d9e16c3964934c387b9d5385384bb0d8c",
-  "catalog_semantic_sha256": "b6bf0748a8330f2841eb5d1ce1cf93f8d7bd21e37f763d4a283527e513080f45",
-  "content_digest": "2dbcfc6d639e7b0b2beef415c1fc4a8b43a0bb096840916f12d35fc1fef0bf70",
+  "catalog_file_sha256": "74cc406984ca025fe11c11659da253a1009ccd51d06ddfdde968f8939233d251",
+  "catalog_semantic_sha256": "984c2031a36e6332c0c0a5724dc0dabbeb1f6f07f8389c3bda02e6744dccb5ed",
+  "content_digest": "1a49bdf18bc53102d922d9e5a458639bf0615f0579bbc84529e1af6480ea0a2e",
   "contracts": [
+    {
+      "name": "evidence-record",
+      "resource_path": "schemas/toolchain/evidence_record.schema.json",
+      "schema_id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/evidence-record/1.0",
+      "sha256": "2fced87d07a1c64c873c777045a9c7507d9bac2ddd38014c0bef41a26a66203d",
+      "version": "1.0.0"
+    },
+    {
+      "name": "ingestion-plan",
+      "resource_path": "schemas/toolchain/ingestion_plan.schema.json",
+      "schema_id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/ingestion-plan/1.0",
+      "sha256": "e8ce9536a461210a818e06d0f158e1b3c8cf784b9a6aa852ee44670dc5fef48e",
+      "version": "1.0.0"
+    },
+    {
+      "name": "ingestion-run",
+      "resource_path": "schemas/toolchain/ingestion_run.schema.json",
+      "schema_id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/ingestion-run/1.0",
+      "sha256": "fb0cdceb3510096003f2d37d927b22415ce7d01d7023a6c3ee07afb52eba7a54",
+      "version": "1.0.0"
+    },
+    {
+      "name": "kg-ir-dataset",
+      "resource_path": "schemas/toolchain/kg_ir_dataset.schema.json",
+      "schema_id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/kg-ir-dataset/1.0",
+      "sha256": "3d1034c61f8a175e826ba0fd8dad27b1c41752018dd497f938bbaeb0899fe3a6",
+      "version": "1.0.0"
+    },
+    {
+      "name": "kg-ir-item",
+      "resource_path": "schemas/toolchain/kg_ir_item.schema.json",
+      "schema_id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/kg-ir-item/1.0",
+      "sha256": "c017a5a661bf2fa94c506cbbd3b616c74f3a3861d545f6db08b4cd4f6c57b26a",
+      "version": "1.0.0"
+    },
+    {
+      "name": "plugin-common",
+      "resource_path": "schemas/toolchain/plugin_common.schema.json",
+      "schema_id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/plugin-common/1.0",
+      "sha256": "011dd6baac9bb3f41ccaa31cbe5d38f27ede242c5c8ffa5ab639563a4a6ce4c2",
+      "version": "1.0.0"
+    },
+    {
+      "name": "plugin-manifest",
+      "resource_path": "schemas/toolchain/plugin_manifest.schema.json",
+      "schema_id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/plugin-manifest/1.0",
+      "sha256": "8e6c50bf984eb0b38bacc7831ead0caf039c2ce793f0f5b038ca398a06f929a7",
+      "version": "1.0.0"
+    },
+    {
+      "name": "plugin-snapshot",
+      "resource_path": "schemas/toolchain/plugin_snapshot.schema.json",
+      "schema_id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/plugin-snapshot/1.0",
+      "sha256": "7dbaa9250972ffbeee5ee6dad97b8a0be9968a7e8e3bb85418c099c36764f03c",
+      "version": "1.0.0"
+    },
+    {
+      "name": "quality-report",
+      "resource_path": "schemas/toolchain/quality_report.schema.json",
+      "schema_id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/quality-report/1.0",
+      "sha256": "8e3c12bcd429df52569b31d59e86be11d41d9564a67689b632acd759814f6970",
+      "version": "1.0.0"
+    },
+    {
+      "name": "source-asset",
+      "resource_path": "schemas/toolchain/source_asset.schema.json",
+      "schema_id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/source-asset/1.0",
+      "sha256": "3d11ef14337e62cecc9695a5fd8e56361e5cebfe16ade61bee9cf3ae5a05a9cd",
+      "version": "1.0.0"
+    },
+    {
+      "name": "source-batch",
+      "resource_path": "schemas/toolchain/source_batch.schema.json",
+      "schema_id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/source-batch/1.0",
+      "sha256": "e973af0bf22e3db7bb2740a844b024145acbb7b14d60542a810f9d32c2ce6264",
+      "version": "1.0.0"
+    },
+    {
+      "name": "source-locator",
+      "resource_path": "schemas/toolchain/source_locator.schema.json",
+      "schema_id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/source-locator/1.0",
+      "sha256": "3149bcab20ff9a40c4d782102254604a4dc19544553cba55e06c96da7453081e",
+      "version": "1.0.0"
+    },
+    {
+      "name": "transformation-record",
+      "resource_path": "schemas/toolchain/transformation_record.schema.json",
+      "schema_id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/transformation-record/1.0",
+      "sha256": "ba9850dc1f90c9d2775afbf5f538d2a9b5569e1c76b66f3dc9340673b3c5061f",
+      "version": "1.0.0"
+    },
     {
       "name": "cleaned-partial-data",
       "resource_path": "schemas/modeling/cleaned_partial_data.schema.json",
@@ -103,6 +194,13 @@
       "version": "1.0.0"
     },
     {
+      "name": "contract-catalog-v1-1",
+      "resource_path": "schemas/toolchain/contract_catalog_v1_1.schema.json",
+      "schema_id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/contract-catalog/1.1",
+      "sha256": "f720e257c8c12150599c86bd16141451e1c60b91097c7ed962c284a2f1579088",
+      "version": "1.1.0"
+    },
+    {
       "name": "domain-pack-lock",
       "resource_path": "schemas/toolchain/domain_pack_lock.schema.json",
       "schema_id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/domain-pack-lock/1.0",
@@ -145,7 +243,7 @@
       "version": "1.0.0"
     }
   ],
-  "lock_id": "urn:kg-mnp:contract-catalog-lock:acb509211fa9ab18afd6628201859d10dd78ffff2acb563aa435b44e64fa86bc",
+  "lock_id": "urn:kg-mnp:contract-catalog-lock:2f6a21f2533bf466437139cc0749dcfc43b6994ff0c8272d9918c7c45eb185be",
   "manifest_kind": "KG_MNP_CONTRACT_CATALOG_LOCK",
   "schema_version": "1.0.0"
 }

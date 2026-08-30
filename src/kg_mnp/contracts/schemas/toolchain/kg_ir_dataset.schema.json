@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/kg-ir-dataset/1.0",
+  "title": "KG-MNP KGIRDataset v1",
+  "type": "object", "additionalProperties": false,
+  "required": ["manifest_kind", "schema_version", "dataset_id", "project_lock_id", "source_batch_id", "ingestion_plan_id", "items", "evidence_records", "transformation_records", "plugin_snapshots", "artifact_manifest", "quality_report_id", "content_digest"],
+  "properties": {
+    "manifest_kind": {"const": "KG_MNP_KG_IR_DATASET"}, "schema_version": {"const": "1.0.0"},
+    "dataset_id": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/stableUrn"},
+    "project_lock_id": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/stableUrn"},
+    "source_batch_id": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/stableUrn"},
+    "ingestion_plan_id": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/stableUrn"},
+    "items": {"type": "array", "minItems": 1, "items": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/kg-ir-item/1.0"}},
+    "evidence_records": {"type": "array", "minItems": 1, "items": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/evidence-record/1.0"}},
+    "transformation_records": {"type": "array", "items": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/transformation-record/1.0"}},
+    "plugin_snapshots": {"type": "array", "minItems": 1, "items": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/plugin-snapshot/1.0"}},
+    "artifact_manifest": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/artifact-manifest/1.0"},
+    "quality_report_id": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/stableUrn"},
+    "content_digest": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/sha256"}
+  }
+}

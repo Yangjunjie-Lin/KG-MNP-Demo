@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/transformation-record/1.0",
+  "title": "KG-MNP TransformationRecord v1",
+  "type": "object", "additionalProperties": false,
+  "required": ["manifest_kind", "schema_version", "transformation_id", "transformation_type", "implementation", "configuration_semantic_sha256", "input_sha256", "output_sha256", "reversible", "loss_class", "description", "content_digest"],
+  "properties": {
+    "manifest_kind": {"const": "KG_MNP_TRANSFORMATION_RECORD"}, "schema_version": {"const": "1.0.0"},
+    "transformation_id": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/stableUrn"},
+    "transformation_type": {"enum": ["unicode-nfc", "newline-lf", "utf8-bom-removal", "safe-string-preservation", "decimal-string-preservation", "delimiter-decoding", "structural-flattening"]},
+    "implementation": {"type": "string", "pattern": "^[a-z0-9](?:[a-z0-9.-]*[a-z0-9])?$"},
+    "configuration_semantic_sha256": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/sha256"},
+    "input_sha256": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/sha256"},
+    "output_sha256": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/sha256"},
+    "reversible": {"type": "boolean"},
+    "loss_class": {"enum": ["NONE", "REPRESENTATION_ONLY", "POTENTIALLY_LOSSY", "LOSSY"]},
+    "description": {"type": "string", "minLength": 1, "maxLength": 1000},
+    "content_digest": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/sha256"}
+  }
+}

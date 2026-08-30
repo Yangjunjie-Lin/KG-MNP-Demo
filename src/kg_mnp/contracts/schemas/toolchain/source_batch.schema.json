@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/source-batch/1.0",
+  "title": "KG-MNP SourceBatch v1",
+  "type": "object", "additionalProperties": false,
+  "required": ["manifest_kind", "schema_version", "batch_id", "project_lock_id", "sources", "labels", "content_digest"],
+  "properties": {
+    "manifest_kind": {"const": "KG_MNP_SOURCE_BATCH"}, "schema_version": {"const": "1.0.0"},
+    "batch_id": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/stableUrn"},
+    "project_lock_id": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/stableUrn"},
+    "sources": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/stableUrn"}},
+    "labels": {"type": "array", "uniqueItems": true, "items": {"type": "string", "minLength": 1, "maxLength": 160}},
+    "content_digest": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/sha256"}
+  }
+}

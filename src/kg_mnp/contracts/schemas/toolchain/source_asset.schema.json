@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/source-asset/1.0",
+  "title": "KG-MNP SourceAsset v1",
+  "type": "object", "additionalProperties": false,
+  "required": ["manifest_kind", "schema_version", "source_id", "content_sha256", "content_digest", "size_bytes", "detected_media_type", "declared_media_type", "original_name", "safe_display_path", "source_origin", "blob_path", "registration_method", "metadata", "extensions"],
+  "properties": {
+    "manifest_kind": {"const": "KG_MNP_SOURCE_ASSET"},
+    "schema_version": {"const": "1.0.0"},
+    "source_id": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/stableUrn"},
+    "content_sha256": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/sha256"},
+    "content_digest": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/sha256"},
+    "size_bytes": {"type": "integer", "minimum": 0},
+    "detected_media_type": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/mediaType"},
+    "declared_media_type": {"oneOf": [{"type": "null"}, {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/mediaType"}]},
+    "original_name": {"type": "string", "minLength": 1, "maxLength": 255, "pattern": "^[^/\\\\\\u0000-\\u001f\\u007f]+$"},
+    "safe_display_path": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/safeRelativePosixPath"},
+    "source_origin": {"enum": ["local-file", "local-directory", "workspace-upload", "domain-pack-fixture"]},
+    "blob_path": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/safeRelativePosixPath"},
+    "registration_method": {"enum": ["copied", "workspace-upload-copy"]},
+    "metadata": {
+      "type": "object", "additionalProperties": false,
+      "required": ["identity_profile", "detection_basis", "media_conflicts"],
+      "properties": {
+        "identity_profile": {"const": "KG-MNP Source Identity v1"},
+        "detection_basis": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"type": "string", "maxLength": 160}},
+        "media_conflicts": {"type": "array", "uniqueItems": true, "items": {"type": "string", "maxLength": 512}}
+      }
+    },
+    "extensions": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/extensionMap"}
+  }
+}

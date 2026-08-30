@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/plugin-snapshot/1.0",
+  "title": "KG-MNP PluginSnapshot v1",
+  "type": "object", "additionalProperties": false,
+  "required": ["manifest_kind", "schema_version", "snapshot_id", "plugin_id", "plugin_version", "plugin_api_version", "distribution_name", "distribution_version", "entry_point", "manifest_sha256", "manifest_semantic_sha256", "implementation_digest", "configuration_semantic_sha256", "capabilities", "determinism", "side_effects"],
+  "properties": {
+    "manifest_kind": {"const": "KG_MNP_PLUGIN_SNAPSHOT"},
+    "schema_version": {"const": "1.0.0"},
+    "snapshot_id": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/stableUrn"},
+    "plugin_id": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/plugin-common/1.0#/$defs/pluginId"},
+    "plugin_version": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/semanticVersion"},
+    "plugin_api_version": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/plugin-common/1.0#/$defs/pluginApiVersion"},
+    "distribution_name": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/plugin-common/1.0#/$defs/distributionName"},
+    "distribution_version": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/semanticVersion"},
+    "entry_point": {"type": "string", "pattern": "^kg_mnp\\.plugins:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$"},
+    "manifest_sha256": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/sha256"},
+    "manifest_semantic_sha256": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/sha256"},
+    "implementation_digest": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/sha256"},
+    "configuration_semantic_sha256": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/sha256"},
+    "capabilities": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/plugin-common/1.0#/$defs/capabilityId"}},
+    "determinism": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/plugin-common/1.0#/$defs/deterministicMode"},
+    "side_effects": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/plugin-common/1.0#/$defs/sideEffectClass"}}
+  }
+}

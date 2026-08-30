@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/kg-ir-item/1.0",
+  "title": "KG-MNP KGIRItem v1",
+  "$defs": {
+    "normalizedScalar": {"type": "object", "additionalProperties": false, "required": ["datatype", "original_lexical_value", "normalized_lexical_value", "null_state"], "properties": {
+      "datatype": {"enum": ["string", "integer", "decimal", "boolean", "null"]},
+      "original_lexical_value": {"type": ["string", "null"], "maxLength": 1048576},
+      "normalized_lexical_value": {"type": ["string", "null"], "maxLength": 1048576},
+      "null_state": {"enum": ["NOT_NULL", "EXPLICIT_NULL", "MISSING"]}
+    }},
+    "documentPayload": {"type": "object", "additionalProperties": false, "required": ["media_type", "title"], "properties": {"media_type": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/mediaType"}, "title": {"type": ["string", "null"], "maxLength": 1024}}},
+    "textPayload": {"type": "object", "additionalProperties": false, "required": ["text", "block_kind"], "properties": {"text": {"type": "string", "maxLength": 1048576}, "block_kind": {"enum": ["plain", "heading", "paragraph", "list-item", "code-block"]}}},
+    "recordPayload": {"type": "object", "additionalProperties": false, "required": ["record_label"], "properties": {"record_label": {"type": "string", "maxLength": 1024}}},
+    "scalarPayload": {"type": "object", "additionalProperties": false, "required": ["field_name", "value"], "properties": {"field_name": {"type": "string", "maxLength": 1024}, "value": {"$ref": "#/$defs/normalizedScalar"}}},
+    "tablePayload": {"type": "object", "additionalProperties": false, "required": ["name", "row_count", "column_count"], "properties": {"name": {"type": ["string", "null"], "maxLength": 255}, "row_count": {"type": "integer", "minimum": 0}, "column_count": {"type": "integer", "minimum": 0}}},
+    "tableRowPayload": {"type": "object", "additionalProperties": false, "required": ["row_number"], "properties": {"row_number": {"type": "integer", "minimum": 1}}},
+    "tableCellPayload": {"type": "object", "additionalProperties": false, "required": ["row", "column", "value"], "properties": {"row": {"type": "integer", "minimum": 1}, "column": {"type": "integer", "minimum": 1}, "value": {"$ref": "#/$defs/normalizedScalar"}}},
+    "metadataPayload": {
+      "type": "object", "additionalProperties": false, "required": ["entries"],
+      "properties": {
+        "entries": {
+          "type": "array",
+          "items": {
+            "type": "object", "additionalProperties": false, "required": ["name", "value"],
+            "properties": {
+              "name": {"type": "string", "maxLength": 160},
+              "value": {"type": ["string", "integer", "boolean", "null"], "maxLength": 4096}
+            }
+          }
+        }
+      }
+    }
+  },
+  "type": "object", "additionalProperties": false,
+  "required": ["manifest_kind", "schema_version", "item_id", "item_kind", "source_ids", "parent_item_id", "ordinal", "payload", "evidence_refs", "transformation_refs", "quality_flags", "content_digest"],
+  "properties": {
+    "manifest_kind": {"const": "KG_MNP_KG_IR_ITEM"}, "schema_version": {"const": "1.0.0"},
+    "item_id": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/stableUrn"},
+    "item_kind": {"enum": ["document", "text-block", "structured-record", "scalar-field", "table", "table-row", "table-cell", "document-metadata", "image-metadata", "audio-metadata"]},
+    "source_ids": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/stableUrn"}},
+    "parent_item_id": {"oneOf": [{"type": "null"}, {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/stableUrn"}]},
+    "ordinal": {"type": "integer", "minimum": 0},
+    "payload": {"oneOf": [{"$ref": "#/$defs/documentPayload"}, {"$ref": "#/$defs/textPayload"}, {"$ref": "#/$defs/recordPayload"}, {"$ref": "#/$defs/scalarPayload"}, {"$ref": "#/$defs/tablePayload"}, {"$ref": "#/$defs/tableRowPayload"}, {"$ref": "#/$defs/tableCellPayload"}, {"$ref": "#/$defs/metadataPayload"}]},
+    "evidence_refs": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/stableUrn"}},
+    "transformation_refs": {"type": "array", "uniqueItems": true, "items": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/stableUrn"}},
+    "quality_flags": {"type": "array", "uniqueItems": true, "items": {"type": "string", "pattern": "^[A-Z][A-Z0-9_]*$"}},
+    "content_digest": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/sha256"}
+  }
+}

@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/quality-report/1.0",
+  "title": "KG-MNP QualityReport v1",
+  "$defs": {"metric": {"type": "object", "additionalProperties": false, "required": ["metric_id", "measurement_basis", "numerator", "denominator", "score_basis_points", "status", "issues"], "properties": {
+    "metric_id": {"enum": ["source-integrity", "parse-success", "structural-validity", "locator-validity", "evidence-coverage", "transformation-traceability", "normalization-consistency", "content-coverage"]},
+    "measurement_basis": {"enum": ["EXACT_STRUCTURAL_CHECK", "COVERAGE_CHECK", "POLICY_CHECK", "GROUND_TRUTH_COMPARISON"]},
+    "numerator": {"type": "integer", "minimum": 0}, "denominator": {"type": "integer", "minimum": 0},
+    "score_basis_points": {"type": "integer", "minimum": 0, "maximum": 10000},
+    "status": {"enum": ["PASS", "REVIEW_REQUIRED", "FAIL"]},
+    "issues": {"type": "array", "items": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/plugin-common/1.0#/$defs/issue"}}
+  }}},
+  "type": "object", "additionalProperties": false,
+  "required": ["manifest_kind", "schema_version", "quality_report_id", "subject_id", "metrics", "gate_status", "issues", "content_digest"],
+  "properties": {
+    "manifest_kind": {"const": "KG_MNP_QUALITY_REPORT"}, "schema_version": {"const": "1.0.0"},
+    "quality_report_id": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/stableUrn"},
+    "subject_id": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/stableUrn"},
+    "metrics": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/metric"}},
+    "gate_status": {"enum": ["PASS", "REVIEW_REQUIRED", "FAIL"]},
+    "issues": {"type": "array", "items": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/plugin-common/1.0#/$defs/issue"}},
+    "content_digest": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/sha256"}
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/ingestion-run/1.0",
+  "title": "KG-MNP IngestionRun v1",
+  "type": "object", "additionalProperties": false,
+  "required": ["manifest_kind", "schema_version", "run_id", "project_lock_id", "source_batch_id", "ingestion_plan_id", "plugin_snapshots", "status", "input_artifacts", "output_artifacts", "quality_report_id", "issues", "content_digest"],
+  "properties": {
+    "manifest_kind": {"const": "KG_MNP_INGESTION_RUN"}, "schema_version": {"const": "1.0.0"},
+    "run_id": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/stableUrn"},
+    "project_lock_id": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/stableUrn"},
+    "source_batch_id": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/stableUrn"},
+    "ingestion_plan_id": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/stableUrn"},
+    "plugin_snapshots": {"type": "array", "minItems": 1, "items": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/plugin-snapshot/1.0"}},
+    "status": {"enum": ["SUCCEEDED", "REVIEW_REQUIRED", "PARTIAL", "FAILED"]},
+    "input_artifacts": {"type": "array", "items": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/artifact-reference/1.0"}},
+    "output_artifacts": {"type": "array", "items": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/artifact-reference/1.0"}},
+    "quality_report_id": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/stableUrn"},
+    "issues": {"type": "array", "items": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/plugin-common/1.0#/$defs/issue"}},
+    "content_digest": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/sha256"}
+  }
+}

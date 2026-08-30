@@ -3,6 +3,136 @@
   "contracts": [
     {
       "authority_level": "descriptive",
+      "name": "evidence-record",
+      "resource_path": "schemas/toolchain/evidence_record.schema.json",
+      "schema_id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/evidence-record/1.0",
+      "scope": "ingestion",
+      "sha256": "2fced87d07a1c64c873c777045a9c7507d9bac2ddd38014c0bef41a26a66203d",
+      "stability": "stable",
+      "version": "1.0.0"
+    },
+    {
+      "authority_level": "control",
+      "name": "ingestion-plan",
+      "resource_path": "schemas/toolchain/ingestion_plan.schema.json",
+      "schema_id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/ingestion-plan/1.0",
+      "scope": "ingestion",
+      "sha256": "e8ce9536a461210a818e06d0f158e1b3c8cf784b9a6aa852ee44670dc5fef48e",
+      "stability": "stable",
+      "version": "1.0.0"
+    },
+    {
+      "authority_level": "control",
+      "name": "ingestion-run",
+      "resource_path": "schemas/toolchain/ingestion_run.schema.json",
+      "schema_id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/ingestion-run/1.0",
+      "scope": "ingestion",
+      "sha256": "fb0cdceb3510096003f2d37d927b22415ce7d01d7023a6c3ee07afb52eba7a54",
+      "stability": "stable",
+      "version": "1.0.0"
+    },
+    {
+      "authority_level": "control",
+      "name": "kg-ir-dataset",
+      "resource_path": "schemas/toolchain/kg_ir_dataset.schema.json",
+      "schema_id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/kg-ir-dataset/1.0",
+      "scope": "ingestion",
+      "sha256": "3d1034c61f8a175e826ba0fd8dad27b1c41752018dd497f938bbaeb0899fe3a6",
+      "stability": "stable",
+      "version": "1.0.0"
+    },
+    {
+      "authority_level": "descriptive",
+      "name": "kg-ir-item",
+      "resource_path": "schemas/toolchain/kg_ir_item.schema.json",
+      "schema_id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/kg-ir-item/1.0",
+      "scope": "ingestion",
+      "sha256": "c017a5a661bf2fa94c506cbbd3b616c74f3a3861d545f6db08b4cd4f6c57b26a",
+      "stability": "stable",
+      "version": "1.0.0"
+    },
+    {
+      "authority_level": "descriptive",
+      "name": "plugin-common",
+      "resource_path": "schemas/toolchain/plugin_common.schema.json",
+      "schema_id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/plugin-common/1.0",
+      "scope": "ingestion",
+      "sha256": "011dd6baac9bb3f41ccaa31cbe5d38f27ede242c5c8ffa5ab639563a4a6ce4c2",
+      "stability": "stable",
+      "version": "1.0.0"
+    },
+    {
+      "authority_level": "control",
+      "name": "plugin-manifest",
+      "resource_path": "schemas/toolchain/plugin_manifest.schema.json",
+      "schema_id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/plugin-manifest/1.0",
+      "scope": "ingestion",
+      "sha256": "8e6c50bf984eb0b38bacc7831ead0caf039c2ce793f0f5b038ca398a06f929a7",
+      "stability": "stable",
+      "version": "1.0.0"
+    },
+    {
+      "authority_level": "lock",
+      "name": "plugin-snapshot",
+      "resource_path": "schemas/toolchain/plugin_snapshot.schema.json",
+      "schema_id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/plugin-snapshot/1.0",
+      "scope": "ingestion",
+      "sha256": "7dbaa9250972ffbeee5ee6dad97b8a0be9968a7e8e3bb85418c099c36764f03c",
+      "stability": "stable",
+      "version": "1.0.0"
+    },
+    {
+      "authority_level": "descriptive",
+      "name": "quality-report",
+      "resource_path": "schemas/toolchain/quality_report.schema.json",
+      "schema_id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/quality-report/1.0",
+      "scope": "ingestion",
+      "sha256": "8e3c12bcd429df52569b31d59e86be11d41d9564a67689b632acd759814f6970",
+      "stability": "stable",
+      "version": "1.0.0"
+    },
+    {
+      "authority_level": "control",
+      "name": "source-asset",
+      "resource_path": "schemas/toolchain/source_asset.schema.json",
+      "schema_id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/source-asset/1.0",
+      "scope": "ingestion",
+      "sha256": "3d11ef14337e62cecc9695a5fd8e56361e5cebfe16ade61bee9cf3ae5a05a9cd",
+      "stability": "stable",
+      "version": "1.0.0"
+    },
+    {
+      "authority_level": "control",
+      "name": "source-batch",
+      "resource_path": "schemas/toolchain/source_batch.schema.json",
+      "schema_id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/source-batch/1.0",
+      "scope": "ingestion",
+      "sha256": "e973af0bf22e3db7bb2740a844b024145acbb7b14d60542a810f9d32c2ce6264",
+      "stability": "stable",
+      "version": "1.0.0"
+    },
+    {
+      "authority_level": "descriptive",
+      "name": "source-locator",
+      "resource_path": "schemas/toolchain/source_locator.schema.json",
+      "schema_id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/source-locator/1.0",
+      "scope": "ingestion",
+      "sha256": "3149bcab20ff9a40c4d782102254604a4dc19544553cba55e06c96da7453081e",
+      "stability": "stable",
+      "version": "1.0.0"
+    },
+    {
+      "authority_level": "descriptive",
+      "name": "transformation-record",
+      "resource_path": "schemas/toolchain/transformation_record.schema.json",
+      "schema_id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/transformation-record/1.0",
+      "scope": "ingestion",
+      "sha256": "ba9850dc1f90c9d2775afbf5f538d2a9b5569e1c76b66f3dc9340673b3c5061f",
+      "stability": "stable",
+      "version": "1.0.0"
+    },
+    {
+      "authority_level": "descriptive",
       "name": "cleaned-partial-data",
       "resource_path": "schemas/modeling/cleaned_partial_data.schema.json",
       "schema_id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/cleaned-partial-data/1.0",
@@ -142,6 +272,16 @@
       "version": "1.0.0"
     },
     {
+      "authority_level": "control",
+      "name": "contract-catalog-v1-1",
+      "resource_path": "schemas/toolchain/contract_catalog_v1_1.schema.json",
+      "schema_id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/contract-catalog/1.1",
+      "scope": "toolchain",
+      "sha256": "f720e257c8c12150599c86bd16141451e1c60b91097c7ed962c284a2f1579088",
+      "stability": "stable",
+      "version": "1.1.0"
+    },
+    {
       "authority_level": "lock",
       "name": "domain-pack-lock",
       "resource_path": "schemas/toolchain/domain_pack_lock.schema.json",
@@ -203,5 +343,5 @@
     }
   ],
   "manifest_kind": "KG_MNP_CONTRACT_CATALOG",
-  "schema_version": "1.0.0"
+  "schema_version": "1.1.0"
 }

@@ -98,7 +98,7 @@ class ContractCatalog:
             raise ContractCatalogError("Contract Catalog root must be an object")
         if value.get("manifest_kind") != "KG_MNP_CONTRACT_CATALOG":
             raise ContractCatalogError("invalid Contract Catalog manifest_kind")
-        if value.get("schema_version") != "1.0.0":
+        if value.get("schema_version") not in {"1.0.0", "1.1.0"}:
             raise ContractCatalogError("unsupported Contract Catalog schema_version")
         if value.get("canonicalization_profile") != CANONICAL_JSON_PROFILE:
             raise ContractCatalogError("unsupported Contract Catalog canonicalization profile")
@@ -135,7 +135,7 @@ def _validate_specs(specs: Iterable[ContractSpec], *, verify_hashes: bool = Fals
     for spec in values:
         validate_semver(spec.version)
         validate_safe_relative_path(spec.resource_path)
-        if spec.scope not in {"toolchain", "modeling"}:
+        if spec.scope not in {"toolchain", "modeling", "ingestion"}:
             raise ContractCatalogError(f"invalid contract scope: {spec.scope}")
         if spec.stability not in {"stable", "retained", "experimental"}:
             raise ContractCatalogError(f"invalid contract stability: {spec.stability}")
@@ -265,4 +265,3 @@ def verify_catalog_lock() -> dict[str, Any]:
     if actual != expected:
         raise ContractCatalogError("Contract Catalog lock mismatch")
     return copy.deepcopy(actual)
-

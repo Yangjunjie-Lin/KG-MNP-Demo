@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/source-locator/1.0",
+  "title": "KG-MNP SourceLocator v1",
+  "$defs": {
+    "base": {"type": "object", "required": ["locator_kind"], "properties": {"locator_kind": {"type": "string"}}},
+    "wholeSource": {"type": "object", "additionalProperties": false, "required": ["locator_kind"], "properties": {"locator_kind": {"const": "whole-source"}}},
+    "byteRange": {"type": "object", "additionalProperties": false, "required": ["locator_kind", "start", "end"], "properties": {"locator_kind": {"const": "byte-range"}, "start": {"type": "integer", "minimum": 0}, "end": {"type": "integer", "minimum": 1}}},
+    "lineRange": {"type": "object", "additionalProperties": false, "required": ["locator_kind", "start_line", "end_line"], "properties": {"locator_kind": {"const": "text-line-range"}, "start_line": {"type": "integer", "minimum": 1}, "end_line": {"type": "integer", "minimum": 1}}},
+    "jsonPointer": {"type": "object", "additionalProperties": false, "required": ["locator_kind", "pointer"], "properties": {"locator_kind": {"const": "json-pointer"}, "pointer": {"type": "string", "pattern": "^(?:/(?:[^~/]|~[01])*)*$"}}},
+    "delimitedCell": {"type": "object", "additionalProperties": false, "required": ["locator_kind", "row", "column"], "properties": {"locator_kind": {"const": "delimited-cell"}, "row": {"type": "integer", "minimum": 1}, "column": {"type": "integer", "minimum": 1}}},
+    "delimitedRange": {"type": "object", "additionalProperties": false, "required": ["locator_kind", "start_row", "end_row", "start_column", "end_column"], "properties": {"locator_kind": {"const": "delimited-range"}, "start_row": {"type": "integer", "minimum": 1}, "end_row": {"type": "integer", "minimum": 1}, "start_column": {"type": "integer", "minimum": 1}, "end_column": {"type": "integer", "minimum": 1}}},
+    "spreadsheetCell": {"type": "object", "additionalProperties": false, "required": ["locator_kind", "sheet", "row", "column"], "properties": {"locator_kind": {"const": "spreadsheet-cell"}, "sheet": {"type": "string", "minLength": 1, "maxLength": 255}, "row": {"type": "integer", "minimum": 1}, "column": {"type": "integer", "minimum": 1}}},
+    "spreadsheetRange": {"type": "object", "additionalProperties": false, "required": ["locator_kind", "sheet", "start_row", "end_row", "start_column", "end_column"], "properties": {"locator_kind": {"const": "spreadsheet-range"}, "sheet": {"type": "string", "minLength": 1, "maxLength": 255}, "start_row": {"type": "integer", "minimum": 1}, "end_row": {"type": "integer", "minimum": 1}, "start_column": {"type": "integer", "minimum": 1}, "end_column": {"type": "integer", "minimum": 1}}},
+    "paragraph": {"type": "object", "additionalProperties": false, "required": ["locator_kind", "paragraph_index"], "properties": {"locator_kind": {"const": "document-paragraph"}, "paragraph_index": {"type": "integer", "minimum": 0}}},
+    "tableCell": {"type": "object", "additionalProperties": false, "required": ["locator_kind", "table_index", "row", "column"], "properties": {"locator_kind": {"const": "document-table-cell"}, "table_index": {"type": "integer", "minimum": 0}, "row": {"type": "integer", "minimum": 1}, "column": {"type": "integer", "minimum": 1}}},
+    "pdfPage": {"type": "object", "additionalProperties": false, "required": ["locator_kind", "page"], "properties": {"locator_kind": {"const": "pdf-page"}, "page": {"type": "integer", "minimum": 1}}},
+    "pdfRegion": {"type": "object", "additionalProperties": false, "required": ["locator_kind", "page", "x", "y", "width", "height"], "properties": {"locator_kind": {"const": "pdf-page-region"}, "page": {"type": "integer", "minimum": 1}, "x": {"type": "integer", "minimum": 0}, "y": {"type": "integer", "minimum": 0}, "width": {"type": "integer", "minimum": 1}, "height": {"type": "integer", "minimum": 1}}},
+    "imageRegion": {"type": "object", "additionalProperties": false, "required": ["locator_kind", "x", "y", "width", "height"], "properties": {"locator_kind": {"const": "image-region"}, "x": {"type": "integer", "minimum": 0}, "y": {"type": "integer", "minimum": 0}, "width": {"type": "integer", "minimum": 1}, "height": {"type": "integer", "minimum": 1}}},
+    "timeRange": {"type": "object", "additionalProperties": false, "required": ["locator_kind", "start_ms", "end_ms"], "properties": {"locator_kind": {"const": "time-range"}, "start_ms": {"type": "integer", "minimum": 0}, "end_ms": {"type": "integer", "minimum": 1}}}
+  },
+  "oneOf": [
+    {"$ref": "#/$defs/wholeSource"}, {"$ref": "#/$defs/byteRange"}, {"$ref": "#/$defs/lineRange"},
+    {"$ref": "#/$defs/jsonPointer"}, {"$ref": "#/$defs/delimitedCell"}, {"$ref": "#/$defs/delimitedRange"},
+    {"$ref": "#/$defs/spreadsheetCell"}, {"$ref": "#/$defs/spreadsheetRange"}, {"$ref": "#/$defs/paragraph"},
+    {"$ref": "#/$defs/tableCell"}, {"$ref": "#/$defs/pdfPage"}, {"$ref": "#/$defs/pdfRegion"},
+    {"$ref": "#/$defs/imageRegion"}, {"$ref": "#/$defs/timeRange"}
+  ]
+}

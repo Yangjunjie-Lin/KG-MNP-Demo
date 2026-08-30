@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/ingestion-plan/1.0",
+  "title": "KG-MNP IngestionPlan v1",
+  "$defs": {
+    "limits": {
+      "type": "object", "additionalProperties": false,
+      "required": ["max_source_bytes", "max_sources_per_batch", "max_archive_entries", "max_archive_uncompressed_bytes", "max_compression_ratio", "max_json_depth", "max_json_items", "max_text_line_length", "max_table_rows", "max_table_columns", "max_cell_characters", "max_pdf_pages", "max_document_blocks", "max_image_pixels", "max_audio_duration_ms", "max_extracted_characters"],
+      "properties": {
+        "max_source_bytes": {"type": "integer", "minimum": 1}, "max_sources_per_batch": {"type": "integer", "minimum": 1},
+        "max_archive_entries": {"type": "integer", "minimum": 1}, "max_archive_uncompressed_bytes": {"type": "integer", "minimum": 1},
+        "max_compression_ratio": {"type": "integer", "minimum": 1}, "max_json_depth": {"type": "integer", "minimum": 1},
+        "max_json_items": {"type": "integer", "minimum": 1}, "max_text_line_length": {"type": "integer", "minimum": 1},
+        "max_table_rows": {"type": "integer", "minimum": 1}, "max_table_columns": {"type": "integer", "minimum": 1},
+        "max_cell_characters": {"type": "integer", "minimum": 1}, "max_pdf_pages": {"type": "integer", "minimum": 1},
+        "max_document_blocks": {"type": "integer", "minimum": 1}, "max_image_pixels": {"type": "integer", "minimum": 1},
+        "max_audio_duration_ms": {"type": "integer", "minimum": 1}, "max_extracted_characters": {"type": "integer", "minimum": 1}
+      }
+    },
+    "policy": {"type": "object", "additionalProperties": false, "required": ["policy_id", "settings"], "properties": {"policy_id": {"type": "string", "pattern": "^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$"}, "settings": {"type": "object", "additionalProperties": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/plugin-common/1.0#/$defs/safeConfigurationValue"}}}},
+    "step": {"type": "object", "additionalProperties": false, "required": ["step_id", "source_id", "operation", "plugin_snapshot_id", "required_capability", "input_contract", "output_contract", "configuration", "expected_outputs", "fallback_steps"], "properties": {
+      "step_id": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/stableUrn"},
+      "source_id": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/stableUrn"},
+      "operation": {"enum": ["detect", "parse", "normalize", "quality-evaluate"]},
+      "plugin_snapshot_id": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/stableUrn"},
+      "required_capability": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/plugin-common/1.0#/$defs/capabilityId"},
+      "input_contract": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/contractName"},
+      "output_contract": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/contractName"},
+      "configuration": {"type": "object", "additionalProperties": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/plugin-common/1.0#/$defs/safeConfigurationValue"}},
+      "expected_outputs": {"type": "array", "uniqueItems": true, "items": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/contractName"}},
+      "fallback_steps": {"type": "array", "maxItems": 4, "uniqueItems": true, "items": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/stableUrn"}}
+    }}
+  },
+  "type": "object", "additionalProperties": false,
+  "required": ["manifest_kind", "schema_version", "plan_id", "project_id", "project_lock_id", "source_batch_id", "planner", "plugin_snapshots", "steps", "resource_limits", "normalization_policy", "quality_policy", "fallback_policy", "status", "issues", "content_digest"],
+  "properties": {
+    "manifest_kind": {"const": "KG_MNP_INGESTION_PLAN"}, "schema_version": {"const": "1.0.0"},
+    "plan_id": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/stableUrn"},
+    "project_id": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/projectId"},
+    "project_lock_id": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/stableUrn"},
+    "source_batch_id": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/stableUrn"},
+    "planner": {"type": "object", "additionalProperties": false, "required": ["planner_id", "planner_version", "planner_kind"], "properties": {"planner_id": {"const": "kg-mnp-deterministic-core"}, "planner_version": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/semanticVersion"}, "planner_kind": {"enum": ["DETERMINISTIC_CORE", "EXTERNAL_PROPOSAL"]}}},
+    "plugin_snapshots": {"type": "array", "minItems": 1, "items": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/plugin-snapshot/1.0"}},
+    "steps": {"type": "array", "items": {"$ref": "#/$defs/step"}},
+    "resource_limits": {"$ref": "#/$defs/limits"},
+    "normalization_policy": {"$ref": "#/$defs/policy"}, "quality_policy": {"$ref": "#/$defs/policy"}, "fallback_policy": {"$ref": "#/$defs/policy"},
+    "status": {"enum": ["READY", "UNRESOLVED", "INVALID"]},
+    "issues": {"type": "array", "items": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/plugin-common/1.0#/$defs/issue"}},
+    "content_digest": {"$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/toolchain-common/1.0#/$defs/sha256"}
+  }
+}
