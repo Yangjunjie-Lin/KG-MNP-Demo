@@ -2,9 +2,9 @@ from __future__ import annotations
 
 import pytest
 
-from kg_mnp_demo.workbench.binding import WorkbenchBinding
-from kg_mnp_demo.workbench.errors import WorkbenchError
-from kg_mnp_demo.workbench.relay import Phase01Relay
+from kg_mnp.workbench.binding import WorkbenchBinding
+from kg_mnp.workbench.errors import WorkbenchError
+from kg_mnp.workbench.relay import Phase01Relay
 
 from ._helpers import write_phase01_artifact
 

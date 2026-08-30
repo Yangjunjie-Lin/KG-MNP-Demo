@@ -2,9 +2,9 @@ from __future__ import annotations
 
 import pytest
 
-from kg_mnp_demo.amendment.candidate_binding import bind_amendment_to_proposal
-from kg_mnp_demo.amendment.errors import AmendmentError, AmendmentErrorCode
-from kg_mnp_demo.amendment.republication import (
+from kg_mnp.amendment.candidate_binding import bind_amendment_to_proposal
+from kg_mnp.amendment.errors import AmendmentError, AmendmentErrorCode
+from kg_mnp.amendment.republication import (
     assert_abox_only_invariants,
     new_repository_identity,
 )

@@ -2,11 +2,11 @@ from __future__ import annotations
 
 import pytest
 
-from kg_mnp_demo.diagnostics.contracts import (
+from kg_mnp.diagnostics.contracts import (
     strict_json_bytes,
     validate_diagnostic_contract,
 )
-from kg_mnp_demo.diagnostics.policy import (
+from kg_mnp.diagnostics.policy import (
     DiagnosticClassification,
     DiagnosticSeverity,
     load_diagnostic_policy,

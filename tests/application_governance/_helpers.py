@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from copy import deepcopy
 
-from kg_mnp_demo.governance.authority_binding import GovernanceAuthority
-from kg_mnp_demo.governance.proposal import empty_payload
+from kg_mnp.governance.authority_binding import GovernanceAuthority
+from kg_mnp.governance.proposal import empty_payload
 from scripts.governance_controlled_fixture import (
     ControlledDiagnosticFixture,
     controlled_governance_authority_for_test_harness,

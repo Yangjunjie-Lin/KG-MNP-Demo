@@ -2,12 +2,12 @@ from __future__ import annotations
 
 import pytest
 
-from kg_mnp_demo.application.contracts import (
+from kg_mnp.application.contracts import (
     APPLICATION_SCHEMAS,
     load_application_schema,
     validate_application_contract,
 )
-from kg_mnp_demo.application.errors import ApplicationError, ErrorCode
+from kg_mnp.application.errors import ApplicationError, ErrorCode
 
 
 def test_all_phase01_contracts_are_offline_draft_202012_and_closed():

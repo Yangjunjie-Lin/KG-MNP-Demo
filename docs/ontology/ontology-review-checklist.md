@@ -24,7 +24,7 @@ Shape namespace: `https://yangjunjie-lin.github.io/KG-MNP-Demo/shapes#`
 ## 2. Module structure and imports
 
 - [ ] Root `ontology/kg-mnp.ttl` exists and only aggregates metadata + imports
-- [ ] Runtime modules listed in `config/ontology_modules.yaml` (no hardcoded second list in loader)
+- [ ] Runtime modules listed in `domain_packs/mnp/ontology/modules.yaml` (no hardcoded second list in loader)
 - [ ] `mnp-modeling-provenance.ttl` present (ODR-005)
 - [ ] `mnp-alignments.ttl` optional; not forced into default runtime without audit
 - [ ] `catalog-v001.xml` maps versionless and version IRIs to local files
@@ -78,9 +78,9 @@ Shape namespace: `https://yangjunjie-lin.github.io/KG-MNP-Demo/shapes#`
 
 ## 8. SHACL profiles
 
-- [ ] `shapes/ontology-schema-shapes.ttl` exists
-- [ ] `shapes/foundation-instance-shapes.ttl` exists
-- [ ] `examples/eligibility-use-case/shapes/eligibility-instance-shapes.ttl` exists
+- [ ] `domain_packs/mnp/shapes/ontology-schema-shapes.ttl` exists
+- [ ] `domain_packs/mnp/shapes/foundation-instance-shapes.ttl` exists
+- [ ] `domain_packs/mnp/fixtures/eligibility-use-case/shapes/eligibility-instance-shapes.ttl` exists
 - [ ] Foundation does not require full eligibility evidence packages
 - [ ] Eligibility retains strict legacy demo constraints
 - [ ] Validator exposes explicit profiles; eligibility tests select eligibility

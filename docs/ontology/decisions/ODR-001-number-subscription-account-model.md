@@ -166,7 +166,7 @@ PhoneNumber → Subscription → TelecomAccount
 |---|---|
 | `data/case*.ttl` | Rewrite `hasSubscription` → `holdsSubscription`; move `billedThrough` subjects to subscriptions; replace `ownsPhoneNumber` with number→subscription assignment; drop `relatedAccount` assertions |
 | SPARQL / CQ queries | Update subscription and billing path patterns |
-| `mappings/tmf_to_mnp.yaml` | Remap TMF relatedParty/product/account fields to the new chain |
+| `domain_packs/mnp/mappings/tmf_to_mnp.yaml` | Remap TMF relatedParty/product/account fields to the new chain |
 | Evaluator / RDF builder | Emit new properties; stop materializing deprecated edges |
 | Tests / fixtures | Expect new IRIs and graph shapes |
 
@@ -190,7 +190,8 @@ IRIs under the Stage 03 allowlist.
 
 - Stage 03 brief §13 (number–subscription–account audit baseline)
 - TM Forum Customer / Product Inventory / Customer Bill patterns referenced in
-  `ontology/mnp-alignments.ttl` and `mappings/tmf_to_mnp.yaml`
+  `domain_packs/mnp/ontology/mnp-alignments.ttl` and
+  `domain_packs/mnp/mappings/tmf_to_mnp.yaml`
 - `docs/architecture/owl-shacl-semantics.md` (domain/range as inference, not
   DB type checks)
 - `docs/ontology/release-policy.md` (deprecation and major-change rules)

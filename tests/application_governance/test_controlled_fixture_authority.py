@@ -5,13 +5,13 @@ from pathlib import Path
 
 import pytest
 
-import kg_mnp_demo.governance as governance_api
-import kg_mnp_demo.governance.runtime as production_runtime
+import kg_mnp.governance as governance_api
+import kg_mnp.governance.runtime as production_runtime
 import scripts.governance_controlled_fixture as controlled_fixture_module
-from kg_mnp_demo.governance.authority_binding import GovernanceAuthority
-from kg_mnp_demo.governance.errors import GovernanceError, GovernanceErrorCode
-from kg_mnp_demo.governance.runtime import create_governance_app
-from kg_mnp_demo.governance.workspace import (
+from kg_mnp.governance.authority_binding import GovernanceAuthority
+from kg_mnp.governance.errors import GovernanceError, GovernanceErrorCode
+from kg_mnp.governance.runtime import create_governance_app
+from kg_mnp.governance.workspace import (
     GovernanceWorkspace,
     GovernanceWorkspaceStore,
 )

@@ -2,9 +2,9 @@ from __future__ import annotations
 
 import json
 
-from kg_mnp_demo import root_cli
-from kg_mnp_demo.application import cli as application_cli
-from kg_mnp_demo.modeling import cli as modeling_cli
+from kg_mnp import root_cli
+from kg_mnp.application import cli as application_cli
+from kg_mnp.modeling import cli as modeling_cli
 
 
 def test_root_cli_routes_only_application_first_token(monkeypatch) -> None:

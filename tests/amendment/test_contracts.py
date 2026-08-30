@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pytest
 
-from kg_mnp_demo.amendment.contracts import (
+from kg_mnp.amendment.contracts import (
     AmendmentContractError,
     load_amendment_schema,
     strict_json_bytes,

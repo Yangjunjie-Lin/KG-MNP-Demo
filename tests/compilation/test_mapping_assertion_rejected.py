@@ -1,7 +1,9 @@
 import copy
+
 import pytest
 
-from kg_mnp_demo.compilation.abox_compiler import ABoxCompilationError, compile_abox
+from kg_mnp.compilation.abox_compiler import ABoxCompilationError, compile_abox
+
 from ._helpers import authorities
 
 

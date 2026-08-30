@@ -2,9 +2,8 @@ from __future__ import annotations
 
 import copy
 
-
-from kg_mnp_demo.modeling.identifiers import candidate_id
-from kg_mnp_demo.modeling.review_actions import validate_candidate_term_types
+from kg_mnp.modeling.identifiers import candidate_id
+from kg_mnp.modeling.review_actions import validate_candidate_term_types
 
 from ._helpers import dependencies, load_proposal
 

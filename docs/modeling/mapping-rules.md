@@ -10,7 +10,7 @@ rule IDs. No Python expression, `eval`, dynamic template, unrestricted
 JSONPath, user script, or natural-language transformation is executable.
 Unknown transforms and target terms fail closed.
 
-`mappings/tmf_to_mnp.yaml` remains a standards-alignment reference and
+`domain_packs/mnp/mappings/tmf_to_mnp.yaml` remains a standards-alignment reference and
 modeling-evidence source. Its OpenAPI component paths, lowercase historical
 status, explanatory transformation prose, and legacy selection flag are not
 runtime instructions. In particular:
@@ -23,4 +23,3 @@ OWL logical equivalence
 
 The generator never interprets `related`, `broader`, or `narrower` as an OWL
 equivalence axiom.
-

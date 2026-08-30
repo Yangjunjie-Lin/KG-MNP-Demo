@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import pytest
 
-from kg_mnp_demo.graphdb.client import GraphDBClient, GraphDBClientError
-from kg_mnp_demo.graphdb.query_suite import build_query_suite
+from kg_mnp.graphdb.client import GraphDBClient, GraphDBClientError
+from kg_mnp.graphdb.query_suite import build_query_suite
 
 
 class _GraphStoreClient(GraphDBClient):
@@ -65,7 +65,7 @@ def test_physical_default_graph_injection_is_detected():
     assert snapshot.statement_count == 1
     try:
         client.assert_default_graph_empty("kg-mnp-00000000000000000000")
-    except Exception as exc:
+    except GraphDBClientError as exc:
         assert "default graph" in str(exc).lower()
     else:
         raise AssertionError("physical default graph injection was accepted")

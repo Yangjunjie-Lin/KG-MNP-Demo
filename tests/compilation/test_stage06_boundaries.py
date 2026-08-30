@@ -1,7 +1,7 @@
 import argparse
 from pathlib import Path
 
-from kg_mnp_demo.modeling.cli import build_parser
+from kg_mnp.modeling.cli import build_parser
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -13,4 +13,4 @@ def test_stage06_compiler_remains_separate_from_final_integrations():
     assert "graphdb" in action.choices
     assert {"webvowl", "publication"} <= set(action.choices)
     assert "api" not in action.choices
-    assert not (ROOT / "src/kg_mnp_demo/graphdb.py").exists()
+    assert not (ROOT / "src/kg_mnp/graphdb.py").exists()

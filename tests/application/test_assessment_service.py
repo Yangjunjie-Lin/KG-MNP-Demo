@@ -8,18 +8,18 @@ from pathlib import Path
 
 import pytest
 
-from kg_mnp_demo.application.assessment_service import AssessmentService
-from kg_mnp_demo.application.contracts import ASSESSMENT_RESPONSE_KEYS, SCHEMA_VERSION
-from kg_mnp_demo.application.errors import ApplicationError, ErrorCode
-from kg_mnp_demo.cli import cmd_evaluate_rdf
-from kg_mnp_demo.pipeline import run_pipeline
+from kg_mnp.application.assessment_service import AssessmentService
+from kg_mnp.application.contracts import ASSESSMENT_RESPONSE_KEYS, SCHEMA_VERSION
+from kg_mnp.application.errors import ApplicationError, ErrorCode
+from kg_mnp.cli import cmd_evaluate_rdf
+from kg_mnp.pipeline import run_pipeline
 
 ROOT = Path(__file__).resolve().parents[2]
 
 
 @pytest.fixture
 def case03_payload() -> dict:
-    return json.loads((ROOT / "inputs" / "case03.json").read_text(encoding="utf-8"))
+    return json.loads((ROOT / "domain_packs" / "mnp" / "fixtures" / "inputs" / "case03.json").read_text(encoding="utf-8"))
 
 
 @pytest.fixture
@@ -48,7 +48,7 @@ def test_assess_dict_full_run(service, case03_payload):
 
 def test_assess_file_full_run(service, tmp_path):
     result = service.assess_file(
-        ROOT / "inputs" / "case03.json",
+        ROOT / "domain_packs" / "mnp" / "fixtures" / "inputs" / "case03.json",
         persist_artifacts=True,
         artifact_dir=tmp_path / "out",
     )
@@ -123,7 +123,7 @@ def test_what_if_contract_expired_becomes_eligible(service, case03_payload):
 def test_cli_and_service_agree(service, case03_payload, tmp_path):
     service_result = service.assess_dict(case03_payload)
     pipeline_result = run_pipeline(
-        ROOT / "inputs" / "case03.json",
+        ROOT / "domain_packs" / "mnp" / "fixtures" / "inputs" / "case03.json",
         tmp_path / "pipe",
         write_html=False,
     )

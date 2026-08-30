@@ -15,7 +15,7 @@ NS = {"c": "urn:oasis:names:tc:entity:xmlns:xml:catalog"}
 
 
 def load_catalog() -> dict[str, str]:
-    path = ROOT / "ontology" / "catalog-v001.xml"
+    path = ROOT / "domain_packs" / "mnp" / "ontology" / "catalog-v001.xml"
     tree = ET.parse(path)
     mapping = {}
     for uri in tree.getroot().findall("c:uri", NS):
@@ -24,7 +24,15 @@ def load_catalog() -> dict[str, str]:
 
 
 def main() -> int:
-    cfg = yaml.safe_load((ROOT / "config" / "ontology_modules.yaml").read_text(encoding="utf-8"))
+    cfg = yaml.safe_load(
+        (
+            ROOT
+            / "domain_packs"
+            / "mnp"
+            / "ontology"
+            / "modules.yaml"
+        ).read_text(encoding="utf-8")
+    )
     catalog = load_catalog()
     errors: list[str] = []
 
@@ -39,7 +47,7 @@ def main() -> int:
 
     for entry in modules:
         file_name = entry["file"]
-        path = ROOT / "ontology" / file_name
+        path = ROOT / "domain_packs" / "mnp" / "ontology" / file_name
         if not path.is_file():
             errors.append(f"Missing module file: {file_name}")
             continue
@@ -59,7 +67,7 @@ def main() -> int:
             if str(o) not in catalog:
                 errors.append(f"{file_name}: import {o} not in catalog")
             else:
-                local = ROOT / "ontology" / catalog[str(o)]
+                local = ROOT / "domain_packs" / "mnp" / "ontology" / catalog[str(o)]
                 if not local.is_file():
                     errors.append(f"{file_name}: import resolves to missing file {local}")
 
@@ -83,7 +91,7 @@ def main() -> int:
 
     # every catalog entry points to existing file
     for name, filename in catalog.items():
-        if not (ROOT / "ontology" / filename).is_file():
+        if not (ROOT / "domain_packs" / "mnp" / "ontology" / filename).is_file():
             errors.append(f"catalog URI {name} -> missing {filename}")
 
     if errors:

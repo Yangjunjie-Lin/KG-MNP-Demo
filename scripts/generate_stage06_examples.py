@@ -8,16 +8,14 @@ import json
 import sys
 from pathlib import Path
 
-
 ROOT = Path(__file__).resolve().parents[1]
 SRC = str(ROOT / "src")
 if SRC not in sys.path:
     sys.path.insert(0, SRC)
 
-from kg_mnp_demo.compilation.compiler import compile_formal_semantics  # noqa: E402
-from kg_mnp_demo.modeling.dependencies import load_modeling_dependencies  # noqa: E402
-from kg_mnp_demo.modeling.review_policy import load_default_review_policy  # noqa: E402
-
+from kg_mnp.compilation.compiler import compile_formal_semantics
+from kg_mnp.modeling.dependencies import load_modeling_dependencies
+from kg_mnp.modeling.review_policy import load_default_review_policy
 
 SCENARIOS = (
     "full-confirmation",

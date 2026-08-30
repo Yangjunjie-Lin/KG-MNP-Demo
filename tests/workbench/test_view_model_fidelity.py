@@ -4,7 +4,7 @@ import copy
 
 import pytest
 
-from kg_mnp_demo.workbench.view_model import (
+from kg_mnp.workbench.view_model import (
     assert_view_model_fidelity,
     build_view_model,
 )

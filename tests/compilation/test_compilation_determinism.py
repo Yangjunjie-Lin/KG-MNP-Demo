@@ -1,8 +1,8 @@
 import json
 
-from kg_mnp_demo.compilation.compiler import build_artifact_set
-from ._helpers import authorities
-from ._helpers import build
+from kg_mnp.compilation.compiler import build_artifact_set
+
+from ._helpers import authorities, build
 
 
 def test_same_authorities_have_same_compilation_bytes(tmp_path):

@@ -14,40 +14,40 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import Any
 
-from kg_mnp_demo.activation.artifact_verifier import (
+from kg_mnp.activation.artifact_verifier import (
     verify_application_phase06_artifact,
 )
-from kg_mnp_demo.activation.attestation import publication_tree_sha256
-from kg_mnp_demo.activation.authority_binding import (
+from kg_mnp.activation.attestation import publication_tree_sha256
+from kg_mnp.activation.authority_binding import (
     ControlledPhase06Authority,
     load_production_phase06_authority,
     require_production_phase06_authority,
 )
-from kg_mnp_demo.activation.errors import ActivationError, ActivationErrorCode
-from kg_mnp_demo.activation.event_log import event_identity_content
-from kg_mnp_demo.activation.execution import (
+from kg_mnp.activation.errors import ActivationError, ActivationErrorCode
+from kg_mnp.activation.event_log import event_identity_content
+from kg_mnp.activation.execution import (
     ActivationController,
     ReadOnlyGraphDBTargetVerifier,
 )
-from kg_mnp_demo.activation.persistence import ActivationStateStore
-from kg_mnp_demo.activation.registry import registry_semantic_content
-from kg_mnp_demo.activation.reporting import (
+from kg_mnp.activation.persistence import ActivationStateStore
+from kg_mnp.activation.registry import registry_semantic_content
+from kg_mnp.activation.reporting import (
     aggregate_probe_records,
     build_application_phase06_attestation,
     build_probe_record,
 )
-from kg_mnp_demo.activation.security import (
+from kg_mnp.activation.security import (
     freeze_state_directory,
     validate_control_plane_payload,
 )
-from kg_mnp_demo.activation.validator import (
+from kg_mnp.activation.validator import (
     validate_activation_registry_against_authorities,
 )
-from kg_mnp_demo.application.readonly_client import ReadOnlyGraphDBClient
-from kg_mnp_demo.graphdb.client import GraphDBClient, GraphDBClientError
-from kg_mnp_demo.graphdb.importer import import_package
-from kg_mnp_demo.graphdb.verifier import verify_imported_repository
-from kg_mnp_demo.modeling.canonical_json import canonical_json_bytes, semantic_hash
+from kg_mnp.application.readonly_client import ReadOnlyGraphDBClient
+from kg_mnp.graphdb.client import GraphDBClient, GraphDBClientError
+from kg_mnp.graphdb.importer import import_package
+from kg_mnp.graphdb.verifier import verify_imported_repository
+from kg_mnp.modeling.canonical_json import canonical_json_bytes, semantic_hash
 
 if __package__:
     from scripts import graphdb_integration as graphdb_runtime

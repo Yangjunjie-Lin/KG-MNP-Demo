@@ -22,14 +22,18 @@ dist/
 node_modules/
 
 # Runtime-generated outputs (local runs only; not versioned)
-runtime_outputs/
-runtime_data/
-runtime_reports/
-runtime_logs/
-runtime_outputs/webvowl/
-runtime_reports/webvowl/
-runtime_outputs/publication/
-runtime_reports/publication/
+/demo_outputs/
+/workspace/
+/workspaces/
+/.kg-mnp/
+/.kgmnp/
+/runtime/
+/runtime_data/
+/runtime_outputs/
+/runtime_reports/
+/runtime_logs/
+/local_artifacts/
+/local_reports/
 .webvowl/
 .owl2vowl/
 playwright-report/
@@ -37,6 +41,10 @@ browser-artifacts/
 upstream-source/
 /.tmp-stage08-*/
 /.tmp-phase04-*/
+*.log
+*.tmp
+*.sqlite
+*.sqlite3
 
 # Local GraphDB and downloaded tools (future optional integrations)
 graphdb-data/
@@ -44,6 +52,10 @@ graphdb-local/
 .graphdb/
 graphdb-logs/
 *.license
+*.pem
+*.key
+.env
+.env.*
 docker-volume-*.tar
 *.http-trace
 third_party/bin/

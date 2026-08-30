@@ -3,16 +3,16 @@
 from __future__ import annotations
 
 import json
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from decimal import Decimal
 from pathlib import Path
 
-from kg_mnp_demo.application.contracts import (
+from kg_mnp.application.contracts import (
     ASSESSMENT_RESPONSE_KEYS,
     SCHEMA_VERSION,
     build_assessment_response,
 )
-from kg_mnp_demo.application.serializers import deep_merge, json_safe, to_iso_utc
+from kg_mnp.application.serializers import deep_merge, json_safe, to_iso_utc
 
 
 def test_build_assessment_response_keys():
@@ -31,7 +31,7 @@ def test_build_assessment_response_keys():
 
 def test_json_safe_types():
     raw = {
-        "when": datetime(2026, 7, 1, tzinfo=timezone.utc),
+        "when": datetime(2026, 7, 1, tzinfo=UTC),
         "amount": Decimal("12.50"),
         "path": Path("/tmp/secret/file.json"),
     }
@@ -44,7 +44,7 @@ def test_json_safe_types():
 
 
 def test_to_iso_utc():
-    assert to_iso_utc(datetime(2026, 7, 1, tzinfo=timezone.utc)) == "2026-07-01T00:00:00Z"
+    assert to_iso_utc(datetime(2026, 7, 1, tzinfo=UTC)) == "2026-07-01T00:00:00Z"
 
 
 def test_deep_merge():

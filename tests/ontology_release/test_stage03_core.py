@@ -11,15 +11,15 @@ import yaml
 from rdflib import OWL, RDF, RDFS, Graph, Literal, URIRef
 from rdflib.namespace import SKOS
 
-from kg_mnp_demo.loader import (
+from kg_mnp.loader import (
     load_case_graph,
     load_ontology_graph,
     ontology_module_files,
     ontology_modules_config_path,
     shape_paths,
 )
-from kg_mnp_demo.namespaces import BASE, MNP
-from kg_mnp_demo.validator import validate_graph
+from kg_mnp.namespaces import BASE, MNP
+from kg_mnp.validator import validate_graph
 
 ROOT = Path(__file__).resolve().parents[2]
 TERM_NS = "https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#"
@@ -37,7 +37,7 @@ def test_each_module_has_ontology_and_version():
     cfg = yaml.safe_load(ontology_modules_config_path().read_text(encoding="utf-8"))
     for entry in cfg["modules"]:
         g = Graph()
-        g.parse(ROOT / "ontology" / entry["file"], format="turtle")
+        g.parse(ROOT / "domain_packs" / "mnp" / "ontology" / entry["file"], format="turtle")
         ont = URIRef(entry["ontology_iri"])
         assert (ont, RDF.type, OWL.Ontology) in g
         assert (ont, OWL.versionIRI, URIRef(entry["version_iri"])) in g
@@ -51,7 +51,12 @@ def test_catalog_covers_modules():
 
 
 def test_no_example_org_in_runtime_ontology_data_shapes():
-    for pattern in ["ontology/*.ttl", "shapes/*.ttl", "data/*.ttl", "queries/*.rq"]:
+    for pattern in [
+        "domain_packs/mnp/ontology/*.ttl",
+        "domain_packs/mnp/shapes/*.ttl",
+        "domain_packs/mnp/fixtures/data/*.ttl",
+        "domain_packs/mnp/queries/*.rq",
+    ]:
         for path in ROOT.glob(pattern):
             text = path.read_text(encoding="utf-8")
             assert "example.org" not in text, path
@@ -83,7 +88,7 @@ def test_term_inventory_deterministic_and_complete():
 
 def test_single_defining_module():
     seen: dict[str, str] = {}
-    for path in (ROOT / "ontology").glob("mnp-*.ttl"):
+    for path in (ROOT / "domain_packs" / "mnp" / "ontology").glob("mnp-*.ttl"):
         if path.name == "mnp-alignments.ttl":
             continue
         g = Graph()
@@ -140,10 +145,10 @@ def test_deprecated_terms_marked():
 
 def test_mapping_record_not_in_core():
     core = Graph()
-    core.parse(ROOT / "ontology" / "mnp-core.ttl", format="turtle")
+    core.parse(ROOT / "domain_packs" / "mnp" / "ontology" / "mnp-core.ttl", format="turtle")
     assert (MNP.MappingRecord, RDF.type, OWL.Class) not in core
     prov = Graph()
-    prov.parse(ROOT / "ontology" / "mnp-modeling-provenance.ttl", format="turtle")
+    prov.parse(ROOT / "domain_packs" / "mnp" / "ontology" / "mnp-modeling-provenance.ttl", format="turtle")
     assert (MNP.MappingRecord, RDF.type, OWL.Class) in prov
 
 
@@ -191,11 +196,11 @@ def test_competency_query_blocking_reason():
     from rdflib import Literal
     from rdflib.namespace import XSD
 
-    from kg_mnp_demo.evaluator import materialize_assessment
+    from kg_mnp.evaluator import materialize_assessment
 
     g = load_case_graph("CASE-03")
     g, _ = materialize_assessment(g, "CASE-03", validate=False)
-    q = (ROOT / "competency_questions" / "queries" / "cq02_blocking_reasons.rq").read_text(
+    q = (ROOT / "domain_packs" / "mnp" / "competency_questions" / "queries" / "cq02_blocking_reasons.rq").read_text(
         encoding="utf-8"
     )
     rows = list(

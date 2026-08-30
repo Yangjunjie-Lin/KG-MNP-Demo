@@ -7,7 +7,7 @@ import argparse
 import json
 from pathlib import Path
 
-from kg_mnp_demo.amendment.artifact_verifier import (
+from kg_mnp.amendment.artifact_verifier import (
     Phase05ArtifactVerificationError,
     verify_application_phase05_artifact,
 )

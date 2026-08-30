@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pytest
 
-from kg_mnp_demo.modeling.transformations import (
+from kg_mnp.modeling.transformations import (
     TransformationError,
     transform_value,
 )

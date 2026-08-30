@@ -5,10 +5,10 @@ from copy import copy
 import pytest
 from rdflib import URIRef
 
-from kg_mnp_demo.application.errors import ApplicationError, ErrorCode
-from kg_mnp_demo.application.http import create_app
-from kg_mnp_demo.application.query_registry import QueryRegistry
-from kg_mnp_demo.application.service import ApplicationService
+from kg_mnp.application.errors import ApplicationError, ErrorCode
+from kg_mnp.application.http import create_app
+from kg_mnp.application.query_registry import QueryRegistry
+from kg_mnp.application.service import ApplicationService
 
 from ._phase01_helpers import DatasetClient, synthetic_binding
 

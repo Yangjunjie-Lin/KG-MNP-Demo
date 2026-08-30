@@ -4,13 +4,12 @@ from pathlib import Path
 
 import pytest
 
-from kg_mnp_demo.compilation.contracts import (
+from kg_mnp.compilation.contracts import (
     COMPILATION_CONTRACT_SPECS,
     CompilationContractError,
     load_compilation_schema,
     validate_compilation_contract,
 )
-
 
 ROOT = Path(__file__).resolve().parents[2]
 

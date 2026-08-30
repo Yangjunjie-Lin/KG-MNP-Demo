@@ -8,7 +8,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "scripts"))
 
-import check_runtime_legacy_terms as checker  # noqa: E402
+import check_runtime_legacy_terms as checker
 
 
 def test_no_unapproved_runtime_legacy_terms():
@@ -20,17 +20,11 @@ def test_legacy_allowlist_is_occurrence_exact():
     policy = checker.load_policy()
     required_roots = {
         "src",
-        "ontology",
-        "shapes",
+        "schemas",
         "examples",
-        "data",
-        "queries",
-        "competency_questions",
-        "mappings",
-        "rules",
+        "domain_packs",
         "tests",
         "scripts",
-        "demo_outputs",
     }
     assert required_roots <= set(policy.scan_roots)
     assert policy.allowances

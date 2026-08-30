@@ -4,14 +4,14 @@ import copy
 
 import pytest
 
-from kg_mnp_demo.modeling.canonical_json import canonical_json_bytes
-from kg_mnp_demo.modeling.review_identifiers import decision_log_hash
-from kg_mnp_demo.modeling.review_log import (
+from kg_mnp.modeling.canonical_json import canonical_json_bytes
+from kg_mnp.modeling.review_identifiers import decision_log_hash
+from kg_mnp.modeling.review_log import (
     finalize_review_decision_log,
     init_review_decision_log,
     record_review_action,
 )
-from kg_mnp_demo.modeling.semantic_validation import SemanticValidationError
+from kg_mnp.modeling.semantic_validation import SemanticValidationError
 
 from ._helpers import dependencies, load_action, load_expected_log, load_proposal
 

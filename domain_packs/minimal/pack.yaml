@@ -1,0 +1,9 @@
+manifest_kind: PROVISIONAL_DOMAIN_PACK_BOOTSTRAP
+manifest_version: "prompt-01"
+pack_id: minimal
+display_name: Minimal Contract-Test Scaffold
+status: SCAFFOLD
+provisional: true
+contract_note: >-
+  Prompt 2 will define the DomainPackManifest schema; this file is not validated
+  against a final public contract.

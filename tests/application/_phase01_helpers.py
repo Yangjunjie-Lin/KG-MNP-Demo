@@ -8,7 +8,7 @@ from typing import Any
 
 from rdflib import Dataset
 
-from kg_mnp_demo.application.publication_binding import PublicationBinding
+from kg_mnp.application.publication_binding import PublicationBinding
 
 ROOT = Path(__file__).resolve().parents[2]
 _BINDING_TEMPORARY_DIRECTORIES: list[TemporaryDirectory[str]] = []

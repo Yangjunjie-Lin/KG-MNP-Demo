@@ -2,8 +2,8 @@ from __future__ import annotations
 
 from copy import deepcopy
 
-from kg_mnp_demo.modeling.identifiers import candidate_id, issue_id
-from kg_mnp_demo.modeling.issues import make_issue
+from kg_mnp.modeling.identifiers import candidate_id, issue_id
+from kg_mnp.modeling.issues import make_issue
 
 
 def test_candidate_identifier_is_content_derived_and_stable() -> None:

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import json
 
-from kg_mnp_demo.application.ontology_service import OntologyService
+from kg_mnp.application.ontology_service import OntologyService
 
 
 def test_summary_and_modules():

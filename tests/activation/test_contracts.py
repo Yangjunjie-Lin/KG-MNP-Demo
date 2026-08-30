@@ -4,7 +4,7 @@ from copy import deepcopy
 
 import pytest
 
-from kg_mnp_demo.activation.contracts import (
+from kg_mnp.activation.contracts import (
     ACTIVATION_EVENT_TYPES,
     ACTIVATION_EXECUTION_STATUSES,
     ACTIVATION_KINDS,
@@ -21,7 +21,7 @@ from kg_mnp_demo.activation.contracts import (
     strict_json_bytes,
     validate_activation_contract,
 )
-from kg_mnp_demo.activation.errors import ActivationError, ActivationErrorCode
+from kg_mnp.activation.errors import ActivationError, ActivationErrorCode
 
 HASH = "a" * 64
 OTHER_HASH = "b" * 64

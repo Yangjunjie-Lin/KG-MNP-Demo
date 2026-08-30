@@ -1,6 +1,6 @@
 profiles:
   foundation-instance:
     files:
-      - shapes/foundation-instance-shapes.ttl
+      - domain_packs/mnp/shapes/foundation-instance-shapes.ttl
     central_default: true
     legacy: false

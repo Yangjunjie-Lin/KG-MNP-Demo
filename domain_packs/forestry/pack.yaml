@@ -1,0 +1,9 @@
+manifest_kind: PROVISIONAL_DOMAIN_PACK_BOOTSTRAP
+manifest_version: "prompt-01"
+pack_id: forestry
+display_name: Forestry Pilot Domain Pack
+status: PLANNED
+provisional: true
+contract_note: >-
+  No forestry semantic asset is implemented in Prompt 1. Prompt 2 will define
+  the DomainPackManifest schema.

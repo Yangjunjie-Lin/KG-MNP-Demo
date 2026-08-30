@@ -37,16 +37,16 @@ def _load_pyproject() -> dict:
 
 def test_kg_mnp_console_entry_uses_the_application_aware_root_dispatcher():
     scripts = _load_pyproject()["scripts"]
-    assert scripts.get("kg-mnp") == "kg_mnp_demo.root_cli:main"
+    assert scripts.get("kg-mnp") == "kg_mnp.root_cli:main"
 
 
-def test_kg_mnp_eligibility_console_entry_present():
+def test_domain_specific_eligibility_console_entry_is_not_public():
     scripts = _load_pyproject()["scripts"]
-    assert scripts.get("kg-mnp-eligibility") == "kg_mnp_demo.cli:main"
+    assert "kg-mnp-eligibility" not in scripts
 
 
 def test_legacy_cli_description_marks_legacy():
-    from kg_mnp_demo.cli import build_parser
+    from kg_mnp.cli import build_parser
 
     parser = build_parser()
     description = (parser.description or "").lower()
@@ -55,7 +55,7 @@ def test_legacy_cli_description_marks_legacy():
 
 
 def test_legacy_cli_module_docstring_marks_legacy():
-    import kg_mnp_demo.cli as cli
+    from kg_mnp import cli
 
     assert cli.__doc__ is not None
     assert "legacy" in cli.__doc__.lower()
@@ -91,14 +91,14 @@ def test_neo4j_absent_and_phase01_http_dependencies_are_exactly_pinned():
     assert "neo4j" not in text
     assert '"fastapi==0.115.0"' in text
     assert '"uvicorn==0.30.6"' in text
-    assert (ROOT / "src/kg_mnp_demo/application/http.py").is_file()
+    assert (ROOT / "src/kg_mnp/application/http.py").is_file()
 
 
 def test_api_and_neo4j_packages_absent():
-    assert not (ROOT / "src" / "kg_mnp_demo" / "api").exists()
-    assert not (ROOT / "src" / "kg_mnp_demo" / "storage").exists()
-    assert not (ROOT / "src" / "kg_mnp_demo" / "neo4j_pipeline.py").exists()
-    assert not (ROOT / "src" / "kg_mnp_demo" / "neo4j_store.py").exists()
+    assert not (ROOT / "src" / "kg_mnp" / "api").exists()
+    assert not (ROOT / "src" / "kg_mnp" / "storage").exists()
+    assert not (ROOT / "src" / "kg_mnp" / "neo4j_pipeline.py").exists()
+    assert not (ROOT / "src" / "kg_mnp" / "neo4j_store.py").exists()
 
 
 def test_readme_does_not_treat_eligibility_as_central_task():
@@ -107,9 +107,11 @@ def test_readme_does_not_treat_eligibility_as_central_task():
         "eligibility" in readme and "central" in readme and "not" in readme
     )
     assert "ontology" in readme
-    assert "kg-mnp-eligibility" in readme
+    assert "toolchain" in readme
 
 
 def test_ontology_modules_catalog_still_loads():
-    catalog = yaml.safe_load(_read_text("config/ontology_modules.yaml"))
+    catalog = yaml.safe_load(
+        _read_text("domain_packs/mnp/ontology/modules.yaml")
+    )
     assert catalog

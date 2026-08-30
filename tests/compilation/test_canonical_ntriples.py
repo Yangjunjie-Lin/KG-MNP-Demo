@@ -1,5 +1,6 @@
-from kg_mnp_demo.compilation.rdf_canonical import canonical_ntriples
-from rdflib import URIRef, Literal
+from rdflib import Literal, URIRef
+
+from kg_mnp.compilation.rdf_canonical import canonical_ntriples
 
 
 def test_ntriples_are_sorted_and_lf_terminated():

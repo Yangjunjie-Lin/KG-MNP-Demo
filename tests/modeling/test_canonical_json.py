@@ -4,7 +4,7 @@ import math
 
 import pytest
 
-from kg_mnp_demo.modeling.canonical_json import canonical_json_bytes, semantic_hash
+from kg_mnp.modeling.canonical_json import canonical_json_bytes, semantic_hash
 
 
 def test_canonical_json_is_sorted_compact_utf8_and_repeatable() -> None:

@@ -4,7 +4,7 @@ import json
 
 import pytest
 
-from kg_mnp_demo.workbench.contracts import (
+from kg_mnp.workbench.contracts import (
     WORKBENCH_SCHEMAS,
     load_workbench_schema,
     strict_json_bytes,

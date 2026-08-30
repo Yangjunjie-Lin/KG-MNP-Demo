@@ -1,4 +1,4 @@
-from kg_mnp_demo.modeling.cli import build_parser
+from kg_mnp.modeling.cli import build_parser
 
 
 def test_graphdb_cli_surface_remains_available_with_stage08_commands():

@@ -2,11 +2,11 @@ from __future__ import annotations
 
 from fastapi.testclient import TestClient
 
-from kg_mnp_demo.diagnostics.runtime import create_diagnostics_app
+from kg_mnp.diagnostics import reconstruct_diagnostics
+from kg_mnp.diagnostics.runtime import create_diagnostics_app
 
 from ._helpers import snapshot
 from .test_deterministic_diagnostics import requirement
-from kg_mnp_demo.diagnostics import reconstruct_diagnostics
 
 
 def test_runtime_is_read_only_and_escapes_text() -> None:

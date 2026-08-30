@@ -7,11 +7,11 @@ from typing import Any
 
 import pytest
 
-from kg_mnp_demo import root_cli
-from kg_mnp_demo.activation import cli
-from kg_mnp_demo.activation.errors import ActivationError, ActivationErrorCode
-from kg_mnp_demo.activation.runtime import ActivationRuntimeConfig
-from kg_mnp_demo.modeling import cli as modeling_cli
+from kg_mnp import root_cli
+from kg_mnp.activation import cli
+from kg_mnp.activation.errors import ActivationError, ActivationErrorCode
+from kg_mnp.activation.runtime import ActivationRuntimeConfig
+from kg_mnp.modeling import cli as modeling_cli
 
 RUNTIME_ARGUMENTS = [
     "--publication-package",

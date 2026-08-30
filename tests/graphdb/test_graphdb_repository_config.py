@@ -2,7 +2,13 @@ import pytest
 from rdflib import Graph
 from rdflib.compare import isomorphic
 
-from kg_mnp_demo.graphdb.repository_config import RepositoryConfigError, repository_config_document, repository_config_semantic_hash, render_repository_config_nt, render_repository_config_ttl
+from kg_mnp.graphdb.repository_config import (
+    RepositoryConfigError,
+    render_repository_config_nt,
+    render_repository_config_ttl,
+    repository_config_document,
+    repository_config_semantic_hash,
+)
 
 
 def test_repository_config_is_deterministic_and_empty_ruleset():

@@ -2,19 +2,19 @@
   "contract_version": "1.0",
   "package_id": "stage04-confirmed-package-fixture",
   "package_semantic_hash": "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
-  "source_proposal_id": "urn:kg-mnp:modeling-proposal:f558441112f6f38d5b6159280f82fb55dedb693a6923d549f77321b5a7d34980",
-  "source_proposal_hash": "f558441112f6f38d5b6159280f82fb55dedb693a6923d549f77321b5a7d34980",
+  "source_proposal_id": "urn:kg-mnp:modeling-proposal:af663b63b92a65e88b8584a667a04c64798dc53eeb5b288ac51dc59c5fb34ff4",
+  "source_proposal_hash": "af663b63b92a65e88b8584a667a04c64798dc53eeb5b288ac51dc59c5fb34ff4",
   "review_decision_log_id": "stage04-review-log-fixture",
   "review_decision_log_hash": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
   "ontology_baseline": {
     "ontology_baseline_id": "kg-mnp-ontology-baseline",
     "ontology_version": "1.0.0",
-    "ontology_release_source_hash": "fa6a74a5fb1e2862e04805de58c2ef67e43920a7be785b2fc370a93df1786bfc"
+    "ontology_release_source_hash": "db7e4d7ee514fef1c62a54c688290940e11ef0a1d9a96bb866d7b74c01f3e8fd"
   },
   "confirmed_abox_decisions": [
     {
       "decision_id": "synthetic-confirm-decision",
-      "candidate_id": "urn:kg-mnp:candidate:dc4669b61c5efa75eb523192dbd5182cdc10eb51920317c33a4fa52cba6afbc2",
+      "candidate_id": "urn:kg-mnp:candidate:3dc3320b259383e00326e8f8bf0397725990373ef0c7244b1ad154cb64e131a7",
       "decision": "CONFIRM",
       "publication_scope": "ABOX"
     }

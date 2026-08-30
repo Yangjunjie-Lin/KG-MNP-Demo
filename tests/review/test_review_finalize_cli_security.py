@@ -5,8 +5,8 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from kg_mnp_demo.modeling.cli import main
-from kg_mnp_demo.modeling.review_identifiers import decision_log_hash, review_decision_id
+from kg_mnp.modeling.cli import main
+from kg_mnp.modeling.review_identifiers import decision_log_hash, review_decision_id
 
 from ._helpers import ROOT, load_expected_log, load_proposal
 

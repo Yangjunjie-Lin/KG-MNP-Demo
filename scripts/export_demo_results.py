@@ -6,10 +6,10 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from kg_mnp_demo.evaluator import evaluate_case
-from kg_mnp_demo.inference import apply_owlrl
-from kg_mnp_demo.loader import load_case_graph
-from kg_mnp_demo.namespaces import CASE_FILES
+from kg_mnp.evaluator import evaluate_case
+from kg_mnp.inference import apply_owlrl
+from kg_mnp.loader import load_case_graph
+from kg_mnp.namespaces import CASE_FILES
 
 ROOT = Path(__file__).resolve().parents[1]
 OUT = ROOT / "docs" / "demo_results.json"

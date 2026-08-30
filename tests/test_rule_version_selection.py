@@ -8,10 +8,10 @@ from pathlib import Path
 import pytest
 import yaml
 
-from kg_mnp_demo.evaluator import evaluate_case
-from kg_mnp_demo.inference import apply_owlrl
-from kg_mnp_demo.loader import load_case_graph, rules_path
-from kg_mnp_demo.rule_engine import (
+from kg_mnp.evaluator import evaluate_case
+from kg_mnp.inference import apply_owlrl
+from kg_mnp.loader import load_case_graph, rules_path
+from kg_mnp.rule_engine import (
     RuleConfigurationError,
     load_applicable_rules,
     validate_rule_configuration,
@@ -21,7 +21,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 def _at(text: str) -> datetime:
-    return datetime.fromisoformat(text.replace("Z", "+00:00"))
+    return datetime.fromisoformat(text)
 
 
 def _port_version(as_of: datetime) -> str:
@@ -99,10 +99,11 @@ def test_case06_hist_and_current_versions():
 
 
 def test_json_assessment_time_selects_version(tmp_path):
-    from kg_mnp_demo.pipeline import run_pipeline
     import json
 
-    data = json.loads((ROOT / "inputs" / "case03.json").read_text(encoding="utf-8"))
+    from kg_mnp.pipeline import run_pipeline
+
+    data = json.loads((ROOT / "domain_packs" / "mnp" / "fixtures" / "inputs" / "case03.json").read_text(encoding="utf-8"))
     data["assessment_time"] = "2026-05-15T00:00:00Z"
     path = tmp_path / "early.json"
     path.write_text(json.dumps(data), encoding="utf-8")

@@ -2,8 +2,8 @@ import json
 
 import pytest
 
-from kg_mnp_demo.graphdb.client import GraphDBClient, GraphDBClientError, redact_credentials
-from kg_mnp_demo.graphdb.identifiers import GraphDBIdentifierError
+from kg_mnp.graphdb.client import GraphDBClient, GraphDBClientError, redact_credentials
+from kg_mnp.graphdb.identifiers import GraphDBIdentifierError
 
 
 def test_remote_hosts_require_explicit_permission():

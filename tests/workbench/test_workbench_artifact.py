@@ -4,15 +4,20 @@ import copy
 
 import pytest
 
-from kg_mnp_demo.modeling.canonical_json import canonical_json_bytes
-from kg_mnp_demo.workbench.artifact_verifier import (
+from kg_mnp.modeling.canonical_json import canonical_json_bytes
+from kg_mnp.workbench.artifact_verifier import (
     WorkbenchArtifactVerificationError,
     verify_application_phase02_artifact,
 )
-from kg_mnp_demo.workbench.attestation import build_workbench_attestation
-from kg_mnp_demo.workbench.binding import WorkbenchBinding
+from kg_mnp.workbench.attestation import build_workbench_attestation
+from kg_mnp.workbench.binding import WorkbenchBinding
 
-from ._helpers import PUBLICATION_HASH, PUBLICATION_ID, REPOSITORY_HASH, write_phase01_artifact
+from ._helpers import (
+    PUBLICATION_HASH,
+    PUBLICATION_ID,
+    REPOSITORY_HASH,
+    write_phase01_artifact,
+)
 
 
 def write_artifact(directory, tmp_path):

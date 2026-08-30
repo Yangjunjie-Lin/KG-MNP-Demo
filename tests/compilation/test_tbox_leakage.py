@@ -1,10 +1,11 @@
 import copy
+
 import pytest
 from rdflib import OWL, RDF, RDFS, SH, Graph
 
-from kg_mnp_demo.compilation.abox_compiler import ABoxCompilationError, compile_abox
-from ._helpers import ROOT, authorities
+from kg_mnp.compilation.abox_compiler import ABoxCompilationError, compile_abox
 
+from ._helpers import ROOT, authorities
 
 FORBIDDEN_PREDICATES = {
     RDFS.subClassOf,

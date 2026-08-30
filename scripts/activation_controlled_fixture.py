@@ -11,20 +11,20 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 from typing import Any
 
-from kg_mnp_demo.activation.attestation import (
+from kg_mnp.activation.attestation import (
     build_controlled_publication_attestation,
     publication_tree_sha256,
 )
-from kg_mnp_demo.activation.authority_binding import ControlledPhase06Authority
-from kg_mnp_demo.activation.errors import ActivationError
-from kg_mnp_demo.activation.execution import (
+from kg_mnp.activation.authority_binding import ControlledPhase06Authority
+from kg_mnp.activation.errors import ActivationError
+from kg_mnp.activation.execution import (
     ActivationController,
     ReadOnlyGraphDBTargetVerifier,
     TargetReverifier,
 )
-from kg_mnp_demo.activation.persistence import ActivationStateStore
-from kg_mnp_demo.activation.resolver import ActivePublicationResolver
-from kg_mnp_demo.modeling.canonical_json import canonical_json_bytes
+from kg_mnp.activation.persistence import ActivationStateStore
+from kg_mnp.activation.resolver import ActivePublicationResolver
+from kg_mnp.modeling.canonical_json import canonical_json_bytes
 
 if __package__:
     from scripts.amendment_controlled_fixture import build_controlled_publication_pair

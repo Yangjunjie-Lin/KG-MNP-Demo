@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from kg_mnp_demo.diagnostics import AuthorityBindings
-from kg_mnp_demo.diagnostics.policy import diagnostic_policy_hash
+from kg_mnp.diagnostics import AuthorityBindings
+from kg_mnp.diagnostics.policy import diagnostic_policy_hash
 
 
 def bindings() -> AuthorityBindings:

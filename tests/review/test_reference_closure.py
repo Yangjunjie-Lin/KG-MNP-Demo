@@ -4,8 +4,11 @@ import copy
 
 import pytest
 
-from kg_mnp_demo.modeling.confirmation import PackageBuildError, build_confirmed_modeling_package
-from kg_mnp_demo.modeling.review_log import (
+from kg_mnp.modeling.confirmation import (
+    PackageBuildError,
+    build_confirmed_modeling_package,
+)
+from kg_mnp.modeling.review_log import (
     finalize_review_decision_log,
     init_review_decision_log,
     record_review_action,

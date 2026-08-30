@@ -59,7 +59,7 @@ Named graphs:
   namespace, instance namespace, or named graph namespace, and it conveys none
   of those kinds of semantic authority.
 - File location and `$id` are governed separately. The legacy contract lives
-  with its example under `examples/eligibility-use-case/schemas/`, while its
+  with its example under `domain_packs/mnp/fixtures/eligibility-use-case/schemas/`, while its
   stable `$id` remains below `schemas.legacy`.
 - Schema identifier checks are offline. They parse repository files and policy
   only; they never resolve `$id` or download a remote Schema.

@@ -5,9 +5,9 @@ import copy
 import pytest
 from jsonschema import ValidationError
 
-from kg_mnp_demo.modeling.identifiers import candidate_id
-from kg_mnp_demo.modeling.review_actions import validate_review_action
-from kg_mnp_demo.modeling.semantic_validation import SemanticValidationError
+from kg_mnp.modeling.identifiers import candidate_id
+from kg_mnp.modeling.review_actions import validate_review_action
+from kg_mnp.modeling.semantic_validation import SemanticValidationError
 
 from ._helpers import dependencies, load_action, load_proposal
 

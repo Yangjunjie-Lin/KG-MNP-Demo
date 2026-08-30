@@ -7,7 +7,7 @@ from pathlib import Path
 import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
-CQ_DIR = ROOT / "competency_questions"
+CQ_DIR = ROOT / "domain_packs" / "mnp" / "competency_questions"
 Q_DIR = CQ_DIR / "queries"
 PREFIX = "PREFIX mnp: <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#>\n"
 

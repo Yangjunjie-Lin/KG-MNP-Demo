@@ -9,8 +9,8 @@ from pathlib import Path
 import pytest
 from jsonschema import ValidationError
 
-from kg_mnp_demo.modeling.registry import validate_contract
-from kg_mnp_demo.modeling.semantic_validation import (
+from kg_mnp.modeling.registry import validate_contract
+from kg_mnp.modeling.semantic_validation import (
     SemanticValidationError,
     validate_review_decision_log_semantics,
 )

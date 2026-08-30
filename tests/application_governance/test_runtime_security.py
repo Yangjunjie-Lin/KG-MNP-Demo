@@ -5,9 +5,9 @@ from pathlib import Path
 import pytest
 from fastapi.testclient import TestClient
 
-from kg_mnp_demo.governance.errors import GovernanceError
-from kg_mnp_demo.governance.security import MAX_BODY_BYTES
-from kg_mnp_demo.governance.workspace import GovernanceWorkspaceStore
+from kg_mnp.governance.errors import GovernanceError
+from kg_mnp.governance.security import MAX_BODY_BYTES
+from kg_mnp.governance.workspace import GovernanceWorkspaceStore
 from scripts.governance_controlled_fixture import (
     controlled_governance_app_for_test_harness,
     controlled_governance_store_for_test_harness,

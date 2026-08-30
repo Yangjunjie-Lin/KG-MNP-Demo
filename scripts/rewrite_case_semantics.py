@@ -19,7 +19,7 @@ HEADER = f"""@prefix mnp: <{TERM}> .
 
 def rewrite_case(text: str) -> str:
     # Strip old prefixes
-    text = re.sub(r"^@prefix[^\n]+\n", "", text, flags=re.M)
+    text = re.sub(r"^@prefix[^\n]+\n", "", text, flags=re.MULTILINE)
     text = text.strip() + "\n"
 
     # Individual IRIs: mnp:Name -> data:Name for non-type local names used as subjects
@@ -38,8 +38,8 @@ def rewrite_case(text: str) -> str:
     text = text.replace("mnp:relatedAccount", "mnp:_REMOVED_relatedAccount")
 
     # Remove deprecated triples
-    text = re.sub(r"^\s*mnp:_REMOVED_ownsPhoneNumber[^\n]*\n", "", text, flags=re.M)
-    text = re.sub(r"^\s*mnp:_REMOVED_relatedAccount[^\n]*\n", "", text, flags=re.M)
+    text = re.sub(r"^\s*mnp:_REMOVED_ownsPhoneNumber[^\n]*\n", "", text, flags=re.MULTILINE)
+    text = re.sub(r"^\s*mnp:_REMOVED_relatedAccount[^\n]*\n", "", text, flags=re.MULTILINE)
 
     # Move billedThrough from Subscriber to ServiceSubscription:
     # Pattern: subscriber has billedThrough X and holdsSubscription Y -> add Y billedThrough X, remove from subscriber
@@ -106,14 +106,18 @@ def rewrite_case(text: str) -> str:
         n = m.group(1)
         phone = f"data:Phone-{n}"
         subscr = f"data:Subscr-{n}"
-        if phone in text and f"{phone} a mnp:PhoneNumber" in text:
-            if "mnp:assignedToSubscription" not in text.split(f"{phone} a mnp:PhoneNumber")[1][:400]:
-                text = re.sub(
-                    rf"({re.escape(phone)} a mnp:PhoneNumber\s*;)",
-                    rf"\1\n    mnp:assignedToSubscription {subscr} ;",
-                    text,
-                    count=1,
-                )
+        if (
+            phone in text
+            and f"{phone} a mnp:PhoneNumber" in text
+            and "mnp:assignedToSubscription"
+            not in text.split(f"{phone} a mnp:PhoneNumber")[1][:400]
+        ):
+            text = re.sub(
+                rf"({re.escape(phone)} a mnp:PhoneNumber\s*;)",
+                rf"\1\n    mnp:assignedToSubscription {subscr} ;",
+                text,
+                count=1,
+            )
 
     # Clean double spaces / empty property lines
     text = re.sub(r";\s*;", ";", text)
@@ -122,7 +126,7 @@ def rewrite_case(text: str) -> str:
 
 
 def main() -> int:
-    data_dir = ROOT / "data"
+    data_dir = ROOT / "domain_packs" / "mnp" / "fixtures" / "data"
     for path in sorted(data_dir.glob("*.ttl")):
         original = path.read_text(encoding="utf-8")
         # First do simple namespace replace if still old

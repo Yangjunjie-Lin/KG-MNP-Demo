@@ -5,8 +5,8 @@ from pathlib import Path
 
 import pytest
 
-from kg_mnp_demo.application.errors import ApplicationError, ErrorCode
-from kg_mnp_demo.application.publication_binding import PublicationBinding
+from kg_mnp.application.errors import ApplicationError, ErrorCode
+from kg_mnp.application.publication_binding import PublicationBinding
 
 from ._phase01_helpers import ROOT, publication_attestation_report
 

@@ -14,19 +14,19 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 
-from stage03_constants import (  # noqa: E402
+from stage03_constants import (
     LICENSE_IRI,
     MODULE_FILES,
     ONTOLOGY_VERSION,
     OPTIONAL_MODULES,
     RUNTIME_MODULES,
     TERM_NS,
-    ontology_iri,
     old_term_iri,
+    ontology_iri,
     term_iri,
     version_iri,
 )
-from stage03_term import T, Term  # noqa: E402
+from stage03_term import T, Term
 
 LICENSE = LICENSE_IRI
 
@@ -333,7 +333,7 @@ def emit_term(t: Term) -> str:
     lines.append(f'    rdfs:label "{esc(t.label_zh)}"@zh-CN ;')
     lines.append(f'    skos:definition "{esc(t.definition_en)}"@en ;')
     lines.append(f'    skos:definition "{esc(t.definition_zh)}"@zh-CN ;')
-    code = t.module if t.module in MODULE_FILES else t.module
+    code = t.module
     mod_file = MODULE_FILES.get(t.module, t.module)
     lines.append(f'    mnp:moduleCode "{code}" ;')
     lines.append(f'    mnp:sourceStatus "{t.source_status}" ;')
@@ -434,7 +434,7 @@ def write_modules(terms: list[Term]) -> dict[str, str]:
     for t in terms:
         by_mod.setdefault(t.module, []).append(t)
     written: dict[str, str] = {}
-    out_dir = ROOT / "ontology"
+    out_dir = ROOT / "domain_packs" / "mnp" / "ontology"
     for mod_key, meta in MODULE_META.items():
         header = module_header(mod_key, *meta)
         body_terms = sorted(by_mod.get(mod_key, []), key=lambda x: (x.term_type, x.local))
@@ -468,7 +468,7 @@ def write_root() -> Path:
         lines.append(f"    owl:imports <{ontology_iri(m)}> ;")
     lines[-1] = lines[-1].rstrip(" ;") + " ."
     lines.append("")
-    path = ROOT / "ontology" / "kg-mnp.ttl"
+    path = ROOT / "domain_packs" / "mnp" / "ontology" / "kg-mnp.ttl"
     path.write_text("\n".join(lines), encoding="utf-8")
     return path
 
@@ -488,7 +488,7 @@ def write_catalog() -> Path:
         lines.append(f'    <uri name="{uri}" uri="{filename}"/>')
     lines.append("</catalog>")
     lines.append("")
-    path = ROOT / "ontology" / "catalog-v001.xml"
+    path = ROOT / "domain_packs" / "mnp" / "ontology" / "catalog-v001.xml"
     path.write_text("\n".join(lines), encoding="utf-8")
     return path
 
@@ -562,19 +562,21 @@ def write_change_log(terms: list[Term]) -> Path:
     for t in sorted(terms, key=lambda x: x.local):
         if t.audit_decision in ("DEPRECATE", "MODIFY", "MOVE_MODULE", "ACCEPT") and (
             t.deprecated or t.audit_decision != "ACCEPT" or t.module != "CORE"
+        ) and (
+            t.deprecated
+            or t.audit_decision in ("DEPRECATE", "MODIFY", "MOVE_MODULE")
         ):
-            if t.deprecated or t.audit_decision in ("DEPRECATE", "MODIFY", "MOVE_MODULE"):
-                rows.append({
-                    "change_id": f"CL-{cid:04d}",
-                    "term_iri": term_iri(t.local),
-                    "change_type": t.audit_decision,
-                    "old_value": old_term_iri(t.local),
-                    "new_value": term_iri(t.replacement) if t.replacement else term_iri(t.local),
-                    "ontology_version": ONTOLOGY_VERSION,
-                    "rationale": t.audit_notes or t.definition_en,
-                    "odr_ref": "",
-                })
-                cid += 1
+            rows.append({
+                "change_id": f"CL-{cid:04d}",
+                "term_iri": term_iri(t.local),
+                "change_type": t.audit_decision,
+                "old_value": old_term_iri(t.local),
+                "new_value": term_iri(t.replacement) if t.replacement else term_iri(t.local),
+                "ontology_version": ONTOLOGY_VERSION,
+                "rationale": t.audit_notes or t.definition_en,
+                "odr_ref": "",
+            })
+            cid += 1
     # Explicit priority changes
     priority = [
         ("ownsPhoneNumber", "DEPRECATE", "assignedToSubscription", "ODR-001"),
@@ -669,7 +671,7 @@ def write_iri_migration(terms: list[Term]) -> Path:
 
 def ontology_hash() -> str:
     h = hashlib.sha256()
-    for path in sorted((ROOT / "ontology").glob("*.ttl")):
+    for path in sorted((ROOT / "domain_packs" / "mnp" / "ontology").glob("*.ttl")):
         h.update(path.name.encode())
         h.update(path.read_bytes())
     return h.hexdigest()

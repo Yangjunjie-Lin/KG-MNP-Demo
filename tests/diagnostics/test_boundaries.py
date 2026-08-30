@@ -2,13 +2,12 @@ from __future__ import annotations
 
 from pathlib import Path
 
-
 ROOT = Path(__file__).resolve().parents[2]
 
 
 def test_diagnostics_has_no_ai_mutation_repair_or_persistent_truth_store() -> None:
     production = [
-        *sorted((ROOT / "src/kg_mnp_demo/diagnostics").glob("*.py")),
+        *sorted((ROOT / "src/kg_mnp/diagnostics").glob("*.py")),
         *sorted((ROOT / "web/diagnostics").rglob("*")),
         ROOT / "config/diagnostics/diagnostic-policy-1.0.0.yaml",
     ]

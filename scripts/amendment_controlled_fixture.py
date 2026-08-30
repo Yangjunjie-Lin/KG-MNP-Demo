@@ -12,41 +12,41 @@ from typing import Any
 
 from rdflib import Graph, Literal, URIRef
 
-from kg_mnp_demo.amendment.authority_binding import require_production_authority
-from kg_mnp_demo.amendment.candidate_binding import bind_amendment_to_proposal
-from kg_mnp_demo.amendment.errors import AmendmentError, AmendmentErrorCode
-from kg_mnp_demo.amendment.fixture import ControlledAmendmentFixture
-from kg_mnp_demo.amendment.intake import AmendmentIntakeManifest, ReplayGuard
-from kg_mnp_demo.amendment.lineage import build_amendment_lineage
-from kg_mnp_demo.amendment.republication import complete_reentry, prepare_reentry
-from kg_mnp_demo.amendment.review_bridge import require_explicit_review
-from kg_mnp_demo.amendment.scope import validate_amendment_scope
-from kg_mnp_demo.amendment.validator import (
+from kg_mnp.amendment.authority_binding import require_production_authority
+from kg_mnp.amendment.candidate_binding import bind_amendment_to_proposal
+from kg_mnp.amendment.errors import AmendmentError, AmendmentErrorCode
+from kg_mnp.amendment.fixture import ControlledAmendmentFixture
+from kg_mnp.amendment.intake import AmendmentIntakeManifest, ReplayGuard
+from kg_mnp.amendment.lineage import build_amendment_lineage
+from kg_mnp.amendment.republication import complete_reentry, prepare_reentry
+from kg_mnp.amendment.review_bridge import require_explicit_review
+from kg_mnp.amendment.scope import validate_amendment_scope
+from kg_mnp.amendment.validator import (
     validate_new_repository_identity,
     validate_no_direct_mutation,
 )
-from kg_mnp_demo.compilation.artifacts import write_artifact_set
-from kg_mnp_demo.compilation.compiler import build_artifact_set
-from kg_mnp_demo.compilation.policy import load_compiler_policy
-from kg_mnp_demo.diagnostics.authority_binding import AuthorityBindings
-from kg_mnp_demo.diagnostics.engine import AuthoritySnapshot, reconstruct_diagnostics
-from kg_mnp_demo.diagnostics.policy import diagnostic_policy_hash
-from kg_mnp_demo.graphdb.package_builder import build_graphdb_import_package
-from kg_mnp_demo.modeling.canonical_json import canonical_json_bytes, semantic_hash
-from kg_mnp_demo.modeling.confirmation import build_confirmed_modeling_package
-from kg_mnp_demo.modeling.dependencies import load_modeling_dependencies
-from kg_mnp_demo.modeling.package_validation import load_term_type_index
-from kg_mnp_demo.modeling.proposal import generate_modeling_proposal
-from kg_mnp_demo.modeling.review_log import (
+from kg_mnp.compilation.artifacts import write_artifact_set
+from kg_mnp.compilation.compiler import build_artifact_set
+from kg_mnp.compilation.policy import load_compiler_policy
+from kg_mnp.diagnostics.authority_binding import AuthorityBindings
+from kg_mnp.diagnostics.engine import AuthoritySnapshot, reconstruct_diagnostics
+from kg_mnp.diagnostics.policy import diagnostic_policy_hash
+from kg_mnp.graphdb.package_builder import build_graphdb_import_package
+from kg_mnp.modeling.canonical_json import canonical_json_bytes, semantic_hash
+from kg_mnp.modeling.confirmation import build_confirmed_modeling_package
+from kg_mnp.modeling.dependencies import load_modeling_dependencies
+from kg_mnp.modeling.package_validation import load_term_type_index
+from kg_mnp.modeling.proposal import generate_modeling_proposal
+from kg_mnp.modeling.review_log import (
     finalize_review_decision_log,
     init_review_decision_log,
     record_review_action,
 )
-from kg_mnp_demo.modeling.review_policy import load_default_review_policy
-from kg_mnp_demo.modeling.semantic_validation import (
+from kg_mnp.modeling.review_policy import load_default_review_policy
+from kg_mnp.modeling.semantic_validation import (
     validate_confirmed_modeling_package_semantics,
 )
-from kg_mnp_demo.publication.package_builder import (
+from kg_mnp.publication.package_builder import (
     build_end_to_end_publication_package,
 )
 

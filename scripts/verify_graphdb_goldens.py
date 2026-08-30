@@ -6,10 +6,10 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from kg_mnp_demo.compilation.policy import load_compiler_policy
-from kg_mnp_demo.graphdb.package_validator import validate_graphdb_import_package
-from kg_mnp_demo.modeling.dependencies import load_modeling_dependencies
-from kg_mnp_demo.modeling.review_policy import load_default_review_policy
+from kg_mnp.compilation.policy import load_compiler_policy
+from kg_mnp.graphdb.package_validator import validate_graphdb_import_package
+from kg_mnp.modeling.dependencies import load_modeling_dependencies
+from kg_mnp.modeling.review_policy import load_default_review_policy
 
 ROOT = Path(__file__).resolve().parents[1]
 SCENARIOS = ("full-confirmation", "modified-confirmation", "rejection", "issue-resolution")

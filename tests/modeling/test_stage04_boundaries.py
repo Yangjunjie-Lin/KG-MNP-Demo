@@ -21,7 +21,7 @@ def test_stage04_does_not_implement_compilers_or_auto_confirmation() -> None:
         "def webvowl_export",
     )
     matches = []
-    for path in (ROOT / "src" / "kg_mnp_demo" / "modeling").rglob("*.py"):
+    for path in (ROOT / "src" / "kg_mnp" / "modeling").rglob("*.py"):
         text = path.read_text(encoding="utf-8")
         if any(marker in text for marker in forbidden_definitions):
             matches.append(path.relative_to(ROOT).as_posix())
@@ -29,7 +29,7 @@ def test_stage04_does_not_implement_compilers_or_auto_confirmation() -> None:
 
 
 def test_central_cli_preserves_stage04_commands_after_final_extensions() -> None:
-    from kg_mnp_demo.modeling.cli import build_parser
+    from kg_mnp.modeling.cli import build_parser
 
     parser = build_parser()
     action = next(
@@ -51,14 +51,14 @@ def test_no_application_frontend_or_http_api_was_added() -> None:
         "graphdb-local",
         "webvowl",
         "frontend",
-        "src/kg_mnp_demo/graphdb.py",
-        "src/kg_mnp_demo/api",
+        "src/kg_mnp/graphdb.py",
+        "src/kg_mnp/api",
     ):
         assert not (ROOT / relative).exists()
 
 
 def test_pure_generator_has_no_network_clock_random_or_llm_imports() -> None:
-    path = ROOT / "src/kg_mnp_demo/modeling/proposal.py"
+    path = ROOT / "src/kg_mnp/modeling/proposal.py"
     tree = ast.parse(path.read_text(encoding="utf-8"))
     imports: set[str] = set()
     for node in ast.walk(tree):

@@ -4,15 +4,14 @@ import copy
 from pathlib import Path
 from typing import Any
 
-from kg_mnp_demo.application.query_registry import QueryRegistry
-from kg_mnp_demo.modeling.canonical_json import canonical_json_bytes
-from kg_mnp_demo.workbench.binding import WorkbenchBinding
+from kg_mnp.application.query_registry import QueryRegistry
+from kg_mnp.modeling.canonical_json import canonical_json_bytes
+from kg_mnp.workbench.binding import WorkbenchBinding
 
-
-PUBLICATION_HASH = "0e43e22adccec950dc6b638ffec5c3fdc2f0f43911704f9648e6171ae35161d3"
+PUBLICATION_HASH = "274e74a3ccd8a97b7572286838b1b9ea662ab111c6883c7f832b70e899a43cd5"
 PUBLICATION_ID = "urn:kg-mnp:e2e-publication:" + PUBLICATION_HASH
-REPOSITORY_ID = "kg-mnp-8e7873f07736e86f7d70"
-REPOSITORY_HASH = "59a1ea58c20a43e4718cfa3dc7a5253bbe44b704aba3a9e4b47b302b70c639d4"
+REPOSITORY_ID = "kg-mnp-2efef9a122ade96e4a79"
+REPOSITORY_HASH = "24d5363c682e01f12a69948c80d6277b363dcbebb4754549b67500eebe939ef4"
 ENTITY = "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/modeled/2993a1403cabddd34da97cacad8c5aa55103903ab9d3a0d831bd9f989f2fc029"
 TERM = "https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#APIResponse"
 ONTOLOGY_VERSION = "https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/1.0.0/mnp-evidence-time"

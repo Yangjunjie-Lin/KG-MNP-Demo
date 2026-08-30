@@ -4,11 +4,11 @@ from __future__ import annotations
 
 from rdflib.namespace import RDF
 
-from kg_mnp_demo.evaluator import evaluate_case
-from kg_mnp_demo.inference import apply_owlrl
-from kg_mnp_demo.loader import load_case_graph
-from kg_mnp_demo.namespaces import DATA, MNP
-from kg_mnp_demo.validator import validate_graph
+from kg_mnp.evaluator import evaluate_case
+from kg_mnp.inference import apply_owlrl
+from kg_mnp.loader import load_case_graph
+from kg_mnp.namespaces import DATA, MNP
+from kg_mnp.validator import validate_graph
 
 
 def _assessed(case_id: str):

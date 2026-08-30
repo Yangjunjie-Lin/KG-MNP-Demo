@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from kg_mnp_demo.modeling.review_log import review_status
+from kg_mnp.modeling.review_log import review_status
 
 from ._helpers import load_expected_log, load_proposal
 

@@ -15,39 +15,38 @@ import time
 from pathlib import Path
 from typing import Any
 
-import uvicorn
-
 import application_integration as phase01_harness
+import uvicorn
 import workbench_browser_smoke
-from kg_mnp_demo.application.artifact_verifier import (
+
+from kg_mnp.application.artifact_verifier import (
     verify_application_phase01_artifact,
 )
-from kg_mnp_demo.application.http import create_app as create_phase01_app
-from kg_mnp_demo.application.publication_binding import PublicationBinding
-from kg_mnp_demo.application.query_registry import QueryRegistry
-from kg_mnp_demo.application.readonly_client import ReadOnlyGraphDBClient
-from kg_mnp_demo.application.service import ApplicationService
-from kg_mnp_demo.graphdb.client import GraphDBClient
-from kg_mnp_demo.graphdb.importer import import_package
-from kg_mnp_demo.graphdb.policy import load_graphdb_policy
-from kg_mnp_demo.modeling.canonical_json import canonical_json_bytes
-from kg_mnp_demo.workbench.artifact_verifier import (
+from kg_mnp.application.http import create_app as create_phase01_app
+from kg_mnp.application.publication_binding import PublicationBinding
+from kg_mnp.application.query_registry import QueryRegistry
+from kg_mnp.application.readonly_client import ReadOnlyGraphDBClient
+from kg_mnp.application.service import ApplicationService
+from kg_mnp.graphdb.client import GraphDBClient, GraphDBClientError
+from kg_mnp.graphdb.importer import import_package
+from kg_mnp.graphdb.policy import load_graphdb_policy
+from kg_mnp.modeling.canonical_json import canonical_json_bytes
+from kg_mnp.workbench.artifact_verifier import (
     verify_application_phase02_artifact,
 )
-from kg_mnp_demo.workbench.attestation import build_workbench_attestation
-from kg_mnp_demo.workbench.binding import WorkbenchBinding
-from kg_mnp_demo.workbench.errors import WorkbenchError
-from kg_mnp_demo.workbench.manifest import (
+from kg_mnp.workbench.attestation import build_workbench_attestation
+from kg_mnp.workbench.binding import WorkbenchBinding
+from kg_mnp.workbench.errors import WorkbenchError
+from kg_mnp.workbench.manifest import (
     build_workbench_package,
     validate_workbench_package,
 )
-from kg_mnp_demo.workbench.relay import Phase01Relay
-from kg_mnp_demo.workbench.runtime import create_workbench_app
-from kg_mnp_demo.workbench.view_model import (
+from kg_mnp.workbench.relay import Phase01Relay
+from kg_mnp.workbench.runtime import create_workbench_app
+from kg_mnp.workbench.view_model import (
     assert_view_model_fidelity,
     build_view_model,
 )
-
 
 ROOT = Path(__file__).resolve().parents[1]
 SUBSCRIPTION = "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/modeled/2993a1403cabddd34da97cacad8c5aa55103903ab9d3a0d831bd9f989f2fc029"
@@ -84,7 +83,7 @@ SCENARIO_CANDIDATES = {
 def _json(path: Path) -> dict[str, Any]:
     value = json.loads(path.read_text(encoding="utf-8"))
     if not isinstance(value, dict):
-        raise RuntimeError("expected JSON object")
+        raise TypeError("expected JSON object")
     return value
 
 
@@ -565,8 +564,8 @@ def main() -> int:
         if imported:
             try:
                 setup.delete_generated_repository(publication_binding.repository_id)
-            except Exception:
-                pass
+            except GraphDBClientError:
+                imported = False
         phase01_harness._compose(
             project,
             compose_files,

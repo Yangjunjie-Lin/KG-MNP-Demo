@@ -20,13 +20,16 @@ import tempfile
 import time
 import urllib.request
 import zipfile
-from datetime import datetime, timezone
+from collections.abc import Iterable, Mapping, Sequence
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, Iterable, Mapping, Sequence
+from typing import Any
 
 import yaml
 from rdflib import OWL, RDF, RDFS, Graph, URIRef
 from rdflib.compare import to_canonical_graph
+
+from kg_mnp.paths import domain_pack_path
 
 ROOT = Path(__file__).resolve().parents[1]
 DOWNLOAD_DIR = ROOT / "third_party" / "downloads"
@@ -138,7 +141,7 @@ def write_json(path: Path, value: Mapping[str, Any]) -> None:
 def read_json(path: Path) -> dict[str, Any]:
     value = json.loads(path.read_text(encoding="utf-8"))
     if not isinstance(value, dict):
-        raise ValueError(f"JSON root must be an object: {path}")
+        raise TypeError(f"JSON root must be an object: {path}")
     return value
 
 
@@ -244,17 +247,17 @@ def installed_rdflib_version() -> str:
 
 
 def _load_module_config(root: Path = ROOT) -> dict[str, Any]:
-    path = root / "config" / "ontology_modules.yaml"
+    path = domain_pack_path("mnp", repository=root) / "ontology" / "modules.yaml"
     value = yaml.safe_load(path.read_text(encoding="utf-8"))
     if not isinstance(value, dict) or not isinstance(value.get("modules"), list):
-        raise ValueError(f"Invalid ontology module configuration: {path}")
+        raise TypeError(f"Invalid ontology module configuration: {path}")
     return value
 
 
 def ontology_version(root: Path = ROOT) -> str:
     value = _load_module_config(root).get("ontology_version")
     if not isinstance(value, str) or not value:
-        raise ValueError("config/ontology_modules.yaml has no ontology_version")
+        raise ValueError("MNP ontology modules.yaml has no ontology_version")
     return value
 
 
@@ -273,28 +276,27 @@ def release_source_files(
     """
 
     config = _load_module_config(root)
-    relative_paths = {
-        Path("config/ontology_modules.yaml"),
-    }
+    ontology_dir = domain_pack_path("mnp", repository=root) / "ontology"
+    relative_paths = {ontology_dir / "modules.yaml"}
     root_config = config.get("root")
     if not isinstance(root_config, dict):
-        raise ValueError("ontology module configuration has no root object")
+        raise TypeError("ontology module configuration has no root object")
     root_file = root_config.get("file")
     catalog = root_config.get("catalog")
     if not isinstance(root_file, str) or not isinstance(catalog, str):
-        raise ValueError("ontology root file/catalog entries are invalid")
-    relative_paths.add(Path("ontology") / root_file)
-    relative_paths.add(Path("ontology") / catalog)
+        raise TypeError("ontology root file/catalog entries are invalid")
+    relative_paths.add(ontology_dir / root_file)
+    relative_paths.add(ontology_dir / catalog)
 
     for entry in config["modules"]:
         if not isinstance(entry, dict) or not isinstance(entry.get("file"), str):
-            raise ValueError("invalid ontology module entry")
+            raise TypeError("invalid ontology module entry")
         if bool(entry.get("runtime")) or (
             include_alignments and bool(entry.get("optional"))
         ):
-            relative_paths.add(Path("ontology") / entry["file"])
+            relative_paths.add(ontology_dir / entry["file"])
 
-    files = [root / path for path in sorted(relative_paths, key=lambda p: p.as_posix())]
+    files = sorted(relative_paths, key=lambda p: p.as_posix())
     missing = [path for path in files if not path.is_file()]
     if missing:
         raise FileNotFoundError(f"Missing release source file: {missing[0]}")
@@ -329,12 +331,13 @@ def asserted_reasoner_graph(root: Path = ROOT) -> Graph:
     """Load the root and runtime modules, excluding optional alignments."""
 
     config = _load_module_config(root)
+    ontology_dir = domain_pack_path("mnp", repository=root) / "ontology"
     graph = Graph()
     root_config = config["root"]
-    graph.parse(root / "ontology" / root_config["file"], format="turtle")
+    graph.parse(ontology_dir / root_config["file"], format="turtle")
     for entry in config["modules"]:
         if bool(entry.get("runtime")):
-            graph.parse(root / "ontology" / entry["file"], format="turtle")
+            graph.parse(ontology_dir / entry["file"], format="turtle")
     for triple in list(graph.triples((None, OWL.imports, None))):
         graph.remove(triple)
     graph.add((URIRef(root_config["ontology_iri"]), RDF.type, OWL.Ontology))
@@ -501,10 +504,10 @@ def _normalize_equivalence_pair(value: Any) -> tuple[str, str]:
 def load_equivalence_allowlist(path: Path = ALLOWLIST_PATH) -> set[tuple[str, str]]:
     value = yaml.safe_load(path.read_text(encoding="utf-8"))
     if not isinstance(value, dict):
-        raise ValueError(f"Invalid reasoner allowlist: {path}")
+        raise TypeError(f"Invalid reasoner allowlist: {path}")
     entries = value.get("expected_equivalent_classes", [])
     if not isinstance(entries, list):
-        raise ValueError("expected_equivalent_classes must be a list")
+        raise TypeError("expected_equivalent_classes must be a list")
     return {_normalize_equivalence_pair(entry) for entry in entries}
 
 
@@ -637,7 +640,7 @@ def _initial_runtime_record(
         "warnings": [],
         "execution_command": PORTABLE_EXECUTION_COMMAND,
         "robot_command": PORTABLE_ROBOT_COMMAND,
-        "executed_at_utc": datetime.now(timezone.utc).strftime("%Y-%m-%dT%H:%M:%SZ"),
+        "executed_at_utc": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
         "execution_time_seconds": 0.0,
         "reasoned_output_generated": False,
         "reasoned_output_file_hash": "",

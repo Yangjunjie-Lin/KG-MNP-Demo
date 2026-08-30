@@ -2,9 +2,9 @@ import pytest
 from rdflib import DCTERMS, RDF, XSD, Graph, Literal, Namespace, URIRef
 from rdflib.namespace import PROV
 
-from ._helpers import authorities, build
-from kg_mnp_demo.compilation.review_audit_compiler import compile_review_audit
+from kg_mnp.compilation.review_audit_compiler import compile_review_audit
 
+from ._helpers import authorities, build
 
 MNP = Namespace("https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#")
 

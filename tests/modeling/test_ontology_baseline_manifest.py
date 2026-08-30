@@ -9,7 +9,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-from kg_mnp_demo.modeling.dependencies import (
+from kg_mnp.modeling.dependencies import (
     ROOT,
     build_ontology_baseline_manifest,
     load_ontology_baseline,
@@ -17,16 +17,14 @@ from kg_mnp_demo.modeling.dependencies import (
     normalized_file_hash,
     verify_ontology_baseline_manifest,
 )
-from kg_mnp_demo.modeling.registry import validate_contract
+from kg_mnp.modeling.registry import validate_contract
 
 
 def _copy_baseline_sources(destination: Path) -> None:
-    (destination / "config").mkdir(parents=True)
-    shutil.copy2(
-        ROOT / "config" / "ontology_modules.yaml",
-        destination / "config" / "ontology_modules.yaml",
+    shutil.copytree(
+        ROOT / "domain_packs" / "mnp" / "ontology",
+        destination / "domain_packs" / "mnp" / "ontology",
     )
-    shutil.copytree(ROOT / "ontology", destination / "ontology")
     (destination / "docs" / "ontology").mkdir(parents=True)
     for name in ("reasoner-attestation.json", "term-inventory.csv"):
         shutil.copy2(
@@ -80,7 +78,7 @@ def test_manifest_fingerprints_attestation_inventory_and_module_config():
         ROOT / "docs" / "ontology" / "term-inventory.csv"
     )
     assert manifest["ontology_module_config_hash"] == normalized_file_hash(
-        ROOT / "config" / "ontology_modules.yaml"
+        ROOT / "domain_packs" / "mnp" / "ontology" / "modules.yaml"
     )
 
 
@@ -103,7 +101,7 @@ def test_optional_alignment_is_explicitly_excluded_from_reasoner_input():
 def test_manifest_build_is_deterministic():
     first = build_ontology_baseline_manifest()
     second = build_ontology_baseline_manifest()
-    render = lambda value: (  # noqa: E731 - compact byte-level assertion helper
+    render = lambda value: (
         json.dumps(value, ensure_ascii=False, indent=2, sort_keys=True) + "\n"
     ).encode("utf-8")
     assert render(first) == render(second)
@@ -129,8 +127,8 @@ def test_builder_writes_identical_lf_json_bytes(tmp_path: Path):
 
 def test_builder_refuses_to_write_inside_ontology_directory(tmp_path: Path):
     root = tmp_path / "checkout"
-    (root / "ontology").mkdir(parents=True)
-    output = root / "ontology" / "forbidden.json"
+    (root / "domain_packs" / "mnp" / "ontology").mkdir(parents=True)
+    output = root / "domain_packs" / "mnp" / "ontology" / "forbidden.json"
     result = subprocess.run(
         [
             sys.executable,
@@ -146,7 +144,7 @@ def test_builder_refuses_to_write_inside_ontology_directory(tmp_path: Path):
         check=False,
     )
     assert result.returncode == 1
-    assert "never writes under ontology" in result.stderr
+    assert "only the authoritative baseline manifest" in result.stderr
     assert not output.exists()
 
 
@@ -162,7 +160,7 @@ def test_lf_normalized_hash_is_portable(tmp_path: Path):
 def test_runtime_ontology_change_invalidates_manifest(tmp_path: Path):
     _copy_baseline_sources(tmp_path)
     frozen = copy.deepcopy(load_ontology_baseline())
-    changed = tmp_path / "ontology" / "mnp-core.ttl"
+    changed = tmp_path / "domain_packs" / "mnp" / "ontology" / "mnp-core.ttl"
     changed.write_bytes(changed.read_bytes() + b"\n# changed in verification fixture\n")
     errors = verify_ontology_baseline_manifest(frozen, root=tmp_path)
     assert errors
@@ -175,7 +173,13 @@ def test_runtime_ontology_change_invalidates_manifest(tmp_path: Path):
 def test_optional_ontology_change_also_invalidates_manifest(tmp_path: Path):
     _copy_baseline_sources(tmp_path)
     frozen = copy.deepcopy(load_ontology_baseline())
-    changed = tmp_path / "ontology" / "mnp-alignments.ttl"
+    changed = (
+        tmp_path
+        / "domain_packs"
+        / "mnp"
+        / "ontology"
+        / "mnp-alignments.ttl"
+    )
     changed.write_bytes(changed.read_bytes() + b"\n# optional source changed\n")
     errors = verify_ontology_baseline_manifest(frozen, root=tmp_path)
     assert errors

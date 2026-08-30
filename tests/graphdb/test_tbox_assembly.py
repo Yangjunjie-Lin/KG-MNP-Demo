@@ -1,4 +1,4 @@
-from kg_mnp_demo.graphdb.tbox_assembler import assemble_runtime_tbox
+from kg_mnp.graphdb.tbox_assembler import assemble_runtime_tbox
 
 
 def test_runtime_tbox_has_root_and_runtime_modules_only():

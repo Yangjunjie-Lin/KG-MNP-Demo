@@ -1,4 +1,5 @@
-from kg_mnp_demo.graphdb.dataset_assembler import assemble_stage06_dataset
+from kg_mnp.graphdb.dataset_assembler import assemble_stage06_dataset
+
 from ._helpers import compilation
 
 

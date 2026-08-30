@@ -131,7 +131,7 @@ the empty wrapper silently.
 ## Evidence / source
 
 - Stage 03 brief §16
-- Property and class declarations in `ontology/mnp-core.ttl`
+- Property and class declarations in `domain_packs/mnp/ontology/mnp-core.ttl`
 - `mnp:EligibilityAssessmentShape` dependsOn constraint in `shapes/mnp-shapes.ttl`
 - Alignment annotation `mnp:AssessmentDependency mnp:alignmentStatus "LOCAL_ONLY"`
 

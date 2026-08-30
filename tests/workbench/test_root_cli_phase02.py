@@ -4,17 +4,16 @@ import subprocess
 import sys
 from pathlib import Path
 
-from kg_mnp_demo.workbench.artifact_verifier import ARTIFACT_FILES
+from kg_mnp.workbench.artifact_verifier import ARTIFACT_FILES
 
 from ._helpers import write_phase01_artifact
-
 
 ROOT = Path(__file__).resolve().parents[2]
 
 
 def run_cli(*arguments: str):
     return subprocess.run(
-        [sys.executable, "-m", "kg_mnp_demo.root_cli", *arguments],
+        [sys.executable, "-m", "kg_mnp.root_cli", *arguments],
         cwd=ROOT,
         check=False,
         capture_output=True,

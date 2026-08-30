@@ -190,15 +190,15 @@ def _exact_sources_ready(policy: dict, *, root: Path = ROOT) -> bool:
 
 
 def main() -> int:
-    from kg_mnp_demo.compilation.manifest import json_bytes
-    from kg_mnp_demo.webvowl.converter import convert_with_owl2vowl_docker
-    from kg_mnp_demo.webvowl.coverage import build_coverage_report
-    from kg_mnp_demo.webvowl.normalizer import (
+    from kg_mnp.compilation.manifest import json_bytes
+    from kg_mnp.webvowl.converter import convert_with_owl2vowl_docker
+    from kg_mnp.webvowl.coverage import build_coverage_report
+    from kg_mnp.webvowl.normalizer import (
         normalize_vowl_json,
         normalized_vowl_bytes,
     )
-    from kg_mnp_demo.webvowl.policy import load_webvowl_policy
-    from kg_mnp_demo.webvowl.source import build_visualization_source
+    from kg_mnp.webvowl.policy import load_webvowl_policy
+    from kg_mnp.webvowl.source import build_visualization_source
 
     policy = load_webvowl_policy()
     image = "kg-mnp-owl2vowl:" + policy["owl2vowl"]["commit_sha"][:12]

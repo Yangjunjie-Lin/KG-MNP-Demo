@@ -2,12 +2,11 @@ from __future__ import annotations
 
 from fastapi.testclient import TestClient
 
-from kg_mnp_demo.modeling.dependencies import ROOT
-from kg_mnp_demo.workbench.binding import WorkbenchBinding
-from kg_mnp_demo.workbench.runtime import create_workbench_app
+from kg_mnp.modeling.dependencies import ROOT
+from kg_mnp.workbench.binding import WorkbenchBinding
+from kg_mnp.workbench.runtime import create_workbench_app
 
 from ._helpers import ENTITY, FakeRelay, write_phase01_artifact
-
 
 ATTACKS = (
     "<script>alert(1)</script>",

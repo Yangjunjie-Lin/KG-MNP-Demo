@@ -5,14 +5,14 @@ import inspect
 
 import pytest
 
-from kg_mnp_demo.activation.attestation import publication_tree_sha256
-from kg_mnp_demo.activation.errors import ActivationError, ActivationErrorCode
-from kg_mnp_demo.activation.execution import (
+from kg_mnp.activation.attestation import publication_tree_sha256
+from kg_mnp.activation.errors import ActivationError, ActivationErrorCode
+from kg_mnp.activation.execution import (
     ActivationController,
     ReadOnlyGraphDBTargetVerifier,
 )
-from kg_mnp_demo.activation.persistence import ActivationStateStore
-from kg_mnp_demo.activation.resolver import ActivePublicationResolver
+from kg_mnp.activation.persistence import ActivationStateStore
+from kg_mnp.activation.resolver import ActivePublicationResolver
 
 from ._helpers import FakeAuthority, FakeVerifier, create_approved_proposal
 

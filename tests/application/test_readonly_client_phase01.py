@@ -2,9 +2,9 @@ from __future__ import annotations
 
 import pytest
 
-from kg_mnp_demo.application.errors import ApplicationError, ErrorCode
-from kg_mnp_demo.application.query_validator import assert_readonly_http_request
-from kg_mnp_demo.application.readonly_client import ReadOnlyGraphDBClient
+from kg_mnp.application.errors import ApplicationError, ErrorCode
+from kg_mnp.application.query_validator import assert_readonly_http_request
+from kg_mnp.application.readonly_client import ReadOnlyGraphDBClient
 
 
 def test_public_client_surface_has_no_write_methods():

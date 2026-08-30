@@ -5,8 +5,11 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from kg_mnp_demo.modeling.cli import main
-from kg_mnp_demo.modeling.review_identifiers import confirmed_package_id, package_semantic_hash
+from kg_mnp.modeling.cli import main
+from kg_mnp.modeling.review_identifiers import (
+    confirmed_package_id,
+    package_semantic_hash,
+)
 
 from ._helpers import EXAMPLES, ROOT, load_expected_package
 

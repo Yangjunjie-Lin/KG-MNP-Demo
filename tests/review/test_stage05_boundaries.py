@@ -20,7 +20,7 @@ def test_stage05_forbids_compilers_auto_confirm_and_integrations():
         "def llm_reviewer",
     )
     matches = []
-    for path in (ROOT / "src" / "kg_mnp_demo" / "modeling").rglob("*.py"):
+    for path in (ROOT / "src" / "kg_mnp" / "modeling").rglob("*.py"):
         text = path.read_text(encoding="utf-8")
         if any(marker in text for marker in forbidden):
             matches.append(path.relative_to(ROOT).as_posix())
@@ -29,14 +29,14 @@ def test_stage05_forbids_compilers_auto_confirm_and_integrations():
         "graphdb-local",
         "webvowl",
         "frontend",
-        "src/kg_mnp_demo/graphdb.py",
-        "src/kg_mnp_demo/api",
+        "src/kg_mnp/graphdb.py",
+        "src/kg_mnp/api",
     ):
         assert not (ROOT / relative).exists()
 
 
 def test_cli_preserves_review_confirm_after_final_extensions():
-    from kg_mnp_demo.modeling.cli import build_parser
+    from kg_mnp.modeling.cli import build_parser
 
     parser = build_parser()
     action = next(
@@ -57,9 +57,9 @@ def test_cli_preserves_review_confirm_after_final_extensions():
 
 def test_review_modules_avoid_clock_random_network_llm_imports():
     for relative in (
-        "src/kg_mnp_demo/modeling/review_log.py",
-        "src/kg_mnp_demo/modeling/confirmation.py",
-        "src/kg_mnp_demo/modeling/review_identifiers.py",
+        "src/kg_mnp/modeling/review_log.py",
+        "src/kg_mnp/modeling/confirmation.py",
+        "src/kg_mnp/modeling/review_identifiers.py",
     ):
         tree = ast.parse((ROOT / relative).read_text(encoding="utf-8"))
         imports: set[str] = set()

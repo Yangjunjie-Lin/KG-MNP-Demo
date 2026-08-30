@@ -3,8 +3,8 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from kg_mnp_demo.modeling.dependencies import load_modeling_dependencies
-from kg_mnp_demo.modeling.proposal import generate_modeling_proposal
+from kg_mnp.modeling.dependencies import load_modeling_dependencies
+from kg_mnp.modeling.proposal import generate_modeling_proposal
 
 ROOT = Path(__file__).resolve().parents[2]
 

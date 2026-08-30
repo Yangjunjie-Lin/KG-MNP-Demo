@@ -5,7 +5,7 @@ import random
 
 import pytest
 
-from kg_mnp_demo.diagnostics import (
+from kg_mnp.diagnostics import (
     reconstruct_diagnostics,
     validate_diagnostic_package_against_authorities,
 )

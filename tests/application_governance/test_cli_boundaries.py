@@ -9,7 +9,7 @@ ROOT = Path(__file__).resolve().parents[2]
 
 def run(*arguments: str):
     return subprocess.run(
-        [sys.executable, "-m", "kg_mnp_demo.root_cli", *arguments],
+        [sys.executable, "-m", "kg_mnp.root_cli", *arguments],
         cwd=ROOT,
         capture_output=True,
         text=True,

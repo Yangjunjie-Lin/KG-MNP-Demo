@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from kg_mnp_demo.modeling.review_identifiers import (
+from kg_mnp.modeling.review_identifiers import (
     confirmed_package_id,
     decision_log_hash,
     decision_log_id,

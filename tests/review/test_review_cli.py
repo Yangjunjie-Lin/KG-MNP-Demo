@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from kg_mnp_demo.modeling.cli import main
+from kg_mnp.modeling.cli import main
 
 from ._helpers import EXAMPLES, ROOT
 

@@ -6,9 +6,9 @@ from pathlib import Path
 
 import pytest
 
-from kg_mnp_demo.modeling import review_policy as review_policy_module
-from kg_mnp_demo.modeling.review_policy import ReviewPolicyError, load_review_policy
-from kg_mnp_demo.modeling.semantic_validation import (
+from kg_mnp.modeling import review_policy as review_policy_module
+from kg_mnp.modeling.review_policy import ReviewPolicyError, load_review_policy
+from kg_mnp.modeling.semantic_validation import (
     SemanticValidationError,
     validate_review_decision_log_semantics,
 )

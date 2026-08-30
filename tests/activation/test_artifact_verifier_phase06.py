@@ -11,23 +11,23 @@ from typing import Any
 
 import pytest
 
-from kg_mnp_demo.activation import artifact_verifier
-from kg_mnp_demo.activation.artifact_verifier import (
+from kg_mnp.activation import artifact_verifier
+from kg_mnp.activation.artifact_verifier import (
     FILES,
     Phase06ArtifactVerificationError,
     verify_application_phase06_artifact,
 )
-from kg_mnp_demo.activation.attestation import publication_tree_sha256
-from kg_mnp_demo.activation.errors import ActivationError, ActivationErrorCode
-from kg_mnp_demo.activation.registry import new_activation_registry
-from kg_mnp_demo.activation.reporting import (
+from kg_mnp.activation.attestation import publication_tree_sha256
+from kg_mnp.activation.errors import ActivationError, ActivationErrorCode
+from kg_mnp.activation.registry import new_activation_registry
+from kg_mnp.activation.reporting import (
     ATTACK_COUNTER_FIELDS,
     build_probe_record,
 )
-from kg_mnp_demo.activation.validator import (
+from kg_mnp.activation.validator import (
     validate_activation_registry_against_authorities,
 )
-from kg_mnp_demo.modeling.canonical_json import canonical_json_bytes, semantic_hash
+from kg_mnp.modeling.canonical_json import canonical_json_bytes, semantic_hash
 from scripts.activation_controlled_fixture import run_controlled_activation_workflow
 from scripts.activation_integration import _artifact_documents
 

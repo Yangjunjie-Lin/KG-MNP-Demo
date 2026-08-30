@@ -2,8 +2,8 @@
 
 import json
 
-from kg_mnp_demo.cli import main
-from kg_mnp_demo.namespaces import CASE_FILES
+from kg_mnp.cli import main
+from kg_mnp.namespaces import CASE_FILES
 
 
 def test_cli_evaluate_case_03(capsys):

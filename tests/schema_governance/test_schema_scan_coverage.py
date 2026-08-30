@@ -12,8 +12,7 @@ import yaml
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "scripts"))
 
-import check_runtime_legacy_terms as checker  # noqa: E402
-
+import check_runtime_legacy_terms as checker
 
 HTTP_DOCUMENT_NAMESPACE = "http://example.org/" + "kg-mnp/"
 HTTPS_SCHEMA_NAMESPACE = "https://example.org/" + "kg-mnp/"
@@ -62,6 +61,7 @@ def test_production_policy_covers_schema_roots_and_legacy_namespaces() -> None:
 
     assert "schemas" in policy.scan_roots
     assert "examples" in policy.scan_roots
+    assert "domain_packs" in policy.scan_roots
     assert {
         "http://example.org/" + "kg-mnp#",
         HTTP_DOCUMENT_NAMESPACE,
@@ -75,7 +75,7 @@ def test_production_policy_covers_schema_roots_and_legacy_namespaces() -> None:
         ("schemas/term.schema.json", "http://example.org/" + "kg-mnp#"),
         ("schemas/test.schema.json", HTTP_DOCUMENT_NAMESPACE),
         (
-            "examples/eligibility-use-case/schemas/test.schema.json",
+            "domain_packs/mnp/fixtures/eligibility-use-case/schemas/test.schema.json",
             HTTPS_SCHEMA_NAMESPACE,
         ),
     ],
@@ -91,7 +91,10 @@ def test_schema_paths_reject_legacy_identifiers(
         relative_path,
         '{"$id": "' + legacy_identifier + 'schemas/old.schema.json"}\n',
     )
-    policy_path = _write_policy(tmp_path, scan_roots=["schemas", "examples"])
+    policy_path = _write_policy(
+        tmp_path,
+        scan_roots=["schemas", "examples", "domain_packs"],
+    )
 
     result = checker.audit_repository(root=tmp_path, policy_path=policy_path)
 

@@ -2,9 +2,18 @@ from __future__ import annotations
 
 import pytest
 
-from kg_mnp_demo.modeling.confirmation import PackageBuildError, build_confirmed_modeling_package
+from kg_mnp.modeling.confirmation import (
+    PackageBuildError,
+    build_confirmed_modeling_package,
+)
 
-from ._helpers import dependencies, load_expected_log, load_expected_package, load_input, load_proposal
+from ._helpers import (
+    dependencies,
+    load_expected_log,
+    load_expected_package,
+    load_input,
+    load_proposal,
+)
 
 
 @pytest.mark.parametrize(

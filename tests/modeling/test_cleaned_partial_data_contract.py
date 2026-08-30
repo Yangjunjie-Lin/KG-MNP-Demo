@@ -9,8 +9,7 @@ from pathlib import Path
 import pytest
 from jsonschema import ValidationError
 
-from kg_mnp_demo.modeling.registry import validate_contract
-
+from kg_mnp.modeling.registry import validate_contract
 
 ROOT = Path(__file__).resolve().parents[2]
 

@@ -7,12 +7,12 @@ import argparse
 import json
 from pathlib import Path
 
-from kg_mnp_demo._path_security import UnsafePathError
-from kg_mnp_demo.activation.artifact_verifier import (
+from kg_mnp._path_security import UnsafePathError
+from kg_mnp.activation.artifact_verifier import (
     Phase06ArtifactVerificationError,
     verify_application_phase06_artifact,
 )
-from kg_mnp_demo.activation.errors import ActivationError
+from kg_mnp.activation.errors import ActivationError
 
 
 def main() -> int:

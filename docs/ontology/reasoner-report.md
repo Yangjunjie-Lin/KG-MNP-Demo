@@ -3,7 +3,7 @@
 - Status: `PASS`
 - Ontology release version: `1.0.0`
 - Root ontology IRI: `https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/kg-mnp`
-- Release source hash (SHA-256): `fa6a74a5fb1e2862e04805de58c2ef67e43920a7be785b2fc370a93df1786bfc`
+- Release source hash (SHA-256): `db7e4d7ee514fef1c62a54c688290940e11ef0a1d9a96bb866d7b74c01f3e8fd`
 - Release source includes optional alignments: `false`
 - Reasoner input semantic hash (SHA-256): `3c5cbf49843c1f7a440c4271b69c28add6ca93bb9364b81959bceb742c638873`
 - Reasoner input file hash (SHA-256): `3c5cbf49843c1f7a440c4271b69c28add6ca93bb9364b81959bceb742c638873`

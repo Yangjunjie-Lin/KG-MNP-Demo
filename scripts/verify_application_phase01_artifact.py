@@ -7,7 +7,7 @@ import argparse
 import json
 from pathlib import Path
 
-from kg_mnp_demo.application.artifact_verifier import (
+from kg_mnp.application.artifact_verifier import (
     ArtifactVerificationError,
     verify_application_phase01_artifact,
 )

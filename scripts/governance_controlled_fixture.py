@@ -18,28 +18,28 @@ from fastapi import FastAPI, Request
 from fastapi.responses import FileResponse, JSONResponse
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
-from kg_mnp_demo.diagnostics.authority_binding import AuthorityBindings
-from kg_mnp_demo.diagnostics.engine import reconstruct_diagnostics
-from kg_mnp_demo.diagnostics.issue import diagnostic_semantic_basis
-from kg_mnp_demo.diagnostics.policy import diagnostic_policy_hash
-from kg_mnp_demo.governance.authority_binding import GovernanceAuthority
-from kg_mnp_demo.governance.contracts import strict_json_bytes, strict_json_file
-from kg_mnp_demo.governance.errors import GovernanceError, GovernanceErrorCode
-from kg_mnp_demo.governance.identity import CONTROLLED_FIXTURE_NAMESPACE
-from kg_mnp_demo.governance.runtime import CSP, PAGES
-from kg_mnp_demo.governance.security import (
+from kg_mnp.diagnostics.authority_binding import AuthorityBindings
+from kg_mnp.diagnostics.engine import reconstruct_diagnostics
+from kg_mnp.diagnostics.issue import diagnostic_semantic_basis
+from kg_mnp.diagnostics.policy import diagnostic_policy_hash
+from kg_mnp.governance.authority_binding import GovernanceAuthority
+from kg_mnp.governance.contracts import strict_json_bytes, strict_json_file
+from kg_mnp.governance.errors import GovernanceError, GovernanceErrorCode
+from kg_mnp.governance.identity import CONTROLLED_FIXTURE_NAMESPACE
+from kg_mnp.governance.runtime import CSP, PAGES
+from kg_mnp.governance.security import (
     MAX_BODY_BYTES,
     csrf_token,
     exact_fields,
     proposal_identifier,
 )
-from kg_mnp_demo.governance.workspace import (
+from kg_mnp.governance.workspace import (
     GovernanceWorkspace,
     GovernanceWorkspaceStore,
     _workspace_value,
 )
-from kg_mnp_demo.modeling.canonical_json import semantic_hash
-from kg_mnp_demo.modeling.dependencies import ROOT
+from kg_mnp.modeling.canonical_json import semantic_hash
+from kg_mnp.modeling.dependencies import ROOT
 
 FIXTURE_NAMESPACE = CONTROLLED_FIXTURE_NAMESPACE
 FIXTURE_TYPE = "PHASE04_CONTROLLED_DIAGNOSTIC_FIXTURE"

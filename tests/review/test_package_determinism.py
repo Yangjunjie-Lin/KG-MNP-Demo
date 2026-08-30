@@ -1,9 +1,15 @@
 from __future__ import annotations
 
-from kg_mnp_demo.modeling.canonical_json import canonical_json_bytes
-from kg_mnp_demo.modeling.confirmation import build_confirmed_modeling_package
+from kg_mnp.modeling.canonical_json import canonical_json_bytes
+from kg_mnp.modeling.confirmation import build_confirmed_modeling_package
 
-from ._helpers import dependencies, load_expected_log, load_expected_package, load_input, load_proposal
+from ._helpers import (
+    dependencies,
+    load_expected_log,
+    load_expected_package,
+    load_input,
+    load_proposal,
+)
 
 
 def test_package_builder_is_byte_deterministic():

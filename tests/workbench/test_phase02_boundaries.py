@@ -2,13 +2,12 @@ from __future__ import annotations
 
 from pathlib import Path
 
-
 ROOT = Path(__file__).resolve().parents[2]
 
 
 def test_phase02_contains_no_ai_write_review_or_persistent_data_surface() -> None:
     production = [
-        *sorted((ROOT / "src/kg_mnp_demo/workbench").glob("*.py")),
+        *sorted((ROOT / "src/kg_mnp/workbench").glob("*.py")),
         *sorted((ROOT / "web/workbench").rglob("*")),
         ROOT / "config/workbench/workbench-runtime-1.0.0.yaml",
     ]

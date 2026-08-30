@@ -1,4 +1,4 @@
-from kg_mnp_demo.graphdb.verifier import normalize_ask_result, normalize_select_result
+from kg_mnp.graphdb.verifier import normalize_ask_result, normalize_select_result
 
 
 def test_select_rows_are_normalized_independently_of_server_order():

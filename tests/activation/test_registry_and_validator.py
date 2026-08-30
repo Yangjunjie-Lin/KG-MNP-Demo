@@ -5,15 +5,15 @@ from copy import deepcopy
 
 import pytest
 
-from kg_mnp_demo.activation.attestation import publication_tree_sha256
-from kg_mnp_demo.activation.errors import ActivationError, ActivationErrorCode
-from kg_mnp_demo.activation.execution import ActivationController
-from kg_mnp_demo.activation.persistence import ActivationStateStore
-from kg_mnp_demo.activation.registry import ActivationRegistry, new_activation_registry
-from kg_mnp_demo.activation.validator import (
+from kg_mnp.activation.attestation import publication_tree_sha256
+from kg_mnp.activation.errors import ActivationError, ActivationErrorCode
+from kg_mnp.activation.execution import ActivationController
+from kg_mnp.activation.persistence import ActivationStateStore
+from kg_mnp.activation.registry import ActivationRegistry, new_activation_registry
+from kg_mnp.activation.validator import (
     validate_activation_registry_against_authorities,
 )
-from kg_mnp_demo.modeling.canonical_json import semantic_hash
+from kg_mnp.modeling.canonical_json import semantic_hash
 
 from ._helpers import FakeAuthority, FakeVerifier, create_approved_proposal
 

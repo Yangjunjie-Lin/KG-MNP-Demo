@@ -6,12 +6,12 @@ from pathlib import Path
 
 import pytest
 
-from kg_mnp_demo.application.artifact_verifier import (
+from kg_mnp.application.artifact_verifier import (
     ArtifactVerificationError,
     verify_application_phase01_artifact,
 )
-from kg_mnp_demo.application.attestation import build_application_attestation
-from kg_mnp_demo.application.query_registry import QueryRegistry
+from kg_mnp.application.attestation import build_application_attestation
+from kg_mnp.application.query_registry import QueryRegistry
 
 from ._phase01_helpers import synthetic_binding
 

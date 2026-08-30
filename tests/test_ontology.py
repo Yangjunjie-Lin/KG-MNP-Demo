@@ -2,9 +2,8 @@
 
 from rdflib.namespace import OWL, RDF
 
-from kg_mnp_demo.loader import load_ontology_graph
-from kg_mnp_demo.namespaces import MNP
-
+from kg_mnp.loader import load_ontology_graph
+from kg_mnp.namespaces import MNP
 
 REQUIRED_CLASSES = [
     "Subscriber",

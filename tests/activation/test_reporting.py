@@ -4,9 +4,9 @@ from copy import deepcopy
 
 import pytest
 
-from kg_mnp_demo.activation.contracts import validate_activation_contract
-from kg_mnp_demo.activation.errors import ActivationError, ActivationErrorCode
-from kg_mnp_demo.activation.reporting import (
+from kg_mnp.activation.contracts import validate_activation_contract
+from kg_mnp.activation.errors import ActivationError, ActivationErrorCode
+from kg_mnp.activation.reporting import (
     ATTACK_COUNTER_FIELDS,
     aggregate_probe_records,
     build_application_phase06_attestation,

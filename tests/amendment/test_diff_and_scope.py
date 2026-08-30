@@ -2,9 +2,9 @@ from __future__ import annotations
 
 import pytest
 
-from kg_mnp_demo.amendment.diff import compute_cleaned_input_diff
-from kg_mnp_demo.amendment.errors import AmendmentError, AmendmentErrorCode
-from kg_mnp_demo.amendment.scope import validate_amendment_scope, validate_declared_diff
+from kg_mnp.amendment.diff import compute_cleaned_input_diff
+from kg_mnp.amendment.errors import AmendmentError, AmendmentErrorCode
+from kg_mnp.amendment.scope import validate_amendment_scope, validate_declared_diff
 
 
 def _data(value: str = "old") -> dict:

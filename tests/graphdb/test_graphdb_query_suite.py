@@ -1,7 +1,7 @@
 import pytest
 
-from kg_mnp_demo.graphdb.query_suite import build_query_suite, query_suite_hash
-from kg_mnp_demo.graphdb.contracts import GraphDBContractError, validate_graphdb_contract
+from kg_mnp.graphdb.contracts import GraphDBContractError, validate_graphdb_contract
+from kg_mnp.graphdb.query_suite import build_query_suite, query_suite_hash
 
 
 def test_query_suite_has_nine_sparql_queries_and_one_graph_store_check():

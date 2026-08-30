@@ -5,15 +5,15 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from kg_mnp_demo.input_adapter import normalize_case_input
-from kg_mnp_demo.namespaces import MNP
-from kg_mnp_demo.rdf_builder import build_case_graph, case_iri
+from kg_mnp.input_adapter import normalize_case_input
+from kg_mnp.namespaces import MNP
+from kg_mnp.rdf_builder import build_case_graph, case_iri
 
 ROOT = Path(__file__).resolve().parents[1]
 
 
 def _normalized_case03():
-    data = json.loads((ROOT / "inputs" / "case03.json").read_text(encoding="utf-8"))
+    data = json.loads((ROOT / "domain_packs" / "mnp" / "fixtures" / "inputs" / "case03.json").read_text(encoding="utf-8"))
     return normalize_case_input(data)
 
 

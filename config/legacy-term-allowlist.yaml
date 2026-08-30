@@ -1,22 +1,15 @@
 version: 1
 
 # The Stage 03 gate scans Git-tracked files plus non-ignored files that are
-# intended to be tracked.  demo_outputs is included because it is a versioned
-# release snapshot, not a disposable local runtime directory.
+# intended to be tracked. Domain Pack assets are scanned at their authoritative
+# location; generated runtime output is forbidden from Git.
 scan_roots:
   - src
-  - ontology
-  - shapes
   - schemas
   - examples
-  - data
-  - queries
-  - competency_questions
-  - mappings
-  - rules
+  - domain_packs
   - tests
   - scripts
-  - demo_outputs
 
 legacy_terms:
   - 'http://example.org/kg-mnp#'
@@ -59,7 +52,7 @@ allowed_occurrences:
     reason: Generates auditable old-to-new ontology document IRI migration rows.
 
   - term: producesBlockingReason
-    path: ontology/mnp-compliance.ttl
+    path: domain_packs/mnp/ontology/mnp-compliance.ttl
     line_text: 'mnp:producesBlockingReason a owl:ObjectProperty ;'
     count: 1
     category: deprecated_declaration
@@ -90,7 +83,7 @@ allowed_occurrences:
     reason: Dedicated test verifies that the historical term is explicitly deprecated.
 
   - term: hasSubscription
-    path: ontology/mnp-identity.ttl
+    path: domain_packs/mnp/ontology/mnp-identity.ttl
     line_text: 'mnp:hasSubscription a owl:ObjectProperty ;'
     count: 1
     category: deprecated_declaration
@@ -127,7 +120,7 @@ allowed_occurrences:
     reason: Dedicated test verifies that the historical term is explicitly deprecated.
 
   - term: ownsPhoneNumber
-    path: ontology/mnp-identity.ttl
+    path: domain_packs/mnp/ontology/mnp-identity.ttl
     line_text: 'mnp:ownsPhoneNumber a owl:ObjectProperty ;'
     count: 1
     category: deprecated_declaration
@@ -158,7 +151,7 @@ allowed_occurrences:
     reason: Marks obsolete triples for removal during one-way case-data migration.
   - term: ownsPhoneNumber
     path: scripts/rewrite_case_semantics.py
-    line_text: 'text = re.sub(r"^\s*mnp:_REMOVED_ownsPhoneNumber[^\n]*\n", "", text, flags=re.M)'
+    line_text: 'text = re.sub(r"^\s*mnp:_REMOVED_ownsPhoneNumber[^\n]*\n", "", text, flags=re.MULTILINE)'
     count: 1
     category: migration_tool
     reason: Removes the marked obsolete triple during one-way case-data migration.
@@ -176,11 +169,17 @@ allowed_occurrences:
     reason: Dedicated test verifies that the historical term is explicitly deprecated.
 
   - term: relatedAccount
-    path: ontology/mnp-account-billing.ttl
+    path: domain_packs/mnp/ontology/mnp-account-billing.ttl
     line_text: 'mnp:relatedAccount a owl:ObjectProperty ;'
     count: 1
     category: deprecated_declaration
     reason: Deprecated declaration retained with owl:deprecated and replacementTerm metadata.
+  - term: relatedAccount
+    path: domain_packs/mnp/terminology/tmf_field_review.md
+    line_text: '| TMF629 | Customer.account / relatedParty | mnp:TelecomAccount / relatedAccount | broader/related |'
+    count: 1
+    category: migration_source
+    reason: Migrated terminology review records the historical source-to-term assessment exactly.
   - term: relatedAccount
     path: scripts/build_ontology_release.py
     line_text: 'T(local="relatedAccount", term_type="ObjectProperty", module="ACCOUNT_BILLING",'
@@ -201,7 +200,7 @@ allowed_occurrences:
     reason: Marks obsolete triples for removal during one-way case-data migration.
   - term: relatedAccount
     path: scripts/rewrite_case_semantics.py
-    line_text: 'text = re.sub(r"^\s*mnp:_REMOVED_relatedAccount[^\n]*\n", "", text, flags=re.M)'
+    line_text: 'text = re.sub(r"^\s*mnp:_REMOVED_relatedAccount[^\n]*\n", "", text, flags=re.MULTILINE)'
     count: 1
     category: migration_tool
     reason: Removes the marked obsolete triple during one-way case-data migration.
@@ -219,19 +218,19 @@ allowed_occurrences:
     reason: Deterministic Stage 07 golden includes the frozen Stage 03 runtime TBox declaration.
 
   - term: dependsOn
-    path: ontology/mnp-compliance.ttl
+    path: domain_packs/mnp/ontology/mnp-compliance.ttl
     line_text: 'mnp:dependsOn a owl:ObjectProperty ;'
     count: 1
     category: deprecated_declaration
     reason: Deprecated declaration retained with owl:deprecated and replacementTerm metadata.
   - term: dependsOn
-    path: ontology/mnp-compliance.ttl
+    path: domain_packs/mnp/ontology/mnp-compliance.ttl
     line_text: 'mnp:dependsOnEvidence a owl:ObjectProperty ;'
     count: 1
     category: deprecated_declaration
     reason: Deprecated dependency-family declaration retained for migration auditability.
   - term: dependsOn
-    path: ontology/mnp-compliance.ttl
+    path: domain_packs/mnp/ontology/mnp-compliance.ttl
     line_text: 'mnp:dependsOnRuleVersion a owl:ObjectProperty ;'
     count: 1
     category: deprecated_declaration
@@ -280,19 +279,19 @@ allowed_occurrences:
     reason: Dedicated test verifies that the historical term is explicitly deprecated.
 
   - term: AssessmentDependency
-    path: ontology/mnp-compliance.ttl
+    path: domain_packs/mnp/ontology/mnp-compliance.ttl
     line_text: 'mnp:AssessmentDependency a owl:Class ;'
     count: 1
     category: deprecated_declaration
     reason: Deprecated declaration retained with owl:deprecated and replacementTerm metadata.
   - term: AssessmentDependency
-    path: ontology/mnp-compliance.ttl
+    path: domain_packs/mnp/ontology/mnp-compliance.ttl
     line_text: 'rdfs:range mnp:AssessmentDependency ;'
     count: 1
     category: deprecated_declaration
     reason: Range statement belongs to the deprecated dependency predicate declaration.
   - term: AssessmentDependency
-    path: ontology/mnp-compliance.ttl
+    path: domain_packs/mnp/ontology/mnp-compliance.ttl
     line_text: 'rdfs:domain mnp:AssessmentDependency ;'
     count: 2
     category: deprecated_declaration

@@ -9,17 +9,16 @@ from pathlib import Path
 
 import pytest
 
-from kg_mnp_demo import cli
-from kg_mnp_demo.cli import main
-from kg_mnp_demo.input_adapter import (
+from kg_mnp import cli
+from kg_mnp.cli import main
+from kg_mnp.input_adapter import (
     InputValidationError,
     load_and_normalize,
     normalize_case_input,
 )
 
-
 ROOT = Path(__file__).resolve().parents[2]
-VALID_INPUT = ROOT / "inputs" / "case03.json"
+VALID_INPUT = ROOT / "domain_packs" / "mnp" / "fixtures" / "inputs" / "case03.json"
 
 
 def _valid_payload() -> dict[str, object]:
@@ -37,7 +36,7 @@ def test_legacy_adapter_accepts_valid_input_through_both_entry_points() -> None:
 
 def test_load_and_normalize_rejects_missing_evidence_source() -> None:
     with pytest.raises(InputValidationError, match="source_system"):
-        load_and_normalize(ROOT / "inputs" / "invalid_missing_source.json")
+        load_and_normalize(ROOT / "domain_packs" / "mnp" / "fixtures" / "inputs" / "invalid_missing_source.json")
 
 
 def test_normalize_rejects_invalid_datetime() -> None:

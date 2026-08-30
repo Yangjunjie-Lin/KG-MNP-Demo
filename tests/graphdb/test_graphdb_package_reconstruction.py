@@ -1,6 +1,6 @@
-from kg_mnp_demo.compilation.policy import load_compiler_policy
-from kg_mnp_demo.graphdb.package_builder import build_graphdb_import_package
-from kg_mnp_demo.graphdb.package_validator import validate_graphdb_import_package
+from kg_mnp.compilation.policy import load_compiler_policy
+from kg_mnp.graphdb.package_builder import build_graphdb_import_package
+from kg_mnp.graphdb.package_validator import validate_graphdb_import_package
 
 from ._helpers import authorities, compilation
 

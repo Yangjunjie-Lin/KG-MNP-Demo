@@ -4,13 +4,13 @@ import copy
 
 import pytest
 
-from kg_mnp_demo.modeling.registry import validate_contract
-from kg_mnp_demo.modeling.review_policy import (
+from kg_mnp.modeling.registry import validate_contract
+from kg_mnp.modeling.review_policy import (
     decision_allowed_for_target,
     load_default_review_policy,
     validate_review_policy_semantics,
 )
-from kg_mnp_demo.modeling.semantic_validation import SemanticValidationError
+from kg_mnp.modeling.semantic_validation import SemanticValidationError
 
 
 def test_frozen_review_policy_forbids_defaults_and_auto_confirm():

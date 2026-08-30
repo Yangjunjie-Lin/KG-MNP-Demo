@@ -10,7 +10,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 
-from kg_mnp_demo.loader import load_ontology_graph  # noqa: E402
+from kg_mnp.loader import load_ontology_graph
 
 
 def main() -> int:

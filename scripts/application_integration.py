@@ -15,20 +15,20 @@ from typing import Any
 from fastapi.testclient import TestClient
 from rdflib import Dataset, Graph, URIRef
 
-from kg_mnp_demo.application.attestation import build_application_attestation
-from kg_mnp_demo.application.artifact_verifier import (
+from kg_mnp.application.artifact_verifier import (
     verify_application_phase01_artifact,
 )
-from kg_mnp_demo.application.errors import ApplicationError, ErrorCode
-from kg_mnp_demo.application.http import create_app
-from kg_mnp_demo.application.publication_binding import PublicationBinding
-from kg_mnp_demo.application.query_registry import QueryRegistry
-from kg_mnp_demo.application.readonly_client import ReadOnlyGraphDBClient
-from kg_mnp_demo.application.service import ApplicationService
-from kg_mnp_demo.compilation.manifest import json_bytes
-from kg_mnp_demo.graphdb.client import GraphDBClient
-from kg_mnp_demo.graphdb.importer import import_package
-from kg_mnp_demo.graphdb.policy import load_graphdb_policy
+from kg_mnp.application.attestation import build_application_attestation
+from kg_mnp.application.errors import ApplicationError, ErrorCode
+from kg_mnp.application.http import create_app
+from kg_mnp.application.publication_binding import PublicationBinding
+from kg_mnp.application.query_registry import QueryRegistry
+from kg_mnp.application.readonly_client import ReadOnlyGraphDBClient
+from kg_mnp.application.service import ApplicationService
+from kg_mnp.compilation.manifest import json_bytes
+from kg_mnp.graphdb.client import GraphDBClient, GraphDBClientError
+from kg_mnp.graphdb.importer import import_package
+from kg_mnp.graphdb.policy import load_graphdb_policy
 
 ROOT = Path(__file__).resolve().parents[1]
 COMPOSE = ROOT / "deploy/graphdb/docker-compose.integration.yml"
@@ -37,7 +37,7 @@ COMPOSE = ROOT / "deploy/graphdb/docker-compose.integration.yml"
 def _json(path: Path) -> dict[str, Any]:
     value = json.loads(path.read_text(encoding="utf-8"))
     if not isinstance(value, dict):
-        raise RuntimeError("expected JSON object")
+        raise TypeError("expected JSON object")
     return value
 
 
@@ -64,7 +64,7 @@ def _license() -> tuple[Path, Path | None]:
         return path, None
     try:
         raw = value.encode("utf-8") if kind == "CONTENT" else base64.b64decode(value.encode("ascii"), validate=True)
-    except Exception as exc:
+    except (UnicodeError, ValueError) as exc:
         raise RuntimeError("failure_reason = EXTERNAL_GRAPHDB_LICENSE_B64_INVALID") from exc
     if not raw:
         raise RuntimeError("failure_reason = EXTERNAL_GRAPHDB_LICENSE_B64_INVALID")
@@ -102,8 +102,8 @@ def _wait_graphdb(client: GraphDBClient) -> None:
         try:
             if client.health_check()["healthy"]:
                 return
-        except Exception:
-            pass
+        except GraphDBClientError:
+            continue
         time.sleep(2)
     raise RuntimeError("GraphDB did not become healthy within 240 seconds")
 
@@ -237,7 +237,7 @@ def _live_repository_tamper_attacks(
     attack_nquad = (
         f"{attack_triple[0].n3()} {attack_triple[1].n3()} "
         f"{attack_triple[2].n3()} {graph.n3()} .\n"
-    ).encode("utf-8")
+    ).encode()
     original_graph_bytes = ntriples(original_graph)
     removed_graph_bytes = ntriples(removed_graph)
     replacement_graph_bytes = ntriples(replacement_graph)
@@ -441,8 +441,8 @@ def main() -> int:
         if imported:
             try:
                 setup.delete_generated_repository(binding.repository_id)
-            except Exception:
-                pass
+            except GraphDBClientError:
+                imported = False
         cleanup_error: Exception | None = None
         try:
             cleanup = _compose(
@@ -457,7 +457,7 @@ def main() -> int:
                 cleanup_error = RuntimeError(
                     "Application integration resource cleanup failed"
                 )
-        except Exception as exc:
+        except OSError as exc:
             cleanup_error = exc
         finally:
             override.unlink(missing_ok=True)

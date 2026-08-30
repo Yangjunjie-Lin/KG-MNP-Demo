@@ -8,13 +8,12 @@ import json
 import sys
 from pathlib import Path
 
-
 ROOT = Path(__file__).resolve().parents[1]
 SRC = str(ROOT / "src")
 if SRC not in sys.path:
     sys.path.insert(0, SRC)
 
-from kg_mnp_demo.modeling.dependencies import (  # noqa: E402
+from kg_mnp.modeling.dependencies import (
     ONTOLOGY_BASELINE_PATH,
     build_ontology_baseline_manifest,
 )
@@ -49,7 +48,10 @@ def parse_args() -> argparse.Namespace:
         "--output",
         type=Path,
         default=None,
-        help="output JSON path (default: config/modeling/ontology-baseline-1.0.0.json)",
+        help=(
+            "output JSON path (default: "
+            "domain_packs/mnp/ontology/ontology-baseline-1.0.0.json)"
+        ),
     )
     return parser.parse_args()
 
@@ -57,17 +59,25 @@ def parse_args() -> argparse.Namespace:
 def main() -> int:
     args = parse_args()
     root = args.root.resolve()
-    output = args.output or root / "config" / "modeling" / ONTOLOGY_BASELINE_PATH.name
+    ontology_directory = root / "domain_packs" / "mnp" / "ontology"
+    authoritative_output = ontology_directory / ONTOLOGY_BASELINE_PATH.name
+    output = args.output or authoritative_output
     try:
         resolved_output = output.resolve()
-        ontology_directory = (root / "ontology").resolve()
-        if resolved_output == ontology_directory or ontology_directory in resolved_output.parents:
-            raise ValueError("the manifest builder never writes under ontology/")
+        resolved_ontology_directory = ontology_directory.resolve()
+        if (
+            resolved_ontology_directory in resolved_output.parents
+            and resolved_output != authoritative_output.resolve()
+        ):
+            raise ValueError(
+                "the manifest builder writes only the authoritative baseline "
+                "manifest under the MNP ontology directory"
+            )
         manifest = build_ontology_baseline_manifest(root)
         payload = render_manifest(manifest)
         output.parent.mkdir(parents=True, exist_ok=True)
         output.write_bytes(payload)
-    except Exception as exc:  # fail closed at the command boundary
+    except Exception as exc:  # noqa: BLE001 - fail closed at the command boundary
         print(f"ONTOLOGY BASELINE BUILD FAILED: {exc}", file=sys.stderr)
         return 1
     print(f"Wrote deterministic ontology baseline manifest: {output}")

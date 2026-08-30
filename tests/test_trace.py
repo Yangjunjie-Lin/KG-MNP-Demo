@@ -1,9 +1,14 @@
 """Traceability and rule-update impact tests."""
 
-from kg_mnp_demo.evaluator import materialize_assessment
-from kg_mnp_demo.inference import apply_owlrl
-from kg_mnp_demo.loader import load_case_graph, load_ontology_graph
-from kg_mnp_demo.trace import affected_assessments, blocking_reasons, decision_trace, source_alignment
+from kg_mnp.evaluator import materialize_assessment
+from kg_mnp.inference import apply_owlrl
+from kg_mnp.loader import load_case_graph, load_ontology_graph
+from kg_mnp.trace import (
+    affected_assessments,
+    blocking_reasons,
+    decision_trace,
+    source_alignment,
+)
 
 
 def test_blocked_reason_trace_to_evidence_rule_clause_action():
@@ -53,7 +58,7 @@ def test_affected_assessments_for_rule_update():
 
 def test_source_alignment_query():
     g = load_ontology_graph(include_alignments=True)
-    from kg_mnp_demo.loader import reference_paths, load_graph
+    from kg_mnp.loader import load_graph, reference_paths
 
     g2 = load_graph(reference_paths())
     for t in g2:

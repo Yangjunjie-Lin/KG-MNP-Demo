@@ -7,7 +7,7 @@
 | Status | Accepted |
 | Ontology version | 1.0.0 |
 | Date | 2026-08-05 |
-| Related assets | `shapes/`, `examples/eligibility-use-case/shapes/`, `src/kg_mnp_demo/validator.py` |
+| Related assets | `domain_packs/mnp/shapes/`, `domain_packs/mnp/fixtures/eligibility-use-case/shapes/`, `src/kg_mnp/validator.py` |
 | Shape namespace | `https://yangjunjie-lin.github.io/KG-MNP-Demo/shapes#` |
 
 ## Context
@@ -56,14 +56,14 @@ Document severity tags only; no file split.
 ### B — Split into three profile graphs (selected)
 
 ```text
-shapes/ontology-schema-shapes.ttl
-shapes/foundation-instance-shapes.ttl
-examples/eligibility-use-case/shapes/eligibility-instance-shapes.ttl
+domain_packs/mnp/shapes/ontology-schema-shapes.ttl
+domain_packs/mnp/shapes/foundation-instance-shapes.ttl
+domain_packs/mnp/fixtures/eligibility-use-case/shapes/eligibility-instance-shapes.ttl
 ```
 
 Validator selects profiles explicitly.
 
-### C — Put all three files under `examples/eligibility-use-case/shapes/`
+### C — Put all three files under `domain_packs/mnp/fixtures/eligibility-use-case/shapes/`
 
 Treat every shape as example-scoped.
 
@@ -77,9 +77,9 @@ Eliminate most SHACL.
 
 | Profile | File | Purpose |
 |---|---|---|
-| Ontology schema | `shapes/ontology-schema-shapes.ttl` | TBox quality (labels, definitions, version IRI, deprecated replacement, audited domain/range or explicit exemption) |
-| Foundation instance | `shapes/foundation-instance-shapes.ttl` | Stable KG foundation constraints (IRI/datatype hygiene, explicit relation assertion structure, evidence reference typing, no review-only statuses in published graphs) |
-| Eligibility instance | `examples/eligibility-use-case/shapes/eligibility-instance-shapes.ttl` | Legacy eligibility use-case strictness (case completeness, assessment evidence/rules, blocking provenance, uses⊆case) |
+| Ontology schema | `domain_packs/mnp/shapes/ontology-schema-shapes.ttl` | TBox quality (labels, definitions, version IRI, deprecated replacement, audited domain/range or explicit exemption) |
+| Foundation instance | `domain_packs/mnp/shapes/foundation-instance-shapes.ttl` | Stable KG foundation constraints (IRI/datatype hygiene, explicit relation assertion structure, evidence reference typing, no review-only statuses in published graphs) |
+| Eligibility instance | `domain_packs/mnp/fixtures/eligibility-use-case/shapes/eligibility-instance-shapes.ttl` | Legacy eligibility use-case strictness (case completeness, assessment evidence/rules, blocking provenance, uses⊆case) |
 
 Validator API direction:
 
@@ -160,7 +160,7 @@ messages; SPARQL prefixes use the formal term/shape namespaces.
 |---|---|
 | `shapes/mnp-shapes.ttl` | Split / retire as authority |
 | New shape files | Receive migrated constraints |
-| `examples/eligibility-use-case/` | Host eligibility shapes + README pointer |
+| `domain_packs/mnp/fixtures/eligibility-use-case/` | Host eligibility shapes + README pointer |
 | Validator / loader | Profile-aware paths from config |
 | Tests | Explicit profile selection |
 | CI gates | `verify-shacl-profiles` |

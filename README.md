@@ -92,7 +92,9 @@ kg-mnp --help
 ```
 
 The only public console script is `kg-mnp`. The former eligibility-specific
-console entry is no longer part of the product surface.
+console entry is no longer part of the product surface. Retained eligibility
+code is an internal MNP compatibility layer, not the toolchain's central task,
+and is pending relocation or removal in a later Prompt.
 
 ## Verification
 

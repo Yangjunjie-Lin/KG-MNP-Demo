@@ -7,72 +7,72 @@
 @prefix skos: <http://www.w3.org/2004/02/skos/core#> .
 @prefix mnp: <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#> .
 
-<urn:kg-mnp:review-decision-log:9bca71e63f36148c60da8947e07fea095f3035da06a898f2a328432b90294b5c> <http://purl.org/dc/terms/hasPart> <urn:kg-mnp:review-decision:8f0d301a2e94f3020fd2c7de959a7bb22810c8e523a8fb84f9c6da61fde92327> .
-<urn:kg-mnp:review-decision-log:9bca71e63f36148c60da8947e07fea095f3035da06a898f2a328432b90294b5c> <http://purl.org/dc/terms/hasPart> <urn:kg-mnp:review-decision:a1268d81ea7072a5c85d85a4cc1cb5dab2365a6aaf606c0129d74d1c24a3c17c> .
-<urn:kg-mnp:review-decision-log:9bca71e63f36148c60da8947e07fea095f3035da06a898f2a328432b90294b5c> <http://purl.org/dc/terms/hasPart> <urn:kg-mnp:review-decision:c4bc28dcdd215b15423b9697fb762999ff32847a403fe65f17f78f6d0f28f133> .
-<urn:kg-mnp:review-decision-log:9bca71e63f36148c60da8947e07fea095f3035da06a898f2a328432b90294b5c> <http://purl.org/dc/terms/hasPart> <urn:kg-mnp:review-decision:d1ff779b2519ff1b40d505ac6a09d0a7f30637fe547d8cc840120e36bc90e1e8> .
-<urn:kg-mnp:review-decision-log:9bca71e63f36148c60da8947e07fea095f3035da06a898f2a328432b90294b5c> <http://purl.org/dc/terms/hasPart> <urn:kg-mnp:review-decision:e234925cf29352d101f063ab801f12355ffd5d71d93c423eaf522304bc55778c> .
-<urn:kg-mnp:review-decision-log:9bca71e63f36148c60da8947e07fea095f3035da06a898f2a328432b90294b5c> <http://purl.org/dc/terms/identifier> "urn:kg-mnp:review-decision-log:9bca71e63f36148c60da8947e07fea095f3035da06a898f2a328432b90294b5c" .
-<urn:kg-mnp:review-decision-log:9bca71e63f36148c60da8947e07fea095f3035da06a898f2a328432b90294b5c> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/prov#Entity> .
-<urn:kg-mnp:review-decision-log:9bca71e63f36148c60da8947e07fea095f3035da06a898f2a328432b90294b5c> <http://www.w3.org/ns/prov#wasGeneratedBy> <urn:kg-mnp:review-session:38f3398d7180582989fd6e1385e64e0bf27e18ef752ad8b923386e8b61b2f0ba> .
-<urn:kg-mnp:review-decision:8f0d301a2e94f3020fd2c7de959a7bb22810c8e523a8fb84f9c6da61fde92327> <http://purl.org/dc/terms/creator> <urn:kg-mnp:reviewer:professor-001> .
-<urn:kg-mnp:review-decision:8f0d301a2e94f3020fd2c7de959a7bb22810c8e523a8fb84f9c6da61fde92327> <http://purl.org/dc/terms/description> "Subscriber candidate is out of scope for this dataset modeling run." .
-<urn:kg-mnp:review-decision:8f0d301a2e94f3020fd2c7de959a7bb22810c8e523a8fb84f9c6da61fde92327> <http://purl.org/dc/terms/references> <urn:kg-mnp:review-evidence:d80ca1bf6c0c0127f5deea067b833aa6f960fdde3fbb32a3a85a3a8d3ab84888> .
-<urn:kg-mnp:review-decision:8f0d301a2e94f3020fd2c7de959a7bb22810c8e523a8fb84f9c6da61fde92327> <http://purl.org/dc/terms/subject> <urn:kg-mnp:candidate:5b68a78bcd602a16e687f82b44570cf02bbc5df37e7e4b290accc6052db7014a> .
-<urn:kg-mnp:review-decision:8f0d301a2e94f3020fd2c7de959a7bb22810c8e523a8fb84f9c6da61fde92327> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#ReviewDecision> .
-<urn:kg-mnp:review-decision:8f0d301a2e94f3020fd2c7de959a7bb22810c8e523a8fb84f9c6da61fde92327> <http://www.w3.org/ns/prov#generatedAtTime> "2026-08-06T00:02:00Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
-<urn:kg-mnp:review-decision:8f0d301a2e94f3020fd2c7de959a7bb22810c8e523a8fb84f9c6da61fde92327> <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#reviewOutcomeCode> "REJECT" .
-<urn:kg-mnp:review-decision:a1268d81ea7072a5c85d85a4cc1cb5dab2365a6aaf606c0129d74d1c24a3c17c> <http://purl.org/dc/terms/creator> <urn:kg-mnp:reviewer:professor-001> .
-<urn:kg-mnp:review-decision:a1268d81ea7072a5c85d85a4cc1cb5dab2365a6aaf606c0129d74d1c24a3c17c> <http://purl.org/dc/terms/description> "Confirm in-scope candidate #1." .
-<urn:kg-mnp:review-decision:a1268d81ea7072a5c85d85a4cc1cb5dab2365a6aaf606c0129d74d1c24a3c17c> <http://purl.org/dc/terms/references> <urn:kg-mnp:review-evidence:d80ca1bf6c0c0127f5deea067b833aa6f960fdde3fbb32a3a85a3a8d3ab84888> .
-<urn:kg-mnp:review-decision:a1268d81ea7072a5c85d85a4cc1cb5dab2365a6aaf606c0129d74d1c24a3c17c> <http://purl.org/dc/terms/subject> <urn:kg-mnp:candidate:dc4669b61c5efa75eb523192dbd5182cdc10eb51920317c33a4fa52cba6afbc2> .
-<urn:kg-mnp:review-decision:a1268d81ea7072a5c85d85a4cc1cb5dab2365a6aaf606c0129d74d1c24a3c17c> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#ReviewDecision> .
-<urn:kg-mnp:review-decision:a1268d81ea7072a5c85d85a4cc1cb5dab2365a6aaf606c0129d74d1c24a3c17c> <http://www.w3.org/ns/prov#generatedAtTime> "2026-08-06T00:01:00Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
-<urn:kg-mnp:review-decision:a1268d81ea7072a5c85d85a4cc1cb5dab2365a6aaf606c0129d74d1c24a3c17c> <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#reviewOutcomeCode> "CONFIRM" .
-<urn:kg-mnp:review-decision:c4bc28dcdd215b15423b9697fb762999ff32847a403fe65f17f78f6d0f28f133> <http://purl.org/dc/terms/creator> <urn:kg-mnp:reviewer:professor-001> .
-<urn:kg-mnp:review-decision:c4bc28dcdd215b15423b9697fb762999ff32847a403fe65f17f78f6d0f28f133> <http://purl.org/dc/terms/description> "Confirm in-scope candidate #5." .
-<urn:kg-mnp:review-decision:c4bc28dcdd215b15423b9697fb762999ff32847a403fe65f17f78f6d0f28f133> <http://purl.org/dc/terms/references> <urn:kg-mnp:review-evidence:5032174dc30e6bbf5fd77fb1103ead5879efe0d9da308dbc2a977931f1c3f784> .
-<urn:kg-mnp:review-decision:c4bc28dcdd215b15423b9697fb762999ff32847a403fe65f17f78f6d0f28f133> <http://purl.org/dc/terms/subject> <urn:kg-mnp:candidate:c6dc0630a02869987f4afc6ed6b9cdea2d2590cb06727b4f0c8b6d935ed49008> .
-<urn:kg-mnp:review-decision:c4bc28dcdd215b15423b9697fb762999ff32847a403fe65f17f78f6d0f28f133> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#ReviewDecision> .
-<urn:kg-mnp:review-decision:c4bc28dcdd215b15423b9697fb762999ff32847a403fe65f17f78f6d0f28f133> <http://www.w3.org/ns/prov#generatedAtTime> "2026-08-06T00:05:00Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
-<urn:kg-mnp:review-decision:c4bc28dcdd215b15423b9697fb762999ff32847a403fe65f17f78f6d0f28f133> <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#reviewOutcomeCode> "CONFIRM" .
-<urn:kg-mnp:review-decision:d1ff779b2519ff1b40d505ac6a09d0a7f30637fe547d8cc840120e36bc90e1e8> <http://purl.org/dc/terms/creator> <urn:kg-mnp:reviewer:professor-001> .
-<urn:kg-mnp:review-decision:d1ff779b2519ff1b40d505ac6a09d0a7f30637fe547d8cc840120e36bc90e1e8> <http://purl.org/dc/terms/description> "Confirm in-scope candidate #3." .
-<urn:kg-mnp:review-decision:d1ff779b2519ff1b40d505ac6a09d0a7f30637fe547d8cc840120e36bc90e1e8> <http://purl.org/dc/terms/references> <urn:kg-mnp:review-evidence:514c1f62d02970efa75a36c828c0fe1369609add77ed866a79f32ee9906631e4> .
-<urn:kg-mnp:review-decision:d1ff779b2519ff1b40d505ac6a09d0a7f30637fe547d8cc840120e36bc90e1e8> <http://purl.org/dc/terms/subject> <urn:kg-mnp:candidate:16e6bb01566198b4ff97db7952901c922022cdc6512bd727d4b698e033d24016> .
-<urn:kg-mnp:review-decision:d1ff779b2519ff1b40d505ac6a09d0a7f30637fe547d8cc840120e36bc90e1e8> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#ReviewDecision> .
-<urn:kg-mnp:review-decision:d1ff779b2519ff1b40d505ac6a09d0a7f30637fe547d8cc840120e36bc90e1e8> <http://www.w3.org/ns/prov#generatedAtTime> "2026-08-06T00:03:00Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
-<urn:kg-mnp:review-decision:d1ff779b2519ff1b40d505ac6a09d0a7f30637fe547d8cc840120e36bc90e1e8> <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#reviewOutcomeCode> "CONFIRM" .
-<urn:kg-mnp:review-decision:e234925cf29352d101f063ab801f12355ffd5d71d93c423eaf522304bc55778c> <http://purl.org/dc/terms/creator> <urn:kg-mnp:reviewer:professor-001> .
-<urn:kg-mnp:review-decision:e234925cf29352d101f063ab801f12355ffd5d71d93c423eaf522304bc55778c> <http://purl.org/dc/terms/description> "Confirm in-scope candidate #4." .
-<urn:kg-mnp:review-decision:e234925cf29352d101f063ab801f12355ffd5d71d93c423eaf522304bc55778c> <http://purl.org/dc/terms/references> <urn:kg-mnp:review-evidence:396415d30c9b3df5b909b456056f96854be4a263346873f9430733a3d1584559> .
-<urn:kg-mnp:review-decision:e234925cf29352d101f063ab801f12355ffd5d71d93c423eaf522304bc55778c> <http://purl.org/dc/terms/subject> <urn:kg-mnp:candidate:63de7ebf8435aedbba092b5cb7d83450eacb351ffbc96e9833bdcacc6c14a6e2> .
-<urn:kg-mnp:review-decision:e234925cf29352d101f063ab801f12355ffd5d71d93c423eaf522304bc55778c> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#ReviewDecision> .
-<urn:kg-mnp:review-decision:e234925cf29352d101f063ab801f12355ffd5d71d93c423eaf522304bc55778c> <http://www.w3.org/ns/prov#generatedAtTime> "2026-08-06T00:04:00Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
-<urn:kg-mnp:review-decision:e234925cf29352d101f063ab801f12355ffd5d71d93c423eaf522304bc55778c> <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#reviewOutcomeCode> "CONFIRM" .
+<urn:kg-mnp:review-decision-log:e4cae94fa8838b121ce4827a427a3a8281c4ba68831d285b95c9b016123842af> <http://purl.org/dc/terms/hasPart> <urn:kg-mnp:review-decision:26c27293e421f94bb8dfdcab9a869989587a98d8ea9d6579eddfdb9b13f4e014> .
+<urn:kg-mnp:review-decision-log:e4cae94fa8838b121ce4827a427a3a8281c4ba68831d285b95c9b016123842af> <http://purl.org/dc/terms/hasPart> <urn:kg-mnp:review-decision:27716ec30d12507b068132f4df32b1e40f7bed45e2160e9b2f4d7a02f6aa4722> .
+<urn:kg-mnp:review-decision-log:e4cae94fa8838b121ce4827a427a3a8281c4ba68831d285b95c9b016123842af> <http://purl.org/dc/terms/hasPart> <urn:kg-mnp:review-decision:294b9a3f76783787037f052d59dfeee87587299d0adbc84d7abd269fac8ca5f8> .
+<urn:kg-mnp:review-decision-log:e4cae94fa8838b121ce4827a427a3a8281c4ba68831d285b95c9b016123842af> <http://purl.org/dc/terms/hasPart> <urn:kg-mnp:review-decision:c6886f8af15203ea99b3ccea628d8de4458f8ce9297a12c2b9dc8ea8f748f4ea> .
+<urn:kg-mnp:review-decision-log:e4cae94fa8838b121ce4827a427a3a8281c4ba68831d285b95c9b016123842af> <http://purl.org/dc/terms/hasPart> <urn:kg-mnp:review-decision:caa9886b97974d2ff15f45a9b26f123ebad32f03060f74654b61844123e54b06> .
+<urn:kg-mnp:review-decision-log:e4cae94fa8838b121ce4827a427a3a8281c4ba68831d285b95c9b016123842af> <http://purl.org/dc/terms/identifier> "urn:kg-mnp:review-decision-log:e4cae94fa8838b121ce4827a427a3a8281c4ba68831d285b95c9b016123842af" .
+<urn:kg-mnp:review-decision-log:e4cae94fa8838b121ce4827a427a3a8281c4ba68831d285b95c9b016123842af> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/prov#Entity> .
+<urn:kg-mnp:review-decision-log:e4cae94fa8838b121ce4827a427a3a8281c4ba68831d285b95c9b016123842af> <http://www.w3.org/ns/prov#wasGeneratedBy> <urn:kg-mnp:review-session:e27b4de43c7bf2566b8980f6cb4df7a171769a1dab76632834775289160e65ae> .
+<urn:kg-mnp:review-decision:26c27293e421f94bb8dfdcab9a869989587a98d8ea9d6579eddfdb9b13f4e014> <http://purl.org/dc/terms/creator> <urn:kg-mnp:reviewer:professor-001> .
+<urn:kg-mnp:review-decision:26c27293e421f94bb8dfdcab9a869989587a98d8ea9d6579eddfdb9b13f4e014> <http://purl.org/dc/terms/description> "Confirm in-scope candidate #4." .
+<urn:kg-mnp:review-decision:26c27293e421f94bb8dfdcab9a869989587a98d8ea9d6579eddfdb9b13f4e014> <http://purl.org/dc/terms/references> <urn:kg-mnp:review-evidence:396415d30c9b3df5b909b456056f96854be4a263346873f9430733a3d1584559> .
+<urn:kg-mnp:review-decision:26c27293e421f94bb8dfdcab9a869989587a98d8ea9d6579eddfdb9b13f4e014> <http://purl.org/dc/terms/subject> <urn:kg-mnp:candidate:64c2fe578ee0e57db8d7f53ccaeb117aff72c6bf7b53dee63f04eb7740be6cc3> .
+<urn:kg-mnp:review-decision:26c27293e421f94bb8dfdcab9a869989587a98d8ea9d6579eddfdb9b13f4e014> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#ReviewDecision> .
+<urn:kg-mnp:review-decision:26c27293e421f94bb8dfdcab9a869989587a98d8ea9d6579eddfdb9b13f4e014> <http://www.w3.org/ns/prov#generatedAtTime> "2026-08-06T00:04:00Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<urn:kg-mnp:review-decision:26c27293e421f94bb8dfdcab9a869989587a98d8ea9d6579eddfdb9b13f4e014> <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#reviewOutcomeCode> "CONFIRM" .
+<urn:kg-mnp:review-decision:27716ec30d12507b068132f4df32b1e40f7bed45e2160e9b2f4d7a02f6aa4722> <http://purl.org/dc/terms/creator> <urn:kg-mnp:reviewer:professor-001> .
+<urn:kg-mnp:review-decision:27716ec30d12507b068132f4df32b1e40f7bed45e2160e9b2f4d7a02f6aa4722> <http://purl.org/dc/terms/description> "Confirm in-scope candidate #1." .
+<urn:kg-mnp:review-decision:27716ec30d12507b068132f4df32b1e40f7bed45e2160e9b2f4d7a02f6aa4722> <http://purl.org/dc/terms/references> <urn:kg-mnp:review-evidence:d80ca1bf6c0c0127f5deea067b833aa6f960fdde3fbb32a3a85a3a8d3ab84888> .
+<urn:kg-mnp:review-decision:27716ec30d12507b068132f4df32b1e40f7bed45e2160e9b2f4d7a02f6aa4722> <http://purl.org/dc/terms/subject> <urn:kg-mnp:candidate:3dc3320b259383e00326e8f8bf0397725990373ef0c7244b1ad154cb64e131a7> .
+<urn:kg-mnp:review-decision:27716ec30d12507b068132f4df32b1e40f7bed45e2160e9b2f4d7a02f6aa4722> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#ReviewDecision> .
+<urn:kg-mnp:review-decision:27716ec30d12507b068132f4df32b1e40f7bed45e2160e9b2f4d7a02f6aa4722> <http://www.w3.org/ns/prov#generatedAtTime> "2026-08-06T00:01:00Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<urn:kg-mnp:review-decision:27716ec30d12507b068132f4df32b1e40f7bed45e2160e9b2f4d7a02f6aa4722> <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#reviewOutcomeCode> "CONFIRM" .
+<urn:kg-mnp:review-decision:294b9a3f76783787037f052d59dfeee87587299d0adbc84d7abd269fac8ca5f8> <http://purl.org/dc/terms/creator> <urn:kg-mnp:reviewer:professor-001> .
+<urn:kg-mnp:review-decision:294b9a3f76783787037f052d59dfeee87587299d0adbc84d7abd269fac8ca5f8> <http://purl.org/dc/terms/description> "Confirm in-scope candidate #3." .
+<urn:kg-mnp:review-decision:294b9a3f76783787037f052d59dfeee87587299d0adbc84d7abd269fac8ca5f8> <http://purl.org/dc/terms/references> <urn:kg-mnp:review-evidence:514c1f62d02970efa75a36c828c0fe1369609add77ed866a79f32ee9906631e4> .
+<urn:kg-mnp:review-decision:294b9a3f76783787037f052d59dfeee87587299d0adbc84d7abd269fac8ca5f8> <http://purl.org/dc/terms/subject> <urn:kg-mnp:candidate:60b4b6016bcae055dd3a6b563aad262f9463f624e53e7e699fe1d9f57de38ea2> .
+<urn:kg-mnp:review-decision:294b9a3f76783787037f052d59dfeee87587299d0adbc84d7abd269fac8ca5f8> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#ReviewDecision> .
+<urn:kg-mnp:review-decision:294b9a3f76783787037f052d59dfeee87587299d0adbc84d7abd269fac8ca5f8> <http://www.w3.org/ns/prov#generatedAtTime> "2026-08-06T00:03:00Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<urn:kg-mnp:review-decision:294b9a3f76783787037f052d59dfeee87587299d0adbc84d7abd269fac8ca5f8> <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#reviewOutcomeCode> "CONFIRM" .
+<urn:kg-mnp:review-decision:c6886f8af15203ea99b3ccea628d8de4458f8ce9297a12c2b9dc8ea8f748f4ea> <http://purl.org/dc/terms/creator> <urn:kg-mnp:reviewer:professor-001> .
+<urn:kg-mnp:review-decision:c6886f8af15203ea99b3ccea628d8de4458f8ce9297a12c2b9dc8ea8f748f4ea> <http://purl.org/dc/terms/description> "Subscriber candidate is out of scope for this dataset modeling run." .
+<urn:kg-mnp:review-decision:c6886f8af15203ea99b3ccea628d8de4458f8ce9297a12c2b9dc8ea8f748f4ea> <http://purl.org/dc/terms/references> <urn:kg-mnp:review-evidence:d80ca1bf6c0c0127f5deea067b833aa6f960fdde3fbb32a3a85a3a8d3ab84888> .
+<urn:kg-mnp:review-decision:c6886f8af15203ea99b3ccea628d8de4458f8ce9297a12c2b9dc8ea8f748f4ea> <http://purl.org/dc/terms/subject> <urn:kg-mnp:candidate:d34f2db397b76e7e026a66d34d3953cf3891b2b1fe99135ce4b68810511cece8> .
+<urn:kg-mnp:review-decision:c6886f8af15203ea99b3ccea628d8de4458f8ce9297a12c2b9dc8ea8f748f4ea> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#ReviewDecision> .
+<urn:kg-mnp:review-decision:c6886f8af15203ea99b3ccea628d8de4458f8ce9297a12c2b9dc8ea8f748f4ea> <http://www.w3.org/ns/prov#generatedAtTime> "2026-08-06T00:02:00Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<urn:kg-mnp:review-decision:c6886f8af15203ea99b3ccea628d8de4458f8ce9297a12c2b9dc8ea8f748f4ea> <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#reviewOutcomeCode> "REJECT" .
+<urn:kg-mnp:review-decision:caa9886b97974d2ff15f45a9b26f123ebad32f03060f74654b61844123e54b06> <http://purl.org/dc/terms/creator> <urn:kg-mnp:reviewer:professor-001> .
+<urn:kg-mnp:review-decision:caa9886b97974d2ff15f45a9b26f123ebad32f03060f74654b61844123e54b06> <http://purl.org/dc/terms/description> "Confirm in-scope candidate #5." .
+<urn:kg-mnp:review-decision:caa9886b97974d2ff15f45a9b26f123ebad32f03060f74654b61844123e54b06> <http://purl.org/dc/terms/references> <urn:kg-mnp:review-evidence:5032174dc30e6bbf5fd77fb1103ead5879efe0d9da308dbc2a977931f1c3f784> .
+<urn:kg-mnp:review-decision:caa9886b97974d2ff15f45a9b26f123ebad32f03060f74654b61844123e54b06> <http://purl.org/dc/terms/subject> <urn:kg-mnp:candidate:79854a65514427d763de6c40a12d361f6917a81d694e89b273c0f278c28e479c> .
+<urn:kg-mnp:review-decision:caa9886b97974d2ff15f45a9b26f123ebad32f03060f74654b61844123e54b06> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#ReviewDecision> .
+<urn:kg-mnp:review-decision:caa9886b97974d2ff15f45a9b26f123ebad32f03060f74654b61844123e54b06> <http://www.w3.org/ns/prov#generatedAtTime> "2026-08-06T00:05:00Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<urn:kg-mnp:review-decision:caa9886b97974d2ff15f45a9b26f123ebad32f03060f74654b61844123e54b06> <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#reviewOutcomeCode> "CONFIRM" .
 <urn:kg-mnp:review-evidence:396415d30c9b3df5b909b456056f96854be4a263346873f9430733a3d1584559> <http://purl.org/dc/terms/identifier> "review-evidence-reject-004" .
 <urn:kg-mnp:review-evidence:5032174dc30e6bbf5fd77fb1103ead5879efe0d9da308dbc2a977931f1c3f784> <http://purl.org/dc/terms/identifier> "review-evidence-reject-005" .
 <urn:kg-mnp:review-evidence:514c1f62d02970efa75a36c828c0fe1369609add77ed866a79f32ee9906631e4> <http://purl.org/dc/terms/identifier> "review-evidence-reject-003" .
 <urn:kg-mnp:review-evidence:d80ca1bf6c0c0127f5deea067b833aa6f960fdde3fbb32a3a85a3a8d3ab84888> <http://purl.org/dc/terms/identifier> "review-evidence-reject-001" .
-<urn:kg-mnp:review-record:1b52704bc9e1aa3cbcb4d98019e394267215306ebf50d5c0f8061625e974f8ab> <http://purl.org/dc/terms/source> <urn:kg-mnp:review-decision:d1ff779b2519ff1b40d505ac6a09d0a7f30637fe547d8cc840120e36bc90e1e8> .
-<urn:kg-mnp:review-record:1b52704bc9e1aa3cbcb4d98019e394267215306ebf50d5c0f8061625e974f8ab> <http://purl.org/dc/terms/subject> <urn:kg-mnp:candidate:16e6bb01566198b4ff97db7952901c922022cdc6512bd727d4b698e033d24016> .
-<urn:kg-mnp:review-record:1b52704bc9e1aa3cbcb4d98019e394267215306ebf50d5c0f8061625e974f8ab> <http://purl.org/dc/terms/type> "CONFIRM" .
-<urn:kg-mnp:review-record:30162380c6e0ec1ae0c0d371ecf02dfb4a7080f5c670f6de47ced8204dd0fd92> <http://purl.org/dc/terms/source> <urn:kg-mnp:review-decision:c4bc28dcdd215b15423b9697fb762999ff32847a403fe65f17f78f6d0f28f133> .
-<urn:kg-mnp:review-record:30162380c6e0ec1ae0c0d371ecf02dfb4a7080f5c670f6de47ced8204dd0fd92> <http://purl.org/dc/terms/subject> <urn:kg-mnp:candidate:c6dc0630a02869987f4afc6ed6b9cdea2d2590cb06727b4f0c8b6d935ed49008> .
-<urn:kg-mnp:review-record:30162380c6e0ec1ae0c0d371ecf02dfb4a7080f5c670f6de47ced8204dd0fd92> <http://purl.org/dc/terms/type> "CONFIRM" .
-<urn:kg-mnp:review-record:30e9c6961986402b3d42b7a39a3a761ec5fcfdcf94c3592111ec9650985743d2> <http://purl.org/dc/terms/source> <urn:kg-mnp:review-decision:8f0d301a2e94f3020fd2c7de959a7bb22810c8e523a8fb84f9c6da61fde92327> .
-<urn:kg-mnp:review-record:30e9c6961986402b3d42b7a39a3a761ec5fcfdcf94c3592111ec9650985743d2> <http://purl.org/dc/terms/subject> <urn:kg-mnp:candidate:5b68a78bcd602a16e687f82b44570cf02bbc5df37e7e4b290accc6052db7014a> .
-<urn:kg-mnp:review-record:30e9c6961986402b3d42b7a39a3a761ec5fcfdcf94c3592111ec9650985743d2> <http://purl.org/dc/terms/type> "REJECT" .
-<urn:kg-mnp:review-record:c2027ca4ec5ad6ffb563059a5f24ab0c8386d21e8d773c324e1f3bafac081224> <http://purl.org/dc/terms/source> <urn:kg-mnp:review-decision:a1268d81ea7072a5c85d85a4cc1cb5dab2365a6aaf606c0129d74d1c24a3c17c> .
-<urn:kg-mnp:review-record:c2027ca4ec5ad6ffb563059a5f24ab0c8386d21e8d773c324e1f3bafac081224> <http://purl.org/dc/terms/subject> <urn:kg-mnp:candidate:dc4669b61c5efa75eb523192dbd5182cdc10eb51920317c33a4fa52cba6afbc2> .
-<urn:kg-mnp:review-record:c2027ca4ec5ad6ffb563059a5f24ab0c8386d21e8d773c324e1f3bafac081224> <http://purl.org/dc/terms/type> "CONFIRM" .
-<urn:kg-mnp:review-record:ef73ff8036761ea4d99310d55d0436ae1d7b0f738560d4dcd1c5c539fe9c2a87> <http://purl.org/dc/terms/source> <urn:kg-mnp:review-decision:e234925cf29352d101f063ab801f12355ffd5d71d93c423eaf522304bc55778c> .
-<urn:kg-mnp:review-record:ef73ff8036761ea4d99310d55d0436ae1d7b0f738560d4dcd1c5c539fe9c2a87> <http://purl.org/dc/terms/subject> <urn:kg-mnp:candidate:63de7ebf8435aedbba092b5cb7d83450eacb351ffbc96e9833bdcacc6c14a6e2> .
-<urn:kg-mnp:review-record:ef73ff8036761ea4d99310d55d0436ae1d7b0f738560d4dcd1c5c539fe9c2a87> <http://purl.org/dc/terms/type> "CONFIRM" .
-<urn:kg-mnp:review-session:38f3398d7180582989fd6e1385e64e0bf27e18ef752ad8b923386e8b61b2f0ba> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/prov#Activity> .
-<urn:kg-mnp:review-session:38f3398d7180582989fd6e1385e64e0bf27e18ef752ad8b923386e8b61b2f0ba> <http://www.w3.org/ns/prov#endedAtTime> "2026-08-06T02:00:00Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
-<urn:kg-mnp:review-session:38f3398d7180582989fd6e1385e64e0bf27e18ef752ad8b923386e8b61b2f0ba> <http://www.w3.org/ns/prov#startedAtTime> "2026-08-06T00:00:00Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
-<urn:kg-mnp:review-session:38f3398d7180582989fd6e1385e64e0bf27e18ef752ad8b923386e8b61b2f0ba> <http://www.w3.org/ns/prov#wasAssociatedWith> <urn:kg-mnp:reviewer:professor-001> .
+<urn:kg-mnp:review-record:3eb6c0f000ddd91513f24ec915a43c77a53b90a2b51cb0809b0ef8e1d1b7fa10> <http://purl.org/dc/terms/source> <urn:kg-mnp:review-decision:26c27293e421f94bb8dfdcab9a869989587a98d8ea9d6579eddfdb9b13f4e014> .
+<urn:kg-mnp:review-record:3eb6c0f000ddd91513f24ec915a43c77a53b90a2b51cb0809b0ef8e1d1b7fa10> <http://purl.org/dc/terms/subject> <urn:kg-mnp:candidate:64c2fe578ee0e57db8d7f53ccaeb117aff72c6bf7b53dee63f04eb7740be6cc3> .
+<urn:kg-mnp:review-record:3eb6c0f000ddd91513f24ec915a43c77a53b90a2b51cb0809b0ef8e1d1b7fa10> <http://purl.org/dc/terms/type> "CONFIRM" .
+<urn:kg-mnp:review-record:889c43a1b5fdb0e0671c9dfb69c34781a31f1b0c5122f3199e46356cc555d887> <http://purl.org/dc/terms/source> <urn:kg-mnp:review-decision:caa9886b97974d2ff15f45a9b26f123ebad32f03060f74654b61844123e54b06> .
+<urn:kg-mnp:review-record:889c43a1b5fdb0e0671c9dfb69c34781a31f1b0c5122f3199e46356cc555d887> <http://purl.org/dc/terms/subject> <urn:kg-mnp:candidate:79854a65514427d763de6c40a12d361f6917a81d694e89b273c0f278c28e479c> .
+<urn:kg-mnp:review-record:889c43a1b5fdb0e0671c9dfb69c34781a31f1b0c5122f3199e46356cc555d887> <http://purl.org/dc/terms/type> "CONFIRM" .
+<urn:kg-mnp:review-record:9293bbd38c16441f580e631e190471618d4c2a39b723e10e715e3f8656dc6da9> <http://purl.org/dc/terms/source> <urn:kg-mnp:review-decision:27716ec30d12507b068132f4df32b1e40f7bed45e2160e9b2f4d7a02f6aa4722> .
+<urn:kg-mnp:review-record:9293bbd38c16441f580e631e190471618d4c2a39b723e10e715e3f8656dc6da9> <http://purl.org/dc/terms/subject> <urn:kg-mnp:candidate:3dc3320b259383e00326e8f8bf0397725990373ef0c7244b1ad154cb64e131a7> .
+<urn:kg-mnp:review-record:9293bbd38c16441f580e631e190471618d4c2a39b723e10e715e3f8656dc6da9> <http://purl.org/dc/terms/type> "CONFIRM" .
+<urn:kg-mnp:review-record:988c09733805594beee3dacfa9abdc109c5ac7ccf7117fb0f13c56bad0bfcd39> <http://purl.org/dc/terms/source> <urn:kg-mnp:review-decision:c6886f8af15203ea99b3ccea628d8de4458f8ce9297a12c2b9dc8ea8f748f4ea> .
+<urn:kg-mnp:review-record:988c09733805594beee3dacfa9abdc109c5ac7ccf7117fb0f13c56bad0bfcd39> <http://purl.org/dc/terms/subject> <urn:kg-mnp:candidate:d34f2db397b76e7e026a66d34d3953cf3891b2b1fe99135ce4b68810511cece8> .
+<urn:kg-mnp:review-record:988c09733805594beee3dacfa9abdc109c5ac7ccf7117fb0f13c56bad0bfcd39> <http://purl.org/dc/terms/type> "REJECT" .
+<urn:kg-mnp:review-record:a50d7bf0b99d91420965826501c930219d7fa2222ffd85d1f2402b9cded5f418> <http://purl.org/dc/terms/source> <urn:kg-mnp:review-decision:294b9a3f76783787037f052d59dfeee87587299d0adbc84d7abd269fac8ca5f8> .
+<urn:kg-mnp:review-record:a50d7bf0b99d91420965826501c930219d7fa2222ffd85d1f2402b9cded5f418> <http://purl.org/dc/terms/subject> <urn:kg-mnp:candidate:60b4b6016bcae055dd3a6b563aad262f9463f624e53e7e699fe1d9f57de38ea2> .
+<urn:kg-mnp:review-record:a50d7bf0b99d91420965826501c930219d7fa2222ffd85d1f2402b9cded5f418> <http://purl.org/dc/terms/type> "CONFIRM" .
+<urn:kg-mnp:review-session:e27b4de43c7bf2566b8980f6cb4df7a171769a1dab76632834775289160e65ae> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <http://www.w3.org/ns/prov#Activity> .
+<urn:kg-mnp:review-session:e27b4de43c7bf2566b8980f6cb4df7a171769a1dab76632834775289160e65ae> <http://www.w3.org/ns/prov#endedAtTime> "2026-08-06T02:00:00Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<urn:kg-mnp:review-session:e27b4de43c7bf2566b8980f6cb4df7a171769a1dab76632834775289160e65ae> <http://www.w3.org/ns/prov#startedAtTime> "2026-08-06T00:00:00Z"^^<http://www.w3.org/2001/XMLSchema#dateTime> .
+<urn:kg-mnp:review-session:e27b4de43c7bf2566b8980f6cb4df7a171769a1dab76632834775289160e65ae> <http://www.w3.org/ns/prov#wasAssociatedWith> <urn:kg-mnp:reviewer:professor-001> .
 <urn:kg-mnp:reviewer:professor-001> <http://purl.org/dc/terms/description> "KG-MNP Review Board" .
 <urn:kg-mnp:reviewer:professor-001> <http://purl.org/dc/terms/identifier> "urn:kg-mnp:reviewer:professor-001" .
 <urn:kg-mnp:reviewer:professor-001> <http://purl.org/dc/terms/title> "Reviewer One" .

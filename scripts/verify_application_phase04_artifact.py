@@ -7,11 +7,11 @@ import argparse
 import json
 from pathlib import Path
 
-from kg_mnp_demo.governance.artifact_verifier import (
+from kg_mnp.governance.artifact_verifier import (
     Phase04ArtifactVerificationError,
     verify_application_phase04_artifact,
 )
-from kg_mnp_demo.governance.errors import GovernanceError
+from kg_mnp.governance.errors import GovernanceError
 
 
 def main() -> int:

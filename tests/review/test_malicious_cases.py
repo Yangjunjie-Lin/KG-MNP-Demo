@@ -5,20 +5,23 @@ from pathlib import Path
 
 import pytest
 
-from kg_mnp_demo.modeling.canonical_json import semantic_hash
-from kg_mnp_demo.modeling.confirmation import PackageBuildError, build_confirmed_modeling_package
-from kg_mnp_demo.modeling.identifiers import candidate_id
-from kg_mnp_demo.modeling.review_identifiers import (
+from kg_mnp.modeling import review_policy as review_policy_module
+from kg_mnp.modeling.canonical_json import semantic_hash
+from kg_mnp.modeling.confirmation import (
+    PackageBuildError,
+    build_confirmed_modeling_package,
+)
+from kg_mnp.modeling.identifiers import candidate_id
+from kg_mnp.modeling.review_identifiers import (
     confirmed_item_id,
     confirmed_package_id,
     decision_log_hash,
     package_semantic_hash,
     review_decision_id,
 )
-from kg_mnp_demo.modeling.review_log import finalize_review_decision_log
-from kg_mnp_demo.modeling.review_policy import ReviewPolicyError
-from kg_mnp_demo.modeling import review_policy as review_policy_module
-from kg_mnp_demo.modeling.semantic_validation import (
+from kg_mnp.modeling.review_log import finalize_review_decision_log
+from kg_mnp.modeling.review_policy import ReviewPolicyError
+from kg_mnp.modeling.semantic_validation import (
     SemanticValidationError,
     validate_confirmed_modeling_package_semantics,
     validate_review_decision_log_semantics,

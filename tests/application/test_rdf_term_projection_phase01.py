@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from kg_mnp_demo.application.result_normalizer import normalize_binding
+from kg_mnp.application.result_normalizer import normalize_binding
 
 
 def test_rdf_term_projection_preserves_iri_datatype_language_and_lexical_form():

@@ -5,18 +5,18 @@ from pathlib import Path
 
 import pytest
 
-from kg_mnp_demo.amendment.artifact_verifier import (
+from kg_mnp.amendment.artifact_verifier import (
     Phase05ArtifactVerificationError,
     verify_application_phase05_artifact,
 )
-from kg_mnp_demo.amendment.authority_binding import (
+from kg_mnp.amendment.authority_binding import (
     PRODUCTION_AUTHORITY_TYPE,
     ProductionPhase05Authority,
     load_production_phase05_authority,
     require_production_authority,
 )
-from kg_mnp_demo.amendment.errors import AmendmentError, AmendmentErrorCode
-from kg_mnp_demo.amendment.fixture import ControlledAmendmentFixture
+from kg_mnp.amendment.errors import AmendmentError, AmendmentErrorCode
+from kg_mnp.amendment.fixture import ControlledAmendmentFixture
 
 
 def test_artifact_verifier_requires_exact_upstream_paths(tmp_path: Path) -> None:

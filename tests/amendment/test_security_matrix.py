@@ -2,12 +2,12 @@ from __future__ import annotations
 
 import pytest
 
-from kg_mnp_demo.amendment.authority_binding import require_production_authority
-from kg_mnp_demo.amendment.errors import AmendmentError, AmendmentErrorCode
-from kg_mnp_demo.amendment.fixture import ControlledAmendmentFixture
-from kg_mnp_demo.amendment.intake import ReplayGuard
-from kg_mnp_demo.amendment.republication import prepare_reentry
-from kg_mnp_demo.amendment.validator import (
+from kg_mnp.amendment.authority_binding import require_production_authority
+from kg_mnp.amendment.errors import AmendmentError, AmendmentErrorCode
+from kg_mnp.amendment.fixture import ControlledAmendmentFixture
+from kg_mnp.amendment.intake import ReplayGuard
+from kg_mnp.amendment.republication import prepare_reentry
+from kg_mnp.amendment.validator import (
     validate_new_repository_identity,
     validate_no_direct_mutation,
 )

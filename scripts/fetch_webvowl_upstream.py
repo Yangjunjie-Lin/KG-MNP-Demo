@@ -11,7 +11,7 @@ import stat
 import subprocess
 from pathlib import Path
 
-from kg_mnp_demo.webvowl.policy import load_webvowl_policy
+from kg_mnp.webvowl.policy import load_webvowl_policy
 
 
 def _remove_readonly(func, path, _exc_info) -> None:

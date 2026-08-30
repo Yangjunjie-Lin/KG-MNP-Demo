@@ -4,15 +4,15 @@ import importlib
 
 from rdflib import Dataset, URIRef
 
-from kg_mnp_demo.compilation.policy import load_compiler_policy
-from kg_mnp_demo.graphdb.package_builder import build_graphdb_import_package
-from kg_mnp_demo.graphdb.rdf_semantics import graphdb_semantic_hash
+from kg_mnp.compilation.policy import load_compiler_policy
+from kg_mnp.graphdb.package_builder import build_graphdb_import_package
+from kg_mnp.graphdb.rdf_semantics import graphdb_semantic_hash
 
 from ._helpers import authorities, compilation
 
 
 def _project_forbidden(*args):
-    module = importlib.import_module("kg_mnp_demo.graphdb.forbidden_assertions")
+    module = importlib.import_module("kg_mnp.graphdb.forbidden_assertions")
     return module.project_forbidden_business_assertions(*args)
 
 

@@ -5,7 +5,7 @@ import json
 
 import pytest
 
-from kg_mnp_demo.graphdb.verifier import (
+from kg_mnp.graphdb.verifier import (
     GraphDBVerificationError,
     assert_tbox_version_semantics,
     expected_tbox_version_rows,

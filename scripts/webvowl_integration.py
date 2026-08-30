@@ -20,11 +20,11 @@ def _json(path: Path) -> dict:
 
 
 def _latest_graphdb_evidence() -> tuple[dict, dict]:
-    from kg_mnp_demo.graphdb.contracts import (
+    from kg_mnp.graphdb.contracts import (
         GraphDBContractError,
         validate_graphdb_contract,
     )
-    from kg_mnp_demo.graphdb.identifiers import repository_id_for_publication
+    from kg_mnp.graphdb.identifiers import repository_id_for_publication
 
     expected_graphdb = _json(
         ROOT
@@ -229,21 +229,21 @@ def main() -> int:
     from verify_owl2vowl_conversion import _exact_sources_ready
     from webvowl_browser_smoke import run as browser_run
 
-    from kg_mnp_demo.compilation.manifest import json_bytes
-    from kg_mnp_demo.publication.contracts import (
+    from kg_mnp.compilation.manifest import json_bytes
+    from kg_mnp.publication.contracts import (
         validate_publication_attestation_evidence,
     )
-    from kg_mnp_demo.publication.package_builder import (
+    from kg_mnp.publication.package_builder import (
         build_end_to_end_publication_package,
     )
-    from kg_mnp_demo.publication.package_validator import (
+    from kg_mnp.publication.package_validator import (
         validate_end_to_end_publication_package_against_authorities,
     )
-    from kg_mnp_demo.webvowl.converter import convert_with_owl2vowl_docker
-    from kg_mnp_demo.webvowl.package_builder import build_webvowl_visualization_package
-    from kg_mnp_demo.webvowl.policy import load_webvowl_policy
-    from kg_mnp_demo.webvowl.runtime import runtime_descriptor, runtime_smoke
-    from kg_mnp_demo.webvowl.source import build_visualization_source
+    from kg_mnp.webvowl.converter import convert_with_owl2vowl_docker
+    from kg_mnp.webvowl.package_builder import build_webvowl_visualization_package
+    from kg_mnp.webvowl.policy import load_webvowl_policy
+    from kg_mnp.webvowl.runtime import runtime_descriptor, runtime_smoke
+    from kg_mnp.webvowl.source import build_visualization_source
 
     tbox, graphdb_attestation = _latest_graphdb_evidence()
     _assert_loopback_port_available()

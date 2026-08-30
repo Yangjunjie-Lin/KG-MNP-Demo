@@ -8,7 +8,7 @@ from pathlib import Path
 
 import pytest
 
-from kg_mnp_demo.loader import case_path
+from kg_mnp.loader import case_path
 
 ROOT = Path(__file__).resolve().parents[1]
 

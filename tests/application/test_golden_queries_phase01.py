@@ -4,9 +4,9 @@ import json
 
 import pytest
 
-from kg_mnp_demo.application.errors import ApplicationError
-from kg_mnp_demo.application.query_registry import QueryRegistry
-from kg_mnp_demo.application.service import ApplicationService
+from kg_mnp.application.errors import ApplicationError
+from kg_mnp.application.query_registry import QueryRegistry
+from kg_mnp.application.service import ApplicationService
 
 from ._phase01_helpers import ROOT, DatasetClient, synthetic_binding
 

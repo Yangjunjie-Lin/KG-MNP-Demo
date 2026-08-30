@@ -15,21 +15,21 @@ from typing import Any
 import httpx
 import uvicorn
 
-from kg_mnp_demo.diagnostics import (
+from kg_mnp.diagnostics import (
     reconstruct_diagnostics,
     validate_diagnostic_package_against_authorities,
 )
-from kg_mnp_demo.diagnostics.artifact_verifier import (
+from kg_mnp.diagnostics.artifact_verifier import (
     verify_application_phase03_artifact,
 )
-from kg_mnp_demo.diagnostics.attestation import (
+from kg_mnp.diagnostics.attestation import (
     build_application_phase03_attestation,
 )
-from kg_mnp_demo.diagnostics.authority_loader import (
+from kg_mnp.diagnostics.authority_loader import (
     load_verified_authority_snapshot,
 )
-from kg_mnp_demo.diagnostics.runtime import create_diagnostics_app
-from kg_mnp_demo.modeling.canonical_json import canonical_json_bytes
+from kg_mnp.diagnostics.runtime import create_diagnostics_app
+from kg_mnp.modeling.canonical_json import canonical_json_bytes
 
 ROOT = Path(__file__).resolve().parents[1]
 

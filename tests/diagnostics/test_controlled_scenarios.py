@@ -1,10 +1,9 @@
 from __future__ import annotations
 
-from kg_mnp_demo.diagnostics import reconstruct_diagnostics
+from kg_mnp.diagnostics import reconstruct_diagnostics
 
 from ._helpers import snapshot
 from .test_deterministic_diagnostics import requirement
-
 
 FOCUS = "urn:entity:1"
 PATH = "urn:p"

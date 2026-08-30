@@ -2,11 +2,11 @@
 
 from __future__ import annotations
 
-from kg_mnp_demo.application.query_service import QueryService
-from kg_mnp_demo.evaluator import materialize_assessment
-from kg_mnp_demo.inference import apply_owlrl
-from kg_mnp_demo.loader import load_case_graph
-from kg_mnp_demo.validator import validate_graph
+from kg_mnp.application.query_service import QueryService
+from kg_mnp.evaluator import materialize_assessment
+from kg_mnp.inference import apply_owlrl
+from kg_mnp.loader import load_case_graph
+from kg_mnp.validator import validate_graph
 
 # CQ | Case | Expected key fields
 # CQ-01 CASE-01 decision=ELIGIBLE

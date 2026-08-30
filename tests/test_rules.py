@@ -1,9 +1,11 @@
 """Eligibility rule engine tests for six cases."""
 
-from kg_mnp_demo.evaluator import evaluate_case
-from kg_mnp_demo.inference import apply_owlrl
-from kg_mnp_demo.loader import load_case_graph
-from kg_mnp_demo.rule_engine import evaluate_rules, load_rules, summarize_decision
+from datetime import UTC
+
+from kg_mnp.evaluator import evaluate_case
+from kg_mnp.inference import apply_owlrl
+from kg_mnp.loader import load_case_graph
+from kg_mnp.rule_engine import evaluate_rules, load_rules, summarize_decision
 
 
 def _eval(case_id: str, use_updated: bool = True):
@@ -68,14 +70,14 @@ def test_case_06_updated_rule_blocks_port_interval():
 
 
 def test_case_06_old_rules_would_pass():
-    from datetime import datetime, timezone
+    from datetime import datetime
 
     g = load_case_graph("CASE-06")
     # Historical window: MNP-ELIG-005 v1.0 still applicable (min 120 days).
     outcomes = evaluate_rules(
         g,
         "CASE-06",
-        assessment_time=datetime(2026, 5, 15, 12, 0, 0, tzinfo=timezone.utc),
+        assessment_time=datetime(2026, 5, 15, 12, 0, 0, tzinfo=UTC),
     )
     assert summarize_decision(outcomes) == "ELIGIBLE"
     port = next(o for o in outcomes if o.rule_id == "MNP-ELIG-005")

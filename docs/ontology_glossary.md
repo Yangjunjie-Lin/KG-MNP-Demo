@@ -26,4 +26,4 @@
 | AssessmentDependency | Explicit dependency on rule version/evidence | COMPLIANCE |
 | MappingRecord | TMF→MNP mapping audit record | CORE |
 
-Module catalog: `config/ontology_modules.yaml`.
+Module catalog: `domain_packs/mnp/ontology/modules.yaml`.

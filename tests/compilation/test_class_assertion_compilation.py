@@ -1,5 +1,6 @@
+from kg_mnp.compilation.abox_compiler import compile_abox
+
 from ._helpers import authorities
-from kg_mnp_demo.compilation.abox_compiler import compile_abox
 
 
 def test_full_package_compiles_class_and_assertion_kinds_without_inference():

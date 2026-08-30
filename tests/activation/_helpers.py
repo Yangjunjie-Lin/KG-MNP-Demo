@@ -3,8 +3,8 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Any
 
-from kg_mnp_demo.activation.errors import ActivationError, ActivationErrorCode
-from kg_mnp_demo.modeling.canonical_json import semantic_hash
+from kg_mnp.activation.errors import ActivationError, ActivationErrorCode
+from kg_mnp.modeling.canonical_json import semantic_hash
 
 
 def _hash(character: str) -> str:

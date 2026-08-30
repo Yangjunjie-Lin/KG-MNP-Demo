@@ -8,11 +8,16 @@ from pathlib import Path
 
 import yaml
 
+from kg_mnp.paths import domain_pack_path
+
 ROOT = Path(__file__).resolve().parents[1]
 
 
 def main() -> int:
-    manifest = yaml.safe_load((ROOT / "references" / "source_manifest.yaml").read_text(encoding="utf-8"))
+    terminology = domain_pack_path("mnp", repository=ROOT) / "terminology"
+    manifest = yaml.safe_load(
+        (terminology / "source_manifest.yaml").read_text(encoding="utf-8")
+    )
     sources = manifest["sources"]
     required = {
         "Point-Topic/cto-ontology",
@@ -53,7 +58,7 @@ def main() -> int:
             print(f"Runtime source without license: {s['name']}")
             return 1
 
-    cto_review = ROOT / "references" / "cto_review.md"
+    cto_review = terminology / "cto_review.md"
     if "cto_core.ttl" not in cto_review.read_text(encoding="utf-8"):
         print("cto_review.md should mention reviewed files")
         return 1

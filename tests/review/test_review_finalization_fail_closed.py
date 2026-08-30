@@ -6,10 +6,10 @@ import copy
 
 import pytest
 
-from kg_mnp_demo.modeling.identifiers import candidate_id
-from kg_mnp_demo.modeling.review_identifiers import decision_log_hash, review_decision_id
-from kg_mnp_demo.modeling.review_log import finalize_review_decision_log
-from kg_mnp_demo.modeling.semantic_validation import SemanticValidationError
+from kg_mnp.modeling.identifiers import candidate_id
+from kg_mnp.modeling.review_identifiers import decision_log_hash, review_decision_id
+from kg_mnp.modeling.review_log import finalize_review_decision_log
+from kg_mnp.modeling.semantic_validation import SemanticValidationError
 
 from ._helpers import dependencies, load_expected_log, load_proposal
 

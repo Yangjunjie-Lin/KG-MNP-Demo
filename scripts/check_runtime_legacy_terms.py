@@ -102,7 +102,7 @@ def load_policy(path: Path = DEFAULT_POLICY) -> Policy:
     if not isinstance(raw_terms, list) or not raw_terms:
         raise ValueError("legacy_terms must be a non-empty list")
     if not isinstance(raw_allowances, list):
-        raise ValueError("allowed_occurrences must be a list")
+        raise TypeError("allowed_occurrences must be a list")
 
     scan_roots = tuple(_plain_relative_path(item, "scan_root") for item in raw_roots)
     if len(scan_roots) != len(set(scan_roots)):
@@ -124,7 +124,7 @@ def load_policy(path: Path = DEFAULT_POLICY) -> Policy:
     seen_keys: set[tuple[str, str, str]] = set()
     for index, item in enumerate(raw_allowances, start=1):
         if not isinstance(item, dict):
-            raise ValueError(f"allowed_occurrences[{index}] must be a mapping")
+            raise TypeError(f"allowed_occurrences[{index}] must be a mapping")
         term = item.get("term")
         if term not in terms:
             raise ValueError(f"allowed_occurrences[{index}] has unknown term: {term!r}")

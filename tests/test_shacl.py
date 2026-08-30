@@ -1,8 +1,8 @@
 """SHACL validation tests."""
 
-from kg_mnp_demo.loader import load_case_graph
-from kg_mnp_demo.namespaces import DATA, MNP
-from kg_mnp_demo.validator import validate_graph
+from kg_mnp.loader import load_case_graph
+from kg_mnp.namespaces import DATA, MNP
+from kg_mnp.validator import validate_graph
 
 
 def test_case_03_conforms():

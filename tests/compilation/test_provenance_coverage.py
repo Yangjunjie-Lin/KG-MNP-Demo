@@ -2,7 +2,6 @@ from rdflib import DCTERMS, OWL, RDF, Graph, Namespace
 
 from ._helpers import build
 
-
 MNP = Namespace("https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#")
 
 

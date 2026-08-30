@@ -2,17 +2,17 @@ from __future__ import annotations
 
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from threading import Thread
+from typing import ClassVar
 from urllib.request import ProxyHandler
 
 import pytest
 
-from kg_mnp_demo.application.errors import ApplicationError, ErrorCode
-from kg_mnp_demo.application.query_validator import assert_readonly_http_request
-from kg_mnp_demo.application.readonly_client import (
+from kg_mnp.application.errors import ApplicationError, ErrorCode
+from kg_mnp.application.query_validator import assert_readonly_http_request
+from kg_mnp.application.readonly_client import (
     ReadOnlyGraphDBClient,
     _NoRedirectHandler,
 )
-
 
 REPOSITORY_ID = "kg-mnp-" + "0" * 20
 
@@ -108,7 +108,7 @@ def test_client_transport_does_not_follow_even_loopback_redirects():
     observed = {"redirect_target_hits": 0}
 
     class RedirectingHandler(BaseHTTPRequestHandler):
-        def do_GET(self):  # noqa: N802
+        def do_GET(self):
             if self.path == "/rest/repositories":
                 self.send_response(302)
                 self.send_header("Location", "/redirect-target")
@@ -144,7 +144,7 @@ def test_export_explicit_nquads_uses_only_bounded_read_endpoint(monkeypatch):
 
     class Response:
         status = 200
-        headers = {"Content-Type": "application/n-quads; charset=UTF-8"}
+        headers: ClassVar = {"Content-Type": "application/n-quads; charset=UTF-8"}
 
         def __enter__(self):
             return self

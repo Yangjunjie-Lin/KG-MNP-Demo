@@ -6,25 +6,25 @@ from pathlib import Path
 
 import pytest
 
-from kg_mnp_demo.modeling.dependencies import ROOT
-from kg_mnp_demo.webvowl.contracts import (
+from kg_mnp.modeling.dependencies import ROOT
+from kg_mnp.webvowl.contracts import (
     WebVOWLContractError,
     load_webvowl_schema,
     validate_webvowl_contract,
 )
-from kg_mnp_demo.webvowl.normalizer import NormalizationError, normalize_vowl_json
-from kg_mnp_demo.webvowl.package_builder import build_webvowl_visualization_package
-from kg_mnp_demo.webvowl.package_validator import validate_webvowl_visualization_package
-from kg_mnp_demo.webvowl.policy import (
+from kg_mnp.webvowl.normalizer import NormalizationError, normalize_vowl_json
+from kg_mnp.webvowl.package_builder import build_webvowl_visualization_package
+from kg_mnp.webvowl.package_validator import validate_webvowl_visualization_package
+from kg_mnp.webvowl.policy import (
     OWL2VOWL_SHA,
     WEBVOWL_SHA,
     WebVOWLPolicyError,
     load_webvowl_policy,
     validate_webvowl_policy,
 )
-from kg_mnp_demo.webvowl.runtime import runtime_smoke
-from kg_mnp_demo.webvowl.source import VisualizationSourceError, _safe_local
-from kg_mnp_demo.webvowl.verifier import WebVOWLVerificationError, tbox_equivalence
+from kg_mnp.webvowl.runtime import runtime_smoke
+from kg_mnp.webvowl.source import VisualizationSourceError, _safe_local
+from kg_mnp.webvowl.verifier import WebVOWLVerificationError, tbox_equivalence
 
 
 def test_webvowl_contracts_and_policy_are_frozen() -> None:

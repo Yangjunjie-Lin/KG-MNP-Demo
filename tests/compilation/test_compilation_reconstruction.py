@@ -1,4 +1,7 @@
-from kg_mnp_demo.compilation.validator import validate_compilation_package_against_authorities
+from kg_mnp.compilation.validator import (
+    validate_compilation_package_against_authorities,
+)
+
 from ._helpers import authorities, build
 
 

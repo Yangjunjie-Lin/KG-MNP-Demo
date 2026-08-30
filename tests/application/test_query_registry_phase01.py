@@ -5,8 +5,8 @@ from pathlib import Path
 import pytest
 import yaml
 
-from kg_mnp_demo.application.errors import ApplicationError, ErrorCode
-from kg_mnp_demo.application.query_registry import QueryRegistry
+from kg_mnp.application.errors import ApplicationError, ErrorCode
+from kg_mnp.application.query_registry import QueryRegistry
 
 
 def test_registry_is_closed_versioned_and_covers_all_categories():
@@ -30,7 +30,8 @@ def test_unknown_query_id_fails_closed():
 
 def test_registry_collision_and_template_tamper_fail_closed(tmp_path: Path):
     root = Path(__file__).resolve().parents[2]
-    raw = yaml.safe_load((root / "config/application/query-registry-1.0.0.yaml").read_text(encoding="utf-8"))
+    registry_path = root / "domain_packs/mnp/queries/query-registry-1.0.0.yaml"
+    raw = yaml.safe_load(registry_path.read_text(encoding="utf-8"))
     raw["queries"].append(dict(raw["queries"][0], query_id=raw["queries"][0]["query_id"].upper()))
     config = tmp_path / "registry.yaml"
     config.write_text(yaml.safe_dump(raw, sort_keys=False), encoding="utf-8")
@@ -39,7 +40,7 @@ def test_registry_collision_and_template_tamper_fail_closed(tmp_path: Path):
 
     query = root / raw["queries"][0]["template"]
     original = query.read_text(encoding="utf-8")
-    raw = yaml.safe_load((root / "config/application/query-registry-1.0.0.yaml").read_text(encoding="utf-8"))
+    raw = yaml.safe_load(registry_path.read_text(encoding="utf-8"))
     raw["queries"][0]["template_sha256"] = "0" * 64
     config.write_text(yaml.safe_dump(raw, sort_keys=False), encoding="utf-8")
     assert original

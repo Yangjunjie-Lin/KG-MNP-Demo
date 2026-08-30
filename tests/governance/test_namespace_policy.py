@@ -27,9 +27,8 @@ def _http_iris(data: dict) -> list[str]:
         elif isinstance(node, list):
             for value in node:
                 walk(value)
-        elif isinstance(node, str):
-            if node.startswith("http://") or node.startswith("https://"):
-                values.append(node)
+        elif isinstance(node, str) and node.startswith(("http://", "https://")):
+            values.append(node)
 
     walk(data)
     return values

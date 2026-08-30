@@ -2,9 +2,9 @@
 
 from rdflib.namespace import RDF
 
-from kg_mnp_demo.inference import apply_owlrl
-from kg_mnp_demo.loader import load_case_graph
-from kg_mnp_demo.namespaces import DATA, MNP
+from kg_mnp.inference import apply_owlrl
+from kg_mnp.loader import load_case_graph
+from kg_mnp.namespaces import DATA, MNP
 
 
 def test_system_observation_infers_evidence_record():

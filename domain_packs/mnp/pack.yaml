@@ -1,0 +1,18 @@
+manifest_kind: PROVISIONAL_DOMAIN_PACK_BOOTSTRAP
+manifest_version: "prompt-01"
+pack_id: mnp
+display_name: Mobile Number Portability Baseline
+status: MIGRATED_BASELINE
+provisional: true
+asset_roots:
+  ontology: ontology
+  terminology: terminology
+  mappings: mappings
+  shapes: shapes
+  rules: rules
+  competency_questions: competency_questions
+  queries: queries
+  fixtures: fixtures
+contract_note: >-
+  Prompt 2 will define the DomainPackManifest schema and validation rules. This
+  bootstrap file is descriptive and is not a final compatibility claim.

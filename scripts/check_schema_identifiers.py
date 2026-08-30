@@ -15,7 +15,11 @@ import yaml
 
 ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_NAMESPACE_CONFIG = ROOT / "config" / "namespaces.yaml"
-SCHEMA_SCAN_ROOTS = ("schemas", "examples")
+SCHEMA_SCAN_ROOTS = (
+    "schemas",
+    "examples",
+    "domain_packs/mnp/fixtures/eligibility-use-case",
+)
 SCHEMA_FILE_SUFFIX = ".schema.json"
 DRAFT_2020_12 = "https://json-schema.org/draft/2020-12/schema"
 PROJECT_PAGES_BASE = "https://yangjunjie-lin.github.io/KG-MNP-Demo/"
@@ -66,10 +70,10 @@ def load_schema_namespaces(
 ) -> SchemaNamespaces:
     raw = yaml.safe_load(path.read_text(encoding="utf-8"))
     if not isinstance(raw, dict):
-        raise ValueError("namespace policy must be a mapping")
+        raise TypeError("namespace policy must be a mapping")
     schema_config = raw.get("schemas")
     if not isinstance(schema_config, dict):
-        raise ValueError("namespace policy must define a schemas mapping")
+        raise TypeError("namespace policy must define a schemas mapping")
 
     values: dict[str, str] = {}
     for key in ("base", "modeling", "legacy"):
@@ -155,18 +159,21 @@ def _validate_identifier(
             f"{identifier!r}"
         )
 
-    if relative_path.startswith("examples/eligibility-use-case/schemas/"):
+    if relative_path.startswith(
+        "domain_packs/mnp/fixtures/eligibility-use-case/schemas/"
+    ):
         if not identifier.startswith(namespaces.legacy):
             errors.append(
                 f"{relative_path}: eligibility use-case $id must be below "
                 f"schemas.legacy {namespaces.legacy!r}"
             )
-    elif relative_path.startswith("schemas/modeling/"):
-        if not identifier.startswith(namespaces.modeling):
-            errors.append(
-                f"{relative_path}: modeling contract $id must be below "
-                f"schemas.modeling {namespaces.modeling!r}"
-            )
+    elif relative_path.startswith("schemas/modeling/") and not identifier.startswith(
+        namespaces.modeling
+    ):
+        errors.append(
+            f"{relative_path}: modeling contract $id must be below "
+            f"schemas.modeling {namespaces.modeling!r}"
+        )
     return errors
 
 

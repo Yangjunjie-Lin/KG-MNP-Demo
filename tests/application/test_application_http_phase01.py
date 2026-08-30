@@ -2,9 +2,9 @@ from __future__ import annotations
 
 from fastapi.testclient import TestClient
 
-from kg_mnp_demo.application.http import create_app
-from kg_mnp_demo.application.query_registry import QueryRegistry
-from kg_mnp_demo.application.service import ApplicationService
+from kg_mnp.application.http import create_app
+from kg_mnp.application.query_registry import QueryRegistry
+from kg_mnp.application.service import ApplicationService
 
 from ._phase01_helpers import DatasetClient, synthetic_binding
 from .test_application_queries_phase01 import STATUS, SUBSCRIPTION

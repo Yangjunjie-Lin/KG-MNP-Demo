@@ -8,18 +8,17 @@ from pathlib import Path
 
 import pytest
 
-from kg_mnp_demo.modeling.contracts import (
+from kg_mnp.modeling.contracts import (
     CONTRACT_SPECS,
     DRAFT_2020_12,
     ContractRegistryError,
     UnknownContractError,
 )
-from kg_mnp_demo.modeling.registry import (
+from kg_mnp.modeling.registry import (
     contract_names,
     get_contract_schema,
     load_contract_registry,
 )
-
 
 ROOT = Path(__file__).resolve().parents[2]
 SCHEMA_DIR = ROOT / "schemas" / "modeling"

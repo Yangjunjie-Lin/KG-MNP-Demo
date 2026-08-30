@@ -1,8 +1,8 @@
 from __future__ import annotations
 
-import json
-import importlib.util
 import base64
+import importlib.util
+import json
 import os
 import subprocess
 import sys
@@ -32,10 +32,9 @@ def test_generated_license_is_deleted_when_package_validation_fails(
         "files": {},
     }
 
-    import kg_mnp_demo.compilation.artifacts as artifacts
-    import kg_mnp_demo.compilation.policy as compilation_policy
-    import kg_mnp_demo.graphdb.package_builder as package_builder
-    import kg_mnp_demo.graphdb.package_validator as package_validator
+    import kg_mnp.compilation.policy as compilation_policy
+    from kg_mnp.compilation import artifacts
+    from kg_mnp.graphdb import package_builder, package_validator
 
     monkeypatch.setattr(module, "ROOT", tmp_path)
     monkeypatch.setattr(module, "_authorities", lambda: ({},) * 9)
@@ -45,7 +44,7 @@ def test_generated_license_is_deleted_when_package_validation_fails(
     monkeypatch.delenv("GRAPHDB_LICENSE_B64", raising=False)
     monkeypatch.setattr(package_builder, "build_graphdb_import_package", lambda *args: built)
     monkeypatch.setattr(artifacts, "write_artifact_set", lambda *args, **kwargs: None)
-    monkeypatch.setattr(compilation_policy, "load_compiler_policy", lambda: {})
+    monkeypatch.setattr(compilation_policy, "load_compiler_policy", dict)
 
     def fail_validation(*args, **kwargs):
         raise RuntimeError("synthetic package validation failure")
@@ -218,6 +217,7 @@ def test_graphdb_live_import_is_fail_closed_without_external_license_or_verifies
         capture_output=True,
         text=True,
         timeout=900,
+        check=False,
     )
     if not has_license:
         assert result.returncode != 0

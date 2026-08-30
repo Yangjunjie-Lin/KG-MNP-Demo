@@ -1,7 +1,12 @@
 import pytest
-from rdflib import Graph, Literal, URIRef, XSD
+from rdflib import XSD, Graph, Literal, URIRef
 
-from kg_mnp_demo.compilation.abox_compiler import ABoxCompilationError, _literal, compile_abox
+from kg_mnp.compilation.abox_compiler import (
+    ABoxCompilationError,
+    _literal,
+    compile_abox,
+)
+
 from ._helpers import authorities
 
 

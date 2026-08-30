@@ -4,11 +4,11 @@ import copy
 
 import pytest
 
-from kg_mnp_demo.modeling.review_log import (
+from kg_mnp.modeling.review_log import (
     init_review_decision_log,
     record_review_action,
 )
-from kg_mnp_demo.modeling.semantic_validation import SemanticValidationError
+from kg_mnp.modeling.semantic_validation import SemanticValidationError
 
 from ._helpers import dependencies, load_action, load_proposal
 

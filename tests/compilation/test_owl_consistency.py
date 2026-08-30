@@ -1,7 +1,11 @@
 from rdflib import OWL, RDF, URIRef
 
-from kg_mnp_demo.compilation.abox_compiler import compile_abox
-from kg_mnp_demo.compilation.owl_consistency import check_owl_consistency, load_ontology_graph
+from kg_mnp.compilation.abox_compiler import compile_abox
+from kg_mnp.compilation.owl_consistency import (
+    check_owl_consistency,
+    load_ontology_graph,
+)
+
 from ._helpers import authorities, build
 
 

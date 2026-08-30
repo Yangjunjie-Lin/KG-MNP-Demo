@@ -4,13 +4,14 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from kg_mnp_demo import input_adapter
-
+from kg_mnp import input_adapter
 
 ROOT = Path(__file__).resolve().parents[2]
 LEGACY_SCHEMA = (
     ROOT
-    / "examples"
+    / "domain_packs"
+    / "mnp"
+    / "fixtures"
     / "eligibility-use-case"
     / "schemas"
     / "mnp_case_input.schema.json"

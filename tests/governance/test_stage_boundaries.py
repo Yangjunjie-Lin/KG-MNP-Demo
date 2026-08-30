@@ -8,8 +8,8 @@ ROOT = Path(__file__).resolve().parents[2]
 
 def test_graphdb_and_webvowl_integrations_absent():
     markers = [
-        ROOT / "src" / "kg_mnp_demo" / "graphdb.py",
-        ROOT / "src" / "kg_mnp_demo" / "webvowl.py",
+        ROOT / "src" / "kg_mnp" / "graphdb.py",
+        ROOT / "src" / "kg_mnp" / "webvowl.py",
         ROOT / "graphdb-local",
         ROOT / "webvowl",
     ]
@@ -20,7 +20,7 @@ def test_graphdb_and_webvowl_integrations_absent():
 def test_no_auto_confirmation_or_compiler_implementation():
     """Stage 05 may build confirmed packages; auto-confirm and compilers remain forbidden."""
 
-    src = ROOT / "src" / "kg_mnp_demo"
+    src = ROOT / "src" / "kg_mnp"
     matches = []
     forbidden = (
         "def auto_confirm",

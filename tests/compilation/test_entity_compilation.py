@@ -1,6 +1,7 @@
 from rdflib import RDF
 
-from kg_mnp_demo.compilation.abox_compiler import compile_abox
+from kg_mnp.compilation.abox_compiler import compile_abox
+
 from ._helpers import authorities
 
 

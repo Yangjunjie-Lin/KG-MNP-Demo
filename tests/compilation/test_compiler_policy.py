@@ -2,8 +2,11 @@ import copy
 
 import pytest
 
-from kg_mnp_demo.compilation.contracts import CompilationContractError, validate_compilation_contract
-from kg_mnp_demo.compilation.policy import (
+from kg_mnp.compilation.contracts import (
+    CompilationContractError,
+    validate_compilation_contract,
+)
+from kg_mnp.compilation.policy import (
     CompilerPolicyError,
     compiler_policy_hash,
     load_compiler_policy,

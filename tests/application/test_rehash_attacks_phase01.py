@@ -3,34 +3,34 @@ from __future__ import annotations
 import hashlib
 import json
 import shutil
+from collections.abc import Callable
 from pathlib import Path
-from typing import Callable
 
 import pytest
 
-from kg_mnp_demo.application.errors import ApplicationError, ErrorCode
-from kg_mnp_demo.application.publication_binding import PublicationBinding
-from kg_mnp_demo.compilation.manifest import json_bytes
-from kg_mnp_demo.graphdb.contracts import validate_graphdb_contract
-from kg_mnp_demo.graphdb.identifiers import (
+from kg_mnp.application.errors import ApplicationError, ErrorCode
+from kg_mnp.application.publication_binding import PublicationBinding
+from kg_mnp.compilation.manifest import json_bytes
+from kg_mnp.graphdb.contracts import validate_graphdb_contract
+from kg_mnp.graphdb.identifiers import (
     publication_id as graphdb_publication_id,
 )
-from kg_mnp_demo.graphdb.identifiers import (
+from kg_mnp.graphdb.identifiers import (
     publication_semantic_hash as graphdb_publication_semantic_hash,
 )
-from kg_mnp_demo.graphdb.identifiers import repository_id_for_publication
-from kg_mnp_demo.modeling.canonical_json import semantic_hash
-from kg_mnp_demo.modeling.registry import validate_contract
-from kg_mnp_demo.modeling.review_identifiers import (
+from kg_mnp.graphdb.identifiers import repository_id_for_publication
+from kg_mnp.modeling.canonical_json import semantic_hash
+from kg_mnp.modeling.registry import validate_contract
+from kg_mnp.modeling.review_identifiers import (
     confirmed_package_id,
     decision_log_hash,
     package_semantic_hash,
 )
-from kg_mnp_demo.publication.contracts import (
+from kg_mnp.publication.contracts import (
     validate_publication_attestation_evidence,
     validate_publication_contract,
 )
-from kg_mnp_demo.publication.manifest import build_publication_manifest
+from kg_mnp.publication.manifest import build_publication_manifest
 
 from ._phase01_helpers import ROOT, publication_attestation_report
 

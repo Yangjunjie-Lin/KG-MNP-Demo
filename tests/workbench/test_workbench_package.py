@@ -4,9 +4,9 @@ import json
 
 import pytest
 
-from kg_mnp_demo.workbench.binding import WorkbenchBinding
-from kg_mnp_demo.workbench.errors import WorkbenchError
-from kg_mnp_demo.workbench.manifest import (
+from kg_mnp.workbench.binding import WorkbenchBinding
+from kg_mnp.workbench.errors import WorkbenchError
+from kg_mnp.workbench.manifest import (
     build_workbench_package,
     validate_workbench_package,
 )

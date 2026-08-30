@@ -1,8 +1,7 @@
 from __future__ import annotations
 
-from rdflib import OWL, Graph, URIRef
-
 import run_reasoner as reasoner
+from rdflib import OWL, Graph, URIRef
 
 
 def _iri(local: str) -> URIRef:

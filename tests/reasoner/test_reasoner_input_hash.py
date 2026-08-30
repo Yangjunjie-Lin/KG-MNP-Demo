@@ -2,9 +2,8 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from rdflib import Graph
-
 import run_reasoner as reasoner
+from rdflib import Graph
 
 
 def test_canonicalization_dependency_is_exactly_pinned():
@@ -15,8 +14,7 @@ def test_canonicalization_dependency_is_exactly_pinned():
 
 
 def _write_minimal_release(root: Path, *, newline: str = "\n") -> None:
-    (root / "config").mkdir(parents=True)
-    (root / "ontology").mkdir()
+    (root / "domain_packs" / "mnp" / "ontology").mkdir(parents=True)
     config = """ontology_version: "1.0.0"
 modules:
   - code: CORE
@@ -32,7 +30,7 @@ root:
   ontology_iri: "https://example.test/root"
   catalog: catalog.xml
 """.replace("\n", newline)
-    (root / "config" / "ontology_modules.yaml").write_text(
+    (root / "domain_packs" / "mnp" / "ontology" / "modules.yaml").write_text(
         config,
         encoding="utf-8",
         newline="",
@@ -43,7 +41,7 @@ root:
         "alignments.ttl": "<https://example.test/A> <https://example.test/aligned> <https://external.test/A> .\n",
         "catalog.xml": "<catalog/>\n",
     }.items():
-        (root / "ontology" / name).write_text(
+        (root / "domain_packs" / "mnp" / "ontology" / name).write_text(
             content.replace("\n", newline),
             encoding="utf-8",
             newline="",
@@ -87,7 +85,13 @@ def test_release_hash_excludes_optional_alignment_content_by_default(tmp_path: P
         tmp_path,
         include_alignments=True,
     )
-    (tmp_path / "ontology" / "alignments.ttl").write_text(
+    (
+        tmp_path
+        / "domain_packs"
+        / "mnp"
+        / "ontology"
+        / "alignments.ttl"
+    ).write_text(
         "<https://example.test/A> <https://example.test/aligned> <https://external.test/CHANGED> .\n",
         encoding="utf-8",
     )

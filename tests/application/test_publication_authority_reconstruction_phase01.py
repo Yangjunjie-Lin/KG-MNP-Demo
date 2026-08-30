@@ -4,9 +4,9 @@ from pathlib import Path
 
 import pytest
 
-from kg_mnp_demo.application.errors import ApplicationError, ErrorCode
-from kg_mnp_demo.application.policy import GraphRole
-from kg_mnp_demo.application.publication_binding import (
+from kg_mnp.application.errors import ApplicationError, ErrorCode
+from kg_mnp.application.policy import GraphRole
+from kg_mnp.application.publication_binding import (
     PUBLICATION_SCENARIOS,
     PublicationBinding,
 )

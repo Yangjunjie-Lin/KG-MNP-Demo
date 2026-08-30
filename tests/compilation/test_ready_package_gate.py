@@ -1,7 +1,8 @@
 import pytest
 
+from kg_mnp.compilation.compiler import CompilationError, validate_ready_package
+
 from ._helpers import authorities
-from kg_mnp_demo.compilation.compiler import CompilationError, validate_ready_package
 
 
 def test_ready_gate_rejects_blocked_package():

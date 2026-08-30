@@ -6,13 +6,13 @@ from pathlib import Path
 
 import pytest
 
-from kg_mnp_demo.publication.contracts import (
+from kg_mnp.publication.contracts import (
     PublicationContractError,
     load_publication_schema,
     validate_publication_contract,
 )
-from kg_mnp_demo.publication.package_builder import build_end_to_end_publication_package
-from kg_mnp_demo.publication.package_validator import (
+from kg_mnp.publication.package_builder import build_end_to_end_publication_package
+from kg_mnp.publication.package_validator import (
     validate_end_to_end_publication_package_against_authorities,
 )
 

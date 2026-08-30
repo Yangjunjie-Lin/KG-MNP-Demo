@@ -17,7 +17,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "scripts"))
 
-from stage03_constants import (  # noqa: E402
+from stage03_constants import (
     DATA_NS,
     OLD_TERM_NS,
     TERM_NS,
@@ -36,17 +36,17 @@ ALLOWLIST_PREFIXES = (
 )
 
 MIGRATE_GLOBS = [
-    "ontology/*.ttl",
-    "ontology/*.xml",
-    "shapes/**/*.ttl",
+    "domain_packs/mnp/ontology/*.ttl",
+    "domain_packs/mnp/ontology/*.xml",
+    "domain_packs/mnp/shapes/**/*.ttl",
     "examples/**/*.ttl",
-    "data/*.ttl",
-    "queries/*.rq",
-    "competency_questions/**/*.rq",
-    "mappings/*.yaml",
-    "rules/*.yaml",
+    "domain_packs/mnp/fixtures/data/*.ttl",
+    "domain_packs/mnp/queries/*.rq",
+    "domain_packs/mnp/competency_questions/**/*.rq",
+    "domain_packs/mnp/mappings/*.yaml",
+    "domain_packs/mnp/rules/*.yaml",
     "schemas/*.json",
-    "src/kg_mnp_demo/**/*.py",
+    "src/kg_mnp/**/*.py",
     "tests/**/*.py",
     "scripts/**/*.py",
     "config/*.yaml",
@@ -144,7 +144,9 @@ def main() -> int:
         original = path.read_text(encoding="utf-8")
         updated = migrate_text(original, term_map)
         # Instance data: also rewrite @prefix if still old
-        if path.suffix == ".ttl" and "data/" in path.as_posix().replace("\\", "/"):
+        if path.suffix == ".ttl" and "/fixtures/data/" in (
+            "/" + path.as_posix().replace("\\", "/")
+        ):
             # Ensure data prefix available — cases keep individuals under DATA_NS via second pass
             updated = updated.replace(
                 f"@prefix mnp: <{TERM_NS}> .",

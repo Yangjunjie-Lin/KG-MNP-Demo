@@ -15,17 +15,18 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
 sys.path.insert(0, str(ROOT / "scripts"))
 
-from kg_mnp_demo.loader import load_ontology_graph, ontology_paths  # noqa: E402
-from stage03_constants import TERM_NS  # noqa: E402
+from stage03_constants import TERM_NS
+
+from kg_mnp.loader import load_ontology_graph, ontology_paths
 
 RUNTIME_GLOBS = [
-    "ontology/*.ttl",
-    "shapes/*.ttl",
-    "examples/eligibility-use-case/shapes/*.ttl",
-    "data/*.ttl",
-    "queries/*.rq",
-    "mappings/*.yaml",
-    "src/kg_mnp_demo/*.py",
+    "domain_packs/mnp/ontology/*.ttl",
+    "domain_packs/mnp/shapes/*.ttl",
+    "domain_packs/mnp/fixtures/eligibility-use-case/shapes/*.ttl",
+    "domain_packs/mnp/fixtures/data/*.ttl",
+    "domain_packs/mnp/queries/*.rq",
+    "domain_packs/mnp/mappings/*.yaml",
+    "src/kg_mnp/*.py",
 ]
 
 

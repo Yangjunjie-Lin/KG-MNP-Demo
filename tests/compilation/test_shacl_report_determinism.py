@@ -1,6 +1,6 @@
 from rdflib import RDF, BNode, Graph, URIRef
 
-from kg_mnp_demo.compilation.shacl_validation import _node
+from kg_mnp.compilation.shacl_validation import _node
 
 from ._helpers import build
 

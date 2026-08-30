@@ -6,13 +6,13 @@ import copy
 
 import pytest
 
-from kg_mnp_demo.modeling.dependencies import (
+from kg_mnp.modeling.dependencies import (
     ROOT,
     load_modeling_dependencies,
     normalized_file_hash,
 )
-from kg_mnp_demo.modeling.registry import validate_contract
-from kg_mnp_demo.modeling.semantic_validation import (
+from kg_mnp.modeling.registry import validate_contract
+from kg_mnp.modeling.semantic_validation import (
     SemanticValidationError,
     validate_terminology_profile_semantics,
 )
@@ -96,7 +96,7 @@ def test_mismatched_ambiguity_group_fails_closed():
 
 
 def test_alias_validation_does_not_rewrite_or_extend_owl_assets():
-    ontology_paths = sorted((ROOT / "ontology").glob("*.ttl"))
+    ontology_paths = sorted((ROOT / "domain_packs" / "mnp" / "ontology").glob("*.ttl"))
     before = {path: normalized_file_hash(path) for path in ontology_paths}
     dependencies = _dependencies()
     _validate(dependencies["terminology_profile"], dependencies)

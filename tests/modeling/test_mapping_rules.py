@@ -8,22 +8,21 @@ import json
 import pytest
 from jsonschema import ValidationError
 
-from kg_mnp_demo.modeling.dependencies import (
-    DependencyError,
+from kg_mnp.modeling.dependencies import (
     ROOT,
+    DependencyError,
     load_mapping_rules,
     load_modeling_dependencies,
     validate_modeling_evidence_references,
 )
-from kg_mnp_demo.modeling.proposal import generate_modeling_proposal
-from kg_mnp_demo.modeling.registry import validate_contract
-from kg_mnp_demo.modeling.selectors import validate_json_pointer
-from kg_mnp_demo.modeling.semantic_validation import (
+from kg_mnp.modeling.proposal import generate_modeling_proposal
+from kg_mnp.modeling.registry import validate_contract
+from kg_mnp.modeling.selectors import validate_json_pointer
+from kg_mnp.modeling.semantic_validation import (
     SemanticValidationError,
     validate_mapping_rules_semantics,
 )
-from kg_mnp_demo.modeling.transformations import TRANSFORMATION_IDS
-
+from kg_mnp.modeling.transformations import TRANSFORMATION_IDS
 
 TERM_NS = "https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#"
 
@@ -92,8 +91,11 @@ def test_tmf_alignment_remains_reference_only_modeling_evidence():
         for rule in dependencies["mapping_rules"]["rules"]
         for reference in rule["modeling_evidence_refs"]
     }
-    assert any(value.startswith("mappings/tmf_to_mnp.yaml#") for value in references)
-    tmf_reference = (ROOT / "mappings" / "tmf_to_mnp.yaml").read_text(
+    assert any(
+        value.startswith("domain_packs/mnp/mappings/tmf_to_mnp.yaml#")
+        for value in references
+    )
+    tmf_reference = (ROOT / "domain_packs" / "mnp" / "mappings" / "tmf_to_mnp.yaml").read_text(
         encoding="utf-8"
     )
     assert "source_path: components.schemas." in tmf_reference
@@ -106,7 +108,7 @@ def test_all_modeling_evidence_references_resolve_offline():
     validate_modeling_evidence_references(rules)
     invalid = copy.deepcopy(rules)
     invalid["rules"][0]["modeling_evidence_refs"] = [
-        "mappings/tmf_to_mnp.yaml#DOES-NOT-EXIST"
+        "domain_packs/mnp/mappings/tmf_to_mnp.yaml#DOES-NOT-EXIST"
     ]
     with pytest.raises(DependencyError, match="unknown modeling evidence fragment"):
         validate_modeling_evidence_references(invalid)

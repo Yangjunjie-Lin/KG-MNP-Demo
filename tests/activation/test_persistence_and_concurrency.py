@@ -6,10 +6,10 @@ from pathlib import Path
 
 import pytest
 
-from kg_mnp_demo.activation.errors import ActivationError, ActivationErrorCode
-from kg_mnp_demo.activation.execution import ActivationController
-from kg_mnp_demo.activation.persistence import ActivationStateStore
-from kg_mnp_demo.modeling.canonical_json import canonical_json_bytes
+from kg_mnp.activation.errors import ActivationError, ActivationErrorCode
+from kg_mnp.activation.execution import ActivationController
+from kg_mnp.activation.persistence import ActivationStateStore
+from kg_mnp.modeling.canonical_json import canonical_json_bytes
 
 from ._helpers import FakeAuthority, FakeVerifier, create_approved_proposal
 

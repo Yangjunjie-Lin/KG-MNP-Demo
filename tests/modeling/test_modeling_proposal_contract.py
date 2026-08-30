@@ -7,8 +7,7 @@ import copy
 import pytest
 from jsonschema import ValidationError
 
-from kg_mnp_demo.modeling.registry import validate_contract
-
+from kg_mnp.modeling.registry import validate_contract
 
 HASH = "a" * 64
 CANDIDATE_ID = "urn:kg-mnp:candidate:" + "b" * 64

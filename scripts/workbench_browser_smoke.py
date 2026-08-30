@@ -10,7 +10,6 @@ from importlib.metadata import PackageNotFoundError, version
 from pathlib import Path
 from urllib.parse import urlsplit
 
-
 EXPECTED_BROWSER_NAME = "chromium"
 EXPECTED_BROWSER_VERSION = "131.0.6778.33"
 EXPECTED_BROWSER_REVISION = "1148"

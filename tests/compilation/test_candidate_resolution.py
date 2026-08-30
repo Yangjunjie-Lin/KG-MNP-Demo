@@ -2,12 +2,13 @@ import copy
 
 import pytest
 
-from kg_mnp_demo.compilation.abox_compiler import ABoxCompilationError, compile_abox
-from kg_mnp_demo.compilation.candidate_resolution import (
+from kg_mnp.compilation.abox_compiler import ABoxCompilationError, compile_abox
+from kg_mnp.compilation.candidate_resolution import (
     CandidateResolutionError,
     resolve_effective_candidates,
     resolve_effective_entity_iris,
 )
+
 from ._helpers import authorities
 
 

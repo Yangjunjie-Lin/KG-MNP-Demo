@@ -6,8 +6,8 @@ from pathlib import Path
 
 import pytest
 
-from kg_mnp_demo.amendment.errors import AmendmentError, AmendmentErrorCode
-from kg_mnp_demo.amendment.review_bridge import require_explicit_review
+from kg_mnp.amendment.errors import AmendmentError, AmendmentErrorCode
+from kg_mnp.amendment.review_bridge import require_explicit_review
 
 ROOT = Path(__file__).resolve().parents[2]
 

@@ -3,9 +3,8 @@ from __future__ import annotations
 from pathlib import Path
 
 import pytest
-from rdflib import OWL, RDFS, Graph, URIRef
-
 import run_reasoner as reasoner
+from rdflib import OWL, RDFS, Graph, URIRef
 
 
 def test_missing_unsatisfiable_report_is_an_error(tmp_path: Path):

@@ -1,5 +1,6 @@
-from kg_mnp_demo.compilation.rdf_canonical import canonical_nquads
-from rdflib import URIRef, Literal
+from rdflib import Literal, URIRef
+
+from kg_mnp.compilation.rdf_canonical import canonical_nquads
 
 
 def test_nquads_sort_by_graph_then_terms():

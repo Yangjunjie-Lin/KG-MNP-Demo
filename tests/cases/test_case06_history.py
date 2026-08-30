@@ -5,7 +5,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from kg_mnp_demo.application.assessment_service import AssessmentService
+from kg_mnp.application.assessment_service import AssessmentService
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -54,10 +54,10 @@ def _rule(result: dict, rule_id: str) -> dict:
 def test_case06_history_and_current_are_real_rule_executions():
     svc = AssessmentService()
     historical = svc.assess_dict(
-        json.loads((ROOT / "inputs" / "case06_history.json").read_text(encoding="utf-8"))
+        json.loads((ROOT / "domain_packs" / "mnp" / "fixtures" / "inputs" / "case06_history.json").read_text(encoding="utf-8"))
     )
     current = svc.assess_dict(
-        json.loads((ROOT / "inputs" / "case06.json").read_text(encoding="utf-8"))
+        json.loads((ROOT / "domain_packs" / "mnp" / "fixtures" / "inputs" / "case06.json").read_text(encoding="utf-8"))
     )
 
     _assert_execution_consistency(historical)

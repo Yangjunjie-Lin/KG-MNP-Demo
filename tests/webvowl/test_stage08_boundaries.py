@@ -11,11 +11,11 @@ from pathlib import Path
 
 import pytest
 
-from kg_mnp_demo.compilation.manifest import json_bytes
-from kg_mnp_demo.publication.package_builder import (
+from kg_mnp.compilation.manifest import json_bytes
+from kg_mnp.publication.package_builder import (
     build_end_to_end_publication_package,
 )
-from kg_mnp_demo.webvowl.policy import load_webvowl_policy
+from kg_mnp.webvowl.policy import load_webvowl_policy
 
 ROOT = Path(__file__).resolve().parents[2]
 NPM_SHRINKWRAP_SHA256 = (
@@ -310,17 +310,17 @@ def test_stage08_ci_cleanup_and_publication_boundary_are_closed() -> None:
     assert "|| true" not in workflow
 
     readme = (ROOT / "README.md").read_text(encoding="utf-8")
-    assert "Stage 08 WebVOWL and End-to-End Publication | PASS" in readme
-    assert "Foundation pipeline status = COMPLETE through Stage 08" in readme
-    assert "This completes the ontology and knowledge graph foundation." in readme
-    assert "PUBLICATION_VERIFIED" in readme
-    assert "LIVE ATTESTATION PENDING" not in readme
+    assert "# KG-MNP Ontology Toolchain" in readme
+    assert "Versioned Ontology Package" in readme
+    assert "publication reconstruction and verification" in readme
+    assert "No Agent or LLM is an ontology authority" in readme
+    assert "kg-mnp-phase06-baseline-2026-08-30" in readme
 
     stage08_sources = "\n".join(
         path.read_text(encoding="utf-8")
         for directory in (
-            ROOT / "src/kg_mnp_demo/webvowl",
-            ROOT / "src/kg_mnp_demo/publication",
+            ROOT / "src/kg_mnp/webvowl",
+            ROOT / "src/kg_mnp/publication",
         )
         for path in directory.glob("*.py")
     ).casefold()

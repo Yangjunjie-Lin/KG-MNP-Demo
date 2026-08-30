@@ -7,17 +7,17 @@ import json
 from copy import deepcopy
 from pathlib import Path
 
-from kg_mnp_demo.modeling.canonical_json import canonical_json_bytes
-from kg_mnp_demo.modeling.confirmation import build_confirmed_modeling_package
-from kg_mnp_demo.modeling.dependencies import load_modeling_dependencies
-from kg_mnp_demo.modeling.identifiers import candidate_id
-from kg_mnp_demo.modeling.package_validation import load_term_type_index
-from kg_mnp_demo.modeling.review_log import (
+from kg_mnp.modeling.canonical_json import canonical_json_bytes
+from kg_mnp.modeling.confirmation import build_confirmed_modeling_package
+from kg_mnp.modeling.dependencies import load_modeling_dependencies
+from kg_mnp.modeling.identifiers import candidate_id
+from kg_mnp.modeling.package_validation import load_term_type_index
+from kg_mnp.modeling.review_log import (
     finalize_review_decision_log,
     init_review_decision_log,
     record_review_action,
 )
-from kg_mnp_demo.modeling.review_policy import load_default_review_policy
+from kg_mnp.modeling.review_policy import load_default_review_policy
 
 ROOT = Path(__file__).resolve().parents[1]
 EXAMPLES = ROOT / "examples" / "review"

@@ -1,7 +1,7 @@
 from __future__ import annotations
 
-from kg_mnp_demo.modeling.canonical_json import canonical_json_bytes
-from kg_mnp_demo.modeling.review_log import (
+from kg_mnp.modeling.canonical_json import canonical_json_bytes
+from kg_mnp.modeling.review_log import (
     finalize_review_decision_log,
     init_review_decision_log,
     record_review_action,

@@ -4,8 +4,8 @@ import copy
 
 import pytest
 
-from kg_mnp_demo.modeling.review_actions import validate_review_action
-from kg_mnp_demo.modeling.semantic_validation import SemanticValidationError
+from kg_mnp.modeling.review_actions import validate_review_action
+from kg_mnp.modeling.semantic_validation import SemanticValidationError
 
 from ._helpers import load_action, load_proposal
 

@@ -3,14 +3,15 @@ import copy
 import pytest
 from rdflib import URIRef
 
-from kg_mnp_demo.compilation.abox_compiler import ABoxCompilationError, compile_abox
-from kg_mnp_demo.compilation.candidate_resolution import CandidateResolutionError
+from kg_mnp.compilation.abox_compiler import ABoxCompilationError, compile_abox
+from kg_mnp.compilation.candidate_resolution import CandidateResolutionError
+
 from ._helpers import authorities
 
 
 def test_object_property_uses_effective_entity_iris():
     values = authorities()
-    graph, assertions = compile_abox(values[3], values[1], values[4])
+    _graph, assertions = compile_abox(values[3], values[1], values[4])
     relation = next(item for item in assertions if item.candidate_kind == "OBJECT_PROPERTY_ASSERTION")
     assert isinstance(relation.triple[0], URIRef) and isinstance(relation.triple[2], URIRef)
 

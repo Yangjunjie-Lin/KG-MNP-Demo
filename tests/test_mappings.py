@@ -1,11 +1,10 @@
 """TM Forum mapping and source manifest tests."""
 
-from kg_mnp_demo.mappings import (
+from kg_mnp.mappings import (
     load_mappings,
     load_source_manifest,
     validate_mapping_structure,
 )
-
 
 REQUIRED_SOURCES = [
     "Point-Topic/cto-ontology",

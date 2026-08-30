@@ -4,16 +4,15 @@ from __future__ import annotations
 
 from rdflib.namespace import OWL, RDF, RDFS
 
-from kg_mnp_demo.application.ontology_service import (
+from kg_mnp.application.ontology_service import (
     OntologyService,
     edge_exists_in_ontology,
 )
-from kg_mnp_demo.loader import load_case_graph, load_ontology_graph, ontology_module_files
-from kg_mnp_demo.namespaces import MNP
-from kg_mnp_demo.inference import apply_owlrl
-from kg_mnp_demo.evaluator import evaluate_case
-from kg_mnp_demo.validator import validate_graph
-
+from kg_mnp.evaluator import evaluate_case
+from kg_mnp.inference import apply_owlrl
+from kg_mnp.loader import load_case_graph, load_ontology_graph, ontology_module_files
+from kg_mnp.namespaces import MNP
+from kg_mnp.validator import validate_graph
 
 EXPECTED_DECISIONS = {
     "CASE-01": "ELIGIBLE",

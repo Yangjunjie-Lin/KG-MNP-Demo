@@ -52,7 +52,7 @@ No new module; rely on architecture docs until Stage 04.
 
 ### B — New modeling-provenance module with TBox-only terms (selected)
 
-Create `ontology/mnp-modeling-provenance.ttl` and move mapping/modeling terms
+Create `domain_packs/mnp/ontology/mnp-modeling-provenance.ttl` and move mapping/modeling terms
 there. Distinguish modeling evidence from business evidence and review
 decisions from eligibility decisions.
 
@@ -111,7 +111,7 @@ Rules:
   core.
 - Declare the eight classes (and only properties clearly required to connect
   them at TBox level—avoid speculative property explosion).
-- Root `kg-mnp` imports the new module; `config/ontology_modules.yaml` lists it
+- Root `kg-mnp` imports the new module; `domain_packs/mnp/ontology/modules.yaml` lists it
   as runtime.
 - Alignments module may annotate mapping terms as local/governance without
   forcing alignments into default runtime if policy keeps alignments optional.
@@ -129,7 +129,7 @@ Rules:
 
 | Asset | Impact |
 |---|---|
-| `ontology/mnp-core.ttl` | Remove defining triples for `MappingRecord` (and related mapping DPs) |
+| `domain_packs/mnp/ontology/mnp-core.ttl` | Remove defining triples for `MappingRecord` (and related mapping DPs) |
 | New TTL module | Hold defining triples |
 | Existing eligibility `data/` | No ModelingEvidence/ReviewDecision instances expected |
 | term-inventory / change-log | Record MOVE_MODULE and ADD decisions |

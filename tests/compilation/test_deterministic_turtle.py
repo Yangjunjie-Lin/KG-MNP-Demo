@@ -1,6 +1,7 @@
 from rdflib import Graph, Literal, URIRef
 
-from kg_mnp_demo.compilation.rdf_canonical import deterministic_turtle
+from kg_mnp.compilation.rdf_canonical import deterministic_turtle
+
 from ._helpers import build
 
 

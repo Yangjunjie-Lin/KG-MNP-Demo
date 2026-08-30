@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from kg_mnp_demo.modeling.review_identifiers import confirmed_item_id
+from kg_mnp.modeling.review_identifiers import confirmed_item_id
 
 from ._helpers import load_expected_package
 

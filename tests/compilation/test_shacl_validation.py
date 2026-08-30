@@ -1,14 +1,14 @@
 from rdflib import RDF, SH, XSD, Graph, Literal, Namespace, URIRef
 
-from kg_mnp_demo.compilation.owl_consistency import load_ontology_graph
-from kg_mnp_demo.compilation.rdf_canonical import canonical_ntriples
-from kg_mnp_demo.compilation.shacl_validation import (
+from kg_mnp.compilation.owl_consistency import load_ontology_graph
+from kg_mnp.compilation.rdf_canonical import canonical_ntriples
+from kg_mnp.compilation.shacl_validation import (
     _deterministic_report_graph,
     _node,
     validate_abox,
 )
-from ._helpers import build
 
+from ._helpers import build
 
 MNP = Namespace("https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#")
 

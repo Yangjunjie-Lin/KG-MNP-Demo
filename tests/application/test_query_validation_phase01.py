@@ -2,9 +2,9 @@ from __future__ import annotations
 
 import pytest
 
-from kg_mnp_demo.application.errors import ApplicationError
-from kg_mnp_demo.application.identifiers import parse_rdf_term, validate_iri
-from kg_mnp_demo.application.query_validator import (
+from kg_mnp.application.errors import ApplicationError
+from kg_mnp.application.identifiers import parse_rdf_term, validate_iri
+from kg_mnp.application.query_validator import (
     validate_bound_graph_values,
     validate_query_text,
 )

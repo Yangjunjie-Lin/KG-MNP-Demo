@@ -7,7 +7,7 @@ import argparse
 import json
 from pathlib import Path
 
-from kg_mnp_demo.workbench.artifact_verifier import (
+from kg_mnp.workbench.artifact_verifier import (
     verify_application_phase02_artifact,
 )
 

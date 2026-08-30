@@ -2,8 +2,8 @@ from __future__ import annotations
 
 import pytest
 
-from kg_mnp_demo.governance.errors import GovernanceError, GovernanceErrorCode
-from kg_mnp_demo.governance.state_machine import require_transition
+from kg_mnp.governance.errors import GovernanceError, GovernanceErrorCode
+from kg_mnp.governance.state_machine import require_transition
 
 from ._helpers import authority, proposal_arguments
 from ._helpers import workspace as controlled_workspace

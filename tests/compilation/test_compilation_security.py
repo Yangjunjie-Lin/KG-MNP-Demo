@@ -6,38 +6,43 @@ from pathlib import Path
 
 import pytest
 from jsonschema import ValidationError
-from rdflib import Graph, URIRef, XSD
+from rdflib import XSD, Graph, URIRef
 
-from kg_mnp_demo.compilation.abox_compiler import _literal
-from kg_mnp_demo.compilation.compiler import (
+from kg_mnp.compilation.abox_compiler import _literal
+from kg_mnp.compilation.compiler import (
     CompilationError,
     build_artifact_set,
     compile_formal_semantics,
 )
-from kg_mnp_demo.compilation.identifiers import artifact_id, compilation_id
-from kg_mnp_demo.compilation.manifest import (
+from kg_mnp.compilation.identifiers import artifact_id, compilation_id
+from kg_mnp.compilation.manifest import (
     compilation_manifest_hash,
     json_bytes,
     json_semantic_hash,
     rdf_semantic_hash,
 )
-from kg_mnp_demo.compilation.rdf_canonical import canonical_ntriples
-from kg_mnp_demo.compilation.validator import CompilationValidationError, validate_compilation_package_against_authorities
-from kg_mnp_demo.modeling.dependencies import ROOT
-from kg_mnp_demo.modeling.canonical_json import semantic_hash
-from kg_mnp_demo.modeling.review_identifiers import (
+from kg_mnp.compilation.rdf_canonical import canonical_ntriples
+from kg_mnp.compilation.validator import (
+    CompilationValidationError,
+    validate_compilation_package_against_authorities,
+)
+from kg_mnp.modeling.canonical_json import semantic_hash
+from kg_mnp.modeling.dependencies import ROOT
+from kg_mnp.modeling.review_identifiers import (
     confirmed_item_id,
     confirmed_package_id,
     package_semantic_hash,
 )
+
 from ._helpers import authorities, build
 
 
 def _copy_stage03_assets(destination: Path) -> Path:
     root = destination / "stage03"
-    (root / "config").mkdir(parents=True)
-    shutil.copy2(ROOT / "config" / "ontology_modules.yaml", root / "config" / "ontology_modules.yaml")
-    shutil.copytree(ROOT / "ontology", root / "ontology")
+    shutil.copytree(
+        ROOT / "domain_packs" / "mnp" / "ontology",
+        root / "domain_packs" / "mnp" / "ontology",
+    )
     (root / "docs" / "ontology").mkdir(parents=True)
     for name in ("reasoner-attestation.json", "term-inventory.csv"):
         shutil.copy2(ROOT / "docs" / "ontology" / name, root / "docs" / "ontology" / name)
@@ -247,10 +252,10 @@ def test_library_api_rejects_stale_ontology_baseline(tmp_path, tamper):
     root = _copy_stage03_assets(tmp_path)
     values = list(authorities())
     if tamper == "ontology":
-        path = root / "ontology" / "mnp-core.ttl"
+        path = root / "domain_packs" / "mnp" / "ontology" / "mnp-core.ttl"
         path.write_bytes(path.read_bytes() + b"\n# semantic closure tamper\n")
     elif tamper == "module-config":
-        path = root / "config" / "ontology_modules.yaml"
+        path = root / "domain_packs" / "mnp" / "ontology" / "modules.yaml"
         path.write_text(path.read_text(encoding="utf-8") + "\n# config tamper\n", encoding="utf-8")
     elif tamper == "term-inventory":
         path = root / "docs" / "ontology" / "term-inventory.csv"
@@ -259,7 +264,7 @@ def test_library_api_rejects_stale_ontology_baseline(tmp_path, tamper):
         path = root / "docs" / "ontology" / "reasoner-attestation.json"
         path.write_bytes(path.read_bytes() + b"\n")
     elif tamper == "root-version":
-        path = root / "config" / "ontology_modules.yaml"
+        path = root / "domain_packs" / "mnp" / "ontology" / "modules.yaml"
         content = path.read_text(encoding="utf-8")
         path.write_text(content.replace("ontology/1.0.0/kg-mnp", "ontology/9.9.9/kg-mnp"), encoding="utf-8")
     else:
@@ -271,7 +276,7 @@ def test_library_api_rejects_stale_ontology_baseline(tmp_path, tamper):
 
 def test_validator_api_rejects_stale_baseline_before_execution(tmp_path, monkeypatch):
     root = _copy_stage03_assets(tmp_path)
-    stale = root / "ontology" / "mnp-core.ttl"
+    stale = root / "domain_packs" / "mnp" / "ontology" / "mnp-core.ttl"
     stale.write_bytes(stale.read_bytes() + b"\n# validator tamper\n")
     compilation_dir = tmp_path / "empty-compilation"
     compilation_dir.mkdir()
@@ -279,8 +284,8 @@ def test_validator_api_rejects_stale_baseline_before_execution(tmp_path, monkeyp
     def should_not_run(*args, **kwargs):
         raise AssertionError("SHACL/OWL execution must not run for stale authorities")
 
-    monkeypatch.setattr("kg_mnp_demo.compilation.compiler.validate_abox", should_not_run)
-    monkeypatch.setattr("kg_mnp_demo.compilation.compiler.check_owl_consistency", should_not_run)
+    monkeypatch.setattr("kg_mnp.compilation.compiler.validate_abox", should_not_run)
+    monkeypatch.setattr("kg_mnp.compilation.compiler.check_owl_consistency", should_not_run)
     with pytest.raises(CompilationValidationError, match="ontology baseline"):
         validate_compilation_package_against_authorities(
             compilation_dir, *authorities(), authority_root=root
@@ -289,15 +294,15 @@ def test_validator_api_rejects_stale_baseline_before_execution(tmp_path, monkeyp
 
 def test_stale_baseline_creates_no_compilation_artifacts(tmp_path, monkeypatch):
     root = _copy_stage03_assets(tmp_path)
-    stale = root / "ontology" / "mnp-core.ttl"
+    stale = root / "domain_packs" / "mnp" / "ontology" / "mnp-core.ttl"
     stale.write_bytes(stale.read_bytes() + b"\n# fail before artifact write\n")
     output = tmp_path / "must-not-exist"
 
     def should_not_run(*args, **kwargs):
         raise AssertionError("SHACL/OWL execution must not run for stale authorities")
 
-    monkeypatch.setattr("kg_mnp_demo.compilation.compiler.validate_abox", should_not_run)
-    monkeypatch.setattr("kg_mnp_demo.compilation.compiler.check_owl_consistency", should_not_run)
+    monkeypatch.setattr("kg_mnp.compilation.compiler.validate_abox", should_not_run)
+    monkeypatch.setattr("kg_mnp.compilation.compiler.check_owl_consistency", should_not_run)
     with pytest.raises(CompilationError, match="ontology baseline"):
         compile_formal_semantics(
             *authorities(),

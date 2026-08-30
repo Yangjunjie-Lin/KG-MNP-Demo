@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 from __future__ import annotations
 
-import json
 import base64
+import json
 import os
 import subprocess
 import time
@@ -15,7 +15,8 @@ SCENARIO = "full-confirmation"
 
 def _graph_bytes(dataset_bytes: bytes, graph_iri: str, mutate) -> bytes:
     from rdflib import Dataset, URIRef
-    from kg_mnp_demo.compilation.rdf_canonical import canonical_ntriples
+
+    from kg_mnp.compilation.rdf_canonical import canonical_ntriples
 
     dataset = Dataset()
     dataset.parse(data=dataset_bytes.decode("utf-8"), format="nquads")
@@ -25,8 +26,11 @@ def _graph_bytes(dataset_bytes: bytes, graph_iri: str, mutate) -> bytes:
 
 
 def _must_fail_verification(client, package_dir: Path, *, label: str) -> None:
-    from kg_mnp_demo.graphdb.client import GraphDBClientError
-    from kg_mnp_demo.graphdb.verifier import GraphDBVerificationError, verify_imported_repository
+    from kg_mnp.graphdb.client import GraphDBClientError
+    from kg_mnp.graphdb.verifier import (
+        GraphDBVerificationError,
+        verify_imported_repository,
+    )
 
     try:
         verify_imported_repository(client, package_dir)
@@ -62,10 +66,12 @@ def _assert_default_dataset_semantics(client, repository_id: str) -> dict:
 def _verify_graphdb_tbox_projection(client, repository_id: str, built: dict) -> dict:
     """Extract the live repository's TBox named graphs and compare Stage 03."""
     import hashlib
+
     from rdflib import Dataset, URIRef
-    from kg_mnp_demo.compilation.rdf_canonical import canonical_nquads
-    from kg_mnp_demo.webvowl.source import build_visualization_source
-    from kg_mnp_demo.webvowl.verifier import tbox_equivalence
+
+    from kg_mnp.compilation.rdf_canonical import canonical_nquads
+    from kg_mnp.webvowl.source import build_visualization_source
+    from kg_mnp.webvowl.verifier import tbox_equivalence
 
     exported = client.export_nquads(repository_id, include_inferred=False)
     dataset = Dataset()
@@ -91,7 +97,7 @@ def _run_live_inference_regression(client, package_dir: Path, built: dict) -> di
 
     from rdflib import Dataset
 
-    from kg_mnp_demo.graphdb.verifier import semantic_hash_nquads
+    from kg_mnp.graphdb.verifier import semantic_hash_nquads
 
     repository_id = built["manifest"]["repository_id"]
     config = built["files"]["repository/repository-config.ttl"]
@@ -295,8 +301,8 @@ def _json(path: Path) -> dict:
 
 
 def _authorities(scenario: str = SCENARIO) -> tuple[dict, ...]:
-    from kg_mnp_demo.modeling.dependencies import load_modeling_dependencies
-    from kg_mnp_demo.modeling.review_policy import load_default_review_policy
+    from kg_mnp.modeling.dependencies import load_modeling_dependencies
+    from kg_mnp.modeling.review_policy import load_default_review_policy
 
     dependencies = load_modeling_dependencies()
     return (
@@ -392,15 +398,18 @@ def _scan_non_sensitive_artifacts(*directories: Path) -> None:
 
 
 def main() -> int:
-    from kg_mnp_demo.compilation.policy import load_compiler_policy
-    from kg_mnp_demo.graphdb.attestation import build_import_attestation, write_import_attestation
-    from kg_mnp_demo.graphdb.client import GraphDBClient
-    from kg_mnp_demo.graphdb.importer import import_package
-    from kg_mnp_demo.graphdb.package_builder import build_graphdb_import_package
-    from kg_mnp_demo.graphdb.package_validator import validate_graphdb_import_package
-    from kg_mnp_demo.graphdb.policy import load_graphdb_policy
-    from kg_mnp_demo.graphdb.verifier import verify_imported_repository
-    from kg_mnp_demo.graphdb._io import json_bytes
+    from kg_mnp.compilation.policy import load_compiler_policy
+    from kg_mnp.graphdb._io import json_bytes
+    from kg_mnp.graphdb.attestation import (
+        build_import_attestation,
+        write_import_attestation,
+    )
+    from kg_mnp.graphdb.client import GraphDBClient, GraphDBClientError
+    from kg_mnp.graphdb.importer import import_package
+    from kg_mnp.graphdb.package_builder import build_graphdb_import_package
+    from kg_mnp.graphdb.package_validator import validate_graphdb_import_package
+    from kg_mnp.graphdb.policy import load_graphdb_policy
+    from kg_mnp.graphdb.verifier import verify_imported_repository
 
     authorities = _authorities()
     compilation = ROOT / f"examples/compilation/expected/{SCENARIO}"
@@ -409,7 +418,7 @@ def main() -> int:
     project = "kgmnp-" + digest[:12]
     package_dir = ROOT / "runtime_outputs" / "graphdb" / digest
     report_dir = ROOT / "runtime_reports" / "graphdb" / digest
-    from kg_mnp_demo.compilation.artifacts import write_artifact_set
+    from kg_mnp.compilation.artifacts import write_artifact_set
     write_artifact_set(package_dir, built["files"], force=True)
     override_file: Path | None = None
     generated_license_file: Path | None = None
@@ -451,8 +460,8 @@ def main() -> int:
             try:
                 if client.health_check()["healthy"]:
                     break
-            except Exception:
-                pass
+            except GraphDBClientError:
+                continue
             if time.monotonic() >= deadline:
                 raise RuntimeError("GraphDB did not become healthy within 240 seconds")
             time.sleep(3)
@@ -464,7 +473,7 @@ def main() -> int:
         runtime_dir = report_dir / "runtime"
         runtime_dir.mkdir(parents=True, exist_ok=True)
         (runtime_dir / "graphdb-version.json").write_bytes(json_bytes(version))
-        started_at = __import__("kg_mnp_demo.graphdb.attestation", fromlist=["utc_now"]).utc_now()
+        started_at = __import__("kg_mnp.graphdb.attestation", fromlist=["utc_now"]).utc_now()
         imported = import_package(client, package_dir)
         default_dataset_evidence = _assert_default_dataset_semantics(
             client,

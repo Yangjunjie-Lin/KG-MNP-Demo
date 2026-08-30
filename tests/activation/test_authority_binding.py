@@ -7,8 +7,8 @@ from types import SimpleNamespace
 
 import pytest
 
-import kg_mnp_demo.activation.authority_binding as authority_binding_module
-from kg_mnp_demo.activation.authority_binding import (
+import kg_mnp.activation.authority_binding as authority_binding_module
+from kg_mnp.activation.authority_binding import (
     BASE_LINEAGE_SOURCE_TYPE,
     PRODUCTION_AUTHORITY_TYPE,
     ControlledPhase06Authority,
@@ -17,8 +17,8 @@ from kg_mnp_demo.activation.authority_binding import (
     load_production_phase06_authority,
     require_production_phase06_authority,
 )
-from kg_mnp_demo.activation.errors import ActivationError, ActivationErrorCode
-from kg_mnp_demo.modeling.canonical_json import canonical_json_bytes
+from kg_mnp.activation.errors import ActivationError, ActivationErrorCode
+from kg_mnp.modeling.canonical_json import canonical_json_bytes
 
 COMMIT = "a" * 40
 P0_HASH = "b" * 64

@@ -2,8 +2,8 @@ import json
 
 import pytest
 
-from kg_mnp_demo.graphdb.contracts import validate_graphdb_contract
-from kg_mnp_demo.graphdb.identifiers import repository_id_for_publication
+from kg_mnp.graphdb.contracts import validate_graphdb_contract
+from kg_mnp.graphdb.identifiers import repository_id_for_publication
 
 from ._helpers import ROOT
 

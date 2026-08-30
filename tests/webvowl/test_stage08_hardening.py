@@ -10,20 +10,20 @@ from types import ModuleType
 
 import pytest
 
-from kg_mnp_demo.webvowl import converter, package_builder
-from kg_mnp_demo.webvowl.converter import (
+from kg_mnp.webvowl import converter, package_builder
+from kg_mnp.webvowl.converter import (
     ConversionError,
     convert_with_owl2vowl_docker,
 )
-from kg_mnp_demo.webvowl.coverage import build_coverage_report
-from kg_mnp_demo.webvowl.identifiers import normalized_vowl_semantic_hash
-from kg_mnp_demo.webvowl.package_builder import (
+from kg_mnp.webvowl.coverage import build_coverage_report
+from kg_mnp.webvowl.identifiers import normalized_vowl_semantic_hash
+from kg_mnp.webvowl.package_builder import (
     WebVOWLPackageError,
     _validated_upstream_lock,
     build_webvowl_visualization_package,
 )
-from kg_mnp_demo.webvowl.policy import load_webvowl_policy
-from kg_mnp_demo.webvowl.verifier import scan_vowl_leakage
+from kg_mnp.webvowl.policy import load_webvowl_policy
+from kg_mnp.webvowl.verifier import scan_vowl_leakage
 
 
 @pytest.fixture(scope="module")

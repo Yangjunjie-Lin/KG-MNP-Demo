@@ -11,23 +11,23 @@ from workbench.test_workbench_artifact import (
     write_artifact as write_phase02_artifact,
 )
 
-import kg_mnp_demo.governance.authority_binding as authority_binding_module
-from kg_mnp_demo.diagnostics.attestation import (
+import kg_mnp.governance.authority_binding as authority_binding_module
+from kg_mnp.diagnostics.attestation import (
     build_application_phase03_attestation,
 )
-from kg_mnp_demo.diagnostics.authority_loader import (
+from kg_mnp.diagnostics.authority_loader import (
     load_verified_authority_bindings,
 )
-from kg_mnp_demo.diagnostics.contracts import strict_json_file
-from kg_mnp_demo.diagnostics.engine import AuthoritySnapshot, reconstruct_diagnostics
-from kg_mnp_demo.governance.authority_binding import (
+from kg_mnp.diagnostics.contracts import strict_json_file
+from kg_mnp.diagnostics.engine import AuthoritySnapshot, reconstruct_diagnostics
+from kg_mnp.governance.authority_binding import (
     PRODUCTION_AUTHORITY_TYPE,
     GovernanceAuthority,
     load_production_phase03_authority,
 )
-from kg_mnp_demo.governance.errors import GovernanceError, GovernanceErrorCode
-from kg_mnp_demo.governance.workspace import GovernanceWorkspace
-from kg_mnp_demo.modeling.canonical_json import canonical_json_bytes
+from kg_mnp.governance.errors import GovernanceError, GovernanceErrorCode
+from kg_mnp.governance.workspace import GovernanceWorkspace
+from kg_mnp.modeling.canonical_json import canonical_json_bytes
 
 ROOT = Path(__file__).resolve().parents[2]
 COMMIT = "1" * 40

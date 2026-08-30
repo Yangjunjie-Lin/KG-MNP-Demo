@@ -6,14 +6,14 @@ import copy
 
 import pytest
 
-from kg_mnp_demo.modeling.canonical_json import semantic_hash
-from kg_mnp_demo.modeling.identifiers import candidate_semantic_content
-from kg_mnp_demo.modeling.review_identifiers import (
+from kg_mnp.modeling.canonical_json import semantic_hash
+from kg_mnp.modeling.identifiers import candidate_semantic_content
+from kg_mnp.modeling.review_identifiers import (
     confirmed_item_id,
     confirmed_package_id,
     package_semantic_hash,
 )
-from kg_mnp_demo.modeling.semantic_validation import (
+from kg_mnp.modeling.semantic_validation import (
     SemanticValidationError,
     validate_confirmed_modeling_package_semantics,
 )

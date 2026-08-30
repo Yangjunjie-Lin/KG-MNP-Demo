@@ -4,7 +4,6 @@
 Always uses the in-memory RDF backend.
 """
 
-# ruff: noqa: E402
 
 from __future__ import annotations
 
@@ -25,18 +24,18 @@ SRC = ROOT / "src"
 if str(SRC) not in sys.path:
     sys.path.insert(0, str(SRC))
 
-from kg_mnp_demo.evaluator import evaluate_case
-from kg_mnp_demo.inference import apply_owlrl
-from kg_mnp_demo.loader import case_path, load_case_graph
-from kg_mnp_demo.namespaces import CASE_FILES, MNP
-from kg_mnp_demo.rule_engine import ASSESSMENT_TIME, collect_evidence, resolve_case_uri
-from kg_mnp_demo.trace import affected_assessments, blocking_reasons, decision_trace
-from kg_mnp_demo.trace_graph import (
+from kg_mnp.evaluator import evaluate_case
+from kg_mnp.inference import apply_owlrl
+from kg_mnp.loader import case_path, load_case_graph
+from kg_mnp.namespaces import CASE_FILES, MNP
+from kg_mnp.rule_engine import ASSESSMENT_TIME, collect_evidence, resolve_case_uri
+from kg_mnp.trace import affected_assessments, blocking_reasons, decision_trace
+from kg_mnp.trace_graph import (
     build_assessment_subgraph,
     format_subgraph_tree,
     render_subgraph_html,
 )
-from kg_mnp_demo.validator import validate_graph
+from kg_mnp.validator import validate_graph
 
 BACKEND = "rdf"
 DEFAULT_CASE = "CASE-03"
@@ -101,8 +100,8 @@ def _configure_stdio() -> None:
     for stream in (sys.stdout, sys.stderr):
         try:
             stream.reconfigure(encoding="utf-8", errors="replace")
-        except Exception:
-            pass
+        except (AttributeError, OSError):
+            continue
 
 
 def _local(name: Any) -> str:
@@ -133,42 +132,42 @@ def extract_case_input_summary(graph: Graph, case_id: str) -> dict[str, Any]:
     PREFIX mnp: <https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#>
     SELECT ?caseId ?masked ?applicant ?numStatus ?idMatch ?amount ?arrangement
            ?ctrStatus ?ctrEnd ?days
-    WHERE {
+    WHERE {{
       ?case a mnp:MNPCase ;
             mnp:caseIdentifier ?caseId ;
             mnp:concernsNumber ?phone ;
             mnp:requestedBy ?applicant .
-      FILTER(STR(?caseId) = %s)
-      OPTIONAL { ?phone mnp:maskedPhoneNumber ?masked }
-      OPTIONAL {
+      FILTER(STR(?caseId) = {})
+      OPTIONAL {{ ?phone mnp:maskedPhoneNumber ?masked }}
+      OPTIONAL {{
         ?case mnp:hasCaseEvidence ?evNum .
         ?evNum mnp:evidenceType "NUMBER_STATUS" ;
                mnp:numberStatusCode ?numStatus .
-      }
-      OPTIONAL {
+      }}
+      OPTIONAL {{
         ?case mnp:hasCaseEvidence ?evId .
         ?evId mnp:evidenceType "IDENTITY_MATCH" ;
               mnp:identityMatchFlag ?idMatch .
-      }
-      OPTIONAL {
+      }}
+      OPTIONAL {{
         ?case mnp:hasCaseEvidence ?evBill .
         ?evBill mnp:evidenceType "BILLING_BALANCE" ;
                 mnp:observedAmount ?amount .
-        OPTIONAL { ?evBill mnp:hasPaymentArrangement ?arrangement }
-      }
-      OPTIONAL {
+        OPTIONAL {{ ?evBill mnp:hasPaymentArrangement ?arrangement }}
+      }}
+      OPTIONAL {{
         ?case mnp:hasCaseEvidence ?evCtr .
         ?evCtr mnp:evidenceType "CONTRACT_STATUS" ;
                mnp:contractStatusCode ?ctrStatus .
-        OPTIONAL { ?evCtr mnp:contractEndTime ?ctrEnd }
-      }
-      OPTIONAL {
+        OPTIONAL {{ ?evCtr mnp:contractEndTime ?ctrEnd }}
+      }}
+      OPTIONAL {{
         ?case mnp:hasCaseEvidence ?evPort .
         ?evPort mnp:evidenceType "PORTING_HISTORY" ;
                 mnp:daysSinceLastPort ?days .
-      }
-    }
-    """ % f'"{case_id}"'
+      }}
+    }}
+    """.format(f'"{case_id}"')
 
     row = next(iter(graph.query(q)), None)
     evidence_by_type = collect_evidence(graph, case_id)
@@ -181,7 +180,7 @@ def extract_case_input_summary(graph: Graph, case_id: str) -> dict[str, Any]:
         "PORTING_HISTORY",
     ]
     ordered_types = type_order + sorted(
-        t for t in evidence_by_type.keys() if t not in type_order
+        t for t in evidence_by_type if t not in type_order
     )
     for etype in ordered_types:
         views = evidence_by_type.get(etype, [])
@@ -1081,7 +1080,7 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument(
         "--input",
         default=None,
-        help="External JSON case input (delegates to kg_mnp_demo.pipeline)",
+        help="External JSON case input (delegates to kg_mnp.pipeline)",
     )
     p.add_argument(
         "--all",
@@ -1108,7 +1107,7 @@ def main(argv: list[str] | None = None) -> int:
         output_dir = ROOT / output_dir
 
     if args.input:
-        from kg_mnp_demo.pipeline import main as pipeline_main
+        from kg_mnp.pipeline import main as pipeline_main
 
         pipeline_argv = ["--input", args.input, "--output-dir", str(output_dir)]
         if args.no_html:
@@ -1128,11 +1127,7 @@ def main(argv: list[str] | None = None) -> int:
     focus_case = args.case
     primary = evaluate_pipeline(focus_case)
     exit_code = 0
-    if not primary["input_validation"]["conforms"]:
-        exit_code = 1
-    elif primary.get("assessment_validation") and not primary["assessment_validation"].get("conforms", True):
-        exit_code = 1
-    elif primary["evaluation"] and not primary["evaluation"].get("publishable", True):
+    if not primary["input_validation"]["conforms"] or primary.get("assessment_validation") and not primary["assessment_validation"].get("conforms", True) or primary["evaluation"] and not primary["evaluation"].get("publishable", True):
         exit_code = 1
 
     print_input_section(primary["input_summary"])

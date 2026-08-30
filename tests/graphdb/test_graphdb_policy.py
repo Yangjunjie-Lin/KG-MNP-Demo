@@ -1,7 +1,12 @@
 import copy
+
 import pytest
 
-from kg_mnp_demo.graphdb.policy import GraphDBPolicyError, load_graphdb_policy, validate_graphdb_policy
+from kg_mnp.graphdb.policy import (
+    GraphDBPolicyError,
+    load_graphdb_policy,
+    validate_graphdb_policy,
+)
 
 
 def test_policy_freezes_versions_digests_and_local_binding():

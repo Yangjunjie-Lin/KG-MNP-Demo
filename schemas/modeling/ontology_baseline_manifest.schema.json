@@ -96,7 +96,7 @@
         },
         "file": {
           "type": "string",
-          "pattern": "^ontology/[^\\\\]+\\.ttl$"
+          "pattern": "^domain_packs/mnp/ontology/[^\\\\]+\\.ttl$"
         },
         "ontology_iri": {
           "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/common/1.0#/$defs/AbsoluteIRI"

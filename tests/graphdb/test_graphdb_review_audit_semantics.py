@@ -5,7 +5,7 @@ import json
 
 import pytest
 
-from kg_mnp_demo.graphdb.verifier import (
+from kg_mnp.graphdb.verifier import (
     GraphDBVerificationError,
     assert_review_audit_semantics,
     expected_review_audit_rows,

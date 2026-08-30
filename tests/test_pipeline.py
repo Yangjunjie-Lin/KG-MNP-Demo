@@ -2,12 +2,11 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
-
-from kg_mnp_demo.pipeline import run_pipeline
-from kg_mnp_demo.trace_graph import edges_exist_in_graph
+from kg_mnp.pipeline import run_pipeline
+from kg_mnp.trace_graph import edges_exist_in_graph
 
 ROOT = Path(__file__).resolve().parents[1]
 
@@ -27,7 +26,7 @@ REQUIRED_OUTPUTS = [
 
 def test_json_case03_blocked(tmp_path):
     result = run_pipeline(
-        ROOT / "inputs" / "case03.json",
+        ROOT / "domain_packs" / "mnp" / "fixtures" / "inputs" / "case03.json",
         tmp_path / "case03",
         write_html=True,
     )
@@ -46,7 +45,7 @@ def test_json_case03_blocked(tmp_path):
 
 def test_trace_contains_real_entities(tmp_path):
     result = run_pipeline(
-        ROOT / "inputs" / "case03.json",
+        ROOT / "domain_packs" / "mnp" / "fixtures" / "inputs" / "case03.json",
         tmp_path / "case03",
         write_html=False,
     )
@@ -63,14 +62,14 @@ def test_trace_contains_real_entities(tmp_path):
 
 def test_output_files_complete(tmp_path):
     out = tmp_path / "case03"
-    run_pipeline(ROOT / "inputs" / "case03.json", out, write_html=True)
+    run_pipeline(ROOT / "domain_packs" / "mnp" / "fixtures" / "inputs" / "case03.json", out, write_html=True)
     for name in REQUIRED_OUTPUTS:
         assert (out / name).exists(), name
 
 
 def test_repeatable_pipeline(tmp_path):
-    a = run_pipeline(ROOT / "inputs" / "case03.json", tmp_path / "a", write_html=False)
-    b = run_pipeline(ROOT / "inputs" / "case03.json", tmp_path / "b", write_html=False)
+    a = run_pipeline(ROOT / "domain_packs" / "mnp" / "fixtures" / "inputs" / "case03.json", tmp_path / "a", write_html=False)
+    b = run_pipeline(ROOT / "domain_packs" / "mnp" / "fixtures" / "inputs" / "case03.json", tmp_path / "b", write_html=False)
     assert a["decision"] == b["decision"]
     assert a["evaluation"]["blocking_reasons"] == b["evaluation"]["blocking_reasons"]
     assert a["trace_subgraph"]["edges"] == b["trace_subgraph"]["edges"]
@@ -83,14 +82,15 @@ def test_repeatable_pipeline(tmp_path):
 def test_assessment_time_affects_contract(tmp_path):
     # After contract end, with still-valid evidence windows → ELIGIBLE
     import json
-    from kg_mnp_demo.input_adapter import normalize_case_input
-    from kg_mnp_demo.pipeline import merge_reference_graph
-    from kg_mnp_demo.rdf_builder import build_case_graph
-    from kg_mnp_demo.evaluator import evaluate_case
-    from kg_mnp_demo.inference import apply_owlrl
-    from kg_mnp_demo.validator import validate_graph
 
-    data = json.loads((ROOT / "inputs" / "case03.json").read_text(encoding="utf-8"))
+    from kg_mnp.evaluator import evaluate_case
+    from kg_mnp.inference import apply_owlrl
+    from kg_mnp.input_adapter import normalize_case_input
+    from kg_mnp.pipeline import merge_reference_graph
+    from kg_mnp.rdf_builder import build_case_graph
+    from kg_mnp.validator import validate_graph
+
+    data = json.loads((ROOT / "domain_packs" / "mnp" / "fixtures" / "inputs" / "case03.json").read_text(encoding="utf-8"))
     data["assessment_time"] = "2027-01-02T00:00:00Z"
     # Extend evidence validity so only the contract check changes
     for key in data["evidence"]:
@@ -102,7 +102,7 @@ def test_assessment_time_affects_contract(tmp_path):
     result = evaluate_case(
         g,
         "CASE-03",
-        assessment_time=datetime(2027, 1, 2, tzinfo=timezone.utc),
+        assessment_time=datetime(2027, 1, 2, tzinfo=UTC),
         validate=False,
     )
     assert result["decision"] == "ELIGIBLE"
@@ -110,7 +110,7 @@ def test_assessment_time_affects_contract(tmp_path):
 
 def test_invalid_json_does_not_publish(tmp_path):
     result = run_pipeline(
-        ROOT / "inputs" / "invalid_missing_source.json",
+        ROOT / "domain_packs" / "mnp" / "fixtures" / "inputs" / "invalid_missing_source.json",
         tmp_path / "bad",
         write_html=False,
     )

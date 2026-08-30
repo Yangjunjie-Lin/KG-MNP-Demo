@@ -3,8 +3,9 @@ from __future__ import annotations
 import copy
 
 import pytest
+from jsonschema import ValidationError
 
-from kg_mnp_demo.modeling.review_actions import validate_review_action
+from kg_mnp.modeling.review_actions import validate_review_action
 
 from ._helpers import load_action, load_proposal
 
@@ -29,5 +30,5 @@ def test_candidate_deprecate_fails():
     action = load_action("full-confirmation", "action-001.json")
     action = copy.deepcopy(action)
     action["decision"] = "DEPRECATE"
-    with pytest.raises(Exception):
+    with pytest.raises(ValidationError):
         validate_review_action(action, proposal)

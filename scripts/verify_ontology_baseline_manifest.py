@@ -7,13 +7,12 @@ import argparse
 import sys
 from pathlib import Path
 
-
 ROOT = Path(__file__).resolve().parents[1]
 SRC = str(ROOT / "src")
 if SRC not in sys.path:
     sys.path.insert(0, SRC)
 
-from kg_mnp_demo.modeling.dependencies import (  # noqa: E402
+from kg_mnp.modeling.dependencies import (
     ONTOLOGY_BASELINE_PATH,
     verify_ontology_baseline_manifest,
 )
@@ -36,7 +35,10 @@ def parse_args() -> argparse.Namespace:
         "--manifest",
         type=Path,
         default=None,
-        help="manifest to verify (default: config/modeling/ontology-baseline-1.0.0.json)",
+        help=(
+            "manifest to verify (default: "
+            "domain_packs/mnp/ontology/ontology-baseline-1.0.0.json)"
+        ),
     )
     return parser.parse_args()
 
@@ -46,7 +48,11 @@ def main() -> int:
     root = args.root.resolve()
     manifest = (
         args.manifest
-        or root / "config" / "modeling" / ONTOLOGY_BASELINE_PATH.name
+        or root
+        / "domain_packs"
+        / "mnp"
+        / "ontology"
+        / ONTOLOGY_BASELINE_PATH.name
     )
     errors = verify_ontology_baseline_manifest(
         root=root,

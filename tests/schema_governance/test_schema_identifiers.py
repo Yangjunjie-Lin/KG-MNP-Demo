@@ -14,22 +14,18 @@ import yaml
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT / "scripts"))
 
-import check_schema_identifiers as checker  # noqa: E402
+import check_schema_identifiers as checker
 
 
 def _namespace_config(root: Path) -> Path:
     config = root / "config" / "namespaces.yaml"
     config.parent.mkdir(parents=True, exist_ok=True)
     config.write_text(
-        "\n".join(
-            [
-                'schemas:',
-                '  base: "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/"',
-                '  modeling: "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/"',
-                '  legacy: "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/legacy/"',
-                "",
-            ]
-        ),
+        """schemas:
+  base: "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/"
+  modeling: "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/"
+  legacy: "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/legacy/"
+""",
         encoding="utf-8",
     )
     return config
@@ -72,14 +68,19 @@ def test_repository_schema_identifiers_pass_offline_gate():
     result = checker.audit_schema_identifiers()
     assert result.ok, "\n".join(result.errors)
     assert len(result.paths) == len(result.identifiers) == len(set(result.identifiers))
-    assert "examples/eligibility-use-case/schemas/mnp_case_input.schema.json" in result.paths
+    assert (
+        "domain_packs/mnp/fixtures/eligibility-use-case/"
+        "schemas/mnp_case_input.schema.json"
+    ) in result.paths
 
 
 def test_legacy_schema_uses_legacy_namespace_draft_and_contract_version():
     namespaces = checker.load_schema_namespaces()
     path = (
         ROOT
-        / "examples"
+        / "domain_packs"
+        / "mnp"
+        / "fixtures"
         / "eligibility-use-case"
         / "schemas"
         / "mnp_case_input.schema.json"
@@ -131,7 +132,15 @@ def test_gate_rejects_non_project_or_non_https_identifiers(
     tmp_path: Path, identifier: str
 ):
     config = _namespace_config(tmp_path)
-    schema = tmp_path / "examples" / "eligibility-use-case" / "schemas" / "bad.schema.json"
+    schema = (
+        tmp_path
+        / "domain_packs"
+        / "mnp"
+        / "fixtures"
+        / "eligibility-use-case"
+        / "schemas"
+        / "bad.schema.json"
+    )
     _write_schema(schema, identifier)
 
     result = checker.audit_schema_identifiers(

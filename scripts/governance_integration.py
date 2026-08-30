@@ -28,38 +28,38 @@ from governance_controlled_fixture import (
     controlled_governance_workspace_for_test_harness,
 )
 
-from kg_mnp_demo.application.publication_binding import PublicationBinding
-from kg_mnp_demo.application.query_registry import QueryRegistry
-from kg_mnp_demo.application.readonly_client import ReadOnlyGraphDBClient
-from kg_mnp_demo.application.service import ApplicationService
-from kg_mnp_demo.diagnostics.artifact_verifier import (
+from kg_mnp.application.publication_binding import PublicationBinding
+from kg_mnp.application.query_registry import QueryRegistry
+from kg_mnp.application.readonly_client import ReadOnlyGraphDBClient
+from kg_mnp.application.service import ApplicationService
+from kg_mnp.diagnostics.artifact_verifier import (
     verify_application_phase03_artifact,
 )
-from kg_mnp_demo.diagnostics.authority_binding import AuthorityBindings
-from kg_mnp_demo.diagnostics.engine import reconstruct_diagnostics
-from kg_mnp_demo.governance.artifact_verifier import verify_application_phase04_artifact
-from kg_mnp_demo.governance.attestation import build_application_phase04_attestation
-from kg_mnp_demo.governance.authority_binding import (
+from kg_mnp.diagnostics.authority_binding import AuthorityBindings
+from kg_mnp.diagnostics.engine import reconstruct_diagnostics
+from kg_mnp.governance.artifact_verifier import verify_application_phase04_artifact
+from kg_mnp.governance.attestation import build_application_phase04_attestation
+from kg_mnp.governance.authority_binding import (
     GovernanceAuthority,
     load_production_phase03_authority,
 )
-from kg_mnp_demo.governance.contracts import strict_json_file
-from kg_mnp_demo.governance.errors import GovernanceError
-from kg_mnp_demo.governance.event_log import event_identity_content
-from kg_mnp_demo.governance.proposal import empty_payload
-from kg_mnp_demo.governance.state_machine import require_transition
-from kg_mnp_demo.governance.validator import (
+from kg_mnp.governance.contracts import strict_json_file
+from kg_mnp.governance.errors import GovernanceError
+from kg_mnp.governance.event_log import event_identity_content
+from kg_mnp.governance.proposal import empty_payload
+from kg_mnp.governance.state_machine import require_transition
+from kg_mnp.governance.validator import (
     validate_governance_workspace_against_authorities,
     workspace_semantic_content,
 )
-from kg_mnp_demo.governance.workspace import (
+from kg_mnp.governance.workspace import (
     GovernanceWorkspace,
     GovernanceWorkspaceStore,
 )
-from kg_mnp_demo.graphdb.client import GraphDBClient, GraphDBClientError
-from kg_mnp_demo.graphdb.importer import import_package
-from kg_mnp_demo.graphdb.policy import load_graphdb_policy
-from kg_mnp_demo.modeling.canonical_json import canonical_json_bytes, semantic_hash
+from kg_mnp.graphdb.client import GraphDBClient, GraphDBClientError
+from kg_mnp.graphdb.importer import import_package
+from kg_mnp.graphdb.policy import load_graphdb_policy
+from kg_mnp.modeling.canonical_json import canonical_json_bytes, semantic_hash
 
 ROOT = Path(__file__).resolve().parents[1]
 

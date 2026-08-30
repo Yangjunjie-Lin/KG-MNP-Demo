@@ -4,12 +4,12 @@ import copy
 
 import pytest
 
-from kg_mnp_demo.governance.errors import GovernanceError, GovernanceErrorCode
-from kg_mnp_demo.governance.validator import (
+from kg_mnp.governance.errors import GovernanceError, GovernanceErrorCode
+from kg_mnp.governance.validator import (
     validate_governance_workspace_against_authorities,
     workspace_semantic_content,
 )
-from kg_mnp_demo.modeling.canonical_json import semantic_hash
+from kg_mnp.modeling.canonical_json import semantic_hash
 
 from ._helpers import authority, proposal_arguments, stale
 from ._helpers import workspace as controlled_workspace

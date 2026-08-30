@@ -22,8 +22,8 @@ only as `kg-mnp-eligibility`.
 
 | Before | After |
 |---|---|
-| `kg-mnp = kg_mnp_demo.cli:main` | removed |
-| — | `kg-mnp-eligibility = kg_mnp_demo.cli:main` |
+| `kg-mnp = kg_mnp.cli:main` | removed |
+| — | `kg-mnp-eligibility = kg_mnp.cli:main` |
 
 `kg-mnp` is reserved for a future ontology modeling CLI and must not execute
 eligibility evaluation. No placeholder central CLI was added.

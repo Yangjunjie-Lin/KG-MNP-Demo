@@ -1,6 +1,10 @@
-from kg_mnp_demo.graphdb.attestation import build_import_attestation
-from kg_mnp_demo.graphdb.contracts import graphdb_contract_names, load_graphdb_schema, validate_graphdb_contract
-from kg_mnp_demo.graphdb.policy import load_graphdb_policy
+from kg_mnp.graphdb.attestation import build_import_attestation
+from kg_mnp.graphdb.contracts import (
+    graphdb_contract_names,
+    load_graphdb_schema,
+    validate_graphdb_contract,
+)
+from kg_mnp.graphdb.policy import load_graphdb_policy
 
 
 def test_graphdb_contract_registry_is_closed_and_draft_2020_12():

@@ -4,13 +4,13 @@ import copy
 
 import pytest
 
-from kg_mnp_demo.diagnostics import reconstruct_diagnostics
-from kg_mnp_demo.diagnostics.artifact_verifier import (
+from kg_mnp.diagnostics import reconstruct_diagnostics
+from kg_mnp.diagnostics.artifact_verifier import (
     DiagnosticArtifactVerificationError,
     verify_application_phase03_artifact,
 )
-from kg_mnp_demo.diagnostics.attestation import build_application_phase03_attestation
-from kg_mnp_demo.modeling.canonical_json import canonical_json_bytes
+from kg_mnp.diagnostics.attestation import build_application_phase03_attestation
+from kg_mnp.modeling.canonical_json import canonical_json_bytes
 
 from ._helpers import bindings, snapshot
 

@@ -35,7 +35,7 @@ workspace-specific processes were stopped; no reset or commit was used.
 | `queries/` | SPARQL and Neo4j Cypher | SPARQL retained; Cypher removed |
 | `references/` | Source and license audit | Retained; stale Neo4j entries removed |
 | `data/` | Nine RDF cases and reference facts | Retained |
-| `src/kg_mnp_demo/` | RDF core, eligibility, API, storage, Neo4j | Core/example retained; API/storage/Neo4j removed |
+| `src/kg_mnp/` | RDF core, eligibility, API, storage, Neo4j | Core/example retained; API/storage/Neo4j removed |
 | `tests/` | Core plus API/storage/frontend integration | Core ontology/RDF/example tests retained |
 | `scripts/` | Core checks plus fullstack/API scripts | Core checks retained; obsolete scripts removed |
 | `runtime_logs/` | Tracked local server logs | Removed from version control and ignored |
@@ -48,10 +48,10 @@ workspace-specific processes were stopped; no reset or commit was used.
 
 - Central task: deterministic MNP eligibility decision and traceability demo.
 - Frontend: `frontend/src/main.tsx` and `frontend/src/app/App.tsx`.
-- API: `kg-mnp-api` -> `kg_mnp_demo.api.app:main` and `/api/v1` routers.
-- Eligibility: `src/kg_mnp_demo/pipeline.py`, legacy `kg-mnp` console entry,
+- API: `kg-mnp-api` -> `kg_mnp.api.app:main` and `/api/v1` routers.
+- Eligibility: `src/kg_mnp/pipeline.py`, legacy `kg-mnp` console entry,
   evaluator and rule engine.
-- Execution history: `src/kg_mnp_demo/storage/`, SQLite, artifact repositories,
+- Execution history: `src/kg_mnp/storage/`, SQLite, artifact repositories,
   and `scripts/seed_demo_data.py`.
 - Neo4j: root `docker-compose.yml`, `neo4j_*.py`, Cypher queries, CLI commands,
   optional dependency, and integration tests.
@@ -109,8 +109,8 @@ kg-mnp-eligibility --help
 
 ### CLI rename
 
-- Removed console entry `kg-mnp = kg_mnp_demo.cli:main`.
-- Added console entry `kg-mnp-eligibility = kg_mnp_demo.cli:main`.
+- Removed console entry `kg-mnp = kg_mnp.cli:main`.
+- Added console entry `kg-mnp-eligibility = kg_mnp.cli:main`.
 - CLI module docstring already identifies the tool as the legacy eligibility
   use-case CLI.
 - Help description is `Legacy KG-MNP eligibility use-case CLI`.

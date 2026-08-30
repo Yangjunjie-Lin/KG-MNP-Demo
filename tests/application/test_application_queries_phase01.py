@@ -1,14 +1,14 @@
 from __future__ import annotations
 
-from kg_mnp_demo.application.query_registry import QueryRegistry
-from kg_mnp_demo.application.service import ApplicationService
+from kg_mnp.application.query_registry import QueryRegistry
+from kg_mnp.application.service import ApplicationService
 
 from ._phase01_helpers import DatasetClient, synthetic_binding
 
 SUBSCRIPTION = "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/modeled/2993a1403cabddd34da97cacad8c5aa55103903ab9d3a0d831bd9f989f2fc029"
 STATUS = "https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#subscriptionStatusCode"
 SUBSCRIBER = "https://yangjunjie-lin.github.io/KG-MNP-Demo/data/modeled/3c57cca129580c393bb6994fbf088209879907efde712279eb6de9986ba6d457"
-REJECTED_CANDIDATE = "urn:kg-mnp:candidate:5b68a78bcd602a16e687f82b44570cf02bbc5df37e7e4b290accc6052db7014a"
+REJECTED_CANDIDATE = "urn:kg-mnp:candidate:d34f2db397b76e7e026a66d34d3953cf3891b2b1fe99135ce4b68810511cece8"
 
 
 def service(scenario="full-confirmation"):

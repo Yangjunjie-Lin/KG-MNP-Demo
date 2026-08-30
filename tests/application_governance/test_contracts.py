@@ -2,9 +2,9 @@ from __future__ import annotations
 
 import pytest
 
-from kg_mnp_demo.governance.contracts import SCHEMAS, load_governance_schema
-from kg_mnp_demo.governance.errors import GovernanceError, GovernanceErrorCode
-from kg_mnp_demo.governance.proposal import create_resolution_proposal, empty_payload
+from kg_mnp.governance.contracts import SCHEMAS, load_governance_schema
+from kg_mnp.governance.errors import GovernanceError, GovernanceErrorCode
+from kg_mnp.governance.proposal import create_resolution_proposal, empty_payload
 
 from ._helpers import authority, proposal_arguments, value_payload, workspace
 

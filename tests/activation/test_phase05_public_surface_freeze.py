@@ -3,9 +3,9 @@ from __future__ import annotations
 import inspect
 from pathlib import Path
 
-from kg_mnp_demo import amendment
-from kg_mnp_demo.amendment.cli import _parser
-from kg_mnp_demo.amendment.republication import complete_reentry, prepare_reentry
+from kg_mnp import amendment
+from kg_mnp.amendment.cli import _parser
+from kg_mnp.amendment.republication import complete_reentry, prepare_reentry
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -58,6 +58,6 @@ def test_phase05_cli_has_no_activation_or_generic_reentry_command() -> None:
 def test_phase05_implementation_has_no_phase06_hook() -> None:
     sources = "\n".join(
         path.read_text(encoding="utf-8")
-        for path in sorted((ROOT / "src/kg_mnp_demo/amendment").glob("*.py"))
+        for path in sorted((ROOT / "src/kg_mnp/amendment").glob("*.py"))
     ).casefold()
-    assert "kg_mnp_demo.activation" not in sources
+    assert "kg_mnp.activation" not in sources

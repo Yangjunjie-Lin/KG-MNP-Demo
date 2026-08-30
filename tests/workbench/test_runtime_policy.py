@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from kg_mnp_demo.workbench.policy import (
+from kg_mnp.workbench.policy import (
     ALLOWED_PHASE01_ROUTES,
     load_workbench_policy,
     workbench_policy_hash,

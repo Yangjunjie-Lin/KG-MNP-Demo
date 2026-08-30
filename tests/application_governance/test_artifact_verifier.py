@@ -6,17 +6,17 @@ from pathlib import Path
 
 import pytest
 
-import kg_mnp_demo.governance.artifact_verifier as verifier_module
-import kg_mnp_demo.governance.validator as validator_module
-from kg_mnp_demo.governance.artifact_verifier import (
+import kg_mnp.governance.artifact_verifier as verifier_module
+import kg_mnp.governance.validator as validator_module
+from kg_mnp.governance.artifact_verifier import (
     AUTHORITY_LAUNDERING_ATTACKS,
     AUTHORITY_LAUNDERING_OUTCOMES,
     FILES,
     Phase04ArtifactVerificationError,
     verify_application_phase04_artifact,
 )
-from kg_mnp_demo.governance.attestation import CATEGORY_FIELDS
-from kg_mnp_demo.modeling.canonical_json import canonical_json_bytes, semantic_hash
+from kg_mnp.governance.attestation import CATEGORY_FIELDS
+from kg_mnp.modeling.canonical_json import canonical_json_bytes, semantic_hash
 from scripts.governance_controlled_fixture import ControlledDiagnosticFixture
 
 from ._helpers import authority
@@ -346,7 +346,7 @@ def test_fixture_authority_full_rehash_substitution_rejected(
     workspace["workspace_id"] = "urn:kg-mnp:governance-workspace:" + semantic_hash(
         workspace["authority_binding"]
     )
-    from kg_mnp_demo.governance.validator import workspace_semantic_content
+    from kg_mnp.governance.validator import workspace_semantic_content
 
     workspace["workspace_hash"] = semantic_hash(workspace_semantic_content(workspace))
     replacement["governance-summary.json"]["production_workspace_hash"] = workspace[

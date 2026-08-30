@@ -4,9 +4,9 @@ from copy import deepcopy
 
 import pytest
 
-from kg_mnp_demo.modeling.dependencies import load_modeling_dependencies
-from kg_mnp_demo.modeling.proposal import generate_modeling_proposal
-from kg_mnp_demo.modeling.semantic_validation import (
+from kg_mnp.modeling.dependencies import load_modeling_dependencies
+from kg_mnp.modeling.proposal import generate_modeling_proposal
+from kg_mnp.modeling.semantic_validation import (
     SemanticValidationError,
     validate_proposal_policy_semantics,
 )

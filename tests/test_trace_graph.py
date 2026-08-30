@@ -8,19 +8,19 @@ import pytest
 from rdflib import URIRef
 from rdflib.namespace import RDF
 
-from kg_mnp_demo.evaluator import evaluate_case, materialize_assessment
-from kg_mnp_demo.inference import apply_owlrl
-from kg_mnp_demo.loader import load_case_graph, query_path
-from kg_mnp_demo.namespaces import MNP
-from kg_mnp_demo.trace import affected_assessments
-from kg_mnp_demo.trace_graph import (
+from kg_mnp.evaluator import evaluate_case, materialize_assessment
+from kg_mnp.inference import apply_owlrl
+from kg_mnp.loader import load_case_graph, query_path
+from kg_mnp.namespaces import MNP
+from kg_mnp.trace import affected_assessments
+from kg_mnp.trace_graph import (
     SUBGRAPH_QUERY_FILE,
     build_assessment_subgraph,
     edges_exist_in_graph,
     format_subgraph_tree,
     render_subgraph_html,
 )
-from kg_mnp_demo.validator import validate_graph
+from kg_mnp.validator import validate_graph
 
 
 def _assessed(case_id: str):
@@ -31,7 +31,7 @@ def _assessed(case_id: str):
 
 
 def test_uses_assessment_subgraph_rq():
-    g, sub = _assessed("CASE-03")
+    _g, sub = _assessed("CASE-03")
     assert sub["query_file"] == SUBGRAPH_QUERY_FILE
     assert Path(query_path(SUBGRAPH_QUERY_FILE)).exists()
     assert sub["edges"]
@@ -124,7 +124,7 @@ def test_special_case_id_safe():
 
 
 def test_missing_rq_fails(monkeypatch):
-    from kg_mnp_demo import trace_graph as tg
+    from kg_mnp import trace_graph as tg
 
     monkeypatch.setattr(
         tg,
@@ -137,7 +137,7 @@ def test_missing_rq_fails(monkeypatch):
 
 
 def test_rq_change_affects_output(monkeypatch, tmp_path):
-    from kg_mnp_demo import trace_graph as tg
+    from kg_mnp import trace_graph as tg
 
     g, baseline = _assessed("CASE-03")
     stub = tmp_path / "assessment_subgraph.rq"

@@ -4,7 +4,7 @@ from types import SimpleNamespace
 import pytest
 from rdflib import Dataset
 
-from kg_mnp_demo.graphdb.verifier import (
+from kg_mnp.graphdb.verifier import (
     GraphDBVerificationError,
     expected_review_audit_rows,
     semantic_hash_nquads,
