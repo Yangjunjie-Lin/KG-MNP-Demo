@@ -1,4 +1,5 @@
-.PHONY: install test check-refs verify-repo-hygiene verify-python-core \
+.PHONY: install test check-refs verify-repo-hygiene verify-toolchain-foundation \
+	verify-python-core \
 	verify-stage-01 verify-semantic-governance verify-stage-02 \
 	verify-ontology-audit verify-ontology-release verify-shacl-profiles \
 	verify-legacy-eligibility verify-stage-03-core reasoner-check \
@@ -64,6 +65,12 @@ check-refs:
 
 verify-repo-hygiene:
 	python scripts/check_repo_hygiene.py
+
+verify-toolchain-foundation: verify-repo-hygiene
+	python -m pytest -q tests/refactor
+	python -c "import kg_mnp; print(kg_mnp.__name__)"
+	python -m kg_mnp --help
+	kg-mnp --help
 
 verify-python-core: verify-repo-hygiene check-refs
 	python -m pytest $(PYTHON_CORE_TESTS)
@@ -517,7 +524,7 @@ verify-diagnostics-determinism: verify-diagnostics-contracts
 
 verify-diagnostics-security: verify-diagnostics-contracts
 	python -m pytest -q tests/diagnostics/test_deterministic_diagnostics.py -k rehash
-	ruff check src/kg_mnp_demo/diagnostics scripts/diagnostics_integration.py scripts/verify_application_phase03_artifact.py
+	ruff check src/kg_mnp/diagnostics scripts/diagnostics_integration.py scripts/verify_application_phase03_artifact.py
 
 verify-diagnostics-browser: verify-diagnostics-contracts
 	python -m pytest -q tests/diagnostics/test_runtime_security.py
@@ -555,7 +562,7 @@ verify-governance-stale-protection:
 
 verify-governance-security:
 	python -m pytest -q tests/application_governance/test_runtime_security.py
-	ruff check src/kg_mnp_demo/governance scripts/governance_integration.py scripts/governance_controlled_fixture.py scripts/verify_application_phase04_artifact.py tests/application_governance
+	ruff check src/kg_mnp/governance scripts/governance_integration.py scripts/governance_controlled_fixture.py scripts/verify_application_phase04_artifact.py tests/application_governance
 
 verify-governance-browser:
 	python -m pytest -q tests/application_governance/test_runtime_security.py -k "xss or pages"
@@ -598,7 +605,7 @@ verify-amendment-determinism:
 	python -m pytest -q tests/amendment/test_reentry_boundaries.py -k "identity or invariants"
 
 verify-amendment-security:
-	ruff check src/kg_mnp_demo/amendment scripts/amendment_controlled_fixture.py scripts/amendment_integration.py scripts/verify_application_phase05_artifact.py tests/amendment
+	ruff check src/kg_mnp/amendment scripts/amendment_controlled_fixture.py scripts/amendment_integration.py scripts/verify_application_phase05_artifact.py tests/amendment
 	python -m pytest -q tests/amendment
 
 verify-amendment-republication:
@@ -649,7 +656,7 @@ verify-activation-rollback:
 		-k "rollback"
 
 verify-activation-security:
-	ruff check src/kg_mnp_demo/activation scripts/activation_controlled_fixture.py \
+	ruff check src/kg_mnp/activation scripts/activation_controlled_fixture.py \
 		scripts/activation_integration.py \
 		scripts/verify_application_phase06_artifact.py tests/activation
 	python -m pytest -q tests/activation

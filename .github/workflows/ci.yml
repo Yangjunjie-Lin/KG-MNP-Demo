@@ -7,6 +7,32 @@ on:
   workflow_dispatch:
 
 jobs:
+  toolchain-foundation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install toolchain development dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[dev]"
+      - name: Lint repository
+        run: python -m ruff check .
+      - name: Verify ontology toolchain foundation
+        run: make verify-toolchain-foundation
+      - name: Verify clean working tree
+        shell: bash
+        run: |
+          git diff --exit-code
+          if [[ -n "$(git status --short)" ]]; then
+            git status --short
+            exit 1
+          fi
+
   governance-offline:
     if: github.event_name == 'pull_request'
     needs: [diagnostics-offline]
@@ -1292,11 +1318,11 @@ jobs:
 
           if not errors:
               try:
-                  from kg_mnp_demo.publication.contracts import (
+                  from kg_mnp.publication.contracts import (
                       validate_publication_attestation_evidence,
                       validate_publication_contract,
                   )
-                  from kg_mnp_demo.webvowl.contracts import validate_webvowl_contract
+                  from kg_mnp.webvowl.contracts import validate_webvowl_contract
 
                   validate_publication_contract(
                       "end-to-end-publication-manifest",
