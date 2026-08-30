@@ -1,0 +1,21 @@
+{
+  "manifest_kind": "KG_MNP_PLUGIN",
+  "schema_version": "1.0.0",
+  "plugin_api_version": "1.0.0",
+  "plugin_id": "image-metadata-parser",
+  "plugin_version": "1.0.0",
+  "display_name": "Image Metadata Parser",
+  "description": "Reads bounded image dimensions and basic metadata without OCR or vision.",
+  "distribution": {"name": "kg-mnp-toolchain", "required_version": "0.3.0"},
+  "entry_point": {"group": "kg_mnp.plugins", "name": "image-metadata-parser", "object": "kg_mnp.plugins.builtin.image_metadata_parser:ImageMetadataParser"},
+  "plugin_kinds": ["parser"],
+  "capabilities": ["parse-image-metadata"],
+  "media_types": ["image/png", "image/jpeg", "image/gif", "image/tiff"],
+  "priority": 100,
+  "determinism": "DETERMINISTIC",
+  "side_effects": ["PURE"],
+  "implementation_files": ["builtin/image_metadata_parser.py"],
+  "configuration_contract": null,
+  "requirements": {"python": ">=3.11,<4", "toolchain_minimum": "0.2.0", "optional_dependencies": ["Pillow"]},
+  "extensions": {}
+}

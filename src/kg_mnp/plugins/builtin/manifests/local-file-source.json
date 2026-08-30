@@ -1,0 +1,21 @@
+{
+  "manifest_kind": "KG_MNP_PLUGIN",
+  "schema_version": "1.0.0",
+  "plugin_api_version": "1.0.0",
+  "plugin_id": "local-file-source",
+  "plugin_version": "1.0.0",
+  "display_name": "Local File Source",
+  "description": "Reads bounded local regular files without following symlinks.",
+  "distribution": {"name": "kg-mnp-toolchain", "required_version": "0.3.0"},
+  "entry_point": {"group": "kg_mnp.plugins", "name": "local-file-source", "object": "kg_mnp.plugins.builtin.source_file:LocalFileSource"},
+  "plugin_kinds": ["source-adapter"],
+  "capabilities": ["read-local-file"],
+  "media_types": ["*/*"],
+  "priority": 100,
+  "determinism": "DETERMINISTIC",
+  "side_effects": ["READ_LOCAL_INPUT"],
+  "implementation_files": ["builtin/source_file.py"],
+  "configuration_contract": null,
+  "requirements": {"python": ">=3.11,<4", "toolchain_minimum": "0.2.0", "optional_dependencies": []},
+  "extensions": {}
+}

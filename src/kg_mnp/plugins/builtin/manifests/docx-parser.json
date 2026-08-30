@@ -1,0 +1,21 @@
+{
+  "manifest_kind": "KG_MNP_PLUGIN",
+  "schema_version": "1.0.0",
+  "plugin_api_version": "1.0.0",
+  "plugin_id": "docx-parser",
+  "plugin_version": "1.0.0",
+  "display_name": "DOCX Parser",
+  "description": "Reads bounded DOCX paragraphs and cells without external relationships or OCR.",
+  "distribution": {"name": "kg-mnp-toolchain", "required_version": "0.3.0"},
+  "entry_point": {"group": "kg_mnp.plugins", "name": "docx-parser", "object": "kg_mnp.plugins.builtin.docx_parser:DocxParser"},
+  "plugin_kinds": ["parser"],
+  "capabilities": ["parse-docx"],
+  "media_types": ["application/vnd.openxmlformats-officedocument.wordprocessingml.document"],
+  "priority": 100,
+  "determinism": "DETERMINISTIC",
+  "side_effects": ["PURE"],
+  "implementation_files": ["builtin/docx_parser.py"],
+  "configuration_contract": null,
+  "requirements": {"python": ">=3.11,<4", "toolchain_minimum": "0.2.0", "optional_dependencies": ["python-docx"]},
+  "extensions": {}
+}

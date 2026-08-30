@@ -1,0 +1,21 @@
+{
+  "manifest_kind": "KG_MNP_PLUGIN",
+  "schema_version": "1.0.0",
+  "plugin_api_version": "1.0.0",
+  "plugin_id": "pdf-parser",
+  "plugin_version": "1.0.0",
+  "display_name": "PDF Parser",
+  "description": "Extracts bounded page text without executing active content or fabricating OCR.",
+  "distribution": {"name": "kg-mnp-toolchain", "required_version": "0.3.0"},
+  "entry_point": {"group": "kg_mnp.plugins", "name": "pdf-parser", "object": "kg_mnp.plugins.builtin.pdf_parser:PdfParser"},
+  "plugin_kinds": ["parser"],
+  "capabilities": ["parse-pdf"],
+  "media_types": ["application/pdf"],
+  "priority": 100,
+  "determinism": "DETERMINISTIC",
+  "side_effects": ["PURE"],
+  "implementation_files": ["builtin/pdf_parser.py"],
+  "configuration_contract": null,
+  "requirements": {"python": ">=3.11,<4", "toolchain_minimum": "0.2.0", "optional_dependencies": ["pypdf"]},
+  "extensions": {}
+}

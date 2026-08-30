@@ -1,0 +1,21 @@
+{
+  "manifest_kind": "KG_MNP_PLUGIN",
+  "schema_version": "1.0.0",
+  "plugin_api_version": "1.0.0",
+  "plugin_id": "structural-quality-evaluator",
+  "plugin_version": "1.0.0",
+  "display_name": "Structural Quality Evaluator",
+  "description": "Evaluates structural integrity, traceability and review flags.",
+  "distribution": {"name": "kg-mnp-toolchain", "required_version": "0.3.0"},
+  "entry_point": {"group": "kg_mnp.plugins", "name": "structural-quality-evaluator", "object": "kg_mnp.plugins.builtin.quality:StructuralQualityEvaluator"},
+  "plugin_kinds": ["quality-evaluator"],
+  "capabilities": ["evaluate-structural-quality"],
+  "media_types": ["*/*"],
+  "priority": 100,
+  "determinism": "DETERMINISTIC",
+  "side_effects": ["PURE"],
+  "implementation_files": ["builtin/quality.py"],
+  "configuration_contract": null,
+  "requirements": {"python": ">=3.11,<4", "toolchain_minimum": "0.2.0", "optional_dependencies": []},
+  "extensions": {}
+}

@@ -1,0 +1,21 @@
+{
+  "manifest_kind": "KG_MNP_PLUGIN",
+  "schema_version": "1.0.0",
+  "plugin_api_version": "1.0.0",
+  "plugin_id": "plain-text-parser",
+  "plugin_version": "1.0.0",
+  "display_name": "Plain Text Parser",
+  "description": "Parses UTF-8 and UTF-8 BOM text with line locators.",
+  "distribution": {"name": "kg-mnp-toolchain", "required_version": "0.3.0"},
+  "entry_point": {"group": "kg_mnp.plugins", "name": "plain-text-parser", "object": "kg_mnp.plugins.builtin.text_parser:PlainTextParser"},
+  "plugin_kinds": ["parser"],
+  "capabilities": ["parse-text"],
+  "media_types": ["text/plain"],
+  "priority": 100,
+  "determinism": "DETERMINISTIC",
+  "side_effects": ["PURE"],
+  "implementation_files": ["builtin/text_parser.py"],
+  "configuration_contract": null,
+  "requirements": {"python": ">=3.11,<4", "toolchain_minimum": "0.2.0", "optional_dependencies": []},
+  "extensions": {}
+}

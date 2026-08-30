@@ -4,11 +4,11 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "kg-mnp-toolchain"
-version = "0.2.0.dev0"
+version = "0.3.0"
 description = "Evidence-bound, review-governed ontology engineering toolchain"
 readme = "README.md"
 requires-python = ">=3.11"
-license = { text = "Apache-2.0" }
+license = "Apache-2.0"
 authors = [{ name = "KG-MNP Demo Contributors" }]
 dependencies = [
   "rdflib==7.6.0",
@@ -25,6 +25,18 @@ dev = [
   "pytest>=8.0.0,<9.0.0",
   "ruff==0.16.2",
   "httpx==0.27.2",
+  "pypdf>=5.0.0,<7.0.0",
+  "openpyxl>=3.1.0,<4.0.0",
+  "python-docx>=1.1.0,<2.0.0",
+  "Pillow>=10.0.0,<13.0.0",
+  "defusedxml>=0.7.1,<1.0.0",
+]
+ingestion-documents = [
+  "pypdf>=5.0.0,<7.0.0",
+  "openpyxl>=3.1.0,<4.0.0",
+  "python-docx>=1.1.0,<2.0.0",
+  "Pillow>=10.0.0,<13.0.0",
+  "defusedxml>=0.7.1,<1.0.0",
 ]
 webvowl = [
   "playwright==1.49.1",
@@ -32,6 +44,21 @@ webvowl = [
 
 [project.scripts]
 kg-mnp = "kg_mnp.root_cli:main"
+
+[project.entry-points."kg_mnp.plugins"]
+local-file-source = "kg_mnp.plugins.builtin.source_file:LocalFileSource"
+signature-media-detector = "kg_mnp.plugins.builtin.media_detector:SignatureMediaDetector"
+plain-text-parser = "kg_mnp.plugins.builtin.text_parser:PlainTextParser"
+markdown-parser = "kg_mnp.plugins.builtin.markdown_parser:MarkdownParser"
+json-parser = "kg_mnp.plugins.builtin.json_parser:JSONParser"
+delimited-text-parser = "kg_mnp.plugins.builtin.delimited_parser:DelimitedTextParser"
+generic-normalizer = "kg_mnp.plugins.builtin.normalizer:GenericNormalizer"
+structural-quality-evaluator = "kg_mnp.plugins.builtin.quality:StructuralQualityEvaluator"
+wav-metadata-parser = "kg_mnp.plugins.builtin.wav_metadata_parser:WavMetadataParser"
+xlsx-parser = "kg_mnp.plugins.builtin.xlsx_parser:XlsxParser"
+docx-parser = "kg_mnp.plugins.builtin.docx_parser:DocxParser"
+pdf-parser = "kg_mnp.plugins.builtin.pdf_parser:PdfParser"
+image-metadata-parser = "kg_mnp.plugins.builtin.image_metadata_parser:ImageMetadataParser"
 
 [tool.setuptools.packages.find]
 where = ["src"]
@@ -43,6 +70,7 @@ where = ["src"]
   "schemas/toolchain/*.schema.json",
   "schemas/modeling/*.schema.json",
 ]
+"kg_mnp.plugins.builtin" = ["manifests/*.json"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

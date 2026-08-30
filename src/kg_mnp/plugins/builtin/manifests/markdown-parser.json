@@ -1,0 +1,21 @@
+{
+  "manifest_kind": "KG_MNP_PLUGIN",
+  "schema_version": "1.0.0",
+  "plugin_api_version": "1.0.0",
+  "plugin_id": "markdown-parser",
+  "plugin_version": "1.0.0",
+  "display_name": "Markdown Parser",
+  "description": "Parses non-executing Markdown blocks with line locators.",
+  "distribution": {"name": "kg-mnp-toolchain", "required_version": "0.3.0"},
+  "entry_point": {"group": "kg_mnp.plugins", "name": "markdown-parser", "object": "kg_mnp.plugins.builtin.markdown_parser:MarkdownParser"},
+  "plugin_kinds": ["parser"],
+  "capabilities": ["parse-markdown"],
+  "media_types": ["text/markdown"],
+  "priority": 100,
+  "determinism": "DETERMINISTIC",
+  "side_effects": ["PURE"],
+  "implementation_files": ["builtin/markdown_parser.py"],
+  "configuration_contract": null,
+  "requirements": {"python": ">=3.11,<4", "toolchain_minimum": "0.2.0", "optional_dependencies": []},
+  "extensions": {}
+}

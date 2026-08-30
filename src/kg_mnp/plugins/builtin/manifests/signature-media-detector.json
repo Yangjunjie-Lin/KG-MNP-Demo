@@ -1,0 +1,21 @@
+{
+  "manifest_kind": "KG_MNP_PLUGIN",
+  "schema_version": "1.0.0",
+  "plugin_api_version": "1.0.0",
+  "plugin_id": "signature-media-detector",
+  "plugin_version": "1.0.0",
+  "display_name": "Signature Media Detector",
+  "description": "Detects media types from signatures, bounded structure, UTF-8 and extension hints.",
+  "distribution": {"name": "kg-mnp-toolchain", "required_version": "0.3.0"},
+  "entry_point": {"group": "kg_mnp.plugins", "name": "signature-media-detector", "object": "kg_mnp.plugins.builtin.media_detector:SignatureMediaDetector"},
+  "plugin_kinds": ["media-detector"],
+  "capabilities": ["detect-media"],
+  "media_types": ["*/*"],
+  "priority": 100,
+  "determinism": "DETERMINISTIC",
+  "side_effects": ["PURE"],
+  "implementation_files": ["builtin/media_detector.py"],
+  "configuration_contract": null,
+  "requirements": {"python": ">=3.11,<4", "toolchain_minimum": "0.2.0", "optional_dependencies": []},
+  "extensions": {}
+}

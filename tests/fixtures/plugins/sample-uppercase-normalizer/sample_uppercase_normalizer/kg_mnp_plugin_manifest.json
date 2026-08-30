@@ -1,0 +1,21 @@
+{
+  "manifest_kind": "KG_MNP_PLUGIN",
+  "schema_version": "1.0.0",
+  "plugin_api_version": "1.0.0",
+  "plugin_id": "sample-uppercase-normalizer",
+  "plugin_version": "1.0.0",
+  "display_name": "Sample Uppercase Normalizer",
+  "description": "Independent deterministic fixture used only for Plugin SDK conformance tests.",
+  "distribution": {"name": "sample-uppercase-normalizer", "required_version": "1.0.0"},
+  "entry_point": {"group": "kg_mnp.plugins", "name": "sample-uppercase-normalizer", "object": "sample_uppercase_normalizer.plugin:UppercaseNormalizer"},
+  "plugin_kinds": ["normalizer"],
+  "capabilities": ["normalize-generic"],
+  "media_types": ["text/plain"],
+  "priority": 50,
+  "determinism": "DETERMINISTIC",
+  "side_effects": ["PURE"],
+  "implementation_files": ["sample_uppercase_normalizer/plugin.py"],
+  "configuration_contract": null,
+  "requirements": {"python": ">=3.11,<4", "toolchain_minimum": "0.3.0", "optional_dependencies": []},
+  "extensions": {}
+}
