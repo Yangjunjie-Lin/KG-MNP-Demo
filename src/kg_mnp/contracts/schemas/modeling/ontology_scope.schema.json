@@ -1,0 +1,315 @@
+{
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/ontology-scope/1.0",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "acceptance_gates": {
+      "items": {
+        "maxLength": 256,
+        "minLength": 1,
+        "type": "string"
+      },
+      "maxItems": 128,
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "baseline_policy": {
+      "enum": [
+        "REUSE_FIRST",
+        "REUSE_REQUIRED",
+        "NEW_ALLOWED"
+      ]
+    },
+    "competency_question_set_id": {
+      "oneOf": [
+        {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "content_digest": {
+      "maxLength": 64,
+      "minLength": 1,
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "domain_description": {
+      "maxLength": 16384,
+      "minLength": 1,
+      "type": "string"
+    },
+    "domain_pack_locks": {
+      "items": {
+        "maxLength": 256,
+        "minLength": 1,
+        "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "maxItems": 32,
+      "minItems": 1,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "in_scope": {
+      "items": {
+        "maxLength": 2048,
+        "minLength": 1,
+        "type": "string"
+      },
+      "maxItems": 4096,
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "iri_minting_policy": {
+      "additionalProperties": false,
+      "properties": {
+        "allow_random_uuid": {
+          "const": false
+        },
+        "slug_pattern": {
+          "maxLength": 256,
+          "minLength": 1,
+          "type": "string"
+        },
+        "strategy": {
+          "enum": [
+            "HUMAN_READABLE_SLUG",
+            "CONTENT_HASH"
+          ]
+        }
+      },
+      "required": [
+        "strategy",
+        "slug_pattern",
+        "allow_random_uuid"
+      ],
+      "type": "object"
+    },
+    "kg_ir_dataset_ids": {
+      "items": {
+        "maxLength": 256,
+        "minLength": 1,
+        "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "maxItems": 128,
+      "minItems": 1,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "language_policy": {
+      "additionalProperties": false,
+      "properties": {
+        "allowed_languages": {
+          "items": {
+            "maxLength": 35,
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 64,
+          "minItems": 1,
+          "type": "array",
+          "uniqueItems": true
+        },
+        "default_language": {
+          "maxLength": 35,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "default_language",
+        "allowed_languages"
+      ],
+      "type": "object"
+    },
+    "manifest_kind": {
+      "const": "KG_MNP_ONTOLOGY_SCOPE"
+    },
+    "modeling_intent": {
+      "enum": [
+        "CREATE_NEW_ONTOLOGY",
+        "EXTEND_BASELINE",
+        "ALIGN_TO_BASELINE",
+        "INSTANCE_POPULATION",
+        "MAPPING_ONLY",
+        "MIXED_MODELING"
+      ]
+    },
+    "namespace_policy": {
+      "additionalProperties": false,
+      "properties": {
+        "allowed_iri_schemes": {
+          "items": {
+            "enum": [
+              "https",
+              "urn"
+            ]
+          },
+          "maxItems": 2,
+          "minItems": 1,
+          "type": "array",
+          "uniqueItems": true
+        },
+        "allowed_new_namespaces": {
+          "items": {
+            "maxLength": 2048,
+            "minLength": 1,
+            "pattern": "^(?:https?://|urn:)[^\\s]+$",
+            "type": "string"
+          },
+          "maxItems": 128,
+          "minItems": 0,
+          "type": "array",
+          "uniqueItems": true
+        },
+        "default_namespace": {
+          "maxLength": 2048,
+          "minLength": 1,
+          "pattern": "^(?:https?://|urn:)[^\\s]+$",
+          "type": "string"
+        },
+        "external_iri_policy": {
+          "enum": [
+            "DENY",
+            "REUSE_ONLY",
+            "ALLOW_LISTED"
+          ]
+        },
+        "reserved_namespaces": {
+          "items": {
+            "maxLength": 2048,
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 128,
+          "minItems": 0,
+          "type": "array",
+          "uniqueItems": true
+        },
+        "reusable_namespaces": {
+          "items": {
+            "maxLength": 2048,
+            "minLength": 1,
+            "pattern": "^(?:https?://|urn:)[^\\s]+$",
+            "type": "string"
+          },
+          "maxItems": 128,
+          "minItems": 0,
+          "type": "array",
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "default_namespace",
+        "allowed_new_namespaces",
+        "reusable_namespaces",
+        "reserved_namespaces",
+        "allowed_iri_schemes",
+        "external_iri_policy"
+      ],
+      "type": "object"
+    },
+    "out_of_scope": {
+      "items": {
+        "maxLength": 2048,
+        "minLength": 1,
+        "type": "string"
+      },
+      "maxItems": 4096,
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "prohibited_operations": {
+      "items": {
+        "maxLength": 256,
+        "minLength": 1,
+        "type": "string"
+      },
+      "maxItems": 128,
+      "minItems": 1,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "project_id": {
+      "maxLength": 256,
+      "minLength": 1,
+      "type": "string"
+    },
+    "project_lock_id": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "scope_id": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "target_artifacts": {
+      "items": {
+        "enum": [
+          "TBOX",
+          "ABOX",
+          "MAPPING",
+          "SHACL",
+          "TERMINOLOGY"
+        ]
+      },
+      "maxItems": 5,
+      "minItems": 1,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "target_object_families": {
+      "items": {
+        "maxLength": 512,
+        "minLength": 1,
+        "type": "string"
+      },
+      "maxItems": 1024,
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    }
+  },
+  "required": [
+    "manifest_kind",
+    "schema_version",
+    "scope_id",
+    "project_id",
+    "project_lock_id",
+    "domain_pack_locks",
+    "kg_ir_dataset_ids",
+    "modeling_intent",
+    "domain_description",
+    "target_object_families",
+    "in_scope",
+    "out_of_scope",
+    "target_artifacts",
+    "namespace_policy",
+    "language_policy",
+    "iri_minting_policy",
+    "baseline_policy",
+    "competency_question_set_id",
+    "acceptance_gates",
+    "prohibited_operations",
+    "content_digest"
+  ],
+  "title": "KG-MNP Ontology-Scope 1.0",
+  "type": "object"
+}

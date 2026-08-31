@@ -1,0 +1,178 @@
+{
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/competency-question-set/1.0",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "content_digest": {
+      "maxLength": 64,
+      "minLength": 1,
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "manifest_kind": {
+      "const": "KG_MNP_COMPETENCY_QUESTION_SET"
+    },
+    "project_lock_id": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "question_set_id": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "questions": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "evidence_refs": {
+            "items": {
+              "maxLength": 256,
+              "minLength": 1,
+              "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+              "type": "string"
+            },
+            "maxItems": 10000,
+            "minItems": 0,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "expected_answer_shape": {
+            "enum": [
+              "BOOLEAN",
+              "ENTITY_LIST",
+              "SCALAR",
+              "TABLE",
+              "GRAPH_PATTERN"
+            ]
+          },
+          "priority": {
+            "enum": [
+              "LOW",
+              "MEDIUM",
+              "HIGH",
+              "CRITICAL"
+            ]
+          },
+          "purpose": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "type": "string"
+          },
+          "question_id": {
+            "maxLength": 256,
+            "minLength": 1,
+            "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "question_text": {
+            "maxLength": 8192,
+            "minLength": 1,
+            "type": "string"
+          },
+          "required_concepts": {
+            "items": {
+              "maxLength": 2048,
+              "minLength": 1,
+              "type": "string"
+            },
+            "maxItems": 256,
+            "minItems": 0,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "required_constraints": {
+            "items": {
+              "maxLength": 2048,
+              "minLength": 1,
+              "type": "string"
+            },
+            "maxItems": 256,
+            "minItems": 0,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "required_relations": {
+            "items": {
+              "maxLength": 2048,
+              "minLength": 1,
+              "type": "string"
+            },
+            "maxItems": 256,
+            "minItems": 0,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "source_domain_asset_refs": {
+            "items": {
+              "maxLength": 512,
+              "minLength": 1,
+              "type": "string"
+            },
+            "maxItems": 1024,
+            "minItems": 0,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "status": {
+            "enum": [
+              "DRAFT",
+              "APPROVED",
+              "RETIRED"
+            ]
+          },
+          "validation_intent": {
+            "enum": [
+              "RETRIEVAL",
+              "CONSTRAINT_CHECK",
+              "INFERENCE",
+              "TRACEABILITY"
+            ]
+          }
+        },
+        "required": [
+          "question_id",
+          "question_text",
+          "purpose",
+          "priority",
+          "expected_answer_shape",
+          "required_concepts",
+          "required_relations",
+          "required_constraints",
+          "evidence_refs",
+          "source_domain_asset_refs",
+          "validation_intent",
+          "status"
+        ],
+        "type": "object"
+      },
+      "maxItems": 10000,
+      "minItems": 1,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "scope_id": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+      "type": "string"
+    }
+  },
+  "required": [
+    "manifest_kind",
+    "schema_version",
+    "question_set_id",
+    "project_lock_id",
+    "scope_id",
+    "questions",
+    "content_digest"
+  ],
+  "title": "KG-MNP Competency-Question-Set 1.0",
+  "type": "object"
+}

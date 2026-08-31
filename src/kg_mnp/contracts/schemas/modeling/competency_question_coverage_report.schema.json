@@ -1,0 +1,111 @@
+{
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/competency-question-coverage-report/1.0",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "content_digest": {
+      "maxLength": 64,
+      "minLength": 1,
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "coverage": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "candidate_refs": {
+            "items": {
+              "maxLength": 256,
+              "minLength": 1,
+              "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+              "type": "string"
+            },
+            "maxItems": 10000,
+            "minItems": 0,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "issue_refs": {
+            "items": {
+              "maxLength": 256,
+              "minLength": 1,
+              "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+              "type": "string"
+            },
+            "maxItems": 10000,
+            "minItems": 0,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "question_id": {
+            "maxLength": 256,
+            "minLength": 1,
+            "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "status": {
+            "enum": [
+              "COVERED",
+              "PARTIAL",
+              "GAP"
+            ]
+          },
+          "structural_only": {
+            "const": true
+          }
+        },
+        "required": [
+          "question_id",
+          "status",
+          "candidate_refs",
+          "issue_refs",
+          "structural_only"
+        ],
+        "type": "object"
+      },
+      "maxItems": 10000,
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "coverage_report_id": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "execution_claimed": {
+      "const": false
+    },
+    "manifest_kind": {
+      "const": "KG_MNP_COMPETENCY_QUESTION_COVERAGE_REPORT"
+    },
+    "proposal_id": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "question_set_id": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    }
+  },
+  "required": [
+    "manifest_kind",
+    "schema_version",
+    "coverage_report_id",
+    "question_set_id",
+    "proposal_id",
+    "coverage",
+    "execution_claimed",
+    "content_digest"
+  ],
+  "title": "KG-MNP Competency-Question-Coverage-Report 1.0",
+  "type": "object"
+}

@@ -1,0 +1,220 @@
+{
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/model-invocation-record/1.0",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "declared_seed": {
+      "oneOf": [
+        {
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "determinism_class": {
+      "enum": [
+        "RECORDED_BYTES_ONLY",
+        "SEEDED_BUT_NOT_GUARANTEED",
+        "NONDETERMINISTIC"
+      ]
+    },
+    "finish_status": {
+      "maxLength": 128,
+      "minLength": 1,
+      "type": "string"
+    },
+    "invocation_id": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "issues": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "candidate_refs": {
+            "items": {
+              "maxLength": 256,
+              "minLength": 1,
+              "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+              "type": "string"
+            },
+            "maxItems": 10000,
+            "minItems": 0,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "code": {
+            "maxLength": 128,
+            "minLength": 1,
+            "pattern": "^[A-Z][A-Z0-9_]*$",
+            "type": "string"
+          },
+          "evidence_refs": {
+            "items": {
+              "maxLength": 256,
+              "minLength": 1,
+              "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+              "type": "string"
+            },
+            "maxItems": 10000,
+            "minItems": 0,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "issue_id": {
+            "maxLength": 256,
+            "minLength": 1,
+            "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "message": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "type": "string"
+          },
+          "severity": {
+            "enum": [
+              "INFO",
+              "WARNING",
+              "BLOCKING"
+            ]
+          }
+        },
+        "required": [
+          "issue_id",
+          "code",
+          "severity",
+          "message",
+          "candidate_refs",
+          "evidence_refs"
+        ],
+        "type": "object"
+      },
+      "maxItems": 10000,
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "manifest_kind": {
+      "const": "KG_MNP_MODEL_INVOCATION_RECORD"
+    },
+    "model_id": {
+      "maxLength": 512,
+      "minLength": 1,
+      "type": "string"
+    },
+    "model_revision": {
+      "maxLength": 512,
+      "minLength": 1,
+      "type": "string"
+    },
+    "parse_status": {
+      "enum": [
+        "VALID",
+        "REJECTED",
+        "PARTIAL"
+      ]
+    },
+    "prompt_template_id": {
+      "maxLength": 512,
+      "minLength": 1,
+      "type": "string"
+    },
+    "prompt_template_sha256": {
+      "maxLength": 64,
+      "minLength": 1,
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "provider_name": {
+      "maxLength": 256,
+      "minLength": 1,
+      "type": "string"
+    },
+    "provider_type": {
+      "const": "RECORDED_EXTERNAL_MODEL"
+    },
+    "request_artifact_ref": {
+      "maxLength": 1024,
+      "minLength": 1,
+      "type": "string"
+    },
+    "request_sha256": {
+      "maxLength": 64,
+      "minLength": 1,
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "response_artifact_ref": {
+      "maxLength": 1024,
+      "minLength": 1,
+      "type": "string"
+    },
+    "response_sha256": {
+      "maxLength": 64,
+      "minLength": 1,
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "sampling_parameters": {
+      "additionalProperties": false,
+      "properties": {
+        "max_output_tokens": {
+          "maximum": 1000000,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "temperature_basis_points": {
+          "maximum": 10000,
+          "minimum": 0,
+          "type": "integer"
+        },
+        "top_p_basis_points": {
+          "maximum": 10000,
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [],
+      "type": "object"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "semantic_digest": {
+      "maxLength": 64,
+      "minLength": 1,
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    }
+  },
+  "required": [
+    "manifest_kind",
+    "schema_version",
+    "invocation_id",
+    "provider_type",
+    "provider_name",
+    "model_id",
+    "model_revision",
+    "request_artifact_ref",
+    "request_sha256",
+    "response_artifact_ref",
+    "response_sha256",
+    "prompt_template_id",
+    "prompt_template_sha256",
+    "sampling_parameters",
+    "declared_seed",
+    "determinism_class",
+    "finish_status",
+    "parse_status",
+    "issues",
+    "semantic_digest"
+  ],
+  "title": "KG-MNP Model-Invocation-Record 1.0",
+  "type": "object"
+}

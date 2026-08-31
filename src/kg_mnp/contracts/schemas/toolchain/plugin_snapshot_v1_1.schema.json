@@ -1,0 +1,145 @@
+{
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/plugin-snapshot/1.1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "authority_level": {
+      "const": "PROPOSAL_ONLY"
+    },
+    "capabilities": {
+      "items": {
+        "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/plugin-common/1.1#/$defs/capabilityId"
+      },
+      "maxItems": 7,
+      "minItems": 1,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "configuration_semantic_sha256": {
+      "maxLength": 64,
+      "minLength": 1,
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "determinism": {
+      "enum": [
+        "DETERMINISTIC",
+        "RECORDED_BYTES",
+        "HUMAN_AUTHORED"
+      ]
+    },
+    "distribution_name": {
+      "maxLength": 256,
+      "minLength": 1,
+      "type": "string"
+    },
+    "distribution_version": {
+      "const": "0.4.0"
+    },
+    "entry_point": {
+      "maxLength": 512,
+      "minLength": 1,
+      "type": "string"
+    },
+    "implementation_digest": {
+      "maxLength": 64,
+      "minLength": 1,
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "input_contracts": {
+      "items": {
+        "maxLength": 128,
+        "minLength": 1,
+        "type": "string"
+      },
+      "maxItems": 32,
+      "minItems": 1,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "manifest_kind": {
+      "const": "KG_MNP_PLUGIN_SNAPSHOT"
+    },
+    "manifest_semantic_sha256": {
+      "maxLength": 64,
+      "minLength": 1,
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "manifest_sha256": {
+      "maxLength": 64,
+      "minLength": 1,
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "network_policy": {
+      "const": "DENY"
+    },
+    "output_contracts": {
+      "items": {
+        "maxLength": 128,
+        "minLength": 1,
+        "type": "string"
+      },
+      "maxItems": 32,
+      "minItems": 1,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "plugin_api_version": {
+      "const": "1.1.0"
+    },
+    "plugin_id": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/plugin-common/1.1#/$defs/pluginId"
+    },
+    "plugin_version": {
+      "const": "1.0.0"
+    },
+    "schema_version": {
+      "const": "1.1.0"
+    },
+    "side_effects": {
+      "items": {
+        "enum": [
+          "PURE",
+          "READ_RECORDED_INPUT"
+        ]
+      },
+      "maxItems": 2,
+      "minItems": 1,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "snapshot_id": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+      "type": "string"
+    }
+  },
+  "required": [
+    "manifest_kind",
+    "schema_version",
+    "snapshot_id",
+    "plugin_id",
+    "plugin_version",
+    "plugin_api_version",
+    "distribution_name",
+    "distribution_version",
+    "entry_point",
+    "manifest_sha256",
+    "manifest_semantic_sha256",
+    "implementation_digest",
+    "configuration_semantic_sha256",
+    "capabilities",
+    "determinism",
+    "side_effects",
+    "authority_level",
+    "network_policy",
+    "input_contracts",
+    "output_contracts"
+  ],
+  "title": "KG-MNP PluginSnapshot 1.1",
+  "type": "object"
+}

@@ -1,0 +1,480 @@
+{
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/modeling-provider-response/1.0",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "authority_level": {
+      "const": "PROPOSAL_ONLY"
+    },
+    "candidate_drafts": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "baseline_element_refs": {
+            "items": {
+              "maxLength": 256,
+              "minLength": 1,
+              "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+              "type": "string"
+            },
+            "maxItems": 10000,
+            "minItems": 0,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "body": {
+            "additionalProperties": false,
+            "properties": {
+              "candidate_type": {
+                "enum": [
+                  "CLASS",
+                  "OBJECT_PROPERTY",
+                  "DATA_PROPERTY",
+                  "SUBCLASS_AXIOM",
+                  "DOMAIN_AXIOM",
+                  "RANGE_AXIOM",
+                  "DISJOINT_CLASSES_AXIOM",
+                  "RECORD_TO_CLASS",
+                  "FIELD_TO_DATA_PROPERTY",
+                  "REFERENCE_TO_OBJECT_PROPERTY",
+                  "VALUE_MAPPING",
+                  "IRI_TEMPLATE",
+                  "NULL_HANDLING_POLICY",
+                  "INDIVIDUAL",
+                  "CLASS_ASSERTION",
+                  "DATA_PROPERTY_ASSERTION",
+                  "OBJECT_PROPERTY_ASSERTION",
+                  "NODE_SHAPE",
+                  "PROPERTY_SHAPE",
+                  "MIN_COUNT",
+                  "MAX_COUNT",
+                  "DATATYPE",
+                  "CLASS_CONSTRAINT",
+                  "NODE_KIND",
+                  "IN_VALUES"
+                ]
+              },
+              "conversion_policy": {
+                "enum": [
+                  "IDENTITY",
+                  "TRIM",
+                  "NFC",
+                  "LOWERCASE",
+                  "UPPERCASE",
+                  "CONTROLLED_LOOKUP",
+                  "NONE"
+                ]
+              },
+              "integer_value": {
+                "oneOf": [
+                  {
+                    "maximum": 1000000,
+                    "minimum": 0,
+                    "type": "integer"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "label": {
+                "oneOf": [
+                  {
+                    "maxLength": 512,
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "literal": {
+                "oneOf": [
+                  {
+                    "additionalProperties": false,
+                    "properties": {
+                      "datatype_iri": {
+                        "oneOf": [
+                          {
+                            "maxLength": 2048,
+                            "minLength": 1,
+                            "pattern": "^(?:https?://|urn:)[^\\s]+$",
+                            "type": "string"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "language": {
+                        "oneOf": [
+                          {
+                            "maxLength": 35,
+                            "minLength": 1,
+                            "pattern": "^[A-Za-z0-9-]+$",
+                            "type": "string"
+                          },
+                          {
+                            "type": "null"
+                          }
+                        ]
+                      },
+                      "lexical_value": {
+                        "maxLength": 16384,
+                        "minLength": 0,
+                        "type": "string"
+                      }
+                    },
+                    "required": [
+                      "lexical_value",
+                      "datatype_iri",
+                      "language"
+                    ],
+                    "type": "object"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "null_policy": {
+                "enum": [
+                  "REJECT",
+                  "OMIT",
+                  "PRESERVE",
+                  "CONTROLLED_DEFAULT",
+                  "NONE"
+                ]
+              },
+              "object_iri": {
+                "oneOf": [
+                  {
+                    "maxLength": 2048,
+                    "minLength": 1,
+                    "pattern": "^(?:https?://|urn:)[^\\s]+$",
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "predicate_iri": {
+                "oneOf": [
+                  {
+                    "maxLength": 2048,
+                    "minLength": 1,
+                    "pattern": "^(?:https?://|urn:)[^\\s]+$",
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "source_field": {
+                "oneOf": [
+                  {
+                    "maxLength": 512,
+                    "minLength": 1,
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "subject_iri": {
+                "oneOf": [
+                  {
+                    "maxLength": 2048,
+                    "minLength": 1,
+                    "pattern": "^(?:https?://|urn:)[^\\s]+$",
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "target_iri": {
+                "oneOf": [
+                  {
+                    "maxLength": 2048,
+                    "minLength": 1,
+                    "pattern": "^(?:https?://|urn:)[^\\s]+$",
+                    "type": "string"
+                  },
+                  {
+                    "type": "null"
+                  }
+                ]
+              },
+              "values": {
+                "items": {
+                  "maxLength": 4096,
+                  "minLength": 0,
+                  "type": "string"
+                },
+                "maxItems": 1024,
+                "minItems": 0,
+                "type": "array",
+                "uniqueItems": true
+              }
+            },
+            "required": [
+              "candidate_type",
+              "subject_iri",
+              "predicate_iri",
+              "object_iri",
+              "label",
+              "source_field",
+              "target_iri",
+              "literal",
+              "values",
+              "integer_value",
+              "conversion_policy",
+              "null_policy"
+            ],
+            "type": "object"
+          },
+          "candidate_action": {
+            "enum": [
+              "REUSE_EXISTING",
+              "CREATE_NEW",
+              "ALIGN_TO_EXISTING",
+              "ASSERT",
+              "CONSTRAIN"
+            ]
+          },
+          "competency_question_refs": {
+            "items": {
+              "maxLength": 256,
+              "minLength": 1,
+              "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+              "type": "string"
+            },
+            "maxItems": 10000,
+            "minItems": 0,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "dependency_draft_refs": {
+            "items": {
+              "maxLength": 128,
+              "minLength": 1,
+              "type": "string"
+            },
+            "maxItems": 128,
+            "minItems": 0,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "domain_asset_refs": {
+            "items": {
+              "maxLength": 512,
+              "minLength": 1,
+              "type": "string"
+            },
+            "maxItems": 10000,
+            "minItems": 0,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "draft_kind": {
+            "enum": [
+              "TBOX",
+              "MAPPING",
+              "ABOX",
+              "SHACL"
+            ]
+          },
+          "draft_ref": {
+            "maxLength": 128,
+            "minLength": 1,
+            "type": "string"
+          },
+          "evidence_refs": {
+            "items": {
+              "maxLength": 256,
+              "minLength": 1,
+              "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+              "type": "string"
+            },
+            "maxItems": 10000,
+            "minItems": 0,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "kg_ir_item_refs": {
+            "items": {
+              "maxLength": 256,
+              "minLength": 1,
+              "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+              "type": "string"
+            },
+            "maxItems": 10000,
+            "minItems": 0,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "rationale": {
+            "maxLength": 16384,
+            "minLength": 1,
+            "type": "string"
+          },
+          "score_basis": {
+            "maxLength": 1024,
+            "minLength": 1,
+            "type": "string"
+          },
+          "score_basis_points": {
+            "maximum": 10000,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "support_status": {
+            "enum": [
+              "SUPPORTED",
+              "PARTIALLY_SUPPORTED",
+              "UNSUPPORTED"
+            ]
+          }
+        },
+        "required": [
+          "draft_kind",
+          "candidate_action",
+          "body",
+          "kg_ir_item_refs",
+          "evidence_refs",
+          "domain_asset_refs",
+          "competency_question_refs",
+          "baseline_element_refs",
+          "dependency_draft_refs",
+          "draft_ref",
+          "rationale",
+          "support_status",
+          "score_basis",
+          "score_basis_points"
+        ],
+        "type": "object"
+      },
+      "maxItems": 100000,
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "issues": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "candidate_refs": {
+            "items": {
+              "maxLength": 256,
+              "minLength": 1,
+              "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+              "type": "string"
+            },
+            "maxItems": 10000,
+            "minItems": 0,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "code": {
+            "maxLength": 128,
+            "minLength": 1,
+            "pattern": "^[A-Z][A-Z0-9_]*$",
+            "type": "string"
+          },
+          "evidence_refs": {
+            "items": {
+              "maxLength": 256,
+              "minLength": 1,
+              "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+              "type": "string"
+            },
+            "maxItems": 10000,
+            "minItems": 0,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "issue_id": {
+            "maxLength": 256,
+            "minLength": 1,
+            "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "message": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "type": "string"
+          },
+          "severity": {
+            "enum": [
+              "INFO",
+              "WARNING",
+              "BLOCKING"
+            ]
+          }
+        },
+        "required": [
+          "issue_id",
+          "code",
+          "severity",
+          "message",
+          "candidate_refs",
+          "evidence_refs"
+        ],
+        "type": "object"
+      },
+      "maxItems": 10000,
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "manifest_kind": {
+      "const": "KG_MNP_MODELING_PROVIDER_RESPONSE"
+    },
+    "provider_snapshot_id": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "request_id": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "response_digest": {
+      "maxLength": 64,
+      "minLength": 1,
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "response_id": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    }
+  },
+  "required": [
+    "manifest_kind",
+    "schema_version",
+    "response_id",
+    "request_id",
+    "provider_snapshot_id",
+    "authority_level",
+    "candidate_drafts",
+    "issues",
+    "response_digest"
+  ],
+  "title": "KG-MNP Modeling-Provider-Response 1.0",
+  "type": "object"
+}

@@ -1,0 +1,177 @@
+{
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/modeling-input-bundle/1.0",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "approved_scope_id": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "baseline_snapshot_id": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "competency_question_set_id": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "content_digest": {
+      "maxLength": 64,
+      "minLength": 1,
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "contract_catalog_digest": {
+      "maxLength": 64,
+      "minLength": 1,
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "domain_pack_lock_ids": {
+      "items": {
+        "maxLength": 256,
+        "minLength": 1,
+        "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "maxItems": 32,
+      "minItems": 1,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "evidence_record_ids": {
+      "items": {
+        "maxLength": 256,
+        "minLength": 1,
+        "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "maxItems": 100000,
+      "minItems": 1,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "kg_ir_dataset_ids": {
+      "items": {
+        "maxLength": 256,
+        "minLength": 1,
+        "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "maxItems": 128,
+      "minItems": 1,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "manifest_kind": {
+      "const": "KG_MNP_MODELING_INPUT_BUNDLE"
+    },
+    "modeling_input_bundle_id": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "project_lock_id": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "provider_policy": {
+      "additionalProperties": false,
+      "properties": {
+        "allowed_provider_ids": {
+          "items": {
+            "maxLength": 128,
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 128,
+          "minItems": 0,
+          "type": "array",
+          "uniqueItems": true
+        },
+        "authority_level": {
+          "const": "PROPOSAL_ONLY"
+        },
+        "network_allowed": {
+          "const": false
+        }
+      },
+      "required": [
+        "allowed_provider_ids",
+        "network_allowed",
+        "authority_level"
+      ],
+      "type": "object"
+    },
+    "review_policy_id": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "review_required_dataset_acceptances": {
+      "items": {
+        "maxLength": 256,
+        "minLength": 1,
+        "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "maxItems": 128,
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "scope_approval_id": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "term_alignment_set_id": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "terminology_catalog_id": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+      "type": "string"
+    }
+  },
+  "required": [
+    "manifest_kind",
+    "schema_version",
+    "modeling_input_bundle_id",
+    "project_lock_id",
+    "contract_catalog_digest",
+    "domain_pack_lock_ids",
+    "approved_scope_id",
+    "scope_approval_id",
+    "competency_question_set_id",
+    "baseline_snapshot_id",
+    "terminology_catalog_id",
+    "term_alignment_set_id",
+    "kg_ir_dataset_ids",
+    "evidence_record_ids",
+    "provider_policy",
+    "review_policy_id",
+    "review_required_dataset_acceptances",
+    "content_digest"
+  ],
+  "title": "KG-MNP Modeling-Input-Bundle 1.0",
+  "type": "object"
+}

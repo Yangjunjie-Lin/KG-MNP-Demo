@@ -1,0 +1,137 @@
+{
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/ontology-review-policy/1.0",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "blocking_issue_policy": {
+      "const": "MUST_RESOLVE"
+    },
+    "candidate_scope_rules": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "minimum_approvals": {
+            "maximum": 16,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "publication_scope": {
+            "enum": [
+              "TBOX",
+              "MAPPING",
+              "ABOX",
+              "SHACL"
+            ]
+          },
+          "required_roles": {
+            "items": {
+              "maxLength": 128,
+              "minLength": 1,
+              "type": "string"
+            },
+            "maxItems": 16,
+            "minItems": 1,
+            "type": "array",
+            "uniqueItems": true
+          }
+        },
+        "required": [
+          "publication_scope",
+          "required_roles",
+          "minimum_approvals"
+        ],
+        "type": "object"
+      },
+      "maxItems": 16,
+      "minItems": 1,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "content_digest": {
+      "maxLength": 64,
+      "minLength": 1,
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "development_only": {
+      "type": "boolean"
+    },
+    "evidence_requirements": {
+      "enum": [
+        "ALL_ACCEPTED",
+        "DOMAIN_EVIDENCE_ALLOWED"
+      ]
+    },
+    "manifest_kind": {
+      "const": "KG_MNP_ONTOLOGY_REVIEW_POLICY"
+    },
+    "minimum_approvals": {
+      "maximum": 16,
+      "minimum": 1,
+      "type": "integer"
+    },
+    "modification_policy": {
+      "const": "NEW_REVISION_AND_REVALIDATE"
+    },
+    "policy_id": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "policy_profile": {
+      "enum": [
+        "DEVELOPMENT_SINGLE_REVIEWER",
+        "PRODUCTION_MULTI_ROLE"
+      ]
+    },
+    "project_lock_id": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "quorum_policy": {
+      "enum": [
+        "PER_SCOPE",
+        "GLOBAL"
+      ]
+    },
+    "required_roles": {
+      "items": {
+        "maxLength": 128,
+        "minLength": 1,
+        "type": "string"
+      },
+      "maxItems": 64,
+      "minItems": 1,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "self_approval_policy": {
+      "const": "PROVIDER_PROHIBITED"
+    }
+  },
+  "required": [
+    "manifest_kind",
+    "schema_version",
+    "policy_id",
+    "project_lock_id",
+    "policy_profile",
+    "candidate_scope_rules",
+    "required_roles",
+    "minimum_approvals",
+    "evidence_requirements",
+    "modification_policy",
+    "blocking_issue_policy",
+    "quorum_policy",
+    "self_approval_policy",
+    "development_only",
+    "content_digest"
+  ],
+  "title": "KG-MNP Ontology-Review-Policy 1.0",
+  "type": "object"
+}

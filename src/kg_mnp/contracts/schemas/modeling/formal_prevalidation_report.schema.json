@@ -1,0 +1,234 @@
+{
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/formal-prevalidation-report/1.0",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "checks": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "check_id": {
+            "maxLength": 128,
+            "minLength": 1,
+            "type": "string"
+          },
+          "issues": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "candidate_refs": {
+                  "items": {
+                    "maxLength": 256,
+                    "minLength": 1,
+                    "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+                    "type": "string"
+                  },
+                  "maxItems": 10000,
+                  "minItems": 0,
+                  "type": "array",
+                  "uniqueItems": true
+                },
+                "code": {
+                  "maxLength": 128,
+                  "minLength": 1,
+                  "pattern": "^[A-Z][A-Z0-9_]*$",
+                  "type": "string"
+                },
+                "evidence_refs": {
+                  "items": {
+                    "maxLength": 256,
+                    "minLength": 1,
+                    "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+                    "type": "string"
+                  },
+                  "maxItems": 10000,
+                  "minItems": 0,
+                  "type": "array",
+                  "uniqueItems": true
+                },
+                "issue_id": {
+                  "maxLength": 256,
+                  "minLength": 1,
+                  "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+                  "type": "string"
+                },
+                "message": {
+                  "maxLength": 4096,
+                  "minLength": 1,
+                  "type": "string"
+                },
+                "severity": {
+                  "enum": [
+                    "INFO",
+                    "WARNING",
+                    "BLOCKING"
+                  ]
+                }
+              },
+              "required": [
+                "issue_id",
+                "code",
+                "severity",
+                "message",
+                "candidate_refs",
+                "evidence_refs"
+              ],
+              "type": "object"
+            },
+            "maxItems": 10000,
+            "minItems": 0,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "status": {
+            "enum": [
+              "PASS",
+              "REVIEW_REQUIRED",
+              "FAIL"
+            ]
+          }
+        },
+        "required": [
+          "check_id",
+          "status",
+          "issues"
+        ],
+        "type": "object"
+      },
+      "maxItems": 256,
+      "minItems": 1,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "content_digest": {
+      "maxLength": 64,
+      "minLength": 1,
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "cq_execution_claimed": {
+      "const": false
+    },
+    "formal_prevalidation_report_id": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "issues": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "candidate_refs": {
+            "items": {
+              "maxLength": 256,
+              "minLength": 1,
+              "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+              "type": "string"
+            },
+            "maxItems": 10000,
+            "minItems": 0,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "code": {
+            "maxLength": 128,
+            "minLength": 1,
+            "pattern": "^[A-Z][A-Z0-9_]*$",
+            "type": "string"
+          },
+          "evidence_refs": {
+            "items": {
+              "maxLength": 256,
+              "minLength": 1,
+              "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+              "type": "string"
+            },
+            "maxItems": 10000,
+            "minItems": 0,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "issue_id": {
+            "maxLength": 256,
+            "minLength": 1,
+            "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "message": {
+            "maxLength": 4096,
+            "minLength": 1,
+            "type": "string"
+          },
+          "severity": {
+            "enum": [
+              "INFO",
+              "WARNING",
+              "BLOCKING"
+            ]
+          }
+        },
+        "required": [
+          "issue_id",
+          "code",
+          "severity",
+          "message",
+          "candidate_refs",
+          "evidence_refs"
+        ],
+        "type": "object"
+      },
+      "maxItems": 100000,
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "manifest_kind": {
+      "const": "KG_MNP_FORMAL_PREVALIDATION_REPORT"
+    },
+    "owl_consistency_claimed": {
+      "const": false
+    },
+    "proposal_digest": {
+      "maxLength": 64,
+      "minLength": 1,
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "proposal_id": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "shacl_execution_claimed": {
+      "const": false
+    },
+    "status": {
+      "enum": [
+        "PASS",
+        "REVIEW_REQUIRED",
+        "FAIL"
+      ]
+    }
+  },
+  "required": [
+    "manifest_kind",
+    "schema_version",
+    "formal_prevalidation_report_id",
+    "proposal_id",
+    "proposal_digest",
+    "status",
+    "checks",
+    "issues",
+    "owl_consistency_claimed",
+    "shacl_execution_claimed",
+    "cq_execution_claimed",
+    "content_digest"
+  ],
+  "title": "KG-MNP Formal-Prevalidation-Report 1.0",
+  "type": "object"
+}

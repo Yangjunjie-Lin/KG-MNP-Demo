@@ -1,0 +1,193 @@
+{
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/ontology-modeling-run/1.0",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "content_digest": {
+      "maxLength": 64,
+      "minLength": 1,
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "limits": {
+      "additionalProperties": false,
+      "properties": {
+        "max_alignment_candidates_per_term": {
+          "maximum": 1000000000,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_baseline_import_depth": {
+          "maximum": 1000000000,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_baseline_triples": {
+          "maximum": 1000000000,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_candidate_dependencies": {
+          "maximum": 1000000000,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_conflicts": {
+          "maximum": 1000000000,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_definition_characters": {
+          "maximum": 1000000000,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_kgir_datasets": {
+          "maximum": 1000000000,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_kgir_items": {
+          "maximum": 1000000000,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_model_json_depth": {
+          "maximum": 1000000000,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_model_response_bytes": {
+          "maximum": 1000000000,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_rationale_characters": {
+          "maximum": 1000000000,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_review_actions": {
+          "maximum": 1000000000,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_terms": {
+          "maximum": 1000000000,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_total_candidates": {
+          "maximum": 1000000000,
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "max_kgir_datasets",
+        "max_kgir_items",
+        "max_terms",
+        "max_alignment_candidates_per_term",
+        "max_total_candidates",
+        "max_candidate_dependencies",
+        "max_conflicts",
+        "max_definition_characters",
+        "max_rationale_characters",
+        "max_model_response_bytes",
+        "max_model_json_depth",
+        "max_review_actions",
+        "max_baseline_triples",
+        "max_baseline_import_depth"
+      ],
+      "type": "object"
+    },
+    "manifest_kind": {
+      "const": "KG_MNP_ONTOLOGY_MODELING_RUN"
+    },
+    "modeling_input_bundle_id": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "modeling_run_id": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "package_id": {
+      "oneOf": [
+        {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "project_lock_id": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "proposal_id": {
+      "oneOf": [
+        {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "review_queue_id": {
+      "oneOf": [
+        {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "status": {
+      "enum": [
+        "INPUT_READY",
+        "PROPOSED",
+        "PREVALIDATED",
+        "UNDER_REVIEW",
+        "READY_FOR_COMPILATION",
+        "FAILED"
+      ]
+    }
+  },
+  "required": [
+    "manifest_kind",
+    "schema_version",
+    "modeling_run_id",
+    "project_lock_id",
+    "modeling_input_bundle_id",
+    "proposal_id",
+    "review_queue_id",
+    "package_id",
+    "limits",
+    "status",
+    "content_digest"
+  ],
+  "title": "KG-MNP Ontology-Modeling-Run 1.0",
+  "type": "object"
+}

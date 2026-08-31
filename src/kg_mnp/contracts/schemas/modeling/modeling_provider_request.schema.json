@@ -1,0 +1,161 @@
+{
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/modeling-provider-request/1.0",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "capability": {
+      "enum": [
+        "terminology-alignment",
+        "baseline-reuse",
+        "tbox-proposal",
+        "field-mapping-proposal",
+        "abox-proposal",
+        "shacl-proposal",
+        "repair-suggestion"
+      ]
+    },
+    "immutable_payload": {
+      "additionalProperties": false,
+      "properties": {
+        "baseline_snapshot_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "evidence_record_ids": {
+          "items": {
+            "maxLength": 256,
+            "minLength": 1,
+            "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "maxItems": 100000,
+          "minItems": 0,
+          "type": "array",
+          "uniqueItems": true
+        },
+        "kg_ir_dataset_ids": {
+          "items": {
+            "maxLength": 256,
+            "minLength": 1,
+            "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "maxItems": 128,
+          "minItems": 0,
+          "type": "array",
+          "uniqueItems": true
+        },
+        "scope_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "term_alignment_set_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "terminology_catalog_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "scope_id",
+        "baseline_snapshot_id",
+        "terminology_catalog_id",
+        "term_alignment_set_id",
+        "kg_ir_dataset_ids",
+        "evidence_record_ids"
+      ],
+      "type": "object"
+    },
+    "limits": {
+      "additionalProperties": false,
+      "properties": {
+        "max_candidate_dependencies": {
+          "maximum": 1000000000,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_model_json_depth": {
+          "maximum": 1000000000,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_model_response_bytes": {
+          "maximum": 1000000000,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_rationale_characters": {
+          "maximum": 1000000000,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_total_candidates": {
+          "maximum": 1000000000,
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "max_total_candidates",
+        "max_candidate_dependencies",
+        "max_model_response_bytes",
+        "max_model_json_depth",
+        "max_rationale_characters"
+      ],
+      "type": "object"
+    },
+    "manifest_kind": {
+      "const": "KG_MNP_MODELING_PROVIDER_REQUEST"
+    },
+    "modeling_input_bundle_id": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "provider_snapshot_id": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "request_digest": {
+      "maxLength": 64,
+      "minLength": 1,
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "request_id": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    }
+  },
+  "required": [
+    "manifest_kind",
+    "schema_version",
+    "request_id",
+    "modeling_input_bundle_id",
+    "provider_snapshot_id",
+    "capability",
+    "immutable_payload",
+    "limits",
+    "request_digest"
+  ],
+  "title": "KG-MNP Modeling-Provider-Request 1.0",
+  "type": "object"
+}

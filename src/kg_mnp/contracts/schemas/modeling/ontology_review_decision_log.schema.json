@@ -1,0 +1,187 @@
+{
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/ontology-review-decision-log/1.0",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "action_ids": {
+      "items": {
+        "maxLength": 256,
+        "minLength": 1,
+        "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "maxItems": 100000,
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "content_digest": {
+      "maxLength": 64,
+      "minLength": 1,
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "final_decisions": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "candidate_id": {
+            "maxLength": 256,
+            "minLength": 1,
+            "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "decision": {
+            "enum": [
+              "ACCEPT",
+              "MODIFY_AND_ACCEPT",
+              "REJECT",
+              "DEFER",
+              "REUSE_EXISTING",
+              "MARK_DUPLICATE"
+            ]
+          },
+          "effective_candidate_id": {
+            "oneOf": [
+              {
+                "maxLength": 256,
+                "minLength": 1,
+                "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "reviewer_ids": {
+            "items": {
+              "maxLength": 256,
+              "minLength": 1,
+              "type": "string"
+            },
+            "maxItems": 16,
+            "minItems": 0,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "reviewer_roles": {
+            "items": {
+              "maxLength": 128,
+              "minLength": 1,
+              "type": "string"
+            },
+            "maxItems": 16,
+            "minItems": 0,
+            "type": "array",
+            "uniqueItems": true
+          }
+        },
+        "required": [
+          "candidate_id",
+          "decision",
+          "effective_candidate_id",
+          "reviewer_ids",
+          "reviewer_roles"
+        ],
+        "type": "object"
+      },
+      "maxItems": 100000,
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "manifest_kind": {
+      "const": "KG_MNP_ONTOLOGY_REVIEW_DECISION_LOG"
+    },
+    "operational_log_hash": {
+      "maxLength": 64,
+      "minLength": 1,
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "prevalidation_digest": {
+      "maxLength": 64,
+      "minLength": 1,
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "prevalidation_report_id": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "project_lock_id": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "proposal_digest": {
+      "maxLength": 64,
+      "minLength": 1,
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "proposal_id": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "review_decision_log_id": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "review_policy_digest": {
+      "maxLength": 64,
+      "minLength": 1,
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "review_policy_id": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "review_queue_id": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "semantic_decision_hash": {
+      "maxLength": 64,
+      "minLength": 1,
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    }
+  },
+  "required": [
+    "manifest_kind",
+    "schema_version",
+    "review_decision_log_id",
+    "review_queue_id",
+    "project_lock_id",
+    "proposal_id",
+    "proposal_digest",
+    "prevalidation_report_id",
+    "prevalidation_digest",
+    "review_policy_id",
+    "review_policy_digest",
+    "action_ids",
+    "final_decisions",
+    "operational_log_hash",
+    "semantic_decision_hash",
+    "content_digest"
+  ],
+  "title": "KG-MNP Ontology-Review-Decision-Log 1.0",
+  "type": "object"
+}

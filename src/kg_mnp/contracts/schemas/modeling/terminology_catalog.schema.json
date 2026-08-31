@@ -1,0 +1,189 @@
+{
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/terminology-catalog/1.0",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "baseline_snapshot_id": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "content_digest": {
+      "maxLength": 64,
+      "minLength": 1,
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "kg_ir_dataset_ids": {
+      "items": {
+        "maxLength": 256,
+        "minLength": 1,
+        "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "maxItems": 128,
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "manifest_kind": {
+      "const": "KG_MNP_TERMINOLOGY_CATALOG"
+    },
+    "project_lock_id": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "scope_id": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "terminology_catalog_id": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "terms": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "aliases": {
+            "items": {
+              "maxLength": 2048,
+              "minLength": 1,
+              "type": "string"
+            },
+            "maxItems": 128,
+            "minItems": 0,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "candidate_iris": {
+            "items": {
+              "maxLength": 2048,
+              "minLength": 1,
+              "pattern": "^(?:https?://|urn:)[^\\s]+$",
+              "type": "string"
+            },
+            "maxItems": 128,
+            "minItems": 0,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "definition": {
+            "oneOf": [
+              {
+                "maxLength": 16384,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "evidence_refs": {
+            "items": {
+              "maxLength": 256,
+              "minLength": 1,
+              "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+              "type": "string"
+            },
+            "maxItems": 10000,
+            "minItems": 0,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "language": {
+            "oneOf": [
+              {
+                "maxLength": 35,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "lexical_form": {
+            "maxLength": 2048,
+            "minLength": 1,
+            "type": "string"
+          },
+          "normalized_form": {
+            "maxLength": 2048,
+            "minLength": 1,
+            "type": "string"
+          },
+          "source_ref": {
+            "maxLength": 512,
+            "minLength": 1,
+            "type": "string"
+          },
+          "source_type": {
+            "enum": [
+              "DOMAIN_PACK",
+              "ONTOLOGY_BASELINE",
+              "APPROVED_SCOPE",
+              "KG_IR",
+              "HUMAN_AUTHORED"
+            ]
+          },
+          "status": {
+            "enum": [
+              "PROPOSED",
+              "REVIEW_REQUIRED",
+              "HUMAN_AUTHORED"
+            ]
+          },
+          "term_id": {
+            "maxLength": 256,
+            "minLength": 1,
+            "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+            "type": "string"
+          }
+        },
+        "required": [
+          "term_id",
+          "lexical_form",
+          "normalized_form",
+          "language",
+          "source_type",
+          "source_ref",
+          "evidence_refs",
+          "candidate_iris",
+          "definition",
+          "aliases",
+          "status"
+        ],
+        "type": "object"
+      },
+      "maxItems": 100000,
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    }
+  },
+  "required": [
+    "manifest_kind",
+    "schema_version",
+    "terminology_catalog_id",
+    "project_lock_id",
+    "scope_id",
+    "baseline_snapshot_id",
+    "kg_ir_dataset_ids",
+    "terms",
+    "content_digest"
+  ],
+  "title": "KG-MNP Terminology-Catalog 1.0",
+  "type": "object"
+}

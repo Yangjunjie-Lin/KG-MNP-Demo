@@ -1,0 +1,108 @@
+{
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/ontology-scope-approval/1.0",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "approval_id": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "decision": {
+      "enum": [
+        "APPROVE",
+        "REJECT",
+        "REQUEST_CHANGES"
+      ]
+    },
+    "decision_semantic_hash": {
+      "maxLength": 64,
+      "minLength": 1,
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "manifest_kind": {
+      "const": "KG_MNP_ONTOLOGY_SCOPE_APPROVAL"
+    },
+    "operational_metadata": {
+      "additionalProperties": false,
+      "properties": {
+        "decided_at": {
+          "oneOf": [
+            {
+              "maxLength": 64,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "display_name": {
+          "oneOf": [
+            {
+              "maxLength": 256,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "decided_at",
+        "display_name"
+      ],
+      "type": "object"
+    },
+    "rationale": {
+      "maxLength": 16384,
+      "minLength": 1,
+      "type": "string"
+    },
+    "reviewer_id": {
+      "maxLength": 256,
+      "minLength": 1,
+      "type": "string"
+    },
+    "reviewer_role": {
+      "maxLength": 128,
+      "minLength": 1,
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "scope_id": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "scope_semantic_hash": {
+      "maxLength": 64,
+      "minLength": 1,
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    }
+  },
+  "required": [
+    "manifest_kind",
+    "schema_version",
+    "approval_id",
+    "scope_id",
+    "scope_semantic_hash",
+    "reviewer_id",
+    "reviewer_role",
+    "decision",
+    "rationale",
+    "operational_metadata",
+    "decision_semantic_hash"
+  ],
+  "title": "KG-MNP Ontology-Scope-Approval 1.0",
+  "type": "object"
+}

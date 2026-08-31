@@ -1,0 +1,211 @@
+{
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/plugin-manifest/1.1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "authority_level": {
+      "const": "PROPOSAL_ONLY"
+    },
+    "capabilities": {
+      "items": {
+        "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/plugin-common/1.1#/$defs/capabilityId"
+      },
+      "maxItems": 7,
+      "minItems": 1,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "configuration_contract": {
+      "type": "null"
+    },
+    "description": {
+      "maxLength": 4096,
+      "minLength": 1,
+      "type": "string"
+    },
+    "determinism": {
+      "enum": [
+        "DETERMINISTIC",
+        "RECORDED_BYTES",
+        "HUMAN_AUTHORED"
+      ]
+    },
+    "display_name": {
+      "maxLength": 256,
+      "minLength": 1,
+      "type": "string"
+    },
+    "distribution": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "maxLength": 256,
+          "minLength": 1,
+          "type": "string"
+        },
+        "required_version": {
+          "const": "0.4.0"
+        }
+      },
+      "required": [
+        "name",
+        "required_version"
+      ],
+      "type": "object"
+    },
+    "entry_point": {
+      "additionalProperties": false,
+      "properties": {
+        "group": {
+          "const": "kg_mnp.plugins"
+        },
+        "name": {
+          "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/plugin-common/1.1#/$defs/pluginId"
+        },
+        "object": {
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^[A-Za-z_][A-Za-z0-9_.]*:[A-Za-z_][A-Za-z0-9_.]*$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "group",
+        "name",
+        "object"
+      ],
+      "type": "object"
+    },
+    "extensions": {
+      "additionalProperties": false,
+      "properties": {},
+      "required": [],
+      "type": "object"
+    },
+    "implementation_files": {
+      "items": {
+        "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/plugin-common/1.1#/$defs/safeRelativePath"
+      },
+      "maxItems": 64,
+      "minItems": 1,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "input_contracts": {
+      "items": {
+        "maxLength": 128,
+        "minLength": 1,
+        "type": "string"
+      },
+      "maxItems": 32,
+      "minItems": 1,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "manifest_kind": {
+      "const": "KG_MNP_PLUGIN"
+    },
+    "media_types": {
+      "maxItems": 0,
+      "type": "array"
+    },
+    "network_policy": {
+      "const": "DENY"
+    },
+    "output_contracts": {
+      "items": {
+        "maxLength": 128,
+        "minLength": 1,
+        "type": "string"
+      },
+      "maxItems": 32,
+      "minItems": 1,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "plugin_api_version": {
+      "const": "1.1.0"
+    },
+    "plugin_id": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/plugin-common/1.1#/$defs/pluginId"
+    },
+    "plugin_kinds": {
+      "items": {
+        "const": "modeling-provider"
+      },
+      "maxItems": 1,
+      "minItems": 1,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "plugin_version": {
+      "const": "1.0.0"
+    },
+    "priority": {
+      "maximum": 1000,
+      "minimum": 0,
+      "type": "integer"
+    },
+    "requirements": {
+      "additionalProperties": false,
+      "properties": {
+        "optional_dependencies": {
+          "maxItems": 0,
+          "type": "array"
+        },
+        "python": {
+          "maxLength": 64,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "python",
+        "optional_dependencies"
+      ],
+      "type": "object"
+    },
+    "schema_version": {
+      "const": "1.1.0"
+    },
+    "side_effects": {
+      "items": {
+        "enum": [
+          "PURE",
+          "READ_RECORDED_INPUT"
+        ]
+      },
+      "maxItems": 2,
+      "minItems": 1,
+      "type": "array",
+      "uniqueItems": true
+    }
+  },
+  "required": [
+    "manifest_kind",
+    "schema_version",
+    "plugin_api_version",
+    "plugin_id",
+    "plugin_version",
+    "display_name",
+    "description",
+    "distribution",
+    "entry_point",
+    "plugin_kinds",
+    "capabilities",
+    "media_types",
+    "priority",
+    "determinism",
+    "side_effects",
+    "implementation_files",
+    "configuration_contract",
+    "requirements",
+    "extensions",
+    "input_contracts",
+    "output_contracts",
+    "authority_level",
+    "network_policy"
+  ],
+  "title": "KG-MNP PluginManifest 1.1",
+  "type": "object"
+}

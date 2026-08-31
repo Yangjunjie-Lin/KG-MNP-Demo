@@ -1,0 +1,232 @@
+{
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/ontology-review-queue/1.0",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "content_digest": {
+      "maxLength": 64,
+      "minLength": 1,
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "formal_prevalidation_report_id": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "items": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "blocking_reasons": {
+            "items": {
+              "maxLength": 4096,
+              "minLength": 1,
+              "type": "string"
+            },
+            "maxItems": 10000,
+            "minItems": 0,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "candidate_id": {
+            "oneOf": [
+              {
+                "maxLength": 256,
+                "minLength": 1,
+                "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "competency_question_refs": {
+            "items": {
+              "maxLength": 256,
+              "minLength": 1,
+              "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+              "type": "string"
+            },
+            "maxItems": 10000,
+            "minItems": 0,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "dependency_refs": {
+            "items": {
+              "maxLength": 256,
+              "minLength": 1,
+              "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+              "type": "string"
+            },
+            "maxItems": 128,
+            "minItems": 0,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "evidence_refs": {
+            "items": {
+              "maxLength": 256,
+              "minLength": 1,
+              "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+              "type": "string"
+            },
+            "maxItems": 10000,
+            "minItems": 0,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "issue_id": {
+            "oneOf": [
+              {
+                "maxLength": 256,
+                "minLength": 1,
+                "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "item_type": {
+            "enum": [
+              "SCOPE",
+              "TERMINOLOGY_ALIGNMENT",
+              "CANDIDATE",
+              "CONFLICT",
+              "COVERAGE_GAP"
+            ]
+          },
+          "prevalidation_status": {
+            "enum": [
+              "PASS",
+              "REVIEW_REQUIRED",
+              "FAIL"
+            ]
+          },
+          "priority": {
+            "maximum": 1000000,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "publication_scope": {
+            "oneOf": [
+              {
+                "enum": [
+                  "TBOX",
+                  "MAPPING",
+                  "ABOX",
+                  "SHACL"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "queue_item_id": {
+            "maxLength": 256,
+            "minLength": 1,
+            "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "required_roles": {
+            "items": {
+              "maxLength": 128,
+              "minLength": 1,
+              "type": "string"
+            },
+            "maxItems": 16,
+            "minItems": 0,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "review_state": {
+            "enum": [
+              "BLOCKED",
+              "READY_FOR_REVIEW",
+              "NEEDS_EVIDENCE",
+              "UNDER_REVIEW",
+              "DECIDED",
+              "SUPERSEDED"
+            ]
+          }
+        },
+        "required": [
+          "queue_item_id",
+          "candidate_id",
+          "issue_id",
+          "item_type",
+          "publication_scope",
+          "dependency_refs",
+          "evidence_refs",
+          "competency_question_refs",
+          "prevalidation_status",
+          "required_roles",
+          "review_state",
+          "blocking_reasons",
+          "priority"
+        ],
+        "type": "object"
+      },
+      "maxItems": 100000,
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "manifest_kind": {
+      "const": "KG_MNP_ONTOLOGY_REVIEW_QUEUE"
+    },
+    "project_lock_id": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "proposal_digest": {
+      "maxLength": 64,
+      "minLength": 1,
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "proposal_id": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "review_policy_id": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "review_queue_id": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    }
+  },
+  "required": [
+    "manifest_kind",
+    "schema_version",
+    "review_queue_id",
+    "project_lock_id",
+    "proposal_id",
+    "proposal_digest",
+    "formal_prevalidation_report_id",
+    "review_policy_id",
+    "items",
+    "content_digest"
+  ],
+  "title": "KG-MNP Ontology-Review-Queue 1.0",
+  "type": "object"
+}

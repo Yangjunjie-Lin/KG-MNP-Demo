@@ -1,0 +1,40 @@
+{
+  "$defs": {
+    "capabilityId": {
+      "enum": [
+        "terminology-alignment",
+        "baseline-reuse",
+        "tbox-proposal",
+        "field-mapping-proposal",
+        "abox-proposal",
+        "shacl-proposal",
+        "repair-suggestion"
+      ]
+    },
+    "pluginApiVersion": {
+      "const": "1.1.0"
+    },
+    "pluginId": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$",
+      "type": "string"
+    },
+    "pluginKind": {
+      "const": "modeling-provider"
+    },
+    "safeRelativePath": {
+      "maxLength": 1024,
+      "minLength": 1,
+      "pattern": "^(?![A-Za-z]:|/|\\\\|.*(?:^|/)\\.\\.(?:/|$)).+$",
+      "type": "string"
+    }
+  },
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/plugin-common/1.1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {},
+  "required": [],
+  "title": "KG-MNP Plugin Common 1.1",
+  "type": "object"
+}

@@ -1,0 +1,717 @@
+{
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/ontology-baseline-snapshot/1.0",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "annotation_properties": {
+      "items": {
+        "maxLength": 256,
+        "minLength": 1,
+        "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "maxItems": 1000000,
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "baseline_snapshot_id": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "classes": {
+      "items": {
+        "maxLength": 256,
+        "minLength": 1,
+        "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "maxItems": 1000000,
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "content_digest": {
+      "maxLength": 64,
+      "minLength": 1,
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "data_properties": {
+      "items": {
+        "maxLength": 256,
+        "minLength": 1,
+        "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "maxItems": 1000000,
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "definitions": {
+      "items": {
+        "maxLength": 256,
+        "minLength": 1,
+        "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "maxItems": 1000000,
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "domain_axioms": {
+      "items": {
+        "maxLength": 256,
+        "minLength": 1,
+        "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "maxItems": 1000000,
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "domain_pack_lock_ids": {
+      "items": {
+        "maxLength": 256,
+        "minLength": 1,
+        "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "maxItems": 32,
+      "minItems": 1,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "elements": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "definition": {
+            "oneOf": [
+              {
+                "maxLength": 16384,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "domain_refs": {
+            "items": {
+              "maxLength": 2048,
+              "minLength": 1,
+              "pattern": "^(?:https?://|urn:)[^\\s]+$",
+              "type": "string"
+            },
+            "maxItems": 128,
+            "minItems": 0,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "element_id": {
+            "maxLength": 256,
+            "minLength": 1,
+            "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "element_kind": {
+            "enum": [
+              "CLASS",
+              "OBJECT_PROPERTY",
+              "DATA_PROPERTY",
+              "ANNOTATION_PROPERTY",
+              "INDIVIDUAL",
+              "SHAPE",
+              "AXIOM"
+            ]
+          },
+          "iri": {
+            "maxLength": 2048,
+            "minLength": 1,
+            "pattern": "^(?:https?://|urn:)[^\\s]+$",
+            "type": "string"
+          },
+          "labels": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "language": {
+                  "oneOf": [
+                    {
+                      "maxLength": 35,
+                      "minLength": 1,
+                      "type": "string"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "value": {
+                  "maxLength": 1024,
+                  "minLength": 1,
+                  "type": "string"
+                }
+              },
+              "required": [
+                "value",
+                "language"
+              ],
+              "type": "object"
+            },
+            "maxItems": 128,
+            "minItems": 0,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "parent_refs": {
+            "items": {
+              "maxLength": 2048,
+              "minLength": 1,
+              "pattern": "^(?:https?://|urn:)[^\\s]+$",
+              "type": "string"
+            },
+            "maxItems": 128,
+            "minItems": 0,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "range_refs": {
+            "items": {
+              "maxLength": 2048,
+              "minLength": 1,
+              "pattern": "^(?:https?://|urn:)[^\\s]+$",
+              "type": "string"
+            },
+            "maxItems": 128,
+            "minItems": 0,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "source_asset_id": {
+            "maxLength": 512,
+            "minLength": 1,
+            "type": "string"
+          },
+          "source_sha256": {
+            "maxLength": 64,
+            "minLength": 1,
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          }
+        },
+        "required": [
+          "element_id",
+          "element_kind",
+          "iri",
+          "source_asset_id",
+          "source_sha256",
+          "labels",
+          "definition",
+          "domain_refs",
+          "range_refs",
+          "parent_refs"
+        ],
+        "type": "object"
+      },
+      "maxItems": 1000000,
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "imports": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "import_iri": {
+            "maxLength": 2048,
+            "minLength": 1,
+            "pattern": "^(?:https?://|urn:)[^\\s]+$",
+            "type": "string"
+          },
+          "local_asset_id": {
+            "maxLength": 512,
+            "minLength": 1,
+            "type": "string"
+          },
+          "remote_fetch": {
+            "const": false
+          },
+          "source_iri": {
+            "maxLength": 2048,
+            "minLength": 1,
+            "pattern": "^(?:https?://|urn:)[^\\s]+$",
+            "type": "string"
+          }
+        },
+        "required": [
+          "source_iri",
+          "import_iri",
+          "local_asset_id",
+          "remote_fetch"
+        ],
+        "type": "object"
+      },
+      "maxItems": 10000,
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "indexes": {
+      "additionalProperties": false,
+      "properties": {
+        "domain_range_index": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "element_ids": {
+                "items": {
+                  "maxLength": 256,
+                  "minLength": 1,
+                  "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+                  "type": "string"
+                },
+                "maxItems": 10000,
+                "minItems": 0,
+                "type": "array",
+                "uniqueItems": true
+              },
+              "key": {
+                "maxLength": 2048,
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [
+              "key",
+              "element_ids"
+            ],
+            "type": "object"
+          },
+          "maxItems": 100000,
+          "minItems": 0,
+          "type": "array",
+          "uniqueItems": true
+        },
+        "hierarchy_index": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "element_ids": {
+                "items": {
+                  "maxLength": 256,
+                  "minLength": 1,
+                  "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+                  "type": "string"
+                },
+                "maxItems": 10000,
+                "minItems": 0,
+                "type": "array",
+                "uniqueItems": true
+              },
+              "key": {
+                "maxLength": 2048,
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [
+              "key",
+              "element_ids"
+            ],
+            "type": "object"
+          },
+          "maxItems": 100000,
+          "minItems": 0,
+          "type": "array",
+          "uniqueItems": true
+        },
+        "iri_index": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "element_ids": {
+                "items": {
+                  "maxLength": 256,
+                  "minLength": 1,
+                  "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+                  "type": "string"
+                },
+                "maxItems": 10000,
+                "minItems": 1,
+                "type": "array",
+                "uniqueItems": true
+              },
+              "key": {
+                "maxLength": 2048,
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [
+              "key",
+              "element_ids"
+            ],
+            "type": "object"
+          },
+          "maxItems": 100000,
+          "minItems": 0,
+          "type": "array",
+          "uniqueItems": true
+        },
+        "label_index": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "element_ids": {
+                "items": {
+                  "maxLength": 256,
+                  "minLength": 1,
+                  "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+                  "type": "string"
+                },
+                "maxItems": 10000,
+                "minItems": 1,
+                "type": "array",
+                "uniqueItems": true
+              },
+              "key": {
+                "maxLength": 1024,
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [
+              "key",
+              "element_ids"
+            ],
+            "type": "object"
+          },
+          "maxItems": 100000,
+          "minItems": 0,
+          "type": "array",
+          "uniqueItems": true
+        },
+        "language_index": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "element_ids": {
+                "items": {
+                  "maxLength": 256,
+                  "minLength": 1,
+                  "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+                  "type": "string"
+                },
+                "maxItems": 10000,
+                "minItems": 0,
+                "type": "array",
+                "uniqueItems": true
+              },
+              "key": {
+                "maxLength": 35,
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [
+              "key",
+              "element_ids"
+            ],
+            "type": "object"
+          },
+          "maxItems": 1000,
+          "minItems": 0,
+          "type": "array",
+          "uniqueItems": true
+        },
+        "normalized_label_index": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "element_ids": {
+                "items": {
+                  "maxLength": 256,
+                  "minLength": 1,
+                  "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+                  "type": "string"
+                },
+                "maxItems": 10000,
+                "minItems": 1,
+                "type": "array",
+                "uniqueItems": true
+              },
+              "key": {
+                "maxLength": 1024,
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [
+              "key",
+              "element_ids"
+            ],
+            "type": "object"
+          },
+          "maxItems": 100000,
+          "minItems": 0,
+          "type": "array",
+          "uniqueItems": true
+        },
+        "property_type_index": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "element_ids": {
+                "items": {
+                  "maxLength": 256,
+                  "minLength": 1,
+                  "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+                  "type": "string"
+                },
+                "maxItems": 10000,
+                "minItems": 0,
+                "type": "array",
+                "uniqueItems": true
+              },
+              "key": {
+                "maxLength": 64,
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [
+              "key",
+              "element_ids"
+            ],
+            "type": "object"
+          },
+          "maxItems": 64,
+          "minItems": 0,
+          "type": "array",
+          "uniqueItems": true
+        },
+        "source_asset_index": {
+          "items": {
+            "additionalProperties": false,
+            "properties": {
+              "element_ids": {
+                "items": {
+                  "maxLength": 256,
+                  "minLength": 1,
+                  "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+                  "type": "string"
+                },
+                "maxItems": 10000,
+                "minItems": 0,
+                "type": "array",
+                "uniqueItems": true
+              },
+              "key": {
+                "maxLength": 512,
+                "minLength": 1,
+                "type": "string"
+              }
+            },
+            "required": [
+              "key",
+              "element_ids"
+            ],
+            "type": "object"
+          },
+          "maxItems": 100000,
+          "minItems": 0,
+          "type": "array",
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "iri_index",
+        "label_index",
+        "normalized_label_index",
+        "language_index",
+        "property_type_index",
+        "domain_range_index",
+        "hierarchy_index",
+        "source_asset_index"
+      ],
+      "type": "object"
+    },
+    "individuals": {
+      "items": {
+        "maxLength": 256,
+        "minLength": 1,
+        "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "maxItems": 1000000,
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "labels": {
+      "items": {
+        "maxLength": 256,
+        "minLength": 1,
+        "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "maxItems": 1000000,
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "manifest_kind": {
+      "const": "KG_MNP_ONTOLOGY_BASELINE_SNAPSHOT"
+    },
+    "object_properties": {
+      "items": {
+        "maxLength": 256,
+        "minLength": 1,
+        "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "maxItems": 1000000,
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "ontology_assets": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "asset_id": {
+            "maxLength": 512,
+            "minLength": 1,
+            "type": "string"
+          },
+          "relative_path": {
+            "maxLength": 1024,
+            "minLength": 1,
+            "pattern": "^(?![A-Za-z]:|/|\\\\|.*(?:^|/)\\.\\.(?:/|$)).+$",
+            "type": "string"
+          },
+          "sha256": {
+            "maxLength": 64,
+            "minLength": 1,
+            "pattern": "^[0-9a-f]{64}$",
+            "type": "string"
+          }
+        },
+        "required": [
+          "asset_id",
+          "relative_path",
+          "sha256"
+        ],
+        "type": "object"
+      },
+      "maxItems": 10000,
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "ontology_iris": {
+      "items": {
+        "maxLength": 2048,
+        "minLength": 1,
+        "pattern": "^(?:https?://|urn:)[^\\s]+$",
+        "type": "string"
+      },
+      "maxItems": 10000,
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "project_lock_id": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "range_axioms": {
+      "items": {
+        "maxLength": 256,
+        "minLength": 1,
+        "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "maxItems": 1000000,
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "shapes": {
+      "items": {
+        "maxLength": 256,
+        "minLength": 1,
+        "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "maxItems": 1000000,
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "subclass_axioms": {
+      "items": {
+        "maxLength": 256,
+        "minLength": 1,
+        "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "maxItems": 1000000,
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "version_iris": {
+      "items": {
+        "maxLength": 2048,
+        "minLength": 1,
+        "pattern": "^(?:https?://|urn:)[^\\s]+$",
+        "type": "string"
+      },
+      "maxItems": 10000,
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    }
+  },
+  "required": [
+    "manifest_kind",
+    "schema_version",
+    "baseline_snapshot_id",
+    "project_lock_id",
+    "domain_pack_lock_ids",
+    "ontology_assets",
+    "ontology_iris",
+    "version_iris",
+    "imports",
+    "elements",
+    "classes",
+    "object_properties",
+    "data_properties",
+    "annotation_properties",
+    "individuals",
+    "shapes",
+    "labels",
+    "definitions",
+    "domain_axioms",
+    "range_axioms",
+    "subclass_axioms",
+    "indexes",
+    "content_digest"
+  ],
+  "title": "KG-MNP Ontology-Baseline-Snapshot 1.0",
+  "type": "object"
+}

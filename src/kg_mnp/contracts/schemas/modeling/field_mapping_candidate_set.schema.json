@@ -1,0 +1,196 @@
+{
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/field-mapping-candidate-set/1.0",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "content_digest": {
+      "maxLength": 64,
+      "minLength": 1,
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "field_mapping_candidate_set_id": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "kg_ir_dataset_ids": {
+      "items": {
+        "maxLength": 256,
+        "minLength": 1,
+        "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "maxItems": 128,
+      "minItems": 1,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "manifest_kind": {
+      "const": "KG_MNP_FIELD_MAPPING_CANDIDATE_SET"
+    },
+    "mappings": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "cardinality_observation": {
+            "maxLength": 256,
+            "minLength": 1,
+            "type": "string"
+          },
+          "conversion_policy": {
+            "enum": [
+              "IDENTITY",
+              "TRIM",
+              "NFC",
+              "LOWERCASE",
+              "UPPERCASE",
+              "CONTROLLED_LOOKUP",
+              "NONE"
+            ]
+          },
+          "evidence_refs": {
+            "items": {
+              "maxLength": 256,
+              "minLength": 1,
+              "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+              "type": "string"
+            },
+            "maxItems": 10000,
+            "minItems": 0,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "field_mapping_id": {
+            "maxLength": 256,
+            "minLength": 1,
+            "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "mapping_kind": {
+            "enum": [
+              "RECORD_TO_CLASS",
+              "FIELD_TO_DATA_PROPERTY",
+              "REFERENCE_TO_OBJECT_PROPERTY",
+              "VALUE_MAPPING",
+              "IRI_TEMPLATE",
+              "NULL_HANDLING_POLICY"
+            ]
+          },
+          "null_policy": {
+            "enum": [
+              "REJECT",
+              "OMIT",
+              "PRESERVE",
+              "CONTROLLED_DEFAULT",
+              "NONE"
+            ]
+          },
+          "provider_refs": {
+            "items": {
+              "maxLength": 256,
+              "minLength": 1,
+              "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+              "type": "string"
+            },
+            "maxItems": 128,
+            "minItems": 0,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "rationale": {
+            "maxLength": 16384,
+            "minLength": 1,
+            "type": "string"
+          },
+          "review_required": {
+            "const": true
+          },
+          "source_datatype": {
+            "maxLength": 256,
+            "minLength": 1,
+            "type": "string"
+          },
+          "source_field_name": {
+            "maxLength": 512,
+            "minLength": 1,
+            "type": "string"
+          },
+          "source_item_id": {
+            "maxLength": 256,
+            "minLength": 1,
+            "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "source_item_kind": {
+            "maxLength": 128,
+            "minLength": 1,
+            "type": "string"
+          },
+          "target_class_iri": {
+            "oneOf": [
+              {
+                "maxLength": 2048,
+                "minLength": 1,
+                "pattern": "^(?:https?://|urn:)[^\\s]+$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "target_property_iri": {
+            "oneOf": [
+              {
+                "maxLength": 2048,
+                "minLength": 1,
+                "pattern": "^(?:https?://|urn:)[^\\s]+$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "field_mapping_id",
+          "source_item_id",
+          "source_field_name",
+          "source_item_kind",
+          "source_datatype",
+          "target_class_iri",
+          "target_property_iri",
+          "mapping_kind",
+          "conversion_policy",
+          "null_policy",
+          "cardinality_observation",
+          "evidence_refs",
+          "rationale",
+          "provider_refs",
+          "review_required"
+        ],
+        "type": "object"
+      },
+      "maxItems": 100000,
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    }
+  },
+  "required": [
+    "manifest_kind",
+    "schema_version",
+    "field_mapping_candidate_set_id",
+    "kg_ir_dataset_ids",
+    "mappings",
+    "content_digest"
+  ],
+  "title": "KG-MNP Field-Mapping-Candidate-Set 1.0",
+  "type": "object"
+}

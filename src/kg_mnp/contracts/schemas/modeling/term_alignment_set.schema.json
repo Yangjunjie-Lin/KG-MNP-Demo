@@ -1,0 +1,179 @@
+{
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/modeling/term-alignment-set/1.0",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "alignments": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "alignment_id": {
+            "maxLength": 256,
+            "minLength": 1,
+            "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "alignment_type": {
+            "enum": [
+              "EXACT_IRI",
+              "EXACT_LABEL",
+              "NORMALIZED_LABEL",
+              "DECLARED_ALIAS",
+              "DECLARED_SYNONYM",
+              "LEXICAL_SIMILARITY",
+              "NO_MATCH"
+            ]
+          },
+          "ambiguity_group": {
+            "oneOf": [
+              {
+                "maxLength": 256,
+                "minLength": 1,
+                "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "evidence_refs": {
+            "items": {
+              "maxLength": 256,
+              "minLength": 1,
+              "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+              "type": "string"
+            },
+            "maxItems": 10000,
+            "minItems": 0,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "provider_snapshot_id": {
+            "oneOf": [
+              {
+                "maxLength": 256,
+                "minLength": 1,
+                "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "rationale": {
+            "maxLength": 16384,
+            "minLength": 1,
+            "type": "string"
+          },
+          "review_required": {
+            "const": true
+          },
+          "score_basis": {
+            "maxLength": 1024,
+            "minLength": 1,
+            "type": "string"
+          },
+          "score_basis_points": {
+            "maximum": 10000,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "source_term_id": {
+            "maxLength": 256,
+            "minLength": 1,
+            "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "target_element_id": {
+            "oneOf": [
+              {
+                "maxLength": 256,
+                "minLength": 1,
+                "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "target_iri": {
+            "oneOf": [
+              {
+                "maxLength": 2048,
+                "minLength": 1,
+                "pattern": "^(?:https?://|urn:)[^\\s]+$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "alignment_id",
+          "source_term_id",
+          "target_element_id",
+          "target_iri",
+          "alignment_type",
+          "score_basis",
+          "score_basis_points",
+          "provider_snapshot_id",
+          "evidence_refs",
+          "rationale",
+          "ambiguity_group",
+          "review_required"
+        ],
+        "type": "object"
+      },
+      "maxItems": 1000000,
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "baseline_snapshot_id": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "content_digest": {
+      "maxLength": 64,
+      "minLength": 1,
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "manifest_kind": {
+      "const": "KG_MNP_TERM_ALIGNMENT_SET"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "term_alignment_set_id": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "terminology_catalog_id": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+      "type": "string"
+    }
+  },
+  "required": [
+    "manifest_kind",
+    "schema_version",
+    "term_alignment_set_id",
+    "terminology_catalog_id",
+    "baseline_snapshot_id",
+    "alignments",
+    "content_digest"
+  ],
+  "title": "KG-MNP Term-Alignment-Set 1.0",
+  "type": "object"
+}
