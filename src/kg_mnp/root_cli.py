@@ -16,6 +16,8 @@ commands:
   source        content-addressed source registration
   ingest        deterministic planning and transactional execution
   ir            evidence-bound KG-IR inspection and trace
+  model         evidence-grounded ontology modeling proposals
+  review        explicit human review and confirmation
   application   governed application workflow
   workbench     read-only workbench
   diagnostics   diagnostics workflow
@@ -68,6 +70,15 @@ def main(argv: list[str] | None = None) -> int:
         from .ingestion.cli import ir_main
 
         return ir_main(arguments[1:])
+    if arguments and arguments[0] == "model":
+        from .modeling.control_plane.cli import main as model_main
+
+        return model_main(arguments[1:])
+
+    if arguments and arguments[0] == "review":
+        from .modeling.control_plane.review.cli import main as review_main
+
+        return review_main(arguments[1:])
     if arguments and arguments[0] == "application":
         from .application.cli import main as application_main
 
