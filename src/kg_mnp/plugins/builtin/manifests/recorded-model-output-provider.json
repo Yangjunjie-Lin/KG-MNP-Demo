@@ -1,0 +1,13 @@
+{
+  "manifest_kind": "KG_MNP_PLUGIN", "schema_version": "1.1.0", "plugin_api_version": "1.1.0",
+  "plugin_id": "recorded-model-output-provider", "plugin_version": "1.0.0", "display_name": "Recorded Model Output Provider",
+  "description": "Imports bounded recorded external-model JSON bytes; it performs no live model call.",
+  "distribution": {"name": "kg-mnp-toolchain", "required_version": "0.4.0"},
+  "entry_point": {"group": "kg_mnp.plugins", "name": "recorded-model-output-provider", "object": "kg_mnp.plugins.builtin.modeling_providers:RecordedModelOutputProvider"},
+  "plugin_kinds": ["modeling-provider"], "capabilities": ["terminology-alignment", "tbox-proposal", "field-mapping-proposal", "abox-proposal", "shacl-proposal", "repair-suggestion"],
+  "media_types": [], "priority": 50, "determinism": "RECORDED_BYTES", "side_effects": ["READ_RECORDED_INPUT"],
+  "implementation_files": ["builtin/modeling_providers.py"],
+  "configuration_contract": null, "requirements": {"python": ">=3.11", "optional_dependencies": []}, "extensions": {},
+  "input_contracts": ["modeling-provider-request", "model-invocation-record"], "output_contracts": ["modeling-provider-response"],
+  "authority_level": "PROPOSAL_ONLY", "network_policy": "DENY"
+}

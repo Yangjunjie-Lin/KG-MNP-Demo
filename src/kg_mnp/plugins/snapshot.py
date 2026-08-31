@@ -52,8 +52,18 @@ def build_snapshot(
         "determinism": manifest["determinism"],
         "side_effects": sorted(manifest["side_effects"]),
     }
+    if manifest["plugin_api_version"] == "1.1.0":
+        core.update(
+            {
+                "schema_version": "1.1.0",
+                "authority_level": manifest["authority_level"],
+                "network_policy": manifest["network_policy"],
+                "input_contracts": sorted(manifest["input_contracts"]),
+                "output_contracts": sorted(manifest["output_contracts"]),
+            }
+        )
     snapshot = {**core, "snapshot_id": stable_urn("plugin-snapshot", core)}
-    validate_contract("plugin-snapshot", snapshot)
+    validate_contract("plugin-snapshot-v1-1" if manifest["plugin_api_version"] == "1.1.0" else "plugin-snapshot", snapshot)
     return snapshot
 
 
@@ -64,7 +74,8 @@ def verify_snapshot(
     configuration: dict[str, Any] | None = None,
 ) -> None:
     try:
-        validate_contract("plugin-snapshot", snapshot)
+        contract = "plugin-snapshot-v1-1" if descriptor.manifest["plugin_api_version"] == "1.1.0" else "plugin-snapshot"
+        validate_contract(contract, snapshot)
     except ValidationError as exc:
         raise PluginTamperedError(f"invalid PluginSnapshot: {exc.message}") from exc
     expected = build_snapshot(descriptor, configuration=configuration)

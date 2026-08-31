@@ -28,7 +28,8 @@ def read_manifest_bytes(raw: bytes, *, label: str = "PluginManifest") -> dict[st
     if not isinstance(value, dict):
         raise PluginManifestError(f"{label} root must be an object")
     try:
-        validate_contract("plugin-manifest", value)
+        contract = "plugin-manifest-v1-1" if value.get("plugin_api_version") == "1.1.0" else "plugin-manifest"
+        validate_contract(contract, value)
     except ValidationError as exc:
         raise PluginManifestError(f"invalid {label}: {exc.message}") from exc
     validate_plugin_id(value["plugin_id"])
@@ -57,7 +58,13 @@ def validate_manifest_distribution(
     expected = manifest["distribution"]
     if expected["name"].casefold().replace("_", "-") != distribution_name.casefold().replace("_", "-"):
         raise PluginManifestError("Plugin distribution name mismatch")
-    if expected["required_version"] != distribution_version:
+    legacy_builtin_upgrade = (
+        distribution_name == "kg-mnp-toolchain"
+        and manifest.get("plugin_api_version") == "1.0.0"
+        and expected["required_version"] == "0.3.0"
+        and distribution_version == "0.4.0"
+    )
+    if expected["required_version"] != distribution_version and not legacy_builtin_upgrade:
         raise PluginManifestError(
             f"Plugin distribution version mismatch: expected {expected['required_version']}, "
             f"found {distribution_version}"

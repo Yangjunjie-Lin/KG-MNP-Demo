@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "kg-mnp-toolchain"
-version = "0.3.0"
+version = "0.4.0"
 description = "Evidence-bound, review-governed ontology engineering toolchain"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -59,6 +59,10 @@ xlsx-parser = "kg_mnp.plugins.builtin.xlsx_parser:XlsxParser"
 docx-parser = "kg_mnp.plugins.builtin.docx_parser:DocxParser"
 pdf-parser = "kg_mnp.plugins.builtin.pdf_parser:PdfParser"
 image-metadata-parser = "kg_mnp.plugins.builtin.image_metadata_parser:ImageMetadataParser"
+manual-candidate-provider = "kg_mnp.plugins.builtin.modeling_providers:ManualCandidateProvider"
+baseline-reuse-provider = "kg_mnp.plugins.builtin.modeling_providers:BaselineReuseProvider"
+rule-mapping-provider = "kg_mnp.plugins.builtin.modeling_providers:RuleMappingProvider"
+recorded-model-output-provider = "kg_mnp.plugins.builtin.modeling_providers:RecordedModelOutputProvider"
 
 [tool.setuptools.packages.find]
 where = ["src"]

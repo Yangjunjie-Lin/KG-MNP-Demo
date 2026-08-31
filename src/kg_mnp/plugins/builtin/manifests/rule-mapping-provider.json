@@ -1,0 +1,13 @@
+{
+  "manifest_kind": "KG_MNP_PLUGIN", "schema_version": "1.1.0", "plugin_api_version": "1.1.0",
+  "plugin_id": "rule-mapping-provider", "plugin_version": "1.0.0", "display_name": "Rule Mapping Provider",
+  "description": "Creates evidence-bound mapping and ABox drafts from KG-IR and controlled rules.",
+  "distribution": {"name": "kg-mnp-toolchain", "required_version": "0.4.0"},
+  "entry_point": {"group": "kg_mnp.plugins", "name": "rule-mapping-provider", "object": "kg_mnp.plugins.builtin.modeling_providers:RuleMappingProvider"},
+  "plugin_kinds": ["modeling-provider"], "capabilities": ["field-mapping-proposal", "abox-proposal"],
+  "media_types": [], "priority": 300, "determinism": "DETERMINISTIC", "side_effects": ["PURE"],
+  "implementation_files": ["builtin/modeling_providers.py"],
+  "configuration_contract": null, "requirements": {"python": ">=3.11", "optional_dependencies": []}, "extensions": {},
+  "input_contracts": ["modeling-provider-request", "field-mapping-candidate-set", "kg-ir-dataset"],
+  "output_contracts": ["modeling-provider-response"], "authority_level": "PROPOSAL_ONLY", "network_policy": "DENY"
+}

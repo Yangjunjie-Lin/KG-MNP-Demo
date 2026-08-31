@@ -95,6 +95,16 @@ def _parser_sample(plugin_id: str) -> ParseRequest:
 
 def _check_runtime_contract(plugin: object, descriptor: PluginDescriptor) -> None:
     kinds = set(descriptor.manifest["plugin_kinds"])
+    if "modeling-provider" in kinds:
+        from kg_mnp.modeling.control_plane.providers.conformance import (
+            run_modeling_conformance,
+        )
+
+        registry = PluginRegistry((descriptor,), discover_external=False)
+        result = run_modeling_conformance(registry, descriptor.plugin_id)
+        if result["status"] != "PASS":
+            raise PluginConformanceError("modeling provider conformance failed")
+        return
     if "source-adapter" in kinds:
         if not isinstance(plugin, SourceAdapterPlugin):
             raise PluginConformanceError("source adapter does not implement SourceAdapterPlugin")

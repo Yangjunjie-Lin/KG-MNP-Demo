@@ -1,0 +1,13 @@
+{
+  "manifest_kind": "KG_MNP_PLUGIN", "schema_version": "1.1.0", "plugin_api_version": "1.1.0",
+  "plugin_id": "baseline-reuse-provider", "plugin_version": "1.0.0", "display_name": "Baseline Reuse Provider",
+  "description": "Deterministically proposes reuse of locked baseline elements.",
+  "distribution": {"name": "kg-mnp-toolchain", "required_version": "0.4.0"},
+  "entry_point": {"group": "kg_mnp.plugins", "name": "baseline-reuse-provider", "object": "kg_mnp.plugins.builtin.modeling_providers:BaselineReuseProvider"},
+  "plugin_kinds": ["modeling-provider"], "capabilities": ["terminology-alignment", "baseline-reuse", "tbox-proposal"],
+  "media_types": [], "priority": 200, "determinism": "DETERMINISTIC", "side_effects": ["PURE"],
+  "implementation_files": ["builtin/modeling_providers.py"],
+  "configuration_contract": null, "requirements": {"python": ">=3.11", "optional_dependencies": []}, "extensions": {},
+  "input_contracts": ["modeling-provider-request", "ontology-baseline-snapshot", "term-alignment-set"],
+  "output_contracts": ["modeling-provider-response"], "authority_level": "PROPOSAL_ONLY", "network_policy": "DENY"
+}

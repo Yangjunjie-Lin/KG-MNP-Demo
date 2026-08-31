@@ -1,0 +1,13 @@
+{
+  "manifest_kind": "KG_MNP_PLUGIN", "schema_version": "1.1.0", "plugin_api_version": "1.1.0",
+  "plugin_id": "manual-candidate-provider", "plugin_version": "1.0.0", "display_name": "Manual Candidate Provider",
+  "description": "Imports human-authored candidate drafts without confirmation authority.",
+  "distribution": {"name": "kg-mnp-toolchain", "required_version": "0.4.0"},
+  "entry_point": {"group": "kg_mnp.plugins", "name": "manual-candidate-provider", "object": "kg_mnp.plugins.builtin.modeling_providers:ManualCandidateProvider"},
+  "plugin_kinds": ["modeling-provider"], "capabilities": ["tbox-proposal", "field-mapping-proposal", "abox-proposal", "shacl-proposal"],
+  "media_types": [], "priority": 100, "determinism": "HUMAN_AUTHORED", "side_effects": ["PURE"],
+  "implementation_files": ["builtin/modeling_providers.py"],
+  "configuration_contract": null, "requirements": {"python": ">=3.11", "optional_dependencies": []}, "extensions": {},
+  "input_contracts": ["modeling-provider-request"], "output_contracts": ["modeling-provider-response"],
+  "authority_level": "PROPOSAL_ONLY", "network_policy": "DENY"
+}
