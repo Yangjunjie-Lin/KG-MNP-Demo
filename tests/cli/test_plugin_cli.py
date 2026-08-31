@@ -10,7 +10,7 @@ def test_plugin_list_doctor_validate_snapshot_and_conformance_cli() -> None:
     assert listing.returncode == 0, listing.stdout + listing.stderr
     payload = json.loads(listing.stdout)
     assert payload["command"] == "plugin list"
-    assert len(payload["result"]) == 13
+    assert len(payload["result"]) == 17
     assert all(item["builtin"] for item in payload["result"])
     assert all(item["status"] == "ENABLED" for item in payload["result"])
     doctor = run_cli("plugin", "doctor", "--json")

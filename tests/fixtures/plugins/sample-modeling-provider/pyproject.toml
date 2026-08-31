@@ -1,0 +1,14 @@
+[build-system]
+requires = ["setuptools>=68,<82"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "sample-modeling-provider"
+version = "0.4.0"
+requires-python = ">=3.11"
+
+[project.entry-points."kg_mnp.plugins"]
+sample-modeling-provider = "sample_modeling_provider.plugin:SampleModelingProvider"
+
+[tool.setuptools.package-data]
+sample_modeling_provider = ["kg_mnp_plugin_manifest.json"]

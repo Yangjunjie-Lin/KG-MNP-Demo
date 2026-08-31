@@ -22,6 +22,43 @@ from kg_mnp.modeling.registry import (
 
 ROOT = Path(__file__).resolve().parents[2]
 SCHEMA_DIR = ROOT / "src" / "kg_mnp" / "contracts" / "schemas" / "modeling"
+PROMPT03_MODELING_CONTRACTS = {
+    "cleaned-partial-data",
+    "common",
+    "confirmed-modeling-package",
+    "mapping-rules",
+    "modeling-proposal",
+    "ontology-baseline-manifest",
+    "review-action",
+    "review-common",
+    "review-decision-log",
+    "review-policy",
+    "terminology-profile",
+}
+PROMPT04_MODELING_CONTRACTS = {
+    "competency-question-coverage-report",
+    "competency-question-set",
+    "field-mapping-candidate-set",
+    "formal-prevalidation-report",
+    "model-invocation-record",
+    "modeling-input-bundle",
+    "modeling-provider-request",
+    "modeling-provider-response",
+    "ontology-baseline-snapshot",
+    "ontology-candidate-set",
+    "ontology-confirmed-modeling-package",
+    "ontology-modeling-common",
+    "ontology-modeling-proposal",
+    "ontology-modeling-run",
+    "ontology-review-action",
+    "ontology-review-decision-log",
+    "ontology-review-policy",
+    "ontology-review-queue",
+    "ontology-scope",
+    "ontology-scope-approval",
+    "term-alignment-set",
+    "terminology-catalog",
+}
 
 
 def _contract_copy(tmp_path: Path) -> Path:
@@ -34,7 +71,10 @@ def test_registry_loads_exact_closed_catalog_with_unique_project_ids():
     registry = load_contract_registry()
 
     assert contract_names() == tuple(spec.name for spec in CONTRACT_SPECS)
-    assert len(registry) == len(CONTRACT_SPECS) == 11
+    assert set(contract_names()) == (
+        PROMPT03_MODELING_CONTRACTS | PROMPT04_MODELING_CONTRACTS
+    )
+    assert len(registry) == len(CONTRACT_SPECS) == 33
     schemas = [get_contract_schema(spec.name) for spec in CONTRACT_SPECS]
     assert {schema["$id"] for schema in schemas} == {
         spec.schema_id for spec in CONTRACT_SPECS

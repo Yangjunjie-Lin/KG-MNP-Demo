@@ -9,6 +9,7 @@ from pathlib import Path
 from kg_mnp.contracts import ContractCatalog
 
 ROOT = Path(__file__).resolve().parents[2]
+PROMPT04_CONTRACT_COUNT = 59
 
 
 def _run(*arguments: str, cwd: Path) -> subprocess.CompletedProcess[str]:
@@ -53,6 +54,8 @@ def test_wheel_contains_catalog_and_schemas_and_loads_outside_source_tree(
     assert "kg_mnp/ingestion/executor.py" in names
     assert "kg_mnp/plugins/registry.py" in names
     assert "kg_mnp/plugins/builtin/manifests/plain-text-parser.json" in names
+    assert "kg_mnp/modeling/control_plane/service.py" in names
+    assert "kg_mnp/plugins/builtin/manifests/baseline-reuse-provider.json" in names
     assert not any(name.startswith(("runtime_reports/", "runtime_outputs/")) for name in names)
     assert not any(name.startswith("domain_packs/") for name in names)
     assert not any("graphdb.license" in name.casefold() for name in names)
@@ -73,12 +76,21 @@ def test_wheel_contains_catalog_and_schemas_and_loads_outside_source_tree(
     )
     probe = "\n".join(
         (
-            "import json, sys",
+            "import contextlib, io, json, sys",
             f"sys.path.insert(0, {str(target)!r})",
             "from importlib import resources",
             "from kg_mnp.contracts import ContractCatalog, get_contract_schema",
+            "from kg_mnp.root_cli import main as root_main",
             "catalog = ContractCatalog.load()",
             "schema = get_contract_schema('project-lock')",
+            "def invoke(arguments):",
+            "    try:",
+            "        return root_main(arguments)",
+            "    except SystemExit as exc:",
+            "        return exc.code",
+            "with contextlib.redirect_stdout(io.StringIO()):",
+            "    assert invoke(['model', '--help']) == 0",
+            "    assert invoke(['review', '--help']) == 0",
             (
                 "payload = {'count': len(catalog.specs), 'title': schema['title'], "
                 "'catalog': resources.files('kg_mnp.contracts')"
@@ -90,6 +102,6 @@ def test_wheel_contains_catalog_and_schemas_and_loads_outside_source_tree(
     completed = _run("-I", "-c", probe, cwd=probe_cwd)
     assert json.loads(completed.stdout) == {
         "catalog": True,
-        "count": 34,
+        "count": PROMPT04_CONTRACT_COUNT,
         "title": "KG-MNP ProjectLock 1.0",
     }

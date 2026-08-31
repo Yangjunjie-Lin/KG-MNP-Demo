@@ -38,9 +38,12 @@ contract is expected to describe, as applicable:
 Prompt 2 establishes Artifact Reference/Manifest v1 and Project Workspace v1
 as shared identity, containment, and locking contracts. Prompt 3 adds the
 Plugin SDK, content-addressed sources, Evidence Records, structural quality
-gates, and evidence-bound KG-IR. Artifact Manifest v1 remains distinct from the
-final Versioned Ontology Package contract; neither ingestion nor KG-IR implies
-review, confirmation, release, or publication authority.
+gates, and evidence-bound KG-IR. Prompt 4 adds approved modeling scope,
+competency questions, read-only baseline/terminology alignment, proposal-only
+providers, closed candidates, formal prevalidation, explicit review replay, and
+a deterministic Confirmed Modeling Package. Artifact Manifest v1 remains
+distinct from the final Versioned Ontology Package contract; neither ingestion,
+KG-IR, proposal, nor the compiler-ready package implies release or publication.
 
 ## Product principles
 
@@ -78,7 +81,9 @@ without importing external implementations; external installed code is disabled
 until explicitly allowed. A Python Plugin is trusted installed code, not an OS
 sandbox, and cannot own authoritative Evidence or KG-IR identifiers. Plugins
 cannot bypass confirmation, deterministic compilation, validation, or release
-controls.
+controls. Prompt 4 Plugin API 1.1 adds only proposal-authority modeling
+providers; Core still owns candidate IDs and every candidate remains subject to
+human review.
 
 ### Traceability principle
 
@@ -117,10 +122,10 @@ new controlled release. Published artifacts are never self-mutated.
 ## 2026–2027 research and product scope
 
 The current foundation includes stable public artifact/workspace contracts,
-formal local Domain Packs, Plugin SDK v1, deterministic local ingestion,
-Evidence Records, structural quality gates, and evidence-bound KG-IR. The
-planned scope is to support constrained LLM proposal providers; consolidate
-review, compilation, validation, registry, diff, release, and rollback
-experiences; and validate the architecture with an honest forestry pilot Domain
-Pack. Delivery remains incremental, and planned capabilities must not be
-represented as implemented.
+formal local Domain Packs, Plugin APIs 1.0/1.1, deterministic local ingestion,
+Evidence Records, evidence-bound KG-IR, approved modeling requirements,
+baseline reuse, offline proposal providers, formal prevalidation, replayable
+human review, and a deterministic compiler-ready package. Live LLM invocation,
+the authoritative Prompt 5 compiler/final validation, package registry/diff,
+unified interfaces, and an honest Forestry pilot remain planned. Delivery is
+incremental, and planned capabilities must not be represented as implemented.

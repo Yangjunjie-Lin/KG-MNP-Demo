@@ -21,7 +21,7 @@ def test_readme_states_current_identity_and_capability_limits() -> None:
     readme = (ROOT / "README.md").read_text(encoding="utf-8")
     normalized = " ".join(readme.split())
     assert "# KG-MNP Ontology Toolchain" in readme
-    assert "Evidence-Bound Ingestion Kernel — Prompt 3" in readme
+    assert "Evidence-Grounded Modeling and Review — Prompt 4" in readme
     assert "What is implemented now" in readme
     assert "What is not implemented yet" in readme
     assert "Forestry Domain" in readme
@@ -32,7 +32,7 @@ def test_readme_states_current_identity_and_capability_limits() -> None:
     assert "Phase 07" not in readme
 
 
-def test_prompt03_documents_state_implemented_and_deferred_capabilities() -> None:
+def test_prompt04_documents_state_implemented_and_deferred_capabilities() -> None:
     matrix = (ROOT / "docs/product/current-capability-matrix.md").read_text(
         encoding="utf-8"
     )
@@ -47,12 +47,17 @@ def test_prompt03_documents_state_implemented_and_deferred_capabilities() -> Non
         "Deterministic Ingestion Planner",
         "KG-IR",
         "Ingestion CLI",
+        "Ontology Scope and Approval",
+        "Modeling Provider API 1.1",
+        "Formal Prevalidation",
+        "Human Review Control Plane",
+        "Prompt 4 Confirmed Modeling Package",
     ):
         assert capability in matrix
     for planned in (
         "LLM Ingestion Planner",
         "OCR/Vision/ASR/Video providers",
-        "Field-to-Ontology Mapping",
+        "Live LLM Proposal Provider",
         "Final Versioned Ontology Package",
         "Forestry Domain Pack Implementation",
     ):
@@ -88,6 +93,23 @@ def test_prompt03_documents_state_implemented_and_deferred_capabilities() -> Non
         "docs/adr/ADR-0003-plugin-driven-evidence-bound-ingestion.md",
     )
     assert all((ROOT / path).is_file() for path in required_prompt03_docs)
+
+    required_prompt04_docs = (
+        "docs/modeling/ontology-scope-v1.md",
+        "docs/modeling/competency-questions-v1.md",
+        "docs/modeling/baseline-and-terminology.md",
+        "docs/modeling/term-alignment.md",
+        "docs/modeling/modeling-provider-api.md",
+        "docs/modeling/ontology-candidate-model.md",
+        "docs/modeling/formal-prevalidation.md",
+        "docs/modeling/human-review-workflow.md",
+        "docs/modeling/confirmed-modeling-package.md",
+        "docs/modeling/recorded-model-output.md",
+        "docs/architecture/evidence-grounded-modeling-architecture.md",
+        "docs/adr/ADR-0004-evidence-grounded-ontology-modeling.md",
+        "docs/research/ontology-modeling-evaluation-protocol.md",
+    )
+    assert all((ROOT / path).is_file() for path in required_prompt04_docs)
 
 
 def test_current_product_documents_do_not_extend_retired_route() -> None:

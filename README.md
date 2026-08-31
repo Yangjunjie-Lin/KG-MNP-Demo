@@ -2,7 +2,7 @@
 
 > Evidence-bound, review-governed and deterministic ontology engineering toolchain
 
-**Current status:** Evidence-Bound Ingestion Kernel — Prompt 3
+**Current status:** Evidence-Grounded Modeling and Review — Prompt 4
 
 KG-MNP is being repositioned as a pluggable, verifiable and traceable ontology
 engineering toolchain. It converts heterogeneous source material into
@@ -11,10 +11,10 @@ and human review, and allows only a deterministic semantic compiler to produce
 authoritative ontology artifacts.
 
 The core product deliverable remains a future **Versioned Ontology Package**.
-Prompt 2 freezes the shared contracts beneath that future package: one public
-Contract Catalog and offline Registry, formal Domain Pack manifests and locks,
-and a deterministic Project Workspace v1. It does not redefine the retained
-compiler or claim the final package contract.
+Prompt 4 now closes the evidence-to-review loop and produces a deterministic
+`READY_FOR_COMPILATION` Confirmed Modeling Package. That package is a reviewed
+Prompt 5 compiler input—not RDF/OWL/SHACL, a published ontology, or the final
+Versioned Ontology Package.
 
 ## What is implemented now
 
@@ -27,7 +27,7 @@ compiler or claim the final package contract.
 - publication reconstruction and verification;
 - activation and rollback governance;
 - offline GraphDB packaging and a read-only application/workbench baseline;
-- a packaged Public Contract Catalog with 34 Draft 2020-12 schemas and a
+- a packaged Public Contract Catalog with 59 Draft 2020-12 schemas and a
   fully offline Registry;
 - Artifact Reference, Artifact Manifest, and Validation Report v1 contracts;
 - formal DomainPackManifest/DomainPackLock v1 contracts, local discovery,
@@ -44,7 +44,22 @@ compiler or claim the final package contract.
 - transactional ingestion artifacts integrated with ArtifactReference and
   ArtifactManifest; and
 - `kg-mnp plugin`, `source`, `ingest`, and `ir` CLI routes in addition to the
-  Prompt 2 routes.
+  Prompt 2 routes;
+- approved Ontology Scope and stale-safe human Scope Approval;
+- Competency Question Sets and explicitly structural-only coverage;
+- locked local Ontology Baseline Snapshots, terminology catalogs, and
+  deterministic reviewed term alignments;
+- Plugin API 1.1 and four offline, proposal-only modeling providers: manual,
+  baseline reuse, rule mapping, and recorded model output;
+- Core-owned TBox, Mapping, ABox, and SHACL candidate normalization, identity,
+  evidence closure, multi-provider merge, and conflict detection;
+- 30-check formal structural prevalidation with finite Modeling Run limits;
+- dependency-ordered human review queues, role/quorum policy, append-only action
+  chains, candidate revision, replay, and separate semantic/operational hashes;
+- a deterministic, non-RDF Confirmed Modeling Package with the sole status
+  `READY_FOR_COMPILATION`; and
+- explicit `kg-mnp model` and `kg-mnp review` CLI routes while the legacy
+  modeling route remains compatible.
 
 These capabilities are retained from the historical implementation. Some are
 still coupled to MNP paths or the former staged command structure and therefore
@@ -52,10 +67,11 @@ remain refactor targets.
 
 ## What is not implemented yet
 
-The repository does not provide an LLM planner, OCR, vision classification,
-ASR, video understanding, field-to-ontology mapping, a compiler rewrite, the
-final Versioned Ontology Package, semantic diff, a unified REST API, a unified
-Workbench, or a generic GraphDB backend. Image and WAV support is metadata-only;
+The repository does not provide a live LLM provider, LLM planner, OCR, vision
+classification, ASR, video understanding, authoritative Prompt 4 RDF/OWL/SHACL
+compilation, the final Versioned Ontology Package, semantic diff, a unified REST
+API, a unified Workbench, or a generic GraphDB backend. Recorded model output is
+an offline import, not a model call. Image and WAV support is metadata-only;
 scanned PDFs and unsupported audio/video require review or a missing provider.
 The Forestry Domain Pack remains a planning scaffold only.
 No Agent or LLM is an ontology authority.
@@ -75,8 +91,9 @@ No Agent or LLM is an ontology authority.
 ## Architecture
 
 ```text
-Source Assets -> Evidence-bound IR -> Modeling Proposal
-    -> Formal Pre-validation -> Human Review
+Source Assets -> Evidence-bound KG-IR -> Approved Scope + CQ + Locked Baseline
+    -> Proposal-only Providers -> Modeling Proposal
+    -> Formal Structural Pre-validation -> Explicit Human Review
     -> Confirmed Modeling Package -> Deterministic Semantic Compiler
     -> OWL / RDF / SHACL / Provenance -> Validation
     -> Versioned Ontology Package -> Registry / Controlled Release / Rollback
@@ -136,6 +153,15 @@ make verify-ingestion-parsers
 make verify-evidence-kgir
 make verify-ingestion-security
 make verify-prompt-03-offline
+make verify-modeling-scope
+make verify-modeling-baseline
+make verify-modeling-providers
+make verify-modeling-candidates
+make verify-modeling-prevalidation
+make verify-modeling-review
+make verify-modeling-confirmation
+make verify-modeling-security
+make verify-prompt-04-offline
 make verify-stage-06
 make verify-application-phase-06-offline
 python -m pytest -q
@@ -158,6 +184,9 @@ as passing unless their prerequisites are actually available.
 - [Current Capability Matrix](docs/product/current-capability-matrix.md)
 - [Research-to-Product Alignment](docs/product/research-to-product-alignment.md)
 - [Target Architecture](docs/architecture/ontology-toolchain-target-architecture.md)
+- [Prompt 4 Modeling Architecture](docs/architecture/evidence-grounded-modeling-architecture.md)
+- [Modeling Provider API](docs/modeling/modeling-provider-api.md)
+- [Human Review Workflow](docs/modeling/human-review-workflow.md)
 - [Contract and Workspace Kernel](docs/architecture/contract-and-workspace-kernel.md)
 - [Public Contract Policy](docs/contracts/public-contract-policy.md)
 - [Domain Pack Contract v1](docs/domain-packs/domain-pack-contract-v1.md)

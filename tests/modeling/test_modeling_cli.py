@@ -10,7 +10,12 @@ from ._helpers import ROOT
 def test_central_cli_lists_closed_contract_catalog(capsys) -> None:
     assert main(["contracts", "list"]) == 0
     output = json.loads(capsys.readouterr().out)
-    assert len(output["contracts"]) == 11
+    assert len(output["contracts"]) == 33
+    assert {
+        "ontology-scope",
+        "ontology-modeling-proposal",
+        "ontology-confirmed-modeling-package",
+    } <= {item["name"] for item in output["contracts"]}
     assert output["resolution"] == "OFFLINE_ONLY"
 
 
@@ -40,4 +45,3 @@ def test_cli_proposal_output_is_byte_stable_and_not_overwritten(tmp_path, capsys
     assert main(["propose", "--input", str(input_path), "--output", str(first)]) == 1
     assert "--force" in capsys.readouterr().err
     assert main(["proposal", "validate", "--input", str(first)]) == 0
-

@@ -3,10 +3,11 @@
 This is the target product architecture. Shaded boundaries distinguish the
 deterministic semantic authority, plugin extension points, and domain content.
 Solid arrows carry governed artifacts; dashed arrows carry control or adapter
-requests. Prompts 2 and 3 implement the Contract Kernel, local Domain Pack
-Registry, Project Workspace control plane, local Plugin Registry, and the
-evidence-bound ingestion slice. The remaining target boxes are not implied to
-be implemented by their presence in this diagram.
+requests. Prompts 2–4 implement the Contract Kernel, local Domain Pack Registry,
+Project Workspace, local Plugin Registry, evidence-bound ingestion, and the
+evidence-grounded modeling/review control plane through a deterministic
+compiler-ready package. The remaining target boxes are not implied to be
+implemented by their presence in this diagram.
 
 ```mermaid
 flowchart TB
@@ -33,6 +34,9 @@ flowchart TB
   end
 
   subgraph MODEL[Ontology Modeling Pipeline]
+    SCOPE[Approved Scope and CQs]
+    BASE[Baseline and Terminology]
+    PROVIDER[Proposal-only Modeling Providers]
     PROPOSAL[Modeling Proposal]
     PREVALIDATE[Formal Pre-validation]
     CONFIRMED[Confirmed Modeling Package]
@@ -91,7 +95,10 @@ flowchart TB
   REVIEW -. confirms .-> CONFIRMED
 
   SOURCE -->|artifact| INGEST -->|artifact| EVIDENCE -->|artifact| KGIR
-  KGIR -->|artifact| PROPOSAL -->|artifact| PREVALIDATE
+  KGIR -->|untrusted evidence| PROVIDER
+  SCOPE -. controls .-> PROVIDER
+  BASE -->|locked reuse context| PROVIDER
+  PROVIDER -->|candidate drafts| PROPOSAL -->|artifact| PREVALIDATE
   PREVALIDATE -->|review packet| REVIEW
   REVIEW -->|decision artifact| CONFIRMED
   CONFIRMED -->|authoritative input| COMPILER --> FORMAL --> VALIDATE --> PACKAGE
@@ -102,7 +109,7 @@ flowchart TB
 
   PREG -. explicitly enables .-> PROVIDERS
   PROVIDERS -. extends .-> INGEST
-  PROVIDERS -. proposes only .-> PROPOSAL
+  PROVIDERS -. proposes only .-> PROVIDER
   DREG -. selects .-> MNP
   DREG -. selects .-> FORESTRY
   DREG -. selects .-> FUTURE
@@ -143,7 +150,7 @@ flowchart TB
 - **Domain content** is supplied by Domain Packs. No domain pack becomes the
   core compiler or a universal ontology.
 
-## Prompt 2 and Prompt 3 implemented slice
+## Prompt 2–4 implemented slice
 
 The Contract Catalog and all public schemas are package resources accessed via
 `importlib.resources`; they do not depend on the repository root or current
@@ -162,10 +169,15 @@ WAV support is metadata-only, while unsupported video, non-WAV audio, scanned
 documents, and unavailable semantic providers remain unresolved or require
 review without invented text.
 
-The `proposal`, `review`, `confirmed`, `build`, `package`, and release-registry
-authority boundaries remain unchanged. Prompt 3 does not implement an LLM
-planner, OCR, vision, ASR, video understanding, a new review experience, an
-ontology-modeling rewrite, final package assembly, semantic diff, REST,
-Workbench replacement, Forestry content, or a generic GraphDB backend. For the
-detailed implemented control and artifact flow, see
-`plugin-driven-ingestion-architecture.md`.
+Prompt 4 activates descendants under the existing modeling build, proposal,
+review, and confirmed artifact roots. Approved Scope/CQs and a locked baseline
+control Plugin API 1.1 proposal providers; Core normalizes closed candidates and
+prevalidates them; humans decide through a replayable append-only log; and only
+a non-RDF `READY_FOR_COMPILATION` package crosses the review boundary. The
+package and release-registry authorities remain untouched.
+
+No live LLM, OCR/vision/ASR/video understanding, authoritative Prompt 4
+compiler, final OWL/SHACL/CQ validation, Versioned Ontology Package, semantic
+diff, REST, Workbench replacement, Forestry content, or generic GraphDB backend
+is claimed. See `plugin-driven-ingestion-architecture.md` for Prompt 3 and
+`evidence-grounded-modeling-architecture.md` for Prompt 4.

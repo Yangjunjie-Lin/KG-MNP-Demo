@@ -752,3 +752,51 @@ verify-prompt-03-offline: verify-toolchain-foundation verify-contract-catalog \
 	python scripts/generate_contract_catalog.py --check
 	python scripts/generate_ingestion_examples.py --check
 	git diff --exit-code
+
+.PHONY: verify-modeling-scope verify-modeling-baseline \
+	verify-modeling-providers verify-modeling-candidates \
+	verify-modeling-prevalidation verify-modeling-review \
+	verify-modeling-confirmation verify-modeling-security \
+	verify-prompt-04-offline
+
+verify-modeling-scope:
+	python -m pytest -q tests/modeling_control tests/modeling_scope \
+		tests/competency_questions/test_structural_coverage.py
+
+verify-modeling-baseline:
+	python -m pytest -q tests/modeling_baseline tests/modeling_terminology \
+		tests/modeling_alignment tests/e2e/test_mnp_modeling_compatibility.py
+
+verify-modeling-providers:
+	python -m pytest -q tests/modeling_providers tests/cli/test_model_cli.py
+
+verify-modeling-candidates:
+	python -m pytest -q tests/modeling_candidates \
+		tests/security/test_modeling_candidate_security.py
+
+verify-modeling-prevalidation:
+	python -m pytest -q tests/modeling_prevalidation
+
+verify-modeling-review:
+	python -m pytest -q tests/modeling_review tests/cli/test_review_cli.py \
+		tests/security/test_modeling_review_security.py
+
+verify-modeling-confirmation:
+	python -m pytest -q tests/modeling_confirmation \
+		tests/security/test_confirmed_package_security.py \
+		tests/e2e/test_minimal_modeling_workflow.py
+
+verify-modeling-security:
+	python -m pytest -q tests/security/test_modeling_provider_security.py \
+		tests/security/test_modeling_candidate_security.py \
+		tests/security/test_modeling_review_security.py \
+		tests/security/test_confirmed_package_security.py
+
+verify-prompt-04-offline: verify-toolchain-foundation verify-contract-catalog \
+	verify-domain-packs verify-project-workspace verify-prompt-03-offline \
+	verify-modeling-scope verify-modeling-baseline verify-modeling-providers \
+	verify-modeling-candidates verify-modeling-prevalidation \
+	verify-modeling-review verify-modeling-confirmation verify-modeling-security
+	python scripts/generate_prompt04_contracts.py --check
+	python scripts/generate_contract_catalog.py --check
+	git diff --exit-code

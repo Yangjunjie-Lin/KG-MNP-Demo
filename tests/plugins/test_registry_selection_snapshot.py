@@ -30,6 +30,7 @@ from kg_mnp.plugins.snapshot import build_snapshot, verify_snapshot
 
 ROOT = Path(__file__).resolve().parents[2]
 EXPECTED_BUILTINS = {
+    "baseline-reuse-provider",
     "delimited-text-parser",
     "docx-parser",
     "generic-normalizer",
@@ -37,12 +38,19 @@ EXPECTED_BUILTINS = {
     "json-parser",
     "local-file-source",
     "markdown-parser",
+    "manual-candidate-provider",
     "pdf-parser",
     "plain-text-parser",
+    "recorded-model-output-provider",
+    "rule-mapping-provider",
     "signature-media-detector",
     "structural-quality-evaluator",
     "wav-metadata-parser",
     "xlsx-parser",
+}
+EXPECTED_NONDETERMINISTIC_DECLARATIONS = {
+    "manual-candidate-provider": "HUMAN_AUTHORED",
+    "recorded-model-output-provider": "RECORDED_BYTES",
 }
 
 
@@ -50,7 +58,11 @@ def test_builtin_registry_is_stable_enabled_and_complete() -> None:
     descriptors = PluginRegistry(discover_external=False).list()
     assert {item.plugin_id for item in descriptors} == EXPECTED_BUILTINS
     assert all(item.status == PluginStatus.ENABLED for item in descriptors)
-    assert all(item.manifest["determinism"] == "DETERMINISTIC" for item in descriptors)
+    assert {
+        item.plugin_id: item.manifest["determinism"]
+        for item in descriptors
+        if item.manifest["determinism"] != "DETERMINISTIC"
+    } == EXPECTED_NONDETERMINISTIC_DECLARATIONS
 
 
 def test_missing_optional_document_dependencies_do_not_disable_core(

@@ -11,7 +11,7 @@ ROOT = Path(__file__).resolve().parents[2]
 
 def test_source_package_identity() -> None:
     assert kg_mnp.__name__ == "kg_mnp"
-    assert kg_mnp.__version__ == "0.3.0"
+    assert kg_mnp.__version__ == "0.4.0"
     assert not (ROOT / "src" / ("kg_" + "mnp_demo")).exists()
 
 
@@ -20,11 +20,11 @@ def test_distribution_metadata_and_console_surface() -> None:
         "project"
     ]
     assert project["name"] == "kg-mnp-toolchain"
-    assert project["version"] == "0.3.0"
+    assert project["version"] == "0.4.0"
     assert project["scripts"] == {"kg-mnp": "kg_mnp.root_cli:main"}
 
     distribution = importlib.metadata.distribution("kg-mnp-toolchain")
-    assert distribution.version == "0.3.0"
+    assert distribution.version == "0.4.0"
     console_scripts = {
         entry.name: entry.value
         for entry in distribution.entry_points

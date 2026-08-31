@@ -20,10 +20,12 @@ from kg_mnp.contracts import (
 )
 from kg_mnp.contracts.catalog import DRAFT_2020_12, regenerate_catalog_files
 
+PROMPT04_CONTRACT_COUNT = 59
+
 
 def test_catalog_is_the_unique_closed_public_authority() -> None:
     catalog = ContractCatalog.load()
-    assert len(catalog.specs) == 34
+    assert len(catalog.specs) == PROMPT04_CONTRACT_COUNT
     assert contract_names() == tuple(spec.name for spec in catalog.specs)
     for attribute in ("name", "schema_id", "resource_path"):
         values = [getattr(spec, attribute) for spec in catalog.specs]

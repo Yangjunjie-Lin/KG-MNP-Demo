@@ -1487,3 +1487,37 @@ jobs:
             git status --short
             exit 1
           fi
+
+  toolchain-modeling:
+    name: toolchain-modeling (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 90
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install modeling development dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[dev,ingestion-documents]"
+      - name: Lint repository
+        run: python -m ruff check .
+      - name: Verify Prompt 4 modeling and review
+        run: python -m pytest -q tests/modeling_control tests/modeling_scope tests/competency_questions/test_structural_coverage.py tests/modeling_baseline tests/modeling_terminology tests/modeling_alignment tests/modeling_providers tests/modeling_candidates tests/modeling_prevalidation tests/modeling_review tests/modeling_confirmation tests/security/test_modeling_provider_security.py tests/security/test_modeling_candidate_security.py tests/security/test_modeling_review_security.py tests/security/test_confirmed_package_security.py tests/cli/test_model_cli.py tests/cli/test_review_cli.py tests/e2e
+      - name: Verify Linux symlink permissions action-chain and workspace escape
+        if: runner.os == 'Linux'
+        run: python -m pytest -q tests/security/test_domain_pack_security.py tests/security/test_workspace_security.py tests/security/test_source_security.py tests/modeling_review tests/modeling_providers/test_builtin_providers.py
+      - name: Verify generated contracts
+        run: |
+          python scripts/generate_prompt04_contracts.py --check
+          python scripts/generate_contract_catalog.py --check
+      - name: Verify clean generated tree
+        run: git diff --exit-code

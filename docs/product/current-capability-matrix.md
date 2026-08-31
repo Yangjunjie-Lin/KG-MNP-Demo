@@ -1,6 +1,6 @@
 # Current Capability Matrix
 
-This matrix records repository state at Prompt 3. “Implemented” means exercised
+This matrix records repository state at Prompt 4. “Implemented” means exercised
 by retained code and tests; it does not mean the capability is already generic,
 packaged as a stable public API, or validated across industries.
 
@@ -16,7 +16,7 @@ packaged as a stable public API, or validated across industries.
 | Provenance | Modeling provenance and review-audit graphs are compiled and coverage-tested. |
 | Publication verification | Publication packages can be reconstructed, verified, and attested offline. |
 | Activation/rollback governance | Registry, state transition, pointer, concurrency, rollback, resolver, and attestation logic exist. |
-| Public Contract Catalog | One packaged Catalog and deterministic Catalog Lock bind 34 public Draft 2020-12 schemas; the frozen 1.0 catalog schema remains byte-identical and catalog schema 1.1 adds `ingestion`. |
+| Public Contract Catalog | One packaged Catalog and deterministic Catalog Lock bind 59 public Draft 2020-12 schemas; all 34 Prompt 3 schema bytes remain unchanged and the new modeling family is additive. |
 | Offline Contract Registry | Package-local `$ref` resolution, schema self-validation, and payload validation run without network retrieval. |
 | Artifact Reference/Manifest v1 | Public identity and constrained immutable-file-set contracts exist; they do not represent review or the final ontology package. |
 | Formal DomainPackManifest v1 | Formal manifests govern `minimal`, `mnp`, and `forestry` with explicit honest lifecycle states. |
@@ -33,6 +33,16 @@ packaged as a stable public API, or validated across industries.
 | Structured document parsers | TXT, Markdown, JSON, CSV/TSV, XLSX, DOCX and PDF text parsing plus image/WAV metadata are implemented with bounded security checks. OCR, ASR and video understanding are absent. |
 | KG-IR and structural quality gate | Every intermediate item is evidence-bound; ontology/business-object kinds are prohibited. PASS/REVIEW_REQUIRED/FAIL are structural policy outcomes, not semantic accuracy. |
 | Ingestion CLI | `kg-mnp plugin`, `source`, `ingest` and `ir` expose stable JSON envelopes and trace KG-IR to source blobs, snapshots and transformations. |
+| Ontology Scope and Approval | Immutable scope, namespace/IRI policy, human approval semantic hash, and stale protection gate every provider run; no auto-approval exists. |
+| Competency Questions | Closed question sets and structural coverage reports exist; the report explicitly does not claim CQ execution. |
+| Baseline and Terminology | Locked local baseline snapshots and indexes, multi-source terminology, exact/normalized/alias/lexical alignment, ambiguity handling, and cross-path determinism are implemented without remote import. |
+| Modeling Provider API 1.1 | `modeling-provider` manifests, immutable requests, proposal-only responses, snapshots, conformance, metadata-only external discovery, default disablement, and explicit enablement are implemented while API 1.0 remains compatible. |
+| Offline Modeling Providers | Manual, baseline-reuse, rule-mapping, and recorded-model-output providers are implemented with denied network access and Core-owned candidate IDs. Recorded output is not live LLM invocation. |
+| Closed Ontology Candidates | TBox, Mapping, ABox, and SHACL candidate bodies, evidence/KG-IR/baseline/provider closure, normalization, multi-provider merge, and deterministic conflict detection are implemented. |
+| Formal Prevalidation | Thirty named structural, authority, closure, namespace, conflict, and resource checks emit PASS/REVIEW_REQUIRED/FAIL without claiming OWL, SHACL, or CQ final validation. |
+| Human Review Control Plane | Dependency-ordered queues, development and production policies, explicit decisions, immutable revisions, append-only hashes, replay, stale/cross-project protection, role/quorum gates, and fail-closed finalization are implemented. |
+| Prompt 4 Confirmed Modeling Package | Deterministic separated reviewed candidates and complete closure are emitted only as `READY_FOR_COMPILATION`; RDF, publication, registry, GraphDB, scripts, secrets, paths, and current-time identity are prohibited. |
+| Model and Review CLI | `kg-mnp model` and `kg-mnp review` expose the Prompt 4 workflow without accept-all, auto-review, live-LLM, bypass, or force-finalize routes. |
 
 ## IMPLEMENTED_BUT_REQUIRES_REFACTOR
 
@@ -54,9 +64,8 @@ packaged as a stable public API, or validated across industries.
 |---|---|
 | LLM Ingestion Planner | Planned; Prompt 3 implements only the deterministic core planner. |
 | OCR/Vision/ASR/Video providers | Planned optional providers; metadata parsers do not claim semantic understanding. |
-| Field-to-Ontology Mapping | Planned for Prompt 4 proposal and human-review work. |
-| LLM Proposal Provider | Planned and constrained to proposal authority. |
-| Unified Review Experience | Planned; retained review behavior has not been rewritten. |
+| Live LLM Proposal Provider | Not implemented; only offline recorded model bytes can be imported and remain proposals. |
+| Unified Review Experience | Planned; the Prompt 4 review CLI/control plane is implemented, but no unified Workbench experience is claimed. |
 | New Compiler Kernel | Planned; the retained deterministic compiler remains in place. |
 | Final Versioned Ontology Package | Planned; Artifact Manifest v1 is only a constrained file-set manifest. |
 | Semantic Diff | Planned for controlled evolution; existing amendment diff is not represented as the final semantic diff. |

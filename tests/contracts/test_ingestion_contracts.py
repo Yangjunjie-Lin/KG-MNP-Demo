@@ -43,6 +43,7 @@ PROMPT03_CONTRACTS = {
     "quality-report",
     "ingestion-run",
 }
+PROMPT04_CONTRACT_COUNT = 59
 
 
 def test_original_twenty_contract_schema_bytes_are_unchanged() -> None:
@@ -56,7 +57,7 @@ def test_prompt03_contracts_are_single_catalog_ingestion_scope_and_packaged() ->
     catalog = ContractCatalog.load()
     ingestion = {spec.name for spec in catalog.filtered(scope="ingestion")}
     assert PROMPT03_CONTRACTS.issubset(ingestion)
-    assert len(catalog.specs) == 34
+    assert len(catalog.specs) == PROMPT04_CONTRACT_COUNT
     package = resources.files("kg_mnp.contracts")
     for name in PROMPT03_CONTRACTS:
         spec = catalog.by_name(name)

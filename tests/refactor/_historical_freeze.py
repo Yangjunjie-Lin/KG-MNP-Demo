@@ -17,6 +17,8 @@ ROOT = Path(__file__).resolve().parents[2]
 BASELINE_SHA = "e45da340267de8d4b7b3a54177822aa641e3a601"
 BASELINE_TAG = "kg-mnp-phase06-baseline-2026-08-30"
 PROMPT01_HEAD_SHA = "a7114eef25f2f2a262cd69793a8d3e2b444836fc"
+PROMPT02_HEAD_SHA = "d04e9b494a99932532ae9c359653878aa32261d7"
+PROMPT03_HEAD_SHA = "52fb0bc064ed7a715ddc3269d23e89a1a78c917c"
 PROTECTED_ROOTS = (
     "src/kg_mnp",
     "schemas",
@@ -30,13 +32,14 @@ PROTECTED_ROOTS = (
 )
 SELF_PATH = "tests/refactor/_historical_freeze.py"
 
-# Updated only after the sanctioned Prompt 3 Contract Catalog migration,
-# Plugin SDK, Source Store, evidence/KG-IR, security, Prompt 2 regressions,
-# immutable Pack Locks and MNP 84/84 preservation gates passed. The helper
-# excludes itself to avoid a self-referential digest; every other intended
-# repository file below PROTECTED_ROOTS remains bound.
-EXPECTED_FILE_COUNT = 1161
-EXPECTED_TREE_SHA256 = "1e57eb06d004c7f2f3e42ddabd51ac2c3957dfc0fba77000aa0e95530f3d77eb"
+# Updated only after the sanctioned Prompt 4 Contract Catalog migration,
+# Plugin API 1.0 preservation, Plugin API 1.1, evidence-grounded modeling,
+# human review, security, Prompt 3 regressions, Stage 06, Application Phase 06
+# non-snapshot regressions, immutable Pack Locks, and MNP 84/84 preservation
+# gates passed. The helper excludes itself to avoid a self-referential digest;
+# every other intended repository file below PROTECTED_ROOTS remains bound.
+EXPECTED_FILE_COUNT = 1253
+EXPECTED_TREE_SHA256 = "b2f6e753171932aec8afe96ada74b3c9c4de77947f2b0e48031d5bb55403f5e1"
 
 
 def _git(*arguments: str, check: bool = True) -> subprocess.CompletedProcess[bytes]:
@@ -80,7 +83,13 @@ def assert_prompt01_semantic_snapshot(historical_commit: str) -> None:
     assert baseline_target == BASELINE_SHA, (
         f"immutable baseline tag target changed: {baseline_target or '<missing>'}"
     )
-    for commit in (historical_commit, PROMPT01_HEAD_SHA, BASELINE_SHA):
+    for commit in (
+        historical_commit,
+        PROMPT01_HEAD_SHA,
+        PROMPT02_HEAD_SHA,
+        PROMPT03_HEAD_SHA,
+        BASELINE_SHA,
+    ):
         exists = _git("cat-file", "-e", f"{commit}^{{commit}}", check=False)
         assert exists.returncode == 0, f"historical authority commit unavailable: {commit}"
         ancestry = _git("merge-base", "--is-ancestor", commit, "HEAD", check=False)
