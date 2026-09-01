@@ -1,0 +1,216 @@
+{
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compiler-input-attestation/1.0",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "attestation_id": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/stableId"
+    },
+    "baseline_snapshot_id": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/stableId"
+    },
+    "closure_results": {
+      "additionalProperties": false,
+      "properties": {
+        "dependency_basis_points": {
+          "maximum": 10000,
+          "minimum": 0,
+          "type": "integer"
+        },
+        "evidence_basis_points": {
+          "maximum": 10000,
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "evidence_basis_points",
+        "dependency_basis_points"
+      ],
+      "type": "object"
+    },
+    "competency_question_set_id": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/stableId"
+    },
+    "confirmed_package_id": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/stableId"
+    },
+    "confirmed_package_semantic_digest": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/sha256"
+    },
+    "confirmed_package_sha256": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/sha256"
+    },
+    "content_digest": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/sha256"
+    },
+    "contract_catalog_digest": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/sha256"
+    },
+    "coverage_report_id": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/stableId"
+    },
+    "domain_pack_lock_ids": {
+      "items": {
+        "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/stableId"
+      },
+      "maxItems": 100000,
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "field_mapping_candidate_set_id": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/stableId"
+    },
+    "issues": {
+      "items": {
+        "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/issue"
+      },
+      "maxItems": 10000,
+      "minItems": 0,
+      "type": "array"
+    },
+    "kg_ir_dataset_ids": {
+      "items": {
+        "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/stableId"
+      },
+      "maxItems": 100000,
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "manifest_kind": {
+      "const": "KG_MNP_COMPILER_INPUT_ATTESTATION"
+    },
+    "partition_counts": {
+      "additionalProperties": false,
+      "properties": {
+        "ABOX": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "MAPPING": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "SHACL": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "TBOX": {
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "TBOX",
+        "MAPPING",
+        "ABOX",
+        "SHACL"
+      ],
+      "type": "object"
+    },
+    "prevalidation_report_id": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/stableId"
+    },
+    "project_lock_id": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/stableId"
+    },
+    "proposal_id": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/stableId"
+    },
+    "resolved_artifacts": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "artifact_id": {
+            "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/stableId"
+          },
+          "byte_sha256": {
+            "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/sha256"
+          },
+          "content_digest": {
+            "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/sha256"
+          },
+          "path": {
+            "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/safePath"
+          }
+        },
+        "required": [
+          "artifact_id",
+          "path",
+          "byte_sha256",
+          "content_digest"
+        ],
+        "type": "object"
+      },
+      "maxItems": 100000,
+      "minItems": 1,
+      "type": "array"
+    },
+    "review_decision_log_id": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/stableId"
+    },
+    "review_policy_id": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/stableId"
+    },
+    "review_semantic_hash": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/sha256"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "scope_approval_id": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/stableId"
+    },
+    "scope_id": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/stableId"
+    },
+    "status": {
+      "enum": [
+        "VALID",
+        "INVALID",
+        "STALE"
+      ]
+    },
+    "term_alignment_set_id": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/stableId"
+    },
+    "term_inventory_id": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/stableId"
+    }
+  },
+  "required": [
+    "manifest_kind",
+    "schema_version",
+    "attestation_id",
+    "confirmed_package_id",
+    "confirmed_package_sha256",
+    "confirmed_package_semantic_digest",
+    "project_lock_id",
+    "contract_catalog_digest",
+    "domain_pack_lock_ids",
+    "scope_id",
+    "scope_approval_id",
+    "competency_question_set_id",
+    "coverage_report_id",
+    "kg_ir_dataset_ids",
+    "baseline_snapshot_id",
+    "term_inventory_id",
+    "term_alignment_set_id",
+    "field_mapping_candidate_set_id",
+    "proposal_id",
+    "prevalidation_report_id",
+    "review_policy_id",
+    "review_decision_log_id",
+    "review_semantic_hash",
+    "resolved_artifacts",
+    "partition_counts",
+    "closure_results",
+    "status",
+    "issues",
+    "content_digest"
+  ],
+  "title": "KG-MNP Compiler Input Attestation 1.0",
+  "type": "object"
+}

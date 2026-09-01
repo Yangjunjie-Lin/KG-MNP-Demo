@@ -3,6 +3,236 @@
   "contracts": [
     {
       "authority_level": "descriptive",
+      "name": "abox-compilation-report",
+      "resource_path": "schemas/compilation/abox_compilation_report.schema.json",
+      "schema_id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/abox-compilation-report/1.0",
+      "scope": "compilation",
+      "sha256": "ee1b7b8dfce5473751aca4326e85991927f6299f346fe2b5773f10a51b0a019d",
+      "stability": "experimental",
+      "version": "1.0.0"
+    },
+    {
+      "authority_level": "descriptive",
+      "name": "build-reproduction-report",
+      "resource_path": "schemas/compilation/build_reproduction_report.schema.json",
+      "schema_id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/build-reproduction-report/1.0",
+      "scope": "compilation",
+      "sha256": "afc6fe64c86b2126dfd92e601d851ba897865f580489bc0c0b6dd43ad7ee77a2",
+      "stability": "experimental",
+      "version": "1.0.0"
+    },
+    {
+      "authority_level": "control",
+      "name": "competency-question-test-plan",
+      "resource_path": "schemas/compilation/competency_question_test_plan.schema.json",
+      "schema_id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/competency-question-test-plan/1.0",
+      "scope": "compilation",
+      "sha256": "0bac9626e41d31616cce73618910285c835d727620fc3bfed791beca85d49954",
+      "stability": "experimental",
+      "version": "1.0.0"
+    },
+    {
+      "authority_level": "descriptive",
+      "name": "competency-question-test-report",
+      "resource_path": "schemas/compilation/competency_question_test_report.schema.json",
+      "schema_id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/competency-question-test-report/1.0",
+      "scope": "compilation",
+      "sha256": "f9bcd2d03a2d5d9717a8f6fa96abbd5bcab024e6bdf5acd27c622108eb486f4a",
+      "stability": "experimental",
+      "version": "1.0.0"
+    },
+    {
+      "authority_level": "descriptive",
+      "name": "compilation-common",
+      "resource_path": "schemas/compilation/compilation_common.schema.json",
+      "schema_id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0",
+      "scope": "compilation",
+      "sha256": "44c88ea40df481e152b285d6b239c2ee93588f14d22a808aa1153f642ff88bca",
+      "stability": "experimental",
+      "version": "1.0.0"
+    },
+    {
+      "authority_level": "lock",
+      "name": "compiler-input-attestation",
+      "resource_path": "schemas/compilation/compiler_input_attestation.schema.json",
+      "schema_id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compiler-input-attestation/1.0",
+      "scope": "compilation",
+      "sha256": "c4919bec91e14ad853a93dd495d99c031b479f1d9075489faa3c8f142213f0ca",
+      "stability": "experimental",
+      "version": "1.0.0"
+    },
+    {
+      "authority_level": "control",
+      "name": "mapping-plan",
+      "resource_path": "schemas/compilation/mapping_plan.schema.json",
+      "schema_id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/mapping-plan/1.0",
+      "scope": "compilation",
+      "sha256": "8e011453610505bb18882ddfbca837835d58ff01032acf4f8042b7e620826be7",
+      "stability": "experimental",
+      "version": "1.0.0"
+    },
+    {
+      "authority_level": "lock",
+      "name": "ontology-package-lock",
+      "resource_path": "schemas/compilation/ontology_package_lock.schema.json",
+      "schema_id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/ontology-package-lock/1.0",
+      "scope": "compilation",
+      "sha256": "22b54a6df8c325f2d0c74285d62a94f640a082959630bb9097e547e42aaf1193",
+      "stability": "experimental",
+      "version": "1.0.0"
+    },
+    {
+      "authority_level": "control",
+      "name": "ontology-package-manifest",
+      "resource_path": "schemas/compilation/ontology_package_manifest.schema.json",
+      "schema_id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/ontology-package-manifest/1.0",
+      "scope": "compilation",
+      "sha256": "82ccf337ea7774595bab9b31818b858d26147ffd5e710b0a12d33b58c2b99c89",
+      "stability": "experimental",
+      "version": "1.0.0"
+    },
+    {
+      "authority_level": "descriptive",
+      "name": "ontology-package-validation-report",
+      "resource_path": "schemas/compilation/ontology_package_validation_report.schema.json",
+      "schema_id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/ontology-package-validation-report/1.0",
+      "scope": "compilation",
+      "sha256": "17a57dd52951d852729164a27717cd3e97fe2d32a521d06b3ec392ae00799dd3",
+      "stability": "experimental",
+      "version": "1.0.0"
+    },
+    {
+      "authority_level": "descriptive",
+      "name": "owl-profile-report",
+      "resource_path": "schemas/compilation/owl_profile_report.schema.json",
+      "schema_id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/owl-profile-report/1.0",
+      "scope": "compilation",
+      "sha256": "8b85abf69409d54eb766274589858f7966e8d3678e92b8a3c011b22af193331a",
+      "stability": "experimental",
+      "version": "1.0.0"
+    },
+    {
+      "authority_level": "descriptive",
+      "name": "provenance-closure-report",
+      "resource_path": "schemas/compilation/provenance_closure_report.schema.json",
+      "schema_id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/provenance-closure-report/1.0",
+      "scope": "compilation",
+      "sha256": "b693965a541dba937875b573d2ab45a9786677f7e953d4a65910a0d60f699b09",
+      "stability": "experimental",
+      "version": "1.0.0"
+    },
+    {
+      "authority_level": "control",
+      "name": "rdf-dataset-manifest",
+      "resource_path": "schemas/compilation/rdf_dataset_manifest.schema.json",
+      "schema_id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/rdf-dataset-manifest/1.0",
+      "scope": "compilation",
+      "sha256": "63e126a30dc900e9971f0c041fe3e85fb752efbf0f2939d4c1cfa234688713ae",
+      "stability": "experimental",
+      "version": "1.0.0"
+    },
+    {
+      "authority_level": "descriptive",
+      "name": "rdf-syntax-validation-report",
+      "resource_path": "schemas/compilation/rdf_syntax_validation_report.schema.json",
+      "schema_id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/rdf-syntax-validation-report/1.0",
+      "scope": "compilation",
+      "sha256": "0d724b0d331854d626f984e9791defd09f7f7294b03c76578b4d22cdabb481a2",
+      "stability": "experimental",
+      "version": "1.0.0"
+    },
+    {
+      "authority_level": "control",
+      "name": "semantic-compilation-plan",
+      "resource_path": "schemas/compilation/semantic_compilation_plan.schema.json",
+      "schema_id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/semantic-compilation-plan/1.0",
+      "scope": "compilation",
+      "sha256": "d00199e6dbd289c10644ca581a9a3e9a9a18ab127b72972860dba3074addfd97",
+      "stability": "experimental",
+      "version": "1.0.0"
+    },
+    {
+      "authority_level": "control",
+      "name": "semantic-compilation-run",
+      "resource_path": "schemas/compilation/semantic_compilation_run.schema.json",
+      "schema_id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/semantic-compilation-run/1.0",
+      "scope": "compilation",
+      "sha256": "c0ed49025571556cc3a63a9c3e167f74dc9fe26db97a81425f5f75a800d2658b",
+      "stability": "experimental",
+      "version": "1.0.0"
+    },
+    {
+      "authority_level": "control",
+      "name": "semantic-compiler-policy",
+      "resource_path": "schemas/compilation/semantic_compiler_policy.schema.json",
+      "schema_id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/semantic-compiler-policy/1.0",
+      "scope": "compilation",
+      "sha256": "5e08e90ab89749ed1ab7a0b5d8b8c377a6671b28252b4f4d73835df2ae6acb82",
+      "stability": "experimental",
+      "version": "1.0.0"
+    },
+    {
+      "authority_level": "lock",
+      "name": "semantic-compiler-snapshot",
+      "resource_path": "schemas/compilation/semantic_compiler_snapshot.schema.json",
+      "schema_id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/semantic-compiler-snapshot/1.0",
+      "scope": "compilation",
+      "sha256": "c8ea4152be9660754b448f4bfb4777888463a26313834bf6fb169d6fe218173c",
+      "stability": "experimental",
+      "version": "1.0.0"
+    },
+    {
+      "authority_level": "descriptive",
+      "name": "semantic-owl-consistency-report",
+      "resource_path": "schemas/compilation/semantic_owl_consistency_report.schema.json",
+      "schema_id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/semantic-owl-consistency-report/1.0",
+      "scope": "compilation",
+      "sha256": "887965820956547b69e16cf2a27824d503c9e07fb66a9a361cbf997af0bf97ce",
+      "stability": "experimental",
+      "version": "1.0.0"
+    },
+    {
+      "authority_level": "descriptive",
+      "name": "semantic-shacl-validation-report",
+      "resource_path": "schemas/compilation/semantic_shacl_validation_report.schema.json",
+      "schema_id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/semantic-shacl-validation-report/1.0",
+      "scope": "compilation",
+      "sha256": "e85a150bb40fc6a6b2618dd5695d5e9bce2dd47241a70e613fe62dcb08deea7c",
+      "stability": "experimental",
+      "version": "1.0.0"
+    },
+    {
+      "authority_level": "descriptive",
+      "name": "shacl-compilation-report",
+      "resource_path": "schemas/compilation/shacl_compilation_report.schema.json",
+      "schema_id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/shacl-compilation-report/1.0",
+      "scope": "compilation",
+      "sha256": "5194fbbbcdb3f9be4b7f8e70e41ffcb77e54c267e2d0ac0288b6fe3fe556194d",
+      "stability": "experimental",
+      "version": "1.0.0"
+    },
+    {
+      "authority_level": "descriptive",
+      "name": "statement-provenance-manifest",
+      "resource_path": "schemas/compilation/statement_provenance_manifest.schema.json",
+      "schema_id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/statement-provenance-manifest/1.0",
+      "scope": "compilation",
+      "sha256": "c9173edbe674bcc3e81a871990f4e06d6a670f648d99a42f68e46331963635cf",
+      "stability": "experimental",
+      "version": "1.0.0"
+    },
+    {
+      "authority_level": "descriptive",
+      "name": "tbox-compilation-report",
+      "resource_path": "schemas/compilation/tbox_compilation_report.schema.json",
+      "schema_id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/tbox-compilation-report/1.0",
+      "scope": "compilation",
+      "sha256": "d4c08143fab06fa5c3f8a8579e441a0219c7612d88a79271de9003737e2cbc87",
+      "stability": "experimental",
+      "version": "1.0.0"
+    },
+    {
+      "authority_level": "descriptive",
       "name": "evidence-record",
       "resource_path": "schemas/toolchain/evidence_record.schema.json",
       "schema_id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/evidence-record/1.0",
@@ -502,6 +732,16 @@
       "version": "1.1.0"
     },
     {
+      "authority_level": "control",
+      "name": "contract-catalog-v1-2",
+      "resource_path": "schemas/toolchain/contract_catalog_v1_2.schema.json",
+      "schema_id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/toolchain/contract-catalog/1.2",
+      "scope": "toolchain",
+      "sha256": "e7f892a4e52f06260e8b9bb21db907c655da89d4f1ae7ca8ee073d1af6d44477",
+      "stability": "experimental",
+      "version": "1.2.0"
+    },
+    {
       "authority_level": "lock",
       "name": "domain-pack-lock",
       "resource_path": "schemas/toolchain/domain_pack_lock.schema.json",
@@ -593,5 +833,5 @@
     }
   ],
   "manifest_kind": "KG_MNP_CONTRACT_CATALOG",
-  "schema_version": "1.1.0"
+  "schema_version": "1.2.0"
 }

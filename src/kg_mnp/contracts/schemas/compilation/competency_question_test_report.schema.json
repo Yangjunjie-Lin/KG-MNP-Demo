@@ -1,0 +1,127 @@
+{
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/competency-question-test-report/1.0",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "content_digest": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/sha256"
+    },
+    "issues": {
+      "items": {
+        "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/issue"
+      },
+      "maxItems": 10000,
+      "minItems": 0,
+      "type": "array"
+    },
+    "manifest_kind": {
+      "const": "KG_MNP_COMPETENCY_QUESTION_TEST_REPORT"
+    },
+    "report_id": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/stableId"
+    },
+    "required_passed": {
+      "type": "boolean"
+    },
+    "results": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "assertion_results": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "assertion_type": {
+                  "maxLength": 64,
+                  "pattern": "^[A-Z][A-Z0-9_]*$",
+                  "type": "string"
+                },
+                "passed": {
+                  "type": "boolean"
+                }
+              },
+              "required": [
+                "assertion_type",
+                "passed"
+              ],
+              "type": "object"
+            },
+            "maxItems": 128,
+            "minItems": 0,
+            "type": "array"
+          },
+          "question_id": {
+            "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/stableId"
+          },
+          "question_status": {
+            "enum": [
+              "PASSED",
+              "FAILED",
+              "UNVERIFIED"
+            ]
+          },
+          "result_count": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "result_semantic_hash": {
+            "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/sha256"
+          },
+          "test_id": {
+            "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/stableId"
+          },
+          "test_status": {
+            "enum": [
+              "ASSERTION_PASSED",
+              "ASSERTION_FAILED",
+              "EXECUTED_NO_ORACLE",
+              "NOT_EXECUTABLE",
+              "QUERY_REJECTED",
+              "TIMEOUT",
+              "ENGINE_FAILED"
+            ]
+          }
+        },
+        "required": [
+          "test_id",
+          "question_id",
+          "test_status",
+          "question_status",
+          "result_count",
+          "result_semantic_hash",
+          "assertion_results"
+        ],
+        "type": "object"
+      },
+      "maxItems": 10000,
+      "minItems": 0,
+      "type": "array"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "status": {
+      "enum": [
+        "PASSED",
+        "FAILED",
+        "UNVERIFIED"
+      ]
+    },
+    "test_plan_id": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/stableId"
+    }
+  },
+  "required": [
+    "manifest_kind",
+    "schema_version",
+    "report_id",
+    "test_plan_id",
+    "results",
+    "required_passed",
+    "status",
+    "issues",
+    "content_digest"
+  ],
+  "title": "KG-MNP Competency Question Test Report 1.0",
+  "type": "object"
+}

@@ -1,0 +1,416 @@
+{
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/semantic-compilation-plan/1.0",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "baseline_assets": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "asset_path": {
+            "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/safePath"
+          },
+          "byte_sha256": {
+            "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/sha256"
+          },
+          "pack_lock_id": {
+            "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/stableId"
+          },
+          "role": {
+            "maxLength": 64,
+            "pattern": "^[A-Z][A-Z0-9_]*$",
+            "type": "string"
+          },
+          "semantic_sha256": {
+            "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/sha256"
+          }
+        },
+        "required": [
+          "pack_lock_id",
+          "asset_path",
+          "byte_sha256",
+          "semantic_sha256",
+          "role"
+        ],
+        "type": "object"
+      },
+      "maxItems": 10000,
+      "minItems": 0,
+      "type": "array"
+    },
+    "candidate_dispatch": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "candidate_action": {
+            "enum": [
+              "REUSE_EXISTING",
+              "CREATE_NEW",
+              "ALIGN_TO_EXISTING",
+              "ASSERT",
+              "CONSTRAIN"
+            ]
+          },
+          "candidate_id": {
+            "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/stableId"
+          },
+          "candidate_type": {
+            "maxLength": 64,
+            "pattern": "^[A-Z][A-Z0-9_]*$",
+            "type": "string"
+          },
+          "compiler_rule_id": {
+            "maxLength": 128,
+            "pattern": "^P05_[A-Z0-9_]+$",
+            "type": "string"
+          },
+          "dependency_ids": {
+            "items": {
+              "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/stableId"
+            },
+            "maxItems": 100000,
+            "minItems": 0,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "expected_statement_range": {
+            "additionalProperties": false,
+            "properties": {
+              "maximum": {
+                "minimum": 0,
+                "type": "integer"
+              },
+              "minimum": {
+                "minimum": 0,
+                "type": "integer"
+              }
+            },
+            "required": [
+              "minimum",
+              "maximum"
+            ],
+            "type": "object"
+          },
+          "output_graph_role": {
+            "maxLength": 64,
+            "pattern": "^[a-z]+(?:-[a-z]+)*$",
+            "type": "string"
+          },
+          "partition": {
+            "enum": [
+              "TBOX",
+              "MAPPING",
+              "ABOX",
+              "SHACL"
+            ]
+          }
+        },
+        "required": [
+          "candidate_id",
+          "partition",
+          "candidate_type",
+          "candidate_action",
+          "compiler_rule_id",
+          "output_graph_role",
+          "dependency_ids",
+          "expected_statement_range"
+        ],
+        "type": "object"
+      },
+      "maxItems": 100000,
+      "minItems": 0,
+      "type": "array"
+    },
+    "competency_question_test_plan_id": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/stableId"
+    },
+    "compiler_input_attestation_id": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/stableId"
+    },
+    "compiler_snapshot_id": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/stableId"
+    },
+    "confirmed_package_id": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/stableId"
+    },
+    "content_digest": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/sha256"
+    },
+    "expected_artifacts": {
+      "items": {
+        "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/safePath"
+      },
+      "maxItems": 10000,
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "graph_plan": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "role": {
+            "maxLength": 64,
+            "pattern": "^[a-z]+(?:-[a-z]+)*$",
+            "type": "string"
+          },
+          "source_partitions": {
+            "items": {
+              "enum": [
+                "TBOX",
+                "MAPPING",
+                "ABOX",
+                "SHACL",
+                "BASELINE",
+                "PROVENANCE",
+                "AUDIT",
+                "LINEAGE",
+                "ACTIVITY"
+              ]
+            },
+            "maxItems": 16,
+            "minItems": 1,
+            "type": "array"
+          }
+        },
+        "required": [
+          "role",
+          "source_partitions"
+        ],
+        "type": "object"
+      },
+      "maxItems": 32,
+      "minItems": 1,
+      "type": "array"
+    },
+    "issues": {
+      "items": {
+        "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/issue"
+      },
+      "maxItems": 10000,
+      "minItems": 0,
+      "type": "array"
+    },
+    "manifest_kind": {
+      "const": "KG_MNP_SEMANTIC_COMPILATION_PLAN"
+    },
+    "ontology_identity": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/ontologyIdentity"
+    },
+    "operations": {
+      "items": {
+        "enum": [
+          "VERIFY_INPUT",
+          "LOAD_BASELINE",
+          "COMPILE_TBOX",
+          "COMPILE_ABOX",
+          "COMPILE_SHACL",
+          "COMPILE_MAPPING",
+          "COMPILE_PROVENANCE",
+          "BUILD_DATASET",
+          "VALIDATE_RDF",
+          "VALIDATE_OWL_PROFILE",
+          "VALIDATE_OWL_CONSISTENCY",
+          "VALIDATE_SHACL",
+          "EXECUTE_CQ",
+          "VALIDATE_PROVENANCE",
+          "ASSEMBLE_PACKAGE",
+          "VERIFY_PACKAGE",
+          "EXPORT_PACKAGE"
+        ]
+      },
+      "maxItems": 32,
+      "minItems": 17,
+      "type": "array"
+    },
+    "package_identity": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/packageIdentity"
+    },
+    "plan_id": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/stableId"
+    },
+    "resource_limits": {
+      "additionalProperties": false,
+      "properties": {
+        "max_abox_statements": {
+          "maximum": 1073741824,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_archive_compression_ratio": {
+          "maximum": 1073741824,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_confirmed_items": {
+          "maximum": 1073741824,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_cq_count": {
+          "maximum": 1073741824,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_dataset_quads": {
+          "maximum": 1073741824,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_mapping_rules": {
+          "maximum": 1073741824,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_package_files": {
+          "maximum": 1073741824,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_package_uncompressed_bytes": {
+          "maximum": 1073741824,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_provenance_statements": {
+          "maximum": 1073741824,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_query_characters": {
+          "maximum": 1073741824,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_query_path_depth": {
+          "maximum": 1073741824,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_query_results": {
+          "maximum": 1073741824,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_query_seconds": {
+          "maximum": 1073741824,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_rdf_bytes_per_file": {
+          "maximum": 1073741824,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_reasoner_input_triples": {
+          "maximum": 1073741824,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_reasoner_output_bytes": {
+          "maximum": 1073741824,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_reasoner_seconds": {
+          "maximum": 1073741824,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_shacl_results": {
+          "maximum": 1073741824,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_shacl_seconds": {
+          "maximum": 1073741824,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_shacl_statements": {
+          "maximum": 1073741824,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_tbox_statements": {
+          "maximum": 1073741824,
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "max_confirmed_items",
+        "max_tbox_statements",
+        "max_abox_statements",
+        "max_shacl_statements",
+        "max_mapping_rules",
+        "max_provenance_statements",
+        "max_dataset_quads",
+        "max_rdf_bytes_per_file",
+        "max_package_files",
+        "max_package_uncompressed_bytes",
+        "max_archive_compression_ratio",
+        "max_reasoner_input_triples",
+        "max_reasoner_seconds",
+        "max_reasoner_output_bytes",
+        "max_shacl_results",
+        "max_shacl_seconds",
+        "max_cq_count",
+        "max_query_characters",
+        "max_query_results",
+        "max_query_seconds",
+        "max_query_path_depth"
+      ],
+      "type": "object"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "status": {
+      "enum": [
+        "READY",
+        "INVALID"
+      ]
+    },
+    "validation_profiles": {
+      "items": {
+        "enum": [
+          "RDF_ROUND_TRIP",
+          "OWL_2_DL_STRICT",
+          "OWL_RL_STRUCTURAL",
+          "PINNED_HERMIT",
+          "SHACL_FINAL",
+          "CQ_WITH_ORACLE",
+          "PROVENANCE_CLOSURE",
+          "PACKAGE_STRICT"
+        ]
+      },
+      "maxItems": 16,
+      "minItems": 1,
+      "type": "array"
+    }
+  },
+  "required": [
+    "manifest_kind",
+    "schema_version",
+    "plan_id",
+    "compiler_input_attestation_id",
+    "confirmed_package_id",
+    "compiler_snapshot_id",
+    "ontology_identity",
+    "package_identity",
+    "baseline_assets",
+    "candidate_dispatch",
+    "graph_plan",
+    "validation_profiles",
+    "competency_question_test_plan_id",
+    "resource_limits",
+    "expected_artifacts",
+    "operations",
+    "status",
+    "issues",
+    "content_digest"
+  ],
+  "title": "KG-MNP Semantic Compilation Plan 1.0",
+  "type": "object"
+}

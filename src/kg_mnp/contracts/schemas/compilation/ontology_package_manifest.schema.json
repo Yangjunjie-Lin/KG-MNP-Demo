@@ -1,0 +1,331 @@
+{
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/ontology-package-manifest/1.0",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "artifacts": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "byte_sha256": {
+            "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/sha256"
+          },
+          "path": {
+            "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/safePath"
+          },
+          "role": {
+            "maxLength": 128,
+            "pattern": "^[A-Z][A-Z0-9_]*$",
+            "type": "string"
+          },
+          "semantic_sha256": {
+            "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/sha256"
+          },
+          "size_bytes": {
+            "maximum": 1073741824,
+            "minimum": 0,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "path",
+          "role",
+          "byte_sha256",
+          "semantic_sha256",
+          "size_bytes"
+        ],
+        "type": "object"
+      },
+      "maxItems": 10000,
+      "minItems": 1,
+      "type": "array"
+    },
+    "baseline_dependencies": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "asset_path": {
+            "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/safePath"
+          },
+          "byte_sha256": {
+            "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/sha256"
+          },
+          "pack_lock_id": {
+            "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/stableId"
+          },
+          "role": {
+            "maxLength": 64,
+            "pattern": "^[A-Z][A-Z0-9_]*$",
+            "type": "string"
+          },
+          "semantic_sha256": {
+            "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/sha256"
+          }
+        },
+        "required": [
+          "pack_lock_id",
+          "asset_path",
+          "byte_sha256",
+          "semantic_sha256",
+          "role"
+        ],
+        "type": "object"
+      },
+      "maxItems": 10000,
+      "minItems": 0,
+      "type": "array"
+    },
+    "compiler_policy": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/stableId"
+    },
+    "compiler_snapshot": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/stableId"
+    },
+    "content_digest": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/sha256"
+    },
+    "contract_catalog_digest": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/sha256"
+    },
+    "domain_pack_locks": {
+      "items": {
+        "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/stableId"
+      },
+      "maxItems": 100000,
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "graphs": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "graph_iri": {
+            "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/iri"
+          },
+          "graph_semantic_digest": {
+            "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/sha256"
+          },
+          "provenance_coverage_basis_points": {
+            "maximum": 10000,
+            "minimum": 0,
+            "type": "integer"
+          },
+          "role": {
+            "maxLength": 64,
+            "pattern": "^[a-z]+(?:-[a-z]+)*$",
+            "type": "string"
+          },
+          "source_confirmed_item_count": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "triple_count": {
+            "minimum": 0,
+            "type": "integer"
+          }
+        },
+        "required": [
+          "role",
+          "graph_iri",
+          "triple_count",
+          "graph_semantic_digest",
+          "source_confirmed_item_count",
+          "provenance_coverage_basis_points"
+        ],
+        "type": "object"
+      },
+      "maxItems": 32,
+      "minItems": 0,
+      "type": "array"
+    },
+    "manifest_kind": {
+      "const": "KG_MNP_ONTOLOGY_PACKAGE"
+    },
+    "mapping_plan": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/stableId"
+    },
+    "ontology_identity": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/ontologyIdentity"
+    },
+    "package_format_version": {
+      "const": "1.0.0"
+    },
+    "package_id": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/stableId"
+    },
+    "package_name": {
+      "maxLength": 128,
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+      "type": "string"
+    },
+    "package_status": {
+      "const": "VALIDATED_UNPUBLISHED"
+    },
+    "package_version": {
+      "maxLength": 64,
+      "pattern": "^(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)$",
+      "type": "string"
+    },
+    "project_lock_id": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/stableId"
+    },
+    "provenance": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "content_digest": {
+            "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/sha256"
+          },
+          "report_id": {
+            "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/stableId"
+          },
+          "status": {
+            "maxLength": 64,
+            "pattern": "^[A-Z][A-Z0-9_]*$",
+            "type": "string"
+          }
+        },
+        "required": [
+          "report_id",
+          "status",
+          "content_digest"
+        ],
+        "type": "object"
+      },
+      "maxItems": 16,
+      "minItems": 1,
+      "type": "array"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "semantic_summary": {
+      "additionalProperties": false,
+      "properties": {
+        "abox_triple_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "baseline_triple_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "compiled_shape_triple_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "dataset_quad_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "effective_shape_triple_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "effective_tbox_triple_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "evidence_lineage_triple_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "identity_payload_digest": {
+          "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/sha256"
+        },
+        "mapping_rule_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "new_tbox_triple_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "provenance_triple_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "review_audit_triple_count": {
+          "minimum": 0,
+          "type": "integer"
+        },
+        "semantic_dataset_digest": {
+          "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/sha256"
+        }
+      },
+      "required": [
+        "baseline_triple_count",
+        "new_tbox_triple_count",
+        "effective_tbox_triple_count",
+        "abox_triple_count",
+        "compiled_shape_triple_count",
+        "effective_shape_triple_count",
+        "provenance_triple_count",
+        "review_audit_triple_count",
+        "evidence_lineage_triple_count",
+        "dataset_quad_count",
+        "mapping_rule_count",
+        "semantic_dataset_digest",
+        "identity_payload_digest"
+      ],
+      "type": "object"
+    },
+    "source_confirmed_package": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/stableId"
+    },
+    "validation_reports": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "content_digest": {
+            "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/sha256"
+          },
+          "report_id": {
+            "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/stableId"
+          },
+          "status": {
+            "maxLength": 64,
+            "pattern": "^[A-Z][A-Z0-9_]*$",
+            "type": "string"
+          }
+        },
+        "required": [
+          "report_id",
+          "status",
+          "content_digest"
+        ],
+        "type": "object"
+      },
+      "maxItems": 32,
+      "minItems": 1,
+      "type": "array"
+    }
+  },
+  "required": [
+    "manifest_kind",
+    "schema_version",
+    "package_id",
+    "package_format_version",
+    "package_name",
+    "package_version",
+    "package_status",
+    "ontology_identity",
+    "source_confirmed_package",
+    "compiler_snapshot",
+    "compiler_policy",
+    "project_lock_id",
+    "contract_catalog_digest",
+    "domain_pack_locks",
+    "baseline_dependencies",
+    "graphs",
+    "mapping_plan",
+    "validation_reports",
+    "provenance",
+    "artifacts",
+    "semantic_summary",
+    "content_digest"
+  ],
+  "title": "KG-MNP Ontology Package Manifest 1.0",
+  "type": "object"
+}

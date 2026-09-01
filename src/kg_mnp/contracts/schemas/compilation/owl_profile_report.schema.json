@@ -1,0 +1,97 @@
+{
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/owl-profile-report/1.0",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "baseline_digest": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/sha256"
+    },
+    "content_digest": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/sha256"
+    },
+    "delta_digest": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/sha256"
+    },
+    "detected_constructs": {
+      "items": {
+        "maxLength": 128,
+        "type": "string"
+      },
+      "maxItems": 1024,
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "input_graph_digest": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/sha256"
+    },
+    "manifest_kind": {
+      "const": "KG_MNP_OWL_PROFILE_REPORT"
+    },
+    "profile_violations": {
+      "items": {
+        "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/issue"
+      },
+      "maxItems": 10000,
+      "minItems": 0,
+      "type": "array"
+    },
+    "report_id": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/stableId"
+    },
+    "requested_profile": {
+      "enum": [
+        "OWL_2_DL_STRICT",
+        "OWL_RL_STRUCTURAL"
+      ]
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "status": {
+      "enum": [
+        "PASSED",
+        "FAILED",
+        "NOT_RUN_EXTERNAL_PREREQUISITE"
+      ]
+    },
+    "unsupported_constructs": {
+      "items": {
+        "maxLength": 128,
+        "type": "string"
+      },
+      "maxItems": 1024,
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "validator_identity": {
+      "maxLength": 128,
+      "minLength": 1,
+      "type": "string"
+    },
+    "validator_version": {
+      "maxLength": 64,
+      "minLength": 1,
+      "type": "string"
+    }
+  },
+  "required": [
+    "manifest_kind",
+    "schema_version",
+    "report_id",
+    "requested_profile",
+    "detected_constructs",
+    "unsupported_constructs",
+    "profile_violations",
+    "input_graph_digest",
+    "baseline_digest",
+    "delta_digest",
+    "status",
+    "validator_identity",
+    "validator_version",
+    "content_digest"
+  ],
+  "title": "KG-MNP OWL Profile Report 1.0",
+  "type": "object"
+}

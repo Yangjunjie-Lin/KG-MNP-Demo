@@ -1,0 +1,119 @@
+{
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/semantic-owl-consistency-report/1.0",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "abox_semantic_digest": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/sha256"
+    },
+    "baseline_semantic_digest": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/sha256"
+    },
+    "consistent": {
+      "type": "boolean"
+    },
+    "content_digest": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/sha256"
+    },
+    "exit_code": {
+      "oneOf": [
+        {
+          "maximum": 255,
+          "minimum": -1,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "input_semantic_digest": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/sha256"
+    },
+    "java_runtime_major_version": {
+      "oneOf": [
+        {
+          "maximum": 99,
+          "minimum": 11,
+          "type": "integer"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "manifest_kind": {
+      "const": "KG_MNP_SEMANTIC_OWL_CONSISTENCY_REPORT"
+    },
+    "ontology_profile": {
+      "enum": [
+        "OWL_2_DL_STRICT",
+        "OWL_RL_STRUCTURAL"
+      ]
+    },
+    "reasoner": {
+      "const": "HermiT"
+    },
+    "reasoner_version": {
+      "const": "1.4.5.456"
+    },
+    "reasoning_scope": {
+      "const": "LOCAL_BASELINE_TBOX_ABOX_CLOSURE"
+    },
+    "report_id": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/stableId"
+    },
+    "robot_jar_sha256": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/sha256"
+    },
+    "robot_version": {
+      "const": "1.9.7"
+    },
+    "sanitized_diagnostics_hash": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/sha256"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "status": {
+      "enum": [
+        "CONSISTENT",
+        "INCONSISTENT",
+        "UNSUPPORTED_PROFILE",
+        "REASONER_UNAVAILABLE",
+        "TIMEOUT",
+        "FAILED"
+      ]
+    },
+    "tbox_semantic_digest": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/sha256"
+    },
+    "timeout": {
+      "type": "boolean"
+    }
+  },
+  "required": [
+    "manifest_kind",
+    "schema_version",
+    "report_id",
+    "status",
+    "consistent",
+    "reasoning_scope",
+    "reasoner",
+    "reasoner_version",
+    "robot_version",
+    "robot_jar_sha256",
+    "java_runtime_major_version",
+    "ontology_profile",
+    "input_semantic_digest",
+    "baseline_semantic_digest",
+    "tbox_semantic_digest",
+    "abox_semantic_digest",
+    "exit_code",
+    "timeout",
+    "sanitized_diagnostics_hash",
+    "content_digest"
+  ],
+  "title": "KG-MNP OWL Consistency Report 1.0",
+  "type": "object"
+}

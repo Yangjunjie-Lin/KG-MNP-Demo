@@ -1,0 +1,107 @@
+{
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/rdf-syntax-validation-report/1.0",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "content_digest": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/sha256"
+    },
+    "dataset_id": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/stableId"
+    },
+    "files": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "blank_node_count": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "byte_sha256": {
+            "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/sha256"
+          },
+          "canonical_semantic_digest": {
+            "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/sha256"
+          },
+          "equivalent_canonical_artifact": {
+            "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/safePath"
+          },
+          "media_type": {
+            "maxLength": 128,
+            "minLength": 1,
+            "type": "string"
+          },
+          "parse_status": {
+            "enum": [
+              "PASSED",
+              "FAILED"
+            ]
+          },
+          "parsed_statement_count": {
+            "minimum": 0,
+            "type": "integer"
+          },
+          "path": {
+            "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/safePath"
+          },
+          "round_trip_status": {
+            "enum": [
+              "PASSED",
+              "FAILED"
+            ]
+          }
+        },
+        "required": [
+          "path",
+          "media_type",
+          "byte_sha256",
+          "parsed_statement_count",
+          "canonical_semantic_digest",
+          "blank_node_count",
+          "parse_status",
+          "round_trip_status",
+          "equivalent_canonical_artifact"
+        ],
+        "type": "object"
+      },
+      "maxItems": 10000,
+      "minItems": 0,
+      "type": "array"
+    },
+    "issues": {
+      "items": {
+        "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/issue"
+      },
+      "maxItems": 10000,
+      "minItems": 0,
+      "type": "array"
+    },
+    "manifest_kind": {
+      "const": "KG_MNP_RDF_SYNTAX_VALIDATION_REPORT"
+    },
+    "report_id": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/stableId"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "status": {
+      "enum": [
+        "PASSED",
+        "FAILED"
+      ]
+    }
+  },
+  "required": [
+    "manifest_kind",
+    "schema_version",
+    "report_id",
+    "dataset_id",
+    "files",
+    "status",
+    "issues",
+    "content_digest"
+  ],
+  "title": "KG-MNP RDF Syntax Validation Report 1.0",
+  "type": "object"
+}

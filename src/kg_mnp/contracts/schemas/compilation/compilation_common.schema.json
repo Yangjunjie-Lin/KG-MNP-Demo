@@ -1,0 +1,275 @@
+{
+  "$defs": {
+    "fileRecord": {
+      "additionalProperties": false,
+      "properties": {
+        "byte_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "media_type": {
+          "maxLength": 128,
+          "minLength": 1,
+          "type": "string"
+        },
+        "path": {
+          "maxLength": 512,
+          "minLength": 1,
+          "pattern": "^(?!/)(?![A-Za-z]:)(?!\\\\\\\\)(?!.*(?:^|/)\\.\\.(?:/|$))[A-Za-z0-9._/-]+$",
+          "type": "string"
+        },
+        "role": {
+          "maxLength": 128,
+          "pattern": "^[A-Z][A-Z0-9_]*$",
+          "type": "string"
+        },
+        "semantic_sha256": {
+          "pattern": "^[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "size_bytes": {
+          "maximum": 1073741824,
+          "minimum": 0,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "path",
+        "media_type",
+        "size_bytes",
+        "byte_sha256",
+        "semantic_sha256",
+        "role"
+      ],
+      "type": "object"
+    },
+    "iri": {
+      "maxLength": 2048,
+      "minLength": 1,
+      "pattern": "^(?:https://|urn:|http://(?:www\\.w3\\.org|purl\\.org)/)[^\\s<>\\\"{}|\\\\^`]+$",
+      "type": "string"
+    },
+    "iris": {
+      "items": {
+        "maxLength": 2048,
+        "minLength": 1,
+        "pattern": "^(?:https://|urn:|http://(?:www\\.w3\\.org|purl\\.org)/)[^\\s<>\\\"{}|\\\\^`]+$",
+        "type": "string"
+      },
+      "maxItems": 100000,
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "issue": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact_refs": {
+          "items": {
+            "maxLength": 256,
+            "minLength": 1,
+            "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+            "type": "string"
+          },
+          "maxItems": 10000,
+          "minItems": 0,
+          "type": "array"
+        },
+        "code": {
+          "maxLength": 128,
+          "pattern": "^[A-Z][A-Z0-9_]*$",
+          "type": "string"
+        },
+        "issue_id": {
+          "maxLength": 256,
+          "minLength": 1,
+          "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+          "type": "string"
+        },
+        "message": {
+          "maxLength": 4096,
+          "minLength": 1,
+          "type": "string"
+        },
+        "severity": {
+          "enum": [
+            "INFO",
+            "WARNING",
+            "BLOCKING"
+          ]
+        }
+      },
+      "required": [
+        "issue_id",
+        "code",
+        "severity",
+        "message",
+        "artifact_refs"
+      ],
+      "type": "object"
+    },
+    "ontologyIdentity": {
+      "additionalProperties": false,
+      "properties": {
+        "baseline_ontology_iris": {
+          "items": {
+            "maxLength": 2048,
+            "minLength": 1,
+            "pattern": "^(?:https://|urn:|http://(?:www\\.w3\\.org|purl\\.org)/)[^\\s<>\\\"{}|\\\\^`]+$",
+            "type": "string"
+          },
+          "maxItems": 32,
+          "minItems": 0,
+          "type": "array"
+        },
+        "default_namespace": {
+          "maxLength": 2048,
+          "minLength": 1,
+          "pattern": "^(?:https://|urn:|http://(?:www\\.w3\\.org|purl\\.org)/)[^\\s<>\\\"{}|\\\\^`]+$",
+          "type": "string"
+        },
+        "language_policy": {
+          "items": {
+            "maxLength": 35,
+            "pattern": "^[A-Za-z0-9-]+$",
+            "type": "string"
+          },
+          "maxItems": 32,
+          "minItems": 0,
+          "type": "array"
+        },
+        "ontology_iri": {
+          "maxLength": 2048,
+          "minLength": 1,
+          "pattern": "^(?:https://|urn:|http://(?:www\\.w3\\.org|purl\\.org)/)[^\\s<>\\\"{}|\\\\^`]+$",
+          "type": "string"
+        },
+        "ontology_name": {
+          "maxLength": 128,
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+          "type": "string"
+        },
+        "ontology_version": {
+          "maxLength": 64,
+          "pattern": "^(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)$",
+          "type": "string"
+        },
+        "version_iri": {
+          "maxLength": 2048,
+          "minLength": 1,
+          "pattern": "^(?:https://|urn:|http://(?:www\\.w3\\.org|purl\\.org)/)[^\\s<>\\\"{}|\\\\^`]+$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "ontology_name",
+        "ontology_iri",
+        "version_iri",
+        "ontology_version",
+        "default_namespace",
+        "language_policy",
+        "baseline_ontology_iris"
+      ],
+      "type": "object"
+    },
+    "packageIdentity": {
+      "additionalProperties": false,
+      "properties": {
+        "package_format_version": {
+          "const": "1.0.0"
+        },
+        "package_name": {
+          "maxLength": 128,
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+          "type": "string"
+        },
+        "package_profile": {
+          "const": "PORTABLE_OFFLINE"
+        },
+        "package_version": {
+          "maxLength": 64,
+          "pattern": "^(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)$",
+          "type": "string"
+        }
+      },
+      "required": [
+        "package_name",
+        "package_version",
+        "package_format_version",
+        "package_profile"
+      ],
+      "type": "object"
+    },
+    "resourceLimit": {
+      "additionalProperties": false,
+      "properties": {
+        "name": {
+          "maxLength": 128,
+          "pattern": "^max_[a-z0-9_]+$",
+          "type": "string"
+        },
+        "value": {
+          "maximum": 1073741824,
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "name",
+        "value"
+      ],
+      "type": "object"
+    },
+    "safePath": {
+      "maxLength": 512,
+      "minLength": 1,
+      "pattern": "^(?!/)(?![A-Za-z]:)(?!\\\\\\\\)(?!.*(?:^|/)\\.\\.(?:/|$))[A-Za-z0-9._/-]+$",
+      "type": "string"
+    },
+    "safePaths": {
+      "items": {
+        "maxLength": 512,
+        "minLength": 1,
+        "pattern": "^(?!/)(?![A-Za-z]:)(?!\\\\\\\\)(?!.*(?:^|/)\\.\\.(?:/|$))[A-Za-z0-9._/-]+$",
+        "type": "string"
+      },
+      "maxItems": 100000,
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "safeText": {
+      "maxLength": 16384,
+      "minLength": 1,
+      "type": "string"
+    },
+    "sha256": {
+      "pattern": "^[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "stableId": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "stableIds": {
+      "items": {
+        "maxLength": 256,
+        "minLength": 1,
+        "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+        "type": "string"
+      },
+      "maxItems": 100000,
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    }
+  },
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {},
+  "title": "KG-MNP Compilation Common Definitions 1.0",
+  "type": "object"
+}

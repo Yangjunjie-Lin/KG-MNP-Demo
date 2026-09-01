@@ -1,0 +1,192 @@
+{
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/mapping-plan/1.0",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "content_digest": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/sha256"
+    },
+    "execution_policy": {
+      "const": "DECLARATIVE_NOT_EXECUTED"
+    },
+    "manifest_kind": {
+      "const": "KG_MNP_MAPPING_PLAN"
+    },
+    "mapping_count": {
+      "minimum": 0,
+      "type": "integer"
+    },
+    "mapping_plan_id": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/stableId"
+    },
+    "mappings": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "compiled_mapping_id": {
+            "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/stableId"
+          },
+          "conversion_policy": {
+            "enum": [
+              "IDENTITY",
+              "TRIM",
+              "NFC",
+              "LOWERCASE",
+              "UPPERCASE",
+              "CONTROLLED_LOOKUP",
+              "NONE"
+            ]
+          },
+          "dependencies": {
+            "items": {
+              "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/stableId"
+            },
+            "maxItems": 100000,
+            "minItems": 0,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "iri_template": {
+            "oneOf": [
+              {
+                "maxLength": 2048,
+                "pattern": "^(?:https://|urn:)[A-Za-z0-9._~:/?#\\[\\]@!$&'()*+,;=%{}-]+$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "mapping_kind": {
+            "enum": [
+              "RECORD_TO_CLASS",
+              "FIELD_TO_DATA_PROPERTY",
+              "REFERENCE_TO_OBJECT_PROPERTY",
+              "VALUE_MAPPING",
+              "IRI_TEMPLATE",
+              "NULL_HANDLING_POLICY"
+            ]
+          },
+          "null_policy": {
+            "enum": [
+              "REJECT",
+              "OMIT",
+              "PRESERVE",
+              "CONTROLLED_DEFAULT",
+              "NONE"
+            ]
+          },
+          "provenance_ref": {
+            "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/stableId"
+          },
+          "review_decision_ref": {
+            "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/stableId"
+          },
+          "source_confirmed_item_id": {
+            "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/stableId"
+          },
+          "source_evidence_refs": {
+            "items": {
+              "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/stableId"
+            },
+            "maxItems": 100000,
+            "minItems": 0,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "source_kgir_item_refs": {
+            "items": {
+              "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/stableId"
+            },
+            "maxItems": 100000,
+            "minItems": 0,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "target_class_iri": {
+            "oneOf": [
+              {
+                "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/iri"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "target_property_iri": {
+            "oneOf": [
+              {
+                "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/iri"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "value_map": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "source": {
+                  "maxLength": 4096,
+                  "type": "string"
+                },
+                "target": {
+                  "maxLength": 4096,
+                  "type": "string"
+                }
+              },
+              "required": [
+                "source",
+                "target"
+              ],
+              "type": "object"
+            },
+            "maxItems": 1024,
+            "minItems": 0,
+            "type": "array"
+          }
+        },
+        "required": [
+          "compiled_mapping_id",
+          "source_confirmed_item_id",
+          "mapping_kind",
+          "source_kgir_item_refs",
+          "source_evidence_refs",
+          "target_class_iri",
+          "target_property_iri",
+          "conversion_policy",
+          "null_policy",
+          "value_map",
+          "iri_template",
+          "dependencies",
+          "review_decision_ref",
+          "provenance_ref"
+        ],
+        "type": "object"
+      },
+      "maxItems": 100000,
+      "minItems": 0,
+      "type": "array"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "source_plan_id": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/stableId"
+    }
+  },
+  "required": [
+    "manifest_kind",
+    "schema_version",
+    "mapping_plan_id",
+    "source_plan_id",
+    "execution_policy",
+    "mappings",
+    "mapping_count",
+    "content_digest"
+  ],
+  "title": "KG-MNP Declarative Mapping Plan 1.0",
+  "type": "object"
+}

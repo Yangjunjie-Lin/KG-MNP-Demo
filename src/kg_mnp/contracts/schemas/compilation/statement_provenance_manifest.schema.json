@@ -1,0 +1,183 @@
+{
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/statement-provenance-manifest/1.0",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "content_digest": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/sha256"
+    },
+    "graph_semantic_sha256": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/sha256"
+    },
+    "manifest_kind": {
+      "const": "KG_MNP_STATEMENT_PROVENANCE_MANIFEST"
+    },
+    "plan_id": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/stableId"
+    },
+    "provenance_manifest_id": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/stableId"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "statement_count": {
+      "minimum": 0,
+      "type": "integer"
+    },
+    "statements": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "compilation_activity_id": {
+            "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/stableId"
+          },
+          "compiler_snapshot_id": {
+            "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/stableId"
+          },
+          "confirmed_item_id": {
+            "oneOf": [
+              {
+                "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/stableId"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "domain_pack_asset_refs": {
+            "items": {
+              "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/safePath"
+            },
+            "maxItems": 10000,
+            "minItems": 0,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "evidence_record_refs": {
+            "items": {
+              "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/stableId"
+            },
+            "maxItems": 100000,
+            "minItems": 0,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "graph_iri": {
+            "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/iri"
+          },
+          "kg_ir_item_refs": {
+            "items": {
+              "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/stableId"
+            },
+            "maxItems": 100000,
+            "minItems": 0,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "object": {
+            "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/safeText"
+          },
+          "predicate": {
+            "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/iri"
+          },
+          "provenance_class": {
+            "enum": [
+              "GENERATED",
+              "BASELINE_REUSED"
+            ]
+          },
+          "provider_snapshot_refs": {
+            "items": {
+              "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/stableId"
+            },
+            "maxItems": 100000,
+            "minItems": 0,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "review_decision_id": {
+            "oneOf": [
+              {
+                "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/stableId"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "review_semantic_hash": {
+            "oneOf": [
+              {
+                "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/sha256"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "source_asset_refs": {
+            "items": {
+              "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/stableId"
+            },
+            "maxItems": 100000,
+            "minItems": 0,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "source_candidate_id": {
+            "oneOf": [
+              {
+                "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/stableId"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "statement_id": {
+            "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/stableId"
+          },
+          "subject": {
+            "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/safeText"
+          }
+        },
+        "required": [
+          "statement_id",
+          "subject",
+          "predicate",
+          "object",
+          "graph_iri",
+          "confirmed_item_id",
+          "source_candidate_id",
+          "review_decision_id",
+          "review_semantic_hash",
+          "provider_snapshot_refs",
+          "kg_ir_item_refs",
+          "evidence_record_refs",
+          "source_asset_refs",
+          "domain_pack_asset_refs",
+          "compilation_activity_id",
+          "compiler_snapshot_id",
+          "provenance_class"
+        ],
+        "type": "object"
+      },
+      "maxItems": 1000000,
+      "minItems": 0,
+      "type": "array"
+    }
+  },
+  "required": [
+    "manifest_kind",
+    "schema_version",
+    "provenance_manifest_id",
+    "plan_id",
+    "statements",
+    "statement_count",
+    "graph_semantic_sha256",
+    "content_digest"
+  ],
+  "title": "KG-MNP Statement Provenance Manifest 1.0",
+  "type": "object"
+}
