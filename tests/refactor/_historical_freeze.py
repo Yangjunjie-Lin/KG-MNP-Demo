@@ -19,6 +19,7 @@ BASELINE_TAG = "kg-mnp-phase06-baseline-2026-08-30"
 PROMPT01_HEAD_SHA = "a7114eef25f2f2a262cd69793a8d3e2b444836fc"
 PROMPT02_HEAD_SHA = "d04e9b494a99932532ae9c359653878aa32261d7"
 PROMPT03_HEAD_SHA = "52fb0bc064ed7a715ddc3269d23e89a1a78c917c"
+PROMPT04_HEAD_SHA = "eccc5092831503974c8aa54f158e6674445b1cb4"
 PROTECTED_ROOTS = (
     "src/kg_mnp",
     "schemas",
@@ -32,14 +33,15 @@ PROTECTED_ROOTS = (
 )
 SELF_PATH = "tests/refactor/_historical_freeze.py"
 
-# Updated only after the sanctioned Prompt 4 Contract Catalog migration,
-# Plugin API 1.0 preservation, Plugin API 1.1, evidence-grounded modeling,
-# human review, security, Prompt 3 regressions, Stage 06, Application Phase 06
-# non-snapshot regressions, immutable Pack Locks, and MNP 84/84 preservation
-# gates passed. The helper excludes itself to avoid a self-referential digest;
-# every other intended repository file below PROTECTED_ROOTS remains bound.
-EXPECTED_FILE_COUNT = 1253
-EXPECTED_TREE_SHA256 = "b2f6e753171932aec8afe96ada74b3c9c4de77947f2b0e48031d5bb55403f5e1"
+# Updated only after the sanctioned Prompt 5 Contract Catalog migration,
+# deterministic semantic compilation, formal validation, provenance closure,
+# package/archive verification, Prompt 4 regressions, Stage 06, Application
+# Phase 06 non-snapshot regressions, immutable Pack Locks, MNP 84/84
+# preservation, packaging, Ruff, and the full non-snapshot suite passed. The
+# helper excludes itself to avoid a self-referential digest; every other
+# intended repository file below PROTECTED_ROOTS remains bound.
+EXPECTED_FILE_COUNT = 1356
+EXPECTED_TREE_SHA256 = "ecce5e1a77eb73547fb3372d3117d7770be01680ac152aeea981894f3497bb4e"
 
 
 def _git(*arguments: str, check: bool = True) -> subprocess.CompletedProcess[bytes]:
@@ -88,6 +90,7 @@ def assert_prompt01_semantic_snapshot(historical_commit: str) -> None:
         PROMPT01_HEAD_SHA,
         PROMPT02_HEAD_SHA,
         PROMPT03_HEAD_SHA,
+        PROMPT04_HEAD_SHA,
         BASELINE_SHA,
     ):
         exists = _git("cat-file", "-e", f"{commit}^{{commit}}", check=False)

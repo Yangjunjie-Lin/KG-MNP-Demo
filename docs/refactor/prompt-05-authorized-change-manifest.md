@@ -14,3 +14,13 @@ Pack Lock are immutable. Runtime workspaces, packages, `.kgop` files, reasoner
 caches, test logs, secrets, registry data, and GraphDB data are excluded from
 version control. No file is moved or deleted. Prompt 4 artifacts are retained
 as history and never rebound.
+
+The freeze was updated only after the Prompt 5 functional, preservation,
+packaging, Ruff, Prompt 4, Stage 06, Application Phase 06 non-snapshot, and
+full non-snapshot test gates passed. The prior protected identity was 1,253
+files with SHA-256
+`b2f6e753171932aec8afe96ada74b3c9c4de77947f2b0e48031d5bb55403f5e1`;
+the authorized Prompt 5 identity is 1,356 files with SHA-256
+`ecce5e1a77eb73547fb3372d3117d7770be01680ac152aeea981894f3497bb4e`.
+Protected roots were not reduced, and Prompt 4 commit
+`eccc5092831503974c8aa54f158e6674445b1cb4` is now an explicit ancestry gate.
