@@ -800,3 +800,73 @@ verify-prompt-04-offline: verify-toolchain-foundation verify-contract-catalog \
 	python scripts/generate_prompt04_contracts.py --check
 	python scripts/generate_contract_catalog.py --check
 	git diff --exit-code
+
+.PHONY: verify-semantic-kernel-contracts verify-compiler-input \
+	verify-tbox-compilation verify-abox-compilation \
+	verify-shacl-compilation verify-mapping-compilation verify-rdf-dataset \
+	verify-provenance-closure verify-owl-validation \
+	verify-shacl-final-validation verify-cq-execution \
+	verify-ontology-package verify-semantic-kernel-security \
+	verify-prompt-05-offline
+
+verify-semantic-kernel-contracts:
+	python scripts/generate_prompt05_contracts.py --check
+	python scripts/generate_contract_catalog.py --check
+	python -m pytest -q tests/contracts tests/semantic_kernel/test_prompt05_kernel.py -k "contract or catalog or policy or snapshot"
+
+verify-compiler-input:
+	python -m pytest -q tests/compiler_input tests/compilation_plan
+
+verify-tbox-compilation:
+	python -m pytest -q tests/tbox_compilation
+
+verify-abox-compilation:
+	python -m pytest -q tests/abox_compilation
+
+verify-shacl-compilation:
+	python -m pytest -q tests/shacl_compilation
+
+verify-mapping-compilation:
+	python -m pytest -q tests/mapping_compilation
+
+verify-rdf-dataset:
+	python -m pytest -q tests/rdf_canonicalization tests/rdf_dataset
+
+verify-provenance-closure:
+	python -m pytest -q tests/provenance_compilation
+
+verify-owl-validation:
+	python -m pytest -q tests/owl_validation tests/security/test_reasoner_security.py
+
+verify-shacl-final-validation:
+	python -m pytest -q tests/shacl_final_validation
+
+verify-cq-execution:
+	python -m pytest -q tests/competency_question_execution tests/security/test_cq_execution_security.py
+
+verify-ontology-package:
+	python -m pytest -q tests/ontology_package tests/package_archive \
+		tests/compilation_transactions tests/cli/test_compile_cli.py \
+		tests/cli/test_package_cli.py
+
+verify-semantic-kernel-security:
+	python -m pytest -q tests/security/test_semantic_compiler_security.py \
+		tests/security/test_rdf_compilation_security.py \
+		tests/security/test_reasoner_security.py \
+		tests/security/test_cq_execution_security.py \
+		tests/security/test_ontology_package_security.py
+
+verify-prompt-05-offline: verify-toolchain-foundation verify-contract-catalog \
+	verify-domain-packs verify-project-workspace verify-prompt-03-offline \
+	verify-prompt-04-offline verify-semantic-kernel-contracts \
+	verify-compiler-input verify-tbox-compilation verify-abox-compilation \
+	verify-shacl-compilation verify-mapping-compilation verify-rdf-dataset \
+	verify-provenance-closure verify-owl-validation \
+	verify-shacl-final-validation verify-cq-execution \
+	verify-ontology-package verify-semantic-kernel-security
+	python -m pytest -q tests/semantic_kernel \
+		tests/e2e/test_minimal_ontology_package.py \
+		tests/e2e/test_mnp_semantic_kernel_compatibility.py
+	python scripts/generate_prompt05_contracts.py --check
+	python scripts/generate_contract_catalog.py --check
+	git diff --exit-code

@@ -1521,3 +1521,89 @@ jobs:
           python scripts/generate_contract_catalog.py --check
       - name: Verify clean generated tree
         run: git diff --exit-code
+
+  toolchain-semantic-kernel:
+    name: toolchain-semantic-kernel (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 120
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Set up Java for pinned ROBOT/HermiT
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+      - name: Install semantic-kernel development dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[dev,ingestion-documents]"
+      - name: Provision and verify pinned ROBOT bundle on Linux
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          mkdir -p third_party/downloads
+          curl --fail --location --retry 3 \
+            --output third_party/downloads/robot-1.9.7.jar \
+            https://github.com/ontodev/robot/releases/download/v1.9.7/robot.jar
+          echo "91890c2e83d0f092dd08731376f154b36610544cfbe8685337a1bf7244ccaa2d  third_party/downloads/robot-1.9.7.jar" | sha256sum --check
+      - name: Provision and verify pinned ROBOT bundle on Windows
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Force -Path third_party/downloads | Out-Null
+          Invoke-WebRequest -UseBasicParsing `
+            -Uri https://github.com/ontodev/robot/releases/download/v1.9.7/robot.jar `
+            -OutFile third_party/downloads/robot-1.9.7.jar
+          $actual = (Get-FileHash third_party/downloads/robot-1.9.7.jar -Algorithm SHA256).Hash.ToLowerInvariant()
+          if ($actual -ne "91890c2e83d0f092dd08731376f154b36610544cfbe8685337a1bf7244ccaa2d") {
+            throw "ROBOT JAR digest mismatch"
+          }
+      - name: Lint semantic-kernel implementation and gates
+        run: python -m ruff check src/kg_mnp/semantic_kernel tests/semantic_kernel tests/compiler_input tests/compilation_plan tests/tbox_compilation tests/abox_compilation tests/shacl_compilation tests/mapping_compilation tests/rdf_canonicalization tests/rdf_dataset tests/provenance_compilation tests/owl_validation tests/shacl_final_validation tests/competency_question_execution tests/ontology_package tests/package_archive tests/compilation_transactions tests/security/test_semantic_compiler_security.py tests/security/test_rdf_compilation_security.py tests/security/test_reasoner_security.py tests/security/test_cq_execution_security.py tests/security/test_ontology_package_security.py tests/cli/test_compile_cli.py tests/cli/test_package_cli.py
+      - name: Verify Prompt 5 semantic-kernel contracts and compilation
+        if: runner.os == 'Linux'
+        run: |
+          make verify-semantic-kernel-contracts
+          make verify-compiler-input
+          make verify-tbox-compilation
+          make verify-abox-compilation
+          make verify-shacl-compilation
+          make verify-mapping-compilation
+          make verify-rdf-dataset
+          make verify-provenance-closure
+      - name: Verify Prompt 5 formal validation package archive CLI and security
+        if: runner.os == 'Linux'
+        run: |
+          make verify-owl-validation
+          make verify-shacl-final-validation
+          make verify-cq-execution
+          make verify-ontology-package
+          make verify-semantic-kernel-security
+      - name: Verify Prompt 5 contracts compilation package archive CLI and security on Windows
+        if: runner.os == 'Windows'
+        run: python -m pytest -q tests/contracts tests/compiler_input tests/compilation_plan tests/tbox_compilation tests/abox_compilation tests/shacl_compilation tests/mapping_compilation tests/rdf_canonicalization tests/rdf_dataset tests/provenance_compilation tests/owl_validation tests/shacl_final_validation tests/competency_question_execution tests/ontology_package tests/package_archive tests/compilation_transactions tests/security/test_semantic_compiler_security.py tests/security/test_rdf_compilation_security.py tests/security/test_reasoner_security.py tests/security/test_cq_execution_security.py tests/security/test_ontology_package_security.py tests/cli/test_compile_cli.py tests/cli/test_package_cli.py
+      - name: Verify Prompt 5 Minimal MNP and cross-workspace determinism
+        run: python -m pytest -q tests/semantic_kernel tests/e2e/test_minimal_ontology_package.py tests/e2e/test_mnp_semantic_kernel_compatibility.py
+      - name: Verify Linux symlink and POSIX package security
+        if: runner.os == 'Linux'
+        run: python -m pytest -q tests/security/test_rdf_compilation_security.py tests/security/test_ontology_package_security.py tests/package_archive
+      - name: Verify Windows path and archive security
+        if: runner.os == 'Windows'
+        run: python -m pytest -q tests/security/test_semantic_compiler_security.py tests/security/test_ontology_package_security.py tests/package_archive
+      - name: Verify generated contracts and clean tracked tree
+        shell: bash
+        run: |
+          python scripts/generate_prompt05_contracts.py --check
+          python scripts/generate_contract_catalog.py --check
+          git diff --exit-code
+          test -z "$(git status --short --untracked-files=no)"
