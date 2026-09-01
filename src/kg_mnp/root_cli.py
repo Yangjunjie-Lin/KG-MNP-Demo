@@ -18,6 +18,8 @@ commands:
   ir            evidence-bound KG-IR inspection and trace
   model         evidence-grounded ontology modeling proposals
   review        explicit human review and confirmation
+  compile       deterministic semantic compilation and validation
+  package       VALIDATED_UNPUBLISHED ontology package verification/export
   application   governed application workflow
   workbench     read-only workbench
   diagnostics   diagnostics workflow
@@ -79,6 +81,16 @@ def main(argv: list[str] | None = None) -> int:
         from .modeling.control_plane.review.cli import main as review_main
 
         return review_main(arguments[1:])
+
+    if arguments and arguments[0] == "compile":
+        from .semantic_kernel.cli import compile_main
+
+        return compile_main(arguments[1:])
+
+    if arguments and arguments[0] == "package":
+        from .semantic_kernel.cli import package_main
+
+        return package_main(arguments[1:])
     if arguments and arguments[0] == "application":
         from .application.cli import main as application_main
 

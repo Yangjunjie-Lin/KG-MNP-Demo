@@ -3,9 +3,6 @@
 from __future__ import annotations
 
 import hashlib
-import re
-import shutil
-import subprocess
 import zipfile
 from collections.abc import Mapping
 from pathlib import Path
@@ -16,6 +13,7 @@ from rdflib import OWL, Graph
 
 from ..modeling.dependencies import ROOT
 from ..paths import domain_pack_path
+from ..semantic_kernel.reasoner import run_hermit
 from .rdf_canonical import canonical_ntriples
 
 ROBOT_VERSION = "1.9.7"
@@ -90,41 +88,18 @@ def check_owl_consistency(
     if not robot_jar.is_file() or _sha256(robot_jar) != ROBOT_SHA256:
         return {**base, "status": "FAILED", "consistent": False, "exit_code": None}
     base["hermit_dependency_version"] = _hermit_version(robot_jar)
-    work = root / "runtime_outputs" / "compilation" / f".reasoner-{combined_hash}"
-    if work.exists():
-        shutil.rmtree(work)
-    work.mkdir(parents=True)
-    input_path = work / "combined.nt"
-    output_path = work / "reasoned.owl"
-    input_path.write_bytes(combined_bytes)
-    try:
-        process = subprocess.run(
-            [
-                "java", "-jar", str(robot_jar), "reason",
-                "--input", str(input_path), "--reasoner", "hermit",
-                "--equivalent-classes-allowed", "all", "--output", str(output_path),
-            ],
-            capture_output=True,
-            text=True,
-            encoding="utf-8",
-            errors="replace",
-            check=False,
-            timeout=180,
-        )
-        output = f"{process.stdout}\n{process.stderr}"
-        if process.returncode == 0 and output_path.is_file():
-            status = "CONSISTENT"
-        elif re.search(r"ontology\s+is\s+inconsistent|inconsistent\s+ontology|inconsistency", output, re.IGNORECASE):
-            status = "INCONSISTENT"
-        else:
-            status = "FAILED"
-        return {
-            **base,
-            "status": status,
-            "consistent": status == "CONSISTENT",
-            "exit_code": process.returncode,
-        }
-    except (OSError, subprocess.SubprocessError):
-        return {**base, "status": "FAILED", "consistent": False, "exit_code": None}
-    finally:
-        shutil.rmtree(work, ignore_errors=True)
+    execution = run_hermit(
+        combined_bytes,
+        reasoner_jar=robot_jar,
+        timeout_seconds=180,
+        max_output_bytes=16_777_216,
+    )
+    status = execution["status"]
+    if status == "REASONER_UNAVAILABLE":
+        status = "FAILED"
+    return {
+        **base,
+        "status": status,
+        "consistent": status == "CONSISTENT",
+        "exit_code": execution["exit_code"],
+    }

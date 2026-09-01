@@ -1,16 +1,24 @@
-"""Deterministic RDF serialization for the Stage 06 authoritative artifacts."""
+"""Legacy Stage 06 wrapper over the Prompt 5 canonical RDF primitive."""
 
 from __future__ import annotations
 
 from collections.abc import Iterable, Mapping
 
-from rdflib import BNode, Graph, Literal, URIRef
-from rdflib.plugins.serializers.nt import _quoteLiteral
-from rdflib.term import Identifier
+from rdflib import Graph, URIRef
 
-Triple = tuple[Identifier, Identifier, Identifier]
-Quad = tuple[Identifier, Identifier, Identifier, Identifier]
+from kg_mnp.semantic_kernel.rdf.canonical import (
+    CanonicalRDFError,
+    Quad,
+    Triple,
+    assert_no_blank_nodes,
+    canonical_nquads,
+    canonical_ntriples,
+    canonical_term,
+    graph_semantic_digest,
+)
 
+# The historical readable Stage 06 view retains its MNP prefix and exact prefix
+# order. New semantic-kernel callers use domain-neutral configurable prefixes.
 PREFIXES = (
     ("rdf", "http://www.w3.org/1999/02/22-rdf-syntax-ns#"),
     ("rdfs", "http://www.w3.org/2000/01/rdf-schema#"),
@@ -23,60 +31,28 @@ PREFIXES = (
 )
 
 
-class CanonicalRDFError(ValueError):
-    pass
-
-
-def _term(term: Identifier) -> str:
-    if isinstance(term, BNode):
-        raise CanonicalRDFError("blank nodes are forbidden in formal compiled RDF")
-    if isinstance(term, Literal):
-        return _quoteLiteral(term)
-    return term.n3()
-
-
-def canonical_rdf_term(term: Identifier) -> str:
-    """Serialize one RDF term with the canonical Stage 06 safety policy."""
-
-    return _term(term)
-
-
-def canonical_ntriples(triples: Iterable[Triple] | Graph) -> bytes:
-    values = triples.triples((None, None, None)) if isinstance(triples, Graph) else triples
-    lines = {_term(s) + " " + _term(p) + " " + _term(o) + " ." for s, p, o in values}
-    return (("\n".join(sorted(lines)) + "\n") if lines else "").encode("utf-8")
-
-
-def canonical_nquads(quads: Iterable[Quad]) -> bytes:
-    lines = {
-        (_term(g), _term(s), _term(p), _term(o), f"{_term(s)} {_term(p)} {_term(o)} {_term(g)} .")
-        for s, p, o, g in quads
-    }
-    ordered = [line[-1] for line in sorted(lines, key=lambda value: value[:4])]
-    return (("\n".join(ordered) + "\n") if ordered else "").encode("utf-8")
+def canonical_rdf_term(term):
+    return canonical_term(term)
 
 
 def parse_ntriples(data: bytes | str) -> Graph:
     graph = Graph()
     graph.parse(data=data.decode("utf-8") if isinstance(data, bytes) else data, format="nt")
-    if any(isinstance(term, BNode) for triple in graph for term in triple):
-        raise CanonicalRDFError("blank nodes are forbidden in formal compiled RDF")
+    assert_no_blank_nodes(graph)
     return graph
 
 
 def semantic_sha256_rdf(data: bytes, *, format: str) -> str:
-    import hashlib
     graph = Graph()
     graph.parse(data=data.decode("utf-8"), format=format)
-    return hashlib.sha256(canonical_ntriples(graph)).hexdigest()
+    return graph_semantic_digest(graph)
 
 
 def deterministic_turtle(triples: Iterable[Triple] | Graph) -> bytes:
     values = list(triples.triples((None, None, None))) if isinstance(triples, Graph) else list(triples)
     prefix_lines = [f"@prefix {name}: <{iri}> ." for name, iri in PREFIXES]
-    body = [_term(s) + " " + _term(p) + " " + _term(o) + " ." for s, p, o in values]
-    text = "\n".join([*prefix_lines, "", *sorted(set(body))]) + "\n"
-    return text.encode("utf-8")
+    body = [f"{canonical_term(s)} {canonical_term(p)} {canonical_term(o)} ." for s, p, o in values]
+    return ("\n".join([*prefix_lines, "", *sorted(set(body))]) + "\n").encode()
 
 
 def deterministic_trig(graphs: Mapping[URIRef | str, Iterable[Triple] | Graph]) -> bytes:
@@ -84,15 +60,24 @@ def deterministic_trig(graphs: Mapping[URIRef | str, Iterable[Triple] | Graph]) 
     sections: list[str] = []
     for graph_iri, triples in sorted(graphs.items(), key=lambda item: str(item[0])):
         values = list(triples.triples((None, None, None))) if isinstance(triples, Graph) else list(triples)
-        lines = sorted({_term(s) + " " + _term(p) + " " + _term(o) + " ." for s, p, o in values})
+        lines = sorted({f"{canonical_term(s)} {canonical_term(p)} {canonical_term(o)} ." for s, p, o in values})
         sections.append(f"<{graph_iri}> {{")
         sections.extend(f"  {line}" for line in lines)
-        sections.append("}")
-        sections.append("")
-    return ("\n".join([*prefix_lines, "", *sections]).rstrip() + "\n").encode("utf-8")
+        sections.extend(("}", ""))
+    return ("\n".join([*prefix_lines, "", *sections]).rstrip() + "\n").encode()
 
 
-def assert_no_blank_nodes(values: Iterable[Triple] | Iterable[Quad]) -> None:
-    for value in values:
-        if any(isinstance(term, BNode) for term in value):
-            raise CanonicalRDFError("blank nodes are forbidden in formal compiled RDF")
+__all__ = [
+    "PREFIXES",
+    "CanonicalRDFError",
+    "Quad",
+    "Triple",
+    "assert_no_blank_nodes",
+    "canonical_nquads",
+    "canonical_ntriples",
+    "canonical_rdf_term",
+    "deterministic_trig",
+    "deterministic_turtle",
+    "parse_ntriples",
+    "semantic_sha256_rdf",
+]

@@ -20,6 +20,7 @@ def _implementation_digest(descriptor: PluginDescriptor) -> str:
         distribution_name=descriptor.distribution_name,
         distribution_version=descriptor.distribution_version,
         distribution_root=descriptor.distribution_root,
+        allow_bundled_version_upgrade=descriptor.builtin,
     )
     rows = []
     for relative, path in sorted(
@@ -35,6 +36,13 @@ def build_snapshot(
     configuration: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     manifest = descriptor.manifest
+    distribution_version = descriptor.distribution_version
+    if descriptor.builtin and manifest["plugin_api_version"] == "1.1.0":
+        # The frozen API 1.1 Snapshot contract records the 0.4.0 compatibility
+        # baseline. Current built-in implementation bytes remain bound by the
+        # implementation digest and are validated from the installed 0.5.0
+        # distribution before this snapshot is emitted.
+        distribution_version = manifest["distribution"]["required_version"]
     core = {
         "manifest_kind": "KG_MNP_PLUGIN_SNAPSHOT",
         "schema_version": "1.0.0",
@@ -42,7 +50,7 @@ def build_snapshot(
         "plugin_version": manifest["plugin_version"],
         "plugin_api_version": manifest["plugin_api_version"],
         "distribution_name": descriptor.distribution_name,
-        "distribution_version": descriptor.distribution_version,
+        "distribution_version": distribution_version,
         "entry_point": f"{manifest['entry_point']['group']}:{manifest['entry_point']['name']}",
         "manifest_sha256": bytes_sha256(descriptor.manifest_bytes),
         "manifest_semantic_sha256": semantic_hash(manifest),

@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "kg-mnp-toolchain"
-version = "0.4.0"
+version = "0.5.0"
 description = "Evidence-bound, review-governed ontology engineering toolchain"
 readme = "README.md"
 requires-python = ">=3.11"
@@ -73,8 +73,10 @@ where = ["src"]
   "catalog.lock.json",
   "schemas/toolchain/*.schema.json",
   "schemas/modeling/*.schema.json",
+  "schemas/compilation/*.schema.json",
 ]
 "kg_mnp.plugins.builtin" = ["manifests/*.json"]
+"kg_mnp.semantic_kernel" = ["resources/*.ttl", "resources/*.yaml"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

@@ -1,0 +1,26 @@
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix kgp: <https://yangjunjie-lin.github.io/KG-MNP-Demo/toolchain/provenance#> .
+
+<https://yangjunjie-lin.github.io/KG-MNP-Demo/toolchain/provenance>
+  a owl:Ontology ;
+  rdfs:label "KG-MNP domain-neutral toolchain provenance vocabulary"@en .
+
+kgp:SemanticStatement a owl:Class ; rdfs:subClassOf rdf:Statement .
+kgp:CompilationActivity a owl:Class ; rdfs:subClassOf prov:Activity .
+kgp:BaselineReuse a owl:Class ; rdfs:subClassOf prov:Entity .
+kgp:confirmedItem a owl:ObjectProperty .
+kgp:reviewDecision a owl:ObjectProperty .
+kgp:compilerSnapshot a owl:ObjectProperty .
+kgp:ontologyPackage a owl:ObjectProperty .
+kgp:graphRole a owl:DatatypeProperty .
+kgp:semanticDigest a owl:DatatypeProperty .
+kgp:baselineAsset a owl:DatatypeProperty .
+kgp:packLock a owl:ObjectProperty .
+kgp:sourceKGIRItem a owl:ObjectProperty .
+kgp:sourceBlobSha256 a owl:DatatypeProperty .
+kgp:parserSnapshot a owl:ObjectProperty .
+kgp:transformation a owl:ObjectProperty .
+kgp:reviewerRole a owl:DatatypeProperty .

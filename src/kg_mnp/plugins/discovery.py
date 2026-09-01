@@ -55,6 +55,7 @@ def discover_builtin_plugins() -> tuple[PluginDescriptor, ...]:
             distribution_name=descriptor.distribution_name,
             distribution_version=descriptor.distribution_version,
             distribution_root=descriptor.distribution_root,
+            allow_bundled_version_upgrade=True,
         )
         descriptors.append(descriptor)
     return tuple(descriptors)

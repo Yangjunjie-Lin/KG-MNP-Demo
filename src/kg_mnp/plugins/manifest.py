@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
 from typing import Any
 
@@ -54,17 +55,23 @@ def validate_manifest_distribution(
     distribution_name: str,
     distribution_version: str,
     distribution_root: Path,
+    allow_bundled_version_upgrade: bool = False,
 ) -> tuple[Path, ...]:
     expected = manifest["distribution"]
     if expected["name"].casefold().replace("_", "-") != distribution_name.casefold().replace("_", "-"):
         raise PluginManifestError("Plugin distribution name mismatch")
-    legacy_builtin_upgrade = (
+    bundled_toolchain_upgrade = (
+        allow_bundled_version_upgrade
+        and
         distribution_name == "kg-mnp-toolchain"
-        and manifest.get("plugin_api_version") == "1.0.0"
-        and expected["required_version"] == "0.3.0"
-        and distribution_version == "0.4.0"
+        and _compatible_bundled_versions(
+            expected["required_version"], distribution_version
+        )
     )
-    if expected["required_version"] != distribution_version and not legacy_builtin_upgrade:
+    if (
+        expected["required_version"] != distribution_version
+        and not bundled_toolchain_upgrade
+    ):
         raise PluginManifestError(
             f"Plugin distribution version mismatch: expected {expected['required_version']}, "
             f"found {distribution_version}"
@@ -106,6 +113,24 @@ def validate_manifest_distribution(
                 f"invalid Plugin configuration schema: {exc.message}"
             ) from exc
     return implementation_files
+
+
+def _compatible_bundled_versions(required: str, installed: str) -> bool:
+    """Permit only explicitly identified built-ins shipped by a newer toolchain.
+
+    External distributions retain exact version matching. Bundled manifests
+    preserve their introduction-version bytes while their API contract and
+    implementation digest remain independently verified.
+    """
+
+    pattern = re.compile(r"^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$")
+    required_match = pattern.fullmatch(required)
+    installed_match = pattern.fullmatch(installed)
+    if required_match is None or installed_match is None:
+        return False
+    required_version = tuple(int(value) for value in required_match.groups())
+    installed_version = tuple(int(value) for value in installed_match.groups())
+    return installed_version[0] == required_version[0] and installed_version >= required_version
 
 
 def manifest_file_digest(raw: bytes) -> str:
