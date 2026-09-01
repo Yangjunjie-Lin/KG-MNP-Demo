@@ -1,6 +1,6 @@
 # Current Capability Matrix
 
-This matrix records repository state at Prompt 4. “Implemented” means exercised
+This matrix records repository state at Prompt 5. “Implemented” means exercised
 by retained code and tests; it does not mean the capability is already generic,
 packaged as a stable public API, or validated across industries.
 
@@ -16,7 +16,7 @@ packaged as a stable public API, or validated across industries.
 | Provenance | Modeling provenance and review-audit graphs are compiled and coverage-tested. |
 | Publication verification | Publication packages can be reconstructed, verified, and attested offline. |
 | Activation/rollback governance | Registry, state transition, pointer, concurrency, rollback, resolver, and attestation logic exist. |
-| Public Contract Catalog | One packaged Catalog and deterministic Catalog Lock bind 59 public Draft 2020-12 schemas; all 34 Prompt 3 schema bytes remain unchanged and the new modeling family is additive. |
+| Public Contract Catalog | One packaged Catalog and deterministic Catalog Lock bind 83 public Draft 2020-12 schemas; all 59 pre-Prompt-5 schema bytes remain unchanged and the compilation family is additive. |
 | Offline Contract Registry | Package-local `$ref` resolution, schema self-validation, and payload validation run without network retrieval. |
 | Artifact Reference/Manifest v1 | Public identity and constrained immutable-file-set contracts exist; they do not represent review or the final ontology package. |
 | Formal DomainPackManifest v1 | Formal manifests govern `minimal`, `mnp`, and `forestry` with explicit honest lifecycle states. |
@@ -43,6 +43,16 @@ packaged as a stable public API, or validated across industries.
 | Human Review Control Plane | Dependency-ordered queues, development and production policies, explicit decisions, immutable revisions, append-only hashes, replay, stale/cross-project protection, role/quorum gates, and fail-closed finalization are implemented. |
 | Prompt 4 Confirmed Modeling Package | Deterministic separated reviewed candidates and complete closure are emitted only as `READY_FOR_COMPILATION`; RDF, publication, registry, GraphDB, scripts, secrets, paths, and current-time identity are prohibited. |
 | Model and Review CLI | `kg-mnp model` and `kg-mnp review` expose the Prompt 4 workflow without accept-all, auto-review, live-LLM, bypass, or force-finalize routes. |
+| Compiler Input Attestation | The current confirmed package and every declared Workspace authority are reconstructed against current Project, Catalog, Domain Pack, evidence, candidate, and review locks; stale, duplicate, cross-project, or tampered authority fails closed. |
+| Semantic Compiler Policy and Snapshot | Compiler 0.5.0 binds finite resource limits, canonicalization/skolemization profiles, package rules, implementation resources, dependencies, and the pinned local reasoner bundle without timestamps or host paths. |
+| Deterministic Compilation Plan | Explicit package and ontology versions, candidate dispatch, named-graph roles, validation profiles, expected artifacts, and all finite limits are bound into a deterministic plan before RDF is written. |
+| Generic semantic compilation | The same Domain-Pack-neutral kernel compiles confirmed TBox, ABox, safe SHACL Core, and a non-executable declarative MappingPlan; unsupported confirmed types and action/partition mismatches fail closed. |
+| Canonical named RDF dataset | Blank-node-free generated graphs use canonical NT/NQ as semantic digest authority and deterministic TTL/TriG as round-trip-equivalent readable views. Graph IRIs bind package identity, role, and graph digest. |
+| Formal validation gates | Pinned local ROBOT/HermiT OWL profile/consistency, isolated pySHACL, explicit read-only CQ queries with oracles, RDF round-trip, and provenance closure must all pass before a package is committed. |
+| Statement provenance and evidence lineage | New statements bind confirmed items, candidates, review decisions, compiler activity, KG-IR/evidence/source closure, or locked baseline assets without inventing evidence. |
+| Versioned Ontology Package | A portable closed-set Manifest and Lock produce only `VALIDATED_UNPUBLISHED`; strict verification reconstructs source authorities, named graphs, semantic identity, reports, payload bytes, and prohibited-content rules. |
+| Deterministic `.kgop` export | Fixed ZIP ordering, timestamps, permissions, compression, path rules, duplicate detection, bomb limits, and independent verification provide byte-reproducible offline exports. |
+| Compile and Package CLI | `kg-mnp compile` and `kg-mnp package` expose attestation, planning, build, validation, reproduction, inspection, export, and archive verification without registration, publication, activation, repair, or automatic versioning. |
 
 ## IMPLEMENTED_BUT_REQUIRES_REFACTOR
 
@@ -66,13 +76,18 @@ packaged as a stable public API, or validated across industries.
 | OCR/Vision/ASR/Video providers | Planned optional providers; metadata parsers do not claim semantic understanding. |
 | Live LLM Proposal Provider | Not implemented; only offline recorded model bytes can be imported and remain proposals. |
 | Unified Review Experience | Planned; the Prompt 4 review CLI/control plane is implemented, but no unified Workbench experience is claimed. |
-| New Compiler Kernel | Planned; the retained deterministic compiler remains in place. |
-| Final Versioned Ontology Package | Planned; Artifact Manifest v1 is only a constrained file-set manifest. |
 | Semantic Diff | Planned for controlled evolution; existing amendment diff is not represented as the final semantic diff. |
+| Automatic SemVer Classification | Planned; Prompt 5 requires the operator to supply ontology and package versions explicitly. |
+| Package Registry Rewrite | Planned; Prompt 5 verifies packages but never registers them. |
+| Release Publication | Planned; `VALIDATED_UNPUBLISHED` is not a release state. |
+| Version Activation and Rollback Rewrite | Planned against the future package registry; retained historical lifecycle code is not Prompt 5 authority. |
 | Unified REST API | Planned after contracts stabilize. |
 | Unified Workbench | Planned; current read-only Workbench is retained and has not been rewritten. |
 | Forestry Domain Pack Implementation | Planned; the formal manifest declares zero capabilities and assets, with no fabricated forestry content. |
 | Generic GraphDB Backend | Planned; the retained concrete GraphDB integration is not a generic backend abstraction. |
+| OMS/ODS/OSS adapters and Business Actions | Planned outside the semantic compiler authority; Prompt 5 performs no business execution. |
+| Feedback Object and Controlled Evolution | Planned; compiler failures never trigger automatic ontology repair or model calls. |
+| Full Stage/Phase Cleanup | Planned separately so retained historical gates and public compatibility remain testable. |
 
 ## OUT_OF_SCOPE
 

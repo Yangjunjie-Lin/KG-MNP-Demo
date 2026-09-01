@@ -2,7 +2,7 @@
 
 > Evidence-bound, review-governed and deterministic ontology engineering toolchain
 
-**Current status:** Evidence-Grounded Modeling and Review — Prompt 4
+**Current status:** Deterministic Semantic Kernel and Ontology Package — Prompt 5
 
 KG-MNP is being repositioned as a pluggable, verifiable and traceable ontology
 engineering toolchain. It converts heterogeneous source material into
@@ -10,14 +10,29 @@ evidence-bound modeling candidates, subjects those candidates to formal checks
 and human review, and allows only a deterministic semantic compiler to produce
 authoritative ontology artifacts.
 
-The core product deliverable remains a future **Versioned Ontology Package**.
-Prompt 4 now closes the evidence-to-review loop and produces a deterministic
-`READY_FOR_COMPILATION` Confirmed Modeling Package. That package is a reviewed
-Prompt 5 compiler input—not RDF/OWL/SHACL, a published ontology, or the final
-Versioned Ontology Package.
+Prompt 4 closes the evidence-to-review loop and produces a deterministic
+`READY_FOR_COMPILATION` Confirmed Modeling Package. Prompt 5 now attests that
+input and deterministically compiles it into a portable **Versioned Ontology
+Package** whose only successful state is `VALIDATED_UNPUBLISHED`. Registration,
+release, activation, rollback, and semantic-version classification remain
+separate lifecycle work; the package is not a publication or deployment.
 
 ## What is implemented now
 
+- Compiler Input Attestation against the current Project Lock, Contract Catalog,
+  Domain Pack locks, review log, evidence closure, and confirmed partitions;
+- a deterministic Semantic Compiler Snapshot and explicit Compilation Plan with
+  finite resource limits and user-supplied ontology/package versions;
+- generic TBox, ABox, safe SHACL Core, and declarative MappingPlan compilation;
+- canonical N-Triples/N-Quads plus deterministic Turtle/TriG named-graph views;
+- statement provenance, review audit, evidence lineage, and 100% provenance
+  closure validation;
+- pinned local ROBOT 1.9.7/HermiT OWL 2 DL profile and consistency gates,
+  isolated final pySHACL validation, and explicit read-only CQ execution;
+- a closed-set Ontology Package Manifest and Lock, independent verification,
+  transactional build behavior, and deterministic portable `.kgop` export;
+- `kg-mnp compile` and `kg-mnp package` CLI routes without publication,
+  registration, activation, force, repair, or automatic-version options;
 - `ModelingProposal`, `ReviewDecisionLog`, and `ConfirmedModelingPackage`
   contracts and validation;
 - review-governed confirmation with deterministic identifiers and hashes;
@@ -27,7 +42,7 @@ Versioned Ontology Package.
 - publication reconstruction and verification;
 - activation and rollback governance;
 - offline GraphDB packaging and a read-only application/workbench baseline;
-- a packaged Public Contract Catalog with 59 Draft 2020-12 schemas and a
+- a packaged Public Contract Catalog with 83 Draft 2020-12 schemas and a
   fully offline Registry;
 - Artifact Reference, Artifact Manifest, and Validation Report v1 contracts;
 - formal DomainPackManifest/DomainPackLock v1 contracts, local discovery,
@@ -68,12 +83,13 @@ remain refactor targets.
 ## What is not implemented yet
 
 The repository does not provide a live LLM provider, LLM planner, OCR, vision
-classification, ASR, video understanding, authoritative Prompt 4 RDF/OWL/SHACL
-compilation, the final Versioned Ontology Package, semantic diff, a unified REST
-API, a unified Workbench, or a generic GraphDB backend. Recorded model output is
-an offline import, not a model call. Image and WAV support is metadata-only;
-scanned PDFs and unsupported audio/video require review or a missing provider.
-The Forestry Domain Pack remains a planning scaffold only.
+classification, ASR, video understanding, semantic diff, automatic SemVer
+classification, a rewritten Package Registry, release publication, rewritten
+activation/rollback, a unified REST API, a unified Workbench, or a generic
+GraphDB backend. Recorded model output is an offline import, not a model call.
+Image and WAV support is metadata-only; scanned PDFs and unsupported audio/video
+require review or a missing provider. The Forestry Domain Pack remains a
+planning scaffold only.
 No Agent or LLM is an ontology authority.
 
 ## Semantic authority
@@ -95,8 +111,9 @@ Source Assets -> Evidence-bound KG-IR -> Approved Scope + CQ + Locked Baseline
     -> Proposal-only Providers -> Modeling Proposal
     -> Formal Structural Pre-validation -> Explicit Human Review
     -> Confirmed Modeling Package -> Deterministic Semantic Compiler
-    -> OWL / RDF / SHACL / Provenance -> Validation
-    -> Versioned Ontology Package -> Registry / Controlled Release / Rollback
+    -> OWL / RDF / SHACL / Provenance -> OWL / SHACL / CQ / Closure Validation
+    -> VALIDATED_UNPUBLISHED Versioned Ontology Package
+    -> Future Registry / Controlled Release / Activation / Rollback
 ```
 
 See the [target architecture](docs/architecture/ontology-toolchain-target-architecture.md)
@@ -136,7 +153,7 @@ and is pending relocation or removal in a later Prompt.
 
 ## Verification
 
-The Prompt 2 gates are offline and require no GraphDB service or browser:
+The Prompt 5 gates are offline and require no GraphDB service or browser:
 
 ```bash
 python -m ruff check .
@@ -162,6 +179,20 @@ make verify-modeling-review
 make verify-modeling-confirmation
 make verify-modeling-security
 make verify-prompt-04-offline
+make verify-semantic-kernel-contracts
+make verify-compiler-input
+make verify-tbox-compilation
+make verify-abox-compilation
+make verify-shacl-compilation
+make verify-mapping-compilation
+make verify-rdf-dataset
+make verify-provenance-closure
+make verify-owl-validation
+make verify-shacl-final-validation
+make verify-cq-execution
+make verify-ontology-package
+make verify-semantic-kernel-security
+make verify-prompt-05-offline
 make verify-stage-06
 make verify-application-phase-06-offline
 python -m pytest -q

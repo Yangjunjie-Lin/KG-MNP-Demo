@@ -19,8 +19,9 @@ release governance.
 
 ## Core deliverable
 
-The core deliverable is a **Versioned Ontology Package**. Its eventual public
-contract is expected to describe, as applicable:
+The core deliverable is a **Versioned Ontology Package**. Prompt 5 implements
+the first experimental package contract and its `VALIDATED_UNPUBLISHED` state.
+It describes:
 
 - TBox and ABox;
 - SHACL Shapes;
@@ -32,8 +33,10 @@ contract is expected to describe, as applicable:
 - Competency Question Results;
 - a Dependency Manifest;
 - a Semantic Hash;
-- a Release Attestation; and
-- a Semantic Diff.
+- deterministic package and semantic digests.
+
+Release Attestation and Semantic Diff remain future lifecycle artifacts and are
+deliberately absent from the Prompt 5 package authority.
 
 Prompt 2 establishes Artifact Reference/Manifest v1 and Project Workspace v1
 as shared identity, containment, and locking contracts. Prompt 3 adds the
@@ -41,9 +44,13 @@ Plugin SDK, content-addressed sources, Evidence Records, structural quality
 gates, and evidence-bound KG-IR. Prompt 4 adds approved modeling scope,
 competency questions, read-only baseline/terminology alignment, proposal-only
 providers, closed candidates, formal prevalidation, explicit review replay, and
-a deterministic Confirmed Modeling Package. Artifact Manifest v1 remains
-distinct from the final Versioned Ontology Package contract; neither ingestion,
-KG-IR, proposal, nor the compiler-ready package implies release or publication.
+a deterministic Confirmed Modeling Package. Prompt 5 adds input attestation,
+the pinned deterministic semantic kernel, TBox/ABox/SHACL/Mapping compilation,
+OWL/SHACL/CQ/provenance gates, and a closed portable Ontology Package
+Manifest/Lock with deterministic `.kgop` export. Artifact Manifest v1 remains
+distinct from the Versioned Ontology Package contract; neither ingestion,
+KG-IR, proposal, the compiler-ready package, nor `VALIDATED_UNPUBLISHED`
+implies release, registration, activation, or publication.
 
 ## Product principles
 
@@ -95,7 +102,19 @@ validation results, and release lineage.
 
 Equivalent confirmed inputs and pinned dependencies must produce byte- or
 semantically stable formal artifacts and hashes. Only the deterministic
-semantic kernel may compile an authoritative package.
+semantic kernel may compile an authoritative package. The operator supplies
+ontology and package versions explicitly; the compiler never repairs candidates
+or infers a SemVer change. Canonical NT/NQ are digest authorities, while
+deterministic Turtle/TriG are readable round-trip views.
+
+### Formal validation and package boundary
+
+A successful Prompt 5 package requires a valid input attestation, pinned
+compiler snapshot and plan, RDF syntax/round-trip equivalence, the requested OWL
+profile, HermiT consistency, final SHACL conformance, all REQUIRED CQ oracles,
+and complete provenance closure. Failure leaves no valid package. The compiler
+does not write GraphDB or a Package Registry and cannot publish or activate a
+version.
 
 ### Controlled evolution principle
 
@@ -111,7 +130,9 @@ new controlled release. Published artifacts are never self-mutated.
 - autonomous ontology deployment after execution failure;
 - claims of universal multimodal or cross-industry support;
 - a new numbered Stage or Application Phase;
-- treating Artifact Manifest v1 as the final Versioned Ontology Package;
+- treating Artifact Manifest v1 as the Versioned Ontology Package Manifest;
+- treating a `VALIDATED_UNPUBLISHED` package as registered, released, active,
+  deployed, or semantically version-classified;
 - treating ingestion observations or KG-IR as reviewed ontology or business
   objects;
 - an LLM planner or fabricated OCR, vision, ASR, or video understanding;
@@ -125,7 +146,9 @@ The current foundation includes stable public artifact/workspace contracts,
 formal local Domain Packs, Plugin APIs 1.0/1.1, deterministic local ingestion,
 Evidence Records, evidence-bound KG-IR, approved modeling requirements,
 baseline reuse, offline proposal providers, formal prevalidation, replayable
-human review, and a deterministic compiler-ready package. Live LLM invocation,
-the authoritative Prompt 5 compiler/final validation, package registry/diff,
+human review, a deterministic compiler-ready package, and the Prompt 5 semantic
+compiler, formal validation gates, package lock, and deterministic offline
+archive. Live LLM invocation, semantic diff, automatic SemVer classification,
+the Package Registry rewrite, controlled publication, lifecycle rewrite,
 unified interfaces, and an honest Forestry pilot remain planned. Delivery is
 incremental, and planned capabilities must not be represented as implemented.

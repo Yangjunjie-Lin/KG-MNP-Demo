@@ -3,11 +3,12 @@
 This is the target product architecture. Shaded boundaries distinguish the
 deterministic semantic authority, plugin extension points, and domain content.
 Solid arrows carry governed artifacts; dashed arrows carry control or adapter
-requests. Prompts 2–4 implement the Contract Kernel, local Domain Pack Registry,
+requests. Prompts 2–5 implement the Contract Kernel, local Domain Pack Registry,
 Project Workspace, local Plugin Registry, evidence-bound ingestion, and the
 evidence-grounded modeling/review control plane through a deterministic
-compiler-ready package. The remaining target boxes are not implied to be
-implemented by their presence in this diagram.
+compiler-ready package, then the deterministic semantic kernel and portable
+`VALIDATED_UNPUBLISHED` package boundary. The remaining lifecycle and interface
+boxes are not implied to be implemented by their presence in this diagram.
 
 ```mermaid
 flowchart TB
@@ -43,10 +44,24 @@ flowchart TB
   end
 
   subgraph AUTH[Semantic Authority Boundary]
-    COMPILER[Deterministic Semantic Compiler]
-    FORMAL[OWL / RDF / SHACL / Provenance]
-    VALIDATE[Deterministic Validation]
-    PACKAGE[Versioned Ontology Package]
+    ATTEST[Compiler Input Attestation]
+    SNAPSHOT[Pinned Compiler Snapshot]
+    PLAN[Deterministic Compilation Plan]
+    COMPILER[TBox / ABox / SHACL / Mapping Compiler]
+    FORMAL[Canonical Named Graph Dataset and Provenance]
+  end
+
+  subgraph VALIDATION[Formal Validation Boundary]
+    RDFV[RDF Syntax and Round-trip]
+    OWLV[OWL Profile and HermiT Consistency]
+    SHV[Final SHACL]
+    CQV[Explicit CQ Oracles]
+    PROVV[Provenance Closure]
+  end
+
+  subgraph PKG[Package Boundary]
+    PACKAGE[Manifest and Lock]
+    UNPUBLISHED[VALIDATED_UNPUBLISHED .kgop]
   end
 
   subgraph LIFE[Registry and Lifecycle]
@@ -101,9 +116,19 @@ flowchart TB
   PROVIDER -->|candidate drafts| PROPOSAL -->|artifact| PREVALIDATE
   PREVALIDATE -->|review packet| REVIEW
   REVIEW -->|decision artifact| CONFIRMED
-  CONFIRMED -->|authoritative input| COMPILER --> FORMAL --> VALIDATE --> PACKAGE
-  PACKAGE --> REGISTRY --> DIFF --> RELEASE --> ROLLBACK
-  PACKAGE --> STORE
+  CONFIRMED -->|only new semantic input| ATTEST --> SNAPSHOT --> PLAN --> COMPILER
+  BASE -->|locked local closure| COMPILER
+  COMPILER --> FORMAL --> RDFV --> OWLV --> SHV --> CQV --> PROVV
+  PROVV --> PACKAGE --> UNPUBLISHED
+  UNPUBLISHED -. future Prompt 6 input .-> REGISTRY --> DIFF --> RELEASE --> ROLLBACK
+  UNPUBLISHED --> STORE
+  ATTEST -->|FAIL| FAILURE[Transactional failure report]
+  PLAN -->|FAIL| FAILURE
+  RDFV -->|FAIL| FAILURE
+  OWLV -->|FAIL| FAILURE
+  SHV -->|FAIL| FAILURE
+  CQV -->|FAIL| FAILURE
+  PROVV -->|FAIL| FAILURE
   EVIDENCE --> STORE
   PROPOSAL --> STORE
 
@@ -132,7 +157,7 @@ flowchart TB
   classDef authority fill:#e8f5e9,stroke:#1b5e20,stroke-width:2px;
   classDef plugin fill:#e3f2fd,stroke:#0d47a1,stroke-dasharray:5 5;
   classDef domain fill:#fff3e0,stroke:#e65100,stroke-dasharray:5 5;
-  class COMPILER,FORMAL,VALIDATE,PACKAGE authority;
+  class ATTEST,SNAPSHOT,PLAN,COMPILER,FORMAL,RDFV,OWLV,SHV,CQV,PROVV,PACKAGE,UNPUBLISHED authority;
   class PREG,PROVIDERS plugin;
   class DREG,MNP,FORESTRY,FUTURE domain;
 ```
@@ -150,7 +175,7 @@ flowchart TB
 - **Domain content** is supplied by Domain Packs. No domain pack becomes the
   core compiler or a universal ontology.
 
-## Prompt 2–4 implemented slice
+## Prompt 2–5 implemented slice
 
 The Contract Catalog and all public schemas are package resources accessed via
 `importlib.resources`; they do not depend on the repository root or current
@@ -176,8 +201,19 @@ prevalidates them; humans decide through a replayable append-only log; and only
 a non-RDF `READY_FOR_COMPILATION` package crosses the review boundary. The
 package and release-registry authorities remain untouched.
 
-No live LLM, OCR/vision/ASR/video understanding, authoritative Prompt 4
-compiler, final OWL/SHACL/CQ validation, Versioned Ontology Package, semantic
-diff, REST, Workbench replacement, Forestry content, or generic GraphDB backend
-is claimed. See `plugin-driven-ingestion-architecture.md` for Prompt 3 and
-`evidence-grounded-modeling-architecture.md` for Prompt 4.
+Prompt 5 attests only the current confirmed package and its closed Workspace
+authorities, snapshots the compiler and pinned local ROBOT/HermiT bundle, and
+binds explicit versions and finite limits into a deterministic plan. The same
+Domain-Pack-neutral kernel compiles TBox, ABox, safe SHACL Core, MappingPlan,
+named graphs, provenance, audit, and evidence lineage. RDF, OWL, SHACL,
+executable CQ oracles, provenance closure, package integrity, and reproduction
+are fail-closed gates. Package commit is transactional and produces only
+`VALIDATED_UNPUBLISHED`; no failure edge returns to providers, candidates, an
+LLM, or a Domain Pack for automatic repair.
+
+No live LLM, OCR/vision/ASR/video understanding, semantic diff, automatic SemVer
+classification, Package Registry rewrite, controlled publication, activation
+rewrite, REST, Workbench replacement, Forestry content, or generic GraphDB
+backend is claimed. See `plugin-driven-ingestion-architecture.md` for Prompt 3,
+`evidence-grounded-modeling-architecture.md` for Prompt 4, and
+`deterministic-semantic-kernel-architecture.md` for Prompt 5.

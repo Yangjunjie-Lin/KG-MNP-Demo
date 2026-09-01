@@ -7,7 +7,7 @@ overly domain-specific product interpretations.
 |---|---|---|
 | “本体论和 AI 智能体协同的知识工具链框架” | Project Control Plane, explicit semantic authority boundary, pluggable providers, and integration adapters | AI Agent is an advisory proposal/explanation component, never the formal semantic authority. |
 | “多模态规则化” | Prompt 3 deterministic media detection, validated provider plans, constrained parsing/normalization, Evidence Record, evidence-bound KG-IR, and structural Quality Gates | Extracted content stays an observation with source coordinates and cannot become formal semantics without review. Metadata-only image/WAV support is not semantic understanding. |
-| “AI 大模型与领域约束的本体构建” | Prompt 4 approved Scope/CQs, locked baseline reuse, offline rule/reuse/manual/recorded proposal providers, closed candidates, formal prevalidation, replayable human review, and deterministic compiler-ready package | Providers propose; domain constraints pre-validate; humans confirm; Prompt 5 deterministic code will compile. Recorded bytes are not a live LLM or an accuracy claim. |
+| “AI 大模型与领域约束的本体构建” | Prompt 4 approved Scope/CQs, locked baseline reuse, offline rule/reuse/manual/recorded proposal providers, closed candidates, formal prevalidation, replayable human review, and deterministic compiler-ready package; Prompt 5 attests and compiles only that confirmed input into a formally validated, provenance-closed, unpublished package | Providers propose; domain constraints pre-validate; humans confirm; deterministic code alone compiles. Recorded bytes are not a live LLM, and OWL/SHACL/CQ results are not an accuracy claim. |
 | “执行反馈与智能演进” | Feedback Issue, Change Proposal, Semantic Diff, Regression Validation, and Controlled Release | Feedback cannot mutate a released ontology or deploy a repair directly. |
 | 原平台原型 | Unified Ontology Workbench plus Domain Packs | The workbench coordinates governed artifacts; domain content remains outside the core. |
 
@@ -32,10 +32,18 @@ overly domain-specific product interpretations.
   require explicit human decisions.
 - Prompt 4 structural prevalidation and CQ coverage do not claim OWL
   consistency, SHACL execution, CQ execution, or semantic accuracy.
+- Prompt 5 distinguishes compilation coverage, OWL consistency, SHACL
+  conformance, executable CQ oracles, and provenance closure. None proves
+  domain truth, business correctness, evidence truthfulness, or cross-industry
+  performance.
+- Prompt 5 emits only `VALIDATED_UNPUBLISHED`; it does not calculate SemVer,
+  register, release, activate, deploy, repair, or execute business actions.
 
 This alignment distinguishes the implemented Prompt 4 modeling/review control
-plane from later compiler and product capabilities. Prompt 4 demonstrates
-structural traceability, closure, deterministic proposal normalization and
-review replay; it does not establish semantic accuracy without ground truth.
-Live LLM planning, authoritative semantic compilation/final validation,
-semantic diff, a unified Workbench, and Forestry implementation remain planned.
+plane and Prompt 5 deterministic compilation/package boundary from later
+lifecycle and product capabilities. The implemented chain demonstrates
+structural traceability, deterministic compilation, declared formal gates, and
+reproducible packaging; it does not establish semantic accuracy without ground
+truth. Live LLM planning, semantic diff, automatic SemVer classification,
+Package Registry rewrite, publication/activation rewrite, a unified Workbench,
+and Forestry implementation remain planned.
