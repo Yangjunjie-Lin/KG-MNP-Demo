@@ -18,7 +18,7 @@ def test_graphdb_and_webvowl_integrations_absent():
 
 
 def test_no_auto_confirmation_or_compiler_implementation():
-    """Stage 05 may build confirmed packages; auto-confirm and compilers remain forbidden."""
+    """Auto-confirm remains forbidden; Prompt 5 compilers stay in their authority boundary."""
 
     src = ROOT / "src" / "kg_mnp"
     matches = []
@@ -33,10 +33,18 @@ def test_no_auto_confirmation_or_compiler_implementation():
         "def webvowl_export",
         "def llm_reviewer",
     )
+    compiler_markers = {"def compile_owl", "def compile_shacl", "def compile_rdf"}
     for path in src.rglob("*.py"):
         text = path.read_text(encoding="utf-8")
-        if any(marker in text for marker in forbidden):
-            matches.append(path.relative_to(ROOT).as_posix())
+        relative = path.relative_to(ROOT).as_posix()
+        for marker in forbidden:
+            if marker not in text:
+                continue
+            if marker in compiler_markers and relative.startswith(
+                "src/kg_mnp/semantic_kernel/"
+            ):
+                continue
+            matches.append(f"{relative}: {marker}")
     assert matches == []
     assert (src / "modeling" / "confirmation.py").is_file()
 

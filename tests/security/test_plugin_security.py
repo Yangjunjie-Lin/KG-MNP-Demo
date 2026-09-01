@@ -109,3 +109,36 @@ def test_registry_source_contains_no_network_or_auto_install_path() -> None:
     source = inspect.getsource(discovery) + inspect.getsource(registry)
     for forbidden in ("requests.", "urllib.request", "subprocess", "pip install"):
         assert forbidden not in source
+
+
+def test_bundled_upgrade_requires_explicit_trusted_call_site() -> None:
+    descriptor = PluginRegistry(discover_external=False).get("plain-text-parser")
+    with pytest.raises(PluginManifestError, match="version mismatch"):
+        validate_manifest_distribution(
+            descriptor.manifest,
+            distribution_name=descriptor.distribution_name,
+            distribution_version=descriptor.distribution_version,
+            distribution_root=descriptor.distribution_root,
+        )
+    files = validate_manifest_distribution(
+        descriptor.manifest,
+        distribution_name=descriptor.distribution_name,
+        distribution_version=descriptor.distribution_version,
+        distribution_root=descriptor.distribution_root,
+        allow_bundled_version_upgrade=True,
+    )
+    assert files
+
+    external = copy.deepcopy(descriptor.manifest)
+    external["distribution"] = {
+        "name": "external-fixture",
+        "required_version": "0.3.0",
+    }
+    with pytest.raises(PluginManifestError, match="version mismatch"):
+        validate_manifest_distribution(
+            external,
+            distribution_name="external-fixture",
+            distribution_version="0.5.0",
+            distribution_root=descriptor.distribution_root,
+            allow_bundled_version_upgrade=True,
+        )

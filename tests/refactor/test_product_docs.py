@@ -21,7 +21,7 @@ def test_readme_states_current_identity_and_capability_limits() -> None:
     readme = (ROOT / "README.md").read_text(encoding="utf-8")
     normalized = " ".join(readme.split())
     assert "# KG-MNP Ontology Toolchain" in readme
-    assert "Evidence-Grounded Modeling and Review — Prompt 4" in readme
+    assert "Deterministic Semantic Kernel and Ontology Package — Prompt 5" in readme
     assert "What is implemented now" in readme
     assert "What is not implemented yet" in readme
     assert "Forestry Domain" in readme
@@ -32,7 +32,7 @@ def test_readme_states_current_identity_and_capability_limits() -> None:
     assert "Phase 07" not in readme
 
 
-def test_prompt04_documents_state_implemented_and_deferred_capabilities() -> None:
+def test_prompt05_documents_state_implemented_and_deferred_capabilities() -> None:
     matrix = (ROOT / "docs/product/current-capability-matrix.md").read_text(
         encoding="utf-8"
     )
@@ -52,13 +52,23 @@ def test_prompt04_documents_state_implemented_and_deferred_capabilities() -> Non
         "Formal Prevalidation",
         "Human Review Control Plane",
         "Prompt 4 Confirmed Modeling Package",
+        "Compiler Input Attestation",
+        "Semantic Compiler Policy and Snapshot",
+        "Deterministic Compilation Plan",
+        "Generic semantic compilation",
+        "Canonical named RDF dataset",
+        "Formal validation gates",
+        "Versioned Ontology Package",
+        "Deterministic `.kgop` export",
     ):
         assert capability in matrix
     for planned in (
         "LLM Ingestion Planner",
         "OCR/Vision/ASR/Video providers",
         "Live LLM Proposal Provider",
-        "Final Versioned Ontology Package",
+        "Package Registry Rewrite",
+        "Automatic SemVer Classification",
+        "Release Publication",
         "Forestry Domain Pack Implementation",
     ):
         assert planned in matrix
@@ -110,6 +120,27 @@ def test_prompt04_documents_state_implemented_and_deferred_capabilities() -> Non
         "docs/research/ontology-modeling-evaluation-protocol.md",
     )
     assert all((ROOT / path).is_file() for path in required_prompt04_docs)
+
+    required_prompt05_docs = (
+        "docs/compilation/semantic-compiler-policy-v1.md",
+        "docs/compilation/compiler-input-attestation-v1.md",
+        "docs/compilation/semantic-compilation-plan-v1.md",
+        "docs/compilation/tbox-compilation.md",
+        "docs/compilation/abox-compilation.md",
+        "docs/compilation/shacl-compilation.md",
+        "docs/compilation/mapping-plan-v1.md",
+        "docs/compilation/rdf-canonical-profile-v1.md",
+        "docs/compilation/owl-validation.md",
+        "docs/compilation/shacl-final-validation.md",
+        "docs/compilation/competency-question-testing.md",
+        "docs/compilation/provenance-and-evidence-lineage.md",
+        "docs/compilation/ontology-package-format-v1.md",
+        "docs/compilation/kgop-archive-format-v1.md",
+        "docs/architecture/deterministic-semantic-kernel-architecture.md",
+        "docs/adr/ADR-0005-deterministic-semantic-compilation-and-packaging.md",
+        "docs/research/semantic-compilation-evaluation-protocol.md",
+    )
+    assert all((ROOT / path).is_file() for path in required_prompt05_docs)
 
 
 def test_current_product_documents_do_not_extend_retired_route() -> None:

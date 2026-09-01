@@ -9,7 +9,7 @@ from pathlib import Path
 from kg_mnp.contracts import ContractCatalog
 
 ROOT = Path(__file__).resolve().parents[2]
-PROMPT04_CONTRACT_COUNT = 59
+CURRENT_CONTRACT_COUNT = 83
 
 
 def _run(*arguments: str, cwd: Path) -> subprocess.CompletedProcess[str]:
@@ -56,6 +56,8 @@ def test_wheel_contains_catalog_and_schemas_and_loads_outside_source_tree(
     assert "kg_mnp/plugins/builtin/manifests/plain-text-parser.json" in names
     assert "kg_mnp/modeling/control_plane/service.py" in names
     assert "kg_mnp/plugins/builtin/manifests/baseline-reuse-provider.json" in names
+    assert "kg_mnp/semantic_kernel/resources/toolchain-compiler-policy-1.0.0.yaml" in names
+    assert "kg_mnp/semantic_kernel/resources/toolchain-provenance-vocabulary.ttl" in names
     assert not any(name.startswith(("runtime_reports/", "runtime_outputs/")) for name in names)
     assert not any(name.startswith("domain_packs/") for name in names)
     assert not any("graphdb.license" in name.casefold() for name in names)
@@ -81,6 +83,7 @@ def test_wheel_contains_catalog_and_schemas_and_loads_outside_source_tree(
             "from importlib import resources",
             "from kg_mnp.contracts import ContractCatalog, get_contract_schema",
             "from kg_mnp.root_cli import main as root_main",
+            "from kg_mnp.semantic_kernel.policy import load_compiler_policy",
             "catalog = ContractCatalog.load()",
             "schema = get_contract_schema('project-lock')",
             "def invoke(arguments):",
@@ -91,10 +94,15 @@ def test_wheel_contains_catalog_and_schemas_and_loads_outside_source_tree(
             "with contextlib.redirect_stdout(io.StringIO()):",
             "    assert invoke(['model', '--help']) == 0",
             "    assert invoke(['review', '--help']) == 0",
+            "    assert invoke(['compile', '--help']) == 0",
+            "    assert invoke(['package', '--help']) == 0",
+            "policy = load_compiler_policy()",
+            "vocabulary = resources.files('kg_mnp.semantic_kernel').joinpath('resources/toolchain-provenance-vocabulary.ttl')",
             (
                 "payload = {'count': len(catalog.specs), 'title': schema['title'], "
                 "'catalog': resources.files('kg_mnp.contracts')"
-                ".joinpath('catalog.json').is_file()}"
+                ".joinpath('catalog.json').is_file(), 'compiler': policy['compiler_version'], "
+                "'vocabulary': vocabulary.is_file()}"
             ),
             "print(json.dumps(payload, sort_keys=True))",
         )
@@ -102,6 +110,8 @@ def test_wheel_contains_catalog_and_schemas_and_loads_outside_source_tree(
     completed = _run("-I", "-c", probe, cwd=probe_cwd)
     assert json.loads(completed.stdout) == {
         "catalog": True,
-        "count": PROMPT04_CONTRACT_COUNT,
+        "compiler": "0.5.0",
+        "count": CURRENT_CONTRACT_COUNT,
         "title": "KG-MNP ProjectLock 1.0",
+        "vocabulary": True,
     }

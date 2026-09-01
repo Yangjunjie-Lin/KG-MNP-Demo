@@ -260,3 +260,114 @@ def prompt04_case(tmp_path_factory: pytest.TempPathFactory) -> dict:
         review_queue=queue,
     )
     return locals()
+
+
+@pytest.fixture(scope="session")
+def prompt05_case(prompt04_case: dict) -> dict:
+    """Build one current-Catalog Minimal Prompt 5 package for shared gate tests."""
+
+    import hashlib
+
+    from kg_mnp.contracts.document_io import atomic_write_json
+    from kg_mnp.semantic_kernel.baseline import load_baseline_closure
+    from kg_mnp.semantic_kernel.compiler import SemanticCompiler
+    from kg_mnp.semantic_kernel.snapshot import ROBOT_SHA256
+    from kg_mnp.semantic_kernel.validators.competency_questions import (
+        build_cq_test_plan,
+    )
+
+    workspace = prompt04_case["workspace"]
+    authority_dir = workspace / "artifacts" / "confirmed" / "prompt05-current"
+    authority_dir.mkdir(parents=True, exist_ok=False)
+    documents = {
+        "confirmed-package.json": prompt04_case["package"],
+        "scope.json": prompt04_case["scope"],
+        "scope-approval.json": prompt04_case["approval"],
+        "question-set.json": prompt04_case["question_set"],
+        "coverage-report.json": prompt04_case["coverage"],
+        "baseline-snapshot.json": prompt04_case["baseline"],
+        "terminology-catalog.json": prompt04_case["terminology"],
+        "term-alignment-set.json": prompt04_case["alignments"],
+        "field-mapping-candidate-set.json": prompt04_case["field_mappings"],
+        "proposal.json": prompt04_case["proposal"],
+        "prevalidation.json": prompt04_case["prevalidation"],
+        "review-policy.json": prompt04_case["policy"],
+        "review-decision-log.json": prompt04_case["finalization"].decision_log,
+        "provider-snapshots.json": prompt04_case["snapshots"],
+    }
+    for name, document in documents.items():
+        atomic_write_json(authority_dir / name, document)
+    baseline = load_baseline_closure(
+        prompt04_case["project_lock"], domain_packs_root=ROOT / "domain_packs"
+    )
+    question_id = prompt04_case["question_set"]["questions"][0]["question_id"]
+
+    def query_loader(reference: str) -> bytes:
+        return baseline.query_assets[reference]
+
+    cq_plan = build_cq_test_plan(
+        [
+            {
+                "question_id": question_id,
+                "requirement": "REQUIRED",
+                "query_artifact_ref": "minimal-query-list-entities",
+                "query_type": "SELECT",
+                "target_graph_roles": ["abox"],
+                "expected_answer_shape": "ENTITY_LIST",
+                "assertions": [
+                    {
+                        "assertion_type": "MIN_ROW_COUNT",
+                        "boolean_value": None,
+                        "integer_value": 1,
+                        "string_values": [],
+                        "semantic_hash": None,
+                    },
+                    {
+                        "assertion_type": "REQUIRED_BINDINGS",
+                        "boolean_value": None,
+                        "integer_value": None,
+                        "string_values": ["entity", "label"],
+                        "semantic_hash": None,
+                    },
+                ],
+                "resource_limits": [
+                    {"name": "max_query_characters", "value": 100000},
+                    {"name": "max_query_results", "value": 100000},
+                    {"name": "max_query_seconds", "value": 30},
+                    {"name": "max_query_path_depth", "value": 8},
+                ],
+            }
+        ],
+        query_loader=query_loader,
+    )
+    cq_path = authority_dir / "cq-test-plan.json"
+    atomic_write_json(cq_path, cq_plan)
+    jar = ROOT / "third_party" / "downloads" / "robot-1.9.7.jar"
+    assert hashlib.sha256(jar.read_bytes()).hexdigest() == ROBOT_SHA256
+    compiler = SemanticCompiler(
+        workspace,
+        domain_packs_root=ROOT / "domain_packs",
+        reasoner_jar=jar,
+    )
+    plan, attestation = compiler.create_plan(
+        package_id=prompt04_case["package"]["package_id"],
+        package_name="minimal-ontology-example",
+        package_version="0.1.0",
+        ontology_iri="https://yangjunjie-lin.github.io/KG-MNP-Demo/examples/minimal-ontology",
+        version_iri="https://yangjunjie-lin.github.io/KG-MNP-Demo/examples/minimal-ontology/0.1.0",
+        cq_test_plan=cq_plan,
+    )
+    result = compiler.build(plan["plan_id"])
+    return {
+        "workspace": workspace,
+        "authority_dir": authority_dir,
+        "baseline": baseline,
+        "cq_plan": cq_plan,
+        "cq_path": cq_path,
+        "jar": jar,
+        "compiler": compiler,
+        "plan": plan,
+        "attestation": attestation,
+        "result": result,
+        "prompt04": prompt04_case,
+    }

@@ -11,7 +11,7 @@ ROOT = Path(__file__).resolve().parents[2]
 def test_contract_help_list_show_and_catalog_smokes(capsys) -> None:
     assert root_cli.main(["contracts", "list", "--json"]) == 0
     listed = json.loads(capsys.readouterr().out)
-    assert len(listed["result"]) == 59
+    assert len(listed["result"]) == 83
     assert listed["command"] == "contracts list"
     assert root_cli.main(["contracts", "show", "domain-pack-manifest"]) == 0
     shown = json.loads(capsys.readouterr().out)

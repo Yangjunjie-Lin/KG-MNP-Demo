@@ -43,7 +43,7 @@ PROMPT03_CONTRACTS = {
     "quality-report",
     "ingestion-run",
 }
-PROMPT04_CONTRACT_COUNT = 59
+PROMPT05_CONTRACT_COUNT = 83
 
 
 def test_original_twenty_contract_schema_bytes_are_unchanged() -> None:
@@ -57,7 +57,7 @@ def test_prompt03_contracts_are_single_catalog_ingestion_scope_and_packaged() ->
     catalog = ContractCatalog.load()
     ingestion = {spec.name for spec in catalog.filtered(scope="ingestion")}
     assert PROMPT03_CONTRACTS.issubset(ingestion)
-    assert len(catalog.specs) == PROMPT04_CONTRACT_COUNT
+    assert len(catalog.specs) == PROMPT05_CONTRACT_COUNT
     package = resources.files("kg_mnp.contracts")
     for name in PROMPT03_CONTRACTS:
         spec = catalog.by_name(name)
@@ -67,12 +67,13 @@ def test_prompt03_contracts_are_single_catalog_ingestion_scope_and_packaged() ->
         assert get_contract_schema(name)["$schema"] == "https://json-schema.org/draft/2020-12/schema"
 
 
-def test_catalog_1_1_adds_ingestion_without_mutating_frozen_1_0() -> None:
+def test_catalog_1_2_adds_compilation_without_mutating_frozen_1_0_or_1_1() -> None:
     catalog = ContractCatalog.load()
-    assert catalog.document["schema_version"] == "1.1.0"
-    validate_contract("contract-catalog-v1-1", catalog.document)
+    assert catalog.document["schema_version"] == "1.2.0"
+    validate_contract("contract-catalog-v1-2", catalog.document)
     frozen = get_contract_schema("contract-catalog")
     migration = get_contract_schema("contract-catalog-v1-1")
+    compilation = get_contract_schema("contract-catalog-v1-2")
     assert frozen["$id"].endswith("/contract-catalog/1.0")
     assert frozen["properties"]["schema_version"]["$ref"].endswith(
         "/toolchain-common/1.0#/$defs/schemaVersion"
@@ -83,3 +84,5 @@ def test_catalog_1_1_adds_ingestion_without_mutating_frozen_1_0() -> None:
     ]
     assert migration["properties"]["schema_version"]["const"] == "1.1.0"
     assert "ingestion" in migration["properties"]["contracts"]["items"]["properties"]["scope"]["enum"]
+    assert compilation["properties"]["schema_version"]["const"] == "1.2.0"
+    assert "compilation" in compilation["properties"]["contracts"]["items"]["properties"]["scope"]["enum"]
