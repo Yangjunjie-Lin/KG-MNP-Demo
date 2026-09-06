@@ -1,0 +1,10 @@
+policy_id: urn:kg-mnp:activation-policy:df55d3da133552debd0c44ceaad9e806b97f3740a9983fdeac0095e6ce9568b4
+content_digest: d2ac4799b5031f2858c9376e15e1de5ca7f73617f7dcc9f759f68164f1e1151e
+policy_version: 1.0.0
+activation_roles: [RELEASE_MANAGER, ONTOLOGY_ENGINEER]
+activation_quorum: 1
+rollback_roles: [RELEASE_MANAGER, ONTOLOGY_ENGINEER]
+rollback_quorum: 1
+pointer_policy: GENERATION_HASH_AND_REGISTRY_HEAD_CAS
+breaking_release_policy: EXPLICIT_HUMAN_ACKNOWLEDGEMENT
+prohibited_operations: [AUTO_ACTIVATE, AUTO_ROLLBACK, GRAPHDB_WRITE, NETWORK_ACCESS]

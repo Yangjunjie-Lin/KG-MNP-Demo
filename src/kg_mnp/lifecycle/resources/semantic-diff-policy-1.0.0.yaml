@@ -1,0 +1,11 @@
+policy_id: urn:kg-mnp:semantic-diff-policy:7cf25388f2f78d807ada29ef25d9795d6525e279ff566d20368764ea268b928e
+content_digest: ac491ee5d48521136dda2c1aa19aa120fa3f90418277ee1ae788229a51e2fb9f
+policy_version: 1.0.0
+comparison_profile: KG-MNP PACKAGE SEMANTIC DIFF v1
+component_policies: [IDENTITY, TBOX, ABOX, SHACL, MAPPING, CQ, DEPENDENCY, ANNOTATION, PROVENANCE, METADATA]
+classification_rules: [TBOX_POLICY_V1, ABOX_POLICY_V1, SHACL_POLICY_V1, MAPPING_POLICY_V1, CQ_POLICY_V1]
+annotation_policy: LABEL_DEFINITION_CHANGES_REQUIRE_REVIEW
+abox_policy: PRESERVE_ASSERTION_DELTA
+unknown_construct_policy: BLOCK_RELEASE
+version_policy: EXPLICIT_CONSERVATIVE_PRE_ONE
+resource_limits: {max_diff_changes: 100000}

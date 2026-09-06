@@ -31,7 +31,7 @@ def test_prompt04_public_schema_bytes_are_preserved() -> None:
     assert len(historical["contracts"]) == 59
     for row in historical["contracts"]:
         assert hashlib.sha256(package.joinpath(row["resource_path"]).read_bytes()).hexdigest() == row["sha256"]
-    assert len(ContractCatalog.load().specs) == 83
+    assert len(ContractCatalog.load().specs) == 115
 
 
 def test_policy_snapshot_and_structural_skolemization_are_deterministic() -> None:

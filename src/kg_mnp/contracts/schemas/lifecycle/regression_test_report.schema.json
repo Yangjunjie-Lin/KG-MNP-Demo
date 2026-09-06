@@ -1,0 +1,98 @@
+{
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/regression-test-report/1.0",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "base_package_id": {
+      "oneOf": [
+        {
+          "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "candidate_package_id": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/id"
+    },
+    "content_digest": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/sha"
+    },
+    "important_passed": {
+      "type": [
+        "string",
+        "number",
+        "boolean",
+        "object",
+        "array",
+        "null"
+      ]
+    },
+    "manifest_kind": {
+      "const": "KG_MNP_REGRESSION_TEST_REPORT"
+    },
+    "registry_id": {
+      "oneOf": [
+        {
+          "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "report_id": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/id"
+    },
+    "required_passed": {
+      "type": [
+        "string",
+        "number",
+        "boolean",
+        "object",
+        "array",
+        "null"
+      ]
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "status": {
+      "enum": [
+        "PASSED",
+        "FAILED",
+        "INCOMPLETE",
+        "BLOCKED"
+      ]
+    },
+    "summary": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/testSummary"
+    },
+    "test_plan_id": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/id"
+    },
+    "tests": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/testResults"
+    }
+  },
+  "required": [
+    "manifest_kind",
+    "schema_version",
+    "report_id",
+    "content_digest",
+    "registry_id",
+    "test_plan_id",
+    "base_package_id",
+    "candidate_package_id",
+    "tests",
+    "summary",
+    "required_passed",
+    "important_passed",
+    "status"
+  ],
+  "title": "KG-MNP Regression Test Report 1.0",
+  "type": "object",
+  "x-authority-level": "descriptive",
+  "x-identity-field": "report_id"
+}

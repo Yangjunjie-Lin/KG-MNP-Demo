@@ -1,0 +1,114 @@
+{
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/environment-pointer/1.0",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "active_package_id": {
+      "oneOf": [
+        {
+          "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "active_package_version": {
+      "oneOf": [
+        {
+          "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/version"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "active_release_attestation_id": {
+      "oneOf": [
+        {
+          "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "active_release_id": {
+      "oneOf": [
+        {
+          "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "content_digest": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/sha"
+    },
+    "environment_id": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/id"
+    },
+    "generation": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/count"
+    },
+    "manifest_kind": {
+      "const": "KG_MNP_ENVIRONMENT_POINTER"
+    },
+    "pointer_hash": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/sha"
+    },
+    "pointer_id": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/id"
+    },
+    "previous_pointer_hash": {
+      "oneOf": [
+        {
+          "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/sha"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "registry_id": {
+      "oneOf": [
+        {
+          "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "selection_status": {
+      "enum": [
+        "NO_RELEASE_SELECTED",
+        "CONTROL_PLANE_SELECTED"
+      ]
+    }
+  },
+  "required": [
+    "manifest_kind",
+    "schema_version",
+    "pointer_id",
+    "content_digest",
+    "registry_id",
+    "environment_id",
+    "generation",
+    "active_release_id",
+    "active_package_id",
+    "active_package_version",
+    "active_release_attestation_id",
+    "previous_pointer_hash",
+    "selection_status",
+    "pointer_hash"
+  ],
+  "title": "KG-MNP Environment Pointer 1.0",
+  "type": "object",
+  "x-authority-level": "lock",
+  "x-identity-field": "pointer_id"
+}

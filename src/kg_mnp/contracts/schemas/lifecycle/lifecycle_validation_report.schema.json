@@ -1,0 +1,74 @@
+{
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-validation-report/1.0",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "checks": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/checks"
+    },
+    "content_digest": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/sha"
+    },
+    "issues": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/issues"
+    },
+    "manifest_kind": {
+      "const": "KG_MNP_LIFECYCLE_VALIDATION_REPORT"
+    },
+    "production_authority": {
+      "type": "boolean"
+    },
+    "registry_id": {
+      "oneOf": [
+        {
+          "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "report_id": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/id"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "status": {
+      "type": [
+        "string",
+        "number",
+        "boolean",
+        "object",
+        "array",
+        "null"
+      ]
+    },
+    "subject_id": {
+      "oneOf": [
+        {
+          "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "manifest_kind",
+    "schema_version",
+    "report_id",
+    "content_digest",
+    "registry_id",
+    "subject_id",
+    "status",
+    "checks",
+    "issues",
+    "production_authority"
+  ],
+  "title": "KG-MNP Lifecycle Validation Report 1.0",
+  "type": "object",
+  "x-authority-level": "descriptive",
+  "x-identity-field": "report_id"
+}

@@ -1,0 +1,101 @@
+{
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/environment-manifest/1.0",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "activation_quorum": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/positive"
+    },
+    "activation_roles": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/labels"
+    },
+    "allowed_ontology_iris": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/iris"
+    },
+    "allowed_package_names": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/ids"
+    },
+    "allowed_release_types": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/labels"
+    },
+    "breaking_release_policy": {
+      "enum": [
+        "REQUIRE_EXPLICIT_ACK",
+        "ALLOW_WITH_REVIEW"
+      ]
+    },
+    "content_digest": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/sha"
+    },
+    "environment_class": {
+      "enum": [
+        "DEVELOPMENT",
+        "STAGING",
+        "PRODUCTION",
+        "TEST"
+      ]
+    },
+    "environment_id": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/id"
+    },
+    "environment_name": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/name"
+    },
+    "manifest_kind": {
+      "const": "KG_MNP_ENVIRONMENT_MANIFEST"
+    },
+    "pointer_policy": {
+      "enum": [
+        "CAS_GENERATION"
+      ]
+    },
+    "registry_id": {
+      "oneOf": [
+        {
+          "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "rollback_quorum": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/positive"
+    },
+    "rollback_roles": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/labels"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "status": {
+      "enum": [
+        "ACTIVE",
+        "DISABLED"
+      ]
+    }
+  },
+  "required": [
+    "manifest_kind",
+    "schema_version",
+    "environment_id",
+    "content_digest",
+    "registry_id",
+    "environment_name",
+    "environment_class",
+    "allowed_package_names",
+    "allowed_ontology_iris",
+    "allowed_release_types",
+    "activation_roles",
+    "activation_quorum",
+    "rollback_roles",
+    "rollback_quorum",
+    "breaking_release_policy",
+    "pointer_policy",
+    "status"
+  ],
+  "title": "KG-MNP Environment Manifest 1.0",
+  "type": "object",
+  "x-authority-level": "control",
+  "x-identity-field": "environment_id"
+}

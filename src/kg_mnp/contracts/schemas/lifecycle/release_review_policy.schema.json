@@ -1,0 +1,155 @@
+{
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/release-review-policy/1.0",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "activation_prerequisites": {
+      "type": [
+        "string",
+        "number",
+        "boolean",
+        "object",
+        "array",
+        "null"
+      ]
+    },
+    "breaking_change_rules": {
+      "type": [
+        "string",
+        "number",
+        "boolean",
+        "object",
+        "array",
+        "null"
+      ]
+    },
+    "content_digest": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/sha"
+    },
+    "diff_policy": {
+      "type": [
+        "string",
+        "number",
+        "boolean",
+        "object",
+        "array",
+        "null"
+      ]
+    },
+    "immutable_release_policy": {
+      "type": [
+        "string",
+        "number",
+        "boolean",
+        "object",
+        "array",
+        "null"
+      ]
+    },
+    "impact_policy": {
+      "type": [
+        "string",
+        "number",
+        "boolean",
+        "object",
+        "array",
+        "null"
+      ]
+    },
+    "initial_release_policy": {
+      "type": [
+        "string",
+        "number",
+        "boolean",
+        "object",
+        "array",
+        "null"
+      ]
+    },
+    "manifest_kind": {
+      "const": "KG_MNP_RELEASE_REVIEW_POLICY"
+    },
+    "policy_id": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/id"
+    },
+    "policy_version": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/version"
+    },
+    "profile": {
+      "type": [
+        "string",
+        "number",
+        "boolean",
+        "object",
+        "array",
+        "null"
+      ]
+    },
+    "prohibited_operations": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/labels"
+    },
+    "quorum_rules": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/quorumRules"
+    },
+    "regression_policy": {
+      "type": [
+        "string",
+        "number",
+        "boolean",
+        "object",
+        "array",
+        "null"
+      ]
+    },
+    "release_policy_id": {
+      "oneOf": [
+        {
+          "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "review_roles": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/labels"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "version_policy": {
+      "type": [
+        "string",
+        "number",
+        "boolean",
+        "object",
+        "array",
+        "null"
+      ]
+    }
+  },
+  "required": [
+    "manifest_kind",
+    "schema_version",
+    "policy_id",
+    "content_digest",
+    "release_policy_id",
+    "policy_version",
+    "profile",
+    "initial_release_policy",
+    "version_policy",
+    "diff_policy",
+    "impact_policy",
+    "regression_policy",
+    "review_roles",
+    "quorum_rules",
+    "breaking_change_rules",
+    "activation_prerequisites",
+    "immutable_release_policy",
+    "prohibited_operations"
+  ],
+  "title": "KG-MNP Release Review Policy 1.0",
+  "type": "object",
+  "x-authority-level": "control",
+  "x-identity-field": "policy_id"
+}

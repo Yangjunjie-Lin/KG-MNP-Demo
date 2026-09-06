@@ -1,0 +1,134 @@
+{
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/consumer-manifest/1.0",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "consumer_id": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/id"
+    },
+    "consumer_name": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/name"
+    },
+    "consumer_type": {
+      "enum": [
+        "APPLICATION",
+        "SERVICE",
+        "PIPELINE",
+        "REPORT",
+        "OTHER"
+      ]
+    },
+    "content_digest": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/sha"
+    },
+    "criticality": {
+      "enum": [
+        "LOW",
+        "NORMAL",
+        "HIGH",
+        "CRITICAL"
+      ]
+    },
+    "dependency_behavior": {
+      "enum": [
+        "REQUIRE_EXPLICIT_COMPATIBILITY",
+        "ALLOW_PATCH",
+        "ALLOW_MINOR",
+        "BLOCK_BREAKING"
+      ]
+    },
+    "environment_refs": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/ids"
+    },
+    "manifest_kind": {
+      "const": "KG_MNP_CONSUMER_MANIFEST"
+    },
+    "ontology_iri": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/iri"
+    },
+    "owner_label": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/label"
+    },
+    "package_constraints": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/packageConstraints"
+    },
+    "query_contracts": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/queries"
+    },
+    "registry_id": {
+      "oneOf": [
+        {
+          "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "required_cq_ids": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/ids"
+    },
+    "required_graph_roles": {
+      "type": [
+        "string",
+        "number",
+        "boolean",
+        "object",
+        "array",
+        "null"
+      ]
+    },
+    "required_mapping_ids": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/ids"
+    },
+    "required_term_iris": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/iris"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "status": {
+      "enum": [
+        "ACTIVE",
+        "SUPERSEDED",
+        "DISABLED"
+      ]
+    },
+    "supersedes_consumer_id": {
+      "oneOf": [
+        {
+          "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "manifest_kind",
+    "schema_version",
+    "consumer_id",
+    "content_digest",
+    "registry_id",
+    "consumer_name",
+    "consumer_type",
+    "owner_label",
+    "criticality",
+    "ontology_iri",
+    "package_constraints",
+    "required_term_iris",
+    "required_graph_roles",
+    "required_mapping_ids",
+    "required_cq_ids",
+    "query_contracts",
+    "environment_refs",
+    "dependency_behavior",
+    "status",
+    "supersedes_consumer_id"
+  ],
+  "title": "KG-MNP Consumer Manifest 1.0",
+  "type": "object",
+  "x-authority-level": "control",
+  "x-identity-field": "consumer_id"
+}

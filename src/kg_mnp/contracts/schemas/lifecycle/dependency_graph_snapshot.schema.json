@@ -1,0 +1,96 @@
+{
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/dependency-graph-snapshot/1.0",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "completeness_scope": {
+      "type": [
+        "string",
+        "number",
+        "boolean",
+        "object",
+        "array",
+        "null"
+      ]
+    },
+    "consumer_manifest_ids": {
+      "type": [
+        "string",
+        "number",
+        "boolean",
+        "object",
+        "array",
+        "null"
+      ]
+    },
+    "content_digest": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/sha"
+    },
+    "dangling_nodes": {
+      "type": [
+        "string",
+        "number",
+        "boolean",
+        "object",
+        "array",
+        "null"
+      ]
+    },
+    "edges": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/edges"
+    },
+    "illegal_cycles": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/cycles"
+    },
+    "manifest_kind": {
+      "const": "KG_MNP_DEPENDENCY_GRAPH_SNAPSHOT"
+    },
+    "nodes": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/nodes"
+    },
+    "registry_head_hash": {
+      "oneOf": [
+        {
+          "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/sha"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "registry_id": {
+      "oneOf": [
+        {
+          "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "snapshot_id": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/id"
+    }
+  },
+  "required": [
+    "manifest_kind",
+    "schema_version",
+    "snapshot_id",
+    "content_digest",
+    "registry_id",
+    "registry_head_hash",
+    "consumer_manifest_ids",
+    "nodes",
+    "edges",
+    "dangling_nodes",
+    "illegal_cycles",
+    "completeness_scope"
+  ],
+  "title": "KG-MNP Dependency Graph Snapshot 1.0",
+  "type": "object",
+  "x-authority-level": "lock",
+  "x-identity-field": "snapshot_id"
+}

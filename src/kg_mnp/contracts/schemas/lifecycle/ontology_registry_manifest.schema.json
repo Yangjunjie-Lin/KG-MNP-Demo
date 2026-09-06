@@ -1,0 +1,84 @@
+{
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/ontology-registry-manifest/1.0",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "accepted_ontology_iris": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/iris"
+    },
+    "accepted_package_format_versions": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/versions"
+    },
+    "accepted_package_names": {
+      "type": [
+        "string",
+        "number",
+        "boolean",
+        "object",
+        "array",
+        "null"
+      ]
+    },
+    "content_digest": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/sha"
+    },
+    "created_by": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/label"
+    },
+    "manifest_kind": {
+      "const": "KG_MNP_ONTOLOGY_REGISTRY"
+    },
+    "policy_digest": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/sha"
+    },
+    "policy_id": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/id"
+    },
+    "project_id": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/id"
+    },
+    "registry_format_version": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/version"
+    },
+    "registry_id": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/id"
+    },
+    "registry_name": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/name"
+    },
+    "registry_scope": {
+      "enum": [
+        "PROJECT_LOCAL"
+      ]
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "storage_profile": {
+      "enum": [
+        "CONTENT_ADDRESSED_LOCAL"
+      ]
+    }
+  },
+  "required": [
+    "manifest_kind",
+    "schema_version",
+    "registry_id",
+    "content_digest",
+    "registry_format_version",
+    "registry_name",
+    "project_id",
+    "registry_scope",
+    "policy_id",
+    "policy_digest",
+    "accepted_package_format_versions",
+    "accepted_ontology_iris",
+    "accepted_package_names",
+    "storage_profile",
+    "created_by"
+  ],
+  "title": "KG-MNP Ontology Registry Manifest 1.0",
+  "type": "object",
+  "x-authority-level": "control",
+  "x-identity-field": "registry_id"
+}

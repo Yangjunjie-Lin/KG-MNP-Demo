@@ -40,8 +40,8 @@ SELF_PATH = "tests/refactor/_historical_freeze.py"
 # preservation, packaging, Ruff, and the full non-snapshot suite passed. The
 # helper excludes itself to avoid a self-referential digest; every other
 # intended repository file below PROTECTED_ROOTS remains bound.
-EXPECTED_FILE_COUNT = 1356
-EXPECTED_TREE_SHA256 = "ecce5e1a77eb73547fb3372d3117d7770be01680ac152aeea981894f3497bb4e"
+EXPECTED_FILE_COUNT = 1445
+EXPECTED_TREE_SHA256 = "c4bd681415ee6381b77e039a6fb8184c71d2099f0165ff4dfc8abc2b252d0511"
 
 
 def _git(*arguments: str, check: bool = True) -> subprocess.CompletedProcess[bytes]:

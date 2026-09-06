@@ -1,0 +1,122 @@
+{
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/version-compatibility-report/1.0",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "actual_version_change": {
+      "enum": [
+        "UNCHANGED",
+        "PATCH",
+        "MINOR",
+        "MAJOR"
+      ]
+    },
+    "base_version": {
+      "oneOf": [
+        {
+          "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/version"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "candidate_version": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/version"
+    },
+    "compatible": {
+      "type": "boolean"
+    },
+    "content_digest": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/sha"
+    },
+    "issues": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/issues"
+    },
+    "manifest_kind": {
+      "const": "KG_MNP_VERSION_COMPATIBILITY_REPORT"
+    },
+    "pre_one_policy": {
+      "type": [
+        "string",
+        "number",
+        "boolean",
+        "object",
+        "array",
+        "null"
+      ]
+    },
+    "registry_id": {
+      "oneOf": [
+        {
+          "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "report_id": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/id"
+    },
+    "required_version_change": {
+      "enum": [
+        "PATCH",
+        "MINOR",
+        "MAJOR"
+      ]
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "semantic_classification": {
+      "type": [
+        "string",
+        "number",
+        "boolean",
+        "object",
+        "array",
+        "null"
+      ]
+    },
+    "semantic_diff_id": {
+      "oneOf": [
+        {
+          "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "version_relation": {
+      "enum": [
+        "UNCHANGED",
+        "PATCH",
+        "MINOR",
+        "MAJOR"
+      ]
+    }
+  },
+  "required": [
+    "manifest_kind",
+    "schema_version",
+    "report_id",
+    "content_digest",
+    "registry_id",
+    "semantic_diff_id",
+    "base_version",
+    "candidate_version",
+    "version_relation",
+    "semantic_classification",
+    "required_version_change",
+    "actual_version_change",
+    "pre_one_policy",
+    "compatible",
+    "issues"
+  ],
+  "title": "KG-MNP Version Compatibility Report 1.0",
+  "type": "object",
+  "x-authority-level": "descriptive",
+  "x-identity-field": "report_id"
+}

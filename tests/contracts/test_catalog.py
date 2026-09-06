@@ -20,7 +20,7 @@ from kg_mnp.contracts import (
 )
 from kg_mnp.contracts.catalog import DRAFT_2020_12, regenerate_catalog_files
 
-PROMPT05_CONTRACT_COUNT = 83
+PROMPT05_CONTRACT_COUNT = 115
 
 
 def test_catalog_is_the_unique_closed_public_authority() -> None:
@@ -36,7 +36,7 @@ def test_catalog_is_the_unique_closed_public_authority() -> None:
 
 def test_catalog_self_validates_and_all_schemas_are_draft_2020_12() -> None:
     catalog = ContractCatalog.load()
-    validate_contract("contract-catalog-v1-2", catalog.document)
+    validate_contract("contract-catalog-v1-3", catalog.document)
     for spec in catalog.specs:
         schema = get_contract_schema(spec.name)
         assert schema["$id"] == spec.schema_id

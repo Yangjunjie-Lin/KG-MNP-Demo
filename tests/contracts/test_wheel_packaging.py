@@ -9,7 +9,7 @@ from pathlib import Path
 from kg_mnp.contracts import ContractCatalog
 
 ROOT = Path(__file__).resolve().parents[2]
-CURRENT_CONTRACT_COUNT = 83
+CURRENT_CONTRACT_COUNT = 115
 
 
 def _run(*arguments: str, cwd: Path) -> subprocess.CompletedProcess[str]:

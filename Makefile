@@ -677,7 +677,7 @@ verify-application-phase-06: verify-application-phase-05 \
 	verify-application-phase-06-offline
 	python scripts/activation_integration.py
 
-.PHONY: verify-contract-catalog verify-domain-packs \
+.PHONY: verify-contract-catalog verify-domain-packs verify-lifecycle \
 	verify-project-workspace verify-prompt-02-offline
 
 verify-contract-catalog:
@@ -687,6 +687,13 @@ verify-contract-catalog:
 		tests/cli/test_contract_cli.py
 	kg-mnp contracts list --json
 	kg-mnp contracts verify-catalog
+
+verify-lifecycle:
+	python scripts/generate_prompt06_contracts.py --check
+	python scripts/generate_contract_catalog.py --check
+	python -c "from kg_mnp.contracts.registry import load_contract_registry; assert len(load_contract_registry().specs) == 115"
+	python -m ruff check src/kg_mnp/lifecycle scripts/generate_prompt06_contracts.py
+	python -m pytest -q tests/lifecycle
 
 verify-domain-packs:
 	python scripts/generate_prompt02_pack_manifests.py --check

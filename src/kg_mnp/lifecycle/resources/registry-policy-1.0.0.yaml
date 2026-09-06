@@ -1,0 +1,14 @@
+policy_id: urn:kg-mnp:ontology-registry-policy:954955971d004b7d12607a3ff51de6964e0e2afe3a7bdc8c3a04398781208886
+content_digest: 6a2747ec8b168097216f6530306ee75310ebbe6633861ebef79e6080f69d7f84
+policy_version: 1.0.0
+registry_format_version: 1.0.0
+registry_scope: PROJECT_LOCAL
+storage_profile: CONTENT_ADDRESSED_LOCAL
+package_import_policy: [REQUIRE_VALID_PACKAGE, REQUIRE_PACKAGE_LOCK, REQUIRE_SUPPORTED_CONTRACTS, PRESERVE_PACKAGE_BYTES, REJECT_NAME_VERSION_COLLISION, REJECT_VERSION_IRI_COLLISION, REJECT_SYMLINK, REJECT_UNDECLARED_FILE]
+event_log_policy: APPEND_ONLY_HASH_CHAIN
+snapshot_policy: DETERMINISTIC_EVENT_REPLAY
+compatibility_policy: VERIFIED_SUPPORTED_HISTORICAL_CONTRACTS
+immutability_policy: [PACKAGE_DELETE_FORBIDDEN, PACKAGE_OVERWRITE_FORBIDDEN, RELEASE_MUTATION_FORBIDDEN, EVENT_REWRITE_FORBIDDEN, POINTER_CAS_REQUIRED]
+consumer_policy: OFFLINE_DECLARATIVE_ONLY
+resource_limits: {max_registry_packages: 10000, max_package_bytes: 1073741824, max_package_files: 10000, max_registry_events: 100000, max_consumers: 10000, max_feedback_records: 10000, max_change_proposals: 10000, max_diff_changes: 100000, max_dependency_nodes: 100000, max_dependency_edges: 200000, max_regression_tests: 100000, max_release_candidates: 10000, max_environments: 32, max_event_payload_bytes: 16777216, max_snapshot_bytes: 67108864}
+prohibited_operations: [NETWORK_ACCESS, REMOTE_PACKAGE_FETCH, AUTO_INSTALL, PACKAGE_MUTATION, PACKAGE_DELETE, FORCE_OVERWRITE, GRAPHDB_WRITE, OMS_WRITE, ODS_WRITE, OSS_ACTION, AUTO_RELEASE, AUTO_ACTIVATE, AUTO_ROLLBACK, AUTO_VERSION_BUMP, AUTO_ONTOLOGY_REPAIR, DYNAMIC_CODE, SHELL_COMMAND]

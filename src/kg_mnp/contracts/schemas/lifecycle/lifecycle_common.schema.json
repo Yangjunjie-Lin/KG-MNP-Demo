@@ -1,0 +1,1208 @@
+{
+  "$defs": {
+    "artifactRefs": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "artifact_id": {
+            "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/id"
+          },
+          "contract": {
+            "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/label"
+          },
+          "path": {
+            "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/path"
+          },
+          "sha256": {
+            "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/sha"
+          }
+        },
+        "required": [
+          "artifact_id",
+          "contract",
+          "path",
+          "sha256"
+        ],
+        "type": "object"
+      },
+      "maxItems": 100000,
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "authorityDigests": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "artifact_id": {
+            "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/id"
+          },
+          "content_digest": {
+            "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/sha"
+          }
+        },
+        "required": [
+          "artifact_id",
+          "content_digest"
+        ],
+        "type": "object"
+      },
+      "maxItems": 32,
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "bool": {
+      "type": "boolean"
+    },
+    "byteLimit": {
+      "maximum": 1073741824,
+      "minimum": 1,
+      "type": "integer"
+    },
+    "change": {
+      "additionalProperties": false,
+      "properties": {
+        "affected_iris": {
+          "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/iris"
+        },
+        "base_artifact_digest": {
+          "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/sha"
+        },
+        "candidate_artifact_digest": {
+          "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/sha"
+        },
+        "change_id": {
+          "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/id"
+        },
+        "classification": {
+          "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/classification"
+        },
+        "classification_rule_id": {
+          "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/label"
+        },
+        "component": {
+          "enum": [
+            "IDENTITY",
+            "TBOX",
+            "ABOX",
+            "SHACL",
+            "MAPPING",
+            "CQ",
+            "DEPENDENCY",
+            "ANNOTATION",
+            "PROVENANCE",
+            "METADATA"
+          ]
+        },
+        "new_value": {
+          "oneOf": [
+            {
+              "maxLength": 100000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "old_value": {
+          "oneOf": [
+            {
+              "maxLength": 100000,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "operation": {
+          "enum": [
+            "ADD",
+            "REMOVE",
+            "MODIFY",
+            "RETYPE",
+            "REORDER_SEMANTICALLY_IRRELEVANT"
+          ]
+        },
+        "rationale": {
+          "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/text"
+        },
+        "semantic_predicate": {
+          "oneOf": [
+            {
+              "maxLength": 2048,
+              "minLength": 1,
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "semantic_subject": {
+          "maxLength": 2048,
+          "minLength": 1,
+          "type": "string"
+        }
+      },
+      "required": [
+        "change_id",
+        "component",
+        "operation",
+        "semantic_subject",
+        "semantic_predicate",
+        "old_value",
+        "new_value",
+        "affected_iris",
+        "classification",
+        "classification_rule_id",
+        "rationale",
+        "base_artifact_digest",
+        "candidate_artifact_digest"
+      ],
+      "type": "object"
+    },
+    "changes": {
+      "items": {
+        "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/change"
+      },
+      "maxItems": 100000,
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "checks": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "artifact_ref": {
+            "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/id"
+          },
+          "check": {
+            "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/label"
+          },
+          "status": {
+            "enum": [
+              "PASSED",
+              "FAILED",
+              "NOT_RUN"
+            ]
+          }
+        },
+        "required": [
+          "check",
+          "status",
+          "artifact_ref"
+        ],
+        "type": "object"
+      },
+      "maxItems": 100000,
+      "minItems": 1,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "classification": {
+      "enum": [
+        "NO_CHANGE",
+        "ANNOTATION_ONLY",
+        "PATCH_COMPATIBLE",
+        "ADDITIVE",
+        "RELAXING",
+        "DATA_CHANGE",
+        "POTENTIALLY_BREAKING",
+        "BREAKING",
+        "UNKNOWN_REQUIRES_REVIEW"
+      ]
+    },
+    "classificationCounts": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "classification": {
+            "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/classification"
+          },
+          "count": {
+            "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/count"
+          }
+        },
+        "required": [
+          "classification",
+          "count"
+        ],
+        "type": "object"
+      },
+      "maxItems": 9,
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "count": {
+      "maximum": 1000000000,
+      "minimum": 0,
+      "type": "integer"
+    },
+    "cycles": {
+      "items": {
+        "items": {
+          "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/text"
+        },
+        "maxItems": 100,
+        "minItems": 0,
+        "type": "array",
+        "uniqueItems": true
+      },
+      "maxItems": 10000,
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "edges": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "edge_type": {
+            "enum": [
+              "BUILT_FROM",
+              "BASED_ON",
+              "RELEASES",
+              "ACTIVE_IN",
+              "REQUIRES_PACKAGE",
+              "REQUIRES_TERM",
+              "REQUIRES_MAPPING",
+              "REQUIRES_CQ",
+              "USES_DOMAIN_PACK",
+              "SUPERSEDES"
+            ]
+          },
+          "source": {
+            "maxLength": 2048,
+            "minLength": 1,
+            "type": "string"
+          },
+          "target": {
+            "maxLength": 2048,
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "source",
+          "target",
+          "edge_type"
+        ],
+        "type": "object"
+      },
+      "maxItems": 200000,
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "eventPayload": {
+      "additionalProperties": false,
+      "properties": {
+        "artifact_refs": {
+          "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/artifactRefs"
+        },
+        "related_ids": {
+          "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/ids"
+        },
+        "subject_id": {
+          "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/id"
+        },
+        "transition": {
+          "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/label"
+        }
+      },
+      "required": [
+        "subject_id"
+      ],
+      "type": "object"
+    },
+    "eventType": {
+      "enum": [
+        "RegistryInitialized",
+        "PackageImported",
+        "FeedbackRecorded",
+        "ChangeProposalCreated",
+        "ChangeProposalSubmitted",
+        "CandidatePackageAttached",
+        "ChangeEvaluated",
+        "ConsumerRegistered",
+        "ConsumerSuperseded",
+        "ReleaseCandidateCreated",
+        "ReleaseCandidateSubmitted",
+        "ReleaseReviewInitialized",
+        "ReleaseReviewRecorded",
+        "ReleaseReviewFinalized",
+        "ReleasePublished",
+        "EnvironmentCreated",
+        "ActivationProposed",
+        "ActivationReviewed",
+        "ActivationApplied",
+        "RollbackProposed",
+        "RollbackReviewed",
+        "RollbackApplied"
+      ]
+    },
+    "id": {
+      "maxLength": 256,
+      "minLength": 1,
+      "pattern": "^urn:kg-mnp:[a-z0-9-]+:[0-9a-f]{64}$",
+      "type": "string"
+    },
+    "ids": {
+      "items": {
+        "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/id"
+      },
+      "maxItems": 10000,
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "iri": {
+      "maxLength": 2048,
+      "minLength": 1,
+      "pattern": "^(?:https?://|urn:)[^\\s<>\\\"{}|\\\\^`]+$",
+      "type": "string"
+    },
+    "iris": {
+      "items": {
+        "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/iri"
+      },
+      "maxItems": 10000,
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "issues": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "code": {
+            "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/label"
+          },
+          "message": {
+            "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/text"
+          },
+          "severity": {
+            "enum": [
+              "ERROR",
+              "WARNING",
+              "INFO"
+            ]
+          },
+          "subject": {
+            "oneOf": [
+              {
+                "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/iri"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "code",
+          "subject",
+          "severity",
+          "message"
+        ],
+        "type": "object"
+      },
+      "maxItems": 10000,
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "label": {
+      "maxLength": 256,
+      "minLength": 1,
+      "type": "string"
+    },
+    "labels": {
+      "items": {
+        "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/label"
+      },
+      "maxItems": 10000,
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "metrics": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/label"
+          },
+          "unit": {
+            "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/label"
+          },
+          "value": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "name",
+          "value",
+          "unit"
+        ],
+        "type": "object"
+      },
+      "maxItems": 1000,
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "migrations": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "requirement": {
+            "enum": [
+              "HUMAN_COMPATIBILITY_REVIEW",
+              "CONSUMER_UPDATE_REVIEW",
+              "REVALIDATE_QUERY_CONTRACT",
+              "BREAKING_CHANGE_ACKNOWLEDGEMENT"
+            ]
+          },
+          "subject": {
+            "maxLength": 2048,
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "subject",
+          "requirement"
+        ],
+        "type": "object"
+      },
+      "maxItems": 10000,
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "name": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+      "type": "string"
+    },
+    "names": {
+      "items": {
+        "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/name"
+      },
+      "maxItems": 10000,
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "nodes": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "artifact_ref": {
+            "oneOf": [
+              {
+                "maxLength": 2048,
+                "minLength": 1,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "node_id": {
+            "maxLength": 2048,
+            "minLength": 1,
+            "type": "string"
+          },
+          "node_type": {
+            "enum": [
+              "PACKAGE",
+              "RELEASE",
+              "CONSUMER",
+              "ENVIRONMENT",
+              "DOMAIN_PACK_LOCK",
+              "MAPPING",
+              "CQ",
+              "ONTOLOGY_TERM"
+            ]
+          }
+        },
+        "required": [
+          "node_id",
+          "node_type",
+          "artifact_ref"
+        ],
+        "type": "object"
+      },
+      "maxItems": 100000,
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "packageConstraints": {
+      "additionalProperties": false,
+      "properties": {
+        "maximum_version_exclusive": {
+          "oneOf": [
+            {
+              "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/version"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "minimum_version": {
+          "oneOf": [
+            {
+              "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/version"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "package_ids": {
+          "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/ids"
+        },
+        "package_names": {
+          "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/names"
+        }
+      },
+      "required": [
+        "package_names",
+        "minimum_version",
+        "maximum_version_exclusive",
+        "package_ids"
+      ],
+      "type": "object"
+    },
+    "path": {
+      "maxLength": 512,
+      "minLength": 1,
+      "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.?(?:/|$))[A-Za-z0-9_.-]+(?:/[A-Za-z0-9_.-]+)*$",
+      "type": "string"
+    },
+    "positive": {
+      "maximum": 1000000000,
+      "minimum": 1,
+      "type": "integer"
+    },
+    "projections": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "artifact_id": {
+            "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/id"
+          },
+          "related_ids": {
+            "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/ids"
+          },
+          "status": {
+            "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/label"
+          }
+        },
+        "required": [
+          "artifact_id",
+          "status",
+          "related_ids"
+        ],
+        "type": "object"
+      },
+      "maxItems": 100000,
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "queries": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "assertions": {
+            "items": {
+              "additionalProperties": false,
+              "properties": {
+                "assertion_type": {
+                  "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/label"
+                },
+                "boolean_value": {
+                  "oneOf": [
+                    {
+                      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/bool"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "integer_value": {
+                  "oneOf": [
+                    {
+                      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/count"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "semantic_hash": {
+                  "oneOf": [
+                    {
+                      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/sha"
+                    },
+                    {
+                      "type": "null"
+                    }
+                  ]
+                },
+                "string_values": {
+                  "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/texts"
+                }
+              },
+              "required": [
+                "assertion_type",
+                "boolean_value",
+                "integer_value",
+                "string_values",
+                "semantic_hash"
+              ],
+              "type": "object"
+            },
+            "maxItems": 1000,
+            "minItems": 1,
+            "type": "array",
+            "uniqueItems": true
+          },
+          "query_id": {
+            "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/id"
+          },
+          "query_text": {
+            "maxLength": 100000,
+            "minLength": 1,
+            "type": "string"
+          },
+          "query_type": {
+            "enum": [
+              "ASK",
+              "SELECT",
+              "CONSTRUCT"
+            ]
+          },
+          "resource_limits": {
+            "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/queryLimits"
+          },
+          "target_graph_roles": {
+            "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/labels"
+          }
+        },
+        "required": [
+          "query_id",
+          "query_type",
+          "query_text",
+          "target_graph_roles",
+          "assertions",
+          "resource_limits"
+        ],
+        "type": "object"
+      },
+      "maxItems": 1000,
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "queryLimits": {
+      "additionalProperties": false,
+      "properties": {
+        "max_query_characters": {
+          "maximum": 100000,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_query_path_depth": {
+          "maximum": 100000,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_query_results": {
+          "maximum": 100000,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_query_seconds": {
+          "maximum": 100000,
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "max_query_characters",
+        "max_query_results",
+        "max_query_seconds",
+        "max_query_path_depth"
+      ],
+      "type": "object"
+    },
+    "quorumRules": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "alternative_roles": {
+            "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/roles"
+          },
+          "classification": {
+            "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/releaseType"
+          },
+          "minimum_distinct_reviewers": {
+            "maximum": 5,
+            "minimum": 1,
+            "type": "integer"
+          },
+          "required_roles": {
+            "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/roles"
+          }
+        },
+        "required": [
+          "classification",
+          "required_roles",
+          "alternative_roles",
+          "minimum_distinct_reviewers"
+        ],
+        "type": "object"
+      },
+      "maxItems": 16,
+      "minItems": 1,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "rawDelta": {
+      "additionalProperties": false,
+      "properties": {
+        "added": {
+          "items": {
+            "maxLength": 100000,
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 100000,
+          "minItems": 0,
+          "type": "array",
+          "uniqueItems": true
+        },
+        "removed": {
+          "items": {
+            "maxLength": 100000,
+            "minLength": 1,
+            "type": "string"
+          },
+          "maxItems": 100000,
+          "minItems": 0,
+          "type": "array",
+          "uniqueItems": true
+        }
+      },
+      "required": [
+        "added",
+        "removed"
+      ],
+      "type": "object"
+    },
+    "registryLimits": {
+      "additionalProperties": false,
+      "properties": {
+        "max_change_proposals": {
+          "maximum": 1073741824,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_consumers": {
+          "maximum": 1073741824,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_dependency_edges": {
+          "maximum": 1073741824,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_dependency_nodes": {
+          "maximum": 1073741824,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_diff_changes": {
+          "maximum": 1073741824,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_environments": {
+          "maximum": 1073741824,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_event_payload_bytes": {
+          "maximum": 1073741824,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_feedback_records": {
+          "maximum": 1073741824,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_package_bytes": {
+          "maximum": 1073741824,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_package_files": {
+          "maximum": 1073741824,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_registry_events": {
+          "maximum": 1073741824,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_registry_packages": {
+          "maximum": 1073741824,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_regression_tests": {
+          "maximum": 1073741824,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_release_candidates": {
+          "maximum": 1073741824,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_snapshot_bytes": {
+          "maximum": 1073741824,
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "max_registry_packages",
+        "max_package_bytes",
+        "max_package_files",
+        "max_registry_events",
+        "max_consumers",
+        "max_feedback_records",
+        "max_change_proposals",
+        "max_diff_changes",
+        "max_dependency_nodes",
+        "max_dependency_edges",
+        "max_regression_tests",
+        "max_release_candidates",
+        "max_environments",
+        "max_event_payload_bytes",
+        "max_snapshot_bytes"
+      ],
+      "type": "object"
+    },
+    "releaseType": {
+      "enum": [
+        "INITIAL_RELEASE",
+        "NO_CHANGE",
+        "ANNOTATION_ONLY",
+        "PATCH_COMPATIBLE",
+        "ADDITIVE",
+        "RELAXING",
+        "DATA_CHANGE",
+        "POTENTIALLY_BREAKING",
+        "BREAKING",
+        "UNKNOWN_REQUIRES_REVIEW"
+      ]
+    },
+    "roles": {
+      "items": {
+        "enum": [
+          "RELEASE_MANAGER",
+          "ONTOLOGY_ENGINEER",
+          "DOMAIN_REVIEWER",
+          "SECURITY_REVIEWER",
+          "DATA_STEWARD"
+        ]
+      },
+      "maxItems": 5,
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "sha": {
+      "maxLength": 64,
+      "minLength": 1,
+      "pattern": "^[a-f0-9]{64}$",
+      "type": "string"
+    },
+    "test": {
+      "additionalProperties": false,
+      "properties": {
+        "affected_iris": {
+          "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/iris"
+        },
+        "assertion_type": {
+          "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/label"
+        },
+        "consumer_ref": {
+          "oneOf": [
+            {
+              "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "expected_result": {
+          "additionalProperties": false,
+          "properties": {
+            "assertion_type": {
+              "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/label"
+            },
+            "boolean_value": {
+              "oneOf": [
+                {
+                  "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/bool"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "integer_value": {
+              "oneOf": [
+                {
+                  "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/count"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "semantic_hash": {
+              "oneOf": [
+                {
+                  "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/sha"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "string_values": {
+              "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/texts"
+            }
+          },
+          "required": [
+            "assertion_type",
+            "boolean_value",
+            "integer_value",
+            "string_values",
+            "semantic_hash"
+          ],
+          "type": "object"
+        },
+        "query_type": {
+          "oneOf": [
+            {
+              "enum": [
+                "ASK",
+                "SELECT",
+                "CONSTRUCT"
+              ]
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "requirement_level": {
+          "enum": [
+            "REQUIRED",
+            "IMPORTANT",
+            "OPTIONAL"
+          ]
+        },
+        "result_limit": {
+          "maximum": 100000,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "source_artifact_ref": {
+          "oneOf": [
+            {
+              "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/id"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "target_package_id": {
+          "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/id"
+        },
+        "test_category": {
+          "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/label"
+        },
+        "test_id": {
+          "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/id"
+        },
+        "timeout_seconds": {
+          "maximum": 60,
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "test_id",
+        "test_category",
+        "source_artifact_ref",
+        "target_package_id",
+        "query_type",
+        "assertion_type",
+        "expected_result",
+        "requirement_level",
+        "affected_iris",
+        "consumer_ref",
+        "timeout_seconds",
+        "result_limit"
+      ],
+      "type": "object"
+    },
+    "testResults": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "evidence_digest": {
+            "oneOf": [
+              {
+                "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/sha"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "issues": {
+            "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/texts"
+          },
+          "status": {
+            "enum": [
+              "PASSED",
+              "FAILED",
+              "UNVERIFIED",
+              "NOT_APPLICABLE",
+              "REJECTED",
+              "TIMEOUT",
+              "ENGINE_FAILED"
+            ]
+          },
+          "test_id": {
+            "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/id"
+          }
+        },
+        "required": [
+          "test_id",
+          "status",
+          "evidence_digest",
+          "issues"
+        ],
+        "type": "object"
+      },
+      "maxItems": 10000,
+      "minItems": 1,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "testSummary": {
+      "additionalProperties": false,
+      "properties": {
+        "failed": {
+          "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/count"
+        },
+        "incomplete": {
+          "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/count"
+        },
+        "passed": {
+          "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/count"
+        },
+        "total": {
+          "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/count"
+        }
+      },
+      "required": [
+        "total",
+        "passed",
+        "failed",
+        "incomplete"
+      ],
+      "type": "object"
+    },
+    "tests": {
+      "items": {
+        "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/test"
+      },
+      "maxItems": 10000,
+      "minItems": 1,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "text": {
+      "maxLength": 8192,
+      "minLength": 1,
+      "type": "string"
+    },
+    "texts": {
+      "items": {
+        "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/text"
+      },
+      "maxItems": 10000,
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "time": {
+      "maxLength": 40,
+      "minLength": 1,
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(?:\\.\\d{1,6})?Z$",
+      "type": "string"
+    },
+    "version": {
+      "maxLength": 64,
+      "minLength": 1,
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)$",
+      "type": "string"
+    },
+    "versions": {
+      "items": {
+        "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/version"
+      },
+      "maxItems": 10000,
+      "minItems": 0,
+      "type": "array",
+      "uniqueItems": true
+    }
+  },
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {},
+  "required": [],
+  "title": "KG-MNP Lifecycle Common 1.0",
+  "type": "object"
+}

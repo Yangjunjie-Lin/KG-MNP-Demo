@@ -1,0 +1,148 @@
+{
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/feedback-record/1.0",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "artifact_refs": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/artifactRefs"
+    },
+    "content_digest": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/sha"
+    },
+    "evidence_refs": {
+      "type": [
+        "string",
+        "number",
+        "boolean",
+        "object",
+        "array",
+        "null"
+      ]
+    },
+    "feedback_id": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/id"
+    },
+    "feedback_type": {
+      "enum": [
+        "DATA_QUALITY",
+        "MODELING_QUALITY",
+        "VALIDATION_FAILURE",
+        "COMPETENCY_QUESTION_FAILURE",
+        "DOMAIN_REQUIREMENT",
+        "CONSUMER_INCOMPATIBILITY",
+        "SECURITY",
+        "PERFORMANCE",
+        "INTEGRATION",
+        "USER_REVIEW",
+        "OTHER",
+        "DEFECT"
+      ]
+    },
+    "manifest_kind": {
+      "const": "KG_MNP_FEEDBACK_RECORD"
+    },
+    "metric_records": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/metrics"
+    },
+    "observations": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/labels"
+    },
+    "registry_id": {
+      "oneOf": [
+        {
+          "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "reported_by": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/label"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "severity": {
+      "type": [
+        "string",
+        "number",
+        "boolean",
+        "object",
+        "array",
+        "null"
+      ]
+    },
+    "source_type": {
+      "enum": [
+        "HUMAN",
+        "PACKAGE_VALIDATION",
+        "REGRESSION",
+        "APPLICATION_EXPORT",
+        "DIAGNOSTIC_EXPORT",
+        "INTEGRATION_EXPORT"
+      ]
+    },
+    "status": {
+      "enum": [
+        "OPEN",
+        "LINKED_TO_CHANGE",
+        "RESOLVED_BY_RELEASE",
+        "CLOSED_NO_CHANGE"
+      ]
+    },
+    "target_environment_id": {
+      "oneOf": [
+        {
+          "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "target_package_id": {
+      "oneOf": [
+        {
+          "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "target_release_id": {
+      "oneOf": [
+        {
+          "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    }
+  },
+  "required": [
+    "manifest_kind",
+    "schema_version",
+    "feedback_id",
+    "content_digest",
+    "registry_id",
+    "feedback_type",
+    "severity",
+    "source_type",
+    "target_package_id",
+    "target_release_id",
+    "target_environment_id",
+    "observations",
+    "metric_records",
+    "artifact_refs",
+    "evidence_refs",
+    "reported_by",
+    "status"
+  ],
+  "title": "KG-MNP Feedback Record 1.0",
+  "type": "object",
+  "x-authority-level": "descriptive",
+  "x-identity-field": "feedback_id"
+}

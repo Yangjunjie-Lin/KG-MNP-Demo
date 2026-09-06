@@ -1,0 +1,11 @@
+policy_id: urn:kg-mnp:regression-policy:567b3d2ce0063d2dde5bc5cacc080e94513aa366f9cfda0cc53f26f58bdff97d
+content_digest: d7899b6ea03eb7b997b519c2cf6ff01500b91b88c01f5c7aca437e803c3deab2
+policy_version: 1.0.0
+required_test_categories: [PACKAGE_REVERIFY, CANDIDATE_INTERNAL_CQ, BASE_REQUIRED_CQ_CARRY_FORWARD, DIFF_EXPECTATION, DEPENDENCY_RESOLUTION, IMPACT_TARGET_CHECK, PROVENANCE_CLOSURE, RELEASE_METADATA_CHECK]
+carry_forward_policy: ALL_BASE_REQUIRED_CQ
+consumer_test_policy: ALL_DECLARED_CONTRACTS
+impact_test_policy: ALL_KNOWN_AFFECTED_TARGETS
+query_security_policy: OFFLINE_READ_ONLY_ISOLATED
+result_policy: ALL_REQUIRED_AND_IMPORTANT_PASS
+resource_limits: {max_query_characters: 100000, max_query_results: 100000, max_query_seconds: 60, max_query_path_depth: 8}
+prohibited_operations: [NETWORK_ACCESS, SPARQL_UPDATE, SERVICE, AUTO_REPAIR]

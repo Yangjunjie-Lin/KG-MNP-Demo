@@ -43,7 +43,7 @@ PROMPT03_CONTRACTS = {
     "quality-report",
     "ingestion-run",
 }
-PROMPT05_CONTRACT_COUNT = 83
+PROMPT05_CONTRACT_COUNT = 115
 
 
 def test_original_twenty_contract_schema_bytes_are_unchanged() -> None:
@@ -67,13 +67,14 @@ def test_prompt03_contracts_are_single_catalog_ingestion_scope_and_packaged() ->
         assert get_contract_schema(name)["$schema"] == "https://json-schema.org/draft/2020-12/schema"
 
 
-def test_catalog_1_2_adds_compilation_without_mutating_frozen_1_0_or_1_1() -> None:
+def test_catalog_1_3_adds_lifecycle_without_mutating_frozen_1_0_or_1_1() -> None:
     catalog = ContractCatalog.load()
-    assert catalog.document["schema_version"] == "1.2.0"
-    validate_contract("contract-catalog-v1-2", catalog.document)
+    assert catalog.document["schema_version"] == "1.3.0"
+    validate_contract("contract-catalog-v1-3", catalog.document)
     frozen = get_contract_schema("contract-catalog")
     migration = get_contract_schema("contract-catalog-v1-1")
     compilation = get_contract_schema("contract-catalog-v1-2")
+    lifecycle = get_contract_schema("contract-catalog-v1-3")
     assert frozen["$id"].endswith("/contract-catalog/1.0")
     assert frozen["properties"]["schema_version"]["$ref"].endswith(
         "/toolchain-common/1.0#/$defs/schemaVersion"
@@ -86,3 +87,4 @@ def test_catalog_1_2_adds_compilation_without_mutating_frozen_1_0_or_1_1() -> No
     assert "ingestion" in migration["properties"]["contracts"]["items"]["properties"]["scope"]["enum"]
     assert compilation["properties"]["schema_version"]["const"] == "1.2.0"
     assert "compilation" in compilation["properties"]["contracts"]["items"]["properties"]["scope"]["enum"]
+    assert "lifecycle" in lifecycle["properties"]["contracts"]["items"]["properties"]["scope"]["enum"]

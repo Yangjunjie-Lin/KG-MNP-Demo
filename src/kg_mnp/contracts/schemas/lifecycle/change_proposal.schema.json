@@ -1,0 +1,136 @@
+{
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/change-proposal/1.0",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "affected_iris": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/iris"
+    },
+    "base_package_id": {
+      "oneOf": [
+        {
+          "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "base_release_id": {
+      "oneOf": [
+        {
+          "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "change_proposal_id": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/id"
+    },
+    "change_scope": {
+      "enum": [
+        "TBOX",
+        "ABOX",
+        "SHACL",
+        "MAPPING",
+        "CQ",
+        "PROVENANCE",
+        "PACKAGE_METADATA"
+      ]
+    },
+    "change_type": {
+      "enum": [
+        "CORRECTIVE",
+        "ADDITIVE",
+        "DEPRECATION",
+        "BREAKING_SCHEMA_CHANGE",
+        "CONSTRAINT_CHANGE",
+        "MAPPING_CHANGE",
+        "DATA_UPDATE",
+        "SECURITY_REMEDIATION",
+        "INITIAL_RELEASE",
+        "NO_CHANGE_ASSESSMENT"
+      ]
+    },
+    "constraints": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/labels"
+    },
+    "content_digest": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/sha"
+    },
+    "feedback_refs": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/ids"
+    },
+    "manifest_kind": {
+      "const": "KG_MNP_CHANGE_PROPOSAL"
+    },
+    "proposal_status": {
+      "enum": [
+        "DRAFT",
+        "SUBMITTED",
+        "CANDIDATE_ATTACHED",
+        "EVALUATED",
+        "APPROVED_FOR_RELEASE_CANDIDATE",
+        "REJECTED",
+        "SUPERSEDED"
+      ]
+    },
+    "registry_id": {
+      "oneOf": [
+        {
+          "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "requested_outcomes": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/labels"
+    },
+    "required_competency_questions": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/ids"
+    },
+    "risk_class": {
+      "type": [
+        "string",
+        "number",
+        "boolean",
+        "object",
+        "array",
+        "null"
+      ]
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "submitted_by": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/label"
+    }
+  },
+  "required": [
+    "manifest_kind",
+    "schema_version",
+    "change_proposal_id",
+    "content_digest",
+    "registry_id",
+    "base_package_id",
+    "base_release_id",
+    "feedback_refs",
+    "change_type",
+    "change_scope",
+    "affected_iris",
+    "requested_outcomes",
+    "required_competency_questions",
+    "risk_class",
+    "constraints",
+    "submitted_by",
+    "proposal_status"
+  ],
+  "title": "KG-MNP Change Proposal 1.0",
+  "type": "object",
+  "x-authority-level": "proposal",
+  "x-identity-field": "change_proposal_id"
+}

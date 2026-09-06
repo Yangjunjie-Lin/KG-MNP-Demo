@@ -1,0 +1,109 @@
+{
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/registry-event/1.0",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "content_digest": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/sha"
+    },
+    "event_hash": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/sha"
+    },
+    "event_id": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/id"
+    },
+    "event_type": {
+      "enum": [
+        "RegistryInitialized",
+        "PackageImported",
+        "FeedbackRecorded",
+        "ChangeProposalCreated",
+        "ChangeProposalSubmitted",
+        "CandidatePackageAttached",
+        "ChangeEvaluated",
+        "ConsumerRegistered",
+        "ConsumerSuperseded",
+        "ReleaseCandidateCreated",
+        "ReleaseCandidateSubmitted",
+        "ReleaseReviewInitialized",
+        "ReleaseReviewRecorded",
+        "ReleaseReviewFinalized",
+        "ReleasePublished",
+        "EnvironmentCreated",
+        "ActivationProposed",
+        "ActivationReviewed",
+        "ActivationApplied",
+        "RollbackProposed",
+        "RollbackReviewed",
+        "RollbackApplied"
+      ]
+    },
+    "manifest_kind": {
+      "const": "KG_MNP_REGISTRY_EVENT"
+    },
+    "observed_at": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/time"
+    },
+    "payload": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/eventPayload"
+    },
+    "previous_event_hash": {
+      "oneOf": [
+        {
+          "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/sha"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "previous_semantic_event_hash": {
+      "oneOf": [
+        {
+          "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/sha"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "registry_id": {
+      "oneOf": [
+        {
+          "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/id"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "semantic_event_hash": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/sha"
+    },
+    "sequence": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/lifecycle/lifecycle-common/1.0#/$defs/positive"
+    }
+  },
+  "required": [
+    "manifest_kind",
+    "schema_version",
+    "event_id",
+    "content_digest",
+    "registry_id",
+    "sequence",
+    "event_type",
+    "previous_event_hash",
+    "previous_semantic_event_hash",
+    "payload",
+    "observed_at",
+    "semantic_event_hash",
+    "event_hash"
+  ],
+  "title": "KG-MNP Registry Event 1.0",
+  "type": "object",
+  "x-authority-level": "control",
+  "x-identity-field": "event_id"
+}
