@@ -312,9 +312,10 @@ def test_stage08_ci_cleanup_and_publication_boundary_are_closed() -> None:
     readme = (ROOT / "README.md").read_text(encoding="utf-8")
     assert "# KG-MNP Ontology Toolchain" in readme
     assert "Versioned Ontology Package" in readme
-    assert "publication reconstruction and verification" in readme
+    assert "CAS 发布" in readme and "Attestation" in readme
     assert "No Agent or LLM is an ontology authority" in readme
-    assert "kg-mnp-phase06-baseline-2026-08-30" in readme
+    baseline = subprocess.run(["git", "rev-list", "-n", "1", "kg-mnp-phase06-baseline-2026-08-30"], cwd=ROOT, capture_output=True, text=True, check=True)
+    assert baseline.stdout.strip() == "e45da340267de8d4b7b3a54177822aa641e3a601"
 
     stage08_sources = "\n".join(
         path.read_text(encoding="utf-8")

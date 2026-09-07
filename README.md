@@ -3,6 +3,7 @@
 Evidence-bound, review-governed and deterministic ontology engineering.
 
 KG-MNP 将资料转为带证据的 KG-IR，经过候选、人工审核、确定性编译和本地发布。
+产品不以携号转网资格判断为中央任务；MNP 只是一个独立领域包。
 **当前状态：NO_GO_OPEN_CORE_REQUIREMENTS，不是已验收发行候选。**
 KG-MNP Ontology Workbench / KG-MNP 本体工程工作台已有中文界面和 Minimal 初始发布流程；
 跨领域、后续版本治理和完整仓库退役仍未完成。
@@ -40,6 +41,7 @@ GraphDB live 的许可/环境不是本地未完成功能的解释。
 
 资料 → Source → KG-IR/Evidence → Scope/CQ/Baseline → 候选 → 人工审核 →
 Confirmed Package → 编译/验证 → Ontology Package → Registry → 初始 Release。
+正式工件是可验证的 Versioned Ontology Package，不是未经审核的 Provider 输出。
 
 VALIDATED_UNPUBLISHED、IMPORTED_VERIFIED、RELEASED、CONTROL_PLANE_SELECTED
 和外部部署是不同状态。当前界面不能将本地发布称为环境激活或外部部署。
