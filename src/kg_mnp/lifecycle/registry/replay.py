@@ -59,6 +59,8 @@ def verify_registry(root):
     _verify_head(head); _verify_snapshot(snap)
     if head.get("snapshot_id") is not None and head.get("snapshot_id") != snap.get("snapshot_id"):
         raise LifecycleError("LIFECYCLE_ARTIFACT_TAMPERED", "head does not point at snapshot")
+    if snap.get("event_count") != head.get("event_count") or snap.get("head_event_hash") != head.get("head_event_hash"):
+        raise LifecycleError("LIFECYCLE_ARTIFACT_TAMPERED", "snapshot is not the committed registry generation")
     folders = {
         "packages": "records/packages", "feedback": "records/feedback", "changes": "records/changes",
         "consumers": "records/consumers", "candidates": "records/release-candidates", "reviews": "records/release-reviews",

@@ -68,6 +68,16 @@ packaged as a stable public API, or validated across industries.
 | MNP-specific path assumptions | Use centralized repository/domain/runtime resolution and later move remaining coupling behind Domain Pack contracts. |
 | Eligibility internals | Retained temporarily for regression only; public eligibility console entry is removed and relocation remains pending. |
 
+## PROMPT_07_IMPLEMENTED
+
+| Capability | Status |
+|---|---|
+| Lifecycle repair gate | Real regression, package-derived release identity, replayed review quorum, attestation inputs, proposal-bound activation, CAS, and explicit historical rollback are tested. |
+| Unified Application Service | One explicit operation catalogue is shared by CLI, Local SDK, HTTP SDK, and FastAPI; blocked operations stay visible. |
+| Local authentication and project authorization | Server-managed bearer digests, revocation, permission checks, project isolation, and client identity-claim rejection are tested. |
+| Durable jobs | SQLite jobs, leases, fencing tokens, idempotency conflict detection, recovery eligibility, and audit records are implemented. |
+| OMS/ODS and local adapters | Verified-package metadata, local RDF read-only queries, WebVOWL JSON conversion, target policy, GraphDB protocol receipts, and workflow outbox are implemented. |
+
 ## PLANNED
 
 | Capability | Status |
@@ -76,16 +86,14 @@ packaged as a stable public API, or validated across industries.
 | OCR/Vision/ASR/Video providers | Planned optional providers; metadata parsers do not claim semantic understanding. |
 | Live LLM Proposal Provider | Not implemented; only offline recorded model bytes can be imported and remain proposals. |
 | Unified Review Experience | Planned; the Prompt 4 review CLI/control plane is implemented, but no unified Workbench experience is claimed. |
-| Semantic Diff | Planned for controlled evolution; existing amendment diff is not represented as the final semantic diff. |
+| Semantic Diff | Prompt 7 lifecycle diff engine is implemented for verified packages and structured RDF/Mapping/CQ components; unsupported constructs remain UNKNOWN_REQUIRES_REVIEW. |
 | Automatic SemVer Classification | Planned; Prompt 5 requires the operator to supply ontology and package versions explicitly. |
-| Package Registry Rewrite | Planned; Prompt 5 verifies packages but never registers them. |
-| Release Publication | Planned; `VALIDATED_UNPUBLISHED` is not a release state. |
-| Version Activation and Rollback Rewrite | Planned against the future package registry; retained historical lifecycle code is not Prompt 5 authority. |
-| Unified REST API | Planned after contracts stabilize. |
+| Package Registry Rewrite | Prompt 6 registry and Prompt 7 repair gates are implemented; a later Workbench may still consolidate UX. |
+| Release Publication | Real package-derived release publication and attestation are implemented and E2E tested. |
+| Version Activation and Rollback Rewrite | Proposal-bound activation, registry-head/pointer CAS, and explicit historical rollback are implemented and E2E tested. |
 | Unified Workbench | Planned; current read-only Workbench is retained and has not been rewritten. |
 | Forestry Domain Pack Implementation | Planned; the formal manifest declares zero capabilities and assets, with no fabricated forestry content. |
-| Generic GraphDB Backend | Planned; the retained concrete GraphDB integration is not a generic backend abstraction. |
-| OMS/ODS/OSS adapters and Business Actions | Planned outside the semantic compiler authority; Prompt 5 performs no business execution. |
+| Live GraphDB/OMS/ODS/OSS external execution | Protocol and local adapters exist; live target instances and external credentials are not claimed. |
 | Feedback Object and Controlled Evolution | Planned; compiler failures never trigger automatic ontology repair or model calls. |
 | Full Stage/Phase Cleanup | Planned separately so retained historical gates and public compatibility remain testable. |
 

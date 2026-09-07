@@ -5,7 +5,7 @@ from pathlib import Path
 import pytest
 
 from kg_mnp.lifecycle.changes import create_change_proposal, submit_change_proposal
-from kg_mnp.lifecycle.diff import create_diff, verify_diff
+from kg_mnp.lifecycle.diff import create_diff_from_rdf_fixture, verify_diff
 from kg_mnp.lifecycle.environment import activate, init_environment
 from kg_mnp.lifecycle.errors import LifecycleError
 from kg_mnp.lifecycle.feedback import add_feedback
@@ -30,8 +30,8 @@ def test_semantic_diff_is_deterministic_and_verifiable(tmp_path: Path) -> None:
     right = tmp_path / "right.nt"
     left.write_text("<urn:s> <urn:p> <urn:o> .\n", encoding="utf-8")
     right.write_text("<urn:s> <urn:p> <urn:o2> .\n", encoding="utf-8")
-    one = create_diff(left, right)
-    two = create_diff(left, right)
+    one = create_diff_from_rdf_fixture(left, right)
+    two = create_diff_from_rdf_fixture(left, right)
     assert one == two
     assert verify_diff(one)["status"] == "VALID"
 
@@ -42,5 +42,5 @@ def test_activation_requires_explicit_human_breaking_ack(tmp_path: Path) -> None
     env = init_environment(root, environment_name="dev")
     with pytest.raises(LifecycleError):
         activate(root, environment_id=env["environment_id"], release_id="urn:kg-mnp:release:" + "4" * 64, reviewer_id="operator")
-    receipt = activate(root, environment_id=env["environment_id"], release_id="urn:kg-mnp:release:" + "4" * 64, reviewer_id="human-owner", breaking_change_acknowledged=True)
-    assert receipt["execution_status"] == "APPLIED"
+    with pytest.raises(LifecycleError):
+        activate(root, environment_id=env["environment_id"], release_id="urn:kg-mnp:release:" + "4" * 64, reviewer_id="human-owner", breaking_change_acknowledged=True)

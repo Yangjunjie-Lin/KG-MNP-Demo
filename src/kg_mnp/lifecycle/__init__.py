@@ -1,5 +1,5 @@
 """Offline immutable ontology registry and controlled release lifecycle."""
-__version__ = "0.6.0"
+__version__ = "0.7.0"
 from .changes import (
     attach_candidate_package,
     create_change_proposal,

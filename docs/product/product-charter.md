@@ -148,7 +148,9 @@ Evidence Records, evidence-bound KG-IR, approved modeling requirements,
 baseline reuse, offline proposal providers, formal prevalidation, replayable
 human review, a deterministic compiler-ready package, and the Prompt 5 semantic
 compiler, formal validation gates, package lock, and deterministic offline
-archive. Live LLM invocation, semantic diff, automatic SemVer classification,
-the Package Registry rewrite, controlled publication, lifecycle rewrite,
-unified interfaces, and an honest Forestry pilot remain planned. Delivery is
-incremental, and planned capabilities must not be represented as implemented.
+archive. Prompt 6 now provides the controlled lifecycle authority and Prompt 7
+provides the shared application service, local identity, durable jobs,
+REST/SDK boundary, and governed integration protocols. Live LLM invocation,
+automatic SemVer classification, a unified Workbench, and externally live
+GraphDB/WebVOWL prerequisites remain outside this delivery. Delivery is
+incremental, and blocked catalogue items must not be represented as complete.

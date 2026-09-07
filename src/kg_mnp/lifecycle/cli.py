@@ -310,7 +310,7 @@ def dispatch(args: list[str]):
             if expected:
                 current = json.loads((root/"state/registry-head.json").read_bytes()).get("head_hash")
                 if expected != current: raise LifecycleError("LIFECYCLE_CONCURRENCY_CONFLICT", "registry head changed")
-            return publish_release(root,candidate,review,package_name=_arg(args,"--package-name","ontology-package"),package_version=_arg(args,"--package-version","0.0.0"))
+            return publish_release(root,candidate,review,expected_registry_head_hash=_required(args,"--expected-registry-head"))
         if action=="attest":
             release_id=_required(args,"--release-id")
             release=next((x for x in list_records(root,"records/releases") if x.get("release_id")==release_id),None)
@@ -337,7 +337,7 @@ def dispatch(args: list[str]):
             if subaction=="review":
                 return review_activation(root, proposal_id=_required(args,"--proposal-id"), decision=_arg(args,"--decision","APPROVE_ACTIVATION"), reviewer_id=_arg(args,"--reviewer-id","operator"), reviewer_roles=_args(args,"--roles"), rationale=_arg(args,"--rationale",""), breaking_change_acknowledged="--ack-breaking" in args)
             if subaction=="execute":
-                return execute_activation(root, proposal_id=_required(args,"--proposal-id"), decision_id=_required(args,"--decision-id"), expected_generation=int(_arg(args,"--expected-generation")) if _arg(args,"--expected-generation") is not None else None, expected_pointer_hash=_arg(args,"--expected-pointer-hash"), reviewer_id=_arg(args,"--reviewer-id","operator"), breaking_change_acknowledged="--ack-breaking" in args)
+                return execute_activation(root, proposal_id=_required(args,"--proposal-id"), decision_id=_required(args,"--decision-id"), expected_generation=int(_required(args,"--expected-generation")), expected_pointer_hash=_required(args,"--expected-pointer-hash"), expected_registry_head_hash=_required(args,"--expected-registry-head"), reviewer_id=_arg(args,"--reviewer-id","operator"), breaking_change_acknowledged="--ack-breaking" in args)
             return activate(root,environment_id=_required(args,"--environment-id"),release_id=_required(args,"--release-id"),reviewer_id=_arg(args,"--reviewer-id","operator"),breaking_change_acknowledged="--ack-breaking" in args,expected_generation=int(_arg(args,"--expected-generation")) if _arg(args,"--expected-generation") is not None else None,expected_pointer_hash=_arg(args,"--expected-pointer-hash"))
         if action=="rollback":
             if subaction=="propose":
@@ -345,10 +345,10 @@ def dispatch(args: list[str]):
             if subaction=="review":
                 return review_activation(root, proposal_id=_required(args,"--proposal-id"), decision=_arg(args,"--decision","APPROVE_ROLLBACK"), reviewer_id=_arg(args,"--reviewer-id","operator"), reviewer_roles=_args(args,"--roles"), rationale=_arg(args,"--rationale",""))
             if subaction=="execute":
-                return execute_activation(root, proposal_id=_required(args,"--proposal-id"), decision_id=_required(args,"--decision-id"), expected_generation=int(_arg(args,"--expected-generation")) if _arg(args,"--expected-generation") is not None else None, expected_pointer_hash=_arg(args,"--expected-pointer-hash"), reviewer_id=_arg(args,"--reviewer-id","operator"))
-            return rollback(root,environment_id=_required(args,"--environment-id"),reviewer_id=_arg(args,"--reviewer-id","operator"),rationale=_arg(args,"--rationale",""),expected_generation=int(_arg(args,"--expected-generation")) if _arg(args,"--expected-generation") is not None else None,expected_pointer_hash=_arg(args,"--expected-pointer-hash"))
+                return execute_activation(root, proposal_id=_required(args,"--proposal-id"), decision_id=_required(args,"--decision-id"), expected_generation=int(_required(args,"--expected-generation")), expected_pointer_hash=_required(args,"--expected-pointer-hash"), expected_registry_head_hash=_required(args,"--expected-registry-head"), reviewer_id=_arg(args,"--reviewer-id","operator"), breaking_change_acknowledged=True)
+            return rollback(root,environment_id=_required(args,"--environment-id"),target_release_id=_required(args,"--release-id"),reviewer_id=_arg(args,"--reviewer-id","operator"),rationale=_arg(args,"--rationale",""),expected_generation=int(_arg(args,"--expected-generation")) if _arg(args,"--expected-generation") is not None else None,expected_pointer_hash=_arg(args,"--expected-pointer-hash"))
     if domain=="activate": return activate(root,environment_id=_required(args,"--environment-id"),release_id=_required(args,"--release-id"),reviewer_id=_arg(args,"--reviewer-id","operator"),breaking_change_acknowledged="--ack-breaking" in args,expected_generation=int(_arg(args,"--expected-generation")) if _arg(args,"--expected-generation") is not None else None,expected_pointer_hash=_arg(args,"--expected-pointer-hash"))
-    if domain=="rollback": return rollback(root,environment_id=_required(args,"--environment-id"),reviewer_id=_arg(args,"--reviewer-id","operator"),rationale=_arg(args,"--rationale",""),expected_generation=int(_arg(args,"--expected-generation")) if _arg(args,"--expected-generation") is not None else None,expected_pointer_hash=_arg(args,"--expected-pointer-hash"))
+    if domain=="rollback": return rollback(root,environment_id=_required(args,"--environment-id"),target_release_id=_required(args,"--release-id"),reviewer_id=_arg(args,"--reviewer-id","operator"),rationale=_arg(args,"--rationale",""),expected_generation=int(_arg(args,"--expected-generation")) if _arg(args,"--expected-generation") is not None else None,expected_pointer_hash=_arg(args,"--expected-pointer-hash"))
     raise LifecycleError("LIFECYCLE_CONTRACT_INVALID", f"unknown lifecycle command: {' '.join(args[:2])}")
 
 def main(argv: list[str] | None = None) -> int:

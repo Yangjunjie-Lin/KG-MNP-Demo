@@ -30,7 +30,6 @@ def test_stage05_forbids_compilers_auto_confirm_and_integrations():
         "webvowl",
         "frontend",
         "src/kg_mnp/graphdb.py",
-        "src/kg_mnp/api",
     ):
         assert not (ROOT / relative).exists()
 

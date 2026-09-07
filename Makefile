@@ -877,3 +877,51 @@ verify-prompt-05-offline: verify-toolchain-foundation verify-contract-catalog \
 	python scripts/generate_prompt05_contracts.py --check
 	python scripts/generate_contract_catalog.py --check
 	git diff --exit-code
+
+.PHONY: verify-prompt-06-offline verify-p06-remediation \
+	verify-service-operations verify-service-auth verify-service-jobs \
+	verify-service-api verify-service-sdk verify-service-parity \
+	verify-integration-adapters verify-service-security verify-prompt-07-offline
+
+# Prompt 06 compatibility gates. Keep the historical stage and application
+# phase targets as the single sources of truth; this aggregate adds no tests.
+verify-prompt-06-offline: verify-stage-06 verify-application-phase-06-offline
+
+verify-p06-remediation:
+	python -m pytest -q tests/lifecycle/test_prompt07_red.py tests/lifecycle/test_prompt07_e2e.py
+	python -m pytest -q tests/lifecycle tests/contracts/test_registry_and_artifacts.py
+
+verify-service-operations:
+	python -m pytest -q tests/services/test_unified_service.py -k "operation or catalog or project"
+
+verify-service-auth:
+	python -m pytest -q tests/services/test_unified_service.py -k "token or identity or auth"
+
+verify-service-jobs:
+	python -m pytest -q tests/services/test_unified_service.py -k "job or idempot"
+
+verify-service-api:
+	python -m pytest -q tests/services/test_unified_service.py tests/services/test_http_e2e.py
+
+verify-service-sdk:
+	python -m pytest -q tests/services/test_unified_service.py -k "sdk or http"
+	python -m build --wheel --sdist --outdir verification/service-dist
+
+verify-service-parity:
+	python -m pytest -q tests/services/test_unified_service.py tests/services/test_http_e2e.py
+	python -c "from kg_mnp.services.operations import build_operation_catalog, coverage_matrix; assert len(build_operation_catalog()) >= 50; assert coverage_matrix()"
+
+verify-integration-adapters:
+	python -m pytest -q tests/integrations
+
+verify-service-security:
+	python -m ruff check src/kg_mnp/services src/kg_mnp/jobs src/kg_mnp/api src/kg_mnp/sdk src/kg_mnp/integrations tests/services tests/integrations
+	python -m pytest -q tests/services tests/integrations tests/lifecycle/test_prompt07_red.py
+
+verify-prompt-07-offline: verify-prompt-06-offline verify-p06-remediation \
+	verify-service-operations verify-service-auth verify-service-jobs \
+	verify-service-api verify-service-sdk verify-service-parity \
+	verify-integration-adapters verify-service-security
+	python -m ruff check .
+	python -m pytest -q tests/services tests/integrations tests/lifecycle/test_prompt07_red.py tests/lifecycle/test_prompt07_e2e.py
+	python -m kg_mnp service doctor --workspace .

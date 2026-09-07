@@ -46,14 +46,13 @@ def test_central_cli_preserves_stage04_commands_after_final_extensions() -> None
     assert "package" in command_names
 
 
-def test_no_application_frontend_or_http_api_was_added() -> None:
+def test_no_unscoped_application_frontend_or_legacy_http_api_was_added() -> None:
     for relative in (
         "graphdb-local",
         "webvowl",
         "frontend",
         "src/kg_mnp/graphdb.py",
-        "src/kg_mnp/api",
-    ):
+        ):
         assert not (ROOT / relative).exists()
 
 

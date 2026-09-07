@@ -2,7 +2,7 @@
 
 > Evidence-bound, review-governed and deterministic ontology engineering toolchain
 
-**Current status:** Deterministic Semantic Kernel and Ontology Package — Prompt 5
+**Current status:** Unified lifecycle, application service, API/SDK, jobs, and governed integration boundary — Prompt 7
 
 KG-MNP is being repositioned as a pluggable, verifiable and traceable ontology
 engineering toolchain. It converts heterogeneous source material into
@@ -75,6 +75,17 @@ separate lifecycle work; the package is not a publication or deployment.
   `READY_FOR_COMPILATION`; and
 - explicit `kg-mnp model` and `kg-mnp review` CLI routes while the legacy
   modeling route remains compatible.
+- Prompt 6 lifecycle repair gates for real package regression, release review,
+  publication, attestation, audited activation, and explicitly selected
+  historical rollback;
+- a single Prompt 7 Operation Catalog and Application Service shared by the
+  local CLI, Local SDK, HTTP SDK, and REST API;
+- local server-managed bearer credentials, project/object authorization,
+  durable SQLite jobs with idempotency and fencing, and append-only service
+  audit records;
+- local RDF/OMS/ODS readers, WebVOWL JSON export, GraphDB protocol planning,
+  SSRF/target policy checks, and a workflow outbox that does not claim remote
+  execution success.
 
 These capabilities are retained from the historical implementation. Some are
 still coupled to MNP paths or the former staged command structure and therefore
@@ -83,10 +94,11 @@ remain refactor targets.
 ## What is not implemented yet
 
 The repository does not provide a live LLM provider, LLM planner, OCR, vision
-classification, ASR, video understanding, semantic diff, automatic SemVer
-classification, a rewritten Package Registry, release publication, rewritten
-activation/rollback, a unified REST API, a unified Workbench, or a generic
-GraphDB backend. Recorded model output is an offline import, not a model call.
+classification, ASR, video understanding, automatic SemVer classification, a
+unified Workbench, or an externally live GraphDB/WebVOWL deployment. Recorded
+model output is an offline import, not a model call. The Prompt 7 API is a
+governed service boundary; catalogue items without a core implementation are
+explicitly blocked.
 Image and WAV support is metadata-only; scanned PDFs and unsupported audio/video
 require review or a missing provider. The Forestry Domain Pack remains a
 planning scaffold only.
@@ -117,7 +129,10 @@ Source Assets -> Evidence-bound KG-IR -> Approved Scope + CQ + Locked Baseline
 ```
 
 See the [target architecture](docs/architecture/ontology-toolchain-target-architecture.md)
-for the control, artifact, authority, plugin, and domain boundaries.
+for the control, artifact, authority, plugin, and domain boundaries. See the
+[Prompt 7 service architecture](docs/architecture/prompt-07-unified-services.md),
+[operation coverage](docs/architecture/operation-coverage.md), and
+[ADR-0007](docs/adr/ADR-0007.md) for the application boundary.
 
 ## Repository structure
 

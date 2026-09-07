@@ -27,6 +27,7 @@ commands:
   amendment     amendment workflow
   activation    activation and rollback
   lifecycle     ontology registry, semantic diff, regression, release, and environment lifecycle
+  service       unified application service, credentials, API, and jobs
 
 Run `kg-mnp <command> --help` for command-specific help.
 """
@@ -126,6 +127,11 @@ def main(argv: list[str] | None = None) -> int:
         from .lifecycle.cli import main as lifecycle_main
 
         return lifecycle_main(arguments[1:])
+
+    if arguments and arguments[0] == "service":
+        from .services.cli import main as service_main
+
+        return service_main(arguments[1:])
 
     from .modeling.cli import main as modeling_main
 

@@ -32,6 +32,11 @@ node_modules/
 /runtime_outputs/
 /runtime_reports/
 /runtime_logs/
+/service-data/
+/verification/
+/verification-logs/
+/openapi.json
+/service-openapi.json
 /local_artifacts/
 /local_reports/
 .webvowl/

@@ -1,0 +1,72 @@
+{
+  "verification_date": "2026-09-07",
+  "branch": "codex/unified-services-api-sdk-p07",
+  "source_head": "1e31c53f6a441cf9c0c11b02ad9db5fca1ebabfc",
+  "prompt_05_head": "7aaa039b2b2c4eb80fa959b956e6452a814bb5b3",
+  "prompt_06_baseline_tag": "kg-mnp-phase06-baseline-2026-08-30",
+  "collection": {
+    "prompt_05": 1436,
+    "prompt_06": 1443,
+    "current": 1463,
+    "current_minus_prompt_06": 20
+  },
+  "contract_catalog": {
+    "schema_version": "1.3.0",
+    "contract_count": 115,
+    "catalog_sha256": "a57e801acf36f357b7aed4d4de083cce20997381e25ced9b458d461365353529",
+    "lock_sha256": "0c2376604b35f23f670bb8b8ec336477a20ae2ac98c00635208461c17ffd360b"
+  },
+  "checks": [
+    {
+      "name": "ruff",
+      "status": "PASS",
+      "command": "python -m ruff check ."
+    },
+    {
+      "name": "prompt_07_red_and_real_package_e2e",
+      "status": "PASS",
+      "command": "python -m pytest -q tests/lifecycle/test_prompt07_red.py tests/lifecycle/test_prompt07_e2e.py"
+    },
+    {
+      "name": "services_and_integrations",
+      "status": "PASS",
+      "command": "make verify-service-operations verify-service-auth verify-service-jobs verify-service-api verify-service-sdk verify-service-parity verify-integration-adapters verify-service-security"
+    },
+    {
+      "name": "stage_06",
+      "status": "PASS",
+      "command": "make verify-stage-06"
+    },
+    {
+      "name": "application_phase_06_targeted_repair",
+      "status": "PASS",
+      "command": "python -m pytest -q tests/application/test_foundation_freeze_phase01.py tests/application/test_root_cli_phase01.py and activation gates"
+    },
+    {
+      "name": "wheel_sdist_and_clean_venv_import",
+      "status": "PASS",
+      "details": "kg_mnp_toolchain-0.7.0 wheel and sdist built; dependency-complete clean venv imported version 0.7.0 and 53 operations"
+    },
+    {
+      "name": "openapi_export",
+      "status": "PASS",
+      "details": "OpenAPI 3.1.0 exported with 8 unique HTTP operationIds and operation catalogue coverage"
+    },
+    {
+      "name": "graphdb_live",
+      "status": "BLOCKED",
+      "failure_reason": "EXTERNAL_GRAPHDB_LICENSE_MISSING"
+    }
+  ],
+  "aggregate_gate_status": {
+    "verify_application_phase_06_offline": "FIRST_RUN_BLOCKED_BY_STALE_FOUNDATION_SNAPSHOT; targeted corrected tests PASS",
+    "verify_prompt_07_offline": "NOT_COMPLETED_AFTER_FINAL_SNAPSHOT_AND_CLI_GATE_REPAIRS",
+    "verify_graphdb_live": "BLOCKED_EXTERNAL_LICENSE"
+  },
+  "decision": "GO_CORE_WITH_INTEGRATION_BLOCKERS",
+  "decision_basis": [
+    "Prompt 07 lifecycle RED tests, real package release/activation/rollback E2E, services, API, SDK, jobs, and integrations pass.",
+    "GraphDB live execution is fail-closed because the external license is not configured.",
+    "The full aggregate offline gate was not claimed green after the final historical snapshot and CLI help repairs; rerun it before treating this branch as release-ready."
+  ]
+}

@@ -94,8 +94,11 @@ def test_neo4j_absent_and_phase01_http_dependencies_are_exactly_pinned():
     assert (ROOT / "src/kg_mnp/application/http.py").is_file()
 
 
-def test_api_and_neo4j_packages_absent():
-    assert not (ROOT / "src" / "kg_mnp" / "api").exists()
+def test_service_api_is_explicit_and_neo4j_packages_absent():
+    # The original Stage 01 closure predated the Prompt 07 service boundary.
+    # Keep its storage/Neo4j prohibition while allowing the explicit API layer
+    # introduced by the unified service architecture.
+    assert (ROOT / "src" / "kg_mnp" / "api" / "app.py").is_file()
     assert not (ROOT / "src" / "kg_mnp" / "storage").exists()
     assert not (ROOT / "src" / "kg_mnp" / "neo4j_pipeline.py").exists()
     assert not (ROOT / "src" / "kg_mnp" / "neo4j_store.py").exists()

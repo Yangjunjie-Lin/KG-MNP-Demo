@@ -211,9 +211,10 @@ are fail-closed gates. Package commit is transactional and produces only
 `VALIDATED_UNPUBLISHED`; no failure edge returns to providers, candidates, an
 LLM, or a Domain Pack for automatic repair.
 
-No live LLM, OCR/vision/ASR/video understanding, semantic diff, automatic SemVer
-classification, Package Registry rewrite, controlled publication, activation
-rewrite, REST, Workbench replacement, Forestry content, or generic GraphDB
-backend is claimed. See `plugin-driven-ingestion-architecture.md` for Prompt 3,
+No live LLM, OCR/vision/ASR/video understanding, automatic SemVer
+classification, Workbench replacement, Forestry content, or externally live
+GraphDB backend is claimed. Prompt 7 adds a governed REST/SDK service boundary
+and local integration protocols; it does not claim a live external target.
+See `plugin-driven-ingestion-architecture.md` for Prompt 3,
 `evidence-grounded-modeling-architecture.md` for Prompt 4, and
 `deterministic-semantic-kernel-architecture.md` for Prompt 5.

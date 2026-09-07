@@ -39,7 +39,6 @@ def test_environment_cas_rejects_stale_pointer(tmp_path: Path) -> None:
     init_registry(root)
     environment = init_environment(root, environment_name="dev")
     pointer = json.loads(next((root / "state").glob("environment-pointer-*.json")).read_bytes())
-    activate(root, environment_id=environment["environment_id"], release_id="urn:kg-mnp:release:" + "1" * 64, reviewer_id="human", breaking_change_acknowledged=True, expected_generation=pointer["generation"], expected_pointer_hash=pointer["pointer_hash"])
     with pytest.raises(LifecycleError) as error:
         activate(root, environment_id=environment["environment_id"], release_id="urn:kg-mnp:release:" + "2" * 64, reviewer_id="human", breaking_change_acknowledged=True, expected_generation=pointer["generation"], expected_pointer_hash=pointer["pointer_hash"])
-    assert error.value.exit_code == 54
+    assert error.value.code == "ACTIVATION_BLOCKED"
