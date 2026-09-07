@@ -1,0 +1,869 @@
+{
+  "source_sha": "9ae308ef86e74a08eb4daab1e20dd66cced87b16",
+  "operation_count": 53,
+  "backend_gate": "FAIL",
+  "receipts": [
+    "runtime_logs/prompt08/collection-0bd53bb0/receipt.json",
+    "runtime_logs/prompt08/collection-final-1c92a869/receipt.json",
+    "runtime_logs/prompt08/services-serial-complete-db0a8470/receipt.json",
+    "runtime_logs/prompt08/services-serial-final-02-aba4b12f/receipt.json"
+  ],
+  "operations": [
+    {
+      "operation_id": "project.create",
+      "service_handler": "kg_mnp.services.projects.create_project",
+      "input_contract": "ProjectCreateRequest",
+      "output_contract": "ProjectHandle",
+      "contract_boundary": "closed service DTO; public domain contracts unchanged",
+      "required_permissions": [
+        "project:write"
+      ],
+      "api_route": "POST /api/v1/projects",
+      "execution_mode": "INLINE",
+      "success_test_nodeid": "tests/services/test_prompt08_boundary.py::test_created_project_is_valid_workspace_without_path_disclosure",
+      "negative_test_nodeid": "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[project.create]",
+      "status": "IMPLEMENTED_AND_TESTED",
+      "blocked_reason": null
+    },
+    {
+      "operation_id": "project.open",
+      "service_handler": "kg_mnp.services.projects.inspect_project",
+      "input_contract": "ProjectOpenRequest",
+      "output_contract": "ProjectHandle",
+      "contract_boundary": "closed service DTO; public domain contracts unchanged",
+      "required_permissions": [
+        "project:read"
+      ],
+      "api_route": "GET /api/v1/projects/{project_id}",
+      "execution_mode": "INLINE",
+      "success_test_nodeid": "tests/services/test_prompt08_boundary.py::test_owner_open_validate_catalog_pack_inspect_and_empty_environment",
+      "negative_test_nodeid": "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[project.open]",
+      "status": "IMPLEMENTED_AND_TESTED",
+      "blocked_reason": null
+    },
+    {
+      "operation_id": "project.list",
+      "service_handler": "kg_mnp.services.projects.list_projects",
+      "input_contract": "ProjectListRequest",
+      "output_contract": "ProjectListResult",
+      "contract_boundary": "closed service DTO; public domain contracts unchanged",
+      "required_permissions": [
+        "project:read"
+      ],
+      "api_route": "GET /api/v1/projects",
+      "execution_mode": "INLINE",
+      "success_test_nodeid": "tests/services/test_prompt08_boundary.py::test_project_list_and_open_reject_empty_scope_outsider",
+      "negative_test_nodeid": "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[project.list]",
+      "status": "IMPLEMENTED_AND_TESTED",
+      "blocked_reason": null
+    },
+    {
+      "operation_id": "project.validate",
+      "service_handler": "kg_mnp.services.projects.inspect_project",
+      "input_contract": "ProjectHandle",
+      "output_contract": "ProjectValidationResult",
+      "contract_boundary": "closed service DTO; public domain contracts unchanged",
+      "required_permissions": [
+        "project:read"
+      ],
+      "api_route": "GET /api/v1/projects/{project_id}/validation",
+      "execution_mode": "INLINE",
+      "success_test_nodeid": "tests/services/test_prompt08_boundary.py::test_owner_open_validate_catalog_pack_inspect_and_empty_environment",
+      "negative_test_nodeid": "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[project.validate]",
+      "status": "IMPLEMENTED_AND_TESTED",
+      "blocked_reason": null
+    },
+    {
+      "operation_id": "project.lock",
+      "service_handler": "kg_mnp.services.projects.lock_project",
+      "input_contract": "ProjectLockRequest",
+      "output_contract": "ProjectHandle",
+      "contract_boundary": "closed service DTO; public domain contracts unchanged",
+      "required_permissions": [
+        "project:write"
+      ],
+      "api_route": "POST /api/v1/projects/{project_id}/lock",
+      "execution_mode": "INLINE",
+      "success_test_nodeid": "tests/services/test_prompt08_boundary.py::test_formal_lock_check_is_byte_preserving_and_rejects_tampering",
+      "negative_test_nodeid": "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[project.lock]",
+      "status": "IMPLEMENTED_AND_TESTED",
+      "blocked_reason": null
+    },
+    {
+      "operation_id": "domain-pack.discover",
+      "service_handler": "kg_mnp.services.packs.discover",
+      "input_contract": "DomainPackRequest",
+      "output_contract": "DomainPackList",
+      "contract_boundary": "closed service DTO; public domain contracts unchanged",
+      "required_permissions": [
+        "project:read"
+      ],
+      "api_route": "GET /api/v1/domain-packs",
+      "execution_mode": "INLINE",
+      "success_test_nodeid": "tests/services/test_prompt08_boundary.py::test_discovery_is_real_and_available_before_project_creation",
+      "negative_test_nodeid": "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[domain-pack.discover]",
+      "status": "IMPLEMENTED_AND_TESTED",
+      "blocked_reason": null
+    },
+    {
+      "operation_id": "domain-pack.inspect",
+      "service_handler": "kg_mnp.services.packs.discover",
+      "input_contract": "DomainPackRequest",
+      "output_contract": "DomainPackSnapshot",
+      "contract_boundary": "closed service DTO; public domain contracts unchanged",
+      "required_permissions": [
+        "project:read"
+      ],
+      "api_route": "POST /api/v1/operations/domain-pack.inspect",
+      "execution_mode": "INLINE",
+      "success_test_nodeid": "tests/services/test_prompt08_boundary.py::test_owner_open_validate_catalog_pack_inspect_and_empty_environment",
+      "negative_test_nodeid": "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[domain-pack.inspect]",
+      "status": "IMPLEMENTED_AND_TESTED",
+      "blocked_reason": null
+    },
+    {
+      "operation_id": "source.register",
+      "service_handler": null,
+      "input_contract": "SourceRegisterRequest",
+      "output_contract": "Artifact",
+      "contract_boundary": "catalogue declaration only",
+      "required_permissions": [
+        "source:write"
+      ],
+      "api_route": "POST /api/v1/operations/source.register",
+      "execution_mode": "JOB",
+      "success_test_nodeid": null,
+      "negative_test_nodeid": null,
+      "status": "DECLARED_ONLY",
+      "blocked_reason": "No service-to-core handler; rejected before enqueue"
+    },
+    {
+      "operation_id": "source.inspect",
+      "service_handler": null,
+      "input_contract": "ArtifactRequest",
+      "output_contract": "Artifact",
+      "contract_boundary": "catalogue declaration only",
+      "required_permissions": [
+        "source:read"
+      ],
+      "api_route": "POST /api/v1/operations/source.inspect",
+      "execution_mode": "INLINE",
+      "success_test_nodeid": null,
+      "negative_test_nodeid": null,
+      "status": "DECLARED_ONLY",
+      "blocked_reason": "No service-to-core handler; rejected before enqueue"
+    },
+    {
+      "operation_id": "ingestion.plan",
+      "service_handler": null,
+      "input_contract": "IngestionPlanRequest",
+      "output_contract": "IngestionPlan",
+      "contract_boundary": "catalogue declaration only",
+      "required_permissions": [
+        "project:write"
+      ],
+      "api_route": "POST /api/v1/operations/ingestion.plan",
+      "execution_mode": "JOB",
+      "success_test_nodeid": null,
+      "negative_test_nodeid": null,
+      "status": "DECLARED_ONLY",
+      "blocked_reason": "No service-to-core handler; rejected before enqueue"
+    },
+    {
+      "operation_id": "ingestion.run",
+      "service_handler": null,
+      "input_contract": "IngestionRunRequest",
+      "output_contract": "IngestionRun",
+      "contract_boundary": "catalogue declaration only",
+      "required_permissions": [
+        "project:write"
+      ],
+      "api_route": "POST /api/v1/operations/ingestion.run",
+      "execution_mode": "JOB",
+      "success_test_nodeid": null,
+      "negative_test_nodeid": null,
+      "status": "DECLARED_ONLY",
+      "blocked_reason": "No service-to-core handler; rejected before enqueue"
+    },
+    {
+      "operation_id": "ingestion.inspect",
+      "service_handler": null,
+      "input_contract": "ArtifactRequest",
+      "output_contract": "IngestionRun",
+      "contract_boundary": "catalogue declaration only",
+      "required_permissions": [
+        "project:read"
+      ],
+      "api_route": "POST /api/v1/operations/ingestion.inspect",
+      "execution_mode": "INLINE",
+      "success_test_nodeid": null,
+      "negative_test_nodeid": null,
+      "status": "DECLARED_ONLY",
+      "blocked_reason": "No service-to-core handler; rejected before enqueue"
+    },
+    {
+      "operation_id": "ingestion.trace",
+      "service_handler": null,
+      "input_contract": "ArtifactRequest",
+      "output_contract": "Trace",
+      "contract_boundary": "catalogue declaration only",
+      "required_permissions": [
+        "project:read"
+      ],
+      "api_route": "POST /api/v1/operations/ingestion.trace",
+      "execution_mode": "INLINE",
+      "success_test_nodeid": null,
+      "negative_test_nodeid": null,
+      "status": "DECLARED_ONLY",
+      "blocked_reason": "No service-to-core handler; rejected before enqueue"
+    },
+    {
+      "operation_id": "modeling.scope",
+      "service_handler": null,
+      "input_contract": "ModelingScopeRequest",
+      "output_contract": "Artifact",
+      "contract_boundary": "catalogue declaration only",
+      "required_permissions": [
+        "model:propose"
+      ],
+      "api_route": "POST /api/v1/operations/modeling.scope",
+      "execution_mode": "INLINE",
+      "success_test_nodeid": null,
+      "negative_test_nodeid": null,
+      "status": "DECLARED_ONLY",
+      "blocked_reason": "No service-to-core handler; rejected before enqueue"
+    },
+    {
+      "operation_id": "modeling.scope.approve",
+      "service_handler": null,
+      "input_contract": "ReviewDecisionRequest",
+      "output_contract": "Artifact",
+      "contract_boundary": "catalogue declaration only",
+      "required_permissions": [
+        "scope:approve"
+      ],
+      "api_route": "POST /api/v1/operations/modeling.scope.approve",
+      "execution_mode": "INLINE",
+      "success_test_nodeid": null,
+      "negative_test_nodeid": null,
+      "status": "DECLARED_ONLY",
+      "blocked_reason": "No service-to-core handler; rejected before enqueue"
+    },
+    {
+      "operation_id": "modeling.candidate",
+      "service_handler": null,
+      "input_contract": "ModelingCandidateRequest",
+      "output_contract": "Artifact",
+      "contract_boundary": "catalogue declaration only",
+      "required_permissions": [
+        "model:propose"
+      ],
+      "api_route": "POST /api/v1/operations/modeling.candidate",
+      "execution_mode": "JOB",
+      "success_test_nodeid": null,
+      "negative_test_nodeid": null,
+      "status": "DECLARED_ONLY",
+      "blocked_reason": "No service-to-core handler; rejected before enqueue"
+    },
+    {
+      "operation_id": "modeling.cq",
+      "service_handler": null,
+      "input_contract": "CQRequest",
+      "output_contract": "CQResult",
+      "contract_boundary": "catalogue declaration only",
+      "required_permissions": [
+        "model:propose"
+      ],
+      "api_route": "POST /api/v1/operations/modeling.cq",
+      "execution_mode": "JOB",
+      "success_test_nodeid": null,
+      "negative_test_nodeid": null,
+      "status": "DECLARED_ONLY",
+      "blocked_reason": "No service-to-core handler; rejected before enqueue"
+    },
+    {
+      "operation_id": "modeling.baseline",
+      "service_handler": null,
+      "input_contract": "BaselineRequest",
+      "output_contract": "Artifact",
+      "contract_boundary": "catalogue declaration only",
+      "required_permissions": [
+        "model:propose"
+      ],
+      "api_route": "POST /api/v1/operations/modeling.baseline",
+      "execution_mode": "INLINE",
+      "success_test_nodeid": null,
+      "negative_test_nodeid": null,
+      "status": "DECLARED_ONLY",
+      "blocked_reason": "No service-to-core handler; rejected before enqueue"
+    },
+    {
+      "operation_id": "modeling.alignment",
+      "service_handler": null,
+      "input_contract": "AlignmentRequest",
+      "output_contract": "Artifact",
+      "contract_boundary": "catalogue declaration only",
+      "required_permissions": [
+        "model:propose"
+      ],
+      "api_route": "POST /api/v1/operations/modeling.alignment",
+      "execution_mode": "JOB",
+      "success_test_nodeid": null,
+      "negative_test_nodeid": null,
+      "status": "DECLARED_ONLY",
+      "blocked_reason": "No service-to-core handler; rejected before enqueue"
+    },
+    {
+      "operation_id": "modeling.proposal",
+      "service_handler": null,
+      "input_contract": "ProposalRequest",
+      "output_contract": "Artifact",
+      "contract_boundary": "catalogue declaration only",
+      "required_permissions": [
+        "model:propose"
+      ],
+      "api_route": "POST /api/v1/operations/modeling.proposal",
+      "execution_mode": "JOB",
+      "success_test_nodeid": null,
+      "negative_test_nodeid": null,
+      "status": "DECLARED_ONLY",
+      "blocked_reason": "No service-to-core handler; rejected before enqueue"
+    },
+    {
+      "operation_id": "review.action",
+      "service_handler": null,
+      "input_contract": "ReviewActionRequest",
+      "output_contract": "ReviewAction",
+      "contract_boundary": "catalogue declaration only",
+      "required_permissions": [
+        "review:decide"
+      ],
+      "api_route": "POST /api/v1/operations/review.action",
+      "execution_mode": "INLINE",
+      "success_test_nodeid": null,
+      "negative_test_nodeid": null,
+      "status": "DECLARED_ONLY",
+      "blocked_reason": "No service-to-core handler; rejected before enqueue"
+    },
+    {
+      "operation_id": "review.replay",
+      "service_handler": null,
+      "input_contract": "ReviewRequest",
+      "output_contract": "ReviewLog",
+      "contract_boundary": "catalogue declaration only",
+      "required_permissions": [
+        "project:read"
+      ],
+      "api_route": "POST /api/v1/operations/review.replay",
+      "execution_mode": "INLINE",
+      "success_test_nodeid": null,
+      "negative_test_nodeid": null,
+      "status": "DECLARED_ONLY",
+      "blocked_reason": "No service-to-core handler; rejected before enqueue"
+    },
+    {
+      "operation_id": "review.finalize",
+      "service_handler": null,
+      "input_contract": "ReviewRequest",
+      "output_contract": "ReviewLog",
+      "contract_boundary": "catalogue declaration only",
+      "required_permissions": [
+        "review:decide"
+      ],
+      "api_route": "POST /api/v1/operations/review.finalize",
+      "execution_mode": "INLINE",
+      "success_test_nodeid": null,
+      "negative_test_nodeid": null,
+      "status": "DECLARED_ONLY",
+      "blocked_reason": "No service-to-core handler; rejected before enqueue"
+    },
+    {
+      "operation_id": "compile.plan",
+      "service_handler": null,
+      "input_contract": "CompileRequest",
+      "output_contract": "CompilationPlan",
+      "contract_boundary": "catalogue declaration only",
+      "required_permissions": [
+        "compile:run"
+      ],
+      "api_route": "POST /api/v1/operations/compile.plan",
+      "execution_mode": "JOB",
+      "success_test_nodeid": null,
+      "negative_test_nodeid": null,
+      "status": "DECLARED_ONLY",
+      "blocked_reason": "No service-to-core handler; rejected before enqueue"
+    },
+    {
+      "operation_id": "compile.build",
+      "service_handler": null,
+      "input_contract": "CompileRequest",
+      "output_contract": "CompilationResult",
+      "contract_boundary": "catalogue declaration only",
+      "required_permissions": [
+        "compile:run"
+      ],
+      "api_route": "POST /api/v1/operations/compile.build",
+      "execution_mode": "JOB",
+      "success_test_nodeid": null,
+      "negative_test_nodeid": null,
+      "status": "DECLARED_ONLY",
+      "blocked_reason": "No service-to-core handler; rejected before enqueue"
+    },
+    {
+      "operation_id": "compile.validate",
+      "service_handler": null,
+      "input_contract": "CompileRequest",
+      "output_contract": "ValidationReport",
+      "contract_boundary": "catalogue declaration only",
+      "required_permissions": [
+        "compile:run"
+      ],
+      "api_route": "POST /api/v1/operations/compile.validate",
+      "execution_mode": "JOB",
+      "success_test_nodeid": null,
+      "negative_test_nodeid": null,
+      "status": "DECLARED_ONLY",
+      "blocked_reason": "No service-to-core handler; rejected before enqueue"
+    },
+    {
+      "operation_id": "compile.reproduce",
+      "service_handler": null,
+      "input_contract": "CompileRequest",
+      "output_contract": "CompilationResult",
+      "contract_boundary": "catalogue declaration only",
+      "required_permissions": [
+        "compile:run"
+      ],
+      "api_route": "POST /api/v1/operations/compile.reproduce",
+      "execution_mode": "JOB",
+      "success_test_nodeid": null,
+      "negative_test_nodeid": null,
+      "status": "DECLARED_ONLY",
+      "blocked_reason": "No service-to-core handler; rejected before enqueue"
+    },
+    {
+      "operation_id": "package.inspect",
+      "service_handler": "kg_mnp.lifecycle.store.list_records",
+      "input_contract": "PackageRequest",
+      "output_contract": "Package",
+      "contract_boundary": "closed service DTO; public domain contracts unchanged",
+      "required_permissions": [
+        "package:read"
+      ],
+      "api_route": "POST /api/v1/operations/package.inspect",
+      "execution_mode": "INLINE",
+      "success_test_nodeid": null,
+      "negative_test_nodeid": "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[package.inspect]",
+      "status": "IMPLEMENTED_NOT_VERIFIED",
+      "blocked_reason": "Positive and negative service success coverage incomplete"
+    },
+    {
+      "operation_id": "package.verify",
+      "service_handler": null,
+      "input_contract": "PackageRequest",
+      "output_contract": "PackageVerification",
+      "contract_boundary": "catalogue declaration only",
+      "required_permissions": [
+        "package:read"
+      ],
+      "api_route": "POST /api/v1/operations/package.verify",
+      "execution_mode": "INLINE",
+      "success_test_nodeid": null,
+      "negative_test_nodeid": null,
+      "status": "DECLARED_ONLY",
+      "blocked_reason": "No service-to-core handler; rejected before enqueue"
+    },
+    {
+      "operation_id": "package.export",
+      "service_handler": null,
+      "input_contract": "PackageExportRequest",
+      "output_contract": "ExportReceipt",
+      "contract_boundary": "catalogue declaration only",
+      "required_permissions": [
+        "package:export"
+      ],
+      "api_route": "POST /api/v1/operations/package.export",
+      "execution_mode": "JOB",
+      "success_test_nodeid": null,
+      "negative_test_nodeid": null,
+      "status": "DECLARED_ONLY",
+      "blocked_reason": "No service-to-core handler; rejected before enqueue"
+    },
+    {
+      "operation_id": "registry.import",
+      "service_handler": null,
+      "input_contract": "RegistryImportRequest",
+      "output_contract": "PackageRecord",
+      "contract_boundary": "catalogue declaration only",
+      "required_permissions": [
+        "registry:import"
+      ],
+      "api_route": "POST /api/v1/operations/registry.import",
+      "execution_mode": "JOB",
+      "success_test_nodeid": null,
+      "negative_test_nodeid": null,
+      "status": "DECLARED_ONLY",
+      "blocked_reason": "No service-to-core handler; rejected before enqueue"
+    },
+    {
+      "operation_id": "registry.verify",
+      "service_handler": "kg_mnp.lifecycle.registry.replay.verify_registry",
+      "input_contract": "ProjectHandle",
+      "output_contract": "RegistryVerification",
+      "contract_boundary": "closed service DTO; public domain contracts unchanged",
+      "required_permissions": [
+        "project:read"
+      ],
+      "api_route": "POST /api/v1/operations/registry.verify",
+      "execution_mode": "INLINE",
+      "success_test_nodeid": "tests/services/test_unified_service.py::test_project_isolation_is_enforced_by_service",
+      "negative_test_nodeid": "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[registry.verify]",
+      "status": "IMPLEMENTED_AND_TESTED",
+      "blocked_reason": null
+    },
+    {
+      "operation_id": "change.diff",
+      "service_handler": null,
+      "input_contract": "DiffRequest",
+      "output_contract": "DiffReport",
+      "contract_boundary": "catalogue declaration only",
+      "required_permissions": [
+        "project:read"
+      ],
+      "api_route": "POST /api/v1/operations/change.diff",
+      "execution_mode": "JOB",
+      "success_test_nodeid": null,
+      "negative_test_nodeid": null,
+      "status": "DECLARED_ONLY",
+      "blocked_reason": "No service-to-core handler; rejected before enqueue"
+    },
+    {
+      "operation_id": "change.impact",
+      "service_handler": null,
+      "input_contract": "ImpactRequest",
+      "output_contract": "ImpactReport",
+      "contract_boundary": "catalogue declaration only",
+      "required_permissions": [
+        "project:read"
+      ],
+      "api_route": "POST /api/v1/operations/change.impact",
+      "execution_mode": "JOB",
+      "success_test_nodeid": null,
+      "negative_test_nodeid": null,
+      "status": "DECLARED_ONLY",
+      "blocked_reason": "No service-to-core handler; rejected before enqueue"
+    },
+    {
+      "operation_id": "change.regression",
+      "service_handler": null,
+      "input_contract": "RegressionRequest",
+      "output_contract": "RegressionReport",
+      "contract_boundary": "catalogue declaration only",
+      "required_permissions": [
+        "project:read"
+      ],
+      "api_route": "POST /api/v1/operations/change.regression",
+      "execution_mode": "JOB",
+      "success_test_nodeid": null,
+      "negative_test_nodeid": null,
+      "status": "DECLARED_ONLY",
+      "blocked_reason": "No service-to-core handler; rejected before enqueue"
+    },
+    {
+      "operation_id": "change.evaluate",
+      "service_handler": null,
+      "input_contract": "ChangeEvaluationRequest",
+      "output_contract": "ChangeEvaluation",
+      "contract_boundary": "catalogue declaration only",
+      "required_permissions": [
+        "model:propose"
+      ],
+      "api_route": "POST /api/v1/operations/change.evaluate",
+      "execution_mode": "JOB",
+      "success_test_nodeid": null,
+      "negative_test_nodeid": null,
+      "status": "DECLARED_ONLY",
+      "blocked_reason": "No service-to-core handler; rejected before enqueue"
+    },
+    {
+      "operation_id": "release.review",
+      "service_handler": null,
+      "input_contract": "ReleaseReviewRequest",
+      "output_contract": "ReviewLog",
+      "contract_boundary": "catalogue declaration only",
+      "required_permissions": [
+        "release:review"
+      ],
+      "api_route": "POST /api/v1/operations/release.review",
+      "execution_mode": "INLINE",
+      "success_test_nodeid": null,
+      "negative_test_nodeid": null,
+      "status": "DECLARED_ONLY",
+      "blocked_reason": "No service-to-core handler; rejected before enqueue"
+    },
+    {
+      "operation_id": "release.publish",
+      "service_handler": null,
+      "input_contract": "ReleasePublishRequest",
+      "output_contract": "Release",
+      "contract_boundary": "catalogue declaration only",
+      "required_permissions": [
+        "release:publish"
+      ],
+      "api_route": "POST /api/v1/operations/release.publish",
+      "execution_mode": "JOB",
+      "success_test_nodeid": null,
+      "negative_test_nodeid": null,
+      "status": "DECLARED_ONLY",
+      "blocked_reason": "No service-to-core handler; rejected before enqueue"
+    },
+    {
+      "operation_id": "release.inspect",
+      "service_handler": "kg_mnp.lifecycle.store.list_records",
+      "input_contract": "ReleaseRequest",
+      "output_contract": "Release",
+      "contract_boundary": "closed service DTO; public domain contracts unchanged",
+      "required_permissions": [
+        "package:read"
+      ],
+      "api_route": "POST /api/v1/operations/release.inspect",
+      "execution_mode": "INLINE",
+      "success_test_nodeid": null,
+      "negative_test_nodeid": "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[release.inspect]",
+      "status": "IMPLEMENTED_NOT_VERIFIED",
+      "blocked_reason": "Positive and negative service success coverage incomplete"
+    },
+    {
+      "operation_id": "environment.activate",
+      "service_handler": null,
+      "input_contract": "ActivationRequest",
+      "output_contract": "ActivationReceipt",
+      "contract_boundary": "catalogue declaration only",
+      "required_permissions": [
+        "environment:activate"
+      ],
+      "api_route": "POST /api/v1/operations/environment.activate",
+      "execution_mode": "JOB",
+      "success_test_nodeid": null,
+      "negative_test_nodeid": null,
+      "status": "DECLARED_ONLY",
+      "blocked_reason": "No service-to-core handler; rejected before enqueue"
+    },
+    {
+      "operation_id": "environment.rollback",
+      "service_handler": null,
+      "input_contract": "RollbackRequest",
+      "output_contract": "ActivationReceipt",
+      "contract_boundary": "catalogue declaration only",
+      "required_permissions": [
+        "environment:rollback"
+      ],
+      "api_route": "POST /api/v1/operations/environment.rollback",
+      "execution_mode": "JOB",
+      "success_test_nodeid": null,
+      "negative_test_nodeid": null,
+      "status": "DECLARED_ONLY",
+      "blocked_reason": "No service-to-core handler; rejected before enqueue"
+    },
+    {
+      "operation_id": "environment.inspect",
+      "service_handler": "kg_mnp.lifecycle.store.list_records",
+      "input_contract": "EnvironmentRequest",
+      "output_contract": "EnvironmentPointer",
+      "contract_boundary": "closed service DTO; public domain contracts unchanged",
+      "required_permissions": [
+        "project:read"
+      ],
+      "api_route": "POST /api/v1/operations/environment.inspect",
+      "execution_mode": "INLINE",
+      "success_test_nodeid": "tests/services/test_prompt08_boundary.py::test_owner_open_validate_catalog_pack_inspect_and_empty_environment",
+      "negative_test_nodeid": "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[environment.inspect]",
+      "status": "IMPLEMENTED_AND_TESTED",
+      "blocked_reason": null
+    },
+    {
+      "operation_id": "oms.metadata",
+      "service_handler": null,
+      "input_contract": "MetadataRequest",
+      "output_contract": "MetadataResult",
+      "contract_boundary": "catalogue declaration only",
+      "required_permissions": [
+        "package:read"
+      ],
+      "api_route": "POST /api/v1/operations/oms.metadata",
+      "execution_mode": "INLINE",
+      "success_test_nodeid": null,
+      "negative_test_nodeid": null,
+      "status": "DECLARED_ONLY",
+      "blocked_reason": "No service-to-core handler; rejected before enqueue"
+    },
+    {
+      "operation_id": "ods.query",
+      "service_handler": null,
+      "input_contract": "ObjectQueryRequest",
+      "output_contract": "ObjectQueryResult",
+      "contract_boundary": "catalogue declaration only",
+      "required_permissions": [
+        "package:read"
+      ],
+      "api_route": "POST /api/v1/operations/ods.query",
+      "execution_mode": "INLINE",
+      "success_test_nodeid": null,
+      "negative_test_nodeid": null,
+      "status": "DECLARED_ONLY",
+      "blocked_reason": "No service-to-core handler; rejected before enqueue"
+    },
+    {
+      "operation_id": "visualization.export",
+      "service_handler": null,
+      "input_contract": "VisualizationExportRequest",
+      "output_contract": "ExportReceipt",
+      "contract_boundary": "catalogue declaration only",
+      "required_permissions": [
+        "package:export"
+      ],
+      "api_route": "POST /api/v1/operations/visualization.export",
+      "execution_mode": "JOB",
+      "success_test_nodeid": null,
+      "negative_test_nodeid": null,
+      "status": "DECLARED_ONLY",
+      "blocked_reason": "No service-to-core handler; rejected before enqueue"
+    },
+    {
+      "operation_id": "integration.plan",
+      "service_handler": null,
+      "input_contract": "IntegrationPlanRequest",
+      "output_contract": "IntegrationPlan",
+      "contract_boundary": "catalogue declaration only",
+      "required_permissions": [
+        "integration:configure"
+      ],
+      "api_route": "POST /api/v1/operations/integration.plan",
+      "execution_mode": "INLINE",
+      "success_test_nodeid": null,
+      "negative_test_nodeid": null,
+      "status": "DECLARED_ONLY",
+      "blocked_reason": "No service-to-core handler; rejected before enqueue"
+    },
+    {
+      "operation_id": "integration.review",
+      "service_handler": null,
+      "input_contract": "IntegrationApprovalRequest",
+      "output_contract": "IntegrationApproval",
+      "contract_boundary": "catalogue declaration only",
+      "required_permissions": [
+        "integration:review"
+      ],
+      "api_route": "POST /api/v1/operations/integration.review",
+      "execution_mode": "INLINE",
+      "success_test_nodeid": null,
+      "negative_test_nodeid": null,
+      "status": "DECLARED_ONLY",
+      "blocked_reason": "No service-to-core handler; rejected before enqueue"
+    },
+    {
+      "operation_id": "integration.execute",
+      "service_handler": null,
+      "input_contract": "IntegrationExecutionRequest",
+      "output_contract": "IntegrationReceipt",
+      "contract_boundary": "catalogue declaration only",
+      "required_permissions": [
+        "integration:execute"
+      ],
+      "api_route": "POST /api/v1/operations/integration.execute",
+      "execution_mode": "JOB",
+      "success_test_nodeid": null,
+      "negative_test_nodeid": null,
+      "status": "DECLARED_ONLY",
+      "blocked_reason": "No service-to-core handler; rejected before enqueue"
+    },
+    {
+      "operation_id": "integration.verify",
+      "service_handler": null,
+      "input_contract": "IntegrationVerificationRequest",
+      "output_contract": "IntegrationReceipt",
+      "contract_boundary": "catalogue declaration only",
+      "required_permissions": [
+        "integration:execute"
+      ],
+      "api_route": "POST /api/v1/operations/integration.verify",
+      "execution_mode": "JOB",
+      "success_test_nodeid": null,
+      "negative_test_nodeid": null,
+      "status": "DECLARED_ONLY",
+      "blocked_reason": "No service-to-core handler; rejected before enqueue"
+    },
+    {
+      "operation_id": "workflow.enqueue",
+      "service_handler": null,
+      "input_contract": "WorkflowInvocation",
+      "output_contract": "WorkflowReceipt",
+      "contract_boundary": "catalogue declaration only",
+      "required_permissions": [
+        "integration:execute"
+      ],
+      "api_route": "POST /api/v1/operations/workflow.enqueue",
+      "execution_mode": "INLINE",
+      "success_test_nodeid": null,
+      "negative_test_nodeid": null,
+      "status": "DECLARED_ONLY",
+      "blocked_reason": "No service-to-core handler; rejected before enqueue"
+    },
+    {
+      "operation_id": "job.get",
+      "service_handler": "kg_mnp.jobs.store.JobStore.get",
+      "input_contract": "JobRequest",
+      "output_contract": "JobRecord",
+      "contract_boundary": "closed service DTO; public domain contracts unchanged",
+      "required_permissions": [
+        "project:read"
+      ],
+      "api_route": "GET /api/v1/jobs/{job_id}",
+      "execution_mode": "INLINE",
+      "success_test_nodeid": "tests/services/test_prompt08_boundary.py::test_legacy_job_payloads_are_not_returned_and_cancel_is_scoped",
+      "negative_test_nodeid": "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[job.get]",
+      "status": "IMPLEMENTED_AND_TESTED",
+      "blocked_reason": null
+    },
+    {
+      "operation_id": "job.events",
+      "service_handler": "kg_mnp.jobs.store.JobStore.events",
+      "input_contract": "JobRequest",
+      "output_contract": "JobEvents",
+      "contract_boundary": "closed service DTO; public domain contracts unchanged",
+      "required_permissions": [
+        "project:read"
+      ],
+      "api_route": "GET /api/v1/jobs/{job_id}/events",
+      "execution_mode": "INLINE",
+      "success_test_nodeid": "tests/services/test_prompt08_boundary.py::test_legacy_job_payloads_are_not_returned_and_cancel_is_scoped",
+      "negative_test_nodeid": "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[job.events]",
+      "status": "IMPLEMENTED_AND_TESTED",
+      "blocked_reason": null
+    },
+    {
+      "operation_id": "operation.catalog",
+      "service_handler": "kg_mnp.services.facade.ApplicationService.operation_catalog",
+      "input_contract": "CatalogRequest",
+      "output_contract": "OperationCatalog",
+      "contract_boundary": "closed service DTO; public domain contracts unchanged",
+      "required_permissions": [
+        "project:read"
+      ],
+      "api_route": "GET /api/v1/operations",
+      "execution_mode": "INLINE",
+      "success_test_nodeid": "tests/services/test_prompt08_boundary.py::test_owner_open_validate_catalog_pack_inspect_and_empty_environment",
+      "negative_test_nodeid": "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[operation.catalog]",
+      "status": "IMPLEMENTED_AND_TESTED",
+      "blocked_reason": null
+    }
+  ],
+  "status_counts": {
+    "IMPLEMENTED_AND_TESTED": 12,
+    "IMPLEMENTED_NOT_VERIFIED": 2,
+    "DECLARED_ONLY": 39,
+    "EXTERNAL_DEPENDENCY_BLOCKED": 0,
+    "OUT_OF_SCOPE": 0
+  },
+  "note": "Passing a rejection test is never positive business-handler coverage. APIs for missing required resources are not implemented."
+}

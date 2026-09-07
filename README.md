@@ -2,7 +2,11 @@
 
 > Evidence-bound, review-governed and deterministic ontology engineering toolchain
 
-**Current status:** Unified lifecycle, application service, API/SDK, jobs, and governed integration boundary — Prompt 7
+**Current status:** Prompt 8 backend remediation in progress — `NO_GO_BACKEND_NOT_READY`.
+The requested **KG-MNP Ontology Workbench / KG-MNP 本体工程工作台** is not yet
+delivered. The operation catalogue is not a completed HTTP business workflow.
+See [Prompt 8 report](docs/verification/prompt-08-final-report.md) and
+[service recovery/run instructions](docs/workbench/backend-remediation.md).
 
 KG-MNP is being repositioned as a pluggable, verifiable and traceable ontology
 engineering toolchain. It converts heterogeneous source material into
@@ -42,7 +46,7 @@ separate lifecycle work; the package is not a publication or deployment.
 - publication reconstruction and verification;
 - activation and rollback governance;
 - offline GraphDB packaging and a read-only application/workbench baseline;
-- a packaged Public Contract Catalog with 83 Draft 2020-12 schemas and a
+- a packaged Public Contract Catalog with 115 Draft 2020-12 schemas and a
   fully offline Registry;
 - Artifact Reference, Artifact Manifest, and Validation Report v1 contracts;
 - formal DomainPackManifest/DomainPackLock v1 contracts, local discovery,

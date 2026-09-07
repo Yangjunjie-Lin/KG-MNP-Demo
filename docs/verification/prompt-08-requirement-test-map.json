@@ -1,0 +1,592 @@
+{
+  "requirements": [
+    {
+      "requirement": "baseline",
+      "status": "PASS",
+      "evidence_or_blocker": "fixed SHA, clean entry, P1-P7 ancestry and old snapshot checked",
+      "test_nodeids": []
+    },
+    {
+      "requirement": "A1",
+      "status": "PASS",
+      "evidence_or_blocker": "real Workspace/Lock mapping; legacy incomplete records retained",
+      "test_nodeids": [
+        "tests/services/test_prompt08_boundary.py::test_created_project_is_valid_workspace_without_path_disclosure",
+        "tests/services/test_prompt08_boundary.py::test_pack_version_unavailable_does_not_create_project",
+        "tests/services/test_prompt08_boundary.py::test_formal_lock_check_is_byte_preserving_and_rejects_tampering",
+        "tests/services/test_prompt08_boundary.py::test_incomplete_p7_project_is_not_silently_upgraded"
+      ]
+    },
+    {
+      "requirement": "A2",
+      "status": "PASS",
+      "evidence_or_blocker": "real exact-version local Pack discovery, empty/error/denied distinct",
+      "test_nodeids": [
+        "tests/services/test_prompt08_boundary.py::test_discovery_is_real_and_available_before_project_creation",
+        "tests/services/test_prompt08_boundary.py::test_empty_pack_root_and_parse_failure_are_distinct",
+        "tests/services/test_prompt08_boundary.py::test_owner_open_validate_catalog_pack_inspect_and_empty_environment"
+      ]
+    },
+    {
+      "requirement": "A3",
+      "status": "PARTIAL",
+      "evidence_or_blocker": "project/job isolation tested; evidence resource/download not implemented",
+      "test_nodeids": [
+        "tests/services/test_prompt08_boundary.py::test_project_list_and_open_reject_empty_scope_outsider",
+        "tests/services/test_prompt08_boundary.py::test_jobs_cannot_be_read_by_another_principal",
+        "tests/services/test_prompt08_boundary.py::test_legacy_job_payloads_are_not_returned_and_cancel_is_scoped",
+        "tests/services/test_prompt08_boundary.py::test_service_account_cannot_approve_scope_or_reviews"
+      ]
+    },
+    {
+      "requirement": "A4",
+      "status": "PASS",
+      "evidence_or_blocker": "minimal health and administrator-only doctor",
+      "test_nodeids": [
+        "tests/services/test_prompt08_boundary.py::test_health_is_minimal_even_for_authenticated_reader",
+        "tests/services/test_prompt08_boundary.py::test_resource_api_and_compatibility_dto_reject_unknown_fields"
+      ]
+    },
+    {
+      "requirement": "A5",
+      "status": "PARTIAL",
+      "evidence_or_blocker": "scoped idempotency, credential revalidation, lease/cancel recovery; no core commit fencing",
+      "test_nodeids": [
+        "tests/services/test_prompt08_boundary.py::test_sync_idempotency_rejects_changed_body",
+        "tests/services/test_prompt08_boundary.py::test_sync_idempotency_is_concurrent_and_principal_scoped",
+        "tests/services/test_prompt08_boundary.py::test_job_idempotency_scope_includes_principal_project_operation",
+        "tests/services/test_prompt08_boundary.py::test_revoked_job_principal_cannot_execute",
+        "tests/services/test_prompt08_boundary.py::test_expired_lease_cannot_complete_or_renew_and_is_recovery_required",
+        "tests/services/test_prompt08_boundary.py::test_failed_sync_request_and_unknown_outcome_are_not_reexecuted"
+      ]
+    },
+    {
+      "requirement": "A6",
+      "status": "FAIL",
+      "evidence_or_blocker": "39 required/declared service handlers absent",
+      "test_nodeids": []
+    },
+    {
+      "requirement": "typed-resource-api",
+      "status": "PARTIAL",
+      "evidence_or_blocker": "closed implemented-operation requests; most resource families and typed responses absent",
+      "test_nodeids": []
+    },
+    {
+      "requirement": "backend-http-workflow",
+      "status": "FAIL",
+      "evidence_or_blocker": "real socket/SDK gate stops at upload 404 and Source 501",
+      "test_nodeids": []
+    },
+    {
+      "requirement": "browser-session-security",
+      "status": "NOT_IMPLEMENTED",
+      "evidence_or_blocker": "Bearer only; no cookie session/auth cache/CSRF acceptance",
+      "test_nodeids": []
+    },
+    {
+      "requirement": "unified-ui",
+      "status": "NOT_RUN",
+      "evidence_or_blocker": "8A gate failed; no formal UI acceptance",
+      "test_nodeids": []
+    },
+    {
+      "requirement": "modeling-review-compilation-browser",
+      "status": "NOT_RUN",
+      "evidence_or_blocker": "8A gate failed",
+      "test_nodeids": []
+    },
+    {
+      "requirement": "package-release-pointer-browser",
+      "status": "NOT_RUN",
+      "evidence_or_blocker": "8A gate failed",
+      "test_nodeids": []
+    },
+    {
+      "requirement": "minimal-cross-domain",
+      "status": "NOT_RUN",
+      "evidence_or_blocker": "Pack preserved; full browser workflow not executed",
+      "test_nodeids": []
+    },
+    {
+      "requirement": "mnp-cross-domain",
+      "status": "NOT_RUN",
+      "evidence_or_blocker": "Pack preserved; full browser workflow not executed",
+      "test_nodeids": []
+    },
+    {
+      "requirement": "forestry-0.2.0",
+      "status": "NOT_IMPLEMENTED",
+      "evidence_or_blocker": "original PLANNED 0.1.0 retained",
+      "test_nodeids": []
+    },
+    {
+      "requirement": "fourth-pack-ui-smoke",
+      "status": "NOT_RUN",
+      "evidence_or_blocker": "no unified frontend",
+      "test_nodeids": []
+    },
+    {
+      "requirement": "legacy-retirement",
+      "status": "NOT_IMPLEMENTED",
+      "evidence_or_blocker": "nine files explicitly retained until verified equivalents exist",
+      "test_nodeids": []
+    },
+    {
+      "requirement": "production-workbench-build-install",
+      "status": "NOT_RUN",
+      "evidence_or_blocker": "no frontend or bundled Workbench wheel",
+      "test_nodeids": []
+    },
+    {
+      "requirement": "browser-e2e-accessibility-visual-performance",
+      "status": "NOT_RUN",
+      "evidence_or_blocker": "8A gate failed; no screenshots claimed",
+      "test_nodeids": []
+    },
+    {
+      "requirement": "catalog-and-freeze",
+      "status": "PARTIAL",
+      "evidence_or_blocker": "115 schema bytes unchanged; authorized implementation snapshot tracked separately",
+      "test_nodeids": []
+    },
+    {
+      "requirement": "final-full-regression",
+      "status": "SEE_FINAL_REPORT",
+      "evidence_or_blocker": "collection and command receipts; repeated counts are not added",
+      "test_nodeids": []
+    },
+    {
+      "requirement": "P9-admission",
+      "status": "BLOCKED",
+      "evidence_or_blocker": "Prompt 8 unfinished",
+      "test_nodeids": []
+    }
+  ],
+  "browser_required_operations": [
+    {
+      "operation_id": "project.create",
+      "api": "POST /api/v1/projects",
+      "handler": "kg_mnp.services.projects.create_project",
+      "service_test": "tests/services/test_prompt08_boundary.py::test_created_project_is_valid_workspace_without_path_disclosure",
+      "browser_test": null,
+      "browser_status": "NOT_RUN_BACKEND_GATE_FAILED"
+    },
+    {
+      "operation_id": "project.open",
+      "api": "GET /api/v1/projects/{project_id}",
+      "handler": "kg_mnp.services.projects.inspect_project",
+      "service_test": "tests/services/test_prompt08_boundary.py::test_owner_open_validate_catalog_pack_inspect_and_empty_environment",
+      "browser_test": null,
+      "browser_status": "NOT_RUN_BACKEND_GATE_FAILED"
+    },
+    {
+      "operation_id": "project.list",
+      "api": "GET /api/v1/projects",
+      "handler": "kg_mnp.services.projects.list_projects",
+      "service_test": "tests/services/test_prompt08_boundary.py::test_project_list_and_open_reject_empty_scope_outsider",
+      "browser_test": null,
+      "browser_status": "NOT_RUN_BACKEND_GATE_FAILED"
+    },
+    {
+      "operation_id": "project.validate",
+      "api": "GET /api/v1/projects/{project_id}/validation",
+      "handler": "kg_mnp.services.projects.inspect_project",
+      "service_test": "tests/services/test_prompt08_boundary.py::test_owner_open_validate_catalog_pack_inspect_and_empty_environment",
+      "browser_test": null,
+      "browser_status": "NOT_RUN_BACKEND_GATE_FAILED"
+    },
+    {
+      "operation_id": "project.lock",
+      "api": "POST /api/v1/projects/{project_id}/lock",
+      "handler": "kg_mnp.services.projects.lock_project",
+      "service_test": "tests/services/test_prompt08_boundary.py::test_formal_lock_check_is_byte_preserving_and_rejects_tampering",
+      "browser_test": null,
+      "browser_status": "NOT_RUN_BACKEND_GATE_FAILED"
+    },
+    {
+      "operation_id": "domain-pack.discover",
+      "api": "GET /api/v1/domain-packs",
+      "handler": "kg_mnp.services.packs.discover",
+      "service_test": "tests/services/test_prompt08_boundary.py::test_discovery_is_real_and_available_before_project_creation",
+      "browser_test": null,
+      "browser_status": "NOT_RUN_BACKEND_GATE_FAILED"
+    },
+    {
+      "operation_id": "domain-pack.inspect",
+      "api": "POST /api/v1/operations/domain-pack.inspect",
+      "handler": "kg_mnp.services.packs.discover",
+      "service_test": "tests/services/test_prompt08_boundary.py::test_owner_open_validate_catalog_pack_inspect_and_empty_environment",
+      "browser_test": null,
+      "browser_status": "NOT_RUN_BACKEND_GATE_FAILED"
+    },
+    {
+      "operation_id": "source.register",
+      "api": "POST /api/v1/operations/source.register",
+      "handler": null,
+      "service_test": null,
+      "browser_test": null,
+      "browser_status": "NOT_RUN_BACKEND_GATE_FAILED"
+    },
+    {
+      "operation_id": "source.inspect",
+      "api": "POST /api/v1/operations/source.inspect",
+      "handler": null,
+      "service_test": null,
+      "browser_test": null,
+      "browser_status": "NOT_RUN_BACKEND_GATE_FAILED"
+    },
+    {
+      "operation_id": "ingestion.plan",
+      "api": "POST /api/v1/operations/ingestion.plan",
+      "handler": null,
+      "service_test": null,
+      "browser_test": null,
+      "browser_status": "NOT_RUN_BACKEND_GATE_FAILED"
+    },
+    {
+      "operation_id": "ingestion.run",
+      "api": "POST /api/v1/operations/ingestion.run",
+      "handler": null,
+      "service_test": null,
+      "browser_test": null,
+      "browser_status": "NOT_RUN_BACKEND_GATE_FAILED"
+    },
+    {
+      "operation_id": "ingestion.inspect",
+      "api": "POST /api/v1/operations/ingestion.inspect",
+      "handler": null,
+      "service_test": null,
+      "browser_test": null,
+      "browser_status": "NOT_RUN_BACKEND_GATE_FAILED"
+    },
+    {
+      "operation_id": "ingestion.trace",
+      "api": "POST /api/v1/operations/ingestion.trace",
+      "handler": null,
+      "service_test": null,
+      "browser_test": null,
+      "browser_status": "NOT_RUN_BACKEND_GATE_FAILED"
+    },
+    {
+      "operation_id": "modeling.scope",
+      "api": "POST /api/v1/operations/modeling.scope",
+      "handler": null,
+      "service_test": null,
+      "browser_test": null,
+      "browser_status": "NOT_RUN_BACKEND_GATE_FAILED"
+    },
+    {
+      "operation_id": "modeling.scope.approve",
+      "api": "POST /api/v1/operations/modeling.scope.approve",
+      "handler": null,
+      "service_test": null,
+      "browser_test": null,
+      "browser_status": "NOT_RUN_BACKEND_GATE_FAILED"
+    },
+    {
+      "operation_id": "modeling.candidate",
+      "api": "POST /api/v1/operations/modeling.candidate",
+      "handler": null,
+      "service_test": null,
+      "browser_test": null,
+      "browser_status": "NOT_RUN_BACKEND_GATE_FAILED"
+    },
+    {
+      "operation_id": "modeling.cq",
+      "api": "POST /api/v1/operations/modeling.cq",
+      "handler": null,
+      "service_test": null,
+      "browser_test": null,
+      "browser_status": "NOT_RUN_BACKEND_GATE_FAILED"
+    },
+    {
+      "operation_id": "modeling.baseline",
+      "api": "POST /api/v1/operations/modeling.baseline",
+      "handler": null,
+      "service_test": null,
+      "browser_test": null,
+      "browser_status": "NOT_RUN_BACKEND_GATE_FAILED"
+    },
+    {
+      "operation_id": "modeling.alignment",
+      "api": "POST /api/v1/operations/modeling.alignment",
+      "handler": null,
+      "service_test": null,
+      "browser_test": null,
+      "browser_status": "NOT_RUN_BACKEND_GATE_FAILED"
+    },
+    {
+      "operation_id": "modeling.proposal",
+      "api": "POST /api/v1/operations/modeling.proposal",
+      "handler": null,
+      "service_test": null,
+      "browser_test": null,
+      "browser_status": "NOT_RUN_BACKEND_GATE_FAILED"
+    },
+    {
+      "operation_id": "review.action",
+      "api": "POST /api/v1/operations/review.action",
+      "handler": null,
+      "service_test": null,
+      "browser_test": null,
+      "browser_status": "NOT_RUN_BACKEND_GATE_FAILED"
+    },
+    {
+      "operation_id": "review.replay",
+      "api": "POST /api/v1/operations/review.replay",
+      "handler": null,
+      "service_test": null,
+      "browser_test": null,
+      "browser_status": "NOT_RUN_BACKEND_GATE_FAILED"
+    },
+    {
+      "operation_id": "review.finalize",
+      "api": "POST /api/v1/operations/review.finalize",
+      "handler": null,
+      "service_test": null,
+      "browser_test": null,
+      "browser_status": "NOT_RUN_BACKEND_GATE_FAILED"
+    },
+    {
+      "operation_id": "compile.plan",
+      "api": "POST /api/v1/operations/compile.plan",
+      "handler": null,
+      "service_test": null,
+      "browser_test": null,
+      "browser_status": "NOT_RUN_BACKEND_GATE_FAILED"
+    },
+    {
+      "operation_id": "compile.build",
+      "api": "POST /api/v1/operations/compile.build",
+      "handler": null,
+      "service_test": null,
+      "browser_test": null,
+      "browser_status": "NOT_RUN_BACKEND_GATE_FAILED"
+    },
+    {
+      "operation_id": "compile.validate",
+      "api": "POST /api/v1/operations/compile.validate",
+      "handler": null,
+      "service_test": null,
+      "browser_test": null,
+      "browser_status": "NOT_RUN_BACKEND_GATE_FAILED"
+    },
+    {
+      "operation_id": "compile.reproduce",
+      "api": "POST /api/v1/operations/compile.reproduce",
+      "handler": null,
+      "service_test": null,
+      "browser_test": null,
+      "browser_status": "NOT_RUN_BACKEND_GATE_FAILED"
+    },
+    {
+      "operation_id": "package.inspect",
+      "api": "POST /api/v1/operations/package.inspect",
+      "handler": "kg_mnp.lifecycle.store.list_records",
+      "service_test": null,
+      "browser_test": null,
+      "browser_status": "NOT_RUN_BACKEND_GATE_FAILED"
+    },
+    {
+      "operation_id": "package.verify",
+      "api": "POST /api/v1/operations/package.verify",
+      "handler": null,
+      "service_test": null,
+      "browser_test": null,
+      "browser_status": "NOT_RUN_BACKEND_GATE_FAILED"
+    },
+    {
+      "operation_id": "package.export",
+      "api": "POST /api/v1/operations/package.export",
+      "handler": null,
+      "service_test": null,
+      "browser_test": null,
+      "browser_status": "NOT_RUN_BACKEND_GATE_FAILED"
+    },
+    {
+      "operation_id": "registry.import",
+      "api": "POST /api/v1/operations/registry.import",
+      "handler": null,
+      "service_test": null,
+      "browser_test": null,
+      "browser_status": "NOT_RUN_BACKEND_GATE_FAILED"
+    },
+    {
+      "operation_id": "registry.verify",
+      "api": "POST /api/v1/operations/registry.verify",
+      "handler": "kg_mnp.lifecycle.registry.replay.verify_registry",
+      "service_test": "tests/services/test_unified_service.py::test_project_isolation_is_enforced_by_service",
+      "browser_test": null,
+      "browser_status": "NOT_RUN_BACKEND_GATE_FAILED"
+    },
+    {
+      "operation_id": "change.diff",
+      "api": "POST /api/v1/operations/change.diff",
+      "handler": null,
+      "service_test": null,
+      "browser_test": null,
+      "browser_status": "NOT_RUN_BACKEND_GATE_FAILED"
+    },
+    {
+      "operation_id": "change.impact",
+      "api": "POST /api/v1/operations/change.impact",
+      "handler": null,
+      "service_test": null,
+      "browser_test": null,
+      "browser_status": "NOT_RUN_BACKEND_GATE_FAILED"
+    },
+    {
+      "operation_id": "change.regression",
+      "api": "POST /api/v1/operations/change.regression",
+      "handler": null,
+      "service_test": null,
+      "browser_test": null,
+      "browser_status": "NOT_RUN_BACKEND_GATE_FAILED"
+    },
+    {
+      "operation_id": "change.evaluate",
+      "api": "POST /api/v1/operations/change.evaluate",
+      "handler": null,
+      "service_test": null,
+      "browser_test": null,
+      "browser_status": "NOT_RUN_BACKEND_GATE_FAILED"
+    },
+    {
+      "operation_id": "release.review",
+      "api": "POST /api/v1/operations/release.review",
+      "handler": null,
+      "service_test": null,
+      "browser_test": null,
+      "browser_status": "NOT_RUN_BACKEND_GATE_FAILED"
+    },
+    {
+      "operation_id": "release.publish",
+      "api": "POST /api/v1/operations/release.publish",
+      "handler": null,
+      "service_test": null,
+      "browser_test": null,
+      "browser_status": "NOT_RUN_BACKEND_GATE_FAILED"
+    },
+    {
+      "operation_id": "release.inspect",
+      "api": "POST /api/v1/operations/release.inspect",
+      "handler": "kg_mnp.lifecycle.store.list_records",
+      "service_test": null,
+      "browser_test": null,
+      "browser_status": "NOT_RUN_BACKEND_GATE_FAILED"
+    },
+    {
+      "operation_id": "environment.activate",
+      "api": "POST /api/v1/operations/environment.activate",
+      "handler": null,
+      "service_test": null,
+      "browser_test": null,
+      "browser_status": "NOT_RUN_BACKEND_GATE_FAILED"
+    },
+    {
+      "operation_id": "environment.rollback",
+      "api": "POST /api/v1/operations/environment.rollback",
+      "handler": null,
+      "service_test": null,
+      "browser_test": null,
+      "browser_status": "NOT_RUN_BACKEND_GATE_FAILED"
+    },
+    {
+      "operation_id": "environment.inspect",
+      "api": "POST /api/v1/operations/environment.inspect",
+      "handler": "kg_mnp.lifecycle.store.list_records",
+      "service_test": "tests/services/test_prompt08_boundary.py::test_owner_open_validate_catalog_pack_inspect_and_empty_environment",
+      "browser_test": null,
+      "browser_status": "NOT_RUN_BACKEND_GATE_FAILED"
+    },
+    {
+      "operation_id": "oms.metadata",
+      "api": "POST /api/v1/operations/oms.metadata",
+      "handler": null,
+      "service_test": null,
+      "browser_test": null,
+      "browser_status": "NOT_RUN_BACKEND_GATE_FAILED"
+    },
+    {
+      "operation_id": "ods.query",
+      "api": "POST /api/v1/operations/ods.query",
+      "handler": null,
+      "service_test": null,
+      "browser_test": null,
+      "browser_status": "NOT_RUN_BACKEND_GATE_FAILED"
+    },
+    {
+      "operation_id": "visualization.export",
+      "api": "POST /api/v1/operations/visualization.export",
+      "handler": null,
+      "service_test": null,
+      "browser_test": null,
+      "browser_status": "NOT_RUN_BACKEND_GATE_FAILED"
+    },
+    {
+      "operation_id": "integration.plan",
+      "api": "POST /api/v1/operations/integration.plan",
+      "handler": null,
+      "service_test": null,
+      "browser_test": null,
+      "browser_status": "NOT_RUN_BACKEND_GATE_FAILED"
+    },
+    {
+      "operation_id": "integration.review",
+      "api": "POST /api/v1/operations/integration.review",
+      "handler": null,
+      "service_test": null,
+      "browser_test": null,
+      "browser_status": "NOT_RUN_BACKEND_GATE_FAILED"
+    },
+    {
+      "operation_id": "integration.execute",
+      "api": "POST /api/v1/operations/integration.execute",
+      "handler": null,
+      "service_test": null,
+      "browser_test": null,
+      "browser_status": "NOT_RUN_BACKEND_GATE_FAILED"
+    },
+    {
+      "operation_id": "integration.verify",
+      "api": "POST /api/v1/operations/integration.verify",
+      "handler": null,
+      "service_test": null,
+      "browser_test": null,
+      "browser_status": "NOT_RUN_BACKEND_GATE_FAILED"
+    },
+    {
+      "operation_id": "workflow.enqueue",
+      "api": "POST /api/v1/operations/workflow.enqueue",
+      "handler": null,
+      "service_test": null,
+      "browser_test": null,
+      "browser_status": "NOT_RUN_BACKEND_GATE_FAILED"
+    },
+    {
+      "operation_id": "job.get",
+      "api": "GET /api/v1/jobs/{job_id}",
+      "handler": "kg_mnp.jobs.store.JobStore.get",
+      "service_test": "tests/services/test_prompt08_boundary.py::test_legacy_job_payloads_are_not_returned_and_cancel_is_scoped",
+      "browser_test": null,
+      "browser_status": "NOT_RUN_BACKEND_GATE_FAILED"
+    },
+    {
+      "operation_id": "job.events",
+      "api": "GET /api/v1/jobs/{job_id}/events",
+      "handler": "kg_mnp.jobs.store.JobStore.events",
+      "service_test": "tests/services/test_prompt08_boundary.py::test_legacy_job_payloads_are_not_returned_and_cancel_is_scoped",
+      "browser_test": null,
+      "browser_status": "NOT_RUN_BACKEND_GATE_FAILED"
+    },
+    {
+      "operation_id": "operation.catalog",
+      "api": "GET /api/v1/operations",
+      "handler": "kg_mnp.services.facade.ApplicationService.operation_catalog",
+      "service_test": "tests/services/test_prompt08_boundary.py::test_owner_open_validate_catalog_pack_inspect_and_empty_environment",
+      "browser_test": null,
+      "browser_status": "NOT_RUN_BACKEND_GATE_FAILED"
+    }
+  ]
+}

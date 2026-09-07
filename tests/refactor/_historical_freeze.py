@@ -20,6 +20,9 @@ PROMPT01_HEAD_SHA = "a7114eef25f2f2a262cd69793a8d3e2b444836fc"
 PROMPT02_HEAD_SHA = "d04e9b494a99932532ae9c359653878aa32261d7"
 PROMPT03_HEAD_SHA = "52fb0bc064ed7a715ddc3269d23e89a1a78c917c"
 PROMPT04_HEAD_SHA = "eccc5092831503974c8aa54f158e6674445b1cb4"
+PROMPT05_HEAD_SHA = "7aaa039b2b2c4eb80fa959b956e6452a814bb5b3"
+PROMPT06_HEAD_SHA = "1e31c53f6a441cf9c0c11b02ad9db5fca1ebabfc"
+PROMPT07_HEAD_SHA = "9ae308ef86e74a08eb4daab1e20dd66cced87b16"
 PROTECTED_ROOTS = (
     "src/kg_mnp",
     "schemas",
@@ -29,6 +32,7 @@ PROTECTED_ROOTS = (
     "scripts",
     "tests",
     "web",
+    "workbench",
     "examples",
 )
 SELF_PATH = "tests/refactor/_historical_freeze.py"
@@ -40,8 +44,12 @@ SELF_PATH = "tests/refactor/_historical_freeze.py"
 # preservation, packaging, Ruff, and the full non-snapshot suite passed. The
 # helper excludes itself to avoid a self-referential digest; every other
 # intended repository file below PROTECTED_ROOTS remains bound.
-EXPECTED_FILE_COUNT = 1486
-EXPECTED_TREE_SHA256 = "d382179e7322ccb802a5b01d4bbf7fa3f7c113a597c74e932fb52297b19f72b3"
+# Prompt 8 authorized service/auth/job fixes, evidence tooling/tests and
+# content-byte metaschema cache. The old P7 snapshot was independently checked
+# using git archive by scripts/prompt08_snapshot.py before this update.
+# This snapshot grants no Workbench/backend acceptance; P8 remains NO_GO.
+EXPECTED_FILE_COUNT = 1497
+EXPECTED_TREE_SHA256 = "0aec821ea8a266127ac532df42bfda69a809c90504e17a79c6f5760acc8a9052"
 
 
 def _git(*arguments: str, check: bool = True) -> subprocess.CompletedProcess[bytes]:
@@ -91,6 +99,9 @@ def assert_prompt01_semantic_snapshot(historical_commit: str) -> None:
         PROMPT02_HEAD_SHA,
         PROMPT03_HEAD_SHA,
         PROMPT04_HEAD_SHA,
+        PROMPT05_HEAD_SHA,
+        PROMPT06_HEAD_SHA,
+        PROMPT07_HEAD_SHA,
         BASELINE_SHA,
     ):
         exists = _git("cat-file", "-e", f"{commit}^{{commit}}", check=False)

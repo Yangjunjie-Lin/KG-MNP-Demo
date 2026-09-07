@@ -925,3 +925,18 @@ verify-prompt-07-offline: verify-prompt-06-offline verify-p06-remediation \
 	python -m ruff check .
 	python -m pytest -q tests/services tests/integrations tests/lifecycle/test_prompt07_red.py tests/lifecycle/test_prompt07_e2e.py
 	python -m kg_mnp service doctor --workspace .
+
+.PHONY: verify-workbench-backend verify-workbench-contracts verify-workbench-auth verify-prompt-08-offline
+
+verify-workbench-backend:
+	python scripts/verify_prompt08_backend.py
+
+verify-workbench-contracts:
+	python -m pytest -q tests/services/test_prompt08_boundary.py -k "resource_api or discovery or pack_version or formal_lock"
+
+verify-workbench-auth:
+	python -m pytest -q tests/services/test_prompt08_boundary.py
+
+# This gate intentionally exits nonzero while required business handlers are
+# absent. Passing security rejection tests is not passing a workbench workflow.
+verify-prompt-08-offline: verify-prompt-07-offline verify-workbench-contracts verify-workbench-auth verify-workbench-backend

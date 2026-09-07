@@ -1,5 +1,11 @@
 # Research-to-Product Alignment
 
+Prompt 8 evidence boundary: the Workbench row below is a product target, not a
+completed implementation. Service remediation does not establish a browser
+workflow or cross-domain experiment. Forestry remains PLANNED 0.1.0 on this
+partial branch; there is no forestry pilot, expert endorsement or measured
+business outcome. The final report explicitly records missing acceptance.
+
 The revised product preserves the research questions while replacing unsafe or
 overly domain-specific product interpretations.
 

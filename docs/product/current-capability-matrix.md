@@ -1,5 +1,12 @@
 # Current Capability Matrix
 
+Prompt 8 service/API status supersedes any implication of complete service
+coverage below: see [53-operation audit](../verification/prompt-08-service-coverage.json).
+Workspace creation, exact Pack discovery, object isolation, minimal health and
+scoped idempotency are repaired. Core-writing jobs, browser sessions, unified
+UI and cross-domain browser workflows remain incomplete. The backend gate is
+`NO_GO_BACKEND_NOT_READY`; retained core tests do not establish UI/API coverage.
+
 This matrix records repository state at Prompt 5. “Implemented” means exercised
 by retained code and tests; it does not mean the capability is already generic,
 packaged as a stable public API, or validated across industries.

@@ -2,7 +2,12 @@
 
 ## Product definition
 
-**Product name:** KG-MNP Ontology Toolchain
+**Workbench product name:** KG-MNP Ontology Workbench / KG-MNP 本体工程工作台.
+The underlying package remains the KG-MNP ontology toolchain.
+
+Prompt 8 status: backend remediation only, `NO_GO_BACKEND_NOT_READY`. This is
+not a delivered unified UI, a forestry pilot, or a production deployment.
+The service catalogue is not evidence that every core capability is exposed.
 
 **Positioning:** A pluggable, verifiable and traceable domain ontology
 engineering toolchain that binds modeling decisions to source evidence, human
