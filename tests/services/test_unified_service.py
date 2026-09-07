@@ -39,7 +39,7 @@ def test_local_token_store_persists_only_digest_and_revoke(tmp_path):
 def test_project_isolation_is_enforced_by_service(tmp_path):
     service = ApplicationService(ServiceConfiguration(str(tmp_path)))
     creator = _principal("project:write", "project:read")
-    created = service.execute(OperationRequest("project.create", parameters={"name": "a"}), creator).payload
+    created = service.execute(OperationRequest("project.create", parameters={"name": "a", "domain_pack": "minimal", "domain_pack_version": "0.1.0"}), creator).payload
     owner = _principal("project:read", projects={created["project_id"]})
     outsider = _principal("project:read", projects={"urn:kg-mnp:project:" + "b" * 64})
     assert service.execute(OperationRequest("registry.verify", created["project_id"]), owner).payload["status"] == "VALID"
@@ -57,11 +57,16 @@ def test_client_cannot_inject_review_identity():
 def test_durable_job_idempotency_and_fencing(tmp_path):
     service = ApplicationService(ServiceConfiguration(str(tmp_path)))
     principal = _principal("source:write", "project:read", projects={"urn:kg-mnp:project:" + "a" * 64})
-    project = service.execute(OperationRequest("project.create", parameters={"name": "a"}), _principal("project:write", "project:read")).payload
+    project = service.execute(OperationRequest("project.create", parameters={"name": "a", "domain_pack": "minimal", "domain_pack_version": "0.1.0"}), _principal("project:write", "project:read")).payload
     principal = _principal("source:write", "project:read", projects={project["project_id"]})
     request = OperationRequest("source.register", project["project_id"], {"path": "source.csv"}, "same-key")
-    first = service.execute(request, principal)
-    replay = service.execute(request, principal)
+    # P8 rejects an unimplemented handler before enqueue; a FAILED P7 queue
+    # test must never count as a successful Source registration workflow.
+    with pytest.raises(ServiceBoundaryError) as blocked:
+        service.execute(request, principal)
+    assert blocked.value.code == "OPERATION_BLOCKED"
+    first, _ = service.jobs.create(operation_id="source.register", project_id=project["project_id"], parameters={}, idempotency_key="same-key")
+    replay, _ = service.jobs.create(operation_id="source.register", project_id=project["project_id"], parameters={}, idempotency_key="same-key")
     assert first.job_id == replay.job_id
     worker_result = JobWorker(service.jobs, service).run_once("worker-a")
     assert worker_result is not None

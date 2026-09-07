@@ -14,8 +14,8 @@ def build_operation_catalog() -> dict[str, OperationDefinition]:
         OperationDefinition("project.list", "ProjectListRequest", "ProjectListResult", _READ, False),
         OperationDefinition("project.validate", "ProjectHandle", "ProjectValidationResult", _READ),
         OperationDefinition("project.lock", "ProjectLockRequest", "ProjectHandle", _WRITE, True, "INLINE", "WRITE", "REQUIRED"),
-        OperationDefinition("domain-pack.discover", "DomainPackRequest", "DomainPackList", _READ),
-        OperationDefinition("domain-pack.inspect", "DomainPackRequest", "DomainPackSnapshot", _READ),
+        OperationDefinition("domain-pack.discover", "DomainPackRequest", "DomainPackList", _READ, False),
+        OperationDefinition("domain-pack.inspect", "DomainPackRequest", "DomainPackSnapshot", _READ, False),
         OperationDefinition("source.register", "SourceRegisterRequest", "Artifact", ("source:write",), True, "JOB", "WRITE", "REQUIRED"),
         OperationDefinition("source.inspect", "ArtifactRequest", "Artifact", ("source:read",), True),
         OperationDefinition("ingestion.plan", "IngestionPlanRequest", "IngestionPlan", _WRITE, True, "JOB", "WRITE", "REQUIRED"),
@@ -67,4 +67,27 @@ def build_operation_catalog() -> dict[str, OperationDefinition]:
 
 
 def coverage_matrix() -> list[dict[str, str]]:
-    return [{"operation_id": operation_id, "service_handler": "explicit", "cli": "service", "api": "POST /api/v1/operations/{operation_id}", "local_sdk": "LocalClient.execute", "http_sdk": "HTTPClient.execute", "tests": "service-contract"} for operation_id in sorted(build_operation_catalog())]
+    return [{"operation_id": operation_id, "service_handler": HANDLERS.get(operation_id),
+             "status": "IMPLEMENTED_NOT_VERIFIED" if operation_id in HANDLERS else "DECLARED_ONLY",
+             "blocked_reason": None if operation_id in HANDLERS else "No service-to-core handler",
+             "api": "POST /api/v1/operations/{operation_id}"} for operation_id in sorted(build_operation_catalog())]
+
+
+# Deliberately explicit executable coverage, not a reflection-based dispatcher.
+# A catalogue declaration is not proof of a handler or a passing workflow.
+HANDLERS = {
+    "project.create": "kg_mnp.services.projects.create_project",
+    "project.open": "kg_mnp.services.projects.inspect_project",
+    "project.list": "kg_mnp.services.projects.list_projects",
+    "project.validate": "kg_mnp.services.projects.inspect_project",
+    "project.lock": "kg_mnp.services.projects.lock_project",
+    "domain-pack.discover": "kg_mnp.services.packs.discover",
+    "domain-pack.inspect": "kg_mnp.services.packs.discover",
+    "registry.verify": "kg_mnp.lifecycle.registry.replay.verify_registry",
+    "package.inspect": "kg_mnp.lifecycle.store.list_records",
+    "release.inspect": "kg_mnp.lifecycle.store.list_records",
+    "environment.inspect": "kg_mnp.lifecycle.store.list_records",
+    "job.get": "kg_mnp.jobs.store.JobStore.get",
+    "job.events": "kg_mnp.jobs.store.JobStore.events",
+    "operation.catalog": "kg_mnp.services.facade.ApplicationService.operation_catalog",
+}

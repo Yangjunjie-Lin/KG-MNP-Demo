@@ -1,11 +1,9 @@
 from __future__ import annotations
 
-import json
 from dataclasses import asdict
 from pathlib import Path
 from typing import Any
 
-from kg_mnp.contracts.canonical import stable_urn
 from kg_mnp.lifecycle.registry.replay import verify_registry
 from kg_mnp.lifecycle.store import list_records
 
@@ -14,6 +12,7 @@ from .audit import AuditLog
 from .authorization import TokenStore
 from .authorization_policy import authorize
 from .errors import ServiceBoundaryError
+from .idempotency import IdempotencyStore
 from .models import (
     OperationDefinition,
     OperationRequest,
@@ -23,28 +22,49 @@ from .models import (
     ServiceConfiguration,
     path_for,
 )
-from .operations import build_operation_catalog, coverage_matrix
-from .projects import create_project, get_project, list_projects
+from .operations import HANDLERS, build_operation_catalog, coverage_matrix
+from .packs import discover
+from .projects import (
+    can_access,
+    create_project,
+    get_project,
+    inspect_project,
+    list_projects,
+    lock_project,
+    require_access,
+)
 
 
 class ApplicationService:
-    """The only business entrypoint used by the new CLI, SDK and REST API."""
+    """Single authorization boundary for local, HTTP and worker callers."""
 
     def __init__(self, configuration: ServiceConfiguration):
         configuration.validate()
         self.configuration = configuration
-        root = Path(configuration.workspace_root)
-        root.mkdir(parents=True, exist_ok=True)
+        self.root = Path(configuration.workspace_root).resolve()
+        self.root.mkdir(parents=True, exist_ok=True)
         self.catalog = build_operation_catalog()
         self.tokens = TokenStore(path_for(configuration, "token_store_path", "service-data/tokens.json"))
         self.jobs = JobStore(path_for(configuration, "jobs_db_path", "service-data/jobs.sqlite3"))
-        self.audit = AuditLog(root / "service-data" / "audit.jsonl")
+        self.idempotency = IdempotencyStore(self.root / "service-data" / "requests.sqlite3")
+        self.audit = AuditLog(self.root / "service-data" / "audit.jsonl")
 
     def runtime_check(self) -> dict[str, Any]:
-        return {"status": "SERVICE_READY", "host": self.configuration.host, "port": self.configuration.port, "operation_count": len(self.catalog), "workspace_root": str(Path(self.configuration.workspace_root).resolve())}
+        """Local CLI/authorized doctor only. Never use for public health."""
+        return {"status": "SERVICE_READY", "host": self.configuration.host, "port": self.configuration.port,
+                "operation_count": len(self.catalog), "workspace_root": str(self.root),
+                "workbench_backend_gate": "NOT_READY"}
 
     def operation_catalog(self) -> list[dict[str, Any]]:
-        return [{"operation_id": item.operation_id, "request_contract": item.request_contract, "response_contract": item.response_contract, "required_permissions": list(item.required_permissions), "project_scope_required": item.project_scope_required, "execution_mode": item.execution_mode, "side_effect_class": item.side_effect_class, "idempotency_policy": item.idempotency_policy, "precondition_policy": item.precondition_policy, "audit_policy": item.audit_policy, "blocked_reason": item.blocked_reason} for item in self.catalog.values()]
+        return [{**asdict(item), "required_permissions": list(item.required_permissions),
+                 "blocked_reason": None if item.operation_id in HANDLERS else "No service-to-core handler"}
+                for item in self.catalog.values()]
+
+    def capabilities(self, principal: PrincipalReference) -> dict:
+        return {"capabilities": [{"operation_id": item.operation_id,
+                                  "status": "BLOCKED_BY_POLICY" if not all(principal.can(p) for p in item.required_permissions)
+                                  else "AVAILABLE" if item.operation_id in HANDLERS else "NOT_IMPLEMENTED"}
+                                 for item in self.catalog.values()], "workbench_backend_gate": "NOT_READY"}
 
     def authenticate(self, authorization: str) -> PrincipalReference:
         scheme, _, token = authorization.partition(" ")
@@ -52,85 +72,156 @@ class ApplicationService:
             raise ServiceBoundaryError("AUTH_REQUIRED", "Bearer credential required", status_code=401)
         return self.tokens.authenticate(token)
 
-    def execute(self, request: OperationRequest, principal: PrincipalReference | None) -> OperationResult:
+    def _current(self, principal: PrincipalReference | None) -> PrincipalReference:
         if principal is None:
             raise ServiceBoundaryError("AUTH_REQUIRED", "authenticated principal is required", status_code=401)
+        if principal.token_id:
+            current = self.tokens.resolve(principal.token_id)
+            if current.principal_id != principal.principal_id:
+                raise ServiceBoundaryError("AUTH_INVALID", "credential identity changed", status_code=401)
+            return current
+        # Explicitly trusted in-process LocalClient only; never reconstructed
+        # from a network body or a queued serialized Principal.
+        return principal
+
+    def _authorize_object(self, request, principal, operation):
+        if operation.project_scope_required:
+            require_access(principal, self._project(request))
+        if request.operation_id == "project.open":
+            project_id = request.parameters.get("project_id", request.project_id or "")
+            require_access(principal, get_project(self.root, project_id))
+        if request.operation_id in {"job.get", "job.events"}:
+            self._job(str(request.parameters.get("job_id", "")), principal)
+
+    def execute(self, request: OperationRequest, principal: PrincipalReference | None) -> OperationResult:
+        principal = self._current(principal)
         operation = self.catalog.get(request.operation_id)
         if operation is None:
             raise ServiceBoundaryError("OPERATION_NOT_FOUND", "unknown operation", status_code=404)
         authorize(principal, operation, request)
+        self._authorize_object(request, principal, operation)
+        if request.operation_id not in HANDLERS:
+            raise ServiceBoundaryError("OPERATION_BLOCKED", "service-to-core handler is not implemented", status_code=501)
+        from .requests import validate_parameters
+        validate_parameters(request)
+        if operation.idempotency_policy == "REQUIRED" and not request.idempotency_key:
+            raise ServiceBoundaryError("IDEMPOTENCY_REQUIRED", "Idempotency-Key is required", status_code=428)
         if operation.execution_mode == "JOB":
-            if operation.idempotency_policy == "REQUIRED" and not request.idempotency_key:
-                raise ServiceBoundaryError("IDEMPOTENCY_REQUIRED", "Idempotency-Key is required", status_code=428)
-            params = {**request.parameters, "__principal": principal.to_dict()}
+            if not principal.token_id:
+                raise ServiceBoundaryError("JOB_CREDENTIAL_REQUIRED", "durable jobs require a revocable server credential", status_code=401)
+            params = {**request.parameters, "__principal": {"principal_id": principal.principal_id, "token_id": principal.token_id}}
             try:
-                job, existing = self.jobs.create(operation_id=request.operation_id, project_id=request.project_id, parameters=params, idempotency_key=request.idempotency_key)
+                job, _ = self.jobs.create(operation_id=request.operation_id, project_id=request.project_id, parameters=params,
+                                          idempotency_key=request.idempotency_key, principal_id=principal.principal_id)
             except ValueError as exc:
                 raise ServiceBoundaryError("IDEMPOTENCY_CONFLICT", str(exc), status_code=409) from exc
-            audit_id = self.audit.append(principal_id=principal.principal_id, operation_id=request.operation_id, project_id=request.project_id, request_id=request.request_id, outcome="ACCEPTED" if not existing else "IDEMPOTENT_REPLAY", details={"job_id": job.job_id})
-            return OperationResult(request.operation_id, "ACCEPTED", {"job_id": job.job_id, "status": job.status}, request.request_id, job.job_id, audit_id)
+            return OperationResult(request.operation_id, "ACCEPTED", {"job_id": job.job_id, "status": job.status}, request.request_id, job.job_id)
         try:
-            payload = self._execute_inline(request, principal, operation)
-            audit_id = self.audit.append(principal_id=principal.principal_id, operation_id=request.operation_id, project_id=request.project_id, request_id=request.request_id, outcome="SUCCEEDED", details={"semantic": payload.get("semantic_digest") if isinstance(payload, dict) else None})
+            action = lambda: self._execute_inline(request, principal, operation)
+            payload = self.idempotency.execute(request, principal, action) if operation.side_effect_class != "READ" else action()
+            audit_id = self.audit.append(principal_id=principal.principal_id, operation_id=request.operation_id,
+                                         project_id=request.project_id, request_id=request.request_id, outcome="SUCCEEDED", details={})
             return OperationResult(request.operation_id, "SUCCEEDED", payload, request.request_id, None, audit_id)
         except ServiceBoundaryError as exc:
-            self.audit.append(principal_id=principal.principal_id, operation_id=request.operation_id, project_id=request.project_id, request_id=request.request_id, outcome="BLOCKED", details={"code": exc.code})
+            self.audit.append(principal_id=principal.principal_id, operation_id=request.operation_id, project_id=request.project_id,
+                              request_id=request.request_id, outcome="BLOCKED", details={"code": exc.code})
             raise
 
     def execute_job(self, job, parameters: dict[str, Any]) -> dict[str, Any]:
         raw = dict(parameters)
-        principal_data = raw.pop("__principal", None)
-        if not principal_data:
-            raise ServiceBoundaryError("JOB_PRINCIPAL_MISSING", "job has no authenticated principal")
-        principal = PrincipalReference(principal_data["principal_id"], principal_data["principal_type"], frozenset(principal_data["permissions"]), frozenset(principal_data["project_ids"]), principal_data.get("token_id"))
+        identity = raw.pop("__principal", {})
+        if not identity.get("token_id"):
+            raise ServiceBoundaryError("JOB_CREDENTIAL_REQUIRED", "job has no revocable credential", status_code=401)
+        principal = self.tokens.resolve(identity["token_id"])
+        if principal.principal_id != identity.get("principal_id"):
+            raise ServiceBoundaryError("AUTH_INVALID", "job identity does not match credential", status_code=401)
         request = OperationRequest(job.operation_id, job.project_id, raw)
-        operation = self.catalog[job.operation_id]
+        operation = self.catalog.get(job.operation_id)
+        if not operation:
+            raise ServiceBoundaryError("OPERATION_NOT_FOUND", "unknown queued operation", status_code=404)
         authorize(principal, operation, request)
-        return self._execute_inline(request, principal, operation)
+        self._authorize_object(request, principal, operation)
+        self.jobs.require_lease(job)
+        # No core-writing JOB handler is enabled until its *core commit* is
+        # fenced. Completion fencing alone is insufficient (P8 A5).
+        raise ServiceBoundaryError("OPERATION_BLOCKED", "queued operation has no commit-fenced handler", status_code=501)
 
     def _project(self, request: OperationRequest) -> ProjectHandle:
         if not request.project_id:
             raise ServiceBoundaryError("PROJECT_REQUIRED", "project scope is required", status_code=422)
-        return get_project(Path(self.configuration.workspace_root), request.project_id)
+        return get_project(self.root, request.project_id)
+
+    def _job(self, job_id, principal):
+        try:
+            job = self.jobs.get(job_id)
+        except KeyError as exc:
+            raise ServiceBoundaryError("JOB_NOT_FOUND", "job was not found", status_code=404) from exc
+        if job.project_id:
+            require_access(principal, get_project(self.root, job.project_id))
+        owner = self.jobs.parameters(job_id).get("__principal", {}).get("principal_id")
+        if owner != principal.principal_id and not principal.can("project:admin"):
+            raise ServiceBoundaryError("JOB_FORBIDDEN", "job is outside principal scope", status_code=403)
+        return job
+
+    def cancel_job(self, job_id, principal):
+        principal = self._current(principal)
+        if not principal.can("job:cancel"):
+            raise ServiceBoundaryError("FORBIDDEN", "missing permission: job:cancel", status_code=403)
+        self._job(job_id, principal)
+        return self._public_job(self.jobs.cancel(job_id))
+
+    @staticmethod
+    def _public_job(job):
+        # Old persisted result/error/event payloads may contain filesystem paths.
+        # Do not expose arbitrary legacy dictionaries across this boundary.
+        return {"job_id": job.job_id, "operation_id": job.operation_id, "project_id": job.project_id,
+                "status": job.status, "attempt": job.attempt, "result": None,
+                "error": {"code": job.error.get("code", "JOB_FAILED"), "message": "job failed; consult authorized diagnostics"} if job.error else None}
 
     def _execute_inline(self, request: OperationRequest, principal: PrincipalReference, operation: OperationDefinition) -> dict[str, Any]:
-        if request.operation_id == "project.create":
-            handle = create_project(Path(self.configuration.workspace_root), str(request.parameters.get("name", "")), principal)
-            return asdict(handle)
-        if request.operation_id == "project.list":
-            return {"projects": [asdict(item) for item in list_projects(Path(self.configuration.workspace_root))]}
-        if request.operation_id == "project.open":
-            return asdict(get_project(Path(self.configuration.workspace_root), str(request.parameters.get("project_id", request.project_id or ""))))
-        if request.operation_id == "job.get":
-            return asdict(self.jobs.get(str(request.parameters.get("job_id"))))
-        if request.operation_id == "job.events":
-            return {"events": self.jobs.events(str(request.parameters.get("job_id")))}
-        if request.operation_id == "operation.catalog":
+        name, params, packs_root = request.operation_id, request.parameters, self.configuration.domain_packs_root
+        if name == "project.create":
+            return create_project(self.root, params["name"], principal, domain_pack=params["domain_pack"],
+                                  domain_pack_version=params["domain_pack_version"], packs_root=packs_root).public_dict()
+        if name == "project.list":
+            return {"projects": [inspect_project(item, packs_root).public_dict() for item in list_projects(self.root) if can_access(principal, item)]}
+        if name == "project.open":
+            return inspect_project(get_project(self.root, params.get("project_id", request.project_id or "")), packs_root).public_dict()
+        if name == "job.get":
+            return self._public_job(self._job(params["job_id"], principal))
+        if name == "job.events":
+            return {"events": [{"sequence": row["sequence"], "event_type": row["event_type"], "observed_at": row["observed_at"]}
+                               for row in self.jobs.events(params["job_id"])]}
+        if name == "operation.catalog":
             return {"operations": self.operation_catalog(), "coverage": coverage_matrix()}
+        if name.startswith("domain-pack."):
+            result = discover(packs_root)
+            if name == "domain-pack.inspect":
+                row = next((row for row in result["domain_packs"] if row["pack_id"] == params["pack_id"] and row["pack_version"] == params["pack_version"]), None)
+                if row is None:
+                    raise ServiceBoundaryError("DOMAIN_PACK_VERSION_UNAVAILABLE", "exact Domain Pack version is unavailable", status_code=404)
+                return row
+            return result
         project = self._project(request)
-        if request.operation_id == "project.validate":
-            result = verify_registry(project.root)
-            return {"project_id": project.project_id, **result}
-        if request.operation_id == "registry.verify":
-            return verify_registry(project.root)
-        if request.operation_id == "package.inspect":
-            package_id = request.parameters.get("package_id")
-            rows = list_records(project.root, "records/packages")
-            return next((row for row in rows if row.get("package_id") == package_id), {"status": "NOT_FOUND"})
-        if request.operation_id == "release.inspect":
-            release_id = request.parameters.get("release_id")
-            rows = list_records(project.root, "records/releases")
-            return next((row for row in rows if row.get("release_id") == release_id), {"status": "NOT_FOUND"})
-        if request.operation_id == "environment.inspect":
-            environment_id = request.parameters.get("environment_id")
-            pointer = project.root / "state" / f"environment-pointer-{str(environment_id).rsplit(':', 1)[-1]}.json"
-            if not pointer.is_file():
+        if name == "project.validate":
+            return inspect_project(project, packs_root).public_dict()
+        if name == "project.lock":
+            return lock_project(project, packs_root).public_dict()
+        if inspect_project(project, packs_root).status != "VALID":
+            raise ServiceBoundaryError("WORKSPACE_INVALID", "workspace is not valid; recovery or a new workspace is required", status_code=409)
+        if name == "registry.verify":
+            return verify_registry(project.registry_root)
+        if name in {"package.inspect", "release.inspect"}:
+            kind = "package" if name == "package.inspect" else "release"
+            rows = list_records(project.registry_root, "records/" + kind + "s")
+            row = next((row for row in rows if row.get(kind + "_id") == params[kind + "_id"]), None)
+            if row is None:
+                raise ServiceBoundaryError("ARTIFACT_NOT_FOUND", "artifact was not found in project", status_code=404)
+            return row
+        if name == "environment.inspect":
+            rows = list_records(project.registry_root, "state")
+            row = next((row for row in rows if row.get("environment_id") == params["environment_id"] and row.get("manifest_kind") == "KG_MNP_ENVIRONMENT_POINTER"), None)
+            if row is None:
                 raise ServiceBoundaryError("ARTIFACT_NOT_FOUND", "environment pointer was not found", status_code=404)
-            return json.loads(pointer.read_bytes())
-        if request.operation_id == "project.lock":
-            lock = project.root / "project.lock.json"
-            lock.write_text(json.dumps({"project_id": project.project_id, "status": "LOCKED", "lock_digest": stable_urn("project-lock", {"project_id": project.project_id})}, sort_keys=True), encoding="utf-8")
-            return {**asdict(project), "status": "LOCKED"}
-        if request.operation_id == "domain-pack.discover":
-            return {"domain_packs": []}
-        raise ServiceBoundaryError("OPERATION_BLOCKED", f"operation handler is not enabled in this service release: {request.operation_id}", status_code=501)
+            return row
+        raise ServiceBoundaryError("OPERATION_BLOCKED", "operation handler is not implemented", status_code=501)

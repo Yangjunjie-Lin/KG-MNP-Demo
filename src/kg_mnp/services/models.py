@@ -22,6 +22,7 @@ class ServiceConfiguration:
     token_store_path: str | None = None
     jobs_db_path: str | None = None
     max_upload_bytes: int = 16 * 1024 * 1024
+    domain_packs_root: str | None = None
 
     def validate(self) -> None:
         import ipaddress
@@ -67,6 +68,19 @@ class ProjectHandle:
     project_name: str
     root: str
     status: str = "OPEN"
+    owner_id: str | None = None
+    manifest_project_id: str | None = None
+    domain_pack: str | None = None
+    domain_pack_version: str | None = None
+    migration_status: str | None = None
+
+    def public_dict(self) -> dict[str, Any]:
+        """A filesystem handle is never a network resource representation."""
+        return {key: value for key, value in asdict(self).items() if key != "root"}
+
+    @property
+    def registry_root(self) -> Path:
+        return Path(self.root) / "registry" / "lifecycle"
 
 
 @dataclass(frozen=True)

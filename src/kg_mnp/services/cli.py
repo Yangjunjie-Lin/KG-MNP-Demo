@@ -56,6 +56,12 @@ def main(argv: list[str] | None = None) -> int:
         return 0
     if action == "worker":
         worker = JobWorker(service.jobs, service)
+        if "--once" not in args:
+            try:
+                worker.run_forever(_arg(args, "--worker-id", "worker") or "worker")
+            except KeyboardInterrupt:
+                pass
+            return 0
         result = worker.run_once(_arg(args, "--worker-id", "worker") or "worker")
         print(json.dumps({"status": "IDLE" if result is None else result.status}, sort_keys=True))
         return 0
