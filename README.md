@@ -1,157 +1,155 @@
 # KG-MNP Ontology Toolchain
 
-Evidence-bound, review-governed and deterministic ontology engineering.
+可插拔、可验证、可追溯的通用本体工程工具链。它把资料转成 Evidence-bound KG-IR，经候选建模、明确人工审核和确定性语义编译，产出可验证的本体包，并管理本地版本发布与环境选择。
 
-KG-MNP 将资料转为带证据的 KG-IR，经过候选、人工审核、确定性编译和本地发布。
-产品不以携号转网资格判断为中央任务；MNP 只是一个独立领域包。
-**当前状态：NO_GO_OPEN_CORE_REQUIREMENTS，不是已验收发行候选。**
-KG-MNP Ontology Workbench / KG-MNP 本体工程工作台已有中文界面和 Minimal 初始发布流程；
-跨领域、后续版本治理和完整仓库退役仍未完成。
+当前分支仍在完成仓库收敛与发行验收，不是已验收的发行候选。历史测试通过记录只适用于其记录的修订，不能认证后续代码。
 
-## What is implemented now
+## 实际能力
 
-- 项目隔离、精确领域包版本、正式 Workspace 和 ProjectLock。
-- 流式实际字节限制、SourceAsset/SourceBatch、解析 Worker、KG-IR/Evidence、来源定位和授权下载。
-- 复用既有 Scope/CQ、基线、术语、映射、Provider、Proposal、逐项 Review 和 Confirmed Package 核心。
-- 固定 ROBOT/HermiT、OWL、SHACL、明确 SELECT CQ Oracle、Provenance 和真实 Package 验证。
-- 本地 Registry 导入、初始 Release 人工审核、CAS 发布、文件摘要 Attestation 和非空对象查询。
-- 统一服务、HTTP/Local SDK、CLI、持久化 Job 和 React 工作台。
-- 短期不透明 HttpOnly 会话、CSRF、同源校验、撤销和退出。
-- 隔离计算 Workspace、原子项目映射与提交回执、权限重验、fencing、修订 CAS 和提交回执恢复。
+- 项目隔离、精确版本的 Domain Pack、完整 Workspace / Project Lock。
+- 实际字节受限的上传，Source / Batch、持久化解析任务、KG-IR、Evidence 定位和授权原文下载。
+- Scope / CQ、基线、术语、声明式记录与字段映射、离线或 Recorded Provider 候选。
+- 逐项人工审核、拒绝、修订重验、审核头冲突检测、确认包；客户端不能声明审核身份或角色。
+- 固定 ROBOT / HermiT、OWL、SHACL、明确 Query / Oracle、Provenance、确定性 Package 与 .kgop。
+- 本地 Registry、语义 Diff、Impact、实际回归、消费者契约、初始和后续 Release、审核后的 CAS 环境选择及指定历史回滚。
+- 一个中文 React 工作台、同一 ApplicationService、资源 API、Python SDK 和服务 CLI。
+- HttpOnly 短期会话、CSRF / Origin、权限撤销、项目隔离、幂等、核心提交 fencing 和显式任务恢复。
+- 固定 Package / Release 的元数据、隔离只读对象查询、分页、Typed Literal 和来源追溯。
 
-精确范围见[收敛台账](docs/verification/final-requirements.json)和
-[交付说明](docs/release/release-candidate-notes.md)。接入数量不是行为正确性证明。
+Provider 只生成候选；服务账户不能批准。发布默认采用多角色策略，至少两位独立审核人。显式单人开发策略仅限 loopback，不代表生产审核完成。
 
-## What is not implemented yet
+## 主流程与状态
 
-以下仍属于本次必需交付，没有移出范围：
+资料 → Source / KG-IR / Evidence → Scope / CQ / Baseline → Proposal → 人工 Review → Confirmed Package → 编译与验证 → Ontology Package → Registry → Release。
 
-- 完整服务化 Diff/Impact/Regression/Change Evaluation、后续 Release 和指定历史环境回滚。
-- 工作台完整候选修改/冲突处理、映射编辑、证据联动、版本治理和集成管理。
-- Forestry Domain Pack 0.2.0、MNP/Forestry/第四领域的分级工作流。
-  Forestry remains a planning scaffold only，仍为 0.1.0 PLANNED。
-- 旧三套 UI、重复控制面、旧脚本及完整测试/CI 收敛。
-- 完整同修订发行验收、Linux 实测、完整可访问性和性能检查。
+后续版本执行 Diff / Impact / Regression；环境选择与回滚有独立提案、审核和 CAS。
+Release Attestation 绑定实际文件摘要，不接受客户端提供的伪造成功状态。
 
-没有在线 LLM/OCR/ASR/Vision 实现，不自动执行外部业务。
-Image and WAV support is metadata-only. No Agent or LLM is an ontology authority.
-GraphDB live 的许可/环境不是本地未完成功能的解释。
+| 对象 | 状态含义 |
+| --- | --- |
+| Package：VALIDATED_UNPUBLISHED | 包内必需验证通过，但不等于发布 |
+| Registry：IMPORTED_VERIFIED | 本地登记并校验 |
+| Release：RELEASED | 当前发布候选经过人工审核 |
+| Environment：CONTROL_PLANE_SELECTED | 本地控制面选定版本 |
+| External Deployment | 必须单独观测，不能由 Pointer 或 Outbox 推断 |
 
-## 主流程和状态边界
+## 领域包
 
-资料 → Source → KG-IR/Evidence → Scope/CQ/Baseline → 候选 → 人工审核 →
-Confirmed Package → 编译/验证 → Ontology Package → Registry → 初始 Release。
-正式工件是可验证的 Versioned Ontology Package，不是未经审核的 Provider 输出。
+- Minimal 0.1.0：小型真实流程和否定案例。
+- MNP 1.0.0：独立领域包，保持原 84 个资产和约束；验证使用非空、有证据的合成 MappingRecord。
+- Forestry 0.2.0 EXPERIMENTAL：树木档案与巡查示例，6 条 TreeRecord、6 条 InspectionRecord、2 个 Site，全部为合成数据。
+- 任意名称的临时第四包用于检查前端不依赖固定 Pack ID。
 
-VALIDATED_UNPUBLISHED、IMPORTED_VERIFIED、RELEASED、CONTROL_PLANE_SELECTED
-和外部部署是不同状态。当前界面不能将本地发布称为环境激活或外部部署。
+旧 Forestry 0.1.0 不会被静默替换为 0.2.0；请求不可用的精确版本会失败。领域包是数据、约束和映射，不允许通过包执行 Python / Shell。
 
-## 准备与安装
+## 安装要求
 
-Python 3.11+；构建工作台需要 Node 22.12+；语义编译需要 Java 11+ 和固定 ROBOT 1.9.7。
-依赖、浏览器、JAR 只在显式准备阶段安装，核心运行不自动下载。
-ROBOT 的准确摘要保存在 kg_mnp.semantic_kernel.snapshot.ROBOT_SHA256。
+Python 3.11+、构建前端用的 Node.js，以及语义编译所需的 Java 与固定 ROBOT 1.9.7。当前实测环境为 Python 3.12、Node 24、Chromium 153。安装 Wheel 后运行工作台不需要 Node。
 
-    cd workbench
-    npm ci
-    npm run build
-    cd ..
-    python -m venv .venv
+依赖和 JAR 只在显式准备阶段安装，核心运行不会自动联网下载。ROBOT 的准确摘要见 `kg_mnp.semantic_kernel.snapshot.ROBOT_SHA256`。
 
-激活虚拟环境后执行：
+从源码准备（先激活自行创建的虚拟环境）：
 
-    python -m pip install -e ".[dev]"
+```text
+python -m pip install -c requirements-dev.lock -e ".[dev,webvowl]"
+npm ci --prefix workbench
+npm --prefix workbench run build
+```
 
-PowerShell 使用 .\.venv\Scripts\Activate.ps1；POSIX 使用 source .venv/bin/activate。
-Wheel 包含构建后的工作台，安装 Wheel 不要求 Node。
+PowerShell 可使用 `python -m venv .venv`、`.\.venv\Scripts\Activate.ps1`；POSIX 使用 `python -m venv .venv`、`source .venv/bin/activate`。不依赖宿主机偶然安装的测试库。
 
 ## 本地启动
 
-Web/Worker 必须使用相同配置、同一工作目录。PowerShell 开发示例：
+Web 与 Worker 使用同一配置和运行目录。在两个终端分别设置相同环境变量。以下 PowerShell 示例只用于合成开发，不连接生产服务：
 
-    $env:KG_MNP_DOMAIN_PACKS_ROOT = (Resolve-Path domain_packs).Path
-    $env:KG_MNP_WORKBENCH_ROOT = (Resolve-Path workbench/dist).Path
-    $env:KG_MNP_REASONER_JAR = (Resolve-Path third_party/downloads/robot-1.9.7.jar).Path
-    $env:KG_MNP_ALLOW_INSECURE_LOOPBACK_SESSION = 'true'
-    kg-mnp service token create --workspace runtime/local --principal-id local-human --created-by local-admin --permissions '*'
-    kg-mnp service serve --workspace runtime/local
+```powershell
+$env:KG_MNP_DOMAIN_PACKS_ROOT = (Resolve-Path domain_packs).Path
+$env:KG_MNP_WORKBENCH_ROOT = (Resolve-Path workbench/dist).Path
+$env:KG_MNP_REASONER_JAR = (Resolve-Path third_party/downloads/robot-1.9.7.jar).Path
+$env:KG_MNP_ALLOW_INSECURE_LOOPBACK_SESSION = 'true'
+$env:KG_MNP_REVIEW_PROFILE = 'DEVELOPMENT_SINGLE_REVIEWER'
+kg-mnp service token create --workspace runtime/local --principal-id local-human --created-by local-admin --permissions '*'
+kg-mnp service serve --workspace runtime/local
+```
 
-在第二个同配置终端执行：
+另一终端执行：
 
-    kg-mnp service worker --workspace runtime/local
+```text
+kg-mnp service worker --workspace runtime/local
+```
 
-浏览器入口：[本地工作台](http://127.0.0.1:8765/)。
-凭证只在签发时显示，粘贴后被登录框清空；不得放入 URL、截图、仓库或浏览器存储。
-生产浏览器会话需要 HTTPS。默认没有管理员账户。
+浏览器入口：[本地工作台](http://127.0.0.1:8765/)。没有默认账户、匿名管理员注册或“选择角色即认证”。凭证只在本地签发时显示；不要记录到日志、URL、截图、Git 或浏览器存储。非 loopback 服务需要 TLS 和 Origin 配置；生产会话使用 Secure Cookie。
 
-POSIX 对应示例：
+POSIX 对应环境设置：
 
-    export KG_MNP_DOMAIN_PACKS_ROOT="$PWD/domain_packs"
-    export KG_MNP_WORKBENCH_ROOT="$PWD/workbench/dist"
-    export KG_MNP_REASONER_JAR="$PWD/third_party/downloads/robot-1.9.7.jar"
-    export KG_MNP_ALLOW_INSECURE_LOOPBACK_SESSION=true
-    kg-mnp service serve --workspace runtime/local
+```sh
+export KG_MNP_DOMAIN_PACKS_ROOT="$PWD/domain_packs"
+export KG_MNP_WORKBENCH_ROOT="$PWD/workbench/dist"
+export KG_MNP_REASONER_JAR="$PWD/third_party/downloads/robot-1.9.7.jar"
+export KG_MNP_ALLOW_INSECURE_LOOPBACK_SESSION=true
+export KG_MNP_REVIEW_PROFILE=DEVELOPMENT_SINGLE_REVIEWER
+kg-mnp service serve --workspace runtime/local
+```
 
-默认审核策略为多角色生产策略，具体角色权限使用 review:role:Ontology Engineer 等名称。
-合成开发示例可以由管理员显式配置 KG_MNP_REVIEW_PROFILE=DEVELOPMENT_SINGLE_REVIEWER；
-该策略不支持非 loopback 服务。端口冲突报错，不杀死未知进程。
-用 Ctrl+C 停止自己启动的 Web/Worker。
+仅用 Ctrl+C 停止自己启动的服务；端口冲突不意味着可以终止未知进程。
 
-## CLI / SDK
+## CLI 与 SDK
 
-HTTP 凭证通过 KG_MNP_TOKEN 提供，不放入命令行参数或 URL。
+服务 CLI 从 `KG_MNP_TOKEN` 环境变量读取凭证，不把凭证放进命令参数或 URL。
 
-    kg-mnp service upload --url http://127.0.0.1:8765 --project-id <PROJECT_ID> --file sample.csv --media-type text/csv --idempotency-key upload-1
-    kg-mnp service call --url http://127.0.0.1:8765 --project-id <PROJECT_ID> --operation ingestion.plan --request plan-request.json --idempotency-key plan-1
+```text
+kg-mnp service upload --url http://127.0.0.1:8765 --project-id <PROJECT_ID> --file sample.csv --media-type text/csv --idempotency-key upload-1
+kg-mnp service call --url http://127.0.0.1:8765 --project-id <PROJECT_ID> --operation ingestion.plan --request plan-request.json --idempotency-key plan-1
+```
 
-plan-request.json 内容为 {"batch_id":"<SOURCE_BATCH_ID>"}。
-HTTP 202 仅表示任务接受，使用 job.get 读取真实结果。
+`plan-request.json` 为 `{"batch_id":"<SOURCE_BATCH_ID>"}`。202 只表示已接收；通过 `job.get` 读取真实任务结果。网页关闭不等于取消；取消请求不等于结果已撤销。
 
-    import os
-    from kg_mnp.sdk.http import HTTPClient
-    from kg_mnp.services.models import OperationRequest
+```python
+import os
+from kg_mnp.sdk.http import HTTPClient
+from kg_mnp.services.models import OperationRequest
 
-    client = HTTPClient("http://127.0.0.1:8765", os.environ["KG_MNP_TOKEN"])
-    try:
-        print(client.execute(OperationRequest("project.list")).payload)
-    finally:
-        client.close()
+client = HTTPClient("http://127.0.0.1:8765", os.environ["KG_MNP_TOKEN"])
+try:
+    result = client.execute(OperationRequest("project.list"))
+    print(result.payload)
+finally:
+    client.close()
+```
 
-Local SDK 同样调用 ApplicationService，不通过 Shell/CLI stdout 调度核心。
-服务管理的 Workspace 只经服务写入，不要对内部 generation 目录并行运行旧写命令。
+恢复先核验正式提交回执。只有未提交、租约已过期的本地任务可以显式重试；活动租约、取消意图、失效原凭证和未知外部副作用不会被绕过：
 
-## 验证与构建
+```text
+kg-mnp service recover --url http://127.0.0.1:8765 --job-id <JOB_ID> --expected-attempt 1
+kg-mnp service recover --url http://127.0.0.1:8765 --job-id <JOB_ID> --expected-attempt 1 --retry-local
+```
 
-    python -m ruff check .
-    python -m pytest
-    python scripts/check_repo_hygiene.py
-    python scripts/generate_mnp_prompt01_content_golden.py --check
-    python tools/build_distribution.py
+## 质量与验收
 
-浏览器测试：用 tools/run_workbench_test_server.py 启动隔离合成环境，
-在 workbench/ 设置 KG_MNP_BROWSER_URL、KG_MNP_BROWSER_CREDENTIAL
-（服务器输出的合成凭证文件路径），然后执行 npm run test:e2e。
-先显式执行 npx playwright install chromium。核心接口不 Mock，Trace/录像默认关闭。
+```text
+python -m ruff check .
+python tools/check_types.py
+python -m pytest
+npm --prefix workbench run lint
+npm --prefix workbench run typecheck
+npm --prefix workbench test
+npm --prefix workbench run build
+```
 
-验收原始记录在忽略的 runtime_logs/p09/；构建在 runtime/p09-distribution/。
-完整测试/CI 能力化迁移仍未完成；命令存在不表示执行通过。
+静态类型门覆盖服务、API、SDK、任务和集成应用边界；语义工件另由版本化 JSON Schema 和行为测试验证。真实浏览器测试使用显式合成服务与凭证，不 Mock 核心 API。容量测试复用同一套正式组件，其结果不冒充业务流程或生产性能。
 
-## 领域包与文档
+最终验收必须先固定干净的代码修订，再导出完整唯一 collection，执行所有分区、浏览器、Linux、兼容、安装和打包检查。现有验证摘要和退役台账仍在收敛；以其中的 tested_commit 判断证据适用范围。
 
-| 领域包 | 状态 | 本次证明范围 |
-| --- | --- | --- |
-| minimal 0.1.0 | EXPERIMENTAL | 非空服务流程和初始发布浏览器场景 |
-| mnp 1.0.0 | MIGRATED_BASELINE | 资产保持；完整应用工作流未完成 |
-| forestry 0.1.0 | PLANNED | 原规划元数据；0.2.0 未完成 |
+## 限制与研究边界
 
-[提交与恢复边界](docs/architecture/service-commit-boundary.md) ·
-[收敛台账](docs/verification/final-requirements.json) ·
-[迁移记录](docs/migration/final-retirement-ledger.json) ·
-[交付说明](docs/release/release-candidate-notes.md) ·
-[领域包规范](docs/domain-packs/domain-pack-contract-v1.md) ·
-[公开契约](docs/contracts/public-contract-policy.md)
+当前尚待完成旧入口与重复实现退役、能力型 CI / 测试迁移，以及最终同修订发行验证；这些仍属于本次交付。
+
+Recorded Provider 不是 Live LLM；Image / WAV 默认只有元数据，不提供虚构 OCR / ASR。GraphDB live 和外部业务执行器未配置时明确阻断，不模拟部署或执行成功。本地包和环境 Pointer 可独立使用。
+
+当前本地提交使用复制工作区和原子权威切换，校验成本随项目增大；不承诺分布式高可用或外部 exactly-once。合成流程中有些完整校验和下载需数十秒，界面等待与真实后台状态分开处理。
+
+Hash / Lock 证明完整性，不证明原始资料真实；OWL 一致不代表业务知识正确；SHACL 和 CQ 只覆盖实际执行的约束与 Oracle。合成 Forestry 不是实地试点。工程机制实现不自动证明学术新颖性或生产安全认证。
 
 ## License
 
-Apache-2.0，见 [LICENSE](LICENSE) 和 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。
-工程机制实现不等于学术新颖性、来源真实性、行业普适性或生产安全认证已经证明。
+项目使用 Apache-2.0。第三方依赖和工具的授权、来源与义务见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)；不将开源依赖描述为完全自主知识产权。
