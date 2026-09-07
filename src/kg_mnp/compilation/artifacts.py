@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import os
 import shutil
+import time
 from collections.abc import Mapping
 from pathlib import Path
 
@@ -18,6 +19,24 @@ def _safe_directory(path: Path) -> Path:
     if resolved in anchors or resolved.parent == resolved:
         raise ArtifactWriteError(f"unsafe compilation output directory: {resolved}")
     return resolved
+
+
+def _commit_staging(staging: Path, target: Path) -> None:
+    """Retry transient Windows sharing denials, without declaring success.
+
+    Virus scanners/indexers can briefly hold a just-written staging directory.
+    Only Win32 access/sharing denials on a still-existing source and absent
+    target are retryable. Permanent denial remains a failed commit.
+    """
+    for attempt in range(6):
+        try:
+            os.replace(staging, target)
+            return
+        except PermissionError as exc:
+            if (getattr(exc, "winerror", None) not in {5, 32, 33}
+                    or attempt == 5 or target.exists() or not staging.is_dir()):
+                raise
+            time.sleep(min(0.05 * (2 ** attempt), 0.2))
 
 
 def write_artifact_set(output_dir: Path, files: Mapping[str, bytes], *, force: bool = False) -> None:
@@ -39,7 +58,7 @@ def write_artifact_set(output_dir: Path, files: Mapping[str, bytes], *, force: b
             path.write_bytes(data)
         if target.exists():
             shutil.rmtree(target)
-        os.replace(staging, target)
+        _commit_staging(staging, target)
     except Exception:
         shutil.rmtree(staging, ignore_errors=True)
         raise

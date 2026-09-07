@@ -48,8 +48,8 @@ SELF_PATH = "tests/refactor/_historical_freeze.py"
 # content-byte metaschema cache. The old P7 snapshot was independently checked
 # using git archive by scripts/prompt08_snapshot.py before this update.
 # This snapshot grants no Workbench/backend acceptance; P8 remains NO_GO.
-EXPECTED_FILE_COUNT = 1497
-EXPECTED_TREE_SHA256 = "0aec821ea8a266127ac532df42bfda69a809c90504e17a79c6f5760acc8a9052"
+EXPECTED_FILE_COUNT = 1498
+EXPECTED_TREE_SHA256 = "6f82b7d49a4e17b0a363a6eb6bd9ae1391a03bfcb36b0eb3631f732c750b8991"
 
 
 def _git(*arguments: str, check: bool = True) -> subprocess.CompletedProcess[bytes]:

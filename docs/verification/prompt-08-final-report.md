@@ -135,7 +135,9 @@ separately and does not prove a frontend package exists.
 
 ## 22–23. Test evidence and visual acceptance
 
-Final unique collection: **1506 nodeids**. Serialized service/integration/P7
+Initial final collection: **1506 nodeids**; four atomic-commit tests were added
+after reproducing the Windows write failure. The refreshed collection and union
+are recorded in the verification summary. Serialized service/integration/P7
 core regression and cache safety set: **63 passed, 0 failures, 0 skips**.
 Logs/JUnit/dependency versions and SHA-256 live under ignored
 `runtime_logs/prompt08/`; final summary records command outcomes independently.
@@ -159,12 +161,15 @@ versions are unchanged. Existing ProjectLock and portable package bytes are not
 rewritten. P7 frozen tree was verified from git archive: 1486 files,
 `d382179e7322ccb802a5b01d4bbf7fa3f7c113a597c74e932fb52297b19f72b3`.
 Authorized P8 protected tree includes new `workbench` root (currently absent),
-with no protected root removed; new semantic tree is 1497 files,
-`0aec821ea8a266127ac532df42bfda69a809c90504e17a79c6f5760acc8a9052`.
+with no protected root removed; new semantic tree is 1498 files,
+`6f82b7d49a4e17b0a363a6eb6bd9ae1391a03bfcb36b0eb3631f732c750b8991`.
 
 The content cache stores only a metaschema verdict keyed by exact raw bytes.
 Every call still reads files, checks IDs and verifies required digests; mutated
 schema bytes do not inherit a cached valid verdict. Negative tests cover this.
+Old compilation artifact writes also receive a bounded retry for transient
+Windows access/sharing-denied rename failures. Repeated/permanent denial still
+fails; a concurrently-created destination is not replaced by the retry helper.
 Risks remain: missing core service writes/fencing, browser sessions, resource
 families/typed responses/pagination, all UI acceptance, forestry content,
 release-ready Workbench packaging and any incomplete final aggregate result.
