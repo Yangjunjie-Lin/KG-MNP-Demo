@@ -466,6 +466,7 @@ verify-workbench-contracts:
 	python -m pytest -q \
 		tests/workbench/test_workbench_contracts.py \
 		tests/workbench/test_workbench_package.py
+	python -m pytest -q tests/services/test_prompt08_boundary.py -k "resource_api or discovery or pack_version or formal_lock"
 
 verify-workbench-runtime-policy:
 	python -m pytest -q \
@@ -930,9 +931,6 @@ verify-prompt-07-offline: verify-prompt-06-offline verify-p06-remediation \
 
 verify-workbench-backend:
 	python scripts/verify_prompt08_backend.py
-
-verify-workbench-contracts:
-	python -m pytest -q tests/services/test_prompt08_boundary.py -k "resource_api or discovery or pack_version or formal_lock"
 
 verify-workbench-auth:
 	python -m pytest -q tests/services/test_prompt08_boundary.py
