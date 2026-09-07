@@ -2,6 +2,11 @@
 schemas/modeling/*.json text eol=lf
 src/kg_mnp/contracts/*.json text eol=lf
 src/kg_mnp/contracts/schemas/**/*.json text eol=lf
+# These three historical public contracts are frozen with CRLF byte hashes.
+# Restore their canonical bytes on every checkout without changing schema blobs.
+src/kg_mnp/contracts/schemas/modeling/review_action.schema.json text eol=crlf
+src/kg_mnp/contracts/schemas/modeling/review_common.schema.json text eol=crlf
+src/kg_mnp/contracts/schemas/modeling/review_policy.schema.json text eol=crlf
 domain_packs/**/*.json text eol=lf
 domain_packs/**/*.md text eol=lf
 domain_packs/**/*.rq text eol=lf
