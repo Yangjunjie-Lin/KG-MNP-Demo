@@ -93,7 +93,8 @@ def compile_statement_provenance(
             matching = [
                 candidate
                 for candidate in candidates.values()
-                if candidate["candidate_action"] in {"REUSE_EXISTING", "ALIGN_TO_EXISTING"}
+                if candidate["candidate_kind"] in {"TBOX", "SHACL"}
+                and candidate["candidate_action"] in {"REUSE_EXISTING", "ALIGN_TO_EXISTING"}
                 and (
                     candidate["body"].get("subject_iri") in {str(subject), str(obj)}
                     or candidate["body"].get("target_iri") in {str(subject), str(obj)}

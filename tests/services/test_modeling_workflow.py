@@ -65,7 +65,7 @@ def modeling_case(tmp_path):
     return service, principal, project_id, proposed
 
 
-def test_nonempty_review_confirmed_workflow(modeling_case):
+def run_confirmed_initial_chain(modeling_case):
     service, principal, project_id, proposed = modeling_case
     queue = proposed["queue"]
     assert proposed["proposal"]["abox_candidates"]
@@ -109,3 +109,18 @@ def test_nonempty_review_confirmed_workflow(modeling_case):
     assert released["release"]["release_status"] == "RELEASED"
     inspected = call(service, principal, project_id, "release.inspect", {"release_id":released["release"]["release_id"]}, "inspect-release")
     assert inspected["release_id"] == released["release"]["release_id"]
+    view=call(service,principal,project_id,"visualization.export",{"package_id":built["package_id"]},"visualization")
+    assert view["nodes"] and view["status"]=="CONVERTED"
+    integration=call(service,principal,project_id,"integration.plan",{"release_id":released["release"]["release_id"],"target_id":"local-graphdb"},"integration-plan")
+    approval=call(service,principal,project_id,"integration.review",{"plan_id":integration["plan"]["plan_id"],"rationale":"Synthetic plan review, not deployment"},"integration-review")
+    assert "grant_reference" not in approval
+    observed=call(service,principal,project_id,"integration.execute",{"plan_id":integration["plan"]["plan_id"],"approval_id":approval["approval"]["approval_id"]},"integration-observe")
+    assert observed["status"]=="BLOCKED_BY_OFFLINE_POLICY" and observed["external_request_attempted"] is False
+    invocation=call(service,principal,project_id,"workflow.enqueue",{"release_id":released["release"]["release_id"],"action_id":"request-source-review","note":"Synthetic follow-up request"},"workflow")
+    assert invocation["status"]=="REQUEST_ENQUEUED" and invocation["last_verification_status"]=="NOT_EXECUTED"
+    return {"service":service,"principal":principal,"project_id":project_id,"confirmed_id":package_id,"question_id":question_id,
+            "package":built,"release":released["release"]}
+
+
+def test_nonempty_review_confirmed_workflow(modeling_case):
+    run_confirmed_initial_chain(modeling_case)

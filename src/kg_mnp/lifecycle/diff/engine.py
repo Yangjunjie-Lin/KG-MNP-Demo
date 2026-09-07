@@ -104,7 +104,10 @@ def _package_parts(value: Any) -> tuple[dict[str, set[str]], dict[str, Any]]:
         "shacl": _component(path, "shapes/effective-shapes.nt"),
         "mapping": _component(path, "mappings/mapping-plan.json"),
         "cq": _component(path, "validation/competency-question-test-plan.json"),
-        "dependency": {"json:package-lock=" + semantic_hash(json.loads(lock_path.read_bytes()))},
+        # A new output package digest is not a changed semantic dependency.
+        # Compare the actual locked domain dependency set, not this build's
+        # archive/file checksums (which change on any legitimate version).
+        "dependency": {"json:domain-pack-lock=" + value for value in manifest.get("domain_pack_locks", [])},
         "annotation": set(), "provenance": set(),
         "metadata": {"json:package=" + semantic_hash({"package_name": manifest.get("package_name"), "package_version": manifest.get("package_version"), "ontology_identity": manifest.get("ontology_identity")})},
     }
@@ -137,6 +140,8 @@ def _change(component: str, operation: str, subject: str, predicate: str | None,
 
 
 def _classify(component: str, old: str | None, new: str | None, predicate: str | None) -> tuple[str, str]:
+    if component=="METADATA":
+        return "PATCH_COMPATIBLE","EXPLICIT_PACKAGE_METADATA_CHANGE"
     if component in {"TBOX", "ABOX", "SHACL"}:
         p = URIRef(predicate.strip("<>") if predicate else "urn:unknown")
         if component == "TBOX":
@@ -175,7 +180,10 @@ def create_diff(base: Any, candidate: Any, *, policy_id: str | None = None, regi
     identity_left = {"package_id": left_meta.get("package_id"), "ontology_iri": left_meta.get("ontology_iri"), "version": base_version or left_meta.get("version")}
     identity_right = {"package_id": right_meta.get("package_id"), "ontology_iri": right_meta.get("ontology_iri"), "version": candidate_version or right_meta.get("version")}
     if identity_left != identity_right:
-        changes["IDENTITY"].append(_change("IDENTITY", "MODIFY", "package-identity", None, json.dumps(identity_left, sort_keys=True), json.dumps(identity_right, sort_keys=True), "UNKNOWN_REQUIRES_REVIEW", "PACKAGE_IDENTITY_CHANGED", semantic_hash(identity_left), semantic_hash(identity_right)))
+        same_ontology=identity_left["ontology_iri"]==identity_right["ontology_iri"]
+        classification="PATCH_COMPATIBLE" if same_ontology else "UNKNOWN_REQUIRES_REVIEW"
+        rule="VERSIONED_PACKAGE_IDENTITY" if same_ontology else "ONTOLOGY_IDENTITY_CHANGED"
+        changes["IDENTITY"].append(_change("IDENTITY", "MODIFY", "package-identity", None, json.dumps(identity_left, sort_keys=True), json.dumps(identity_right, sort_keys=True), classification, rule, semantic_hash(identity_left), semantic_hash(identity_right)))
     all_changes = [item for values in changes.values() for item in values]
     counts = [{"classification": name, "count": sum(item["classification"] == name for item in all_changes)} for name in sorted({item["classification"] for item in all_changes})]
     business_components = {key: sorted(values) for key, values in left.items() if key not in {"metadata", "dependency"}}

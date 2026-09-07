@@ -6,6 +6,7 @@ import json
 import math
 import os
 import tempfile
+import time
 from pathlib import Path
 from typing import Any
 
@@ -141,7 +142,14 @@ def atomic_write_bytes(path: Path | str, content: bytes) -> None:
             stream.write(content)
             stream.flush()
             os.fsync(stream.fileno())
-        os.replace(temporary, destination)
+        for attempt in range(5):
+            try:
+                os.replace(temporary, destination)
+                break
+            except OSError as exc:
+                if getattr(exc,"winerror",None) not in {5,32,33,1224} or attempt==4:
+                    raise
+                time.sleep(0.02*(attempt+1))
     except BaseException:
         temporary.unlink(missing_ok=True)
         raise

@@ -7,6 +7,7 @@ from __future__ import annotations
 
 from kg_mnp.contracts.document_io import read_document
 from kg_mnp.domain_packs.registry import DomainPackRegistry
+from kg_mnp.ingestion.source_store import SourceStore
 from kg_mnp.modeling.control_plane.alignment import align_terms
 from kg_mnp.modeling.control_plane.baseline import build_baseline_snapshot
 from kg_mnp.modeling.control_plane.candidates import normalize_candidate_drafts
@@ -25,6 +26,7 @@ from kg_mnp.modeling.control_plane.prevalidation import prevalidate
 from kg_mnp.modeling.control_plane.proposal import build_proposal
 from kg_mnp.modeling.control_plane.providers.execution import execute_provider
 from kg_mnp.modeling.control_plane.providers.models import build_provider_request
+from kg_mnp.modeling.control_plane.providers.record_mapping import record_mapping_drafts
 from kg_mnp.modeling.control_plane.review.actions import build_review_action
 from kg_mnp.modeling.control_plane.review.finalization import finalize_review
 from kg_mnp.modeling.control_plane.review.policy import build_review_policy
@@ -75,6 +77,18 @@ def _terms(packs):
     return terms
 
 
+def _record_rules(packs):
+    matches=[]
+    for pack in packs:
+        identifier=pack.manifest.document["entrypoints"].get("mappings")
+        asset=next((a for a in pack.manifest.document["assets"] if a["asset_id"]==identifier),None)
+        if asset:
+            document=read_document(pack.root/asset["path"])
+            if isinstance(document,dict) and document.get("profile")=="evidence-record-mapping-v1":matches.append((identifier,document))
+    if len(matches)>1:raise ModelingControlError("ambiguous record mapping profiles")
+    return matches[0] if matches else None
+
+
 def _bundle_context(modeling, bundle):
     return {key: modeling.find_artifact(bundle[reference]) for key, reference in {
         "scope": "approved_scope_id", "baseline": "baseline_snapshot_id", "terminology": "terminology_catalog_id",
@@ -107,17 +121,18 @@ def _prepare(app, modeling, params):
     policy = build_review_policy(project_lock_id=modeling.project_lock["lock_id"], profile=app.configuration.review_profile)
     bundle = build_input_bundle(project_lock=modeling.project_lock, scope=scope, approval=approval, question_set=question_set,
                                 baseline=baseline, terminology=terminology, alignments=alignments, kg_ir_datasets=datasets,
-                                review_policy_id=policy["policy_id"], allowed_provider_ids=["baseline-reuse-provider", "rule-mapping-provider"])
+                                review_policy_id=policy["policy_id"], allowed_provider_ids=["baseline-reuse-provider", "rule-mapping-provider","manual-candidate-provider"])
     modeling.write_build(bundle["modeling_input_bundle_id"], {
         "competency-question-set.json": question_set, "baseline-snapshot.json": baseline, "terminology-catalog.json": terminology,
         "term-alignment-set.json": alignments, "field-mapping-candidate-set.json": mappings,
         "review-policy.json": policy, "modeling-input-bundle.json": bundle,
     })
     return {"bundle": bundle, "questions": question_set, "baseline": baseline, "terminology": terminology,
-            "alignments": alignments, "mappings": mappings, "policy": policy}
+            "alignments": alignments, "mappings": mappings, "policy": policy,
+            "record_mapping":(_record_rules(packs) or (None,None))[1]}
 
 
-def _propose(modeling, params):
+def _propose(app,modeling, params):
     bundle = modeling.find_artifact(params["bundle_id"])
     verify_input_bundle(bundle)
     context = _bundle_context(modeling, bundle)
@@ -133,12 +148,22 @@ def _propose(modeling, params):
                         "default_namespace": scope["namespace_policy"]["default_namespace"],
                         "competency_question_ids": [q["question_id"] for q in context["question_set"]["questions"]]}
     registry, responses, snapshots, requests = PluginRegistry(), [], [], []
+    declared=_record_rules(_packs(app,modeling))
+    if params.get("record_mapping") is not None:
+        declared=(None,params["record_mapping"])
+    if declared:
+        source_store=SourceStore(modeling.root)
+        source_ids={source for data in datasets for source in source_store.load_batch(data["source_batch_id"])["sources"]}
+        provider_context["manual_drafts"]=record_mapping_drafts(rules=declared[1],datasets=datasets,
+            source_names={identifier:source_store.verify_source(identifier)["original_name"] for identifier in source_ids},
+            namespace=scope["namespace_policy"]["default_namespace"],baseline=baseline,
+            question_ids=provider_context["competency_question_ids"],asset_id=declared[0])
     for provider in sorted(set(params["providers"])):
         if provider not in bundle["provider_policy"]["allowed_provider_ids"]:
             raise ServiceBoundaryError("PROVIDER_FORBIDDEN", "provider not allowed by input bundle", status_code=403)
         snapshot = build_snapshot(registry.get(provider))
         request = build_provider_request(modeling_input_bundle_id=bundle["modeling_input_bundle_id"],
-            provider_snapshot_id=snapshot["snapshot_id"], capability={"baseline-reuse-provider": "baseline-reuse", "rule-mapping-provider": "field-mapping-proposal"}[provider],
+            provider_snapshot_id=snapshot["snapshot_id"], capability={"baseline-reuse-provider": "baseline-reuse", "rule-mapping-provider": "field-mapping-proposal","manual-candidate-provider":"tbox-proposal"}[provider],
             scope_id=scope["scope_id"], baseline_snapshot_id=baseline["baseline_snapshot_id"],
             terminology_catalog_id=context["terminology"]["terminology_catalog_id"], term_alignment_set_id=context["alignments"]["term_alignment_set_id"],
             kg_ir_dataset_ids=bundle["kg_ir_dataset_ids"], evidence_record_ids=sorted(evidence_ids), context=provider_context)
@@ -155,6 +180,7 @@ def _propose(modeling, params):
     coverage = structural_coverage(context["question_set"], proposal)
     queue = build_review_queue(proposal, report, policy)
     modeling.write_proposal(proposal["proposal_id"], {"ontology-modeling-proposal.json": proposal,
+        "record-mapping-proposal.json":{"mapping":declared[1] if declared else None,"source_asset_id":declared[0] if declared else None},
         "provider-requests.json": requests, "provider-responses.json": responses, "provider-snapshots.json": snapshots,
         "ontology-candidate-set.json": candidates, "formal-prevalidation-report.json": report})
     modeling.write_review(queue["review_queue_id"], {"review-queue.json": queue, "review-policy.json": policy,
@@ -188,7 +214,8 @@ def _review(modeling, request, principal):
             decision=params["decision"], reviewer_id=principal.principal_id, reviewer_role=role,
             rationale=params["rationale"], candidate_id=params["candidate_id"])
         modeling.append_action(params["review_id"], action)
-        return {"action": action, "status": review_status(queue, [*actions, action])}
+        status=review_status(queue,[*actions,action])
+        return {"action":action,"status":{"complete":status["complete"]}}
     bundle = modeling.find_artifact(proposal["modeling_input_bundle_id"])
     context = _bundle_context(modeling, bundle)
     scope = context["scope"]
@@ -227,7 +254,7 @@ def execute(app, project, request, principal):
         if name in PREPARE_OPERATIONS:
             return _prepare(app, modeling, params)
         if name in {"modeling.candidate", "modeling.proposal"}:
-            return _propose(modeling, params)
+            return _propose(app,modeling, params)
         return _review(modeling, request, principal)
     except ModelingControlError as exc:
         raise ServiceBoundaryError("MODELING_BLOCKED", "modeling authority or review precondition failed", status_code=422) from exc

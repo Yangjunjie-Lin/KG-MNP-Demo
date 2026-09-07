@@ -21,6 +21,7 @@ def build_operation_catalog() -> dict[str, OperationDefinition]:
         OperationDefinition("source.register", "SourceRegisterRequest", "Artifact", ("source:write",), True, "JOB", "WRITE", "REQUIRED"),
         OperationDefinition("source.inspect", "ArtifactRequest", "Artifact", ("source:read",), True),
         OperationDefinition("source.list", "EmptyRequest", "SourceList", ("source:read",), True),
+        OperationDefinition("source.batch","SourceBatchRequest","SourceBatch",("source:write",),True,"JOB","WRITE","REQUIRED"),
         OperationDefinition("source.verify", "SourceRequest", "SourceAsset", ("source:read",), True),
         OperationDefinition("evidence.list", "IngestionInspectRequest", "EvidenceList", ("source:read",), True),
         OperationDefinition("kgir.inspect", "IngestionInspectRequest", "KGIRDataset", ("source:read",), True),
@@ -60,6 +61,7 @@ def build_operation_catalog() -> dict[str, OperationDefinition]:
         OperationDefinition("environment.inspect", "EnvironmentRequest", "EnvironmentPointer", _READ),
         OperationDefinition("oms.metadata", "MetadataRequest", "MetadataResult", ("package:read",), True),
         OperationDefinition("ods.query", "ObjectQueryRequest", "ObjectQueryResult", ("package:read",), True),
+        OperationDefinition("object.trace","ObjectTraceRequest","ObjectEvidenceTrace",("package:read","source:read"),True),
         OperationDefinition("visualization.export", "VisualizationExportRequest", "ExportReceipt", ("package:export",), True, "JOB", "READ", "REQUIRED"),
         OperationDefinition("integration.plan", "IntegrationPlanRequest", "IntegrationPlan", ("integration:configure",), True, "INLINE", "WRITE", "REQUIRED"),
         OperationDefinition("integration.review", "IntegrationApprovalRequest", "IntegrationApproval", ("integration:review",), True, "INLINE", "WRITE", "REQUIRED"),
@@ -74,12 +76,17 @@ def build_operation_catalog() -> dict[str, OperationDefinition]:
         ("model:propose",), True, "JOB", "WRITE", "REQUIRED"))
     definitions.append(OperationDefinition("release.candidate", "ReleaseCandidateRequest", "ReleaseCandidate",
         ("release:publish",), True, "JOB", "WRITE", "REQUIRED"))
+    definitions.append(OperationDefinition("feedback.add","FeedbackRequest","FeedbackRecord",("model:propose",),True,"JOB","WRITE","REQUIRED"))
+    definitions.append(OperationDefinition("consumer.register","ConsumerRequest","ConsumerManifest",("project:write",),True,"JOB","WRITE","REQUIRED"))
+    for name,permission in [("environment.create","environment:configure"),("environment.propose","environment:propose"),("environment.review","environment:review")]:
+        definitions.append(OperationDefinition(name,"EnvironmentRequest","EnvironmentArtifact",(permission,),True,"JOB","WRITE","REQUIRED"))
+    from .integrations import OPERATIONS as INTEGRATION_OPERATIONS
     from .modeling import OPERATIONS as MODELING_OPERATIONS
     from .requests import REQUEST_MODELS
     definitions = [replace(definition, request_contract=REQUEST_MODELS[definition.operation_id].__name__)
                    if definition.operation_id in REQUEST_MODELS else definition for definition in definitions]
     return {definition.operation_id: replace(definition, execution_mode="JOB", side_effect_class="WRITE")
-            if (definition.operation_id in MODELING_OPERATIONS and definition.operation_id != "review.replay") or definition.operation_id == "release.review"
+            if (definition.operation_id in MODELING_OPERATIONS and definition.operation_id != "review.replay") or definition.operation_id == "release.review" or definition.operation_id in INTEGRATION_OPERATIONS
             else definition for definition in definitions}
 
 
@@ -124,3 +131,7 @@ HANDLERS.update({name: "kg_mnp.services.compilation.execute" for name in COMPILA
 from .lifecycle import OPERATIONS as LIFECYCLE_OPERATIONS
 
 HANDLERS.update({name: "kg_mnp.services.lifecycle.execute" for name in LIFECYCLE_OPERATIONS})
+
+from .integrations import OPERATIONS as INTEGRATION_OPERATIONS
+
+HANDLERS.update({name:"kg_mnp.services.integrations.execute" for name in INTEGRATION_OPERATIONS})

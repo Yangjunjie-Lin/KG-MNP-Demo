@@ -139,7 +139,7 @@ class ApplicationService:
         principal = self.tokens.resolve(identity["token_id"])
         if principal.principal_id != identity.get("principal_id"):
             raise ServiceBoundaryError("AUTH_INVALID", "job identity does not match credential", status_code=401)
-        request = OperationRequest(job.operation_id, job.project_id, raw)
+        request = OperationRequest(job.operation_id, job.project_id, raw, idempotency_key=job.job_id)
         operation = self.catalog.get(job.operation_id)
         if not operation:
             raise ServiceBoundaryError("OPERATION_NOT_FOUND", "unknown queued operation", status_code=404)
@@ -149,6 +149,8 @@ class ApplicationService:
         from .compilation import OPERATIONS as COMPILATION_OPERATIONS
         from .compilation import execute as execute_compilation
         from .execution import execute_fenced
+        from .integrations import OPERATIONS as INTEGRATION_OPERATIONS
+        from .integrations import execute as execute_integration
         from .lifecycle import OPERATIONS as LIFECYCLE_OPERATIONS
         from .lifecycle import execute as execute_lifecycle
         from .modeling import OPERATIONS as MODELING_OPERATIONS
@@ -156,7 +158,7 @@ class ApplicationService:
         from .requests import validate_parameters
         from .sources import OPERATIONS, execute
         validate_parameters(request)
-        if job.operation_id not in OPERATIONS | MODELING_OPERATIONS | COMPILATION_OPERATIONS | LIFECYCLE_OPERATIONS:
+        if job.operation_id not in OPERATIONS | MODELING_OPERATIONS | COMPILATION_OPERATIONS | LIFECYCLE_OPERATIONS | INTEGRATION_OPERATIONS:
             raise ServiceBoundaryError("OPERATION_BLOCKED", "queued operation has no commit-fenced handler", status_code=501)
         if job.operation_id in OPERATIONS:
             handler = execute
@@ -164,8 +166,10 @@ class ApplicationService:
             handler = execute_modeling
         elif job.operation_id in COMPILATION_OPERATIONS:
             handler = execute_compilation
-        else:
+        elif job.operation_id in LIFECYCLE_OPERATIONS:
             handler = execute_lifecycle
+        else:
+            handler = execute_integration
         return execute_fenced(self, job, request, principal, lambda project: handler(self, project, request, principal))
 
     def recover_job(self, job):
@@ -178,13 +182,14 @@ class ApplicationService:
             raise ServiceBoundaryError("PROJECT_REQUIRED", "project scope is required", status_code=422)
         return get_project(self.root, request.project_id)
 
-    def _job(self, job_id, principal):
+    def _job(self, job_id, principal, *, authorized_project=None):
         try:
             job = self.jobs.get(job_id)
         except KeyError as exc:
             raise ServiceBoundaryError("JOB_NOT_FOUND", "job was not found", status_code=404) from exc
         if job.project_id:
-            require_access(principal, get_project(self.root, job.project_id))
+            project = authorized_project if authorized_project is not None and authorized_project.project_id == job.project_id else get_project(self.root, job.project_id)
+            require_access(principal, project)
         owner = self.jobs.parameters(job_id).get("__principal", {}).get("principal_id")
         if owner != principal.principal_id and not principal.can("project:admin"):
             raise ServiceBoundaryError("JOB_FORBIDDEN", "job is outside principal scope", status_code=403)
@@ -248,7 +253,7 @@ class ApplicationService:
         if name == "package.verify":
             from .compilation import execute as execute_compilation
             return execute_compilation(self, project, request, principal)
-        if name in {"oms.metadata", "ods.query"}:
+        if name in {"oms.metadata", "ods.query","object.trace"}:
             from .lifecycle import execute as execute_lifecycle
             return execute_lifecycle(self, project, request, principal)
         if name == "registry.verify":

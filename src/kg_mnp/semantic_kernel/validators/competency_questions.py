@@ -5,6 +5,7 @@ from __future__ import annotations
 import hashlib
 import multiprocessing
 from collections.abc import Callable, Iterable
+from queue import Empty
 from typing import Any
 
 from rdflib import Dataset, Graph, URIRef
@@ -98,15 +99,20 @@ def _execute(
         args=(nquads, query, operation, max_results, output),
     )
     process.start()
-    process.join(timeout)
-    if process.is_alive():
-        process.terminate()
+    try:
+        # Drain before joining: the child's Queue feeder cannot finish when a
+        # bounded but large result fills the pipe and the parent only joins.
+        status, value = output.get(timeout=timeout)
         process.join(5)
-        return "TIMEOUT", None
-    if output.empty():
-        return "ENGINE_FAILED", None
-    status, value = output.get()
-    return ("OK", value) if status == "OK" else ("ENGINE_FAILED", value)
+        return ("OK", value) if status == "OK" else ("ENGINE_FAILED", value)
+    except Empty:
+        return ("TIMEOUT" if process.is_alive() else "ENGINE_FAILED"), None
+    finally:
+        if process.is_alive():
+            process.terminate()
+        process.join(5)
+        output.close()
+        output.join_thread()
 
 
 def _selected_nquads(

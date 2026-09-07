@@ -53,7 +53,11 @@ def build(contract: str, **fields: Any) -> dict[str, Any]:
     ident = identity_field(contract)
     if contract == "ontology-registry-manifest": value[ident] = stable_urn("ontology-registry", {k:value[k] for k in ("registry_name","project_id","registry_scope","policy_digest")})
     elif contract == "registry-event": value[ident] = stable_urn(contract, {"semantic_event_hash": digest})
-    else: value[ident] = stable_urn(contract, {"content_digest": digest})
+    else:
+        # Release manifests have always been minted as urn:kg-mnp:release:...
+        # by the release authority; the schema name is not its identity kind.
+        kind = "release" if contract == "release-manifest" else contract
+        value[ident] = stable_urn(kind, {"content_digest": digest})
     if contract == "registry-event": value["semantic_event_hash"] = digest; value["event_hash"] = semantic_hash(value)
     elif contract == "release-review-action": value["semantic_action_hash"] = digest; value["action_hash"] = semantic_hash(value)
     elif contract == "activation-review-decision": value["semantic_decision_hash"] = digest

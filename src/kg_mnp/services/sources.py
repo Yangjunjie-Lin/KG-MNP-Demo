@@ -74,6 +74,7 @@ def execute(service, project, request, principal):
             return {"source": public_source(source), "batch": batch}
         if name in {"source.inspect", "source.verify"}:
             return {"source": public_source(SourceStore(root).verify_source(params["source_id"]))}
+        if name=="source.batch":return {"batch":SourceStore(root).create_batch(params["source_ids"])}
         if name == "source.list":
             store = SourceStore(root)
             return {"sources": [public_source(store.verify_source(row["source_id"])) for row in store.list_sources()]}
@@ -103,5 +104,5 @@ def execute(service, project, request, principal):
         raise ServiceBoundaryError("INGESTION_FAILED", "ingestion input or artifact is invalid", status_code=422) from exc
 
 
-OPERATIONS = frozenset({"source.register", "source.inspect", "source.list", "source.verify", "ingestion.plan",
+OPERATIONS = frozenset({"source.register", "source.inspect", "source.list", "source.verify", "source.batch", "ingestion.plan",
                         "ingestion.run", "ingestion.inspect", "ingestion.trace", "evidence.list", "kgir.inspect", "kgir.validate"})

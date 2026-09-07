@@ -48,3 +48,10 @@ lifecycle services remain open requirements.
 
 Tests: tests/services/test_core_fencing.py, test_browser_sessions.py,
 test_source_workflow.py and test_modeling_workflow.py.
+
+The baseline-reuse provenance correction changes the compiler implementation
+digest: mapping alignment candidates no longer shadow reviewed TBox reuse
+authority. The frozen 0.5.0 snapshot contract is retained, but its implementation
+digest is different; existing plans fail the snapshot comparison and require a
+new plan. No old snapshot is claimed identical and old package bytes are not
+rewritten. The provenance closure gate and orphan detection remain mandatory.

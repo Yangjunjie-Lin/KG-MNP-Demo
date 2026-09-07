@@ -8,11 +8,44 @@ from typing import Any
 
 from kg_mnp.contracts.canonical import semantic_hash
 from kg_mnp.semantic_kernel.packaging.verifier import verify_package
+from kg_mnp.semantic_kernel.validators.competency_questions import execute_cq_test_plan
 
 from .errors import LifecycleError
 from .guards import package_files, package_record, record_by_id
 from .registry.manifest import load_manifest
 from .store import bind_identity, next_id, save
+
+
+def execute_packaged_cq(plan_root: Path, target_root: Path) -> dict[str, Any]:
+    """Execute the frozen query/Oracle plan against actual target dataset bytes.
+
+    Query bytes are selected from the verified package's embedded Pack Locks.
+    No local path or remote URL comes from the caller, and cached CQ results
+    cannot substitute for this execution.
+    """
+    verify_package(plan_root)
+    verify_package(target_root)
+    plan=json.loads((plan_root/"validation/competency-question-test-plan.json").read_bytes())
+    dataset=json.loads((target_root/"dataset/rdf-dataset-manifest.json").read_bytes())
+    queries={}
+    for lock_path in (plan_root/"baseline/domain-pack-locks").glob("*.json"):
+        lock=json.loads(lock_path.read_bytes())
+        for asset in lock["assets"]:
+            relative=asset.get("path",asset.get("asset_path"))
+            if relative and relative.endswith(".rq"):
+                path=plan_root/"baseline/assets"/lock["pack_id"]/relative
+                content=path.read_bytes()
+                if __import__("hashlib").sha256(content).hexdigest()!=asset["sha256"]:
+                    raise LifecycleError("REGRESSION_FAILED","packaged query hash mismatch")
+                queries[asset["asset_id"]]=content
+                queries[relative]=content
+    if not plan["required_question_ids"] or not plan["tests"]:
+        raise LifecycleError("REGRESSION_FAILED","CQ plan has no required Oracle")
+    try:
+        return execute_cq_test_plan(plan,dataset_nquads=(target_root/"dataset/dataset.nq").read_bytes(),
+            query_loader=lambda ref:queries[ref],graph_iris={g["role"]:g["graph_iri"] for g in dataset["graphs"]})
+    except KeyError as exc:
+        raise LifecycleError("REGRESSION_FAILED","locked CQ query not packaged") from exc
 
 _KNOWN_CATEGORIES = {
     "PACKAGE_INTEGRITY", "PACKAGE", "CANDIDATE_CQ", "BASE_REQUIRED_CQ",
@@ -72,7 +105,7 @@ def _package_check(root: Path, package_id: str, package_verifier: Callable[[str]
     return {"package_id": package_id, "package_root": str(package_root), "verification": verified}
 
 
-def _execute_test(root: Path, test: dict[str, Any], package_verifier: Callable[[str], Any] | None) -> tuple[str, list[str], dict[str, Any]]:
+def _execute_test(root: Path, test: dict[str, Any], package_verifier: Callable[[str], Any] | None, *, base_package_id: str | None = None) -> tuple[str, list[str], dict[str, Any]]:
     category = str(test.get("test_category", ""))
     if category not in _KNOWN_CATEGORIES:
         return "UNVERIFIED", [f"unknown-test-category:{category}"], {}
@@ -87,15 +120,16 @@ def _execute_test(root: Path, test: dict[str, Any], package_verifier: Callable[[
         elif category == "VERSION_COMPATIBILITY":
             actual = bool(record_by_id(root, "records/version-compatibility", "report_id", test.get("source_artifact_ref")))
         elif category in {"CANDIDATE_CQ", "BASE_REQUIRED_CQ", "CONSUMER_QUERY"}:
-            result_path = package_root / "validation" / "competency-question-results.json"
-            if not result_path.is_file():
-                return "UNVERIFIED", ["cq-oracle-result-missing"], evidence
-            payload = json.loads(result_path.read_bytes())
-            rows = payload if isinstance(payload, list) else payload.get("results", [])
-            matching = next((row for row in rows if row.get("query_id") == test.get("source_artifact_ref")), None)
-            if matching is None:
-                return "UNVERIFIED", ["cq-result-not-found"], evidence
-            actual = matching.get("passed") is True
+            if category=="CONSUMER_QUERY":
+                return "UNVERIFIED", ["consumer-query-executor-required"], evidence
+            plan_root=package_root
+            if category=="BASE_REQUIRED_CQ":
+                if not base_package_id:
+                    return "UNVERIFIED",["base-package-required"],evidence
+                plan_root=package_files(root,package_record(root,base_package_id))[2]
+            cq=execute_packaged_cq(plan_root,package_root)
+            evidence={**evidence,"cq_report":cq}
+            actual=cq["required_passed"] is True and cq["status"]=="PASSED"
         elif category == "TERM_CONTRACT":
             actual = bool(test.get("affected_iris")) and (package_root / "ontology").is_dir()
         elif category == "MAPPING_CONTRACT":
@@ -125,7 +159,7 @@ def run_regression(workspace: Path | str, plan: dict, *, package_verifier: Calla
         raise LifecycleError("REGRESSION_FAILED", "test plan has no executable tests")
     results = []
     for test in tests:
-        status, issues, evidence = _execute_test(root, test, package_verifier)
+        status, issues, evidence = _execute_test(root, test, package_verifier, base_package_id=plan["base_package_id"])
         results.append({"test_id": test["test_id"], "status": status, "evidence_digest": semantic_hash(evidence) if evidence else None, "issues": issues})
     passed = sum(item["status"] == "PASSED" for item in results)
     failed = sum(item["status"] in {"FAILED", "ENGINE_FAILED", "TIMEOUT"} for item in results)

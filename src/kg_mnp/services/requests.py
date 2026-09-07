@@ -55,6 +55,10 @@ class SourceRequest(RequestDTO):
     source_id: str = Field(pattern=r"^urn:kg-mnp:source:[a-f0-9]{64}$")
 
 
+class SourceBatchRequest(RequestDTO):
+    source_ids:list[str]=Field(min_length=1,max_length=100)
+
+
 class IngestionPlanRequest(RequestDTO):
     batch_id: str = Field(pattern=r"^urn:kg-mnp:source-batch:[a-f0-9]{64}$")
 
@@ -97,9 +101,30 @@ class ModelingPrepareRequest(RequestDTO):
     questions: list[QuestionDraft] = Field(min_length=1, max_length=100)
 
 
+class RecordReferenceRequest(RequestDTO):
+    field:str=Field(min_length=1,max_length=100)
+    target_table:str=Field(pattern=r"^[a-z][a-z0-9-]{0,50}$")
+    predicate_iri:str=Field(min_length=1,max_length=500)
+
+
+class RecordTableRequest(RequestDTO):
+    table_id:str=Field(pattern=r"^[a-z][a-z0-9-]{0,50}$")
+    source_name:str=Field(min_length=1,max_length=200)
+    class_iri:str=Field(min_length=1,max_length=500)
+    id_field:str=Field(min_length=1,max_length=100)
+    literals:dict[str,str]=Field(max_length=100)
+    references:list[RecordReferenceRequest]=Field(default_factory=list,max_length=100)
+
+
+class RecordMappingRequest(RequestDTO):
+    profile:Literal["evidence-record-mapping-v1"]
+    tables:list[RecordTableRequest]=Field(min_length=1,max_length=20)
+
+
 class ProposalRequest(RequestDTO):
     bundle_id: str = Field(pattern=r"^urn:kg-mnp:modeling-input-bundle:[a-f0-9]{64}$")
-    providers: list[Literal["baseline-reuse-provider", "rule-mapping-provider"]] = Field(min_length=1, max_length=2)
+    providers: list[Literal["baseline-reuse-provider", "rule-mapping-provider","manual-candidate-provider"]] = Field(min_length=1, max_length=3)
+    record_mapping:RecordMappingRequest|None=None
 
 
 class ReviewRequest(RequestDTO):
@@ -134,7 +159,7 @@ class CompileBuildRequest(RequestDTO):
 
 
 class ReleaseCandidateRequest(PackageRequest):
-    pass
+    change_evaluation_id: str | None = Field(default=None,pattern=r"^urn:kg-mnp:[a-z0-9-]+:[a-f0-9]{64}$")
 
 
 class ReleaseReviewRequest(RequestDTO):
@@ -159,6 +184,85 @@ class ObjectRequest(MetadataRequest):
     instance_iri: str | None = Field(default=None, max_length=500)
 
 
+class ObjectTraceRequest(PackageRequest):
+    instance_iri:str=Field(min_length=1,max_length=500)
+
+
+class DiffRequest(RequestDTO):
+    base_package_id: str = Field(pattern=r"^urn:kg-mnp:ontology-package:[a-f0-9]{64}$")
+    candidate_package_id: str = Field(pattern=r"^urn:kg-mnp:ontology-package:[a-f0-9]{64}$")
+
+
+class DiffReferenceRequest(RequestDTO):
+    diff_id: str = Field(pattern=r"^urn:kg-mnp:semantic-diff-report:[a-f0-9]{64}$")
+
+
+class RegressionRequest(DiffReferenceRequest):
+    impact_id: str = Field(pattern=r"^urn:kg-mnp:impact-analysis-report:[a-f0-9]{64}$")
+
+
+class ChangeEvaluationRequest(RegressionRequest):
+    regression_report_id: str = Field(pattern=r"^urn:kg-mnp:regression-test-report:[a-f0-9]{64}$")
+    rationale: str = Field(min_length=1,max_length=4000)
+
+
+class EnvironmentCreateRequest(RequestDTO):
+    name: str = Field(pattern=r"^[a-z][a-z0-9-]{0,80}$")
+
+
+class EnvironmentProposalRequest(RequestDTO):
+    environment_id: str = Field(pattern=r"^urn:kg-mnp:environment-manifest:[a-f0-9]{64}$")
+    release_id: str = Field(pattern=r"^urn:kg-mnp:release:[a-f0-9]{64}$")
+    rationale: str = Field(min_length=1,max_length=4000)
+    kind: Literal["ACTIVATE","ROLLBACK"]
+
+
+class EnvironmentReviewRequest(RequestDTO):
+    proposal_id: str = Field(pattern=r"^urn:kg-mnp:activation-proposal:[a-f0-9]{64}$")
+    decision: Literal["APPROVE","REJECT"]
+    rationale: str = Field(min_length=1,max_length=4000)
+    breaking_change_acknowledged: bool
+
+
+class EnvironmentExecutionRequest(RequestDTO):
+    proposal_id: str = Field(pattern=r"^urn:kg-mnp:activation-proposal:[a-f0-9]{64}$")
+    decision_id: str = Field(pattern=r"^urn:kg-mnp:activation-review-decision:[a-f0-9]{64}$")
+    expected_generation: int = Field(ge=0)
+    expected_pointer_hash: str = Field(pattern=r"^[a-f0-9]{64}$")
+    expected_registry_head_hash: str = Field(pattern=r"^[a-f0-9]{64}$")
+
+
+class IntegrationPlanRequest(RequestDTO):
+    release_id:str=Field(pattern=r"^urn:kg-mnp:release:[a-f0-9]{64}$")
+    target_id:Literal["local-graphdb"]
+
+
+class IntegrationReviewRequest(RequestDTO):
+    plan_id:str=Field(pattern=r"^plan_[a-f0-9]{64}$")
+    rationale:str=Field(min_length=1,max_length=4000)
+
+
+class IntegrationExecuteRequest(RequestDTO):
+    plan_id:str=Field(pattern=r"^plan_[a-f0-9]{64}$")
+    approval_id:str=Field(pattern=r"^approval_[a-f0-9]{64}$")
+
+
+class WorkflowRequest(RequestDTO):
+    release_id:str=Field(pattern=r"^urn:kg-mnp:release:[a-f0-9]{64}$")
+    action_id:Literal["request-source-review"]
+    note:str=Field(min_length=1,max_length=4000)
+
+
+class FeedbackRequest(PackageRequest):
+    observations:list[str]=Field(min_length=1,max_length=100)
+    severity:Literal["INFO","WARNING","ERROR","CRITICAL"]="INFO"
+
+
+class ConsumerRequest(PackageRequest):
+    name:str=Field(min_length=1,max_length=100)
+    required_term_iris:list[str]=Field(default_factory=list,max_length=1000)
+
+
 REQUEST_MODELS = {
     "project.create": ProjectCreateRequest, "project.open": ProjectOpenRequest,
     "project.list": EmptyRequest, "project.validate": EmptyRequest, "project.lock": EmptyRequest,
@@ -168,6 +272,7 @@ REQUEST_MODELS = {
     "environment.inspect": EnvironmentRequest,
     "source.register": SourceRegisterRequest, "source.inspect": SourceRequest, "source.list": EmptyRequest,
     "source.verify": SourceRequest, "ingestion.plan": IngestionPlanRequest, "ingestion.run": IngestionRunRequest,
+    "source.batch":SourceBatchRequest,
     "ingestion.inspect": IngestionInspectRequest, "ingestion.trace": IngestionInspectRequest,
     "evidence.list": IngestionInspectRequest, "kgir.inspect": IngestionInspectRequest, "kgir.validate": IngestionInspectRequest,
     "modeling.scope": ScopeRequest, "modeling.scope.approve": ScopeApprovalRequest,
@@ -181,6 +286,13 @@ REQUEST_MODELS = {
     "registry.import": PackageRequest, "release.candidate": ReleaseCandidateRequest,
     "release.review": ReleaseReviewRequest, "release.publish": ReleasePublishRequest,
     "oms.metadata": MetadataRequest, "ods.query": ObjectRequest,
+    "object.trace":ObjectTraceRequest,
+    "change.diff":DiffRequest,"change.impact":DiffReferenceRequest,"change.regression":RegressionRequest,"change.evaluate":ChangeEvaluationRequest,
+    "environment.create":EnvironmentCreateRequest,"environment.propose":EnvironmentProposalRequest,"environment.review":EnvironmentReviewRequest,
+    "environment.activate":EnvironmentExecutionRequest,"environment.rollback":EnvironmentExecutionRequest,
+    "visualization.export":PackageRequest,"integration.plan":IntegrationPlanRequest,"integration.review":IntegrationReviewRequest,
+    "integration.execute":IntegrationExecuteRequest,"integration.verify":IntegrationExecuteRequest,"workflow.enqueue":WorkflowRequest,
+    "feedback.add":FeedbackRequest,"consumer.register":ConsumerRequest,
 }
 
 

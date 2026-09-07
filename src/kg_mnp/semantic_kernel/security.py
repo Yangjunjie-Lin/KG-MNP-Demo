@@ -102,15 +102,20 @@ def assert_read_only_query(
 ) -> str:
     if not isinstance(query, str) or not query.strip() or len(query) > max_characters:
         raise SemanticKernelError("query is empty or exceeds its character limit", code="COMPETENCY_QUESTION_FAILED")
-    stripped = re.sub(r"#[^\n]*", "", query).lstrip()
-    operation = re.match(r"(?is)(?:PREFIX\s+[^\n]+\s*|BASE\s+<[^>]+>\s*)*(ASK|SELECT|CONSTRUCT)\b", stripped)
-    if operation is None or _QUERY_FORBIDDEN.search(stripped):
+    lexical=re.compile("|".join([r'<[^<>\s]*>',r'"""(?:\\.|(?!""").)*"""',r"'''(?:\\.|(?!''').)*'''",r'"(?:\\.|[^"\\])*"',r"'(?:\\.|[^'\\])*'",r'#[^\r\n]*']),re.DOTALL)  # noqa: FLY002 - explicit lexical alternatives
+    structural=lexical.sub(" ",query)
+    if _QUERY_FORBIDDEN.search(structural) or re.search(r"\bFROM\b",structural,re.IGNORECASE):
         raise SemanticKernelError("unsafe or non-read-only SPARQL query", code="COMPETENCY_QUESTION_FAILED")
-    structural = re.sub(r"<[^>]*>|\"(?:\\.|[^\"\\])*\"|'(?:\\.|[^'\\])*'", "", stripped)
+    try:
+        from rdflib.plugins.sparql.parser import parseQuery
+        parsed=parseQuery(query)
+        operation={"AskQuery":"ASK","SelectQuery":"SELECT","ConstructQuery":"CONSTRUCT"}[parsed[1].name]
+    except Exception as exc:
+        raise SemanticKernelError("invalid or unsupported read-only SPARQL query",code="COMPETENCY_QUESTION_FAILED") from exc
     path_tokens = re.findall(r"(?<![?])[/|^*+]", structural)
     if len(path_tokens) > max_path_depth:
         raise SemanticKernelError("SPARQL property-path complexity limit exceeded", code="COMPETENCY_QUESTION_FAILED")
-    return operation.group(1).upper()
+    return operation
 
 
 def scan_prohibited_text(data: bytes) -> list[str]:

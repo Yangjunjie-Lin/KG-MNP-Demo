@@ -37,7 +37,8 @@ class JobWorker:
                 if recovered is not None:
                     return recovered
             error = {"code": exc.code if isinstance(exc, ServiceBoundaryError) else "JOB_EXECUTION_FAILED",
-                     "message": exc.message if isinstance(exc, ServiceBoundaryError) else "job execution failed"}
+                     "message": exc.message if isinstance(exc, ServiceBoundaryError) else "job execution failed",
+                     "exception_type":type(exc).__name__,"errno":getattr(exc,"errno",None),"winerror":getattr(exc,"winerror",None)}
             try:
                 return self.store.fail(job.job_id, worker_id=worker_id, fencing_token=job.fencing_token, error=error)
             except ValueError:

@@ -16,15 +16,29 @@ from kg_mnp.services.errors import ServiceBoundaryError
 from kg_mnp.services.facade import ApplicationService
 from kg_mnp.services.models import OperationRequest
 from kg_mnp.services.requests import (
+    ChangeEvaluationRequest,
     CompileBuildRequest,
     CompilePlanRequest,
+    ConsumerRequest,
+    DiffReferenceRequest,
+    DiffRequest,
+    EnvironmentCreateRequest,
+    EnvironmentExecutionRequest,
+    EnvironmentProposalRequest,
+    EnvironmentReviewRequest,
+    FeedbackRequest,
     IngestionPlanRequest,
     IngestionRunRequest,
+    IntegrationExecuteRequest,
+    IntegrationPlanRequest,
+    IntegrationReviewRequest,
     ModelingPrepareRequest,
     ObjectRequest,
+    ObjectTraceRequest,
     PackageRequest,
     ProjectCreateRequest,
     ProposalRequest,
+    RegressionRequest,
     ReleaseCandidateRequest,
     ReleasePublishRequest,
     ReleaseReviewRequest,
@@ -32,6 +46,8 @@ from kg_mnp.services.requests import (
     ReviewRequest,
     ScopeApprovalRequest,
     ScopeRequest,
+    SourceBatchRequest,
+    WorkflowRequest,
 )
 
 
@@ -191,19 +207,20 @@ def create_app(service: ApplicationService) -> FastAPI:
         from kg_mnp.lifecycle.registry.head import read_head
         from kg_mnp.services.projects import get_project, load_catalog
         catalog = load_catalog(service.root)
+        project_handle=get_project(service.root,project_id)
         results = [{"job_id": job_id, "operation": record["context"]["operation_id"],
                     "revision": record["authority_revision"], "result": record["result"]}
                    for job_id, record in catalog.get("commits", {}).items() if record["context"]["project_id"] == project_id]
         jobs = []
         for job in service.jobs.list_project(project_id):
             try:
-                service._job(job.job_id, principal)
+                service._job(job.job_id, principal,authorized_project=project_handle)
             except ServiceBoundaryError:
                 continue
             jobs.append({"job_id": job.job_id, "operation_id": job.operation_id, "status": job.status,
                          "error": {"code": job.error.get("code")} if job.error else None})
         return {"project": opened, "results": sorted(results, key=lambda row: row["revision"]), "jobs": jobs,
-                "registry_head": read_head(get_project(service.root, project_id).registry_root)["head_hash"]}
+                "registry_head": read_head(project_handle.registry_root)["head_hash"]}
 
     @app.get("/api/v1/projects/{project_id}/validation", operation_id="validateProject")
     def validate_project(project_id: str, authorization: str | None = Header(default=None)):
@@ -243,6 +260,10 @@ def create_app(service: ApplicationService) -> FastAPI:
     @app.get("/api/v1/projects/{project_id}/sources", operation_id="listSources")
     def list_sources(project_id: str, authorization: str | None = Header(default=None)):
         return resource("source.list", project_id, authorization)
+
+    @app.post("/api/v1/projects/{project_id}/source-batches",operation_id="createSourceBatch",status_code=202)
+    def source_batch(project_id:str,payload:SourceBatchRequest,authorization:str|None=Header(default=None),idempotency_key:str|None=Header(default=None)):
+        return resource("source.batch",project_id,authorization,payload.model_dump(),idempotency_key)
 
     @app.get("/api/v1/projects/{project_id}/sources/{source_id}", operation_id="inspectSource")
     def source(project_id: str, source_id: str, authorization: str | None = Header(default=None)):
@@ -330,13 +351,85 @@ def create_app(service: ApplicationService) -> FastAPI:
     def release_publish(project_id: str, payload: ReleasePublishRequest, authorization: str | None = Header(default=None), idempotency_key: str | None = Header(default=None)):
         return resource("release.publish", project_id, authorization, payload.model_dump(), idempotency_key)
 
+    @app.post("/api/v1/projects/{project_id}/lifecycle/diffs",operation_id="comparePackages",status_code=202)
+    def compare_packages(project_id:str,payload:DiffRequest,authorization:str|None=Header(default=None),idempotency_key:str|None=Header(default=None)):
+        return resource("change.diff",project_id,authorization,payload.model_dump(),idempotency_key)
+
+    @app.post("/api/v1/projects/{project_id}/lifecycle/impacts",operation_id="analyzeImpact",status_code=202)
+    def impact(project_id:str,payload:DiffReferenceRequest,authorization:str|None=Header(default=None),idempotency_key:str|None=Header(default=None)):
+        return resource("change.impact",project_id,authorization,payload.model_dump(),idempotency_key)
+
+    @app.post("/api/v1/projects/{project_id}/lifecycle/regressions",operation_id="executeRegression",status_code=202)
+    def regression(project_id:str,payload:RegressionRequest,authorization:str|None=Header(default=None),idempotency_key:str|None=Header(default=None)):
+        return resource("change.regression",project_id,authorization,payload.model_dump(),idempotency_key)
+
+    @app.post("/api/v1/projects/{project_id}/lifecycle/evaluations",operation_id="evaluateChange",status_code=202)
+    def evaluate(project_id:str,payload:ChangeEvaluationRequest,authorization:str|None=Header(default=None),idempotency_key:str|None=Header(default=None)):
+        return resource("change.evaluate",project_id,authorization,payload.model_dump(),idempotency_key)
+
+    @app.post("/api/v1/projects/{project_id}/lifecycle/environments",operation_id="createEnvironment",status_code=202)
+    def environment_create(project_id:str,payload:EnvironmentCreateRequest,authorization:str|None=Header(default=None),idempotency_key:str|None=Header(default=None)):
+        return resource("environment.create",project_id,authorization,payload.model_dump(),idempotency_key)
+
+    @app.post("/api/v1/projects/{project_id}/lifecycle/environment-proposals",operation_id="proposeEnvironment",status_code=202)
+    def environment_propose(project_id:str,payload:EnvironmentProposalRequest,authorization:str|None=Header(default=None),idempotency_key:str|None=Header(default=None)):
+        return resource("environment.propose",project_id,authorization,payload.model_dump(),idempotency_key)
+
+    @app.post("/api/v1/projects/{project_id}/lifecycle/environment-reviews",operation_id="reviewEnvironment",status_code=202)
+    def environment_review(project_id:str,payload:EnvironmentReviewRequest,authorization:str|None=Header(default=None),idempotency_key:str|None=Header(default=None)):
+        return resource("environment.review",project_id,authorization,payload.model_dump(),idempotency_key)
+
+    @app.post("/api/v1/projects/{project_id}/lifecycle/activations",operation_id="activateEnvironment",status_code=202)
+    def environment_activate(project_id:str,payload:EnvironmentExecutionRequest,authorization:str|None=Header(default=None),idempotency_key:str|None=Header(default=None)):
+        return resource("environment.activate",project_id,authorization,payload.model_dump(),idempotency_key)
+
+    @app.post("/api/v1/projects/{project_id}/lifecycle/rollbacks",operation_id="rollbackEnvironment",status_code=202)
+    def environment_rollback(project_id:str,payload:EnvironmentExecutionRequest,authorization:str|None=Header(default=None),idempotency_key:str|None=Header(default=None)):
+        return resource("environment.rollback",project_id,authorization,payload.model_dump(),idempotency_key)
+
+    @app.post("/api/v1/projects/{project_id}/integrations/plans",operation_id="planIntegration",status_code=202)
+    def integration_plan(project_id:str,payload:IntegrationPlanRequest,authorization:str|None=Header(default=None),idempotency_key:str|None=Header(default=None)):
+        return resource("integration.plan",project_id,authorization,payload.model_dump(),idempotency_key)
+
+    @app.post("/api/v1/projects/{project_id}/integrations/reviews",operation_id="reviewIntegration",status_code=202)
+    def integration_review(project_id:str,payload:IntegrationReviewRequest,authorization:str|None=Header(default=None),idempotency_key:str|None=Header(default=None)):
+        return resource("integration.review",project_id,authorization,payload.model_dump(),idempotency_key)
+
+    @app.post("/api/v1/projects/{project_id}/integrations/executions",operation_id="executeIntegration",status_code=202)
+    def integration_execute(project_id:str,payload:IntegrationExecuteRequest,authorization:str|None=Header(default=None),idempotency_key:str|None=Header(default=None)):
+        return resource("integration.execute",project_id,authorization,payload.model_dump(),idempotency_key)
+
+    @app.post("/api/v1/projects/{project_id}/integrations/observations",operation_id="observeIntegration",status_code=202)
+    def integration_observe(project_id:str,payload:IntegrationExecuteRequest,authorization:str|None=Header(default=None),idempotency_key:str|None=Header(default=None)):
+        return resource("integration.verify",project_id,authorization,payload.model_dump(),idempotency_key)
+
+    @app.post("/api/v1/projects/{project_id}/integrations/workflow-requests",operation_id="enqueueWorkflow",status_code=202)
+    def enqueue_workflow(project_id:str,payload:WorkflowRequest,authorization:str|None=Header(default=None),idempotency_key:str|None=Header(default=None)):
+        return resource("workflow.enqueue",project_id,authorization,payload.model_dump(),idempotency_key)
+
+    @app.post("/api/v1/projects/{project_id}/lifecycle/feedback",operation_id="submitFeedback",status_code=202)
+    def feedback(project_id:str,payload:FeedbackRequest,authorization:str|None=Header(default=None),idempotency_key:str|None=Header(default=None)):
+        return resource("feedback.add",project_id,authorization,payload.model_dump(),idempotency_key)
+
+    @app.post("/api/v1/projects/{project_id}/lifecycle/consumers",operation_id="registerConsumer",status_code=202)
+    def consumer(project_id:str,payload:ConsumerRequest,authorization:str|None=Header(default=None),idempotency_key:str|None=Header(default=None)):
+        return resource("consumer.register",project_id,authorization,payload.model_dump(),idempotency_key)
+
     @app.get("/api/v1/projects/{project_id}/metadata", operation_id="inspectMetadata")
     def metadata(project_id: str, package_id: str, limit: int = 100, offset: int = 0, authorization: str | None = Header(default=None)):
         return resource("oms.metadata", project_id, authorization, {"package_id": package_id, "limit": limit, "offset": offset})
 
+    @app.get("/api/v1/projects/{project_id}/environment-pointer",operation_id="getEnvironmentPointer")
+    def environment_pointer(project_id:str,environment_id:str,authorization:str|None=Header(default=None)):
+        return resource("environment.inspect",project_id,authorization,{"environment_id":environment_id})
+
     @app.post("/api/v1/projects/{project_id}/objects/query", operation_id="queryObjects")
     def objects(project_id: str, payload: ObjectRequest, authorization: str | None = Header(default=None)):
         return resource("ods.query", project_id, authorization, payload.model_dump())
+
+    @app.post("/api/v1/projects/{project_id}/objects/trace",operation_id="traceObjectEvidence")
+    def object_trace(project_id:str,payload:ObjectTraceRequest,authorization:str|None=Header(default=None)):
+        return resource("object.trace",project_id,authorization,payload.model_dump())
 
     @app.get("/api/v1/projects/{project_id}/packages/{package_id}/archive", operation_id="downloadPackageArchive")
     def download_package(project_id: str, package_id: str, authorization: str | None = Header(default=None)):
