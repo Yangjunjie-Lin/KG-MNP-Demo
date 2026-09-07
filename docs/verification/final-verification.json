@@ -1,0 +1,751 @@
+{
+  "backend": {
+    "collection_count": 1575,
+    "collection_file_sha256": "6455d60ece97683304066056ef98e16210333f1e62ca3c4e97fc8e83aa05222d",
+    "errors": 0,
+    "extra": [],
+    "failed": 0,
+    "missing": [],
+    "partition_counts": {
+      "parallel": 1126,
+      "serial": 449
+    },
+    "partition_nodeids_sha256": {
+      "parallel": "327ae698136d9537fa209f3801a41d8e4bc494db887f80c7e13058f0392a5078",
+      "serial": "e72b08cad245dcafdd0a158d2e49f954b9421851b5c1c350a5ac324d807a2215"
+    },
+    "passed": 1566,
+    "skipped": 9,
+    "status": "PASS",
+    "unique_executed_count": 1575,
+    "xfailed": 0
+  },
+  "branch": "codex/toolchain-final-consolidation-p09",
+  "browser": {
+    "ids": {
+      "attestation_id": "urn:kg-mnp:release-attestation:f338dad9477b049c0dbe8a42d30785b67ccd570e7463f6da052eda470c8ccdbc",
+      "compilation_plan_id": "urn:kg-mnp:semantic-compilation-plan:16e844c7311d005548e39069ff38cd819935744b0bf3642e7a298655fc9bac3a",
+      "confirmed_package_id": "urn:kg-mnp:ontology-confirmed-modeling-package:76109566c067bbe126b45629a567bf5337bc8e0cd5ad37243ab87300f32568f5",
+      "dataset_id": "urn:kg-mnp:kg-ir-dataset:85a7bec0652e59ac231cadf29fe6d9c510539fb73643132277e7bad780ed861e",
+      "job_ids": [
+        "job_da7ca33d020e4fbbad672f0cbd7eae5f",
+        "job_61b13bf729f148e7adb280d2834a229b",
+        "job_9ab927e4a6254697a069fa37c4327019",
+        "job_804d0de9635f46ccb9b24571a0d69a5d",
+        "job_63053eb91c594aef833cb81be376b2b3",
+        "job_86ade1e2cc5845ae910544c8b9afb9c3",
+        "job_b856d794b2994960b9a011fc478c8dba",
+        "job_9efd544d79fc4c238f2484de197857d0",
+        "job_d5f05b4358e34f3ebda56e62b5ed30e9",
+        "job_c4e262a9bab64e04a4306582cfa34f87",
+        "job_91fdf9b7d3ef44baa8082baaca1b1297",
+        "job_89f52d633f534fdc9cc1b40e0b1ca9c5",
+        "job_05d16d4f874341c289a55074b815b4ec",
+        "job_7e6292b929ca48f8849f6037f48ead7b",
+        "job_b3abe1e0e10948948dbcc1ff1be8d103",
+        "job_497dbada7a704753bd887077b5ea704f",
+        "job_92fa5592822a4cda87aad212ad14c316",
+        "job_8245899855954e65ad55a2a98dcde6ce",
+        "job_cd277d0ef852489ebbb2dfc1449a3c4c",
+        "job_4a4d341372fc4b818be74b8e9cd6b850"
+      ],
+      "package_id": "urn:kg-mnp:ontology-package:f18aa1412acaaecfff05eb4b21cc080c776192b70a94c93091080bb60155b16c",
+      "project_id": "urn:kg-mnp:project:d3978b962b81a1adef6e984abc72294efbb8ef102d60fef3f3603e2f1cebd9f7",
+      "proposal_id": "urn:kg-mnp:ontology-modeling-proposal:aecdd0bcd56c598d89c5f626f2229b8fe62d65e59dc309484a5308c30ee9dec8",
+      "release_id": "urn:kg-mnp:release:86374b5d36f9f92fa67d99eecf6418d13268c62358764a983499395c7af4d649",
+      "review_id": "urn:kg-mnp:ontology-review-queue:80ea2665657764f1cc18df6f0acaac81321df174f9440f6bc37aa12c6cd63202",
+      "run_id": "urn:kg-mnp:ingestion-run:1e916ed0d47a3586296b90bb97dd7c094a2313596e22bacd930f190c2e3d224f",
+      "scope_id": "urn:kg-mnp:ontology-scope:87dd94dbbcad5ed87ab0b31731e43cf83142683871ef1d1fae63f0bbccbf32f1",
+      "source_batch_id": "urn:kg-mnp:source-batch:af8ee2adb9e96f8cfcdf2f3effe7ef4663ba2954e4b444ed83a7a00b4cc8bfd0",
+      "source_id": "urn:kg-mnp:source:a6b96e697f242db622efb316e435372f68ce9881611213756e7736b9b406cbb6"
+    },
+    "limitations": [
+      "Only the Minimal initial-release scenario is covered.",
+      "Dense technical/JSON review tables; full UX/graph acceptance incomplete.",
+      "No complete keyboard/a11y audit or 1000-row/200-node benchmark."
+    ],
+    "mocked_core_api": false,
+    "reasoner": "ROBOT 1.9.7 / HermiT 1.4.5.456",
+    "review_identity": "Synthetic HUMAN test identity with automated per-item clicks; not a real expert signature.",
+    "screenshots": [
+      {
+        "path": "runtime_logs/p09/browser-runs/2026-09-07T10-33-40-063Z/output/minimal.e2e.ts-real-browse-dc8aa-package-and-initial-release/screenshots/compilation.png",
+        "sha256": "4aa71f890663c42cda349328d9168997c54b065081d4bd1632f75be2ddf450d3",
+        "visually_inspected": true
+      },
+      {
+        "path": "runtime_logs/p09/browser-runs/2026-09-07T10-33-40-063Z/output/minimal.e2e.ts-real-browse-dc8aa-package-and-initial-release/screenshots/project-overview.png",
+        "sha256": "b5c490b7b82ebf8689794fc70a750e7e6890e97bea0e397cddff7698406536fa",
+        "visually_inspected": true
+      },
+      {
+        "path": "runtime_logs/p09/browser-runs/2026-09-07T10-33-40-063Z/output/minimal.e2e.ts-real-browse-dc8aa-package-and-initial-release/screenshots/release-objects.png",
+        "sha256": "5876ca13b8fd33e162ae95c046bb6731867826da215e73928fbea6751b8bd467",
+        "visually_inspected": true
+      },
+      {
+        "path": "runtime_logs/p09/browser-runs/2026-09-07T10-33-40-063Z/output/minimal.e2e.ts-real-browse-dc8aa-package-and-initial-release/screenshots/review.png",
+        "sha256": "d2b948656abaa64fbc0ccb72643259787d2d40d12f863dfba58d1a15aaef37a2",
+        "visually_inspected": true
+      },
+      {
+        "path": "runtime_logs/p09/browser-runs/2026-09-07T10-33-40-063Z/output/minimal.e2e.ts-real-browse-dc8aa-package-and-initial-release/screenshots/scope-cq.png",
+        "sha256": "943535eae928ee28be8412696ae87f8aeca43c4cbf44db7d12d8b076b6cdd93d",
+        "visually_inspected": true
+      },
+      {
+        "path": "runtime_logs/p09/browser-runs/2026-09-07T10-33-40-063Z/output/minimal.e2e.ts-real-browse-dc8aa-package-and-initial-release/screenshots/source-evidence.png",
+        "sha256": "54e6e13b6260b64b6695c3f0b9568b03689a47a2f8493f2170644db0f5d43b02",
+        "visually_inspected": true
+      }
+    ],
+    "status": "PASS_MINIMAL_INITIAL_RELEASE_SCENARIO",
+    "viewports_checked": [
+      1024,
+      1366,
+      1440,
+      1920
+    ]
+  },
+  "build_artifacts": [
+    {
+      "bytes": 59330,
+      "path": "runtime/p09-final-distribution/domain-packs-and-minimal-example-3c0d0ad.tar.gz",
+      "sha256": "b1a6423dfee6d6e23f989eb395dd04e818be0757db12d726c173ab92c7cbac3a"
+    },
+    {
+      "bytes": 1144449,
+      "path": "runtime/p09-final-distribution/kg_mnp_toolchain-0.9.0.dev0-py3-none-any.whl",
+      "sha256": "0121ce397964c19e130bfcd7d81f86643667ef152cf6badd2d57c5dbed1957c3"
+    },
+    {
+      "bytes": 857688,
+      "path": "runtime/p09-final-distribution/kg_mnp_toolchain-0.9.0.dev0.tar.gz",
+      "sha256": "d1f1871b549be8d3b7da26e8605cf974458762140f6bc9b48e4f8ea7adee864d"
+    }
+  ],
+  "ci": "No successful new capability CI run claimed. Existing workflows retained; CI refactor incomplete.",
+  "commands": {
+    "browser": {
+      "command": [
+        "D:\\npm.CMD",
+        "--prefix",
+        "workbench",
+        "run",
+        "test:e2e"
+      ],
+      "duration_seconds": 441.89000000001397,
+      "exit_code": 0,
+      "files": {
+        "command.log": "064bf25743323fcc0336bf2a51f82e620f2ecbe9e0a6ae0f374c0c391926a5dc"
+      }
+    },
+    "clean-wheel-probe": {
+      "command": [
+        "<repository>\\runtime\\p09-clean-win-c355e95\\Scripts\\python.exe",
+        "-I",
+        "-c",
+        "import os,tempfile,sysconfig,json\nfrom pathlib import Path\nos.chdir(tempfile.mkdtemp(prefix=\"kg-mnp-clean-probe-\"))\nimport kg_mnp\nassert Path(kg_mnp.__file__).is_relative_to(Path(sysconfig.get_paths()[\"purelib\"]))\nfrom kg_mnp.contracts.catalog import verify_catalog_lock\nverify_catalog_lock()\nfrom kg_mnp.semantic_kernel.policy import load_compiler_policy\nfrom kg_mnp.lifecycle.policy import load_policy\nassert load_compiler_policy()[\"policy_id\"]\nassert load_policy(\"release-policy-1.0.0.yaml\")[\"policy_id\"]\nfrom kg_mnp.services.facade import ApplicationService\nfrom kg_mnp.services.models import ServiceConfiguration\nfrom kg_mnp.api.app import create_app\nfrom fastapi.testclient import TestClient\nservice = ApplicationService(ServiceConfiguration(tempfile.mkdtemp()))\nwith TestClient(create_app(service)) as client:\n    statuses={path:client.get(path).status_code for path in [\"/\",\"/projects/example/overview\",\"/api/v1/projects\",\"/api/v1/not-a-resource\"]}\n    assert list(statuses.values()) == [200,200,401,404]\n    assert \"token_digest\" not in client.get(\"/service-data/tokens.json\").text\nprint(json.dumps({\"version\":kg_mnp.__version__,\"status_codes\":statuses,\"imported_from_site_packages\":True}))\n"
+      ],
+      "duration_seconds": 13.796999999991385,
+      "exit_code": 0,
+      "files": {
+        "command.log": "ec0cd165cd38f78e9b24cb27ad10c598f320efdc8cda504eab34858406960941"
+      }
+    },
+    "collection": {
+      "command": [
+        "<repository>\\.venv-p09\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "--collect-only",
+        "-q",
+        "-p",
+        "tests.verification_receipts",
+        "--junitxml=<repository>\\runtime_logs\\p09\\fixed-3c0d0ad-72018325\\collection\\junit.xml"
+      ],
+      "duration_seconds": 12.625,
+      "exit_code": 0,
+      "files": {
+        "collection.json": "6455d60ece97683304066056ef98e16210333f1e62ca3c4e97fc8e83aa05222d",
+        "command.log": "1687d1e1abe6afc9ebb8ffa8e1213ca0fe4def11c8315abd01eb64c69670cbdf",
+        "junit.xml": "86c9cd059d37e94f0e6a27a56152ec107897914537ba431411eff5112a4662bf",
+        "reports.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
+      },
+      "skips": [],
+      "suites": [
+        {
+          "errors": "0",
+          "failures": "0",
+          "hostname": "Yangjunjie",
+          "name": "pytest",
+          "skipped": "0",
+          "tests": "0",
+          "time": "9.890",
+          "timestamp": "2026-09-07T11:25:39.656451+01:00"
+        }
+      ]
+    },
+    "frontend-audit": {
+      "command": [
+        "D:\\npm.CMD",
+        "--prefix",
+        "workbench",
+        "audit",
+        "--json"
+      ],
+      "duration_seconds": 2.9060000000172295,
+      "exit_code": 0,
+      "files": {
+        "command.log": "f4266260db47c19344b0c0dcb48bcc2fc951773f487e607114f5492b32f608dd"
+      }
+    },
+    "frontend-build": {
+      "command": [
+        "D:\\npm.CMD",
+        "--prefix",
+        "workbench",
+        "run",
+        "build"
+      ],
+      "duration_seconds": 5.967999999993481,
+      "exit_code": 0,
+      "files": {
+        "command.log": "91aa290f805054cb2d2a6ca47a049ccb920a2d85ec48cfaa87404efd46026b63"
+      }
+    },
+    "hygiene": {
+      "command": [
+        "<repository>\\.venv-p09\\Scripts\\python.exe",
+        "scripts/check_repo_hygiene.py"
+      ],
+      "duration_seconds": 8.23499999998603,
+      "exit_code": 0,
+      "files": {
+        "command.log": "ae36cd7b8eea1bcb09bdd630de10509586d32f9dcfb4f14ceabbbe1ed5991d37"
+      }
+    },
+    "lint": {
+      "command": [
+        "<repository>\\.venv-p09\\Scripts\\python.exe",
+        "-m",
+        "ruff",
+        "check",
+        "."
+      ],
+      "duration_seconds": 0.45300000000861473,
+      "exit_code": 0,
+      "files": {
+        "command.log": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+      }
+    },
+    "linux": {
+      "commands": [
+        {
+          "command": [
+            "git",
+            "-c",
+            "safe.directory=<repository>",
+            "clone",
+            "--no-hardlinks",
+            "--single-branch",
+            "--branch",
+            "codex/toolchain-final-consolidation-p09",
+            "<repository>",
+            "/var/tmp/kg-mnp-final-3p0ulp1a/source"
+          ],
+          "exit_code": 0,
+          "log_sha256": "c78bbb52a4f7dc0304ae5575aff5966d189ca23eea5714d2c4155cc4c17f85a8",
+          "name": "clone",
+          "seconds": 34.890591079000004
+        },
+        {
+          "command": [
+            "/usr/bin/python3",
+            "-m",
+            "venv",
+            "/var/tmp/kg-mnp-final-3p0ulp1a/.venv"
+          ],
+          "exit_code": 0,
+          "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+          "name": "venv",
+          "seconds": 9.834396515999998
+        },
+        {
+          "command": [
+            "/var/tmp/kg-mnp-final-3p0ulp1a/.venv/bin/python",
+            "-m",
+            "pip",
+            "install",
+            "-c",
+            "/var/tmp/kg-mnp-final-3p0ulp1a/source/requirements-dev.lock",
+            "<repository>/runtime/p09-final-distribution/kg_mnp_toolchain-0.9.0.dev0-py3-none-any.whl[dev]"
+          ],
+          "exit_code": 0,
+          "log_sha256": "acee4318640881a034c2e0f8d42461ead2a48ae1f6d8cbc1332646168b93c518",
+          "name": "install",
+          "seconds": 40.633856324
+        },
+        {
+          "command": [
+            "/var/tmp/kg-mnp-final-3p0ulp1a/.venv/bin/python",
+            "-m",
+            "pytest",
+            "tests/workspace",
+            "tests/sources",
+            "tests/security/test_domain_pack_security.py",
+            "tests/security/test_workspace_security.py",
+            "tests/security/test_source_security.py",
+            "tests/security/test_ingestion_security.py",
+            "tests/security/test_contract_document_security.py",
+            "--junitxml=<repository>/runtime_logs/p09/fixed-3c0d0ad-72018325/linux/junit.xml"
+          ],
+          "exit_code": 0,
+          "log_sha256": "0d34ca49bf527cbf2c2b542b9efc4a138e8a03d8e2dfa04f8a7214ca1eec4067",
+          "name": "posix-tests",
+          "seconds": 43.478178306000004
+        }
+      ],
+      "platform": "Linux-6.18.33.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+      "python": "3.12.3 (main, Jun 19 2026, 12:46:00) [GCC 13.3.0]",
+      "tested_commit": "3c0d0ad18e9640ceacc60502e227354cfff939d0",
+      "uid": 1003,
+      "wheel_sha256": "0121ce397964c19e130bfcd7d81f86643667ef152cf6badd2d57c5dbed1957c3",
+      "workspace": "/var/tmp/kg-mnp-final-3p0ulp1a"
+    },
+    "mnp-assets": {
+      "command": [
+        "<repository>\\.venv-p09\\Scripts\\python.exe",
+        "scripts/generate_mnp_prompt01_content_golden.py",
+        "--check"
+      ],
+      "duration_seconds": 9.5,
+      "exit_code": 0,
+      "files": {
+        "command.log": "aed5de2419a5e62600eff4619ff3c539be40db1b5387b608f4898a99bd39e354"
+      }
+    },
+    "openapi": {
+      "command": [
+        "<repository>\\.venv-p09\\Scripts\\python.exe",
+        "-m",
+        "kg_mnp",
+        "service",
+        "openapi",
+        "--workspace",
+        "runtime/p09-openapi-check",
+        "--output",
+        "<repository>\\runtime_logs\\p09\\fixed-3c0d0ad-72018325\\openapi.json"
+      ],
+      "duration_seconds": 3.75,
+      "exit_code": 0,
+      "files": {
+        "command.log": "ba8766501341230eb84da5ae6b9b7b0dafeb3e329bf0bb90967d2772c3d849ec"
+      }
+    },
+    "parallel": {
+      "command": [
+        "<repository>\\.venv-p09\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "@<repository>\\runtime_logs\\p09\\fixed-3c0d0ad-72018325\\parallel.args",
+        "-p",
+        "xdist.plugin",
+        "-n",
+        "3",
+        "-p",
+        "tests.verification_receipts",
+        "--junitxml=<repository>\\runtime_logs\\p09\\fixed-3c0d0ad-72018325\\parallel\\junit.xml"
+      ],
+      "duration_seconds": 1619.4379999999946,
+      "exit_code": 0,
+      "files": {
+        "collection.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
+        "command.log": "f04369b58d2c2a648467819d5cd1b93da53e86f92c0de9d67a0a9cde149f618a",
+        "junit.xml": "584aca4ace72ac05e23468da37260d5b33ab65c67e77531e0ba3940d1bc71fcd",
+        "progress-12512.jsonl": "a4b3b28ec791b736944de4b061a7edfbc8329482287a935efbac0a1ce8d49dab",
+        "progress-16660.jsonl": "599e76a349487b44eb3961622333ff27b4f181a3ac531187321b95ff6a55bd26",
+        "progress-17084.jsonl": "5ab852976d0a625aba6a48a65b948b26ec08c060fc84328f8f28e722dfe89204",
+        "progress-24076.jsonl": "b1f786b81c828f6bd547311882e21e97426281c04545aac05c670c01758b999a",
+        "reports.json": "c36cc6ecd66d3c544fc914de2029d43a0b2389c4afd902362a40720abbc5195f"
+      },
+      "skips": [
+        {
+          "reason": {
+            "message": "POSIX execute permission bits are not exposed on Windows",
+            "type": "pytest.skip"
+          },
+          "test": {
+            "classname": "tests.security.test_domain_pack_security",
+            "name": "test_executable_permission_is_rejected",
+            "time": "0.001"
+          }
+        },
+        {
+          "reason": {
+            "message": "platform cannot create test symlink: [WinError 1314] 客户端没有所需的特权。: '<user-home>\\\\AppData\\\\Local\\\\Temp\\\\pytest-of-Yangjunjie Lin\\\\pytest-2616\\\\popen-gw2\\\\test_symlink_escape_is_rejecte0\\\\outside.ttl' -> '<user-home>\\\\AppData\\\\Local\\\\Temp\\\\pytest-of-Yangjunjie Lin\\\\pytest-2616\\\\popen-gw2\\\\test_symlink_escape_is_rejecte0\\\\minimal\\\\shadow.ttl'",
+            "type": "pytest.skip"
+          },
+          "test": {
+            "classname": "tests.security.test_domain_pack_security",
+            "name": "test_symlink_escape_is_rejected_or_explicitly_skipped",
+            "time": "0.059"
+          }
+        },
+        {
+          "reason": {
+            "message": "directory symlink creation unavailable on this platform: [WinError 1314] 客户端没有所需的特权。: '<user-home>\\\\AppData\\\\Local\\\\Temp\\\\pytest-of-Yangjunjie Lin\\\\pytest-2616\\\\popen-gw2\\\\test_source_store_rejects_syml0\\\\external' -> '<user-home>\\\\AppData\\\\Local\\\\Temp\\\\pytest-of-Yangjunjie Lin\\\\pytest-2616\\\\popen-gw2\\\\test_source_store_rejects_syml0\\\\workspace\\\\sources\\\\blobs\\\\sha256'",
+            "type": "pytest.skip"
+          },
+          "test": {
+            "classname": "tests.security.test_source_security",
+            "name": "test_source_store_rejects_symlinked_authority_directory",
+            "time": "0.590"
+          }
+        },
+        {
+          "reason": {
+            "message": "platform cannot create test symlink: [WinError 1314] 客户端没有所需的特权。: '<user-home>\\\\AppData\\\\Local\\\\Temp\\\\pytest-of-Yangjunjie Lin\\\\pytest-2616\\\\popen-gw2\\\\test_workspace_symlink_escape_0\\\\outside.txt' -> '<user-home>\\\\AppData\\\\Local\\\\Temp\\\\pytest-of-Yangjunjie Lin\\\\pytest-2616\\\\popen-gw2\\\\test_workspace_symlink_escape_0\\\\workspace\\\\sources\\\\escape.txt'",
+            "type": "pytest.skip"
+          },
+          "test": {
+            "classname": "tests.security.test_workspace_security",
+            "name": "test_workspace_symlink_escape_is_rejected_or_explicitly_skipped",
+            "time": "0.538"
+          }
+        },
+        {
+          "reason": {
+            "message": "POSIX FIFO semantics are exercised by Ubuntu CI",
+            "type": "pytest.skip"
+          },
+          "test": {
+            "classname": "tests.sources.test_source_store",
+            "name": "test_fifo_is_rejected",
+            "time": "0.001"
+          }
+        },
+        {
+          "reason": {
+            "message": "symlink creation unavailable on this platform: [WinError 1314] 客户端没有所需的特权。: '<user-home>\\\\AppData\\\\Local\\\\Temp\\\\pytest-of-Yangjunjie Lin\\\\pytest-2616\\\\popen-gw2\\\\test_symlink_and_non_regular_s0\\\\target.txt' -> '<user-home>\\\\AppData\\\\Local\\\\Temp\\\\pytest-of-Yangjunjie Lin\\\\pytest-2616\\\\popen-gw2\\\\test_symlink_and_non_regular_s0\\\\link.txt'",
+            "type": "pytest.skip"
+          },
+          "test": {
+            "classname": "tests.sources.test_source_store",
+            "name": "test_symlink_and_non_regular_source_are_rejected",
+            "time": "0.569"
+          }
+        }
+      ],
+      "suites": [
+        {
+          "errors": "0",
+          "failures": "0",
+          "hostname": "Yangjunjie",
+          "name": "pytest",
+          "skipped": "6",
+          "tests": "1126",
+          "time": "1615.749",
+          "timestamp": "2026-09-07T11:28:51.799880+01:00"
+        }
+      ]
+    },
+    "pip-check": {
+      "command": [
+        "<repository>\\.venv-p09\\Scripts\\python.exe",
+        "-m",
+        "pip",
+        "check"
+      ],
+      "duration_seconds": 3.1559999999881256,
+      "exit_code": 0,
+      "files": {
+        "command.log": "672aec65a45bed50e70229c70934a7eebf0462595c459b83023027645d57cccf"
+      }
+    },
+    "python-build": {
+      "command": [
+        "<repository>\\.venv-p09\\Scripts\\python.exe",
+        "-m",
+        "build",
+        "--wheel",
+        "--sdist",
+        "--outdir",
+        "runtime/p09-final-distribution"
+      ],
+      "duration_seconds": 62.64100000000326,
+      "exit_code": 0,
+      "files": {
+        "command.log": "f705f61f2949630b897642b011d8044884a8e9bae17e22c4d12ab0879786b523"
+      }
+    },
+    "requirement-ledger": {
+      "command": [
+        "<repository>\\.venv-p09\\Scripts\\python.exe",
+        "-m",
+        "tools.consolidation_audit",
+        "--check"
+      ],
+      "duration_seconds": 4.60899999999674,
+      "exit_code": 0,
+      "files": {
+        "command.log": "f93d9fcf96e70004f694e00128b240751af9694643b9969f360a95f09118787c"
+      }
+    },
+    "sdist-wheel-rebuild": {
+      "command": [
+        "<repository>\\.venv-p09\\Scripts\\python.exe",
+        "-m",
+        "pip",
+        "wheel",
+        "--no-deps",
+        "--wheel-dir",
+        "runtime/p09-sdist-wheel",
+        "runtime/p09-final-distribution/kg_mnp_toolchain-0.9.0.dev0.tar.gz"
+      ],
+      "duration_seconds": 64.95300000000861,
+      "exit_code": 0,
+      "files": {
+        "command.log": "96cd6126ff11cb4411d12b19af3f9fe865b2c3d1fa158dd04c501feff883eca6"
+      }
+    },
+    "serial": {
+      "command": [
+        "<repository>\\.venv-p09\\Scripts\\python.exe",
+        "-m",
+        "pytest",
+        "@<repository>\\runtime_logs\\p09\\fixed-3c0d0ad-72018325\\serial.args",
+        "-p",
+        "tests.verification_receipts",
+        "--junitxml=<repository>\\runtime_logs\\p09\\fixed-3c0d0ad-72018325\\serial\\junit.xml"
+      ],
+      "duration_seconds": 1369.9839999999967,
+      "exit_code": 0,
+      "files": {
+        "collection.json": "e72b08cad245dcafdd0a158d2e49f954b9421851b5c1c350a5ac324d807a2215",
+        "command.log": "7ed555d6c5405bdd8e875fbebe588f5de25328a973850f42e864c5d441470700",
+        "junit.xml": "0a59c3f472e42123bb59c71f1c6d1132038f7ed28b950325f37cacb94ee25c97",
+        "progress-37752.jsonl": "94aa257adf631c1c609da23f36f4b7b647f16033ba8c539c697279fa90cd849a",
+        "reports.json": "736f5c47d50f6c87b6ecf1c5098390061433249e8f08220b9c0ed416280a7d47"
+      },
+      "skips": [
+        {
+          "reason": {
+            "message": "directory symlinks are unavailable to this test user",
+            "type": "pytest.skip"
+          },
+          "test": {
+            "classname": "tests.activation.test_artifact_verifier_phase06",
+            "name": "test_artifact_directory_symlink_is_rejected",
+            "time": "2.751"
+          }
+        },
+        {
+          "reason": {
+            "message": "file symlinks are unavailable to this test user",
+            "type": "pytest.skip"
+          },
+          "test": {
+            "classname": "tests.activation.test_artifact_verifier_phase06",
+            "name": "test_artifact_file_symlink_is_rejected",
+            "time": "0.039"
+          }
+        },
+        {
+          "reason": {
+            "message": "directory symlinks are not available to this test user",
+            "type": "pytest.skip"
+          },
+          "test": {
+            "classname": "tests.activation.test_persistence_and_concurrency",
+            "name": "test_state_directory_rejects_symlink_escape",
+            "time": "0.009"
+          }
+        }
+      ],
+      "suites": [
+        {
+          "errors": "0",
+          "failures": "0",
+          "hostname": "Yangjunjie",
+          "name": "pytest",
+          "skipped": "3",
+          "tests": "449",
+          "time": "1347.854",
+          "timestamp": "2026-09-07T11:28:40.792886+01:00"
+        }
+      ]
+    }
+  },
+  "commits": [
+    "3c0d0ad18e9640ceacc60502e227354cfff939d0 fix(contracts): preserve frozen schema bytes across platform checkouts",
+    "10b3f92f2f08ba16d9d538f472d86af5a3380e69 test(product): replace stale version and prose freezes with current invariants",
+    "598c7b03ca748663889518adfe2333e78408cd2a fix(security): reject drive syntax in portable source display paths",
+    "c355e9527dad9ba0a6d4246dbe8585126eace229 fix(packaging): include dependency notices and isolate generated build output",
+    "5330df3ac02463e8c32c30e64d9ecb58f9ef0984 refactor(verification): audit fixed history and retain open consolidation scope",
+    "d587d578c7bc5b365882645a7b18a026594c2223 feat(workbench): add authenticated Chinese minimal engineering workflow",
+    "dc5694dbf7b5b2b0273e70d3b61595c005b28580 feat(services): connect fenced source modeling and initial release workflows"
+  ],
+  "decision": "NO_GO_OPEN_CORE_REQUIREMENTS",
+  "delivery_commit_policy": "Evidence-only successor, exact SHA reported after creating that commit; no self-referential SHA.",
+  "domains": {
+    "forestry": {
+      "new_digest": null,
+      "new_service_browser_workflow": "NOT_RUN",
+      "pack": "PLANNED_METADATA_ONLY",
+      "requested_0_2_0_upgrade": "NOT_IMPLEMENTED",
+      "version": "0.1.0"
+    },
+    "fourth_pack": {
+      "browser": "NOT_RUN"
+    },
+    "minimal": {
+      "browser": "PASS",
+      "compilation": "PASS",
+      "evidence": "PASS",
+      "ingestion": "PASS",
+      "initial_release": "PASS",
+      "modeling": "PASS",
+      "pack": "PASS",
+      "package": "PASS",
+      "review": "DEVELOPMENT_HUMAN_TEST_PROFILE"
+    },
+    "mnp": {
+      "assets": "84/84 PASS",
+      "new_service_browser_workflow": "NOT_RUN",
+      "pack": "PASS",
+      "version": "1.0.0"
+    }
+  },
+  "environment": {
+    "chromium": "153.0.8010.12",
+    "dependencies": {
+      "fastapi": "0.115.0",
+      "httpx": "0.27.2",
+      "jsonschema": "4.26.0",
+      "kg-mnp-toolchain": "0.9.0.dev0",
+      "owlrl": "6.0.2",
+      "pydantic": "2.13.5",
+      "pyshacl": "0.28.1",
+      "pytest": "8.4.2",
+      "rdflib": "7.6.0",
+      "setuptools": "80.9.0",
+      "uvicorn": "0.30.6",
+      "wheel": "0.45.1"
+    },
+    "java": "java version \"23.0.2\" 2025-01-21\nJava(TM) SE Runtime Environment (build 23.0.2+7-58)\nJava HotSpot(TM) 64-Bit Server VM (build 23.0.2+7-58, mixed mode, sharing)",
+    "machine": "AMD64",
+    "node": "v24.15.0",
+    "platform": "Windows-11-10.0.26200-SP0",
+    "python": "3.12.6"
+  },
+  "external_blockers": [
+    "GraphDB live license/environment not provisioned; missing local adapters are distinct implementation gaps."
+  ],
+  "linux": {
+    "failed": 0,
+    "full_linux_suite_and_reasoner": "NOT_RUN",
+    "junit_sha256": "45195fcde7d686e97261d5abc67759d2e2e3ccbb730f02a02325780516dac9f6",
+    "passed": 60,
+    "skipped": 0,
+    "status": "PASS_POSIX_SUBSET"
+  },
+  "lock_digests": {
+    "requirements-dev.lock": "32ba3b28e5db528eac3cb1fa34d6ecf36b1ead39d6df06a9efa5da31d20dd8ec",
+    "workbench/package-lock.json": "3e36a1f6dc2990a2b5cb39af1b343e7b659befc6eed6e298e6bfec63e0bc867d"
+  },
+  "not_run_or_incomplete": [
+    "Remaining 12 declared operations and detailed partial-operation gaps in final-requirements.json.",
+    "Manual/recorded-provider application flows and full candidate modification/conflict/evidence workflow.",
+    "Successor Diff/Impact/Regression/Release/Environment/Rollback workflow.",
+    "Forestry 0.2.0, MNP service/browser and fourth-pack workflow.",
+    "Full old UI/business/CLI/script retirement and capability CI migration/execution.",
+    "Backend standalone static typing and frontend standalone lint/unit suites.",
+    "Full adversarial browser, accessibility/keyboard and scale/performance acceptance.",
+    "Full Linux semantic/browser suite and comprehensive hard-kill/power-loss recovery."
+  ],
+  "original_failures_and_repairs": [
+    "Upload 404/Source 501 reproduced and connected.",
+    "Blanket rejection of confirmed Workspace files replaced by authority checks.",
+    "Actual core commit fencing/revocation/cancel/recovery boundaries tested.",
+    "Registry import now binds real source ProjectLock bytes/hash.",
+    "Browser login cache, table reference loop and ambiguous labels fixed.",
+    "Built-in distribution prerelease support fixed without relaxing external version matching.",
+    "Missing clean-environment setuptools/wheel requirements declared and pinned.",
+    "Frontend license notices and clean build outputs added.",
+    "Four obsolete version/prose assertions migrated, then complete fixed-revision tests rerun.",
+    "POSIX drive syntax and frozen schema checkout bytes fixed; Linux subset rerun."
+  ],
+  "protected_packs": {
+    "forestry": {
+      "content_digest": "58dbf2ab75189ecefdaf79e6c5e49ae7c796471e9be65aa48cbf0e21a21d66e9",
+      "lock_sha256": "d8286ebeeeaab3a409fdee1de241bae1c1db8bd79cec3c60030dd7cb3e2a196b"
+    },
+    "minimal": {
+      "content_digest": "9243d8a995a4a87b8d2048bf7cb0069203e3d7d528e57409e6d3f985ac11e014",
+      "lock_sha256": "533c4730303765b98a17006421535f543969846afbff007347fdd7e7aea601d3"
+    },
+    "mnp": {
+      "content_digest": "2554d6d4bbd98b4defd2a46243d6f4f01842320bcc929aff0a3a03ba7cc6ddd1",
+      "lock_sha256": "f7b53a9031a66423ed6fe7569c52457ffd8914fed150b0cf95c5ef5e4f32e619"
+    }
+  },
+  "public_schemas": {
+    "catalog_lock_verified": true,
+    "checkout_policy": "Three frozen historical review schemas explicitly use CRLF to match their unchanged Catalog hashes.",
+    "count": 115,
+    "git_blob_changes_from_source": []
+  },
+  "raw_evidence_root": "runtime_logs/p09/fixed-3c0d0ad-72018325",
+  "research_limits": [
+    "Engineering mechanisms do not establish academic novelty.",
+    "Hash bindings do not establish source truth.",
+    "OWL/SHACL/CQ claims are limited to actual inputs, constraints and Oracles.",
+    "No live LLM, forestry field trial or external business/deployment success."
+  ],
+  "retirement": {
+    "complete": false,
+    "helper_move": "tests/prompt08_receipts.py -> tests/verification_receipts.py",
+    "product_ui_or_business_files_deleted": [],
+    "tracked_files_at_source": 1687,
+    "tracked_files_at_tested_commit": 1726
+  },
+  "source_commit": "9da17d126cb37166ff06084080770108da20afbe",
+  "source_equivalence_exclusions": [
+    "docs/release/release-candidate-notes.md",
+    "docs/verification/final-requirements.json",
+    "docs/verification/final-verification.json"
+  ],
+  "source_equivalence_method": "SHA-256 of tracked tested inputs, plus git diff; only the three named evidence files may differ.",
+  "tested_commit": "3c0d0ad18e9640ceacc60502e227354cfff939d0",
+  "tested_source_tree_digest": "1cee0c28d4ef2012ab8056259661ba5e30809fc6038c85cdb4f876065f6de88e",
+  "evidence_archive": {
+    "path": "runtime/p09-final-distribution/acceptance-evidence-3c0d0ad.zip",
+    "sha256": "bb24845ce801d08c388b1a71c1be3191e5176d7229e8012729a5c5bc26ddb93b",
+    "bytes": 958548,
+    "file_count": 93,
+    "secret_scan": "PASS",
+    "scope": "Final raw command/JUnit/collection evidence, final synthetic screenshots/IDs and development JUnit failures; no runtime workspace or credentials."
+  },
+  "installed_wheel_security_module_sha256": "0e3b0182487c356cb824b18bc4a6543b886ecee60c610791385a34a9913cf579",
+  "additional_test_migrations": [
+    {
+      "old_nodeid": "tests/refactor/test_product_identity.py::test_source_package_identity",
+      "new_nodeid": "tests/refactor/test_product_identity.py::test_source_package_identity",
+      "decision": "REPLACE_FIXED_VERSION_ASSERTION",
+      "evidence": "Valid PEP 440 source version, no old package namespace; installed metadata equality separately tested"
+    },
+    {
+      "old_nodeid": "tests/refactor/test_product_identity.py::test_distribution_metadata_and_console_surface",
+      "new_nodeid": "tests/refactor/test_product_identity.py::test_distribution_metadata_and_console_surface",
+      "decision": "STRENGTHEN_SINGLE_VERSION_AUTHORITY",
+      "evidence": "pyproject dynamic version points to kg_mnp.__version__; installed distribution and console entries must agree"
+    },
+    {
+      "old_nodeid": "tests/webvowl/test_stage08_boundaries.py::test_stage08_ci_cleanup_and_publication_boundary_are_closed",
+      "new_nodeid": "tests/webvowl/test_stage08_boundaries.py::test_stage08_ci_cleanup_and_publication_boundary_are_closed",
+      "decision": "REPLACE_STALE_PROSE_ASSERTIONS",
+      "evidence": "CI secret/cleanup and publication boundary checks retained; actual historical tag target checked"
+    }
+  ]
+}

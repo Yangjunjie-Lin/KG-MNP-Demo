@@ -114,3 +114,63 @@ schema/file counts. Academic novelty, source truth, business correctness,
 cross-industry generality, forestry field effectiveness and production security
 certification have not been demonstrated. Hashes prove byte bindings, not truth;
 OWL/SHACL/CQ results are limited to the actual inputs, constraints and Oracles run.
+
+## Fixed-revision verification actually completed
+
+Tested commit: `3c0d0ad18e9640ceacc60502e227354cfff939d0`.
+Source-tree digest: `1cee0c28d4ef2012ab8056259661ba5e30809fc6038c85cdb4f876065f6de88e`.
+The earlier fixed attempts are superseded and were not merged into this result.
+
+- Complete Windows collection: 1575 unique nodes. Serial 449 + parallel 1126,
+  disjoint union exactly equals collection. Result: **1566 passed, 9 skipped,
+  0 failed/errors**. Skips and original command outcomes are in final-verification.json.
+- Ubuntu 24.04 / Python 3.12.3: **60 POSIX tests passed, no skips** on an actual
+  source checkout of the tested commit, with a clean installed dependency environment.
+  The first Linux failure exposed drive-path rejection and three frozen CRLF schema
+  byte bindings. The path code and exact checkout rules were fixed; schema blobs,
+  IDs and old hashes were not changed. This is not a full Linux semantic suite.
+- Real Chromium 153 Minimal browser scenario passed in about 442 seconds with
+  Source, KG-IR, Proposal, per-item synthetic-human Review, fixed Reasoner,
+  Package, initial Release and nonempty object query. No core API was mocked.
+- Frontend type/build, npm audit, backend Ruff, hygiene, pip consistency,
+  MNP 84-asset preservation, OpenAPI export and requirement-generator module check passed.
+- Wheel/Sdist built; sdist actually rebuilt into a wheel. An isolated Windows wheel
+  probe read packaged Contract/Policy resources, loaded Workbench/deep links and
+  confirmed API 401/404 boundaries without importing source-tree code.
+- Six final screenshots were actually inspected. Dense review tables and incomplete
+  UX/a11y/benchmark coverage remain limitations, not a completed visual acceptance.
+
+Main browser IDs:
+
+    Source: urn:kg-mnp:source:a6b96e697f242db622efb316e435372f68ce9881611213756e7736b9b406cbb6
+    KG-IR: urn:kg-mnp:kg-ir-dataset:85a7bec0652e59ac231cadf29fe6d9c510539fb73643132277e7bad780ed861e
+    Proposal: urn:kg-mnp:ontology-modeling-proposal:aecdd0bcd56c598d89c5f626f2229b8fe62d65e59dc309484a5308c30ee9dec8
+    Review: urn:kg-mnp:ontology-review-queue:80ea2665657764f1cc18df6f0acaac81321df174f9440f6bc37aa12c6cd63202
+    Package: urn:kg-mnp:ontology-package:f18aa1412acaaecfff05eb4b21cc080c776192b70a94c93091080bb60155b16c
+    Release: urn:kg-mnp:release:86374b5d36f9f92fa67d99eecf6418d13268c62358764a983499395c7af4d649
+
+The exact Job/Scope/Confirmation/Compilation/Attestation IDs and artifact hashes
+are in final-verification.json. Development artifacts (not release candidates):
+
+- `runtime/p09-final-distribution/domain-packs-and-minimal-example-3c0d0ad.tar.gz` — SHA-256 `b1a6423dfee6d6e23f989eb395dd04e818be0757db12d726c173ab92c7cbac3a`
+- `runtime/p09-final-distribution/kg_mnp_toolchain-0.9.0.dev0-py3-none-any.whl` — SHA-256 `0121ce397964c19e130bfcd7d81f86643667ef152cf6badd2d57c5dbed1957c3`
+- `runtime/p09-final-distribution/kg_mnp_toolchain-0.9.0.dev0.tar.gz` — SHA-256 `d1f1871b549be8d3b7da26e8605cf974458762140f6bc9b48e4f8ea7adee864d`
+
+The delivery commit is an evidence-only successor of the tested commit. Its exact
+SHA is supplied after creation; no file contains its own commit hash. Only
+final-verification.json, final-requirements.json and these notes are excluded from
+the tested-input comparison. These files are not included in Wheel/Sdist inputs.
+All source/config/test/build inputs must match the tested revision.
+
+The original required operation map remains complete, with 12 declarations still
+unconnected and several implemented operations explicitly partial. No candidate
+tag, public Release, main merge, force push or production deployment is performed.
+The original 1687 tracked files became 1726 at the tested commit; this is inventory,
+not a quality score. Only the shared receipt helper moved; full retirement and CI
+reorganization are not complete.
+
+Raw acceptance archive: `runtime/p09-final-distribution/acceptance-evidence-3c0d0ad.zip`
+(958548 bytes), SHA-256
+`bb24845ce801d08c388b1a71c1be3191e5176d7229e8012729a5c5bc26ddb93b`.
+Its 93 selected files passed the credential-pattern scan; runtime workspaces,
+source blobs, session/token stores and browser auth state are not included.

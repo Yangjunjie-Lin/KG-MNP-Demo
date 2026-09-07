@@ -22,18 +22,24 @@
       "baseline_status": "IMPLEMENTED_AND_TESTED",
       "blocker": null,
       "cli": "kg-mnp service call project.create",
-      "commits": [],
+      "commits": [
+        "3c0d0ad18e9640ceacc60502e227354cfff939d0"
+      ],
       "core_required": true,
       "execution_mode": "INLINE",
       "implementation": "kg_mnp.services.projects.create_project",
       "maps_to": "project.create",
       "missing": [],
-      "negative_tests": [],
-      "positive_tests": [],
+      "negative_tests": [
+        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[project.create]"
+      ],
+      "positive_tests": [
+        "tests/services/test_prompt08_boundary.py::test_created_project_is_valid_workspace_without_path_disclosure"
+      ],
       "requirement_id": "project.create",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_NOT_VERIFIED",
+      "status": "IMPLEMENTED_AND_TESTED",
       "ui": "/"
     },
     {
@@ -41,18 +47,24 @@
       "baseline_status": "IMPLEMENTED_AND_TESTED",
       "blocker": null,
       "cli": "kg-mnp service call project.open",
-      "commits": [],
+      "commits": [
+        "3c0d0ad18e9640ceacc60502e227354cfff939d0"
+      ],
       "core_required": true,
       "execution_mode": "INLINE",
       "implementation": "kg_mnp.services.projects.inspect_project",
       "maps_to": "project.open",
       "missing": [],
-      "negative_tests": [],
-      "positive_tests": [],
+      "negative_tests": [
+        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[project.open]"
+      ],
+      "positive_tests": [
+        "tests/services/test_prompt08_boundary.py::test_owner_open_validate_catalog_pack_inspect_and_empty_environment"
+      ],
       "requirement_id": "project.open",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_NOT_VERIFIED",
+      "status": "IMPLEMENTED_AND_TESTED",
       "ui": "overview"
     },
     {
@@ -60,18 +72,24 @@
       "baseline_status": "IMPLEMENTED_AND_TESTED",
       "blocker": null,
       "cli": "kg-mnp service call project.list",
-      "commits": [],
+      "commits": [
+        "3c0d0ad18e9640ceacc60502e227354cfff939d0"
+      ],
       "core_required": true,
       "execution_mode": "INLINE",
       "implementation": "kg_mnp.services.projects.list_projects",
       "maps_to": "project.list",
       "missing": [],
-      "negative_tests": [],
-      "positive_tests": [],
+      "negative_tests": [
+        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[project.list]"
+      ],
+      "positive_tests": [
+        "tests/services/test_prompt08_boundary.py::test_project_list_and_open_reject_empty_scope_outsider"
+      ],
       "requirement_id": "project.list",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_NOT_VERIFIED",
+      "status": "IMPLEMENTED_AND_TESTED",
       "ui": "/"
     },
     {
@@ -79,18 +97,24 @@
       "baseline_status": "IMPLEMENTED_AND_TESTED",
       "blocker": null,
       "cli": "kg-mnp service call project.validate",
-      "commits": [],
+      "commits": [
+        "3c0d0ad18e9640ceacc60502e227354cfff939d0"
+      ],
       "core_required": true,
       "execution_mode": "INLINE",
       "implementation": "kg_mnp.services.projects.inspect_project",
       "maps_to": "project.validate",
       "missing": [],
-      "negative_tests": [],
-      "positive_tests": [],
+      "negative_tests": [
+        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[project.validate]"
+      ],
+      "positive_tests": [
+        "tests/services/test_prompt08_boundary.py::test_owner_open_validate_catalog_pack_inspect_and_empty_environment"
+      ],
       "requirement_id": "project.validate",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_NOT_VERIFIED",
+      "status": "IMPLEMENTED_AND_TESTED",
       "ui": "overview via project state"
     },
     {
@@ -98,18 +122,24 @@
       "baseline_status": "IMPLEMENTED_AND_TESTED",
       "blocker": null,
       "cli": "kg-mnp service call project.lock",
-      "commits": [],
+      "commits": [
+        "3c0d0ad18e9640ceacc60502e227354cfff939d0"
+      ],
       "core_required": true,
       "execution_mode": "INLINE",
       "implementation": "kg_mnp.services.projects.lock_project",
       "maps_to": "project.lock",
       "missing": [],
-      "negative_tests": [],
-      "positive_tests": [],
+      "negative_tests": [
+        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[project.lock]"
+      ],
+      "positive_tests": [
+        "tests/services/test_prompt08_boundary.py::test_formal_lock_check_is_byte_preserving_and_rejects_tampering"
+      ],
       "requirement_id": "project.lock",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_NOT_VERIFIED",
+      "status": "IMPLEMENTED_AND_TESTED",
       "ui": "NOT_IMPLEMENTED"
     },
     {
@@ -117,18 +147,24 @@
       "baseline_status": "IMPLEMENTED_AND_TESTED",
       "blocker": null,
       "cli": "kg-mnp service call domain-pack.discover",
-      "commits": [],
+      "commits": [
+        "3c0d0ad18e9640ceacc60502e227354cfff939d0"
+      ],
       "core_required": true,
       "execution_mode": "INLINE",
       "implementation": "kg_mnp.services.packs.discover",
       "maps_to": "domain-pack.discover",
       "missing": [],
-      "negative_tests": [],
-      "positive_tests": [],
+      "negative_tests": [
+        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[domain-pack.discover]"
+      ],
+      "positive_tests": [
+        "tests/services/test_prompt08_boundary.py::test_discovery_is_real_and_available_before_project_creation"
+      ],
       "requirement_id": "domain-pack.discover",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_NOT_VERIFIED",
+      "status": "IMPLEMENTED_AND_TESTED",
       "ui": "/"
     },
     {
@@ -136,18 +172,24 @@
       "baseline_status": "IMPLEMENTED_AND_TESTED",
       "blocker": null,
       "cli": "kg-mnp service call domain-pack.inspect",
-      "commits": [],
+      "commits": [
+        "3c0d0ad18e9640ceacc60502e227354cfff939d0"
+      ],
       "core_required": true,
       "execution_mode": "INLINE",
       "implementation": "kg_mnp.services.packs.discover",
       "maps_to": "domain-pack.inspect",
       "missing": [],
-      "negative_tests": [],
-      "positive_tests": [],
+      "negative_tests": [
+        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[domain-pack.inspect]"
+      ],
+      "positive_tests": [
+        "tests/services/test_prompt08_boundary.py::test_owner_open_validate_catalog_pack_inspect_and_empty_environment"
+      ],
       "requirement_id": "domain-pack.inspect",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_NOT_VERIFIED",
+      "status": "IMPLEMENTED_AND_TESTED",
       "ui": "NOT_IMPLEMENTED"
     },
     {
@@ -155,18 +197,24 @@
       "baseline_status": "DECLARED_ONLY",
       "blocker": null,
       "cli": "kg-mnp service call source.register",
-      "commits": [],
+      "commits": [
+        "3c0d0ad18e9640ceacc60502e227354cfff939d0"
+      ],
       "core_required": true,
       "execution_mode": "JOB",
       "implementation": "kg_mnp.services.sources.execute",
       "maps_to": "source.register",
       "missing": [],
-      "negative_tests": [],
-      "positive_tests": [],
+      "negative_tests": [
+        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[source.register]"
+      ],
+      "positive_tests": [
+        "tests/services/test_source_workflow.py::test_real_tcp_source_ingestion_evidence_chain"
+      ],
       "requirement_id": "source.register",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_NOT_VERIFIED",
+      "status": "IMPLEMENTED_AND_TESTED",
       "ui": "sources"
     },
     {
@@ -174,18 +222,24 @@
       "baseline_status": "DECLARED_ONLY",
       "blocker": null,
       "cli": "kg-mnp service call source.inspect",
-      "commits": [],
+      "commits": [
+        "3c0d0ad18e9640ceacc60502e227354cfff939d0"
+      ],
       "core_required": true,
       "execution_mode": "INLINE",
       "implementation": "kg_mnp.services.sources.execute",
       "maps_to": "source.inspect",
       "missing": [],
-      "negative_tests": [],
-      "positive_tests": [],
+      "negative_tests": [
+        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[source.inspect]"
+      ],
+      "positive_tests": [
+        "tests/services/test_source_workflow.py::test_real_tcp_source_ingestion_evidence_chain"
+      ],
       "requirement_id": "source.inspect",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_NOT_VERIFIED",
+      "status": "IMPLEMENTED_AND_TESTED",
       "ui": "sources"
     },
     {
@@ -193,18 +247,24 @@
       "baseline_status": "DECLARED_ONLY",
       "blocker": null,
       "cli": "kg-mnp service call ingestion.plan",
-      "commits": [],
+      "commits": [
+        "3c0d0ad18e9640ceacc60502e227354cfff939d0"
+      ],
       "core_required": true,
       "execution_mode": "JOB",
       "implementation": "kg_mnp.services.sources.execute",
       "maps_to": "ingestion.plan",
       "missing": [],
-      "negative_tests": [],
-      "positive_tests": [],
+      "negative_tests": [
+        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[ingestion.plan]"
+      ],
+      "positive_tests": [
+        "tests/services/test_source_workflow.py::test_real_tcp_source_ingestion_evidence_chain"
+      ],
       "requirement_id": "ingestion.plan",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_NOT_VERIFIED",
+      "status": "IMPLEMENTED_AND_TESTED",
       "ui": "sources"
     },
     {
@@ -212,18 +272,24 @@
       "baseline_status": "DECLARED_ONLY",
       "blocker": null,
       "cli": "kg-mnp service call ingestion.run",
-      "commits": [],
+      "commits": [
+        "3c0d0ad18e9640ceacc60502e227354cfff939d0"
+      ],
       "core_required": true,
       "execution_mode": "JOB",
       "implementation": "kg_mnp.services.sources.execute",
       "maps_to": "ingestion.run",
       "missing": [],
-      "negative_tests": [],
-      "positive_tests": [],
+      "negative_tests": [
+        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[ingestion.run]"
+      ],
+      "positive_tests": [
+        "tests/services/test_source_workflow.py::test_real_tcp_source_ingestion_evidence_chain"
+      ],
       "requirement_id": "ingestion.run",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_NOT_VERIFIED",
+      "status": "IMPLEMENTED_AND_TESTED",
       "ui": "sources"
     },
     {
@@ -231,18 +297,24 @@
       "baseline_status": "DECLARED_ONLY",
       "blocker": null,
       "cli": "kg-mnp service call ingestion.inspect",
-      "commits": [],
+      "commits": [
+        "3c0d0ad18e9640ceacc60502e227354cfff939d0"
+      ],
       "core_required": true,
       "execution_mode": "INLINE",
       "implementation": "kg_mnp.services.sources.execute",
       "maps_to": "ingestion.inspect",
       "missing": [],
-      "negative_tests": [],
-      "positive_tests": [],
+      "negative_tests": [
+        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[ingestion.inspect]"
+      ],
+      "positive_tests": [
+        "tests/services/test_source_workflow.py::test_real_tcp_source_ingestion_evidence_chain"
+      ],
       "requirement_id": "ingestion.inspect",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_NOT_VERIFIED",
+      "status": "IMPLEMENTED_AND_TESTED",
       "ui": "sources"
     },
     {
@@ -250,18 +322,24 @@
       "baseline_status": "DECLARED_ONLY",
       "blocker": null,
       "cli": "kg-mnp service call ingestion.trace",
-      "commits": [],
+      "commits": [
+        "3c0d0ad18e9640ceacc60502e227354cfff939d0"
+      ],
       "core_required": true,
       "execution_mode": "INLINE",
       "implementation": "kg_mnp.services.sources.execute",
       "maps_to": "ingestion.trace",
       "missing": [],
-      "negative_tests": [],
-      "positive_tests": [],
+      "negative_tests": [
+        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[ingestion.trace]"
+      ],
+      "positive_tests": [
+        "tests/services/test_source_workflow.py::test_real_tcp_source_ingestion_evidence_chain"
+      ],
       "requirement_id": "ingestion.trace",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_NOT_VERIFIED",
+      "status": "IMPLEMENTED_AND_TESTED",
       "ui": "sources"
     },
     {
@@ -269,18 +347,24 @@
       "baseline_status": "DECLARED_ONLY",
       "blocker": null,
       "cli": "kg-mnp service call modeling.scope",
-      "commits": [],
+      "commits": [
+        "3c0d0ad18e9640ceacc60502e227354cfff939d0"
+      ],
       "core_required": true,
       "execution_mode": "JOB",
       "implementation": "kg_mnp.services.modeling.execute",
       "maps_to": "modeling.scope",
       "missing": [],
-      "negative_tests": [],
-      "positive_tests": [],
+      "negative_tests": [
+        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[modeling.scope]"
+      ],
+      "positive_tests": [
+        "tests/services/test_modeling_workflow.py::test_nonempty_review_confirmed_workflow"
+      ],
       "requirement_id": "modeling.scope",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "OPEN",
+      "status": "IMPLEMENTED_AND_TESTED",
       "ui": "modeling"
     },
     {
@@ -288,7 +372,9 @@
       "baseline_status": "DECLARED_ONLY",
       "blocker": null,
       "cli": "kg-mnp service call modeling.scope.approve",
-      "commits": [],
+      "commits": [
+        "3c0d0ad18e9640ceacc60502e227354cfff939d0"
+      ],
       "core_required": true,
       "execution_mode": "JOB",
       "implementation": "kg_mnp.services.modeling.execute",
@@ -296,8 +382,12 @@
       "missing": [
         "explicit approval revision CAS UX not completed"
       ],
-      "negative_tests": [],
-      "positive_tests": [],
+      "negative_tests": [
+        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[modeling.scope.approve]"
+      ],
+      "positive_tests": [
+        "tests/services/test_modeling_workflow.py::test_nonempty_review_confirmed_workflow"
+      ],
       "requirement_id": "modeling.scope.approve",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
@@ -309,7 +399,9 @@
       "baseline_status": "DECLARED_ONLY",
       "blocker": null,
       "cli": "kg-mnp service call modeling.candidate",
-      "commits": [],
+      "commits": [
+        "3c0d0ad18e9640ceacc60502e227354cfff939d0"
+      ],
       "core_required": true,
       "execution_mode": "JOB",
       "implementation": "kg_mnp.services.modeling.execute",
@@ -317,8 +409,12 @@
       "missing": [
         "manual/recorded Provider application adapters not connected"
       ],
-      "negative_tests": [],
-      "positive_tests": [],
+      "negative_tests": [
+        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[modeling.candidate]"
+      ],
+      "positive_tests": [
+        "tests/services/test_modeling_workflow.py::test_nonempty_review_confirmed_workflow"
+      ],
       "requirement_id": "modeling.candidate",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
@@ -330,18 +426,24 @@
       "baseline_status": "DECLARED_ONLY",
       "blocker": null,
       "cli": "kg-mnp service call modeling.cq",
-      "commits": [],
+      "commits": [
+        "3c0d0ad18e9640ceacc60502e227354cfff939d0"
+      ],
       "core_required": true,
       "execution_mode": "JOB",
       "implementation": "kg_mnp.services.modeling.execute",
       "maps_to": "modeling.prepare",
       "missing": [],
-      "negative_tests": [],
-      "positive_tests": [],
+      "negative_tests": [
+        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[modeling.cq]"
+      ],
+      "positive_tests": [
+        "tests/services/test_modeling_workflow.py::test_nonempty_review_confirmed_workflow"
+      ],
       "requirement_id": "modeling.cq",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "OPEN",
+      "status": "IMPLEMENTED_AND_TESTED",
       "ui": "modeling"
     },
     {
@@ -349,18 +451,24 @@
       "baseline_status": "DECLARED_ONLY",
       "blocker": null,
       "cli": "kg-mnp service call modeling.baseline",
-      "commits": [],
+      "commits": [
+        "3c0d0ad18e9640ceacc60502e227354cfff939d0"
+      ],
       "core_required": true,
       "execution_mode": "JOB",
       "implementation": "kg_mnp.services.modeling.execute",
       "maps_to": "modeling.prepare",
       "missing": [],
-      "negative_tests": [],
-      "positive_tests": [],
+      "negative_tests": [
+        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[modeling.baseline]"
+      ],
+      "positive_tests": [
+        "tests/services/test_modeling_workflow.py::test_nonempty_review_confirmed_workflow"
+      ],
       "requirement_id": "modeling.baseline",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "OPEN",
+      "status": "IMPLEMENTED_AND_TESTED",
       "ui": "modeling"
     },
     {
@@ -368,18 +476,24 @@
       "baseline_status": "DECLARED_ONLY",
       "blocker": null,
       "cli": "kg-mnp service call modeling.alignment",
-      "commits": [],
+      "commits": [
+        "3c0d0ad18e9640ceacc60502e227354cfff939d0"
+      ],
       "core_required": true,
       "execution_mode": "JOB",
       "implementation": "kg_mnp.services.modeling.execute",
       "maps_to": "modeling.prepare",
       "missing": [],
-      "negative_tests": [],
-      "positive_tests": [],
+      "negative_tests": [
+        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[modeling.alignment]"
+      ],
+      "positive_tests": [
+        "tests/services/test_modeling_workflow.py::test_nonempty_review_confirmed_workflow"
+      ],
       "requirement_id": "modeling.alignment",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "OPEN",
+      "status": "IMPLEMENTED_AND_TESTED",
       "ui": "modeling"
     },
     {
@@ -387,7 +501,9 @@
       "baseline_status": "DECLARED_ONLY",
       "blocker": null,
       "cli": "kg-mnp service call modeling.proposal",
-      "commits": [],
+      "commits": [
+        "3c0d0ad18e9640ceacc60502e227354cfff939d0"
+      ],
       "core_required": true,
       "execution_mode": "JOB",
       "implementation": "kg_mnp.services.modeling.execute",
@@ -395,8 +511,12 @@
       "missing": [
         "manual/recorded Provider application adapters not connected"
       ],
-      "negative_tests": [],
-      "positive_tests": [],
+      "negative_tests": [
+        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[modeling.proposal]"
+      ],
+      "positive_tests": [
+        "tests/services/test_modeling_workflow.py::test_nonempty_review_confirmed_workflow"
+      ],
       "requirement_id": "modeling.proposal",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
@@ -408,7 +528,9 @@
       "baseline_status": "DECLARED_ONLY",
       "blocker": null,
       "cli": "kg-mnp service call review.action",
-      "commits": [],
+      "commits": [
+        "3c0d0ad18e9640ceacc60502e227354cfff939d0"
+      ],
       "core_required": true,
       "execution_mode": "JOB",
       "implementation": "kg_mnp.services.modeling.execute",
@@ -416,8 +538,12 @@
       "missing": [
         "modify-and-revalidate, conflict-resolution and evidence-request completion UI absent"
       ],
-      "negative_tests": [],
-      "positive_tests": [],
+      "negative_tests": [
+        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[review.action]"
+      ],
+      "positive_tests": [
+        "tests/services/test_modeling_workflow.py::test_nonempty_review_confirmed_workflow"
+      ],
       "requirement_id": "review.action",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
@@ -429,37 +555,48 @@
       "baseline_status": "DECLARED_ONLY",
       "blocker": null,
       "cli": "kg-mnp service call review.replay",
-      "commits": [],
+      "commits": [
+        "3c0d0ad18e9640ceacc60502e227354cfff939d0"
+      ],
       "core_required": true,
       "execution_mode": "INLINE",
       "implementation": "kg_mnp.services.modeling.execute",
       "maps_to": "review.replay",
       "missing": [],
-      "negative_tests": [],
+      "negative_tests": [
+        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[review.replay]"
+      ],
       "positive_tests": [],
       "requirement_id": "review.replay",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
       "status": "OPEN",
-      "ui": "modeling"
+      "ui": "modeling",
+      "browser_evidence": "workbench/tests/minimal.e2e.ts; fixed-3c0d0ad-72018325/browser/receipt.json"
     },
     {
       "api": "POST /api/v1/projects/{project_id}/reviews/finalizations",
       "baseline_status": "DECLARED_ONLY",
       "blocker": null,
       "cli": "kg-mnp service call review.finalize",
-      "commits": [],
+      "commits": [
+        "3c0d0ad18e9640ceacc60502e227354cfff939d0"
+      ],
       "core_required": true,
       "execution_mode": "JOB",
       "implementation": "kg_mnp.services.modeling.execute",
       "maps_to": "review.finalize",
       "missing": [],
-      "negative_tests": [],
-      "positive_tests": [],
+      "negative_tests": [
+        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[review.finalize]"
+      ],
+      "positive_tests": [
+        "tests/services/test_modeling_workflow.py::test_nonempty_review_confirmed_workflow"
+      ],
       "requirement_id": "review.finalize",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "OPEN",
+      "status": "IMPLEMENTED_AND_TESTED",
       "ui": "modeling"
     },
     {
@@ -467,7 +604,9 @@
       "baseline_status": "DECLARED_ONLY",
       "blocker": null,
       "cli": "kg-mnp service call compile.plan",
-      "commits": [],
+      "commits": [
+        "3c0d0ad18e9640ceacc60502e227354cfff939d0"
+      ],
       "core_required": true,
       "execution_mode": "JOB",
       "implementation": "kg_mnp.services.compilation.execute",
@@ -475,8 +614,12 @@
       "missing": [
         "only SELECT/minimum-row/required-binding Oracle form is connected"
       ],
-      "negative_tests": [],
-      "positive_tests": [],
+      "negative_tests": [
+        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[compile.plan]"
+      ],
+      "positive_tests": [
+        "tests/services/test_modeling_workflow.py::test_nonempty_review_confirmed_workflow"
+      ],
       "requirement_id": "compile.plan",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
@@ -488,18 +631,24 @@
       "baseline_status": "DECLARED_ONLY",
       "blocker": null,
       "cli": "kg-mnp service call compile.build",
-      "commits": [],
+      "commits": [
+        "3c0d0ad18e9640ceacc60502e227354cfff939d0"
+      ],
       "core_required": true,
       "execution_mode": "JOB",
       "implementation": "kg_mnp.services.compilation.execute",
       "maps_to": "compile.build",
       "missing": [],
-      "negative_tests": [],
-      "positive_tests": [],
+      "negative_tests": [
+        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[compile.build]"
+      ],
+      "positive_tests": [
+        "tests/services/test_modeling_workflow.py::test_nonempty_review_confirmed_workflow"
+      ],
       "requirement_id": "compile.build",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "OPEN",
+      "status": "IMPLEMENTED_AND_TESTED",
       "ui": "releases"
     },
     {
@@ -507,13 +656,17 @@
       "baseline_status": "DECLARED_ONLY",
       "blocker": null,
       "cli": "kg-mnp service call compile.validate",
-      "commits": [],
+      "commits": [
+        "3c0d0ad18e9640ceacc60502e227354cfff939d0"
+      ],
       "core_required": true,
       "execution_mode": "JOB",
       "implementation": "kg_mnp.services.compilation.execute",
       "maps_to": "compile.validate",
       "missing": [],
-      "negative_tests": [],
+      "negative_tests": [
+        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[compile.validate]"
+      ],
       "positive_tests": [],
       "requirement_id": "compile.validate",
       "sdk": "LocalClient.execute / HTTPClient.execute",
@@ -526,13 +679,17 @@
       "baseline_status": "DECLARED_ONLY",
       "blocker": null,
       "cli": "kg-mnp service call compile.reproduce",
-      "commits": [],
+      "commits": [
+        "3c0d0ad18e9640ceacc60502e227354cfff939d0"
+      ],
       "core_required": true,
       "execution_mode": "JOB",
       "implementation": "kg_mnp.services.compilation.execute",
       "maps_to": "compile.reproduce",
       "missing": [],
-      "negative_tests": [],
+      "negative_tests": [
+        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[compile.reproduce]"
+      ],
       "positive_tests": [],
       "requirement_id": "compile.reproduce",
       "sdk": "LocalClient.execute / HTTPClient.execute",
@@ -545,13 +702,17 @@
       "baseline_status": "IMPLEMENTED_NOT_VERIFIED",
       "blocker": null,
       "cli": "kg-mnp service call package.inspect",
-      "commits": [],
+      "commits": [
+        "3c0d0ad18e9640ceacc60502e227354cfff939d0"
+      ],
       "core_required": true,
       "execution_mode": "INLINE",
       "implementation": "kg_mnp.lifecycle.store.list_records",
       "maps_to": "package.inspect",
       "missing": [],
-      "negative_tests": [],
+      "negative_tests": [
+        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[package.inspect]"
+      ],
       "positive_tests": [],
       "requirement_id": "package.inspect",
       "sdk": "LocalClient.execute / HTTPClient.execute",
@@ -564,18 +725,24 @@
       "baseline_status": "DECLARED_ONLY",
       "blocker": null,
       "cli": "kg-mnp service call package.verify",
-      "commits": [],
+      "commits": [
+        "3c0d0ad18e9640ceacc60502e227354cfff939d0"
+      ],
       "core_required": true,
       "execution_mode": "INLINE",
       "implementation": "kg_mnp.services.compilation.execute",
       "maps_to": "package.verify",
       "missing": [],
-      "negative_tests": [],
-      "positive_tests": [],
+      "negative_tests": [
+        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[package.verify]"
+      ],
+      "positive_tests": [
+        "tests/services/test_modeling_workflow.py::test_nonempty_review_confirmed_workflow"
+      ],
       "requirement_id": "package.verify",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "OPEN",
+      "status": "IMPLEMENTED_AND_TESTED",
       "ui": "NOT_IMPLEMENTED"
     },
     {
@@ -583,18 +750,24 @@
       "baseline_status": "DECLARED_ONLY",
       "blocker": null,
       "cli": "kg-mnp service call package.export",
-      "commits": [],
+      "commits": [
+        "3c0d0ad18e9640ceacc60502e227354cfff939d0"
+      ],
       "core_required": true,
       "execution_mode": "JOB",
       "implementation": "kg_mnp.services.compilation.execute",
       "maps_to": "package.export",
       "missing": [],
-      "negative_tests": [],
-      "positive_tests": [],
+      "negative_tests": [
+        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[package.export]"
+      ],
+      "positive_tests": [
+        "tests/services/test_modeling_workflow.py::test_nonempty_review_confirmed_workflow"
+      ],
       "requirement_id": "package.export",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "OPEN",
+      "status": "IMPLEMENTED_AND_TESTED",
       "ui": "NOT_IMPLEMENTED"
     },
     {
@@ -602,18 +775,24 @@
       "baseline_status": "DECLARED_ONLY",
       "blocker": null,
       "cli": "kg-mnp service call registry.import",
-      "commits": [],
+      "commits": [
+        "3c0d0ad18e9640ceacc60502e227354cfff939d0"
+      ],
       "core_required": true,
       "execution_mode": "JOB",
       "implementation": "kg_mnp.services.lifecycle.execute",
       "maps_to": "registry.import",
       "missing": [],
-      "negative_tests": [],
-      "positive_tests": [],
+      "negative_tests": [
+        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[registry.import]"
+      ],
+      "positive_tests": [
+        "tests/services/test_modeling_workflow.py::test_nonempty_review_confirmed_workflow"
+      ],
       "requirement_id": "registry.import",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "OPEN",
+      "status": "IMPLEMENTED_AND_TESTED",
       "ui": "releases"
     },
     {
@@ -621,18 +800,24 @@
       "baseline_status": "IMPLEMENTED_AND_TESTED",
       "blocker": null,
       "cli": "kg-mnp service call registry.verify",
-      "commits": [],
+      "commits": [
+        "3c0d0ad18e9640ceacc60502e227354cfff939d0"
+      ],
       "core_required": true,
       "execution_mode": "INLINE",
       "implementation": "kg_mnp.lifecycle.registry.replay.verify_registry",
       "maps_to": "registry.verify",
       "missing": [],
-      "negative_tests": [],
-      "positive_tests": [],
+      "negative_tests": [
+        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[registry.verify]"
+      ],
+      "positive_tests": [
+        "tests/services/test_unified_service.py::test_project_isolation_is_enforced_by_service"
+      ],
       "requirement_id": "registry.verify",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_NOT_VERIFIED",
+      "status": "IMPLEMENTED_AND_TESTED",
       "ui": "NOT_IMPLEMENTED"
     },
     {
@@ -728,18 +913,24 @@
       "baseline_status": "DECLARED_ONLY",
       "blocker": null,
       "cli": "kg-mnp service call release.review",
-      "commits": [],
+      "commits": [
+        "3c0d0ad18e9640ceacc60502e227354cfff939d0"
+      ],
       "core_required": true,
       "execution_mode": "JOB",
       "implementation": "kg_mnp.services.lifecycle.execute",
       "maps_to": "release.review",
       "missing": [],
-      "negative_tests": [],
-      "positive_tests": [],
+      "negative_tests": [
+        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[release.review]"
+      ],
+      "positive_tests": [
+        "tests/services/test_modeling_workflow.py::test_nonempty_review_confirmed_workflow"
+      ],
       "requirement_id": "release.review",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "OPEN",
+      "status": "IMPLEMENTED_AND_TESTED",
       "ui": "releases"
     },
     {
@@ -747,7 +938,9 @@
       "baseline_status": "DECLARED_ONLY",
       "blocker": null,
       "cli": "kg-mnp service call release.publish",
-      "commits": [],
+      "commits": [
+        "3c0d0ad18e9640ceacc60502e227354cfff939d0"
+      ],
       "core_required": true,
       "execution_mode": "JOB",
       "implementation": "kg_mnp.services.lifecycle.execute",
@@ -755,8 +948,12 @@
       "missing": [
         "only initial lineage service path verified; successor governance remains open"
       ],
-      "negative_tests": [],
-      "positive_tests": [],
+      "negative_tests": [
+        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[release.publish]"
+      ],
+      "positive_tests": [
+        "tests/services/test_modeling_workflow.py::test_nonempty_review_confirmed_workflow"
+      ],
       "requirement_id": "release.publish",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
@@ -768,18 +965,24 @@
       "baseline_status": "IMPLEMENTED_NOT_VERIFIED",
       "blocker": null,
       "cli": "kg-mnp service call release.inspect",
-      "commits": [],
+      "commits": [
+        "3c0d0ad18e9640ceacc60502e227354cfff939d0"
+      ],
       "core_required": true,
       "execution_mode": "INLINE",
       "implementation": "kg_mnp.lifecycle.store.list_records",
       "maps_to": "release.inspect",
       "missing": [],
-      "negative_tests": [],
-      "positive_tests": [],
+      "negative_tests": [
+        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[release.inspect]"
+      ],
+      "positive_tests": [
+        "tests/services/test_modeling_workflow.py::test_nonempty_review_confirmed_workflow"
+      ],
       "requirement_id": "release.inspect",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_NOT_VERIFIED",
+      "status": "IMPLEMENTED_AND_TESTED",
       "ui": "NOT_IMPLEMENTED"
     },
     {
@@ -831,18 +1034,24 @@
       "baseline_status": "IMPLEMENTED_AND_TESTED",
       "blocker": null,
       "cli": "kg-mnp service call environment.inspect",
-      "commits": [],
+      "commits": [
+        "3c0d0ad18e9640ceacc60502e227354cfff939d0"
+      ],
       "core_required": true,
       "execution_mode": "INLINE",
       "implementation": "kg_mnp.lifecycle.store.list_records",
       "maps_to": "environment.inspect",
       "missing": [],
-      "negative_tests": [],
-      "positive_tests": [],
+      "negative_tests": [
+        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[environment.inspect]"
+      ],
+      "positive_tests": [
+        "tests/services/test_prompt08_boundary.py::test_owner_open_validate_catalog_pack_inspect_and_empty_environment"
+      ],
       "requirement_id": "environment.inspect",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_NOT_VERIFIED",
+      "status": "IMPLEMENTED_AND_TESTED",
       "ui": "NOT_IMPLEMENTED"
     },
     {
@@ -850,7 +1059,9 @@
       "baseline_status": "DECLARED_ONLY",
       "blocker": null,
       "cli": "kg-mnp service call oms.metadata",
-      "commits": [],
+      "commits": [
+        "3c0d0ad18e9640ceacc60502e227354cfff939d0"
+      ],
       "core_required": true,
       "execution_mode": "INLINE",
       "implementation": "kg_mnp.services.lifecycle.execute",
@@ -858,20 +1069,25 @@
       "missing": [
         "explicit Release selector and complete OMS views not implemented"
       ],
-      "negative_tests": [],
+      "negative_tests": [
+        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[oms.metadata]"
+      ],
       "positive_tests": [],
       "requirement_id": "oms.metadata",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
       "status": "PARTIAL",
-      "ui": "releases"
+      "ui": "releases",
+      "browser_evidence": "workbench/tests/minimal.e2e.ts; fixed-3c0d0ad-72018325/browser/receipt.json"
     },
     {
       "api": "POST /api/v1/projects/{project_id}/objects/query",
       "baseline_status": "DECLARED_ONLY",
       "blocker": null,
       "cli": "kg-mnp service call ods.query",
-      "commits": [],
+      "commits": [
+        "3c0d0ad18e9640ceacc60502e227354cfff939d0"
+      ],
       "core_required": true,
       "execution_mode": "INLINE",
       "implementation": "kg_mnp.services.lifecycle.execute",
@@ -879,13 +1095,16 @@
       "missing": [
         "only bounded class/instance primitives connected; full query timeout and trace UI not verified"
       ],
-      "negative_tests": [],
+      "negative_tests": [
+        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[ods.query]"
+      ],
       "positive_tests": [],
       "requirement_id": "ods.query",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
       "status": "PARTIAL",
-      "ui": "releases"
+      "ui": "releases",
+      "browser_evidence": "workbench/tests/minimal.e2e.ts; fixed-3c0d0ad-72018325/browser/receipt.json"
     },
     {
       "api": "POST /api/v1/operations/visualization.export",
@@ -1024,18 +1243,24 @@
       "baseline_status": "IMPLEMENTED_AND_TESTED",
       "blocker": null,
       "cli": "kg-mnp service call job.get",
-      "commits": [],
+      "commits": [
+        "3c0d0ad18e9640ceacc60502e227354cfff939d0"
+      ],
       "core_required": true,
       "execution_mode": "INLINE",
       "implementation": "kg_mnp.jobs.store.JobStore.get",
       "maps_to": "job.get",
       "missing": [],
-      "negative_tests": [],
-      "positive_tests": [],
+      "negative_tests": [
+        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[job.get]"
+      ],
+      "positive_tests": [
+        "tests/services/test_prompt08_boundary.py::test_legacy_job_payloads_are_not_returned_and_cancel_is_scoped"
+      ],
       "requirement_id": "job.get",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_NOT_VERIFIED",
+      "status": "IMPLEMENTED_AND_TESTED",
       "ui": "jobs via project state"
     },
     {
@@ -1043,18 +1268,24 @@
       "baseline_status": "IMPLEMENTED_AND_TESTED",
       "blocker": null,
       "cli": "kg-mnp service call job.events",
-      "commits": [],
+      "commits": [
+        "3c0d0ad18e9640ceacc60502e227354cfff939d0"
+      ],
       "core_required": true,
       "execution_mode": "INLINE",
       "implementation": "kg_mnp.jobs.store.JobStore.events",
       "maps_to": "job.events",
       "missing": [],
-      "negative_tests": [],
-      "positive_tests": [],
+      "negative_tests": [
+        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[job.events]"
+      ],
+      "positive_tests": [
+        "tests/services/test_prompt08_boundary.py::test_legacy_job_payloads_are_not_returned_and_cancel_is_scoped"
+      ],
       "requirement_id": "job.events",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_NOT_VERIFIED",
+      "status": "IMPLEMENTED_AND_TESTED",
       "ui": "NOT_IMPLEMENTED"
     },
     {
@@ -1062,18 +1293,24 @@
       "baseline_status": "IMPLEMENTED_AND_TESTED",
       "blocker": null,
       "cli": "kg-mnp service call operation.catalog",
-      "commits": [],
+      "commits": [
+        "3c0d0ad18e9640ceacc60502e227354cfff939d0"
+      ],
       "core_required": true,
       "execution_mode": "INLINE",
       "implementation": "kg_mnp.services.facade.ApplicationService.operation_catalog",
       "maps_to": "operation.catalog",
       "missing": [],
-      "negative_tests": [],
-      "positive_tests": [],
+      "negative_tests": [
+        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[operation.catalog]"
+      ],
+      "positive_tests": [
+        "tests/services/test_prompt08_boundary.py::test_owner_open_validate_catalog_pack_inspect_and_empty_environment"
+      ],
       "requirement_id": "operation.catalog",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_NOT_VERIFIED",
+      "status": "IMPLEMENTED_AND_TESTED",
       "ui": "NOT_IMPLEMENTED"
     },
     {
@@ -1084,14 +1321,17 @@
       "core_required": true,
       "implementation": [],
       "missing": [
-        "Fixed source, clean entry, ancestors, P8 protected tree and domain/schema byte audit"
+        "Full old-code caller audit remains incomplete"
       ],
       "negative_tests": [],
-      "positive_tests": [],
+      "positive_tests": [
+        "historical P8 git archive audit",
+        "P1-P8 ancestry and tag checks"
+      ],
       "requirement_id": "G0.baseline",
       "sdk": null,
       "source_requirement": "Fixed source, clean entry, ancestors, P8 protected tree and domain/schema byte audit",
-      "status": "OPEN",
+      "status": "VERIFIED",
       "ui": null
     },
     {
@@ -1101,15 +1341,15 @@
       "commits": [],
       "core_required": true,
       "implementation": [],
-      "missing": [
-        "Bounded authenticated stream and Blob/SourceAsset/SourceBatch, cleanup and downloads"
-      ],
+      "missing": [],
       "negative_tests": [],
-      "positive_tests": [],
+      "positive_tests": [
+        "tests/services/test_source_workflow.py::test_real_tcp_source_ingestion_evidence_chain"
+      ],
       "requirement_id": "G1.upload",
       "sdk": null,
       "source_requirement": "Bounded authenticated stream and Blob/SourceAsset/SourceBatch, cleanup and downloads",
-      "status": "OPEN",
+      "status": "VERIFIED_LOCAL_JSON_CSV_CHAIN",
       "ui": null
     },
     {
@@ -1119,15 +1359,15 @@
       "commits": [],
       "core_required": true,
       "implementation": [],
-      "missing": [
-        "Verified KG-IR, locators and Source Blob trace with project authorization"
-      ],
+      "missing": [],
       "negative_tests": [],
-      "positive_tests": [],
+      "positive_tests": [
+        "tests/services/test_source_workflow.py::test_real_tcp_source_ingestion_evidence_chain"
+      ],
       "requirement_id": "G1.evidence",
       "sdk": null,
       "source_requirement": "Verified KG-IR, locators and Source Blob trace with project authorization",
-      "status": "OPEN",
+      "status": "VERIFIED_LOCAL_JSON_CSV_CHAIN",
       "ui": null
     },
     {
@@ -1138,14 +1378,16 @@
       "core_required": true,
       "implementation": [],
       "missing": [
-        "Core CAS, revocation, two workers, crash/restart and idempotency recovery"
+        "Complete hard-kill, all write-boundary and power-loss matrix; storage/quota/recovery UI"
       ],
       "negative_tests": [],
-      "positive_tests": [],
+      "positive_tests": [
+        "tests/services/test_core_fencing.py"
+      ],
       "requirement_id": "G1.fencing",
       "sdk": null,
       "source_requirement": "Core CAS, revocation, two workers, crash/restart and idempotency recovery",
-      "status": "OPEN",
+      "status": "PARTIAL_VERIFIED",
       "ui": null
     },
     {
@@ -1246,14 +1488,17 @@
       "core_required": true,
       "implementation": [],
       "missing": [
-        "Opaque HttpOnly sessions, CSRF, origin, expiration, revoke, logout and cache isolation"
+        "Complete browser adversarial/multitab/production-policy matrix"
       ],
       "negative_tests": [],
-      "positive_tests": [],
+      "positive_tests": [
+        "tests/services/test_browser_sessions.py",
+        "workbench/tests/minimal.e2e.ts"
+      ],
       "requirement_id": "G4.sessions",
       "sdk": null,
       "source_requirement": "Opaque HttpOnly sessions, CSRF, origin, expiration, revoke, logout and cache isolation",
-      "status": "OPEN",
+      "status": "PARTIAL_VERIFIED",
       "ui": null
     },
     {
@@ -1262,16 +1507,21 @@
       "cli": null,
       "commits": [],
       "core_required": true,
-      "implementation": [],
+      "implementation": [
+        "workbench/src",
+        "src/kg_mnp/api/app.py"
+      ],
       "missing": [
-        "One Chinese React/TypeScript/Vite workbench with actual forms, graph/table and API"
+        "Full candidate edit/conflict, field mapping, evidence linking, version governance, integrations and required UX/accessibility/performance matrix"
       ],
       "negative_tests": [],
-      "positive_tests": [],
+      "positive_tests": [
+        "workbench/tests/minimal.e2e.ts"
+      ],
       "requirement_id": "G4.workbench",
       "sdk": null,
       "source_requirement": "One Chinese React/TypeScript/Vite workbench with actual forms, graph/table and API",
-      "status": "OPEN",
+      "status": "PARTIAL",
       "ui": null
     },
     {
@@ -1426,14 +1676,19 @@
       "core_required": true,
       "implementation": [],
       "missing": [
-        "Clean fixed commit, complete pytest/browser collection, full command receipts and delivery consistency"
+        "All required feature/domain acceptance and full platform/browser/quality coverage"
       ],
       "negative_tests": [],
-      "positive_tests": [],
+      "positive_tests": [
+        "1575-node fixed backend partition union",
+        "60 Linux POSIX cases",
+        "one actual Minimal browser scenario",
+        "isolated Wheel/static/API resource probe"
+      ],
       "requirement_id": "G6.freeze",
       "sdk": null,
       "source_requirement": "Clean fixed commit, complete pytest/browser collection, full command receipts and delivery consistency",
-      "status": "OPEN",
+      "status": "PARTIAL_VERIFIED",
       "ui": null
     },
     {
