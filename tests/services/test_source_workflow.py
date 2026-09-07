@@ -82,6 +82,10 @@ def test_real_tcp_source_ingestion_evidence_chain(server):
     assert uploaded.status_code == 202, uploaded.text
     registered = finish(service, client, uploaded.json()["job_id"])
     source_id, batch_id = registered["source"]["source_id"], registered["batch"]["batch_id"]
+    source_response = client.get(f"/api/v1/projects/{project_id}/sources/{source_id}")
+    assert source_response.status_code == 200
+    assert source_response.json()["source"]["source_id"] == source_id
+    assert client.get(f"/api/v1/projects/{project_id}/sources").json()["sources"][0]["source_id"] == source_id
     replay = upload(client, project_id)
     assert replay.status_code == 202
     assert replay.json()["job_id"] == uploaded.json()["job_id"]
@@ -98,6 +102,9 @@ def test_real_tcp_source_ingestion_evidence_chain(server):
     assert inspected.status_code == 200, inspected.text
     dataset = inspected.json()["dataset"]
     assert dataset["items"] and dataset["evidence_records"]
+    trace = client.post("/api/v1/operations/ingestion.trace", json={"project_id":project_id,"run_id":run["run_id"],"item_id":dataset["items"][0]["item_id"]})
+    assert trace.status_code == 200
+    assert trace.json()["payload"]["evidence"]
     traced = client.get(f"/api/v1/projects/{project_id}/evidence", params={"run_id": run["run_id"]})
     assert traced.status_code == 200, traced.text
     assert any(record["source_id"] == source_id for record in traced.json()["evidence"])

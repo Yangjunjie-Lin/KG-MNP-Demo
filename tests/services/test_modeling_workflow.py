@@ -92,6 +92,10 @@ def test_nonempty_review_confirmed_workflow(modeling_case):
     built = call(service, principal, project_id, "compile.build", {"plan_id": plan["plan_id"]}, "compile-build")
     assert built["manifest"]["package_status"] == "VALIDATED_UNPUBLISHED"
     assert built["reports"]["competency-question-test-report.json"]["required_passed"] is True
+    verified = call(service, principal, project_id, "package.verify", {"package_id":built["package_id"]}, "verify")
+    assert verified["status"] == "VERIFIED"
+    exported = call(service, principal, project_id, "package.export", {"package_id":built["package_id"]}, "export")
+    assert exported["size_bytes"] > 0 and len(exported["sha256"]) == 64
     registered = call(service, principal, project_id, "registry.import", {"package_id": built["package_id"]}, "register")
     assert registered["status"] == "IMPORTED_VERIFIED"
     candidate = call(service, principal, project_id, "release.candidate", {"package_id": built["package_id"]}, "release-candidate")
@@ -103,3 +107,5 @@ def test_nonempty_review_confirmed_workflow(modeling_case):
     released = call(service, principal, project_id, "release.publish", {"candidate_id": candidate["release_candidate_id"],
         "review_id": reviewed["review_id"], "expected_registry_head_hash": head}, "publish")
     assert released["release"]["release_status"] == "RELEASED"
+    inspected = call(service, principal, project_id, "release.inspect", {"release_id":released["release"]["release_id"]}, "inspect-release")
+    assert inspected["release_id"] == released["release"]["release_id"]

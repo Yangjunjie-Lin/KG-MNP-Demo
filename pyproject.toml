@@ -9,6 +9,7 @@ description = "Evidence-bound, review-governed ontology engineering toolchain"
 readme = "README.md"
 requires-python = ">=3.11"
 license = "Apache-2.0"
+license-files = ["LICENSE", "THIRD_PARTY_NOTICES.md"]
 authors = [{ name = "KG-MNP Demo Contributors" }]
 dependencies = [
   "packaging==26.3",
