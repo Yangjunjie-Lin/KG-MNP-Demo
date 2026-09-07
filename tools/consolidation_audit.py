@@ -20,8 +20,8 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--check", action="store_true")
     args = parser.parse_args()
-    baseline = json.loads((ROOT / "docs/verification/prompt-08-service-coverage.json").read_bytes())
-    from tests.refactor._historical_freeze import PROTECTED_ROOTS, SELF_PATH
+    baseline = json.loads(subprocess.check_output(["git","show",f"{SOURCE}:docs/verification/prompt-08-service-coverage.json"],cwd=ROOT))
+    from tests.compatibility.repository_history import PROTECTED_ROOTS, SELF_PATH
     archive = subprocess.run(["git", "archive", SOURCE, *[p for p in PROTECTED_ROOTS if p != "workbench"]],
                              cwd=ROOT, capture_output=True, check=True).stdout
     digest, count = hashlib.sha256(), 0
@@ -35,7 +35,7 @@ def main():
             digest.update(entry.name.encode() + b"\0" + hashlib.sha256(data).digest() + b"\n")
             count += 1
     assert (count, digest.hexdigest()) == (1498, "595558b7b32f0b64cd84729349dc81aae58dde6bc93624188646766727ce69cd")
-    from tests.refactor import _historical_freeze as historical
+    from tests.compatibility import repository_history as historical
     heads = [getattr(historical, f"PROMPT{index:02d}_HEAD_SHA") for index in range(1, 9)]
     for head in heads:
         subprocess.run(["git", "merge-base", "--is-ancestor", head, SOURCE], cwd=ROOT, check=True)

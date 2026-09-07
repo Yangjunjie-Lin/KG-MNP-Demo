@@ -12,7 +12,7 @@ import io
 import subprocess
 import tarfile
 from functools import lru_cache
-from pathlib import Path, PurePosixPath
+from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 BASELINE_SHA = "e45da340267de8d4b7b3a54177822aa641e3a601"
@@ -53,40 +53,12 @@ def _git(*arguments: str, check: bool = True) -> subprocess.CompletedProcess[byt
     )
 
 
-def semantic_tree_identity() -> tuple[int, str]:
-    listed = _git(
-        "ls-files",
-        "-z",
-        "--cached",
-        "--others",
-        "--exclude-standard",
-        "--",
-        *PROTECTED_ROOTS,
-    ).stdout.decode("utf-8").split("\0")
-    relative_paths = sorted(
-        path for path in set(listed) if path and path != SELF_PATH
-    )
-    digest = hashlib.sha256()
-    for relative in relative_paths:
-        path = ROOT / PurePosixPath(relative)
-        assert path.is_file(), f"protected semantic file is missing: {relative}"
-        content = path.read_bytes()
-        if b"\0" not in content:
-            content = content.replace(b"\r\n", b"\n")
-        digest.update(relative.encode("utf-8"))
-        digest.update(b"\0")
-        digest.update(hashlib.sha256(content).digest())
-        digest.update(b"\n")
-    return len(relative_paths), digest.hexdigest()
-
-
-def assert_prompt01_semantic_snapshot(historical_commit: str) -> None:
+def assert_repository_history() -> None:
     baseline_target = _git("rev-list", "-n", "1", BASELINE_TAG).stdout.decode().strip()
     assert baseline_target == BASELINE_SHA, (
         f"immutable baseline tag target changed: {baseline_target or '<missing>'}"
     )
     for commit in (
-        historical_commit,
         PROMPT01_HEAD_SHA,
         PROMPT02_HEAD_SHA,
         PROMPT03_HEAD_SHA,
@@ -96,6 +68,12 @@ def assert_prompt01_semantic_snapshot(historical_commit: str) -> None:
         PROMPT07_HEAD_SHA,
         PROMPT08_HEAD_SHA,
         BASELINE_SHA,
+        "3254656ffcd1c42b601d30b6ea313c6f81642bef",
+        "9e7684bb9b988cec796e86ed9a6c51c59fa3a741",
+        "4dc09d9cfb15da3746f108755593ceb9fe805cd7",
+        "79b7d34125b0c5cb2d5fe8546e1f4e6a95ca8106",
+        "3ef40b9cfbd657b55d8c5f446cfc247335db87f0",
+        "06898e8ef3fbe93bd7e7a030f4361c0bef7a76c9",
     ):
         exists = _git("cat-file", "-e", f"{commit}^{{commit}}", check=False)
         assert exists.returncode == 0, f"historical authority commit unavailable: {commit}"

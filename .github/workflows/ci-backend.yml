@@ -1,0 +1,25 @@
+name: Complete backend collection
+on: [pull_request, workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  backend:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: ./.github/actions/setup-toolchain
+      - run: npm --prefix workbench run build
+      - name: Execute each collected backend test once
+        run: python -m pytest -q --basetemp=runtime/ci-backend --junitxml=runtime_logs/ci-backend.xml
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: backend-${{ matrix.os }}
+          path: runtime_logs/ci-backend.xml

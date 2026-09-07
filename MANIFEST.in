@@ -1,6 +1,9 @@
 include workbench/package.json workbench/package-lock.json workbench/index.html workbench/tsconfig.json workbench/vite.config.ts
 include THIRD_PARTY_NOTICES.md requirements-dev.lock
+include pyrightconfig.json
+include workbench/eslint.config.mjs workbench/vitest.config.ts workbench/playwright.config.ts workbench/rendering.config.ts
 recursive-include workbench/scripts *.mjs
 recursive-include workbench/src *.ts *.tsx *.css
+recursive-include workbench/tests *.ts *.tsx *.html
 recursive-include workbench/dist *.html *.js *.css *.txt
 prune workbench/node_modules

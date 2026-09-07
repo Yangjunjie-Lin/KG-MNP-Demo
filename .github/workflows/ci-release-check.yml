@@ -1,0 +1,19 @@
+name: Build artifacts
+on: [pull_request, workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  distributions:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: ./.github/actions/setup-toolchain
+      - run: npm --prefix workbench run build
+      - run: python -m build --wheel --sdist --outdir runtime_logs/distributions
+      - uses: actions/upload-artifact@v4
+        with:
+          name: unverified-candidate-distributions
+          path: runtime_logs/distributions

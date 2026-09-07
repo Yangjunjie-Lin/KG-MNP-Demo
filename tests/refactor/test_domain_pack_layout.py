@@ -31,7 +31,7 @@ FORBIDDEN_TOP_LEVEL_AUTHORITIES = {
 
 
 def _manifest(pack: str) -> dict[str, object]:
-    value = yaml.safe_load((ROOT / "domain_packs" / pack / "pack.yaml").read_text())
+    value = yaml.safe_load((ROOT / "domain_packs" / pack / "pack.yaml").read_text(encoding="utf-8"))
     assert isinstance(value, dict)
     return value
 
@@ -39,7 +39,8 @@ def _manifest(pack: str) -> dict[str, object]:
 def test_formal_pack_layout_and_honest_lifecycles() -> None:
     assert _manifest("minimal")["lifecycle"] == "EXPERIMENTAL"
     assert _manifest("mnp")["lifecycle"] == "MIGRATED_BASELINE"
-    assert _manifest("forestry")["lifecycle"] == "PLANNED"
+    assert _manifest("forestry")["lifecycle"] == "EXPERIMENTAL"
+    assert _manifest("forestry")["pack_version"] == "0.2.0"
     for pack in ("minimal", "mnp", "forestry"):
         manifest = _manifest(pack)
         assert manifest["manifest_kind"] == "KG_MNP_DOMAIN_PACK"

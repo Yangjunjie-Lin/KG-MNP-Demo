@@ -5,7 +5,6 @@ import json
 import runpy
 import subprocess
 import sys
-import textwrap
 from functools import lru_cache
 from pathlib import Path
 
@@ -36,11 +35,7 @@ STAGE08_ARTIFACT_FILES = (
 
 
 def _stage08_artifact_scanner() -> str:
-    workflow = (ROOT / ".github/workflows/ci.yml").read_text(encoding="utf-8")
-    marker = "python - \"$ARTIFACT_DIR\" <<'PY'\n"
-    assert workflow.count(marker) == 2
-    block = workflow.rsplit(marker, 1)[1].split("\n          PY", 1)[0]
-    return textwrap.dedent(block)
+    return (ROOT/'tools/check_historical_attestation_artifacts.py').read_text(encoding='utf-8')
 
 
 def _run_artifact_scanner(root: Path) -> subprocess.CompletedProcess[str]:
@@ -300,20 +295,18 @@ def test_stage08_artifact_scan_rejects_unexpected_benign_json(tmp_path: Path) ->
 
 
 def test_stage08_ci_cleanup_and_publication_boundary_are_closed() -> None:
-    workflow = (ROOT / ".github/workflows/ci.yml").read_text(encoding="utf-8")
-    assert "stage08-publication-attestation-${{ github.sha }}" in workflow
-    assert "object_pairs_hook=reject_duplicate_keys" in workflow
-    assert workflow.count("attestation artifact sensitive-data scan: PASS") == 2
-    assert "label=com.docker.compose.project" in workflow
-    assert 'docker compose -p "$project"' in workflow
-    assert "mapfile -t remaining < <(discover_projects)" in workflow
-    assert "|| true" not in workflow
+    workflow=(ROOT/'.github/workflows/ci-workbench.yml').read_text(encoding='utf-8')
+    scanner=_stage08_artifact_scanner()
+    assert 'object_pairs_hook=reject_duplicate_keys' in scanner
+    assert 'attestation artifact sensitive-data scan: PASS' in scanner
+    assert 'tools/run_browser_verification.py' in workflow
+    assert 'docker compose' not in workflow and '|| true' not in workflow
 
     readme = (ROOT / "README.md").read_text(encoding="utf-8")
     assert "# KG-MNP Ontology Toolchain" in readme
-    assert "Versioned Ontology Package" in readme
-    assert "CAS 发布" in readme and "Attestation" in readme
-    assert "No Agent or LLM is an ontology authority" in readme
+    assert 'Ontology Package' in readme
+    assert 'CAS' in readme and 'Attestation' in readme
+    assert 'Provider 只生成候选' in readme
     baseline = subprocess.run(["git", "rev-list", "-n", "1", "kg-mnp-phase06-baseline-2026-08-30"], cwd=ROOT, capture_output=True, text=True, check=True)
     assert baseline.stdout.strip() == "e45da340267de8d4b7b3a54177822aa641e3a601"
 

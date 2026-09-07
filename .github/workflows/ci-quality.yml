@@ -1,0 +1,20 @@
+name: Quality and generated contracts
+on: [pull_request, workflow_dispatch]
+permissions:
+  contents: read
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: ./.github/actions/setup-toolchain
+      - run: python -m ruff check .
+      - run: python tools/check_types.py
+      - run: python tools/generate_compiler_contracts.py --check
+      - run: python scripts/generate_contract_catalog.py --check
+      - run: npm --prefix workbench run lint
+      - run: npm --prefix workbench run typecheck
+      - run: git diff --exit-code

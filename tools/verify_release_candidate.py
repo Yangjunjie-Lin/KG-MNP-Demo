@@ -89,7 +89,7 @@ def main():
     if git("rev-parse","HEAD") != plan["tested_commit"] or fingerprint()[0] != plan["tested_source_tree_digest"]:
         raise SystemExit("Tested inputs changed; create a new code freeze and acceptance plan")
     if args.mode in {"serial","parallel"}:
-        command = [sys.executable,"-m","pytest", "@" + str(directory / (args.mode + ".args"))]
+        command = [sys.executable,"-m","pytest", "@" + str(directory / (args.mode + ".args")), "--basetemp="+str(directory/(args.mode+'-temp'))]
         if args.mode == "parallel":
             command.extend(["-p","xdist.plugin","-n","3"])
         result = run(directory,args.mode,command,pytest_run=True)
