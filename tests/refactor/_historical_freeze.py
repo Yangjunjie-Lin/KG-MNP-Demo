@@ -49,7 +49,7 @@ SELF_PATH = "tests/refactor/_historical_freeze.py"
 # using git archive by scripts/prompt08_snapshot.py before this update.
 # This snapshot grants no Workbench/backend acceptance; P8 remains NO_GO.
 EXPECTED_FILE_COUNT = 1498
-EXPECTED_TREE_SHA256 = "6f82b7d49a4e17b0a363a6eb6bd9ae1391a03bfcb36b0eb3631f732c750b8991"
+EXPECTED_TREE_SHA256 = "595558b7b32f0b64cd84729349dc81aae58dde6bc93624188646766727ce69cd"
 
 
 def _git(*arguments: str, check: bool = True) -> subprocess.CompletedProcess[bytes]:

@@ -162,7 +162,7 @@ rewritten. P7 frozen tree was verified from git archive: 1486 files,
 `d382179e7322ccb802a5b01d4bbf7fa3f7c113a597c74e932fb52297b19f72b3`.
 Authorized P8 protected tree includes new `workbench` root (currently absent),
 with no protected root removed; new semantic tree is 1498 files,
-`6f82b7d49a4e17b0a363a6eb6bd9ae1391a03bfcb36b0eb3631f732c750b8991`.
+`595558b7b32f0b64cd84729349dc81aae58dde6bc93624188646766727ce69cd`.
 
 The content cache stores only a metaschema verdict keyed by exact raw bytes.
 Every call still reads files, checks IDs and verifies required digests; mutated

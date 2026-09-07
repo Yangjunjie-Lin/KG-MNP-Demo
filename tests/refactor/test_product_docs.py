@@ -21,7 +21,11 @@ def test_readme_states_current_identity_and_capability_limits() -> None:
     readme = (ROOT / "README.md").read_text(encoding="utf-8")
     normalized = " ".join(readme.split())
     assert "# KG-MNP Ontology Toolchain" in readme
-    assert "Deterministic Semantic Kernel and Ontology Package — Prompt 5" in readme
+    # The current-status line must describe the real P8 entry result, not pin a
+    # superseded P5 heading (already absent at the fixed P7 source).
+    assert "Prompt 8 backend remediation in progress" in readme
+    assert "NO_GO_BACKEND_NOT_READY" in readme
+    assert "KG-MNP Ontology Workbench" in readme
     assert "What is implemented now" in readme
     assert "What is not implemented yet" in readme
     assert "Forestry Domain" in readme
