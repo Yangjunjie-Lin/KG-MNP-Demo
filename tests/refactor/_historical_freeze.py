@@ -1,16 +1,17 @@
-"""Exact Prompt 1 snapshot gate for retained historical semantic layers.
+"""Historical provenance audit, no longer a freeze of the live source tree.
 
-The former phase gates compared paths byte-for-byte with commits that predate
-the authorized package rename and Domain Pack extraction.  This gate preserves
-their fail-closed intent by pinning the complete post-migration semantic tree,
-while separately proving that each historical closure commit and the immutable
-Prompt 1 baseline remain ancestors of the current branch.
+P9 explicitly authorizes development and retirement without resetting an
+ever-changing whole-repository hash. Immutable Git objects are audited here;
+behavioral, authority, package and security tests protect the current product.
 """
 
 from __future__ import annotations
 
 import hashlib
+import io
 import subprocess
+import tarfile
+from functools import lru_cache
 from pathlib import Path, PurePosixPath
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -23,6 +24,7 @@ PROMPT04_HEAD_SHA = "eccc5092831503974c8aa54f158e6674445b1cb4"
 PROMPT05_HEAD_SHA = "7aaa039b2b2c4eb80fa959b956e6452a814bb5b3"
 PROMPT06_HEAD_SHA = "1e31c53f6a441cf9c0c11b02ad9db5fca1ebabfc"
 PROMPT07_HEAD_SHA = "9ae308ef86e74a08eb4daab1e20dd66cced87b16"
+PROMPT08_HEAD_SHA = "9da17d126cb37166ff06084080770108da20afbe"
 PROTECTED_ROOTS = (
     "src/kg_mnp",
     "schemas",
@@ -37,17 +39,7 @@ PROTECTED_ROOTS = (
 )
 SELF_PATH = "tests/refactor/_historical_freeze.py"
 
-# Updated only after the sanctioned Prompt 7 unified-service extension,
-# deterministic semantic compilation, formal validation, provenance closure,
-# package/archive verification, Prompt 4 regressions, Stage 06, Application
-# Phase 06 non-snapshot regressions, immutable Pack Locks, MNP 84/84
-# preservation, packaging, Ruff, and the full non-snapshot suite passed. The
-# helper excludes itself to avoid a self-referential digest; every other
-# intended repository file below PROTECTED_ROOTS remains bound.
-# Prompt 8 authorized service/auth/job fixes, evidence tooling/tests and
-# content-byte metaschema cache. The old P7 snapshot was independently checked
-# using git archive by scripts/prompt08_snapshot.py before this update.
-# This snapshot grants no Workbench/backend acceptance; P8 remains NO_GO.
+# Fixed historical values, never updated for current product source changes.
 EXPECTED_FILE_COUNT = 1498
 EXPECTED_TREE_SHA256 = "595558b7b32f0b64cd84729349dc81aae58dde6bc93624188646766727ce69cd"
 
@@ -102,6 +94,7 @@ def assert_prompt01_semantic_snapshot(historical_commit: str) -> None:
         PROMPT05_HEAD_SHA,
         PROMPT06_HEAD_SHA,
         PROMPT07_HEAD_SHA,
+        PROMPT08_HEAD_SHA,
         BASELINE_SHA,
     ):
         exists = _git("cat-file", "-e", f"{commit}^{{commit}}", check=False)
@@ -111,11 +104,28 @@ def assert_prompt01_semantic_snapshot(historical_commit: str) -> None:
             f"historical authority commit is not an ancestor of HEAD: {commit}"
         )
 
-    actual_count, actual_digest = semantic_tree_identity()
+    actual_count, actual_digest = historical_tree_identity()
     assert actual_count == EXPECTED_FILE_COUNT, (
-        f"Prompt 1 protected semantic file count changed: {actual_count}"
+        f"Historical P8 protected file count changed: {actual_count}"
     )
     assert actual_digest == EXPECTED_TREE_SHA256, (
-        "Prompt 1 protected semantic tree changed without an audited snapshot update: "
+        "Historical P8 Git object audit failed: "
         f"{actual_digest}"
     )
+
+
+@lru_cache(maxsize=1)
+def historical_tree_identity() -> tuple[int, str]:
+    """Only immutable Git object bytes are cached; no live-state verdicts."""
+    data = _git("archive", PROMPT08_HEAD_SHA, *[p for p in PROTECTED_ROOTS if p != "workbench"]).stdout
+    digest, count = hashlib.sha256(), 0
+    with tarfile.open(fileobj=io.BytesIO(data)) as archive:
+        for item in sorted(archive.getmembers(), key=lambda entry: entry.name):
+            if not item.isfile() or item.name == SELF_PATH:
+                continue
+            content = archive.extractfile(item).read()
+            if b"\0" not in content:
+                content = content.replace(b"\r\n", b"\n")
+            digest.update(item.name.encode() + b"\0" + hashlib.sha256(content).digest() + b"\n")
+            count += 1
+    return count, digest.hexdigest()

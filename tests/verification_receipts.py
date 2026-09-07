@@ -19,7 +19,7 @@ def pytest_runtest_logreport(report):
     REPORTS.append(row)
     # Per-process append streams survive a killed/incomplete run, but do not
     # turn its partial node union into a completed regression claim.
-    directory = Path(os.environ["P08_RECEIPT_ROOT"])
+    directory = Path(os.environ["KG_MNP_RECEIPT_ROOT"])
     with (directory / f"progress-{os.getpid()}.jsonl").open("a", encoding="utf-8") as stream:
         stream.write(json.dumps(row) + "\n")
 
@@ -27,7 +27,7 @@ def pytest_runtest_logreport(report):
 def pytest_sessionfinish(session, exitstatus):
     if hasattr(session.config, "workerinput"):
         return
-    directory = Path(os.environ["P08_RECEIPT_ROOT"])
+    directory = Path(os.environ["KG_MNP_RECEIPT_ROOT"])
     # xdist reports carry all executed nodeids on the controller. Collection is
     # separately collected serially for the required union check.
     (directory / "collection.json").write_text(json.dumps(sorted(set(COLLECTION)), indent=2), encoding="utf-8")

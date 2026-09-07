@@ -1,259 +1,155 @@
 # KG-MNP Ontology Toolchain
 
-> Evidence-bound, review-governed and deterministic ontology engineering toolchain
+Evidence-bound, review-governed and deterministic ontology engineering.
 
-**Current status:** Prompt 8 backend remediation in progress — `NO_GO_BACKEND_NOT_READY`.
-The requested **KG-MNP Ontology Workbench / KG-MNP 本体工程工作台** is not yet
-delivered. The operation catalogue is not a completed HTTP business workflow.
-See [Prompt 8 report](docs/verification/prompt-08-final-report.md) and
-[service recovery/run instructions](docs/workbench/backend-remediation.md).
-
-KG-MNP is being repositioned as a pluggable, verifiable and traceable ontology
-engineering toolchain. It converts heterogeneous source material into
-evidence-bound modeling candidates, subjects those candidates to formal checks
-and human review, and allows only a deterministic semantic compiler to produce
-authoritative ontology artifacts.
-
-Prompt 4 closes the evidence-to-review loop and produces a deterministic
-`READY_FOR_COMPILATION` Confirmed Modeling Package. Prompt 5 now attests that
-input and deterministically compiles it into a portable **Versioned Ontology
-Package** whose only successful state is `VALIDATED_UNPUBLISHED`. Registration,
-release, activation, rollback, and semantic-version classification remain
-separate lifecycle work; the package is not a publication or deployment.
+KG-MNP 将资料转为带证据的 KG-IR，经过候选、人工审核、确定性编译和本地发布。
+**当前状态：NO_GO_OPEN_CORE_REQUIREMENTS，不是已验收发行候选。**
+KG-MNP Ontology Workbench / KG-MNP 本体工程工作台已有中文界面和 Minimal 初始发布流程；
+跨领域、后续版本治理和完整仓库退役仍未完成。
 
 ## What is implemented now
 
-- Compiler Input Attestation against the current Project Lock, Contract Catalog,
-  Domain Pack locks, review log, evidence closure, and confirmed partitions;
-- a deterministic Semantic Compiler Snapshot and explicit Compilation Plan with
-  finite resource limits and user-supplied ontology/package versions;
-- generic TBox, ABox, safe SHACL Core, and declarative MappingPlan compilation;
-- canonical N-Triples/N-Quads plus deterministic Turtle/TriG named-graph views;
-- statement provenance, review audit, evidence lineage, and 100% provenance
-  closure validation;
-- pinned local ROBOT 1.9.7/HermiT OWL 2 DL profile and consistency gates,
-  isolated final pySHACL validation, and explicit read-only CQ execution;
-- a closed-set Ontology Package Manifest and Lock, independent verification,
-  transactional build behavior, and deterministic portable `.kgop` export;
-- `kg-mnp compile` and `kg-mnp package` CLI routes without publication,
-  registration, activation, force, repair, or automatic-version options;
-- `ModelingProposal`, `ReviewDecisionLog`, and `ConfirmedModelingPackage`
-  contracts and validation;
-- review-governed confirmation with deterministic identifiers and hashes;
-- deterministic RDF/Turtle/TriG generation from confirmed packages;
-- OWL consistency and SHACL validation;
-- modeling provenance and review-audit artifacts;
-- publication reconstruction and verification;
-- activation and rollback governance;
-- offline GraphDB packaging and a read-only application/workbench baseline;
-- a packaged Public Contract Catalog with 115 Draft 2020-12 schemas and a
-  fully offline Registry;
-- Artifact Reference, Artifact Manifest, and Validation Report v1 contracts;
-- formal DomainPackManifest/DomainPackLock v1 contracts, local discovery,
-  exact-version dependency resolution, validation, and deterministic locks;
-- ProjectManifest/ProjectLock and transactional Project Workspace v1; and
-- Plugin SDK v1, metadata-only installed-distribution discovery, explicit
-  external allowlisting, deterministic provider selection and snapshots;
-- content-addressed SourceAsset/SourceBatch storage with bounded local file and
-  directory registration;
-- deterministic media detection and real TXT, Markdown, JSON, CSV/TSV, XLSX,
-  DOCX, PDF, image-metadata and WAV-metadata parsers;
-- core-authoritative SourceLocator, TransformationRecord, EvidenceRecord,
-  structural QualityReport, IngestionPlan/Run and evidence-bound KG-IR;
-- transactional ingestion artifacts integrated with ArtifactReference and
-  ArtifactManifest; and
-- `kg-mnp plugin`, `source`, `ingest`, and `ir` CLI routes in addition to the
-  Prompt 2 routes;
-- approved Ontology Scope and stale-safe human Scope Approval;
-- Competency Question Sets and explicitly structural-only coverage;
-- locked local Ontology Baseline Snapshots, terminology catalogs, and
-  deterministic reviewed term alignments;
-- Plugin API 1.1 and four offline, proposal-only modeling providers: manual,
-  baseline reuse, rule mapping, and recorded model output;
-- Core-owned TBox, Mapping, ABox, and SHACL candidate normalization, identity,
-  evidence closure, multi-provider merge, and conflict detection;
-- 30-check formal structural prevalidation with finite Modeling Run limits;
-- dependency-ordered human review queues, role/quorum policy, append-only action
-  chains, candidate revision, replay, and separate semantic/operational hashes;
-- a deterministic, non-RDF Confirmed Modeling Package with the sole status
-  `READY_FOR_COMPILATION`; and
-- explicit `kg-mnp model` and `kg-mnp review` CLI routes while the legacy
-  modeling route remains compatible.
-- Prompt 6 lifecycle repair gates for real package regression, release review,
-  publication, attestation, audited activation, and explicitly selected
-  historical rollback;
-- a single Prompt 7 Operation Catalog and Application Service shared by the
-  local CLI, Local SDK, HTTP SDK, and REST API;
-- local server-managed bearer credentials, project/object authorization,
-  durable SQLite jobs with idempotency and fencing, and append-only service
-  audit records;
-- local RDF/OMS/ODS readers, WebVOWL JSON export, GraphDB protocol planning,
-  SSRF/target policy checks, and a workflow outbox that does not claim remote
-  execution success.
+- 项目隔离、精确领域包版本、正式 Workspace 和 ProjectLock。
+- 流式实际字节限制、SourceAsset/SourceBatch、解析 Worker、KG-IR/Evidence、来源定位和授权下载。
+- 复用既有 Scope/CQ、基线、术语、映射、Provider、Proposal、逐项 Review 和 Confirmed Package 核心。
+- 固定 ROBOT/HermiT、OWL、SHACL、明确 SELECT CQ Oracle、Provenance 和真实 Package 验证。
+- 本地 Registry 导入、初始 Release 人工审核、CAS 发布、文件摘要 Attestation 和非空对象查询。
+- 统一服务、HTTP/Local SDK、CLI、持久化 Job 和 React 工作台。
+- 短期不透明 HttpOnly 会话、CSRF、同源校验、撤销和退出。
+- 隔离计算 Workspace、原子项目映射与提交回执、权限重验、fencing、修订 CAS 和提交回执恢复。
 
-These capabilities are retained from the historical implementation. Some are
-still coupled to MNP paths or the former staged command structure and therefore
-remain refactor targets.
+精确范围见[收敛台账](docs/verification/final-requirements.json)和
+[交付说明](docs/release/release-candidate-notes.md)。接入数量不是行为正确性证明。
 
 ## What is not implemented yet
 
-The repository does not provide a live LLM provider, LLM planner, OCR, vision
-classification, ASR, video understanding, automatic SemVer classification, a
-unified Workbench, or an externally live GraphDB/WebVOWL deployment. Recorded
-model output is an offline import, not a model call. The Prompt 7 API is a
-governed service boundary; catalogue items without a core implementation are
-explicitly blocked.
-Image and WAV support is metadata-only; scanned PDFs and unsupported audio/video
-require review or a missing provider. The Forestry Domain Pack remains a
-planning scaffold only.
-No Agent or LLM is an ontology authority.
+以下仍属于本次必需交付，没有移出范围：
 
-## Semantic authority
+- 完整服务化 Diff/Impact/Regression/Change Evaluation、后续 Release 和指定历史环境回滚。
+- 工作台完整候选修改/冲突处理、映射编辑、证据联动、版本治理和集成管理。
+- Forestry Domain Pack 0.2.0、MNP/Forestry/第四领域的分级工作流。
+  Forestry remains a planning scaffold only，仍为 0.1.0 PLANNED。
+- 旧三套 UI、重复控制面、旧脚本及完整测试/CI 收敛。
+- 完整同修订发行验收、Linux 实测、完整可访问性和性能检查。
 
-1. LLMs and Agents may create proposals, explanations, or recommended fixes.
-2. They may not write authoritative OWL, RDF, SHACL, or production ABox data.
-3. Unreviewed candidates cannot enter a Confirmed Modeling Package.
-4. Only the deterministic semantic compiler may generate formal semantic
-   artifacts from a confirmed package.
-5. Feedback creates a Change Proposal; it cannot mutate a released ontology.
-6. Domain content enters through Domain Packs. OMS, ODS, OSS, GraphDB, WebVOWL,
-   object-query, and action-workflow systems are integration adapters, not
-   compilation authorities.
+没有在线 LLM/OCR/ASR/Vision 实现，不自动执行外部业务。
+Image and WAV support is metadata-only. No Agent or LLM is an ontology authority.
+GraphDB live 的许可/环境不是本地未完成功能的解释。
 
-## Architecture
+## 主流程和状态边界
 
-```text
-Source Assets -> Evidence-bound KG-IR -> Approved Scope + CQ + Locked Baseline
-    -> Proposal-only Providers -> Modeling Proposal
-    -> Formal Structural Pre-validation -> Explicit Human Review
-    -> Confirmed Modeling Package -> Deterministic Semantic Compiler
-    -> OWL / RDF / SHACL / Provenance -> OWL / SHACL / CQ / Closure Validation
-    -> VALIDATED_UNPUBLISHED Versioned Ontology Package
-    -> Future Registry / Controlled Release / Activation / Rollback
-```
+资料 → Source → KG-IR/Evidence → Scope/CQ/Baseline → 候选 → 人工审核 →
+Confirmed Package → 编译/验证 → Ontology Package → Registry → 初始 Release。
 
-See the [target architecture](docs/architecture/ontology-toolchain-target-architecture.md)
-for the control, artifact, authority, plugin, and domain boundaries. See the
-[Prompt 7 service architecture](docs/architecture/prompt-07-unified-services.md),
-[operation coverage](docs/architecture/operation-coverage.md), and
-[ADR-0007](docs/adr/ADR-0007.md) for the application boundary.
+VALIDATED_UNPUBLISHED、IMPORTED_VERIFIED、RELEASED、CONTROL_PLANE_SELECTED
+和外部部署是不同状态。当前界面不能将本地发布称为环境激活或外部部署。
 
-## Repository structure
+## 准备与安装
 
-```text
-src/kg_mnp/             Python package, Contract Kernel, Workspace, and retained semantic kernel
-domain_packs/           formal data-only DomainPackManifest v1 layout
-  minimal/              experimental industry-neutral contract-test assets
-  mnp/                  locked migrated historical MNP assets
-  forestry/             planned scaffold; no forestry ontology or data
-schemas/                retained internal Stage/Phase schemas; public Modeling schemas are packaged
-config/                 generic policies and integration configuration
-examples/               reviewed deterministic golden artifacts
-tests/                  retained regression suite plus Prompt 1 foundation gates
-docs/                   product, architecture, ADR, and migration evidence
-scripts/                retained verification and historical migration utilities
-```
+Python 3.11+；构建工作台需要 Node 22.12+；语义编译需要 Java 11+ 和固定 ROBOT 1.9.7。
+依赖、浏览器、JAR 只在显式准备阶段安装，核心运行不自动下载。
+ROBOT 的准确摘要保存在 kg_mnp.semantic_kernel.snapshot.ROBOT_SHA256。
 
-## Local installation
+    cd workbench
+    npm ci
+    npm run build
+    cd ..
+    python -m venv .venv
 
-Python 3.11 or newer is required.
+激活虚拟环境后执行：
 
-```bash
-python -m pip install -e ".[dev]"
-python -c "import kg_mnp; print(kg_mnp.__name__)"
-python -m kg_mnp --help
-kg-mnp --help
-```
+    python -m pip install -e ".[dev]"
 
-The only public console script is `kg-mnp`. The former eligibility-specific
-console entry is no longer part of the product surface. Retained eligibility
-code is an internal MNP compatibility layer, not the toolchain's central task,
-and is pending relocation or removal in a later Prompt.
+PowerShell 使用 .\.venv\Scripts\Activate.ps1；POSIX 使用 source .venv/bin/activate。
+Wheel 包含构建后的工作台，安装 Wheel 不要求 Node。
 
-## Verification
+## 本地启动
 
-The Prompt 5 gates are offline and require no GraphDB service or browser:
+Web/Worker 必须使用相同配置、同一工作目录。PowerShell 开发示例：
 
-```bash
-python -m ruff check .
-make verify-repo-hygiene
-make verify-toolchain-foundation
-make verify-contract-catalog
-make verify-domain-packs
-make verify-project-workspace
-make verify-prompt-02-offline
-make verify-plugin-sdk
-make verify-source-store
-make verify-ingestion-contracts
-make verify-ingestion-parsers
-make verify-evidence-kgir
-make verify-ingestion-security
-make verify-prompt-03-offline
-make verify-modeling-scope
-make verify-modeling-baseline
-make verify-modeling-providers
-make verify-modeling-candidates
-make verify-modeling-prevalidation
-make verify-modeling-review
-make verify-modeling-confirmation
-make verify-modeling-security
-make verify-prompt-04-offline
-make verify-semantic-kernel-contracts
-make verify-compiler-input
-make verify-tbox-compilation
-make verify-abox-compilation
-make verify-shacl-compilation
-make verify-mapping-compilation
-make verify-rdf-dataset
-make verify-provenance-closure
-make verify-owl-validation
-make verify-shacl-final-validation
-make verify-cq-execution
-make verify-ontology-package
-make verify-semantic-kernel-security
-make verify-prompt-05-offline
-make verify-stage-06
-make verify-application-phase-06-offline
-python -m pytest -q
-```
+    $env:KG_MNP_DOMAIN_PACKS_ROOT = (Resolve-Path domain_packs).Path
+    $env:KG_MNP_WORKBENCH_ROOT = (Resolve-Path workbench/dist).Path
+    $env:KG_MNP_REASONER_JAR = (Resolve-Path third_party/downloads/robot-1.9.7.jar).Path
+    $env:KG_MNP_ALLOW_INSECURE_LOOPBACK_SESSION = 'true'
+    kg-mnp service token create --workspace runtime/local --principal-id local-human --created-by local-admin --permissions '*'
+    kg-mnp service serve --workspace runtime/local
 
-Licensed or live integration targets remain separate and must not be reported
-as passing unless their prerequisites are actually available.
+在第二个同配置终端执行：
 
-## Domain Pack status
+    kg-mnp service worker --workspace runtime/local
 
-| Pack | Status | Meaning |
-|---|---|---|
-| `minimal` | `EXPERIMENTAL` | Real, minimal, industry-neutral assets for contract and boundary tests; not a production ontology. |
-| `mnp` | `MIGRATED_BASELINE` | Historical MNP assets enumerated by a formal manifest and deterministic lock; not cross-industry or `STABLE`. |
-| `forestry` | `PLANNED` | Placeholder for the forestry pilot requirement; contains no fabricated ontology, data, or validation result. |
+浏览器入口：[本地工作台](http://127.0.0.1:8765/)。
+凭证只在签发时显示，粘贴后被登录框清空；不得放入 URL、截图、仓库或浏览器存储。
+生产浏览器会话需要 HTTPS。默认没有管理员账户。
 
-## Documentation
+POSIX 对应示例：
 
-- [Product Charter](docs/product/product-charter.md)
-- [Current Capability Matrix](docs/product/current-capability-matrix.md)
-- [Research-to-Product Alignment](docs/product/research-to-product-alignment.md)
-- [Target Architecture](docs/architecture/ontology-toolchain-target-architecture.md)
-- [Prompt 4 Modeling Architecture](docs/architecture/evidence-grounded-modeling-architecture.md)
-- [Modeling Provider API](docs/modeling/modeling-provider-api.md)
-- [Human Review Workflow](docs/modeling/human-review-workflow.md)
-- [Contract and Workspace Kernel](docs/architecture/contract-and-workspace-kernel.md)
-- [Public Contract Policy](docs/contracts/public-contract-policy.md)
-- [Domain Pack Contract v1](docs/domain-packs/domain-pack-contract-v1.md)
-- [Project Workspace v1](docs/workspaces/project-workspace-v1.md)
-- [ADR-0001](docs/adr/ADR-0001-reposition-as-ontology-toolchain.md)
-- [ADR-0002](docs/adr/ADR-0002-public-contract-domain-pack-and-workspace.md)
-- [Prompt 1 Baseline Audit](docs/refactor/prompt-01-baseline-audit.md)
-- [Repository Migration Matrix](docs/refactor/repository-migration-matrix.md)
-- [Domain Packs](docs/domain-packs/README.md)
+    export KG_MNP_DOMAIN_PACKS_ROOT="$PWD/domain_packs"
+    export KG_MNP_WORKBENCH_ROOT="$PWD/workbench/dist"
+    export KG_MNP_REASONER_JAR="$PWD/third_party/downloads/robot-1.9.7.jar"
+    export KG_MNP_ALLOW_INSECURE_LOOPBACK_SESSION=true
+    kg-mnp service serve --workspace runtime/local
 
-## Migration note
+默认审核策略为多角色生产策略，具体角色权限使用 review:role:Ontology Engineer 等名称。
+合成开发示例可以由管理员显式配置 KG_MNP_REVIEW_PROFILE=DEVELOPMENT_SINGLE_REVIEWER；
+该策略不支持非 loopback 服务。端口冲突报错，不杀死未知进程。
+用 Ctrl+C 停止自己启动的 Web/Worker。
 
-The former Stage 01–08 and Application Phase 01–06 route is preserved at the
-immutable tag `kg-mnp-phase06-baseline-2026-08-30`. Git history and that tag are
-the authoritative historical archive; no duplicate legacy source tree is kept.
+## CLI / SDK
+
+HTTP 凭证通过 KG_MNP_TOKEN 提供，不放入命令行参数或 URL。
+
+    kg-mnp service upload --url http://127.0.0.1:8765 --project-id <PROJECT_ID> --file sample.csv --media-type text/csv --idempotency-key upload-1
+    kg-mnp service call --url http://127.0.0.1:8765 --project-id <PROJECT_ID> --operation ingestion.plan --request plan-request.json --idempotency-key plan-1
+
+plan-request.json 内容为 {"batch_id":"<SOURCE_BATCH_ID>"}。
+HTTP 202 仅表示任务接受，使用 job.get 读取真实结果。
+
+    import os
+    from kg_mnp.sdk.http import HTTPClient
+    from kg_mnp.services.models import OperationRequest
+
+    client = HTTPClient("http://127.0.0.1:8765", os.environ["KG_MNP_TOKEN"])
+    try:
+        print(client.execute(OperationRequest("project.list")).payload)
+    finally:
+        client.close()
+
+Local SDK 同样调用 ApplicationService，不通过 Shell/CLI stdout 调度核心。
+服务管理的 Workspace 只经服务写入，不要对内部 generation 目录并行运行旧写命令。
+
+## 验证与构建
+
+    python -m ruff check .
+    python -m pytest
+    python scripts/check_repo_hygiene.py
+    python scripts/generate_mnp_prompt01_content_golden.py --check
+    python tools/build_distribution.py
+
+浏览器测试：用 tools/run_workbench_test_server.py 启动隔离合成环境，
+在 workbench/ 设置 KG_MNP_BROWSER_URL、KG_MNP_BROWSER_CREDENTIAL
+（服务器输出的合成凭证文件路径），然后执行 npm run test:e2e。
+先显式执行 npx playwright install chromium。核心接口不 Mock，Trace/录像默认关闭。
+
+验收原始记录在忽略的 runtime_logs/p09/；构建在 runtime/p09-distribution/。
+完整测试/CI 能力化迁移仍未完成；命令存在不表示执行通过。
+
+## 领域包与文档
+
+| 领域包 | 状态 | 本次证明范围 |
+| --- | --- | --- |
+| minimal 0.1.0 | EXPERIMENTAL | 非空服务流程和初始发布浏览器场景 |
+| mnp 1.0.0 | MIGRATED_BASELINE | 资产保持；完整应用工作流未完成 |
+| forestry 0.1.0 | PLANNED | 原规划元数据；0.2.0 未完成 |
+
+[提交与恢复边界](docs/architecture/service-commit-boundary.md) ·
+[收敛台账](docs/verification/final-requirements.json) ·
+[迁移记录](docs/migration/final-retirement-ledger.json) ·
+[交付说明](docs/release/release-candidate-notes.md) ·
+[领域包规范](docs/domain-packs/domain-pack-contract-v1.md) ·
+[公开契约](docs/contracts/public-contract-policy.md)
 
 ## License
 
-Licensed under the Apache License 2.0. See [LICENSE](LICENSE) and
-[THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md).
+Apache-2.0，见 [LICENSE](LICENSE) 和 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)。
+工程机制实现不等于学术新颖性、来源真实性、行业普适性或生产安全认证已经证明。

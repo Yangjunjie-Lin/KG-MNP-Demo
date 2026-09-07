@@ -1,4 +1,5 @@
 {
+  "path_normalization": "P9 replaced machine-local command path prefixes with <repository> and <user-home>. Original command bytes and original failures remain in fixed source commit 9da17d126cb37166ff06084080770108da20afbe; statuses, counts and receipt hashes were not changed.",
   "decision": "NO_GO_BACKEND_NOT_READY",
   "WORKBENCH_BACKEND_GATE": "FAIL",
   "source_sha": "9ae308ef86e74a08eb4daab1e20dd66cced87b16",
@@ -1650,15 +1651,15 @@
     {
       "name": "collection",
       "command": [
-        "C:\\Users\\Yangjunjie Lin\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "<user-home>\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
         "-m",
         "pytest",
         "--collect-only",
         "-q",
-        "--junitxml=D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime_logs\\prompt08\\collection-0bd53bb0\\junit.xml",
+        "--junitxml=<repository>\\runtime_logs\\prompt08\\collection-0bd53bb0\\junit.xml",
         "-p",
         "tests.prompt08_receipts",
-        "--basetemp=D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime\\collection-0bd53bb0"
+        "--basetemp=<repository>\\runtime\\collection-0bd53bb0"
       ],
       "exit_code": 0,
       "status": "PASS",
@@ -1688,15 +1689,15 @@
     {
       "name": "collection-final",
       "command": [
-        "C:\\Users\\Yangjunjie Lin\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "<user-home>\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
         "-m",
         "pytest",
         "--collect-only",
         "-q",
-        "--junitxml=D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime_logs\\prompt08\\collection-final-1c92a869\\junit.xml",
+        "--junitxml=<repository>\\runtime_logs\\prompt08\\collection-final-1c92a869\\junit.xml",
         "-p",
         "tests.prompt08_receipts",
-        "--basetemp=D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime\\collection-final-1c92a869"
+        "--basetemp=<repository>\\runtime\\collection-final-1c92a869"
       ],
       "exit_code": 0,
       "status": "PASS",
@@ -1726,15 +1727,15 @@
     {
       "name": "collection-post-repair",
       "command": [
-        "C:\\Users\\Yangjunjie Lin\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "<user-home>\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
         "-m",
         "pytest",
         "--collect-only",
         "-q",
-        "--junitxml=D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime_logs\\prompt08\\collection-post-repair-d1ab3a3c\\junit.xml",
+        "--junitxml=<repository>\\runtime_logs\\prompt08\\collection-post-repair-d1ab3a3c\\junit.xml",
         "-p",
         "tests.prompt08_receipts",
-        "--basetemp=D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime\\collection-post-repair-d1ab3a3c"
+        "--basetemp=<repository>\\runtime\\collection-post-repair-d1ab3a3c"
       ],
       "exit_code": 0,
       "status": "PASS",
@@ -1764,17 +1765,17 @@
     {
       "name": "compilation-repair",
       "command": [
-        "C:\\Users\\Yangjunjie Lin\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "<user-home>\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
         "-m",
         "pytest",
         "-q",
         "tests/compilation/test_prompt08_atomic_commit.py",
         "tests/compilation/test_review_audit.py",
         "tests/compilation/test_compilation_determinism.py",
-        "--junitxml=D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime_logs\\prompt08\\compilation-repair-4fcd3da5\\junit.xml",
+        "--junitxml=<repository>\\runtime_logs\\prompt08\\compilation-repair-4fcd3da5\\junit.xml",
         "-p",
         "tests.prompt08_receipts",
-        "--basetemp=D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime\\compilation-repair-4fcd3da5"
+        "--basetemp=<repository>\\runtime\\compilation-repair-4fcd3da5"
       ],
       "exit_code": 0,
       "status": "PASS",
@@ -1805,16 +1806,16 @@
     {
       "name": "failure-diagnostics",
       "command": [
-        "C:\\Users\\Yangjunjie Lin\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "<user-home>\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
         "-m",
         "pytest",
         "-q",
         "tests/application/test_foundation_freeze_phase01.py",
         "tests/compilation/test_review_audit.py",
-        "--junitxml=D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime_logs\\prompt08\\failure-diagnostics-dead0a27\\junit.xml",
+        "--junitxml=<repository>\\runtime_logs\\prompt08\\failure-diagnostics-dead0a27\\junit.xml",
         "-p",
         "tests.prompt08_receipts",
-        "--basetemp=D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime\\failure-diagnostics-dead0a27"
+        "--basetemp=<repository>\\runtime\\failure-diagnostics-dead0a27"
       ],
       "exit_code": 1,
       "status": "FAIL",
@@ -1865,7 +1866,7 @@
     {
       "name": "freeze-final",
       "command": [
-        "C:\\Users\\Yangjunjie Lin\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "<user-home>\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
         "-m",
         "pytest",
         "-q",
@@ -1875,10 +1876,10 @@
         "tests\\diagnostics\\test_phase02_freeze_phase03.py",
         "tests\\application\\test_foundation_freeze_phase01.py",
         "tests\\workbench\\test_phase01_freeze_phase02.py",
-        "--junitxml=D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime_logs\\prompt08\\freeze-final-886f1549\\junit.xml",
+        "--junitxml=<repository>\\runtime_logs\\prompt08\\freeze-final-886f1549\\junit.xml",
         "-p",
         "tests.prompt08_receipts",
-        "--basetemp=D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime\\freeze-final-886f1549"
+        "--basetemp=<repository>\\runtime\\freeze-final-886f1549"
       ],
       "exit_code": 0,
       "status": "PASS",
@@ -1909,7 +1910,7 @@
     {
       "name": "freeze-post-doc-repair",
       "command": [
-        "C:\\Users\\Yangjunjie Lin\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "<user-home>\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
         "-m",
         "pytest",
         "-q",
@@ -1919,10 +1920,10 @@
         "tests\\application_governance\\test_phase03_freeze_phase04.py",
         "tests\\diagnostics\\test_phase02_freeze_phase03.py",
         "tests\\workbench\\test_phase01_freeze_phase02.py",
-        "--junitxml=D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime_logs\\prompt08\\freeze-post-doc-repair-f7ebace1\\junit.xml",
+        "--junitxml=<repository>\\runtime_logs\\prompt08\\freeze-post-doc-repair-f7ebace1\\junit.xml",
         "-p",
         "tests.prompt08_receipts",
-        "--basetemp=D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime\\freeze-post-doc-repair-f7ebace1"
+        "--basetemp=<repository>\\runtime\\freeze-post-doc-repair-f7ebace1"
       ],
       "exit_code": 0,
       "status": "PASS",
@@ -1953,7 +1954,7 @@
     {
       "name": "full-regression-01",
       "command": [
-        "C:\\Users\\Yangjunjie Lin\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "<user-home>\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
         "-m",
         "pytest",
         "-q",
@@ -1961,10 +1962,10 @@
         "xdist.plugin",
         "-n",
         "4",
-        "--junitxml=D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime_logs\\prompt08\\full-regression-01-d4dc7002\\junit.xml",
+        "--junitxml=<repository>\\runtime_logs\\prompt08\\full-regression-01-d4dc7002\\junit.xml",
         "-p",
         "tests.prompt08_receipts",
-        "--basetemp=D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime\\full-regression-01-d4dc7002"
+        "--basetemp=<repository>\\runtime\\full-regression-01-d4dc7002"
       ],
       "exit_code": 4294967295,
       "status": "INTERRUPTED_NOT_COMPLETED",
@@ -1981,7 +1982,7 @@
     {
       "name": "full-regression-final",
       "command": [
-        "C:\\Users\\Yangjunjie Lin\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "<user-home>\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
         "-m",
         "pytest",
         "-q",
@@ -1989,10 +1990,10 @@
         "xdist.plugin",
         "-n",
         "4",
-        "--junitxml=D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime_logs\\prompt08\\full-regression-final-f8d9387a\\junit.xml",
+        "--junitxml=<repository>\\runtime_logs\\prompt08\\full-regression-final-f8d9387a\\junit.xml",
         "-p",
         "tests.prompt08_receipts",
-        "--basetemp=D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime\\full-regression-final-f8d9387a"
+        "--basetemp=<repository>\\runtime\\full-regression-final-f8d9387a"
       ],
       "exit_code": 1,
       "status": "FAIL",
@@ -2069,7 +2070,7 @@
         },
         {
           "reason": {
-            "message": "platform cannot create test symlink: [WinError 1314] 客户端没有所需的特权。: 'D:\\\\UoM_CS\\\\Research Evidence Portfolio\\\\CUHK-Shenzhen RA\\\\KG-MNP-Demo\\\\runtime\\\\full-regression-final-f8d9387a\\\\popen-gw3\\\\test_symlink_escape_is_rejecte0\\\\outside.ttl' -> 'D:\\\\UoM_CS\\\\Research Evidence Portfolio\\\\CUHK-Shenzhen RA\\\\KG-MNP-Demo\\\\runtime\\\\full-regression-final-f8d9387a\\\\popen-gw3\\\\test_symlink_escape_is_rejecte0\\\\minimal\\\\shadow.ttl'",
+            "message": "platform cannot create test symlink: [WinError 1314] 客户端没有所需的特权。: '<repository>\\\\runtime\\\\full-regression-final-f8d9387a\\\\popen-gw3\\\\test_symlink_escape_is_rejecte0\\\\outside.ttl' -> '<repository>\\\\runtime\\\\full-regression-final-f8d9387a\\\\popen-gw3\\\\test_symlink_escape_is_rejecte0\\\\minimal\\\\shadow.ttl'",
             "type": "pytest.skip"
           },
           "test": {
@@ -2080,7 +2081,7 @@
         },
         {
           "reason": {
-            "message": "directory symlink creation unavailable on this platform: [WinError 1314] 客户端没有所需的特权。: 'D:\\\\UoM_CS\\\\Research Evidence Portfolio\\\\CUHK-Shenzhen RA\\\\KG-MNP-Demo\\\\runtime\\\\full-regression-final-f8d9387a\\\\popen-gw3\\\\test_source_store_rejects_syml0\\\\external' -> 'D:\\\\UoM_CS\\\\Research Evidence Portfolio\\\\CUHK-Shenzhen RA\\\\KG-MNP-Demo\\\\runtime\\\\full-regression-final-f8d9387a\\\\popen-gw3\\\\test_source_store_rejects_syml0\\\\workspace\\\\sources\\\\blobs\\\\sha256'",
+            "message": "directory symlink creation unavailable on this platform: [WinError 1314] 客户端没有所需的特权。: '<repository>\\\\runtime\\\\full-regression-final-f8d9387a\\\\popen-gw3\\\\test_source_store_rejects_syml0\\\\external' -> '<repository>\\\\runtime\\\\full-regression-final-f8d9387a\\\\popen-gw3\\\\test_source_store_rejects_syml0\\\\workspace\\\\sources\\\\blobs\\\\sha256'",
             "type": "pytest.skip"
           },
           "test": {
@@ -2091,7 +2092,7 @@
         },
         {
           "reason": {
-            "message": "platform cannot create test symlink: [WinError 1314] 客户端没有所需的特权。: 'D:\\\\UoM_CS\\\\Research Evidence Portfolio\\\\CUHK-Shenzhen RA\\\\KG-MNP-Demo\\\\runtime\\\\full-regression-final-f8d9387a\\\\popen-gw3\\\\test_workspace_symlink_escape_0\\\\outside.txt' -> 'D:\\\\UoM_CS\\\\Research Evidence Portfolio\\\\CUHK-Shenzhen RA\\\\KG-MNP-Demo\\\\runtime\\\\full-regression-final-f8d9387a\\\\popen-gw3\\\\test_workspace_symlink_escape_0\\\\workspace\\\\sources\\\\escape.txt'",
+            "message": "platform cannot create test symlink: [WinError 1314] 客户端没有所需的特权。: '<repository>\\\\runtime\\\\full-regression-final-f8d9387a\\\\popen-gw3\\\\test_workspace_symlink_escape_0\\\\outside.txt' -> '<repository>\\\\runtime\\\\full-regression-final-f8d9387a\\\\popen-gw3\\\\test_workspace_symlink_escape_0\\\\workspace\\\\sources\\\\escape.txt'",
             "type": "pytest.skip"
           },
           "test": {
@@ -2102,7 +2103,7 @@
         },
         {
           "reason": {
-            "message": "symlink creation unavailable on this platform: [WinError 1314] 客户端没有所需的特权。: 'D:\\\\UoM_CS\\\\Research Evidence Portfolio\\\\CUHK-Shenzhen RA\\\\KG-MNP-Demo\\\\runtime\\\\full-regression-final-f8d9387a\\\\popen-gw0\\\\test_symlink_and_non_regular_s0\\\\target.txt' -> 'D:\\\\UoM_CS\\\\Research Evidence Portfolio\\\\CUHK-Shenzhen RA\\\\KG-MNP-Demo\\\\runtime\\\\full-regression-final-f8d9387a\\\\popen-gw0\\\\test_symlink_and_non_regular_s0\\\\link.txt'",
+            "message": "symlink creation unavailable on this platform: [WinError 1314] 客户端没有所需的特权。: '<repository>\\\\runtime\\\\full-regression-final-f8d9387a\\\\popen-gw0\\\\test_symlink_and_non_regular_s0\\\\target.txt' -> '<repository>\\\\runtime\\\\full-regression-final-f8d9387a\\\\popen-gw0\\\\test_symlink_and_non_regular_s0\\\\link.txt'",
             "type": "pytest.skip"
           },
           "test": {
@@ -2216,15 +2217,15 @@
     {
       "name": "product-docs-final",
       "command": [
-        "C:\\Users\\Yangjunjie Lin\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "<user-home>\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
         "-m",
         "pytest",
         "-q",
         "tests/refactor/test_product_docs.py",
-        "--junitxml=D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime_logs\\prompt08\\product-docs-final-3aca1d1a\\junit.xml",
+        "--junitxml=<repository>\\runtime_logs\\prompt08\\product-docs-final-3aca1d1a\\junit.xml",
         "-p",
         "tests.prompt08_receipts",
-        "--basetemp=D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime\\product-docs-final-3aca1d1a"
+        "--basetemp=<repository>\\runtime\\product-docs-final-3aca1d1a"
       ],
       "exit_code": 0,
       "status": "PASS",
@@ -2255,7 +2256,7 @@
     {
       "name": "services-serial-complete",
       "command": [
-        "C:\\Users\\Yangjunjie Lin\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "<user-home>\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
         "-m",
         "pytest",
         "-q",
@@ -2264,10 +2265,10 @@
         "tests/lifecycle/test_prompt07_red.py",
         "tests/lifecycle/test_prompt07_e2e.py",
         "tests/contracts/test_prompt08_schema_cache.py",
-        "--junitxml=D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime_logs\\prompt08\\services-serial-complete-db0a8470\\junit.xml",
+        "--junitxml=<repository>\\runtime_logs\\prompt08\\services-serial-complete-db0a8470\\junit.xml",
         "-p",
         "tests.prompt08_receipts",
-        "--basetemp=D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime\\services-serial-complete-db0a8470"
+        "--basetemp=<repository>\\runtime\\services-serial-complete-db0a8470"
       ],
       "exit_code": 0,
       "status": "PASS",
@@ -2298,7 +2299,7 @@
     {
       "name": "services-serial-final-02",
       "command": [
-        "C:\\Users\\Yangjunjie Lin\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "<user-home>\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
         "-m",
         "pytest",
         "-q",
@@ -2307,10 +2308,10 @@
         "tests/lifecycle/test_prompt07_red.py",
         "tests/lifecycle/test_prompt07_e2e.py",
         "tests/contracts/test_prompt08_schema_cache.py",
-        "--junitxml=D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime_logs\\prompt08\\services-serial-final-02-aba4b12f\\junit.xml",
+        "--junitxml=<repository>\\runtime_logs\\prompt08\\services-serial-final-02-aba4b12f\\junit.xml",
         "-p",
         "tests.prompt08_receipts",
-        "--basetemp=D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime\\services-serial-final-02-aba4b12f"
+        "--basetemp=<repository>\\runtime\\services-serial-final-02-aba4b12f"
       ],
       "exit_code": 0,
       "status": "PASS",
@@ -2341,7 +2342,7 @@
     {
       "name": "services-serial-final",
       "command": [
-        "C:\\Users\\Yangjunjie Lin\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+        "<user-home>\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
         "-m",
         "pytest",
         "-q",
@@ -2349,10 +2350,10 @@
         "tests/integrations",
         "tests/lifecycle/test_prompt07_red.py",
         "tests/lifecycle/test_prompt07_e2e.py",
-        "--junitxml=D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime_logs\\prompt08\\services-serial-final-e03a4058\\junit.xml",
+        "--junitxml=<repository>\\runtime_logs\\prompt08\\services-serial-final-e03a4058\\junit.xml",
         "-p",
         "tests.prompt08_receipts",
-        "--basetemp=D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime\\services-serial-final-e03a4058"
+        "--basetemp=<repository>\\runtime\\services-serial-final-e03a4058"
       ],
       "exit_code": 4294967295,
       "status": "INTERRUPTED_NOT_COMPLETED",

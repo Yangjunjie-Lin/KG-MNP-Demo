@@ -29,8 +29,8 @@ def main():
     env = {**os.environ, "PYTHONUNBUFFERED": "1", "PYTEST_DISABLE_PLUGIN_AUTOLOAD": "1"}
     if command[:3] == ["python", "-m", "pytest"]:
         command = [sys.executable, *command[1:]]
-        command.extend(["--junitxml=" + str(directory / "junit.xml"), "-p", "tests.prompt08_receipts"])
-        env["P08_RECEIPT_ROOT"] = str(directory)
+        command.extend(["--junitxml=" + str(directory / "junit.xml"), "-p", "tests.verification_receipts"])
+        env["KG_MNP_RECEIPT_ROOT"] = str(directory)
         (ROOT / "runtime").mkdir(exist_ok=True)
         command.append("--basetemp=" + str(ROOT / "runtime" / directory.name))
     start = time.time()
