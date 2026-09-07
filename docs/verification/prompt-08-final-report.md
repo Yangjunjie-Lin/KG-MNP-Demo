@@ -6,6 +6,9 @@
 Prompt 8. `WORKBENCH_BACKEND_GATE=FAIL`. Formal 8B UI acceptance and 8C browser
 acceptance were not run. GraphDB licensing does not explain missing core APIs.
 
+Machine-readable command receipts, hashes, unique-node partitions, package
+digests and skip reasons: [verification summary](prompt-08-verification-summary.json).
+
 ## 2. Baseline and branch
 
 Source: `9ae308ef86e74a08eb4daab1e20dd66cced87b16` on
@@ -137,11 +140,38 @@ separately and does not prove a frontend package exists.
 
 Initial final collection: **1506 nodeids**; four atomic-commit tests were added
 after reproducing the Windows write failure. The refreshed collection and union
-are recorded in the verification summary. Serialized service/integration/P7
+contain **1510 unique nodeids**, with no missing or extra nodeids in the executed
+partition union. Serialized service/integration/P7
 core regression and cache safety set: **63 passed, 0 failures, 0 skips**.
 Logs/JUnit/dependency versions and SHA-256 live under ignored
 `runtime_logs/prompt08/`; final summary records command outcomes independently.
 Repeated 13/32/49/63 test runs are not added as unique coverage.
+
+| Command/run | Actual outcome |
+| --- | --- |
+| Full pytest attempt, 1506 collected | 1490 passed, 7 failed, 9 skipped; exit 1; 1600.26 seconds |
+| Serial service/integration/P7 core + cache safety | 63 passed, exit 0 |
+| Windows compilation commit/audit/determinism repair | 12 passed, exit 0 |
+| Final authorized freeze regression | 8 passed, exit 0 |
+| Corrected product-doc assertions | 4 passed, exit 0 |
+| Latest outcomes across full attempt + explicit repair partitions | 1501 passed, 9 skipped, 0 unresolved failures; complete 1510-node union |
+| `python -m ruff check .` | PASS |
+| MNP content preservation | PASS, 84/84 |
+| Wheel/sdist, then clean Python installation/import | PASS for partial Python service package only |
+| `make verify-prompt-08-offline` | FAIL, exit 2 at real backend gate (upload 404 / Source 501) |
+| `make verify-stage-06`, `verify-application-phase-06-offline`, `verify-prompt-07-offline` | Started but interrupted before aggregate completion; NOT PASS |
+
+The complete-node union is **not a single clean final-revision full-suite PASS**.
+The original run loaded snapshot constants before authorized updates and its
+seven failures remain in the original JUnit. Later repair partitions are
+identified separately. Nine skips are Windows symlink-privilege/POSIX permission
+or FIFO limitations; they are not GraphDB license failures and do not constitute
+passed security checks or evidence of a successful Ubuntu CI run.
+
+The still-running P7/historical aggregate processes were explicitly stopped at
+the NO_GO handoff. Their receipts preserve the interruption exit codes; no
+remaining gate was inferred green from the full pytest union. P7's previously
+unfinished offline gate therefore remains unfinished on this delivery.
 
 The initial long-running aggregate/full runs were interrupted when the
 byte-keyed schema-check optimization was applied and then restarted. They are
@@ -181,6 +211,16 @@ Logical commits separate service/security corrections, schema-check performance,
 gate/evidence/freeze work and the final report. Full commit IDs and final remote
 HEAD are supplied with delivery rather than embedding a self-referential HEAD
 inside its own commit.
+
+Implementation and gate commits before this final report:
+
+- `3135667d4d1e3d617d507ddc8ace77f70c3ac4bc` — workspace/project/job boundary repair.
+- `531953a48b4c404223d0b2a80ac6a899e2ea9218` — byte-keyed metaschema checks.
+- `809fe1d8fa66042c1eaed587372b57b14278f993` — real gate, coverage and snapshot evidence.
+- `9113bbee764180914b95e837ea7dbccb19b5829b` — retain old Workbench contract gate assertions.
+- `aa71f9a1ab32e9396377d80a429b86d701b6d5f9` — bounded Windows artifact rename recovery.
+- `559c1fbfe990fab706d91e5088156fec4705803f` — truthful current product-status assertion.
+- `332328a4a6e3a81d1227ba3c34681ccb14dae3f8` — fail-fast real P8 backend aggregate.
 
 P9 admission is **blocked by unfinished Prompt 8**, not by a new roadmap. The
 [P9 checklist](../workbench/p9-handoff.md) lists retained old entrypoints and
