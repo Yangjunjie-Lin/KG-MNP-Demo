@@ -19,7 +19,7 @@ export type Pack = {pack_id: string; pack_version: string; display_name: string;
 // fields for display; submitted requests use resource-specific form bodies.
 export type Document = {[key: string]: unknown};
 export type Result = {job_id: string; operation: string; revision: number; result: Document};
-export type Job = {job_id: string; operation_id: string; status: string; error: {code: string} | null};
+export type Job = {job_id: string; operation_id: string; status: string; attempt: number; error: {code: string} | null};
 export type ProjectState = {project: Project; results: Result[]; jobs: Job[]; registry_head: string};
 export function object(value: unknown): Document { return value !== null && typeof value === 'object' && !Array.isArray(value) ? value as Document : {}; }
 export function rows(value: unknown): Document[] { return Array.isArray(value) ? value.map(object) : []; }

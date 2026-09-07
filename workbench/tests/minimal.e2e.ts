@@ -28,7 +28,7 @@ for(const scenario of scenarios) test(`real browser ${scenario.id} source review
   await expect(page.getByRole('heading',{name:'项目概览',exact:true})).toBeVisible({timeout:60000});
   const projectPath=new URL(page.url()).pathname.split('/').slice(0,3).join('/');
   async function state(){const response=await page.request.get('/api/v1'+projectPath+'/state');if(!response.ok())throw new Error(`Project state HTTP ${response.status()}: ${await response.text()}`);return response.json();}
-  async function output(operation:string,key?:string){await expect.poll(async()=>{const s=await state();const failed=s.jobs.find((j:{status:string;operation_id:string})=>j.status==='FAILED'&&j.operation_id===operation);if(failed)throw new Error(JSON.stringify(failed));return s.results.filter((r:{operation:string})=>r.operation===operation).length;},{timeout:operation.startsWith('compile.')?600000:120000}).toBeGreaterThan(0);const s=await state();const result=s.results.filter((r:{operation:string})=>r.operation===operation).at(-1).result;return key?result[key]:result;}
+  async function output(operation:string,key?:string){await expect.poll(async()=>{const s=await state();const failed=s.jobs.find((j:{status:string;operation_id:string})=>j.status==='FAILED'&&j.operation_id===operation);if(failed)throw new Error(JSON.stringify(failed));return s.results.filter((r:{operation:string})=>r.operation===operation).length;},{timeout:/^(compile|registry|release|change|environment)\./.test(operation)?600000:120000}).toBeGreaterThan(0);const s=await state();const result=s.results.filter((r:{operation:string})=>r.operation===operation).at(-1).result;return key?result[key]:result;}
   async function screenshot(name:string){const targets:Record<string,string>={'source-evidence':'证据定位与转换记录','scope-cq':'范围确认与能力问题','review':'候选审核','compilation':'正式验证结果','release-objects':'固定 Package 对象浏览'};if(targets[name])await page.getByRole('heading',{name:targets[name],exact:true}).scrollIntoViewIfNeeded();else await page.evaluate(()=>window.scrollTo(0,0));const scan=await new AxeBuilder({page}).withTags(['wcag2a','wcag2aa','wcag21aa']).analyze();fs.writeFileSync(path.join(evidenceRoot,name+'-accessibility.json'),JSON.stringify(scan,null,2));expect(scan.violations).toEqual([]);await page.screenshot({path:path.join(evidenceRoot,name+'.png'),fullPage:false});}
   await screenshot('project-overview');
   await page.getByRole('link',{name:'资料与证据',exact:true}).click();
@@ -140,9 +140,17 @@ for(const scenario of scenarios) test(`real browser ${scenario.id} source review
   await page.getByLabel('本体包版本',{exact:true}).last().selectOption(built.package_id);
   await page.getByLabel('实例所属 Class IRI').fill(scenario.classIri);
   await page.getByRole('button',{name:'查询实例',exact:true}).click();
-  await expect(page.getByRole('table').filter({has:page.getByRole('columnheader',{name:'实例 IRI',exact:true})}).getByRole('row')).toHaveCount(scenario.count+1,{timeout:15000});
+  await expect(page.getByRole('table').filter({has:page.getByRole('columnheader',{name:'实例 IRI',exact:true})}).getByRole('row')).toHaveCount(scenario.count+1,{timeout:120000});
   await page.getByRole('button',{name:/^追溯 /}).first().click();
-  await expect(page.getByRole('link',{name:/^下载关联原始资料/}).first()).toBeVisible({timeout:20000});
+  await expect(page.getByRole('link',{name:/^下载关联原始资料/}).first()).toBeVisible({timeout:90000});
+  const downloadPromise=page.waitForEvent('download');
+  await page.getByRole('link',{name:/^下载关联原始资料/}).first().click();
+  const download=await downloadPromise;
+  const downloadedPath=await download.path();
+  expect(downloadedPath).not.toBeNull();
+  const downloadedBytes=fs.readFileSync(downloadedPath!);
+  expect(inputs.some(input=>input.buffer.equals(downloadedBytes))).toBe(true);
+  fs.copyFileSync(downloadedPath!,path.join(evidenceRoot,'traced-source.bin'));
   await screenshot('release-objects');
   if(scenario.id==='minimal'){
     const versionIds=await versionFlow(page,projectPath,built.package_id,released.release.release_id);

@@ -54,12 +54,13 @@ export async function versionFlow(page:Page,projectPath:string,initialPackage:st
     await page.getByLabel('操作意图',{exact:true}).selectOption(intent.kind);
     await page.getByLabel('环境变更理由',{exact:true}).fill(`Explicit ${intent.kind} to selected synthetic release`);
     await page.getByRole('button',{name:'提交独立环境提案',exact:true}).click();
-    await changed('environment.propose',index);
-    await page.getByLabel('环境审核理由',{exact:true}).nth(index).fill('Reviewed exact target and local control-plane effect');
-    await page.getByLabel('确认已检查目标与变化影响',{exact:true}).nth(index).check();
-    await page.getByRole('button',{name:'人工批准此环境提案',exact:true}).nth(index).click();
+    const proposal=await changed('environment.propose',index);
+    const proposalPanel=page.getByTestId('environment-proposal-'+proposal.activation_proposal_id);
+    await proposalPanel.getByLabel('环境审核理由',{exact:true}).fill('Reviewed exact target and local control-plane effect');
+    await proposalPanel.getByLabel('确认已检查目标与变化影响',{exact:true}).check();
+    await proposalPanel.getByRole('button',{name:'人工批准此环境提案',exact:true}).click();
     await changed('environment.review',index);
-    await page.getByRole('button',{name:'执行已审核意图与当前 CAS',exact:true}).last().click();
+    await proposalPanel.getByRole('button',{name:'执行已审核意图与当前 CAS',exact:true}).click();
     const applied=await changed(intent.kind==='ROLLBACK'?'environment.rollback':'environment.activate',intent.kind==='ROLLBACK'?0:activationCount++);
     expect(applied.receipt.target_release_id).toBe(intent.target);
     const response=await page.request.get('/api/v1'+projectPath+'/environment-pointer?environment_id='+encodeURIComponent(env.environment_id));

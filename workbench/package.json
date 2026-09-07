@@ -8,6 +8,7 @@
     "typecheck": "tsc --noEmit",
     "build": "tsc --noEmit && vite build && node scripts/licenses.mjs",
     "test:e2e": "playwright test",
+    "test:rendering": "playwright test --config rendering.config.ts",
     "lint": "eslint src",
     "test": "vitest run"
   },
