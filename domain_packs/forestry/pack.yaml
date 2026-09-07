@@ -1,19 +1,105 @@
 manifest_kind: KG_MNP_DOMAIN_PACK
 schema_version: 1.0.0
 pack_id: forestry
-pack_version: 0.1.0
-display_name: Forestry Pilot Domain Pack Plan
-description: Planning metadata only; no forestry ontology, constraints, data, or validation claim exists.
-lifecycle: PLANNED
+pack_version: 0.2.0
+display_name: 林业本体建模示例（合成数据）
+description: Synthetic experimental tree, inspection and site records. No field trial,
+  diagnosis or legal threshold claims.
+lifecycle: EXPERIMENTAL
 compatibility:
   contract_major: 1
   minimum_toolchain_version: 0.2.0
 license:
   expression: Apache-2.0
   notice_files: []
-capabilities: []
-namespaces: {}
-assets: []
-entrypoints: {}
+capabilities:
+- competency-questions
+- fixtures
+- mappings
+- ontology
+- queries
+- shacl
+- terminology
+namespaces:
+  ontology: https://example.invalid/forestry/ontology
+  terms: https://example.invalid/forestry#
+assets:
+- asset_id: forestry-inspections
+  kind: fixture
+  path: fixtures/inspections.csv
+  media_type: text/csv
+  required: true
+  description: Six explicitly synthetic inspection records
+- asset_id: forestry-ontology
+  kind: ontology-root
+  path: ontology/forestry.ttl
+  media_type: text/turtle
+  required: true
+  description: Synthetic tree/inspection/site vocabulary
+  ontology_iri: https://example.invalid/forestry/ontology
+  version_iri: https://example.invalid/forestry/0.2.0/ontology
+- asset_id: forestry-query-tree-inspections
+  kind: query
+  path: queries/trees-and-inspections.rq
+  media_type: application/sparql-query
+  required: true
+  description: Read-only tree inspection site retrieval
+- asset_id: forestry-questions
+  kind: competency-questions
+  path: competency_questions/questions.yaml
+  media_type: application/yaml
+  required: true
+  description: Nonempty relational query and Oracle declaration
+- asset_id: forestry-record-mapping
+  kind: mapping-rules
+  path: mappings/records.yaml
+  media_type: application/yaml
+  required: true
+  description: Nonexecutable evidence-bound record and reference mappings
+- asset_id: forestry-shapes
+  kind: shacl-shapes
+  path: shapes/records.ttl
+  media_type: text/turtle
+  required: true
+  description: Real identifier and reference constraints
+  profile: default
+- asset_id: forestry-sites
+  kind: fixture
+  path: fixtures/sites.csv
+  media_type: text/csv
+  required: true
+  description: Two explicitly synthetic sites
+- asset_id: forestry-source-declaration
+  kind: source-notice
+  path: fixtures/source-declaration.json
+  media_type: application/json
+  required: true
+  description: Machine-readable synthetic data declaration
+- asset_id: forestry-source-notice
+  kind: source-notice
+  path: fixtures/source-notice.txt
+  media_type: text/plain
+  required: true
+  description: Source and research-claim limits
+- asset_id: forestry-terminology
+  kind: terminology
+  path: terminology/terms.yaml
+  media_type: application/yaml
+  required: true
+  description: Record and field terminology
+- asset_id: forestry-trees
+  kind: fixture
+  path: fixtures/trees.csv
+  media_type: text/csv
+  required: true
+  description: Six explicitly synthetic tree records
+entrypoints:
+  ontology: forestry-ontology
+  shacl: forestry-shapes
+  terminology: forestry-terminology
+  mappings: forestry-record-mapping
+  competency-questions: forestry-questions
+  queries: forestry-query-tree-inspections
+  fixtures: forestry-trees
 dependencies: []
 extensions: {}

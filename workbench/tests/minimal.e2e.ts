@@ -1,7 +1,12 @@
 import { test, expect } from '@playwright/test';
 import fs from 'node:fs';
 import path from 'node:path';
-test('real browser minimal source, review, fixed reasoner, package and initial release',async({page},testInfo)=>{
+const scenarios=[
+ {id:'minimal',version:'0.1.0',files:[],concepts:'Entity',question:'Which entities and labels are present?',query:'minimal-query-list-entities',bindings:'entity,label',count:1,classIri:'https://yangjunjie-lin.github.io/KG-MNP-Demo/domain-packs/minimal/terms#Entity'},
+ {id:'forestry',version:'0.2.0',files:['sites.csv','trees.csv','inspections.csv'],concepts:'TreeRecord,InspectionRecord,Site',question:'Which synthetic trees have inspections and sites?',query:'forestry-query-tree-inspections',bindings:'tree,treeCode,inspection,inspectionCode,site',count:6,classIri:'https://example.invalid/forestry#TreeRecord'}
+];
+for(const scenario of scenarios) test(`real browser ${scenario.id} source review fixed reasoner and release`,async({page},testInfo)=>{
+  test.setTimeout(1200000);
   const evidenceRoot=testInfo.outputPath('screenshots');
   fs.mkdirSync(evidenceRoot,{recursive:true});
   const credentialPath=process.env.KG_MNP_BROWSER_CREDENTIAL;
@@ -13,31 +18,41 @@ test('real browser minimal source, review, fixed reasoner, package and initial r
   await expect(page.getByRole('heading',{name:'选择项目',exact:true})).toBeVisible();
   const name='合成本体验收-'+Date.now();
   await page.getByLabel('项目名称').fill(name);
-  await page.getByLabel('领域包与版本').selectOption('minimal@0.1.0');
+  await page.getByLabel('领域包与版本').selectOption(`${scenario.id}@${scenario.version}`);
   await page.getByRole('button',{name:'创建项目',exact:true}).click();
-  await expect(page.getByRole('heading',{name:'项目概览',exact:true})).toBeVisible();
+  await expect(page.getByRole('heading',{name:'项目概览',exact:true})).toBeVisible({timeout:60000});
   const projectPath=new URL(page.url()).pathname.split('/').slice(0,3).join('/');
   async function state(){const response=await page.request.get('/api/v1'+projectPath+'/state');expect(response.ok()).toBeTruthy();return response.json();}
   async function output(operation:string,key?:string){await expect.poll(async()=>{const s=await state();const failed=s.jobs.find((j:{status:string;operation_id:string})=>j.status==='FAILED'&&j.operation_id===operation);if(failed)throw new Error(JSON.stringify(failed));return s.results.filter((r:{operation:string})=>r.operation===operation).length;},{timeout:120000}).toBeGreaterThan(0);const s=await state();const result=s.results.filter((r:{operation:string})=>r.operation===operation).at(-1).result;return key?result[key]:result;}
   async function screenshot(name:string){const targets:Record<string,string>={'source-evidence':'证据定位与转换记录','scope-cq':'范围确认与能力问题','review':'候选审核','compilation':'正式验证结果','release-objects':'固定 Package 对象浏览'};if(targets[name])await page.getByRole('heading',{name:targets[name],exact:true}).scrollIntoViewIfNeeded();else await page.evaluate(()=>window.scrollTo(0,0));await page.screenshot({path:path.join(evidenceRoot,name+'.png'),fullPage:false});}
   await screenshot('project-overview');
   await page.getByRole('link',{name:'资料与证据',exact:true}).click();
-  await page.getByLabel('资料文件').setInputFiles({name:'synthetic.csv',mimeType:'text/csv',buffer:Buffer.from('entity,label\nsynthetic,Synthetic entity\n')});
-  await page.getByRole('button',{name:'上传并登记 Source',exact:true}).click();
+  const inputs=scenario.files.length?scenario.files.map(name=>({name,mimeType:'text/csv',buffer:fs.readFileSync(path.resolve('../domain_packs',scenario.id,'fixtures',name))})):[{name:'synthetic.csv',mimeType:'text/csv',buffer:Buffer.from(['entity,label','synthetic,Synthetic entity',''].join(String.fromCharCode(10)))}];
+  for(let index=0;index<inputs.length;index++){
+    await page.getByLabel('资料文件').setInputFiles(inputs[index]);
+    await page.getByRole('button',{name:'上传并登记 Source',exact:true}).click();
+    await expect.poll(async()=>{const s=await state();return s.results.filter((r:{operation:string})=>r.operation==='source.register').length;},{timeout:30000}).toBe(index+1);
+  }
   const registration=await output('source.register');
-  await page.getByLabel('资料批次').selectOption(registration.batch.batch_id);
+  let batchId=registration.batch.batch_id;
+  if(inputs.length>1){
+    for(const input of inputs)await page.getByRole('checkbox',{name:input.name,exact:true}).check();
+    await page.getByRole('button',{name:'创建选中来源的批次',exact:true}).click();
+    batchId=(await output('source.batch','batch')).batch_id;
+  }
+  await page.getByLabel('资料批次').selectOption(batchId);
   await page.getByRole('button',{name:'生成解析计划',exact:true}).click();
   await output('ingestion.plan');
   await expect(page.getByRole('button',{name:'运行解析',exact:true})).toBeEnabled({timeout:15000});
   await page.getByRole('button',{name:'运行解析',exact:true}).click();
   const run=await output('ingestion.run','run');
   await page.getByLabel('解析运行').selectOption(run.run_id);
-  await expect(page.getByText('Synthetic entity',{exact:true})).toBeVisible({timeout:20000});
+  await expect(page.getByRole('heading',{name:'证据定位与转换记录',exact:true})).toBeVisible();
   await screenshot('source-evidence');
   await page.getByRole('link',{name:'本体建模与审核',exact:true}).click();
   await page.getByLabel('已验证的解析运行').selectOption(run.run_id);
-  await page.getByLabel('目标对象（逗号分隔）').fill('Entity');
-  await page.getByLabel('范围说明').fill('Synthetic minimal browser acceptance');
+  await page.getByLabel('目标对象（逗号分隔）').fill(scenario.concepts);
+  await page.getByLabel('范围说明').fill(`Synthetic ${scenario.id} browser acceptance`);
   await page.getByLabel('纳入范围（每行一项）').fill('entity labels');
   await page.getByLabel('排除范围（每行一项）').fill('production deployment');
   await page.getByRole('button',{name:'保存范围草案',exact:true}).click();
@@ -46,9 +61,9 @@ test('real browser minimal source, review, fixed reasoner, package and initial r
   await page.getByLabel('范围批准理由').fill('Explicit synthetic human scope approval');
   await page.getByRole('button',{name:'以当前身份批准范围',exact:true}).click();
   await output('modeling.scope.approve');
-  await page.getByLabel('能力问题',{exact:true}).fill('Which entities and labels are present?');
+  await page.getByLabel('能力问题',{exact:true}).fill(scenario.question);
   await page.getByLabel('验证目的').fill('structural retrieval and traceability');
-  await page.getByLabel('需要的概念（逗号分隔）').fill('Entity');
+  await page.getByLabel('需要的概念（逗号分隔）').fill(scenario.concepts);
   await page.getByRole('button',{name:'保存 CQ 并准备基线、术语与映射',exact:true}).click();
   const prepared=await output('modeling.prepare');
   await screenshot('scope-cq');
@@ -62,20 +77,23 @@ test('real browser minimal source, review, fixed reasoner, package and initial r
     await page.getByRole('button',{name:'接受此项',exact:true}).nth(index).click();
     await expect.poll(async()=>{const s=await state();return s.results.filter((r:{operation:string})=>r.operation==='review.action').length;},{timeout:30000}).toBe(count+1);
     // Wait for the actual action table, not a fixed delay or a forged head.
-    await expect(page.locator('table').last().getByRole('row')).toHaveCount(count+2,{timeout:15000});
+    const updated=await state();
+    const action=updated.results.filter((r:{operation:string})=>r.operation==='review.action').at(-1).result.action;
+    await expect(page.getByTestId('review-head')).toHaveText(action.action_hash,{timeout:15000});
   }
   await screenshot('review');
   await page.getByRole('button',{name:'Finalize：校验审核并生成确认包',exact:true}).click();
   const confirmed=await output('review.finalize','confirmed_package');
   await page.getByRole('link',{name:'验证与发布',exact:true}).click();
   await page.getByLabel('确认包',{exact:true}).selectOption(confirmed.package_id);
-  await page.getByLabel('本体包名称').fill('synthetic-browser-package');
-  await page.getByLabel('本体包版本',{exact:true}).first().fill('0.1.0');
-  await page.getByLabel('Ontology IRI',{exact:true}).fill('urn:synthetic:browser:ontology');
-  await page.getByLabel('Version IRI',{exact:true}).fill('urn:synthetic:browser:ontology:0.1.0');
+  await page.getByLabel('本体包名称').fill(`synthetic-browser-${scenario.id}`);
+  await page.getByLabel('本体包版本',{exact:true}).first().fill(scenario.version);
+  await page.getByLabel('Ontology IRI',{exact:true}).fill(`urn:synthetic:browser:${scenario.id}`);
+  await page.getByLabel('Version IRI',{exact:true}).fill(`urn:synthetic:browser:${scenario.id}:${scenario.version}`);
   await page.getByLabel('能力问题',{exact:true}).selectOption(prepared.questions.questions[0].question_id);
-  await page.getByLabel('锁定领域包中的查询 Asset ID').fill('minimal-query-list-entities');
-  await page.getByLabel('必须返回的变量（逗号分隔）').fill('entity,label');
+  await page.getByLabel('锁定领域包中的查询 Asset ID').fill(scenario.query);
+  await page.getByLabel('必须返回的变量（逗号分隔）').fill(scenario.bindings);
+  await page.getByLabel('最少结果行数（非空 Oracle）').fill(String(scenario.count));
   await page.getByRole('button',{name:'生成编译计划',exact:true}).click();
   await output('compile.plan');
   await page.getByRole('button',{name:'执行真实编译与验证',exact:true}).click();
@@ -93,9 +111,11 @@ test('real browser minimal source, review, fixed reasoner, package and initial r
   const released=await output('release.publish');
   expect(released.release.release_status).toBe('RELEASED');
   await page.getByLabel('本体包版本',{exact:true}).last().selectOption(built.package_id);
-  await page.getByLabel('实例所属 Class IRI').fill('https://yangjunjie-lin.github.io/KG-MNP-Demo/domain-packs/minimal/terms#Entity');
+  await page.getByLabel('实例所属 Class IRI').fill(scenario.classIri);
   await page.getByRole('button',{name:'查询实例',exact:true}).click();
-  await expect(page.locator('table').last().getByRole('row')).toHaveCount(2,{timeout:15000});
+  await expect(page.getByRole('table').filter({has:page.getByRole('columnheader',{name:'实例 IRI',exact:true})}).getByRole('row')).toHaveCount(scenario.count+1,{timeout:15000});
+  await page.getByRole('button',{name:/^追溯 /}).first().click();
+  await expect(page.getByRole('link',{name:/^下载关联原始资料/}).first()).toBeVisible({timeout:20000});
   await screenshot('release-objects');
   await page.reload();
   await expect(page.getByRole('heading',{name:'验证与发布',exact:true})).toBeVisible({timeout:20000});

@@ -1,0 +1,15 @@
+@prefix f: <https://example.invalid/forestry#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+<https://example.invalid/forestry/ontology> a owl:Ontology ; owl:versionIRI <https://example.invalid/forestry/0.2.0/ontology> ; rdfs:comment "Synthetic experimental tree and inspection example; no field trial or diagnosis." .
+f:TreeRecord a owl:Class ; rdfs:label "TreeRecord"@en .
+f:InspectionRecord a owl:Class ; rdfs:label "InspectionRecord"@en .
+f:Site a owl:Class ; rdfs:label "Site"@en .
+f:treeCode a owl:DatatypeProperty ; rdfs:label "treeCode"@en ; rdfs:domain f:TreeRecord ; rdfs:range xsd:string .
+f:label a owl:DatatypeProperty ; rdfs:label "label"@en ; rdfs:range xsd:string .
+f:siteCode a owl:DatatypeProperty ; rdfs:label "siteCode"@en ; rdfs:domain f:Site ; rdfs:range xsd:string .
+f:inspectionCode a owl:DatatypeProperty ; rdfs:label "inspectionCode"@en ; rdfs:domain f:InspectionRecord ; rdfs:range xsd:string .
+f:inspectionNote a owl:DatatypeProperty ; rdfs:label "inspectionNote"@en ; rdfs:domain f:InspectionRecord ; rdfs:range xsd:string .
+f:locatedAt a owl:ObjectProperty ; rdfs:label "locatedAt"@en ; rdfs:domain f:TreeRecord ; rdfs:range f:Site .
+f:inspectedTree a owl:ObjectProperty ; rdfs:label "inspectedTree"@en ; rdfs:domain f:InspectionRecord ; rdfs:range f:TreeRecord .

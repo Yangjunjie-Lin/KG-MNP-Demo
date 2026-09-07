@@ -1,0 +1,28 @@
+profile: evidence-record-mapping-v1
+tables:
+  - table_id: sites
+    source_name: sites.csv
+    class_iri: https://example.invalid/forestry#Site
+    id_field: siteCode
+    literals:
+      siteCode: https://example.invalid/forestry#siteCode
+      label: https://example.invalid/forestry#label
+    references: []
+  - table_id: trees
+    source_name: trees.csv
+    class_iri: https://example.invalid/forestry#TreeRecord
+    id_field: treeCode
+    literals:
+      treeCode: https://example.invalid/forestry#treeCode
+      label: https://example.invalid/forestry#label
+    references:
+      - {field: siteCode, target_table: sites, predicate_iri: 'https://example.invalid/forestry#locatedAt'}
+  - table_id: inspections
+    source_name: inspections.csv
+    class_iri: https://example.invalid/forestry#InspectionRecord
+    id_field: inspectionCode
+    literals:
+      inspectionCode: https://example.invalid/forestry#inspectionCode
+      inspectionNote: https://example.invalid/forestry#inspectionNote
+    references:
+      - {field: treeCode, target_table: trees, predicate_iri: 'https://example.invalid/forestry#inspectedTree'}

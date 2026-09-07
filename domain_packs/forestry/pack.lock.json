@@ -1,13 +1,91 @@
 {
-  "assets": [],
+  "assets": [
+    {
+      "asset_id": "forestry-inspections",
+      "media_type": "text/csv",
+      "path": "fixtures/inspections.csv",
+      "sha256": "16f756d479de358797ac94879c4ecfdf0a36e2f9e334fab4f078014847e50ab4",
+      "size_bytes": 387
+    },
+    {
+      "asset_id": "forestry-ontology",
+      "media_type": "text/turtle",
+      "path": "ontology/forestry.ttl",
+      "sha256": "1f0ff65ea89fefbe89c679958542a53edb838f7cd4f0cec16d2b035fab14a514",
+      "size_bytes": 1405
+    },
+    {
+      "asset_id": "forestry-query-tree-inspections",
+      "media_type": "application/sparql-query",
+      "path": "queries/trees-and-inspections.rq",
+      "sha256": "b3a59324e67d1cecc47b18fb5f887a247881b39997fd1ae9043e7a289b98e03e",
+      "size_bytes": 310
+    },
+    {
+      "asset_id": "forestry-questions",
+      "media_type": "application/yaml",
+      "path": "competency_questions/questions.yaml",
+      "sha256": "1e41d11a6490b97c2b7a0947f5af6603c65d082293a048706f5421f00d4f5615",
+      "size_bytes": 433
+    },
+    {
+      "asset_id": "forestry-record-mapping",
+      "media_type": "application/yaml",
+      "path": "mappings/records.yaml",
+      "sha256": "c3abfebb7bd0a7889a6f3b9c941a0831f14be5e2b1f89da6c2df8848452205e4",
+      "size_bytes": 1122
+    },
+    {
+      "asset_id": "forestry-shapes",
+      "media_type": "text/turtle",
+      "path": "shapes/records.ttl",
+      "sha256": "e5a9e2dd2c4414df3c3d6e0d6c6fb91e3edee063019740e1778adc4b73121612",
+      "size_bytes": 1111
+    },
+    {
+      "asset_id": "forestry-sites",
+      "media_type": "text/csv",
+      "path": "fixtures/sites.csv",
+      "sha256": "6de9882ac6a75728cbfb414a7be52294704cf5a9efcb8e3b16893dec11e3a999",
+      "size_bytes": 65
+    },
+    {
+      "asset_id": "forestry-source-declaration",
+      "media_type": "application/json",
+      "path": "fixtures/source-declaration.json",
+      "sha256": "4c5893c8b481837b7482b95cab024eceb6e8d3c6bcb584c557c87d2c78467c1f",
+      "size_bytes": 240
+    },
+    {
+      "asset_id": "forestry-source-notice",
+      "media_type": "text/plain",
+      "path": "fixtures/source-notice.txt",
+      "sha256": "c74e4096d9163df50eea914ceecf068ff372f475e6b22b1d9e8cccd6e7d9c358",
+      "size_bytes": 282
+    },
+    {
+      "asset_id": "forestry-terminology",
+      "media_type": "application/yaml",
+      "path": "terminology/terms.yaml",
+      "sha256": "21b351deb543644bdda2f04d7b587f58560e7349078bf6880d64d898f3e3e12f",
+      "size_bytes": 979
+    },
+    {
+      "asset_id": "forestry-trees",
+      "media_type": "text/csv",
+      "path": "fixtures/trees.csv",
+      "sha256": "20819de7faec7e92ce7029b919a7d266b62aeb381041290100d639302d1f5055",
+      "size_bytes": 222
+    }
+  ],
   "canonicalization_profile": "KG-MNP Canonical JSON v1",
-  "content_digest": "58dbf2ab75189ecefdaf79e6c5e49ae7c796471e9be65aa48cbf0e21a21d66e9",
+  "content_digest": "c9c0d502aa9476cd35eb929f7abf90c3d65887a8ed25c88b1fca18760a479387",
   "dependencies": [],
-  "lock_id": "urn:kg-mnp:domain-pack-lock:ad767d64635dee7c8329c7d370b20acedbb85cf6b9ce3f50173ba7aa92cdb055",
-  "manifest_file_sha256": "f3697fb644cc661831cb551992dd576d262a368fd9820444a0f9819e83ca5481",
+  "lock_id": "urn:kg-mnp:domain-pack-lock:c53e0af34a632f56df94ea25e0ceab9573a0e941491a7e2cf5e8e0d25fee4dd1",
+  "manifest_file_sha256": "3a9382a0c89dcdf75b19bbbaf243a403ba862dbe5dc9421063a917beebefd429",
   "manifest_kind": "KG_MNP_DOMAIN_PACK_LOCK",
-  "manifest_semantic_sha256": "ca8bfa6e1bc608997da3ed09f576e96f2e9498ced48afb99a2f720ba92797426",
+  "manifest_semantic_sha256": "4f8ab2f8df3c8d47e0bdb94d3ee6135beee70ca8e0a01816eafaca8c0b296213",
   "pack_id": "forestry",
-  "pack_version": "0.1.0",
+  "pack_version": "0.2.0",
   "schema_version": "1.0.0"
 }
