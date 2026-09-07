@@ -1,6 +1,6 @@
 import pytest
 
-from kg_mnp.domain_packs.registry import DomainPackRegistry,DomainPackRegistryError
+from kg_mnp.domain_packs.registry import DomainPackRegistry, DomainPackRegistryError
 
 
 def test_forestry_experimental_pack_has_locked_synthetic_assets():
