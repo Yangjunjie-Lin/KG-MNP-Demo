@@ -15,7 +15,7 @@ from pathlib import Path
 from typing import Any
 
 from fastapi import FastAPI, Request
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import JSONResponse
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from kg_mnp.diagnostics.authority_binding import AuthorityBindings
@@ -39,7 +39,6 @@ from kg_mnp.governance.workspace import (
     _workspace_value,
 )
 from kg_mnp.modeling.canonical_json import semantic_hash
-from kg_mnp.modeling.dependencies import ROOT
 
 FIXTURE_NAMESPACE = CONTROLLED_FIXTURE_NAMESPACE
 FIXTURE_TYPE = "PHASE04_CONTROLLED_DIAGNOSTIC_FIXTURE"
@@ -418,9 +417,6 @@ def controlled_governance_app_for_test_harness(
         raise ValueError("controlled store required")
     if store.current_authority().authority_type != "CONTROLLED_TEST_HARNESS":
         raise ValueError("controlled authority required")
-    root = Path(web_root or ROOT / "web" / "governance").resolve(strict=True)
-    if not (root / "index.html").is_file():
-        raise GovernanceError(GovernanceErrorCode.GOVERNANCE_NOT_READY)
     token = csrf_value or csrf_token()
     app = FastAPI(
         title="KG-MNP Controlled Governance Test Harness",
@@ -516,18 +512,18 @@ def controlled_governance_app_for_test_harness(
 
     def page():
         store.load()
-        return FileResponse(root / "index.html", media_type="text/html")
+        return JSONResponse({"error":{"code":"UI_RETIRED"}},status_code=410)
 
     for route in PAGES:
         app.add_api_route(route, page, methods=["GET", "HEAD"], include_in_schema=False)
 
     @app.api_route("/assets/app.js", methods=["GET", "HEAD"])
     def javascript():
-        return FileResponse(root / "assets" / "app.js", media_type="text/javascript")
+        return JSONResponse({"error":{"code":"UI_RETIRED"}},status_code=410)
 
     @app.api_route("/assets/styles.css", methods=["GET", "HEAD"])
     def styles():
-        return FileResponse(root / "assets" / "styles.css", media_type="text/css")
+        return JSONResponse({"error":{"code":"UI_RETIRED"}},status_code=410)
 
     @app.api_route("/governance/api/bootstrap", methods=["GET", "HEAD"])
     def bootstrap():

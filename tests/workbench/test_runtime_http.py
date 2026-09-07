@@ -20,11 +20,11 @@ def test_pages_assets_status_and_csp_are_same_origin_read_only(tmp_path) -> None
     with client(tmp_path) as http:
         for path in ("/", "/ontology", "/entity", "/fact", "/trace", "/review"):
             response = http.get(path)
-            assert response.status_code == 200
+            assert response.status_code == 410
             assert response.headers["content-security-policy"] == CSP
             assert response.headers["cache-control"] == "no-store, max-age=0"
-        assert http.get("/assets/app.js").status_code == 200
-        assert http.get("/assets/styles.css").status_code == 200
+        assert http.get("/assets/app.js").status_code == 410
+        assert http.get("/assets/styles.css").status_code == 410
         status = http.get("/workbench/api/status")
         assert status.status_code == 200
         assert status.json()["status"] == "WORKBENCH_READY"

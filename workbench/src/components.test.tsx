@@ -18,9 +18,10 @@ describe('working surfaces',()=>{
   render(<Field label="明确表单标签"><select><option>值</option></select></Field>);
   expect(screen.getByLabelText('明确表单标签')).toHaveAttribute('id');
  });
- it('renders untrusted markup as text',()=>{
-  const {container}=render(<DataTable data={[{text:'<script>alert(1)</script>'}]} fields={[["text","原文"]]}/>);
+ it.each(['<script>alert(1)</script>','<img src=x onerror=alert(1)>','<svg onload=alert(1)>','javascript:alert(1)','data:text/html,<script>alert(1)</script>','&#x6a;avascript:alert(1)','%3Cscript%3Ealert(1)%3C/script%3E','\"</div><script>alert(1)</script>','urn:datatype:<script>alert(1)</script>','en-<img-src-x>','urn:source:<svg-onload-alert>'])('renders untrusted markup as text: %s',(text)=>{
+  const {container}=render(<DataTable data={[{text}]} fields={[["text","原文"]]}/>);
   expect(container.querySelector('script')).toBeNull();
-  expect(screen.getByText('<script>alert(1)</script>')).toBeInTheDocument();
+  expect(container.querySelector('img,svg')).toBeNull();
+  expect(screen.getByText(text)).toBeInTheDocument();
  });
 });

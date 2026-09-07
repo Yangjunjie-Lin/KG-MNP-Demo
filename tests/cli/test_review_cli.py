@@ -10,7 +10,7 @@ def test_review_help_has_no_bypass_routes(capsys: pytest.CaptureFixture[str]) ->
         main(["review", "--help"])
     assert raised.value.code == 0
     output = capsys.readouterr().out
-    for command in ("queue", "decide", "status", "replay", "finalize", "package"):
+    for command in ("decide", "status", "replay", "finalize"):
         assert command in output
     for forbidden in ("accept-all", "auto", "bypass", "force-finalize", "llm"):
         assert forbidden not in output

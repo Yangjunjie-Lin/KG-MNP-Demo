@@ -1,4 +1,4 @@
-"""Route the top-level command without extending frozen Foundation CLIs."""
+"""Current product entry points; obsolete runtime platforms are retired."""
 
 from __future__ import annotations
 
@@ -6,7 +6,7 @@ import sys
 
 _ROOT_HELP = """usage: kg-mnp <command> [options]
 
-KG-MNP Ontology Toolchain - Evidence-Bound Ingestion Kernel
+KG-MNP Ontology Toolchain
 
 commands:
   contracts     public contract catalog and validation
@@ -20,12 +20,6 @@ commands:
   review        explicit human review and confirmation
   compile       deterministic semantic compilation and validation
   package       VALIDATED_UNPUBLISHED ontology package verification/export
-  application   governed application workflow
-  workbench     read-only workbench
-  diagnostics   diagnostics workflow
-  governance    governance workflow
-  amendment     amendment workflow
-  activation    activation and rollback
   lifecycle     ontology registry, semantic diff, regression, release, and environment lifecycle
   service       unified application service, credentials, API, and jobs
 
@@ -37,6 +31,9 @@ def main(argv: list[str] | None = None) -> int:
     """Route Application commands and preserve every Foundation argument verbatim."""
 
     arguments = list(sys.argv[1:] if argv is None else argv)
+    if arguments and arguments[0] in {"application","workbench","diagnostics","governance","amendment","activation"}:
+        print("CLI_RETIRED: use kg-mnp service serve and authenticated model/review/lifecycle resources")
+        return 2
     if arguments in ([], ["-h"], ["--help"]):
         print(_ROOT_HELP, end="")
         return 0
@@ -93,36 +90,6 @@ def main(argv: list[str] | None = None) -> int:
         from .semantic_kernel.cli import package_main
 
         return package_main(arguments[1:])
-    if arguments and arguments[0] == "application":
-        from .application.cli import main as application_main
-
-        return application_main(arguments[1:])
-
-    if arguments and arguments[0] == "workbench":
-        from .workbench.cli import main as workbench_main
-
-        return workbench_main(arguments[1:])
-
-    if arguments and arguments[0] == "diagnostics":
-        from .diagnostics.cli import main as diagnostics_main
-
-        return diagnostics_main(arguments[1:])
-
-    if arguments and arguments[0] == "governance":
-        from .governance.cli import main as governance_main
-
-        return governance_main(arguments[1:])
-
-    if arguments and arguments[0] == "amendment":
-        from .amendment.cli import main as amendment_main
-
-        return amendment_main(arguments[1:])
-
-    if arguments and arguments[0] == "activation":
-        from .activation.cli import main as activation_main
-
-        return activation_main(arguments[1:])
-
     if arguments and arguments[0] == "lifecycle":
         from .lifecycle.cli import main as lifecycle_main
 
@@ -133,9 +100,8 @@ def main(argv: list[str] | None = None) -> int:
 
         return service_main(arguments[1:])
 
-    from .modeling.cli import main as modeling_main
-
-    return modeling_main(arguments)
+    print("Unknown command; use kg-mnp --help", file=sys.stderr)
+    return 2
 
 
 if __name__ == "__main__":

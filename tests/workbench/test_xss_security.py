@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from fastapi.testclient import TestClient
 
-from kg_mnp.modeling.dependencies import ROOT
 from kg_mnp.workbench.binding import WorkbenchBinding
 from kg_mnp.workbench.runtime import create_workbench_app
 
@@ -21,22 +20,6 @@ ATTACKS = (
     "en-<img-src-x>",
     "urn:source:<svg-onload-alert>",
 )
-
-
-def test_frontend_uses_only_text_dom_rendering_and_no_persistent_authority() -> None:
-    javascript = (ROOT / "web/workbench/assets/app.js").read_text(encoding="utf-8")
-    forbidden = (
-        "inner" + "HTML",
-        "dangerouslySet" + "InnerHTML",
-        "eval" + "(",
-        "new" + " Function",
-        "document" + ".write",
-        "local" + "Storage",
-        "indexed" + "DB",
-        "service" + "Worker",
-    )
-    assert "textContent" in javascript
-    assert all(marker not in javascript for marker in forbidden)
 
 
 def test_malicious_rdf_text_remains_json_data_for_text_renderer(tmp_path) -> None:

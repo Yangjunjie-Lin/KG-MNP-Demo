@@ -24,3 +24,16 @@ def test_recorded_output_is_bound_to_uploaded_bytes_and_remains_proposal_only(mo
     assert result["proposal"]["authority_level"]=="PROPOSAL_ONLY"
     assert len(result["proposal"]["model_invocation_records"])==1
     assert result["queue"]["items"]
+    from kg_mnp.modeling.control_plane.providers.recorded_model import (
+        verify_model_invocation_record,
+    )
+    from kg_mnp.modeling.control_plane.service import ModelingWorkspaceService
+    from kg_mnp.semantic_kernel.artifact_resolver import WorkspaceArtifactResolver
+    from kg_mnp.services.projects import get_project
+    workspace=ModelingWorkspaceService(get_project(service.root,project).root)
+    invocation=WorkspaceArtifactResolver(workspace.root).resolve(result['proposal']['model_invocation_records'][0]).document
+    verify_model_invocation_record(invocation,request_bytes=(workspace.root/invocation['request_artifact_ref']).read_bytes(),
+        response_bytes=(workspace.root/invocation['response_artifact_ref']).read_bytes())
+    assert invocation['prompt_template_sha256']==registered[0]['content_sha256']
+    assert invocation['response_sha256']==registered[1]['content_sha256']
+    assert invocation['determinism_class']=='RECORDED_BYTES_ONLY'

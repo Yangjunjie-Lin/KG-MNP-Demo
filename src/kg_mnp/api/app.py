@@ -119,6 +119,15 @@ def create_app(service: ApplicationService) -> FastAPI:
     def healthz():
         return {"status": "ALIVE"}
 
+    @app.get("/workbench", include_in_schema=False)
+    @app.get("/workbench/{retired_path:path}", include_in_schema=False)
+    @app.get("/diagnostics", include_in_schema=False)
+    @app.get("/diagnostics/{retired_path:path}", include_in_schema=False)
+    @app.get("/governance", include_in_schema=False)
+    @app.get("/governance/{retired_path:path}", include_in_schema=False)
+    def retired_ui(retired_path: str = ""):
+        return JSONResponse({"error":{"code":"UI_RETIRED","message":"Use the unified workbench at /"}},status_code=410)
+
     @app.get("/api/v1/health", operation_id="serviceHealth")
     def health(authorization: str | None = Header(default=None)):
         if not authorization:

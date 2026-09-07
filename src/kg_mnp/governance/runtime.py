@@ -5,10 +5,8 @@ from __future__ import annotations
 from pathlib import Path
 
 from fastapi import FastAPI, Request
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import JSONResponse
 from starlette.exceptions import HTTPException as StarletteHTTPException
-
-from kg_mnp.modeling.dependencies import ROOT
 
 from .authority_binding import (
     GovernanceAuthority,
@@ -55,9 +53,6 @@ def create_governance_app(
     # overridden after startup.  The runtime owns a fresh closed store and a
     # production authority that is reverified by every store load/mutation.
     store = GovernanceWorkspaceStore(store.path, lambda: supplied_authority)
-    root = Path(web_root or ROOT / "web" / "governance").resolve(strict=True)
-    if not (root / "index.html").is_file():
-        raise GovernanceError(GovernanceErrorCode.GOVERNANCE_NOT_READY)
     token = csrf_value or csrf_token()
     app = FastAPI(
         title="KG-MNP Human Governance",
@@ -157,18 +152,18 @@ def create_governance_app(
 
     def page():
         store.load()
-        return FileResponse(root / "index.html", media_type="text/html")
+        return JSONResponse({"error":{"code":"UI_RETIRED","message":"Use the authenticated unified workbench"}},status_code=410)
 
     for route in PAGES:
         app.add_api_route(route, page, methods=["GET", "HEAD"], include_in_schema=False)
 
     @app.api_route("/assets/app.js", methods=["GET", "HEAD"])
     def javascript():
-        return FileResponse(root / "assets" / "app.js", media_type="text/javascript")
+        return JSONResponse({"error":{"code":"UI_RETIRED","message":"Use the authenticated unified workbench"}},status_code=410)
 
     @app.api_route("/assets/styles.css", methods=["GET", "HEAD"])
     def styles():
-        return FileResponse(root / "assets" / "styles.css", media_type="text/css")
+        return JSONResponse({"error":{"code":"UI_RETIRED","message":"Use the authenticated unified workbench"}},status_code=410)
 
     @app.api_route("/governance/api/bootstrap", methods=["GET", "HEAD"])
     def bootstrap():

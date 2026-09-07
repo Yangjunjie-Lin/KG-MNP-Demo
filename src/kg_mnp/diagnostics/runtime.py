@@ -7,10 +7,8 @@ from pathlib import Path
 from typing import Any
 
 from fastapi import FastAPI, Query, Request
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import JSONResponse
 from starlette.exceptions import HTTPException as StarletteHTTPException
-
-from kg_mnp.modeling.dependencies import ROOT
 
 from .authority_binding import AuthorityBindings
 from .errors import DiagnosticError, DiagnosticErrorCode
@@ -50,9 +48,6 @@ def create_diagnostics_app(
 ) -> FastAPI:
     validated = validate_diagnostic_package(package)
     bindings = AuthorityBindings.from_dict(validated["authority_bindings"])
-    root = Path(web_root or ROOT / "web" / "diagnostics")
-    if not (root / "index.html").is_file():
-        raise DiagnosticError(DiagnosticErrorCode.DIAGNOSTICS_NOT_READY)
 
     app = FastAPI(
         title="KG-MNP Deterministic Diagnostics",
@@ -114,9 +109,9 @@ def create_diagnostics_app(
         error = DiagnosticError(DiagnosticErrorCode.DIAGNOSTICS_NOT_READY)
         return JSONResponse(error.to_dict(), status_code=error.http_status)
 
-    def page_response() -> FileResponse:
+    def page_response() -> JSONResponse:
         verify_current_authority()
-        return FileResponse(root / "index.html", media_type="text/html")
+        return JSONResponse({"error":{"code":"UI_RETIRED","message":"Use the authenticated unified workbench"}},status_code=410)
 
     for route in PAGE_ROUTES:
         app.add_api_route(
@@ -128,11 +123,11 @@ def create_diagnostics_app(
 
     @app.api_route("/assets/app.js", methods=["GET", "HEAD"])
     def javascript():
-        return FileResponse(root / "assets" / "app.js", media_type="text/javascript")
+        return JSONResponse({"error":{"code":"UI_RETIRED","message":"Use the authenticated unified workbench"}},status_code=410)
 
     @app.api_route("/assets/styles.css", methods=["GET", "HEAD"])
     def styles():
-        return FileResponse(root / "assets" / "styles.css", media_type="text/css")
+        return JSONResponse({"error":{"code":"UI_RETIRED","message":"Use the authenticated unified workbench"}},status_code=410)
 
     @app.api_route("/diagnostics/api/status", methods=["GET", "HEAD"])
     def status():

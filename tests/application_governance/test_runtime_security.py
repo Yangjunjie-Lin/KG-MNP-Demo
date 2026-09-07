@@ -69,7 +69,7 @@ def test_status_bootstrap_and_pages_are_loopback_only(tmp_path: Path) -> None:
         "/approved-amendment-requests",
         "/governance-audit-trail",
     ):
-        assert http.get(route).status_code == 200
+        assert http.get(route).status_code == 410
     assert http.get("/", headers={"Host": "evil.example"}).status_code == 403
 
 
@@ -212,27 +212,3 @@ def test_valid_http_create_submit_review_and_replay(tmp_path: Path) -> None:
         reviewed.json()["amendment_request"]["status"]
         == "APPROVED_FOR_FUTURE_MODELING_AMENDMENT"
     )
-
-
-def test_xss_is_text_only_and_no_external_browser_capabilities() -> None:
-    root = Path("web/governance")
-    javascript = (root / "assets/app.js").read_text(encoding="utf-8")
-    html = (root / "index.html").read_text(encoding="utf-8")
-    forbidden = (
-        "innerHTML",
-        "dangerouslySetInnerHTML",
-        "eval(",
-        "new Function",
-        "document.write",
-        "serviceWorker",
-    )
-    assert all(marker not in javascript and marker not in html for marker in forbidden)
-    assert "textContent" in javascript and "https://" not in html
-    assert "This approval does not modify the authoritative ontology" in html
-    forbidden_labels = (
-        "KG Updated",
-        "Fact Confirmed",
-        "Conflict Resolved",
-        "Data Corrected",
-    )
-    assert all(label not in html for label in forbidden_labels)

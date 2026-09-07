@@ -7,7 +7,7 @@ from typing import Any
 
 from fastapi import FastAPI, Query, Request
 from fastapi.exceptions import RequestValidationError
-from fastapi.responses import FileResponse, JSONResponse, Response
+from fastapi.responses import JSONResponse, Response
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from kg_mnp.modeling.dependencies import ROOT
@@ -163,8 +163,8 @@ def create_workbench_app(
         error = WorkbenchError(WorkbenchErrorCode.INTERNAL_ERROR)
         return JSONResponse(error.to_dict(), status_code=500)
 
-    def page_response() -> FileResponse:
-        return FileResponse(web_root / "index.html", media_type="text/html")
+    def page_response() -> JSONResponse:
+        return JSONResponse({"error":{"code":"UI_RETIRED","message":"Use the authenticated unified workbench"}},status_code=410)
 
     for page_route in PAGE_ROUTES:
         app.add_api_route(
@@ -176,17 +176,11 @@ def create_workbench_app(
 
     @app.api_route("/assets/app.js", methods=["GET", "HEAD"])
     def app_javascript():
-        return FileResponse(
-            web_root / "assets" / "app.js",
-            media_type="text/javascript",
-        )
+        return JSONResponse({"error":{"code":"UI_RETIRED","message":"Use the authenticated unified workbench"}},status_code=410)
 
     @app.api_route("/assets/styles.css", methods=["GET", "HEAD"])
     def app_styles():
-        return FileResponse(
-            web_root / "assets" / "styles.css",
-            media_type="text/css",
-        )
+        return JSONResponse({"error":{"code":"UI_RETIRED","message":"Use the authenticated unified workbench"}},status_code=410)
 
     @app.get("/workbench/api/status")
     def status():
