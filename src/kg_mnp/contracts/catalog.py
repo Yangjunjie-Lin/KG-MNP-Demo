@@ -6,6 +6,7 @@ import copy
 import json
 from collections.abc import Iterable
 from dataclasses import dataclass
+from functools import lru_cache
 from importlib import resources
 from pathlib import Path
 from typing import Any
@@ -157,13 +158,21 @@ def _validate_specs(specs: Iterable[ContractSpec], *, verify_hashes: bool = Fals
         if schema.get("$schema") != DRAFT_2020_12:
             raise ContractCatalogError(f"{spec.resource_path} is not Draft 2020-12")
         try:
-            Draft202012Validator.check_schema(schema)
+            _check_schema_bytes(raw)
         except SchemaError as exc:
             raise ContractCatalogError(
                 f"invalid Draft 2020-12 schema {spec.resource_path}: {exc.message}"
             ) from exc
         if verify_hashes and bytes_sha256(raw) != spec.sha256:
             raise ContractCatalogError(f"schema digest mismatch: {spec.resource_path}")
+
+
+# Only cache the metaschema verdict for identical immutable bytes. Catalog
+# declarations, file reads, identity checks and lock hashes still run each time.
+# Never key this by a path/mtime: changed bytes must be checked immediately.
+@lru_cache(maxsize=256)
+def _check_schema_bytes(raw: bytes) -> None:
+    Draft202012Validator.check_schema(json.loads(raw))
 
 
 def normalize_contract_name(
