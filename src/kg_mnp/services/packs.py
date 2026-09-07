@@ -3,6 +3,7 @@ from __future__ import annotations
 
 from jsonschema import ValidationError
 
+from kg_mnp._path_security import _is_link_like
 from kg_mnp.contracts.errors import ContractError
 from kg_mnp.domain_packs.registry import DomainPackRegistry
 from kg_mnp.domain_packs.validation import load_domain_pack_manifest
@@ -14,7 +15,7 @@ def registry(root: str | None) -> DomainPackRegistry:
     try:
         result = DomainPackRegistry(root)
         for child in result.root.iterdir():
-            if child.is_symlink() or (hasattr(child, "is_junction") and child.is_junction()):
+            if _is_link_like(child):
                 raise ValueError("linked pack entry")
         for path in result.entries.values():
             if not path.is_relative_to(result.root):

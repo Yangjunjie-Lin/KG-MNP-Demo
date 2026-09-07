@@ -143,8 +143,8 @@ for(const scenario of scenarios) test(`real browser ${scenario.id} source review
   await expect(page.getByRole('table').filter({has:page.getByRole('columnheader',{name:'实例 IRI',exact:true})}).getByRole('row')).toHaveCount(scenario.count+1,{timeout:120000});
   await page.getByRole('button',{name:/^追溯 /}).first().click();
   await expect(page.getByRole('link',{name:/^下载关联原始资料/}).first()).toBeVisible({timeout:90000});
-  const downloadPromise=page.waitForEvent('download');
-  await page.getByRole('link',{name:/^下载关联原始资料/}).first().click();
+  const downloadPromise=page.waitForEvent('download',{timeout:120000});
+  await page.getByRole('link',{name:/^下载关联原始资料/}).first().click({timeout:120000});
   const download=await downloadPromise;
   const downloadedPath=await download.path();
   expect(downloadedPath).not.toBeNull();

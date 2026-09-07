@@ -22,7 +22,10 @@ def query_objects(package_root: Path, *, class_iri: str | None = None, instance_
                   offset: int = 0, limit: int = 100, timeout_seconds: int = 30) -> dict:
     if bool(class_iri) == bool(instance_iri) or not 0 <= offset <= 1000000 or not 1 <= limit <= 1000 or not 1 <= timeout_seconds <= 60:
         raise ValueError("object query requires one selector and bounded limits")
-    selected = _iri(class_iri or instance_iri)
+    selector = class_iri or instance_iri
+    if selector is None:
+        raise ValueError("object selector is required")
+    selected = _iri(selector)
     verified = verify_package(package_root)
     manifest = json.loads((package_root / "dataset/rdf-dataset-manifest.json").read_bytes())
     graphs = " ".join(_iri(g["graph_iri"]) for g in manifest["graphs"] if g["role"] in {"effective-tbox", "abox", "effective-shapes"})

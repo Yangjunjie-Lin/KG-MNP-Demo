@@ -3,7 +3,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from rdflib import OWL, RDF, RDFS, Graph, URIRef
+from rdflib import OWL, RDF, RDFS, Graph, Literal, URIRef
 
 from kg_mnp.semantic_kernel.packaging.verifier import verify_package
 
@@ -26,8 +26,8 @@ class OMSMetadataService:
         rows = []
         for iri in classes:
             term = URIRef(iri)
-            rows.append({"iri": iri, "kind": "CLASS", "labels": [{"value": str(label), "language": label.language} for label in self.graph.objects(term, RDFS.label)], "definitions": [{"value": str(definition), "language": definition.language} for definition in self.graph.objects(term, RDFS.comment)], "domain": [], "range": []})
+            rows.append({"iri": iri, "kind": "CLASS", "labels": [{"value": str(label), "language": label.language if isinstance(label, Literal) else None} for label in self.graph.objects(term, RDFS.label)], "definitions": [{"value": str(definition), "language": definition.language if isinstance(definition, Literal) else None} for definition in self.graph.objects(term, RDFS.comment)], "domain": [], "range": []})
         for iri in properties:
             term = URIRef(iri)
-            rows.append({"iri": iri, "kind": "PROPERTY", "labels": [{"value": str(label), "language": label.language} for label in self.graph.objects(term, RDFS.label)], "definitions": [{"value": str(definition), "language": definition.language} for definition in self.graph.objects(term, RDFS.comment)], "domain": sorted(str(item) for item in self.graph.objects(term, RDFS.domain)), "range": sorted(str(item) for item in self.graph.objects(term, RDFS.range))})
+            rows.append({"iri": iri, "kind": "PROPERTY", "labels": [{"value": str(label), "language": label.language if isinstance(label, Literal) else None} for label in self.graph.objects(term, RDFS.label)], "definitions": [{"value": str(definition), "language": definition.language if isinstance(definition, Literal) else None} for definition in self.graph.objects(term, RDFS.comment)], "domain": sorted(str(item) for item in self.graph.objects(term, RDFS.domain)), "range": sorted(str(item) for item in self.graph.objects(term, RDFS.range))})
         return {"project_id": self.manifest.get("project_id"), "package_id": self.manifest.get("package_id"), "release_id": None, "semantic_digest": self.manifest.get("semantic_summary", {}).get("semantic_dataset_digest"), "view": "RELEASED_PACKAGE", "current_environment_selection": False, "rows": rows[offset:offset + limit], "page": {"offset": offset, "limit": limit, "total": len(rows)}}

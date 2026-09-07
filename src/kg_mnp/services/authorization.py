@@ -11,7 +11,7 @@ import json
 import secrets
 import time
 from pathlib import Path
-from typing import Any
+from typing import Any, Literal, cast
 
 from .coordination import metadata_lock
 from .errors import ServiceBoundaryError
@@ -50,7 +50,7 @@ class TokenStore:
             records = self._read()
             records["tokens"][token_id] = {"token_digest": _digest(token), "principal_id": principal_id, "principal_type": principal_type, "permissions": sorted(permissions), "project_ids": sorted(project_ids), "revoked": False, "created_by": created_by, "expires_at": expires_at}
             self._write(records)
-        return token, PrincipalReference(principal_id, principal_type, frozenset(permissions), frozenset(project_ids), token_id)
+        return token, PrincipalReference(principal_id, cast(Literal["HUMAN", "SERVICE"], principal_type), frozenset(permissions), frozenset(project_ids), token_id)
 
     def revoke(self, token_id: str) -> None:
         with metadata_lock(self.path.with_suffix(".lock.sqlite3")):

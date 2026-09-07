@@ -39,12 +39,13 @@ def main(argv: list[str] | None = None) -> int:
                     raise ValueError("recovery requires --job-id and --expected-attempt")
                 result=client.recover_job(job_id,mode="RETRY_LOCAL" if "--retry-local" in args else "RECOVER_COMMITTED",expected_attempt=int(attempt))
             elif action == "upload":
-                if not project_id or not key or not _arg(args, "--file"):
+                source_name = _arg(args, "--file")
+                if not project_id or not key or not source_name:
                     raise ValueError("upload requires --project-id, --file and --idempotency-key")
-                source = Path(_arg(args, "--file"))
+                source = Path(source_name)
                 with source.open("rb") as stream:
                     result = client.upload_source(project_id, iter(lambda: stream.read(64 * 1024), b""),
-                        filename=source.name, media_type=_arg(args, "--media-type", "application/octet-stream"), idempotency_key=key)
+                        filename=source.name, media_type=_arg(args, "--media-type", "application/octet-stream") or "application/octet-stream", idempotency_key=key)
             else:
                 operation = _arg(args, "--operation")
                 if not operation:

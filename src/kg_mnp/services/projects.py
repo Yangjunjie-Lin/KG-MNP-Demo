@@ -6,6 +6,7 @@ from pathlib import Path
 
 from jsonschema import ValidationError
 
+from kg_mnp._path_security import _is_link_like
 from kg_mnp.contracts.canonical import stable_urn
 from kg_mnp.contracts.document_io import atomic_write_json, read_document
 from kg_mnp.contracts.errors import ContractError
@@ -45,14 +46,16 @@ def _safe_handle(root: Path, row: dict) -> ProjectHandle:
     try:
         handle = ProjectHandle(**row)
         candidate = Path(handle.root)
-        base = (root / "projects").resolve()
-        if candidate.is_symlink() or not candidate.resolve().is_relative_to(base):
+        lexical_base = root / "projects"
+        if not candidate.is_absolute() or ".." in candidate.parts or not candidate.is_relative_to(lexical_base):
             raise ValueError("outside project root")
         for parent in (candidate, *candidate.parents):
-            if parent.is_symlink() or (hasattr(parent, "is_junction") and parent.is_junction()):
+            if _is_link_like(parent):
                 raise ValueError("linked project root")
             if parent == root:
                 break
+        if not candidate.resolve().is_relative_to(lexical_base.resolve()):
+            raise ValueError("outside resolved project root")
         return handle
     except (TypeError, ValueError, OSError) as exc:
         raise ServiceBoundaryError("PROJECT_CATALOG_INVALID", "project mapping is invalid", status_code=503) from exc

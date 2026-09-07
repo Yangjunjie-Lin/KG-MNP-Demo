@@ -90,7 +90,7 @@ def build_operation_catalog() -> dict[str, OperationDefinition]:
             else definition for definition in definitions}
 
 
-def coverage_matrix() -> list[dict[str, str]]:
+def coverage_matrix() -> list[dict[str, str | None]]:
     return [{"operation_id": operation_id, "service_handler": HANDLERS.get(operation_id),
              "status": "IMPLEMENTED_NOT_VERIFIED" if operation_id in HANDLERS else "DECLARED_ONLY",
              "blocked_reason": None if operation_id in HANDLERS else "No service-to-core handler",

@@ -15,6 +15,7 @@ import tempfile
 from dataclasses import asdict, dataclass, replace
 from pathlib import Path
 
+from kg_mnp._path_security import _is_link_like
 from kg_mnp.contracts.canonical import semantic_hash
 
 from .authorization_policy import authorize
@@ -34,7 +35,7 @@ def tree_digest(root: Path) -> str:
     digest = hashlib.sha256()
     for path in sorted(root.rglob("*")):
         relative = path.relative_to(root)
-        if path.is_symlink() or (hasattr(path, "is_junction") and path.is_junction()):
+        if _is_link_like(path):
             raise ServiceBoundaryError("WORKSPACE_LINK_REJECTED", "workspace contains a filesystem link", status_code=409)
         if relative.parts[0] == "tmp":
             continue

@@ -214,7 +214,11 @@ def create_app(service: ApplicationService) -> FastAPI:
     def project_state(project_id: str, authorization: str | None = Header(default=None)):
         principal = service.authenticate(authorization or "")
         from kg_mnp.services.authorization_policy import authorize
-        from kg_mnp.services.projects import load_catalog, project_from_catalog, require_access
+        from kg_mnp.services.projects import (
+            load_catalog,
+            project_from_catalog,
+            require_access,
+        )
         authorize(principal,service.catalog["project.open"],OperationRequest("project.open",project_id))
         catalog = load_catalog(service.root)
         project_handle=project_from_catalog(service.root,catalog,project_id)

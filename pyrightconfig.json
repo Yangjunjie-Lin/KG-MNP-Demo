@@ -1,0 +1,12 @@
+{
+  "include": [
+    "src/kg_mnp/services",
+    "src/kg_mnp/jobs",
+    "src/kg_mnp/api",
+    "src/kg_mnp/sdk",
+    "src/kg_mnp/integrations"
+  ],
+  "extraPaths": ["src"],
+  "typeCheckingMode": "basic",
+  "pythonVersion": "3.11"
+}
