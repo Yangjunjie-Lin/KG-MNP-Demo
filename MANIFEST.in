@@ -1,0 +1,4 @@
+include workbench/package.json workbench/package-lock.json workbench/index.html workbench/tsconfig.json workbench/vite.config.ts
+recursive-include workbench/src *.ts *.tsx *.css
+recursive-include workbench/dist *.html *.js *.css
+prune workbench/node_modules
