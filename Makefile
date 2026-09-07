@@ -937,4 +937,4 @@ verify-workbench-auth:
 
 # This gate intentionally exits nonzero while required business handlers are
 # absent. Passing security rejection tests is not passing a workbench workflow.
-verify-prompt-08-offline: verify-prompt-07-offline verify-workbench-contracts verify-workbench-auth verify-workbench-backend
+verify-prompt-08-offline: verify-workbench-backend verify-prompt-07-offline verify-workbench-contracts verify-workbench-auth
