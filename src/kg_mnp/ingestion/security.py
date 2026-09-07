@@ -32,7 +32,8 @@ def safe_relative_display(value: Path) -> str:
     if value.is_absolute() or value.drive or value.root or str(value).startswith(("\\\\", "//")):
         raise SourceError("absolute display path rejected")
     text = value.as_posix()
-    if "\\" in text or "\x00" in text:
+    # Path.drive is host-dependent: POSIX must reject Windows drive syntax too.
+    if "\\" in text or ":" in text or "\x00" in text:
         raise SourceError("unsafe source display path")
     return text
 
