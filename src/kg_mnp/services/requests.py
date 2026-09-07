@@ -84,6 +84,7 @@ class ScopeRequest(RequestDTO):
 
 class ScopeApprovalRequest(RequestDTO):
     scope_id: str = Field(pattern=r"^urn:kg-mnp:ontology-scope:[a-f0-9]{64}$")
+    expected_approval_id: str | None = Field(default=None, pattern=r"^urn:kg-mnp:ontology-scope-approval:[a-f0-9]{64}$")
     rationale: str = Field(min_length=1, max_length=4000)
     decision: Literal["APPROVE", "REJECT", "REQUEST_CHANGES"] = "APPROVE"
 
@@ -123,19 +124,41 @@ class RecordMappingRequest(RequestDTO):
 
 class ProposalRequest(RequestDTO):
     bundle_id: str = Field(pattern=r"^urn:kg-mnp:modeling-input-bundle:[a-f0-9]{64}$")
-    providers: list[Literal["baseline-reuse-provider", "rule-mapping-provider","manual-candidate-provider"]] = Field(min_length=1, max_length=3)
+    providers: list[Literal["baseline-reuse-provider", "rule-mapping-provider","manual-candidate-provider","recorded-model-output-provider"]] = Field(min_length=1, max_length=4)
     record_mapping:RecordMappingRequest|None=None
+    recorded_response_source_id:str|None=Field(default=None,pattern=r"^urn:kg-mnp:source:[a-f0-9]{64}$")
+    recorded_prompt_source_id:str|None=Field(default=None,pattern=r"^urn:kg-mnp:source:[a-f0-9]{64}$")
+    recorded_model_id:str|None=Field(default=None,max_length=200)
+    recorded_model_revision:str|None=Field(default=None,max_length=200)
 
 
 class ReviewRequest(RequestDTO):
     review_id: str = Field(pattern=r"^urn:kg-mnp:ontology-review-queue:[a-f0-9]{64}$")
 
 
+class LiteralEdit(RequestDTO):
+    lexical_value:str=Field(max_length=10000)
+    datatype_iri:str|None=None
+    language:str|None=None
+
+
+class CandidateBodyEdit(RequestDTO):
+    label:str|None=None
+    subject_iri:str|None=None
+    predicate_iri:str|None=None
+    object_iri:str|None=None
+    target_iri:str|None=None
+    source_field:str|None=None
+    literal:LiteralEdit|None=None
+
+
 class ReviewActionRequest(ReviewRequest):
-    candidate_id: str = Field(pattern=r"^urn:kg-mnp:ontology-candidate:[a-f0-9]{64}$")
-    decision: Literal["ACCEPT", "REJECT", "DEFER", "COMMENT", "REQUEST_EVIDENCE"]
+    candidate_id: str|None = Field(default=None,pattern=r"^urn:kg-mnp:ontology-candidate:[a-f0-9]{64}$")
+    issue_id:str|None=Field(default=None,pattern=r"^urn:kg-mnp:[a-z0-9-]+:[a-f0-9]{64}$")
+    decision: Literal["ACCEPT", "REJECT", "DEFER", "COMMENT", "REQUEST_EVIDENCE","MODIFY_AND_ACCEPT","RESOLVE_CONFLICT"]
     rationale: str = Field(min_length=1, max_length=4000)
     expected_head: str | None = Field(pattern=r"^[a-f0-9]{64}$")
+    body_edits:CandidateBodyEdit|None=None
 
 
 class CQOracleRequest(RequestDTO):
@@ -258,9 +281,33 @@ class FeedbackRequest(PackageRequest):
     severity:Literal["INFO","WARNING","ERROR","CRITICAL"]="INFO"
 
 
+class ConsumerAssertionRequest(RequestDTO):
+    assertion_type: Literal["BOOLEAN_EQUALS", "MIN_ROW_COUNT", "MAX_ROW_COUNT", "REQUIRED_BINDINGS", "REQUIRED_IRIS", "RESULT_SEMANTIC_HASH", "GRAPH_PATTERN_PRESENT"]
+    boolean_value: bool | None = None
+    integer_value: int | None = Field(default=None, ge=0, le=100000)
+    string_values: list[str] = Field(default_factory=list, max_length=1000)
+    semantic_hash: str | None = Field(default=None, pattern=r"^[a-f0-9]{64}$")
+
+
+class ConsumerQueryLimits(RequestDTO):
+    max_query_characters: int = Field(default=100000, ge=1, le=100000)
+    max_query_results: int = Field(default=1000, ge=1, le=100000)
+    max_query_seconds: int = Field(default=30, ge=1, le=60)
+    max_query_path_depth: int = Field(default=8, ge=1, le=8)
+
+
+class ConsumerQueryRequest(RequestDTO):
+    query_type: Literal["ASK", "SELECT", "CONSTRUCT"]
+    query_text: str = Field(min_length=1, max_length=100000)
+    target_graph_roles: list[str] = Field(min_length=1, max_length=20)
+    assertions: list[ConsumerAssertionRequest] = Field(min_length=1, max_length=100)
+    resource_limits: ConsumerQueryLimits = Field(default_factory=ConsumerQueryLimits)
+
+
 class ConsumerRequest(PackageRequest):
     name:str=Field(min_length=1,max_length=100)
     required_term_iris:list[str]=Field(default_factory=list,max_length=1000)
+    query_contracts: list[ConsumerQueryRequest] = Field(default_factory=list, max_length=100)
 
 
 REQUEST_MODELS = {

@@ -15,6 +15,7 @@ from kg_mnp.lifecycle.contracts import verify
 from kg_mnp.lifecycle.diff.engine import create_diff
 from kg_mnp.lifecycle.diff.versioning import check_version
 from kg_mnp.lifecycle.environment import (
+    current_environment_reviews,
     execute_activation,
     init_environment,
     propose_activation,
@@ -28,7 +29,12 @@ from kg_mnp.lifecycle.registry.head import read_head
 from kg_mnp.lifecycle.registry.import_package import import_package
 from kg_mnp.lifecycle.registry.manifest import load_manifest
 from kg_mnp.lifecycle.registry.replay import verify_registry
-from kg_mnp.lifecycle.regression import plan_regression, run_regression
+from kg_mnp.lifecycle.regression import (
+    declared_consumer_tests,
+    plan_regression,
+    require_consumer_coverage,
+    run_regression,
+)
 from kg_mnp.lifecycle.release import (
     _quorum,
     attest_release,
@@ -41,7 +47,8 @@ from kg_mnp.semantic_kernel.packaging.verifier import verify_package
 
 from .compilation import package_path
 from .errors import ServiceBoundaryError
-from .projects import load_catalog
+from .projects import load_catalog, require_access
+from .release_policy import release_policy, require_release_policy
 
 OPERATIONS = frozenset({"registry.import", "release.candidate", "release.review", "release.publish", "oms.metadata", "ods.query",
                        "change.diff","change.impact","change.regression","change.evaluate",
@@ -50,7 +57,8 @@ OPERATIONS=OPERATIONS|{"object.trace","feedback.add","consumer.register"}
 
 
 def _record(root,folder,field,identifier):
-    row=record_by_id(root,"records/"+folder,field,identifier)
+    kind = "KG_MNP_REGRESSION_TEST_PLAN" if (folder, field) == ("regressions", "test_plan_id") else None
+    row=record_by_id(root,"records/"+folder,field,identifier,manifest_kind=kind)
     return row
 
 
@@ -77,12 +85,19 @@ def _change(root,request,principal):
     if impact["semantic_diff_id"]!=report["diff_id"]:
         raise ServiceBoundaryError("LIFECYCLE_BINDING_INVALID","impact belongs to another diff",status_code=409)
     if name=="change.regression":
+        policy = load_policy("regression-policy-1.0.0.yaml")
         oracle={"assertion_type":"BOOLEAN_EQUALS","boolean_value":True,"integer_value":None,"string_values":[],"semantic_hash":None}
         plan=plan_regression(root,base_package_id=report["base_package_id"],candidate_package_id=report["candidate_package_id"],
-            semantic_diff_id=report["diff_id"],impact_analysis_id=impact["impact_id"],tests=[{"test_category":category,"expected_result":oracle}
-            for category in ["PACKAGE_INTEGRITY","CANDIDATE_CQ","BASE_REQUIRED_CQ"]])
+            semantic_diff_id=report["diff_id"],impact_analysis_id=impact["impact_id"], policy_id=policy["policy_id"],
+            tests=[{"test_category":category,"expected_result":oracle} for category in policy["required_test_categories"]]
+                  + [{"test_category":"MAPPING_CONTRACT","expected_result":oracle}]
+                  + declared_consumer_tests(root, report["candidate_package_id"]))
         return {"plan":plan,"report":run_regression(root,plan)}
     regression=_record(root,"regressions","report_id",params["regression_report_id"])
+    verify(regression, contract="regression-test-report")
+    plan = _record(root, "regressions", "test_plan_id", regression["test_plan_id"])
+    verify(plan, contract="regression-test-plan")
+    require_consumer_coverage(root, plan)
     if (regression["base_package_id"],regression["candidate_package_id"])!=(report["base_package_id"],report["candidate_package_id"]):
         raise ServiceBoundaryError("LIFECYCLE_BINDING_INVALID","regression pair differs",status_code=409)
     versions=[r for r in list_records(root,"records/version-compatibility") if r["semantic_diff_id"]==report["diff_id"]]
@@ -116,7 +131,7 @@ def _environment(app,project,request,principal):
     decision=_record(root,"activation-reviews","decision_id",params["decision_id"])
     receipts=list(load_catalog(app.root).get("commits",{}).values())
     identities=set()
-    for review in list_records(root,"records/activation-reviews"):
+    for review in current_environment_reviews(root, proposal["activation_proposal_id"]):
         if review["activation_proposal_id"]!=proposal["activation_proposal_id"] or review["decision"]!="APPROVE":continue
         proven=[receipt for receipt in receipts if receipt["context"]["project_id"]==project.project_id
             and receipt["context"]["operation_id"]=="environment.review" and receipt["result"]==review]
@@ -128,6 +143,7 @@ def _environment(app,project,request,principal):
     quorum=env["rollback_quorum"] if proposal["activation_kind"]=="ROLLBACK" else env["activation_quorum"]
     if len(identities)<quorum or decision["activation_proposal_id"]!=proposal["activation_proposal_id"]:
         raise ServiceBoundaryError("REVIEW_QUORUM_INVALID","environment quorum or decision binding incomplete",status_code=409)
+    verify_registry(root)
     result=execute_activation(root,proposal_id=params["proposal_id"],decision_id=params["decision_id"],expected_generation=params["expected_generation"],
         expected_pointer_hash=params["expected_pointer_hash"],expected_registry_head_hash=params["expected_registry_head_hash"])
     return {"receipt":result,"registry_head":read_head(root)["head_hash"]}
@@ -142,11 +158,17 @@ def execute(app, project, request, principal):
             verify_package(package_files(root,record)[2])
             return add_feedback(root,feedback_type="DEFECT",target_package_id=params["package_id"],observations=params["observations"],severity=params.get("severity","INFO"),reported_by=principal.principal_id)
         if name=="consumer.register":
+            from kg_mnp.contracts.canonical import stable_urn
             from kg_mnp.lifecycle.consumer import register_consumer
+
+            from .requests import ConsumerRequest
             record=package_record(root,params["package_id"])
             verify_package(package_files(root,record)[2])
+            contracts = ConsumerRequest.model_validate(params).model_dump()["query_contracts"]
+            contracts = [{**query, "query_id": stable_urn("consumer-query", query)} for query in contracts]
             return register_consumer(root,consumer_name=params["name"],ontology_iri=record["ontology_iri"],owner_label=principal.principal_id,
-                required_term_iris=params.get("required_term_iris",[]),package_constraints={"package_names":[record["package_name"]],"minimum_version":record["package_version"],"maximum_version_exclusive":None,"package_ids":[record["package_id"]]})
+                required_term_iris=params.get("required_term_iris",[]), query_contracts=contracts,
+                package_constraints={"package_names":[record["package_name"]],"minimum_version":record["package_version"],"maximum_version_exclusive":None,"package_ids":[record["package_id"]]})
         if name=="object.trace":
             import json
 
@@ -191,12 +213,16 @@ def execute(app, project, request, principal):
             return {"package_id": params["package_id"], "rows": rows[offset:offset + limit],
                     "page": {"offset": offset, "limit": limit, "truncated": len(rows) > offset + limit or result["truncated"]}}
         if name == "release.candidate":
+            policy = release_policy(app.configuration.review_profile)
             record = package_record(root, params["package_id"])
             verify_package(root / record["package_storage_ref"])
             # Successors must use the separately governed change/regression
             # workflow; never relabel a successor as an initial release.
             if any(row["package_name"] == record["package_name"] for row in list_records(root, "records/releases")):
                 evaluation=_record(root,"change-evaluations","evaluation_id",params.get("change_evaluation_id"))
+                regression = _record(root, "regressions", "report_id", evaluation["regression_test_report_id"])
+                plan = _record(root, "regressions", "test_plan_id", regression["test_plan_id"])
+                require_consumer_coverage(root, plan)
                 if evaluation["candidate_package_id"]!=record["package_id"] or evaluation["evaluation_status"]!="COMPLETE":
                     raise ServiceBoundaryError("SUCCESSOR_CLOSURE_REQUIRED","complete current change evaluation required",status_code=409)
                 version=_record(root,"version-compatibility","report_id",evaluation["version_compatibility_report_id"])
@@ -204,14 +230,22 @@ def execute(app, project, request, principal):
                 return create_release_candidate(root,candidate_package_id=record["package_id"],base_package_id=evaluation["base_package_id"],
                     semantic_diff_id=evaluation["semantic_diff_id"],version_compatibility_report_id=version["report_id"],impact_analysis_id=evaluation["impact_analysis_id"],
                     regression_test_report_id=evaluation["regression_test_report_id"],change_proposal_id=evaluation["change_proposal_id"],change_evaluation_id=evaluation["evaluation_id"],
-                    release_candidate_kind="PATCH_COMPATIBLE",required_roles=["RELEASE_MANAGER"],minimum_distinct_reviewers=1)
-            return create_release_candidate(root, candidate_package_id=params["package_id"], required_roles=["RELEASE_MANAGER"], minimum_distinct_reviewers=1)
+                    release_candidate_kind="PATCH_COMPATIBLE", **policy)
+            return create_release_candidate(root, candidate_package_id=params["package_id"], **policy)
         if name == "release.review":
-            if not principal.can("review:role:RELEASE_MANAGER"):
-                raise ServiceBoundaryError("REVIEW_ROLE_FORBIDDEN", "release manager grant required", status_code=403)
-            return record_review(root, params["candidate_id"], reviewer_id=principal.principal_id, reviewer_roles=["RELEASE_MANAGER"],
+            candidate = _record(root, "release-candidates", "release_candidate_id", params["candidate_id"])
+            require_release_policy(candidate, app.configuration.review_profile)
+            roles = [role for role in candidate["required_roles"] if principal.can("review:role:" + role)]
+            if principal.principal_type != "HUMAN" or not roles:
+                raise ServiceBoundaryError("REVIEW_ROLE_FORBIDDEN", "human release policy role grant required", status_code=403)
+            return record_review(root, params["candidate_id"], reviewer_id=principal.principal_id, reviewer_roles=roles,
                                  action=params["decision"], rationale=params["rationale"], explicit_human_action=True)
         candidate = record_by_id(root, "records/release-candidates", "release_candidate_id", params["candidate_id"])
+        require_release_policy(candidate, app.configuration.review_profile)
+        if candidate.get("regression_test_report_id"):
+            regression = _record(root, "regressions", "report_id", candidate["regression_test_report_id"])
+            plan = _record(root, "regressions", "test_plan_id", regression["test_plan_id"])
+            require_consumer_coverage(root, plan)
         registered=package_record(root,candidate["candidate_package_id"])
         verify_package(package_files(root,registered)[2])
         review = record_by_id(root, "records/release-reviews", "review_id", params["review_id"])
@@ -228,7 +262,10 @@ def execute(app, project, request, principal):
             if not proven:
                 raise ServiceBoundaryError("REVIEW_IDENTITY_UNPROVEN", "release action lacks a server credential-bound commit", status_code=409)
             actor = app.tokens.resolve(proven[0]["context"]["grant_reference"])
-            if actor.principal_type != "HUMAN" or not actor.can("release:review") or not actor.can("review:role:RELEASE_MANAGER"):
+            require_access(actor, project)
+            if (actor.principal_type != "HUMAN" or actor.principal_id != action["reviewer_id"]
+                    or not actor.can("release:review")
+                    or not all(actor.can("review:role:" + role) for role in action["reviewer_roles"])):
                 raise ServiceBoundaryError("REVIEW_ROLE_FORBIDDEN", "release reviewer is no longer authorized", status_code=403)
         # Verify package/event/record closure independently of cached flags.
         if verify_registry(root)["status"] != "VALID":

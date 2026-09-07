@@ -23,10 +23,10 @@ def _required(value: Any, field: str, message: str = "required lifecycle referen
     return value
 
 
-def record_by_id(root: Path, folder: str, field: str, identifier: str | None) -> dict[str, Any]:
+def record_by_id(root: Path, folder: str, field: str, identifier: str | None, *, manifest_kind: str | None = None) -> dict[str, Any]:
     _required(identifier, field)
     for row in list_records(root, folder):
-        if row.get(field) == identifier:
+        if row.get(field) == identifier and (manifest_kind is None or row.get("manifest_kind") == manifest_kind):
             if row.get("registry_id") != load_manifest(root).get("registry_id"):
                 raise LifecycleError("LIFECYCLE_ARTIFACT_TAMPERED", f"cross-registry {field}")
             return row

@@ -85,7 +85,10 @@ def create_release_candidate(
 
 
 def _quorum(candidate: dict[str, Any], actions: list[dict[str, Any]]) -> tuple[bool, set[str], set[str], set[str]]:
-    approvals = [item for item in actions if item.get("action") == "APPROVE" and item.get("reviewer_type") == "HUMAN" and item.get("explicit_human_action") is True]
+    # A later rejection/abstention withdraws that person's earlier approval.
+    # Count current identities, never the accumulated history of positive votes.
+    latest = {item["reviewer_id"]: item for item in actions}
+    approvals = [item for item in latest.values() if item.get("action") == "APPROVE" and item.get("reviewer_type") == "HUMAN" and item.get("explicit_human_action") is True]
     reviewer_ids = {item.get("reviewer_id") for item in approvals}
     roles = {role for item in approvals for role in item.get("reviewer_roles", [])}
     acknowledgements = {ref for item in approvals for ref in item.get("acknowledgement_refs", [])}
@@ -93,7 +96,8 @@ def _quorum(candidate: dict[str, Any], actions: list[dict[str, Any]]) -> tuple[b
     alternatives = set(candidate.get("alternative_roles", []))
     role_ok = required.issubset(roles) or bool(alternatives & roles)
     ack_ok = set(candidate.get("required_acknowledgements", [])).issubset(acknowledgements)
-    return bool(approvals) and role_ok and ack_ok and len(reviewer_ids) >= int(candidate.get("minimum_distinct_reviewers", 1)), roles, reviewer_ids, acknowledgements
+    rejected = any(item.get("action") in {"REJECT", "REQUEST_CHANGES"} for item in latest.values())
+    return not rejected and bool(approvals) and role_ok and ack_ok and len(reviewer_ids) >= int(candidate.get("minimum_distinct_reviewers", 1)), roles, reviewer_ids, acknowledgements
 
 
 def record_review(workspace: Path | str, release_candidate_id: str, *, reviewer_id: str, reviewer_roles: list[str], action: str = "APPROVE", rationale: str = "", explicit_human_action: bool = True, acknowledgement_refs: list[str] | None = None) -> dict[str, Any]:

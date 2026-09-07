@@ -7,10 +7,20 @@ from pathlib import Path
 from typing import Any
 
 from kg_mnp.contracts.canonical import semantic_hash
+from kg_mnp.semantic_kernel.packaging.verifier import verify_package
 
+from .contracts import verify
 from .errors import LifecycleError
-from .guards import head, package_record, record_by_id, release_record
-from .registry.events import append_event
+from .guards import (
+    file_sha256,
+    head,
+    package_files,
+    package_record,
+    real_archive,
+    record_by_id,
+    release_record,
+)
+from .registry.events import append_event, read_events
 from .registry.manifest import load_manifest
 from .security import human
 from .store import bind_identity, list_records, save
@@ -56,13 +66,37 @@ def _decision(root: Path, decision_id: str) -> dict[str, Any]:
     return record_by_id(root, "records/activation-reviews", "decision_id", decision_id)
 
 
+def current_environment_reviews(root: Path, proposal_id: str) -> list[dict]:
+    """Replay the append-only event order, not filename order or old approvals."""
+    latest = {}
+    for event in read_events(root):
+        payload = event.get("payload", {})
+        if event["event_type"] == "ActivationReviewed" and payload.get("activation_proposal_id") == proposal_id:
+            review = _decision(root, payload["subject_id"])
+            if review["activation_proposal_id"] != proposal_id:
+                raise LifecycleError("ACTIVATION_BLOCKED", "current review binding changed")
+            latest[review["reviewer_id"]] = review
+    return list(latest.values())
+
+
 def _release_target(root: Path, release_id: str) -> tuple[dict[str, Any], dict[str, Any], dict[str, Any]]:
     release = release_record(root, release_id)
+    verify(release, contract="release-manifest")
     package = package_record(root, release.get("package_id"))
+    _manifest, lock, package_root = package_files(root, package)
+    verify_package(package_root)
     attestations = [item for item in list_records(root, "records/attestations") if item.get("release_id") == release_id and item.get("attestation_status") == "VERIFIED"]
     if not attestations:
         raise LifecycleError("ACTIVATION_BLOCKED", "release has no verified attestation")
-    return release, package, attestations[-1]
+    attestation = attestations[-1]
+    verify(attestation, contract="release-attestation")
+    release_path = root / "records/releases" / f"{release_id.rsplit(':', 1)[1]}.json"
+    if (attestation["package_id"] != package["package_id"] or attestation["package_lock_id"] != lock["lock_id"]
+            or attestation["package_archive_sha256"] != file_sha256(real_archive(root, package))
+            or attestation["release_manifest_file_sha256"] != file_sha256(release_path)
+            or attestation["release_manifest_semantic_sha256"] != semantic_hash({k:v for k,v in release.items() if k not in {"release_id", "content_digest"}})):
+        raise LifecycleError("ACTIVATION_BLOCKED", "actual release/attestation/package digest closure changed")
+    return release, package, attestation
 
 
 def propose_activation(workspace: Path | str, *, environment_id: str, release_id: str, rationale: str, requested_by: str = "operator", activation_kind: str = "ACTIVATE") -> dict:
@@ -114,6 +148,14 @@ def execute_activation(workspace: Path | str, *, proposal_id: str, decision_id: 
     if decision.get("reviewer_type") != "HUMAN" or decision.get("explicit_human_action") is not True:
         raise LifecycleError("ACTIVATION_BLOCKED", "human approval is required")
     allowed = {"APPROVE_ROLLBACK", "APPROVE"} if proposal.get("activation_kind") == "ROLLBACK" else {"APPROVE_ACTIVATION", "APPROVE"}
+    current = current_environment_reviews(root, proposal_id)
+    roles = set(env["rollback_roles"] if proposal["activation_kind"] == "ROLLBACK" else env["activation_roles"])
+    quorum = env["rollback_quorum"] if proposal["activation_kind"] == "ROLLBACK" else env["activation_quorum"]
+    approvals = {r["reviewer_id"] for r in current if r["decision"] in allowed and r["reviewer_type"] == "HUMAN"
+                 and r["explicit_human_action"] and roles.intersection(r["reviewer_roles"])}
+    if (len(approvals) < quorum or any(r["decision"] == "REJECT" for r in current)
+            or decision_id not in {r["decision_id"] for r in current}):
+        raise LifecycleError("ACTIVATION_BLOCKED", "current review quorum is incomplete or approval was withdrawn")
     if decision.get("decision") not in allowed:
         raise LifecycleError("ACTIVATION_BLOCKED", "activation review did not approve")
     if not breaking_change_acknowledged and not decision.get("breaking_change_acknowledged") and env.get("breaking_release_policy") == "REQUIRE_EXPLICIT_ACK":
@@ -124,6 +166,8 @@ def execute_activation(workspace: Path | str, *, proposal_id: str, decision_id: 
     path, pointer = _pointer(root, proposal["environment_id"])
     if pointer.get("generation") != expected_generation or pointer.get("pointer_hash") != expected_pointer_hash:
         raise LifecycleError("LIFECYCLE_CONCURRENCY_CONFLICT", "environment pointer changed")
+    if (proposal["base_pointer_generation"], proposal["base_pointer_hash"]) != (pointer["generation"], pointer["pointer_hash"]):
+        raise LifecycleError("LIFECYCLE_CONCURRENCY_CONFLICT", "approved proposal was based on a stale pointer")
     release, package, attestation = _release_target(root, proposal["target_release_id"])
     if proposal.get("target_package_id") != package.get("package_id") or proposal.get("release_attestation_id") != attestation.get("attestation_id"):
         raise LifecycleError("ACTIVATION_BLOCKED", "proposal target closure changed")
