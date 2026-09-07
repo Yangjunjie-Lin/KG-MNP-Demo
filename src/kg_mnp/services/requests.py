@@ -197,7 +197,13 @@ class ReleasePublishRequest(RequestDTO):
     expected_registry_head_hash: str = Field(pattern=r"^[a-f0-9]{64}$")
 
 
+class JobRecoveryRequest(RequestDTO):
+    mode: Literal["RECOVER_COMMITTED", "RETRY_LOCAL"]
+    expected_attempt: int = Field(ge=1)
+
+
 class MetadataRequest(PackageRequest):
+    release_id: str | None = Field(default=None, pattern=r"^urn:kg-mnp:release:[a-f0-9]{64}$")
     offset: int = Field(default=0, ge=0, le=1000000)
     limit: int = Field(default=100, ge=1, le=1000)
 

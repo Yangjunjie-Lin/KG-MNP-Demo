@@ -23,9 +23,9 @@ def main(argv: list[str] | None = None) -> int:
     args = list(argv or [])
     action = args[0] if args else "doctor"
     if action in {"--help", "-h", "help"}:
-        print("usage: kg-mnp service {doctor|openapi|token|serve|worker|call|upload} [options]")
+        print("usage: kg-mnp service {doctor|openapi|token|serve|worker|call|upload|recover} [options]")
         return 0
-    if action in {"call", "upload"}:
+    if action in {"call", "upload", "recover"}:
         from kg_mnp.sdk.http import HTTPClient
         from kg_mnp.services.models import OperationRequest
         token = os.environ.get("KG_MNP_TOKEN", "")
@@ -33,7 +33,12 @@ def main(argv: list[str] | None = None) -> int:
         try:
             project_id = _arg(args, "--project-id")
             key = _arg(args, "--idempotency-key")
-            if action == "upload":
+            if action == "recover":
+                job_id, attempt = _arg(args,"--job-id"), _arg(args,"--expected-attempt")
+                if not job_id or not attempt:
+                    raise ValueError("recovery requires --job-id and --expected-attempt")
+                result=client.recover_job(job_id,mode="RETRY_LOCAL" if "--retry-local" in args else "RECOVER_COMMITTED",expected_attempt=int(attempt))
+            elif action == "upload":
                 if not project_id or not key or not _arg(args, "--file"):
                     raise ValueError("upload requires --project-id, --file and --idempotency-key")
                 source = Path(_arg(args, "--file"))

@@ -32,6 +32,14 @@ class HTTPClient:
     def close(self) -> None:
         self._client.close()
 
+    def recover_job(self, job_id: str, *, mode: str, expected_attempt: int) -> dict:
+        response = self._client.post(f"/api/v1/jobs/{quote(job_id,safe='')}/recovery", headers={"Authorization":f"Bearer {self.bearer_token}"},
+            json={"mode":mode,"expected_attempt":expected_attempt})
+        if response.status_code >= 400:
+            error = response.json().get("error", {})
+            raise SDKError(error.get("code","HTTP_ERROR"),error.get("message","recovery failed"),response.status_code)
+        return response.json()
+
     def upload_source(self, project_id: str, content, *, filename: str, media_type: str,
                       idempotency_key: str) -> dict:
         response = self._client.post(f"/api/v1/projects/{project_id}/sources", content=content,

@@ -14,6 +14,9 @@ class LocalClient:
     def execute(self, request: OperationRequest) -> OperationResult:
         return self.service.execute(request, self.principal)
 
+    def recover_job(self, job_id: str, *, mode: str, expected_attempt: int) -> dict:
+        return self.service.request_job_recovery(job_id,self.principal,mode=mode,expected_attempt=expected_attempt)
+
     async def upload_source(self, project_id: str, chunks, *, filename: str, media_type: str,
                             idempotency_key: str) -> dict:
         from kg_mnp.services.uploads import receive_upload

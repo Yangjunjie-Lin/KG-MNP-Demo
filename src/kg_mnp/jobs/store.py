@@ -201,6 +201,26 @@ class JobStore:
             connection.commit()
         return self.get(job_id)
 
+    def requeue_local(self, job_id: str, *, expected_attempt: int, requested_by: str) -> JobRecord:
+        """Explicit recovery of an uncommitted, abandoned local attempt."""
+        with self._connection() as connection:
+            connection.execute("BEGIN IMMEDIATE")
+            row = connection.execute("SELECT * FROM jobs WHERE job_id=?", (job_id,)).fetchone()
+            if not row:
+                raise KeyError(job_id)
+            if row["attempt"] != expected_attempt:
+                raise ValueError("job attempt changed")
+            if row["status"] == "QUEUED":
+                return self.get(job_id)
+            if row["status"] not in {"RUNNING", "RECOVERY_REQUIRED"} or (row["lease_expires_at"] or 0) > time.time():
+                raise ValueError("job is not an abandoned local attempt")
+            if connection.execute("SELECT 1 FROM job_events WHERE job_id=? AND event_type IN ('JOB_CANCEL_REQUESTED','JOB_CANCELLED')", (job_id,)).fetchone():
+                raise ValueError("cancelled intent requires a new explicit request")
+            connection.execute("UPDATE jobs SET status='QUEUED',fencing_token=fencing_token+1,lease_owner=NULL,lease_expires_at=NULL,error_json=NULL,updated_at=? WHERE job_id=?", (time.time(),job_id))
+            self._event(connection,job_id,"JOB_LOCAL_RETRY_REQUESTED",{"previous_attempt":expected_attempt,"requested_by":requested_by})
+            connection.commit()
+        return self.get(job_id)
+
     def cancel(self, job_id: str) -> JobRecord:
         with self._connection() as conn:
             conn.execute("BEGIN IMMEDIATE")

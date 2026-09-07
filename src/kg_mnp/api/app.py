@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import re
 import secrets
 from pathlib import Path
 from typing import Any
@@ -32,6 +33,7 @@ from kg_mnp.services.requests import (
     IntegrationExecuteRequest,
     IntegrationPlanRequest,
     IntegrationReviewRequest,
+    JobRecoveryRequest,
     ModelingPrepareRequest,
     ObjectRequest,
     ObjectTraceRequest,
@@ -57,13 +59,23 @@ def create_app(service: ApplicationService) -> FastAPI:
 
     @app.middleware("http")
     async def boundary_headers(request: Request, call_next):
+        path = request.scope.get("path", "")
+        host = request.headers.get("host", "")
+        # Check raw ASGI/Host values before URL reconstruction or filesystem
+        # resolution. In particular, never let a Windows UNC URL reach static
+        # path resolution (which can trigger SMB before containment is checked).
+        if (not path.startswith("/") or "\\" in path or any(ord(c)<32 for c in path)
+                or not re.fullmatch(r"(?:\[[0-9A-Fa-f:]+\]|[A-Za-z0-9.-]+)(?::[0-9]{1,5})?", host)):
+            return JSONResponse({"error":{"code":"REQUEST_TARGET_INVALID","message":"invalid request target or Host"}}, status_code=400,
+                headers={"Content-Security-Policy":"default-src 'none'; frame-ancestors 'none'; base-uri 'none'",
+                         "X-Content-Type-Options":"nosniff","X-Frame-Options":"DENY","Cache-Control":"no-store"})
         origin = request.headers.get("origin")
         same_origin = str(request.base_url).rstrip("/")
         if origin and origin != same_origin and origin not in service.configuration.allowed_origins:
             response = JSONResponse({"error": {"code": "ORIGIN_FORBIDDEN", "message": "origin is not allowed"}}, status_code=403)
         else:
             try:
-                if request.method in {"POST", "PUT", "PATCH"} and not request.url.path.endswith("/sources"):
+                if request.method in {"POST", "PUT", "PATCH"} and not path.endswith("/sources"):
                     body = bytearray()
                     async for chunk in request.stream():
                         body.extend(chunk)
@@ -82,7 +94,7 @@ def create_app(service: ApplicationService) -> FastAPI:
             except ServiceBoundaryError as exc:
                 response = JSONResponse(exc.to_dict(), status_code=exc.status_code)
         response.headers["Content-Security-Policy"] = "default-src 'none'; frame-ancestors 'none'; base-uri 'none'"
-        if not request.url.path.startswith(("/api/", "/health")):
+        if not path.startswith(("/api/", "/health")):
             response.headers["Content-Security-Policy"] = "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; frame-ancestors 'none'; base-uri 'none'; object-src 'none'"
         response.headers["X-Content-Type-Options"] = "nosniff"
         response.headers["X-Frame-Options"] = "DENY"
@@ -202,9 +214,10 @@ def create_app(service: ApplicationService) -> FastAPI:
     def project_state(project_id: str, authorization: str | None = Header(default=None)):
         principal = service.authenticate(authorization or "")
         from kg_mnp.services.authorization_policy import authorize
-        from kg_mnp.services.projects import get_project, load_catalog, require_access
+        from kg_mnp.services.projects import load_catalog, project_from_catalog, require_access
         authorize(principal,service.catalog["project.open"],OperationRequest("project.open",project_id))
-        project_handle=get_project(service.root,project_id)
+        catalog = load_catalog(service.root)
+        project_handle=project_from_catalog(service.root,catalog,project_id)
         require_access(principal,project_handle)
         # Operational projection only: do not cache or advertise an artifact
         # validation verdict. Explicit readers/validators verify their artifacts.
@@ -212,7 +225,6 @@ def create_app(service: ApplicationService) -> FastAPI:
         if not principal.can("source:read") or not principal.can("package:read"):
             raise ServiceBoundaryError("FORBIDDEN", "source:read and package:read required for combined workspace view", status_code=403)
         from kg_mnp.lifecycle.registry.head import read_head
-        catalog = load_catalog(service.root)
         results = [{"job_id": job_id, "operation": record["context"]["operation_id"],
                     "revision": record["authority_revision"], "result": record["result"]}
                    for job_id, record in catalog.get("commits", {}).items() if record["context"]["project_id"] == project_id]
@@ -223,6 +235,7 @@ def create_app(service: ApplicationService) -> FastAPI:
             except ServiceBoundaryError:
                 continue
             jobs.append({"job_id": job.job_id, "operation_id": job.operation_id, "status": job.status,
+                         "attempt":job.attempt,
                          "error": {"code": job.error.get("code")} if job.error else None})
         return {"project": opened, "results": sorted(results, key=lambda row: row["revision"]), "jobs": jobs,
                 "registry_head": read_head(project_handle.registry_root)["head_hash"]}
@@ -248,6 +261,11 @@ def create_app(service: ApplicationService) -> FastAPI:
     @app.post("/api/v1/jobs/{job_id}/cancel", operation_id="cancelJob")
     def cancel_job(job_id: str, authorization: str | None = Header(default=None)):
         return service.cancel_job(job_id, service.authenticate(authorization or ""))
+
+    @app.post("/api/v1/jobs/{job_id}/recovery", operation_id="recoverJob")
+    def recover_job(job_id: str, payload: JobRecoveryRequest, authorization: str | None = Header(default=None)):
+        return service.request_job_recovery(job_id, service.authenticate(authorization or ""),
+            mode=payload.mode, expected_attempt=payload.expected_attempt)
 
     @app.post("/api/v1/projects/{project_id}/sources", operation_id="uploadSource", status_code=202)
     async def upload_source(project_id: str, request: Request, authorization: str | None = Header(default=None),
@@ -421,8 +439,8 @@ def create_app(service: ApplicationService) -> FastAPI:
         return resource("consumer.register",project_id,authorization,payload.model_dump(),idempotency_key)
 
     @app.get("/api/v1/projects/{project_id}/metadata", operation_id="inspectMetadata")
-    def metadata(project_id: str, package_id: str, limit: int = 100, offset: int = 0, authorization: str | None = Header(default=None)):
-        return resource("oms.metadata", project_id, authorization, {"package_id": package_id, "limit": limit, "offset": offset})
+    def metadata(project_id: str, package_id: str, limit: int = 100, offset: int = 0, release_id: str | None = None, authorization: str | None = Header(default=None)):
+        return resource("oms.metadata", project_id, authorization, {"package_id": package_id, "release_id":release_id, "limit": limit, "offset": offset})
 
     @app.get("/api/v1/projects/{project_id}/environment-pointer",operation_id="getEnvironmentPointer")
     def environment_pointer(project_id:str,environment_id:str,authorization:str|None=Header(default=None)):

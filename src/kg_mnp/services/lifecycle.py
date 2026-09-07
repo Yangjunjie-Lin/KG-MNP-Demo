@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from pathlib import Path
 
-from kg_mnp.integrations.local_rdf import LocalRDFQueryAdapter
+from kg_mnp.integrations.object_query import query_objects
 from kg_mnp.integrations.oms import OMSMetadataService
 from kg_mnp.lifecycle.changes import (
     attach_candidate_package,
@@ -43,9 +43,10 @@ from kg_mnp.lifecycle.release import (
     record_review,
 )
 from kg_mnp.lifecycle.store import list_records, save
+from kg_mnp.semantic_kernel.errors import SemanticKernelError
 from kg_mnp.semantic_kernel.packaging.verifier import verify_package
 
-from .compilation import package_path
+from .compilation import package_location, package_path
 from .errors import ServiceBoundaryError
 from .projects import load_catalog, require_access
 from .release_policy import release_policy, require_release_policy
@@ -198,20 +199,36 @@ def execute(app, project, request, principal):
         if name == "registry.import":
             return import_package(root, package_path(project, params["package_id"]), source_project_lock=Path(project.root) / "project.lock.json")
         if name in {"oms.metadata", "ods.query"}:
-            path = package_path(project, params["package_id"])
+            # Both readers below verify the package themselves. Resolve identity
+            # here without repeating the complete validation in the same read.
+            path = package_location(project, params["package_id"])
+            release_id = params.get("release_id")
+            if release_id:
+                if not principal.can("release:read"):
+                    raise ServiceBoundaryError("FORBIDDEN", "release:read required for a release-selected view", status_code=403)
+                released = _record(root, "releases", "release_id", release_id)
+                verify(released, contract="release-manifest")
+                if released["package_id"] != params["package_id"] or released["release_status"] != "RELEASED":
+                    raise ServiceBoundaryError("VERSION_BINDING_INVALID", "selected Release does not reference this Package", status_code=409)
             if name == "oms.metadata":
-                result = OMSMetadataService(path).metadata(limit=params.get("limit", 100), offset=params.get("offset", 0))
-                result["view"] = "VALIDATED_UNPUBLISHED"
+                try:
+                    result = OMSMetadataService(path).metadata(limit=params.get("limit", 100), offset=params.get("offset", 0))
+                except (OSError, ValueError) as exc:
+                    raise ServiceBoundaryError("PACKAGE_INVALID", "package metadata is absent or invalid", status_code=409) from exc
+                result["view"] = "RELEASED" if release_id else "VALIDATED_UNPUBLISHED"
+                result["release_id"] = release_id
                 return result
             if bool(params.get("class_iri")) == bool(params.get("instance_iri")):
                 raise ServiceBoundaryError("QUERY_INVALID", "select exactly one class or instance", status_code=422)
-            # Closed query primitives: no user SPARQL, UPDATE, SERVICE or FROM.
-            query = LocalRDFQueryAdapter(path, max_results=1001000)
-            offset, limit = params.get("offset", 0), params.get("limit", 100)
-            result = query.instances_by_class(params["class_iri"], limit=offset + limit + 1) if params.get("class_iri") else query.instance(params["instance_iri"], limit=offset + limit + 1)
-            rows = sorted(result["rows"], key=lambda row: str(sorted(row.items())))
-            return {"package_id": params["package_id"], "rows": rows[offset:offset + limit],
-                    "page": {"offset": offset, "limit": limit, "truncated": len(rows) > offset + limit or result["truncated"]}}
+            try:
+                return {**query_objects(path, class_iri=params.get("class_iri"), instance_iri=params.get("instance_iri"),
+                                     offset=params.get("offset", 0), limit=params.get("limit", 100)), "release_id":release_id}
+            except TimeoutError as exc:
+                raise ServiceBoundaryError("QUERY_TIMEOUT", "local query time limit exceeded", status_code=504) from exc
+            except SemanticKernelError as exc:
+                raise ServiceBoundaryError("PACKAGE_INVALID", "query package failed verification", status_code=409) from exc
+            except ValueError as exc:
+                raise ServiceBoundaryError("QUERY_INVALID", "local query selector or execution failed", status_code=422) from exc
         if name == "release.candidate":
             policy = release_policy(app.configuration.review_profile)
             record = package_record(root, params["package_id"])

@@ -177,6 +177,52 @@ class ApplicationService:
         result = committed_result(self, job)
         return self.jobs.recover_committed(job.job_id, result) if result is not None else None
 
+    def request_job_recovery(self, job_id, principal, *, mode, expected_attempt):
+        principal = self._current(principal)
+        from pydantic import ValidationError
+
+        from .requests import JobRecoveryRequest
+        try:
+            JobRecoveryRequest(mode=mode, expected_attempt=expected_attempt)
+        except ValidationError as exc:
+            raise ServiceBoundaryError("REQUEST_INVALID", "recovery request does not match the resource contract", status_code=422) from exc
+        if not principal.can("job:recover"):
+            raise ServiceBoundaryError("FORBIDDEN", "missing permission: job:recover", status_code=403)
+        job = self._job(job_id, principal)
+        recovered = self.recover_job(job)
+        if recovered is not None:
+            return self._public_job(recovered, principal)
+        if mode != "RETRY_LOCAL":
+            raise ServiceBoundaryError("COMMIT_NOT_FOUND", "no verified core commit receipt exists", status_code=409)
+        from .compilation import OPERATIONS as compilation
+        from .lifecycle import OPERATIONS as lifecycle
+        from .modeling import OPERATIONS as modeling
+        from .sources import OPERATIONS as sources
+        # External integration/workflow operations are deliberately excluded;
+        # this is not a claim of safe replay for unknown external side effects.
+        if job.operation_id not in sources | modeling | compilation | lifecycle:
+            raise ServiceBoundaryError("RECOVERY_REQUIRED", "external or unknown operation requires explicit reconciliation", status_code=409)
+        parameters = self.jobs.parameters(job_id)
+        identity = parameters.get("__principal", {})
+        original = self.tokens.resolve(identity.get("token_id", ""))
+        if original.principal_id != identity.get("principal_id"):
+            raise ServiceBoundaryError("AUTH_INVALID", "original job identity changed", status_code=401)
+        request = OperationRequest(job.operation_id, job.project_id, {k:v for k,v in parameters.items() if k != "__principal"})
+        authorize(original, self.catalog[job.operation_id], request)
+        self._authorize_object(request, original, self.catalog[job.operation_id])
+        try:
+            from .coordination import metadata_lock
+            with metadata_lock(self.tokens.path.with_suffix(".lock.sqlite3")):
+                operator = self._current(principal)
+                original = self.tokens.resolve(identity["token_id"])
+                if not operator.can("job:recover"):
+                    raise ServiceBoundaryError("FORBIDDEN", "job recovery grant changed", status_code=403)
+                authorize(original, self.catalog[job.operation_id], request)
+                queued = self.jobs.requeue_local(job_id, expected_attempt=expected_attempt,requested_by=operator.principal_id)
+        except ValueError as exc:
+            raise ServiceBoundaryError("JOB_RECOVERY_CONFLICT", "attempt is active, changed or cancelled", status_code=409) from exc
+        return self._public_job(queued, principal)
+
     def _project(self, request: OperationRequest) -> ProjectHandle:
         if not request.project_id:
             raise ServiceBoundaryError("PROJECT_REQUIRED", "project scope is required", status_code=422)

@@ -5,6 +5,7 @@ from pathlib import Path
 
 from kg_mnp.contracts.canonical import file_sha256
 from kg_mnp.contracts.document_io import read_document
+from kg_mnp.contracts.errors import ContractError
 from kg_mnp.domain_packs.registry import DomainPackRegistry
 from kg_mnp.semantic_kernel.baseline import load_baseline_closure
 from kg_mnp.semantic_kernel.compiler import SemanticCompiler
@@ -20,16 +21,25 @@ from .errors import ServiceBoundaryError
 OPERATIONS = frozenset({"compile.plan", "compile.build", "compile.validate", "compile.reproduce", "package.verify", "package.export"})
 
 
-def package_path(project, package_id):
+def package_location(project, package_id):
+    """Resolve project membership/identity; the consuming reader must verify bytes."""
     try:
         path = Path(project.root) / "artifacts" / "packages" / package_storage_key(package_id)
         manifest = read_document(path / "ontology-package.json", max_bytes=16 * 1024 * 1024)
         if manifest["package_id"] != package_id:
             raise ValueError("package ID mismatch")
-        verify_package(path)
         return path
-    except (OSError, ValueError, KeyError, SemanticKernelError) as exc:
+    except (OSError, ValueError, KeyError, ContractError) as exc:
         raise ServiceBoundaryError("PACKAGE_INVALID", "package is absent or invalid in this project", status_code=409) from exc
+
+
+def package_path(project, package_id):
+    path = package_location(project, package_id)
+    try:
+        verify_package(path)
+    except (OSError, ValueError, KeyError, ContractError) as exc:
+        raise ServiceBoundaryError("PACKAGE_INVALID", "package is absent or invalid in this project", status_code=409) from exc
+    return path
 
 
 def execute(app, project, request, principal):

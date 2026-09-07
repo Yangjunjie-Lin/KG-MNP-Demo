@@ -131,7 +131,12 @@ def create_project(root: Path, name: str, principal: PrincipalReference, *,
 
 
 def get_project(root: Path, project_id: str) -> ProjectHandle:
-    row = load_catalog(root).get("projects", {}).get(project_id)
+    return project_from_catalog(root, load_catalog(root), project_id)
+
+
+def project_from_catalog(root: Path, catalog: dict, project_id: str) -> ProjectHandle:
+    """Resolve a handle from the same immutable catalog read as its receipts."""
+    row = catalog.get("projects", {}).get(project_id)
     if not row:
         raise ServiceBoundaryError("PROJECT_NOT_FOUND", "project was not found", status_code=404)
     handle = _safe_handle(root, row)
