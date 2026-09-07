@@ -201,13 +201,18 @@ def create_app(service: ApplicationService) -> FastAPI:
     @app.get("/api/v1/projects/{project_id}/state", operation_id="readProjectState")
     def project_state(project_id: str, authorization: str | None = Header(default=None)):
         principal = service.authenticate(authorization or "")
-        opened = service.execute(OperationRequest("project.open", project_id), principal).payload
+        from kg_mnp.services.authorization_policy import authorize
+        from kg_mnp.services.projects import get_project, load_catalog, require_access
+        authorize(principal,service.catalog["project.open"],OperationRequest("project.open",project_id))
+        project_handle=get_project(service.root,project_id)
+        require_access(principal,project_handle)
+        # Operational projection only: do not cache or advertise an artifact
+        # validation verdict. Explicit readers/validators verify their artifacts.
+        opened={**project_handle.public_dict(),"status":"OPEN","validation_status":"NOT_RUN_BY_STATE_PROJECTION"}
         if not principal.can("source:read") or not principal.can("package:read"):
             raise ServiceBoundaryError("FORBIDDEN", "source:read and package:read required for combined workspace view", status_code=403)
         from kg_mnp.lifecycle.registry.head import read_head
-        from kg_mnp.services.projects import get_project, load_catalog
         catalog = load_catalog(service.root)
-        project_handle=get_project(service.root,project_id)
         results = [{"job_id": job_id, "operation": record["context"]["operation_id"],
                     "revision": record["authority_revision"], "result": record["result"]}
                    for job_id, record in catalog.get("commits", {}).items() if record["context"]["project_id"] == project_id]
@@ -317,7 +322,7 @@ def create_app(service: ApplicationService) -> FastAPI:
 
     @app.post("/api/v1/projects/{project_id}/reviews/actions", operation_id="applyReviewAction", status_code=202)
     def review_action(project_id: str, payload: ReviewActionRequest, authorization: str | None = Header(default=None), idempotency_key: str | None = Header(default=None)):
-        return resource("review.action", project_id, authorization, payload.model_dump(), idempotency_key)
+        return resource("review.action", project_id, authorization, payload.model_dump(exclude_unset=True), idempotency_key)
 
     @app.get("/api/v1/projects/{project_id}/reviews/{review_id}", operation_id="replayReview")
     def replay_review(project_id: str, review_id: str, authorization: str | None = Header(default=None)):

@@ -83,11 +83,17 @@ def _snapshot(plan: dict[str, Any], snapshot_id: str) -> dict[str, Any]:
     return next(item for item in plan["plugin_snapshots"] if item["snapshot_id"] == snapshot_id)
 
 
-def _formal_directories_empty(workspace: Path) -> None:
+def _formal_artifact_digests(workspace: Path) -> dict[str, str]:
+    """Ingestion cannot mutate formal output, but may follow a prior release."""
+    result = {}
     for relative in ("artifacts/confirmed", "artifacts/packages"):
         directory = workspace / relative
-        if any(directory.iterdir()):
-            raise IngestionError(f"ingestion authority boundary requires empty {relative}")
+        for path in sorted(directory.rglob("*")):
+            if path.is_symlink() or (hasattr(path, "is_junction") and path.is_junction()):
+                raise IngestionError("linked formal artifact rejected")
+            if path.is_file():
+                result[path.relative_to(workspace).as_posix()] = bytes_sha256(path.read_bytes())
+    return result
 
 
 def execute_ingestion_plan(
@@ -123,9 +129,9 @@ def execute_ingestion_plan(
     if existing is not None:
         return existing
     registry = PluginRegistry(allowlist=enabled_plugins)
-    _formal_directories_empty(root)
     limits = ResourceLimits(**plan["resource_limits"])
     with WorkspaceOperationLock(root, "ingestion"):
+        formal_before = _formal_artifact_digests(root)
         existing = _load_existing_run(root, run_hash)
         if existing is not None:
             return existing
@@ -249,8 +255,9 @@ def execute_ingestion_plan(
             atomic_write_json(transaction.directory("validation") / "quality-report.json", quality)
             atomic_write_json(transaction.directory("validation") / "validation-report.json", validation)
             atomic_write_json(transaction.directory("validation") / "artifact-manifest.json", manifests["validation"])
+            if _formal_artifact_digests(root) != formal_before:
+                raise IngestionError("formal artifacts changed during ingestion; output not committed")
             transaction.commit()
-        _formal_directories_empty(root)
         return IngestionResult(run=run, dataset=dataset, quality_report=quality)
 
 

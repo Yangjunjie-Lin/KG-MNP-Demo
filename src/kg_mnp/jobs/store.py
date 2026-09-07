@@ -100,9 +100,9 @@ class JobStore:
         return JobRecord(row["job_id"], row["operation_id"], row["project_id"], row["request_digest"], row["status"], row["attempt"], row["fencing_token"], row["lease_owner"], row["lease_expires_at"], json.loads(row["result_json"]) if row["result_json"] else None, json.loads(row["error_json"]) if row["error_json"] else None)
 
     def claim(self, *, worker_id: str, lease_seconds: float = 30) -> JobRecord | None:
-        now = time.time()
         with self._connection() as connection:
             connection.execute("BEGIN IMMEDIATE")
+            now = time.time()
             expired = connection.execute("SELECT job_id FROM jobs WHERE status IN ('RUNNING','CANCEL_REQUESTED') AND lease_expires_at < ?", (now,)).fetchall()
             for item in expired:
                 connection.execute("UPDATE jobs SET status='RECOVERY_REQUIRED',lease_owner=NULL,lease_expires_at=NULL,updated_at=? WHERE job_id=?", (now, item[0]))
@@ -153,12 +153,16 @@ class JobStore:
         return [{"sequence": row[0], "event_type": row[1], "payload": json.loads(row[2]), "observed_at": row[3]} for row in rows]
 
     def renew(self, job_id: str, *, worker_id: str, fencing_token: int, lease_seconds: float = 30) -> None:
-        now = time.time()
         with self._connection() as conn:
+            conn.execute("BEGIN IMMEDIATE")
+            # Lock wait time is not lease time: never revive an expired lease
+            # with a timestamp captured before another writer released SQLite.
+            now = time.time()
             changed = conn.execute("UPDATE jobs SET lease_expires_at=? WHERE job_id=? AND status='RUNNING' AND lease_owner=? AND fencing_token=? AND lease_expires_at>?",
                                    (now + lease_seconds, job_id, worker_id, fencing_token, now)).rowcount
             if changed != 1:
                 raise ValueError("stale or cancelled job lease")
+            conn.commit()
 
     def require_lease(self, job) -> None:
         current = self.get(job.job_id)

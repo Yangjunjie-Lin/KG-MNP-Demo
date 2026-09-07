@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import sqlite3
 from threading import Event, Thread
 from typing import Any
 
@@ -20,11 +21,20 @@ class JobWorker:
         stopped = Event()
 
         def renew():
-            while not stopped.wait(10):
+            delay = 10
+            while not stopped.wait(delay):
                 try:
                     self.store.renew(job.job_id, worker_id=worker_id, fencing_token=job.fencing_token)
+                    delay = 10
                 except ValueError:
                     return
+                except sqlite3.OperationalError as exc:
+                    if getattr(exc, "sqlite_errorcode", None) not in {sqlite3.SQLITE_BUSY, sqlite3.SQLITE_LOCKED}:
+                        raise
+                    # Short contention can happen during a fenced publication.
+                    # Retrying renewal grants no authority: expiry/token are
+                    # rechecked after the writer lock is acquired each time.
+                    delay = 1
 
         heartbeat = Thread(target=renew, daemon=True)
         heartbeat.start()

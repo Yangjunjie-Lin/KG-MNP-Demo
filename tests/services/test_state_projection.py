@@ -17,6 +17,7 @@ def test_job_state_reuses_only_current_request_project_authorization(tmp_path,mo
     with TestClient(create_app(service)) as client:
         response=client.get(f"/api/v1/projects/{project['project_id']}/state",headers={"Authorization":f"Bearer {token}"})
         assert response.status_code==200 and len(response.json()["jobs"])==20
+        assert response.json()["project"]["validation_status"]=="NOT_RUN_BY_STATE_PROJECTION"
         assert len(reads)<10
         service.tokens.revoke(principal.token_id)
         assert client.get(f"/api/v1/projects/{project['project_id']}/state",headers={"Authorization":f"Bearer {token}"}).status_code==401

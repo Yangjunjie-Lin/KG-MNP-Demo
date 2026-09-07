@@ -4,12 +4,13 @@ from __future__ import annotations
 
 import re
 import xml.etree.ElementTree as ET
+from functools import lru_cache
 from pathlib import Path
 from typing import Any
 
 from jsonschema import ValidationError
 from pyparsing import ParseBaseException
-from rdflib import Graph, URIRef
+from rdflib import Graph
 from rdflib.namespace import OWL, RDF
 from rdflib.plugins.sparql.parser import parseQuery
 
@@ -43,6 +44,21 @@ _RDF_MEDIA_TYPES = {
     "application/n-quads": "nquads",
 }
 _SPARQL_PLACEHOLDER = re.compile(r"@@(?:PARAM|GRAPH)_[A-Za-z0-9_-]+@@")
+
+
+@lru_cache(maxsize=128)
+def _rdf_syntax_facts(raw:bytes,format_name:str,base_uri:str)->tuple[frozenset[str],frozenset[str]]:
+    """Only immutable parse facts are cached; paths, locks and verdicts are not."""
+    graph=Graph()
+    graph.parse(data=raw,format=format_name,publicID=base_uri)
+    return frozenset(map(str,graph.subjects(RDF.type,OWL.Ontology))),frozenset(map(str,graph.objects(None,OWL.imports)))
+
+
+@lru_cache(maxsize=128)
+def _query_syntax_kind(raw:bytes)->str:
+    query=raw.decode("utf8")
+    query=_SPARQL_PLACEHOLDER.sub("<urn:kg-mnp:query-placeholder>",query).replace("@@LIMIT@@","1").replace("@@OFFSET@@","0")
+    return parseQuery(query)[1].name
 
 
 def load_domain_pack_manifest(pack_root: Path | str) -> DomainPackManifest:
@@ -84,10 +100,9 @@ def _validate_asset_content(
             return [_error("EXECUTABLE_CONTENT", relative, "executable Pack content is forbidden")]
         media_type = asset["media_type"]
         if media_type in _RDF_MEDIA_TYPES:
-            graph = Graph()
-            graph.parse(path, format=_RDF_MEDIA_TYPES[media_type])
+            declared_ontologies,imports=_rdf_syntax_facts(path.read_bytes(),_RDF_MEDIA_TYPES[media_type],path.resolve().as_uri())
             declared = asset.get("ontology_iri")
-            if declared and (URIRef(declared), RDF.type, OWL.Ontology) not in graph:
+            if declared and declared not in declared_ontologies:
                 checks.append(
                     _error(
                         "ONTOLOGY_IRI_MISMATCH",
@@ -95,8 +110,8 @@ def _validate_asset_content(
                         f"declared ontology_iri is not an owl:Ontology: {declared}",
                     )
                 )
-            for imported in graph.objects(None, OWL.imports):
-                if str(imported) not in ontology_iris:
+            for imported in imports:
+                if imported not in ontology_iris:
                     checks.append(
                         _error(
                             "UNRESOLVED_ONTOLOGY_IMPORT",
@@ -105,10 +120,7 @@ def _validate_asset_content(
                         )
                     )
         elif media_type == "application/sparql-query":
-            query = path.read_text(encoding="utf-8")
-            query = _SPARQL_PLACEHOLDER.sub("<urn:kg-mnp:query-placeholder>", query)
-            query = query.replace("@@LIMIT@@", "1").replace("@@OFFSET@@", "0")
-            parseQuery(query)
+            _query_syntax_kind(path.read_bytes())
         elif media_type in {"application/json", "application/schema+json", "application/yaml"}:
             read_document(path)
         elif media_type == "application/xml":

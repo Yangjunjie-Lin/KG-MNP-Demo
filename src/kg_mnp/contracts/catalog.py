@@ -9,6 +9,7 @@ from dataclasses import dataclass
 from functools import lru_cache
 from importlib import resources
 from pathlib import Path
+from types import MappingProxyType
 from typing import Any
 
 from jsonschema import Draft202012Validator, SchemaError
@@ -175,6 +176,17 @@ def _check_schema_bytes(raw: bytes) -> None:
     Draft202012Validator.check_schema(json.loads(raw))
 
 
+@lru_cache(maxsize=16)
+def _name_aliases(specs: tuple[ContractSpec, ...]):
+    # A pure index keyed by the complete immutable metadata tuple (including
+    # version/hash), never a cached schema, permission or artifact verdict.
+    return (
+        MappingProxyType({spec.schema_id: spec.name for spec in specs}),
+        MappingProxyType({spec.filename: spec.name for spec in specs}),
+        frozenset(spec.name for spec in specs),
+    )
+
+
 def normalize_contract_name(
     value: str,
     specs: tuple[ContractSpec, ...] | None = None,
@@ -183,9 +195,7 @@ def normalize_contract_name(
     if not isinstance(value, str) or not value.strip():
         raise UnknownContractError(value)
     candidate = value.strip()
-    by_id = {spec.schema_id: spec.name for spec in catalog_specs}
-    by_filename = {spec.filename: spec.name for spec in catalog_specs}
-    names = {spec.name for spec in catalog_specs}
+    by_id, by_filename, names = _name_aliases(catalog_specs)
     if candidate in by_id:
         return by_id[candidate]
     if Path(candidate).name in by_filename:
