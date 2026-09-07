@@ -8,6 +8,7 @@ import zipfile
 from pathlib import Path
 
 from kg_mnp.contracts.canonical import semantic_hash, stable_urn
+from kg_mnp.contracts.registry import validate_contract
 from kg_mnp.semantic_kernel.packaging.archive import archive_bytes, verify_kgop
 from kg_mnp.semantic_kernel.packaging.verifier import verify_package
 
@@ -48,6 +49,15 @@ def import_package(registry, package, *, source_project_lock=None):
     except LifecycleError: raise
     except Exception as exc: raise LifecycleError("PACKAGE_IMPORT_INVALID","package verification failed") from exc
     package_manifest=json.loads((source/"ontology-package.json").read_bytes()); package_lock=json.loads((source/"ontology-package.lock.json").read_bytes())
+    source_lock_bytes = None
+    if source_project_lock is not None:
+        lock_source = Path(source_project_lock)
+        assert_no_links(lock_source)
+        source_lock_bytes = lock_source.read_bytes()
+        source_lock = json.loads(source_lock_bytes)
+        validate_contract("project-lock", source_lock)
+        if source_lock["lock_id"] != package_manifest["project_lock_id"]:
+            raise LifecycleError("PACKAGE_IMPORT_INVALID", "source ProjectLock does not match package")
     if package_manifest.get("package_name") not in manifest["accepted_package_names"] and manifest["accepted_package_names"]: raise LifecycleError("PACKAGE_IMPORT_INVALID","package name not accepted by registry")
     if package_manifest.get("ontology_identity",{}).get("ontology_iri") not in manifest["accepted_ontology_iris"] and manifest["accepted_ontology_iris"]: raise LifecycleError("PACKAGE_IMPORT_INVALID","ontology IRI not accepted by registry")
     if compatibility["compatibility_status"]!="SUPPORTED_AND_VALID": raise LifecycleError("HISTORICAL_PACKAGE_UNSUPPORTED","package uses unsupported historical contract versions")
@@ -68,6 +78,16 @@ def import_package(registry, package, *, source_project_lock=None):
         destination.parent.mkdir(parents=True,exist_ok=True); destination_created = True; shutil.copytree(source,destination,symlinks=False)
         object_path.parent.mkdir(parents=True,exist_ok=True); object_path.write_bytes(data); object_created = True
         record_core={"manifest_kind":"KG_MNP_REGISTERED_PACKAGE_RECORD","schema_version":"1.0.0","registry_id":manifest["registry_id"],"package_id":pid,"package_name":package_manifest["package_name"],"package_version":package_manifest["package_version"],"package_status":"VALIDATED_UNPUBLISHED","ontology_iri":package_manifest["ontology_identity"]["ontology_iri"],"version_iri":package_manifest["ontology_identity"]["version_iri"],"package_content_digest":package_manifest["content_digest"],"semantic_dataset_digest":package_manifest["semantic_summary"]["semantic_dataset_digest"],"package_lock_id":package_lock["lock_id"],"package_lock_content_digest":package_lock["content_digest"],"archive_sha256":archive_sha,"archive_size_bytes":len(data),"archive_object_ref":("objects/sha256/"+archive_sha[:2]+"/"+archive_sha+".kgop"),"package_storage_ref":"packages/"+key,"built_under_catalog_digest":package_manifest["contract_catalog_digest"],"source_project_lock_id":package_manifest["project_lock_id"],"source_project_lock_ref":None,"source_project_lock_file_sha256":"0"*64,"source_domain_pack_lock_ids":package_manifest["domain_pack_locks"],"source_confirmed_package_id":package_manifest["source_confirmed_package"],"compatibility_status":compatibility["compatibility_status"],"import_status":"IMPORTED_VERIFIED"}
+        if source_lock_bytes is not None:
+            source_lock_sha = hashlib.sha256(source_lock_bytes).hexdigest()
+            source_lock_ref = f"objects/sha256/{source_lock_sha[:2]}/{source_lock_sha}.json"
+            source_lock_path = root / source_lock_ref
+            source_lock_path.parent.mkdir(parents=True, exist_ok=True)
+            if source_lock_path.exists() and source_lock_path.read_bytes() != source_lock_bytes:
+                raise LifecycleError("PACKAGE_IMPORT_INVALID", "source lock object collision")
+            source_lock_path.write_bytes(source_lock_bytes)
+            record_core["source_project_lock_ref"] = source_lock_ref
+            record_core["source_project_lock_file_sha256"] = source_lock_sha
         record={**record_core,"content_digest":semantic_hash(record_core),"record_id":stable_urn("registered-package-record",{"content_digest":semantic_hash(record_core)})}; write(root,"records/packages/"+key+".json",record); record_created = True
         event=append_event(root,"PackageImported",{"subject_id":record["record_id"],"related_ids":[pid],"artifact_refs":[],"transition":"IMPORTED_VERIFIED"})
     except LifecycleError:

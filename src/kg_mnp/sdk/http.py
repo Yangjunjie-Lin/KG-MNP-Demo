@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from typing import Any
+from urllib.parse import quote
 
 import httpx
 
@@ -30,3 +31,14 @@ class HTTPClient:
 
     def close(self) -> None:
         self._client.close()
+
+    def upload_source(self, project_id: str, content, *, filename: str, media_type: str,
+                      idempotency_key: str) -> dict:
+        response = self._client.post(f"/api/v1/projects/{project_id}/sources", content=content,
+                                     headers={"Authorization": f"Bearer {self.bearer_token}",
+                                              "X-Filename": quote(filename, safe=""), "Content-Type": media_type,
+                                              "Idempotency-Key": idempotency_key})
+        if response.status_code >= 400:
+            error = response.json().get("error", {})
+            raise SDKError(error.get("code", "HTTP_ERROR"), error.get("message", "upload failed"), response.status_code)
+        return response.json()

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import re
 from collections.abc import Iterable
 from pathlib import Path
 
@@ -40,7 +41,7 @@ class SourceStore:
     @staticmethod
     def _hash_from_id(identifier: str) -> str:
         value = identifier.rsplit(":", 1)[-1]
-        if len(value) != 64:
+        if not re.fullmatch(r"[a-f0-9]{64}", value):
             raise SourceError("invalid deterministic identifier")
         return value
 
@@ -60,6 +61,7 @@ class SourceStore:
         declared_media_type: str | None = None,
         source_origin: str = "local-file",
         display_path: Path | None = None,
+        display_name: str | None = None,
     ) -> SourceRegistrationResult:
         source = require_regular_source(Path(path), max_bytes=self.limits.max_source_bytes)
         content = source.read_bytes()
@@ -67,9 +69,12 @@ class SourceStore:
             raise SourceError(
                 f"SOURCE_SIZE_LIMIT_EXCEEDED: {len(content)} > {self.limits.max_source_bytes}"
             )
+        name = display_name if display_name is not None else source.name
+        if not name or any(char in name for char in "\\/:\x00\r\n") or len(name) > 200:
+            raise SourceError("invalid display filename")
         detection = detect_media_type(
             content,
-            source.name,
+            name,
             declared_media_type=declared_media_type,
             limits=self.limits,
         )
@@ -80,7 +85,7 @@ class SourceStore:
             "identity_profile": SOURCE_IDENTITY_PROFILE,
         }
         source_id = stable_urn("source", identity)
-        safe_display = safe_relative_display(display_path or Path(source.name))
+        safe_display = safe_relative_display(display_path or Path(name))
         blob_relative = f"sources/blobs/sha256/{content_sha[:2]}/{content_sha}"
         record = {
             "manifest_kind": "KG_MNP_SOURCE_ASSET",
@@ -91,7 +96,7 @@ class SourceStore:
             "size_bytes": len(content),
             "detected_media_type": detection.detected_media_type,
             "declared_media_type": declared_media_type,
-            "original_name": source.name,
+            "original_name": name,
             "safe_display_path": safe_display,
             "source_origin": source_origin,
             "blob_path": blob_relative,

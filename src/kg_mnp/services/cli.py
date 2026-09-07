@@ -1,6 +1,9 @@
 from __future__ import annotations
 
 import json
+import os
+from dataclasses import asdict
+from pathlib import Path
 
 from kg_mnp.api.openapi import export_openapi
 from kg_mnp.jobs.worker import JobWorker
@@ -20,8 +23,34 @@ def main(argv: list[str] | None = None) -> int:
     args = list(argv or [])
     action = args[0] if args else "doctor"
     if action in {"--help", "-h", "help"}:
-        print("usage: kg-mnp service {doctor|openapi|token|serve|worker} [options]")
+        print("usage: kg-mnp service {doctor|openapi|token|serve|worker|call|upload} [options]")
         return 0
+    if action in {"call", "upload"}:
+        from kg_mnp.sdk.http import HTTPClient
+        from kg_mnp.services.models import OperationRequest
+        token = os.environ.get("KG_MNP_TOKEN", "")
+        client = HTTPClient(_arg(args, "--url", "http://127.0.0.1:8765") or "", token, timeout=120)
+        try:
+            project_id = _arg(args, "--project-id")
+            key = _arg(args, "--idempotency-key")
+            if action == "upload":
+                if not project_id or not key or not _arg(args, "--file"):
+                    raise ValueError("upload requires --project-id, --file and --idempotency-key")
+                source = Path(_arg(args, "--file"))
+                with source.open("rb") as stream:
+                    result = client.upload_source(project_id, iter(lambda: stream.read(64 * 1024), b""),
+                        filename=source.name, media_type=_arg(args, "--media-type", "application/octet-stream"), idempotency_key=key)
+            else:
+                operation = _arg(args, "--operation")
+                if not operation:
+                    raise ValueError("call requires --operation")
+                request_file = _arg(args, "--request")
+                parameters = json.loads(Path(request_file).read_bytes()) if request_file else {}
+                result = asdict(client.execute(OperationRequest(operation, project_id, parameters, key)))
+            print(json.dumps(result, ensure_ascii=False, sort_keys=True))
+            return 0
+        finally:
+            client.close()
     config = load_configuration(_arg(args, "--workspace", ".") or ".")
     service = ApplicationService(config)
     if action == "doctor":

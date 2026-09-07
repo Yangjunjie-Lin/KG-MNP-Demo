@@ -3,11 +3,11 @@
 from __future__ import annotations
 
 import json
-import re
 from pathlib import Path
 from typing import Any
 
 from jsonschema import Draft202012Validator, SchemaError, ValidationError
+from packaging.version import InvalidVersion, Version
 
 from kg_mnp.contracts.canonical import bytes_sha256
 from kg_mnp.contracts.registry import validate_contract
@@ -123,14 +123,12 @@ def _compatible_bundled_versions(required: str, installed: str) -> bool:
     implementation digest remain independently verified.
     """
 
-    pattern = re.compile(r"^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$")
-    required_match = pattern.fullmatch(required)
-    installed_match = pattern.fullmatch(installed)
-    if required_match is None or installed_match is None:
+    try:
+        required_version, installed_version = Version(required), Version(installed)
+    except InvalidVersion:
         return False
-    required_version = tuple(int(value) for value in required_match.groups())
-    installed_version = tuple(int(value) for value in installed_match.groups())
-    return installed_version[0] == required_version[0] and installed_version >= required_version
+    return (installed_version.epoch == required_version.epoch == 0
+            and installed_version.major == required_version.major and installed_version >= required_version)
 
 
 def manifest_file_digest(raw: bytes) -> str:

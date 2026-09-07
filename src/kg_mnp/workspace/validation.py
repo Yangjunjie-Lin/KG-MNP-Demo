@@ -20,7 +20,11 @@ from kg_mnp.domain_packs.registry import DomainPackRegistry, DomainPackRegistryE
 from .layout import layout_errors
 from .locking import ProjectLockError, load_project_lock, verify_project_lock
 from .models import WorkspaceValidationResult
-from .security import confirmed_authority_files, validate_workspace_tree
+from .security import (
+    confirmed_authority_files,
+    validate_confirmed_authority,
+    validate_workspace_tree,
+)
 from .service import WorkspaceError, load_project_manifest
 from .status import (
     CONTRACT_CATALOG_MISMATCH,
@@ -61,13 +65,11 @@ def validate_workspace(
                 checks.append(_check(code, detail, "Workspace v1 layout mismatch"))
             unexpected_confirmed = confirmed_authority_files(root)
             if unexpected_confirmed:
-                checks.append(
-                    _check(
-                        "UNEXPECTED_CONFIRMED_AUTHORITY",
-                        "artifacts/confirmed",
-                        "Prompt 2 cannot establish confirmed authority: " + ", ".join(unexpected_confirmed),
-                    )
-                )
+                try:
+                    validate_confirmed_authority(root, domain_packs_root=domain_packs_root)
+                except Exception:  # noqa: BLE001 - malformed authorities fail closed
+                    checks.append(_check("UNEXPECTED_CONFIRMED_AUTHORITY", "artifacts/confirmed",
+                                         "Confirmed authority closure or manifest is invalid"))
         except PathSecurityError as exc:
             checks.append(_check("WORKSPACE_SECURITY_VIOLATION", "$", str(exc)))
         try:

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import re
 from typing import Any
 
 from jsonschema import ValidationError
@@ -12,6 +13,19 @@ from kg_mnp.contracts.registry import validate_contract
 from .errors import PluginTamperedError
 from .manifest import validate_manifest_distribution
 from .models import PluginDescriptor
+
+
+def snapshot_distribution_version(value: str) -> str:
+    """Lossless spelling bridge for Python development/RC versions into SemVer.
+
+    Stable versions are unchanged. Unsupported spellings still fail the frozen
+    public schema instead of silently changing their version meaning.
+    """
+    match = re.fullmatch(r"(\d+\.\d+\.\d+)(?:\.dev(\d+)|(a|b|rc)(\d+))", value)
+    if match:
+        base, dev, kind, number = match.groups()
+        return base + "-" + ("dev." + dev if dev is not None else {"a":"alpha", "b":"beta", "rc":"rc"}[kind] + "." + number)
+    return value
 
 
 def _implementation_digest(descriptor: PluginDescriptor) -> str:
@@ -36,7 +50,7 @@ def build_snapshot(
     configuration: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     manifest = descriptor.manifest
-    distribution_version = descriptor.distribution_version
+    distribution_version = snapshot_distribution_version(descriptor.distribution_version)
     if descriptor.builtin and manifest["plugin_api_version"] == "1.1.0":
         # The frozen API 1.1 Snapshot contract records the 0.4.0 compatibility
         # baseline. Current built-in implementation bytes remain bound by the

@@ -13,3 +13,10 @@ class LocalClient:
 
     def execute(self, request: OperationRequest) -> OperationResult:
         return self.service.execute(request, self.principal)
+
+    async def upload_source(self, project_id: str, chunks, *, filename: str, media_type: str,
+                            idempotency_key: str) -> dict:
+        from kg_mnp.services.uploads import receive_upload
+        result = await receive_upload(self.service, project_id, self.principal, chunks, filename=filename,
+                                      media_type=media_type, idempotency_key=idempotency_key)
+        return result.payload

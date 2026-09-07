@@ -124,6 +124,11 @@ class JobStore:
             raise KeyError(job_id)
         return json.loads(row[0])
 
+    def list_project(self, project_id: str, limit: int = 100):
+        with self._connection() as conn:
+            rows = conn.execute("SELECT job_id FROM jobs WHERE project_id=? ORDER BY created_at DESC LIMIT ?", (project_id, limit)).fetchall()
+        return [self.get(row[0]) for row in rows]
+
     def complete(self, job_id: str, *, worker_id: str, fencing_token: int, result: dict[str, Any]) -> JobRecord:
         return self._finish(job_id, worker_id, fencing_token, "SUCCEEDED", result=result)
 
@@ -160,6 +165,37 @@ class JobStore:
         if (current.status != "RUNNING" or current.lease_owner != job.lease_owner
                 or current.fencing_token != job.fencing_token or (current.lease_expires_at or 0) <= time.time()):
             raise ValueError("stale or cancelled job lease")
+
+    @contextmanager
+    def commit_lease(self, job):
+        """Serialize the *authority publication* with claim, cancel and renewal.
+
+        The caller must keep its atomic authority switch inside this context.
+        Computation must happen outside it, so cancellation/revocation can win.
+        """
+        with self._connection() as connection:
+            connection.execute("BEGIN IMMEDIATE")
+            row = connection.execute("SELECT * FROM jobs WHERE job_id=?", (job.job_id,)).fetchone()
+            if (not row or row["status"] != "RUNNING" or row["lease_owner"] != job.lease_owner
+                    or row["fencing_token"] != job.fencing_token or row["lease_expires_at"] <= time.time()):
+                raise ValueError("stale or cancelled job lease")
+            yield
+            connection.commit()
+
+    def recover_committed(self, job_id: str, result: dict[str, Any]) -> JobRecord:
+        """Trusted application recovery after verifying an atomic core receipt."""
+        with self._connection() as connection:
+            connection.execute("BEGIN IMMEDIATE")
+            row = connection.execute("SELECT status FROM jobs WHERE job_id=?", (job_id,)).fetchone()
+            if not row:
+                raise KeyError(job_id)
+            if row[0] != "SUCCEEDED":
+                connection.execute("UPDATE jobs SET status='SUCCEEDED',lease_owner=NULL,lease_expires_at=NULL,"
+                                   "result_json=?,error_json=NULL,updated_at=? WHERE job_id=?",
+                                   (json.dumps(result, sort_keys=True), time.time(), job_id))
+                self._event(connection, job_id, "JOB_COMMIT_RECOVERED", {})
+            connection.commit()
+        return self.get(job_id)
 
     def cancel(self, job_id: str) -> JobRecord:
         with self._connection() as conn:

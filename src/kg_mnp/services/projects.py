@@ -29,7 +29,7 @@ def load_catalog(root: Path) -> dict:
     if not path.exists():
         return {"projects": {}}
     try:
-        value = read_document(path)
+        value = read_document(path, max_bytes=32 * 1024 * 1024)
         if not isinstance(value, dict) or not isinstance(value.get("projects"), dict):
             raise TypeError("invalid catalog")
         return value

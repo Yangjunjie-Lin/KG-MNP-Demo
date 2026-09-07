@@ -45,6 +45,8 @@ class ApplicationService:
         self.root.mkdir(parents=True, exist_ok=True)
         self.catalog = build_operation_catalog()
         self.tokens = TokenStore(path_for(configuration, "token_store_path", "service-data/tokens.json"))
+        from .sessions import SessionStore
+        self.sessions = SessionStore(self.root / "service-data" / "sessions.sqlite3", self.tokens)
         self.jobs = JobStore(path_for(configuration, "jobs_db_path", "service-data/jobs.sqlite3"))
         self.idempotency = IdempotencyStore(self.root / "service-data" / "requests.sqlite3")
         self.audit = AuditLog(self.root / "service-data" / "audit.jsonl")
@@ -68,6 +70,8 @@ class ApplicationService:
 
     def authenticate(self, authorization: str) -> PrincipalReference:
         scheme, _, token = authorization.partition(" ")
+        if scheme == "Session":
+            return self.sessions.resolve(token)[0]
         if scheme.lower() != "bearer":
             raise ServiceBoundaryError("AUTH_REQUIRED", "Bearer credential required", status_code=401)
         return self.tokens.authenticate(token)
@@ -142,9 +146,32 @@ class ApplicationService:
         authorize(principal, operation, request)
         self._authorize_object(request, principal, operation)
         self.jobs.require_lease(job)
-        # No core-writing JOB handler is enabled until its *core commit* is
-        # fenced. Completion fencing alone is insufficient (P8 A5).
-        raise ServiceBoundaryError("OPERATION_BLOCKED", "queued operation has no commit-fenced handler", status_code=501)
+        from .compilation import OPERATIONS as COMPILATION_OPERATIONS
+        from .compilation import execute as execute_compilation
+        from .execution import execute_fenced
+        from .lifecycle import OPERATIONS as LIFECYCLE_OPERATIONS
+        from .lifecycle import execute as execute_lifecycle
+        from .modeling import OPERATIONS as MODELING_OPERATIONS
+        from .modeling import execute as execute_modeling
+        from .requests import validate_parameters
+        from .sources import OPERATIONS, execute
+        validate_parameters(request)
+        if job.operation_id not in OPERATIONS | MODELING_OPERATIONS | COMPILATION_OPERATIONS | LIFECYCLE_OPERATIONS:
+            raise ServiceBoundaryError("OPERATION_BLOCKED", "queued operation has no commit-fenced handler", status_code=501)
+        if job.operation_id in OPERATIONS:
+            handler = execute
+        elif job.operation_id in MODELING_OPERATIONS:
+            handler = execute_modeling
+        elif job.operation_id in COMPILATION_OPERATIONS:
+            handler = execute_compilation
+        else:
+            handler = execute_lifecycle
+        return execute_fenced(self, job, request, principal, lambda project: handler(self, project, request, principal))
+
+    def recover_job(self, job):
+        from .execution import committed_result
+        result = committed_result(self, job)
+        return self.jobs.recover_committed(job.job_id, result) if result is not None else None
 
     def _project(self, request: OperationRequest) -> ProjectHandle:
         if not request.project_id:
@@ -168,14 +195,17 @@ class ApplicationService:
         if not principal.can("job:cancel"):
             raise ServiceBoundaryError("FORBIDDEN", "missing permission: job:cancel", status_code=403)
         self._job(job_id, principal)
-        return self._public_job(self.jobs.cancel(job_id))
+        return self._public_job(self.jobs.cancel(job_id), principal)
 
-    @staticmethod
-    def _public_job(job):
+    def _public_job(self, job, principal):
         # Old persisted result/error/event payloads may contain filesystem paths.
         # Do not expose arbitrary legacy dictionaries across this boundary.
+        from .execution import committed_result
+        result = committed_result(self, job)
+        if result is not None and job.status != "SUCCEEDED":
+            job = self.jobs.recover_committed(job.job_id, result)
         return {"job_id": job.job_id, "operation_id": job.operation_id, "project_id": job.project_id,
-                "status": job.status, "attempt": job.attempt, "result": None,
+                "status": job.status, "attempt": job.attempt, "result": result if principal.can("source:read") else None,
                 "error": {"code": job.error.get("code", "JOB_FAILED"), "message": "job failed; consult authorized diagnostics"} if job.error else None}
 
     def _execute_inline(self, request: OperationRequest, principal: PrincipalReference, operation: OperationDefinition) -> dict[str, Any]:
@@ -188,7 +218,7 @@ class ApplicationService:
         if name == "project.open":
             return inspect_project(get_project(self.root, params.get("project_id", request.project_id or "")), packs_root).public_dict()
         if name == "job.get":
-            return self._public_job(self._job(params["job_id"], principal))
+            return self._public_job(self._job(params["job_id"], principal), principal)
         if name == "job.events":
             return {"events": [{"sequence": row["sequence"], "event_type": row["event_type"], "observed_at": row["observed_at"]}
                                for row in self.jobs.events(params["job_id"])]}
@@ -209,6 +239,18 @@ class ApplicationService:
             return lock_project(project, packs_root).public_dict()
         if inspect_project(project, packs_root).status != "VALID":
             raise ServiceBoundaryError("WORKSPACE_INVALID", "workspace is not valid; recovery or a new workspace is required", status_code=409)
+        from .sources import OPERATIONS, execute
+        if name in OPERATIONS:
+            return execute(self, project, request, principal)
+        if name == "review.replay":
+            from .modeling import execute as execute_modeling
+            return execute_modeling(self, project, request, principal)
+        if name == "package.verify":
+            from .compilation import execute as execute_compilation
+            return execute_compilation(self, project, request, principal)
+        if name in {"oms.metadata", "ods.query"}:
+            from .lifecycle import execute as execute_lifecycle
+            return execute_lifecycle(self, project, request, principal)
         if name == "registry.verify":
             return verify_registry(project.registry_root)
         if name in {"package.inspect", "release.inspect"}:

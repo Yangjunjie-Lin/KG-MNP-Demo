@@ -1,16 +1,17 @@
 [build-system]
-requires = ["setuptools>=68", "wheel"]
+requires = ["setuptools==80.9.0", "wheel==0.45.1"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "kg-mnp-toolchain"
-version = "0.7.0"
+dynamic = ["version"]
 description = "Evidence-bound, review-governed ontology engineering toolchain"
 readme = "README.md"
 requires-python = ">=3.11"
 license = "Apache-2.0"
 authors = [{ name = "KG-MNP Demo Contributors" }]
 dependencies = [
+  "packaging==26.3",
   "rdflib==7.6.0",
   "pyshacl>=0.26.0,<1.0.0",
   "owlrl>=6.0.2,<7.0.0",
@@ -23,6 +24,9 @@ dependencies = [
 
 [project.optional-dependencies]
 dev = [
+  "setuptools==80.9.0",
+  "wheel==0.45.1",
+  "build==1.3.0",
   "pytest>=8.0.0,<9.0.0",
   "pytest-xdist>=3.6.0,<4.0.0",
   "ruff==0.16.2",
@@ -68,6 +72,9 @@ recorded-model-output-provider = "kg_mnp.plugins.builtin.modeling_providers:Reco
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.setuptools.dynamic]
+version = {attr = "kg_mnp.__version__"}
 
 [tool.setuptools.package-data]
 "kg_mnp.contracts" = [

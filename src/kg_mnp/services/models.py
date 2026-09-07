@@ -23,6 +23,10 @@ class ServiceConfiguration:
     jobs_db_path: str | None = None
     max_upload_bytes: int = 16 * 1024 * 1024
     domain_packs_root: str | None = None
+    review_profile: str = "PRODUCTION_MULTI_ROLE"
+    reasoner_jar: str | None = None
+    allow_insecure_loopback_session: bool = False
+    workbench_root: str | None = None
 
     def validate(self) -> None:
         import ipaddress
@@ -36,6 +40,12 @@ class ServiceConfiguration:
             raise ValueError("non-loopback service requires TLS termination and an origin allowlist")
         if not 1 <= self.port <= 65535:
             raise ValueError("port is out of range")
+        if self.review_profile not in {"PRODUCTION_MULTI_ROLE", "DEVELOPMENT_SINGLE_REVIEWER"}:
+            raise ValueError("unknown review profile")
+        if self.review_profile == "DEVELOPMENT_SINGLE_REVIEWER" and not loopback:
+            raise ValueError("development review profile is restricted to explicit loopback service")
+        if self.allow_insecure_loopback_session and not loopback:
+            raise ValueError("insecure session exception is loopback only")
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
@@ -73,6 +83,7 @@ class ProjectHandle:
     domain_pack: str | None = None
     domain_pack_version: str | None = None
     migration_status: str | None = None
+    authority_revision: int = 0
 
     def public_dict(self) -> dict[str, Any]:
         """A filesystem handle is never a network resource representation."""

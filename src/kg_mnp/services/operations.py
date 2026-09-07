@@ -1,6 +1,8 @@
 """One explicit operation catalogue; no import/getattr or command dispatch."""
 from __future__ import annotations
 
+from dataclasses import replace
+
 from .models import OperationDefinition
 
 _READ = ("project:read",)
@@ -18,10 +20,15 @@ def build_operation_catalog() -> dict[str, OperationDefinition]:
         OperationDefinition("domain-pack.inspect", "DomainPackRequest", "DomainPackSnapshot", _READ, False),
         OperationDefinition("source.register", "SourceRegisterRequest", "Artifact", ("source:write",), True, "JOB", "WRITE", "REQUIRED"),
         OperationDefinition("source.inspect", "ArtifactRequest", "Artifact", ("source:read",), True),
+        OperationDefinition("source.list", "EmptyRequest", "SourceList", ("source:read",), True),
+        OperationDefinition("source.verify", "SourceRequest", "SourceAsset", ("source:read",), True),
+        OperationDefinition("evidence.list", "IngestionInspectRequest", "EvidenceList", ("source:read",), True),
+        OperationDefinition("kgir.inspect", "IngestionInspectRequest", "KGIRDataset", ("source:read",), True),
+        OperationDefinition("kgir.validate", "IngestionInspectRequest", "KGIRDataset", ("source:read",), True),
         OperationDefinition("ingestion.plan", "IngestionPlanRequest", "IngestionPlan", _WRITE, True, "JOB", "WRITE", "REQUIRED"),
         OperationDefinition("ingestion.run", "IngestionRunRequest", "IngestionRun", _WRITE, True, "JOB", "WRITE", "REQUIRED"),
-        OperationDefinition("ingestion.inspect", "ArtifactRequest", "IngestionRun", _READ),
-        OperationDefinition("ingestion.trace", "ArtifactRequest", "Trace", _READ),
+        OperationDefinition("ingestion.inspect", "ArtifactRequest", "IngestionRun", ("source:read",)),
+        OperationDefinition("ingestion.trace", "ArtifactRequest", "Trace", ("source:read",)),
         OperationDefinition("modeling.scope", "ModelingScopeRequest", "Artifact", ("model:propose",), True, "INLINE", "WRITE", "REQUIRED"),
         OperationDefinition("modeling.scope.approve", "ReviewDecisionRequest", "Artifact", ("scope:approve",), True, "INLINE", "WRITE", "REQUIRED"),
         OperationDefinition("modeling.candidate", "ModelingCandidateRequest", "Artifact", ("model:propose",), True, "JOB", "WRITE", "REQUIRED"),
@@ -63,7 +70,17 @@ def build_operation_catalog() -> dict[str, OperationDefinition]:
         OperationDefinition("job.events", "JobRequest", "JobEvents", _READ, False),
         OperationDefinition("operation.catalog", "CatalogRequest", "OperationCatalog", _READ, False),
     ]
-    return {definition.operation_id: definition for definition in definitions}
+    definitions.append(OperationDefinition("modeling.prepare", "ModelingPrepareRequest", "ModelingPreparation",
+        ("model:propose",), True, "JOB", "WRITE", "REQUIRED"))
+    definitions.append(OperationDefinition("release.candidate", "ReleaseCandidateRequest", "ReleaseCandidate",
+        ("release:publish",), True, "JOB", "WRITE", "REQUIRED"))
+    from .modeling import OPERATIONS as MODELING_OPERATIONS
+    from .requests import REQUEST_MODELS
+    definitions = [replace(definition, request_contract=REQUEST_MODELS[definition.operation_id].__name__)
+                   if definition.operation_id in REQUEST_MODELS else definition for definition in definitions]
+    return {definition.operation_id: replace(definition, execution_mode="JOB", side_effect_class="WRITE")
+            if (definition.operation_id in MODELING_OPERATIONS and definition.operation_id != "review.replay") or definition.operation_id == "release.review"
+            else definition for definition in definitions}
 
 
 def coverage_matrix() -> list[dict[str, str]]:
@@ -91,3 +108,19 @@ HANDLERS = {
     "job.events": "kg_mnp.jobs.store.JobStore.events",
     "operation.catalog": "kg_mnp.services.facade.ApplicationService.operation_catalog",
 }
+
+from .sources import OPERATIONS as SOURCE_OPERATIONS
+
+HANDLERS.update({name: "kg_mnp.services.sources.execute" for name in SOURCE_OPERATIONS})
+
+from .modeling import OPERATIONS as MODELING_OPERATIONS
+
+HANDLERS.update({name: "kg_mnp.services.modeling.execute" for name in MODELING_OPERATIONS})
+
+from .compilation import OPERATIONS as COMPILATION_OPERATIONS
+
+HANDLERS.update({name: "kg_mnp.services.compilation.execute" for name in COMPILATION_OPERATIONS})
+
+from .lifecycle import OPERATIONS as LIFECYCLE_OPERATIONS
+
+HANDLERS.update({name: "kg_mnp.services.lifecycle.execute" for name in LIFECYCLE_OPERATIONS})

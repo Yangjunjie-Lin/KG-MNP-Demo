@@ -32,6 +32,10 @@ class JobWorker:
             result = self.executor.execute_job(job, self.store.parameters(job.job_id))
             return self.store.complete(job.job_id, worker_id=worker_id, fencing_token=job.fencing_token, result=result)
         except Exception as exc:  # noqa: BLE001 - failure is persisted for recovery
+            if hasattr(self.executor, "recover_job"):
+                recovered = self.executor.recover_job(job)
+                if recovered is not None:
+                    return recovered
             error = {"code": exc.code if isinstance(exc, ServiceBoundaryError) else "JOB_EXECUTION_FAILED",
                      "message": exc.message if isinstance(exc, ServiceBoundaryError) else "job execution failed"}
             try:

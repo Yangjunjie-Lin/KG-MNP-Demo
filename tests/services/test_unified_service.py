@@ -60,11 +60,10 @@ def test_durable_job_idempotency_and_fencing(tmp_path):
     project = service.execute(OperationRequest("project.create", parameters={"name": "a", "domain_pack": "minimal", "domain_pack_version": "0.1.0"}), _principal("project:write", "project:read")).payload
     principal = _principal("source:write", "project:read", projects={project["project_id"]})
     request = OperationRequest("source.register", project["project_id"], {"path": "source.csv"}, "same-key")
-    # P8 rejects an unimplemented handler before enqueue; a FAILED P7 queue
-    # test must never count as a successful Source registration workflow.
+    # A server path must never be accepted as an upload reference.
     with pytest.raises(ServiceBoundaryError) as blocked:
         service.execute(request, principal)
-    assert blocked.value.code == "OPERATION_BLOCKED"
+    assert blocked.value.code == "REQUEST_INVALID"
     first, _ = service.jobs.create(operation_id="source.register", project_id=project["project_id"], parameters={}, idempotency_key="same-key")
     replay, _ = service.jobs.create(operation_id="source.register", project_id=project["project_id"], parameters={}, idempotency_key="same-key")
     assert first.job_id == replay.job_id

@@ -271,7 +271,7 @@ def test_resource_api_and_compatibility_dto_reject_unknown_fields(service):
     with TestClient(create_app(service)) as client:
         assert client.get("/api/v1/me", headers=headers).json()["principal_id"] == "alice"
         caps = client.get("/api/v1/capabilities", headers=headers).json()["capabilities"]
-        assert next(item for item in caps if item["operation_id"] == "source.register")["status"] == "NOT_IMPLEMENTED"
+        assert next(item for item in caps if item["operation_id"] == "source.register")["status"] == "AVAILABLE"
         assert client.get("/api/v1/doctor", headers=headers).status_code == 403
         assert client.get("/api/v1/projects", headers={**headers, "Origin": "https://attacker.invalid"}).status_code == 403
         invalid = client.post("/api/v1/projects", headers=headers, json={"name": "x", "path": "private"})
@@ -296,8 +296,9 @@ def test_owner_open_validate_catalog_pack_inspect_and_empty_environment(service)
         service.execute(OperationRequest("domain-pack.inspect", parameters={"pack_id": "minimal", "pack_version": "9.9.9"}), alice)
     assert missing.value.status_code == 404
     catalog = service.execute(OperationRequest("operation.catalog"), alice).payload
-    assert len(catalog["operations"]) == 53
-    assert len([item for item in catalog["coverage"] if item["service_handler"]]) == 14
+    baseline = json.loads((__import__("pathlib").Path(__file__).parents[2] / "docs/verification/prompt-08-service-coverage.json").read_bytes())
+    assert {row["operation_id"] for row in baseline["operations"]} <= {row["operation_id"] for row in catalog["operations"]}
+    assert {row["operation_id"] for row in catalog["coverage"] if row["service_handler"]} == set(HANDLERS)
     environment = init_environment(get_project(service.root, project["project_id"]).registry_root, environment_name="test")
     pointer = service.execute(OperationRequest("environment.inspect", project["project_id"], {"environment_id": environment["environment_id"]}), alice).payload
     assert pointer["selection_status"] == "NO_RELEASE_SELECTED"

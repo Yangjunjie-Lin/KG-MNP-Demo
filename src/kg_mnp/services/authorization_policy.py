@@ -3,7 +3,7 @@ from __future__ import annotations
 from .errors import ServiceBoundaryError
 from .models import OperationDefinition, OperationRequest, PrincipalReference
 
-_CLIENT_IDENTITY_FIELDS = {"__principal", "reviewer_id", "reviewer_roles", "role", "is_admin", "explicit_human_action", "approved", "quorum_satisfied", "system_actor"}
+_CLIENT_IDENTITY_FIELDS = {"__principal", "reviewer_id", "reviewer_roles", "reviewer_role", "role", "is_admin", "explicit_human_action", "approved", "quorum_satisfied", "system_actor"}
 
 
 def reject_client_identity_claims(value: object) -> None:
