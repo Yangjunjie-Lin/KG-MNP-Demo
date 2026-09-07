@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import shutil
 import socket
 import tempfile
 from pathlib import Path
@@ -20,23 +21,41 @@ from kg_mnp.services.models import ServiceConfiguration
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--port", type=int, default=0)
+    parser.add_argument("--temporary-pack", action="store_true")
     args = parser.parse_args()
     root = Path(__file__).resolve().parents[1]
     runtime = root / "runtime"
     runtime.mkdir(exist_ok=True)
     workspace = Path(tempfile.mkdtemp(prefix="p09-browser-", dir=runtime))
+    packs=root/"domain_packs"
+    if args.temporary_pack:
+        import yaml
+
+        from kg_mnp.domain_packs.locking import generate_pack_lock
+        from kg_mnp.domain_packs.validation import load_domain_pack_manifest
+        packs=workspace/"test-packs"
+        shutil.copytree(root/"domain_packs",packs)
+        temporary=packs/"arbitrary-validation-pack"
+        shutil.copytree(packs/"minimal",temporary)
+        manifest=yaml.safe_load((temporary/"pack.yaml").read_text(encoding="utf8"))
+        manifest["pack_id"]="arbitrary-validation-pack"
+        manifest["display_name"]="临时通用性验证领域包"
+        (temporary/"pack.yaml").write_text(yaml.safe_dump(manifest,allow_unicode=True,sort_keys=False),encoding="utf8")
+        generate_pack_lock(load_domain_pack_manifest(temporary))
     sock = socket.socket()
     sock.bind(("127.0.0.1", args.port))
     sock.listen()
     port = sock.getsockname()[1]
     service = ApplicationService(ServiceConfiguration(str(workspace), port=port,
-        domain_packs_root=str(root / "domain_packs"), workbench_root=str(root / "workbench/dist"),
+        domain_packs_root=str(packs), workbench_root=str(root / "workbench/dist"),
         allow_insecure_loopback_session=True, review_profile="DEVELOPMENT_SINGLE_REVIEWER",
         reasoner_jar=str(root / "third_party/downloads/robot-1.9.7.jar")))
     token, _ = service.tokens.create(principal_id="synthetic-browser-human", principal_type="HUMAN",
                                     permissions={"*"}, project_ids=set(), created_by="explicit-synthetic-browser-test")
+    viewer_token, _ = service.tokens.create(principal_id="synthetic-isolated-viewer", principal_type="HUMAN",
+        permissions={"project:read", "source:read", "package:read", "job:read"}, project_ids=set(), created_by="explicit-synthetic-browser-test")
     credentials = workspace / "browser-test-credential.json"
-    atomic_write_json(credentials, {"token": token})
+    atomic_write_json(credentials, {"token": token, "viewer_token": viewer_token})
     stop = Event()
     worker = Thread(target=JobWorker(service.jobs, service).run_forever, kwargs={"worker_id":"browser-test-worker", "stop":stop}, daemon=True)
     worker.start()

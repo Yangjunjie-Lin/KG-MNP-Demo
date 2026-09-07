@@ -3,7 +3,36 @@
   "version": "0.9.0-dev.0",
   "private": true,
   "type": "module",
-  "scripts": {"dev": "vite --host 127.0.0.1", "typecheck": "tsc --noEmit", "build": "tsc --noEmit && vite build && node scripts/licenses.mjs", "test:e2e": "playwright test"},
-  "dependencies": {"react": "19.2.8", "react-dom": "19.2.8", "react-router-dom": "7.18.3", "@tanstack/react-query": "5.102.8", "@tanstack/react-table": "8.21.3", "@xyflow/react": "12.11.6"},
-  "devDependencies": {"typescript": "5.9.3", "vite": "8.2.2", "@vitejs/plugin-react": "6.1.1", "@types/react": "19.2.18", "@types/react-dom": "19.2.7", "@playwright/test": "1.63.0"}
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "typecheck": "tsc --noEmit",
+    "build": "tsc --noEmit && vite build && node scripts/licenses.mjs",
+    "test:e2e": "playwright test",
+    "lint": "eslint src",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@tanstack/react-query": "5.102.8",
+    "@tanstack/react-table": "8.21.3",
+    "@xyflow/react": "12.11.6",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "react-router-dom": "7.18.3"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.13.0",
+    "@eslint/js": "10.0.1",
+    "@playwright/test": "1.63.0",
+    "@testing-library/jest-dom": "7.0.1",
+    "@testing-library/react": "16.3.3",
+    "@types/react": "19.2.18",
+    "@types/react-dom": "19.2.7",
+    "@vitejs/plugin-react": "6.1.1",
+    "eslint": "10.10.0",
+    "jsdom": "30.0.1",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.69.0",
+    "vite": "8.2.2",
+    "vitest": "5.0.0"
+  }
 }
