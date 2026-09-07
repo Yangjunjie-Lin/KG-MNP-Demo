@@ -1,0 +1,9 @@
+{
+  "purpose": "Frozen genuine synthetic Package built by the prior compiler; payload files are never rewritten to pass compatibility",
+  "source_checkpoint": "442a1e35dcc6e1ceacae48f8f045dcb923491c70",
+  "archive_sha256": "4e6ba7225348a201c1ba2076e58f3c1bff370a97dae7000e99ebe53f9be3f983",
+  "archive_bytes": 76928,
+  "compiler_version": "0.5.0",
+  "package_id": "urn:kg-mnp:ontology-package:6840f4db27afb04e274be7878ef49d96f9e8877d2d21d5c3b9f48c4211f5b36d",
+  "snapshot_id": "urn:kg-mnp:semantic-compiler-snapshot:d96961423019f203dc205657fa0c4d8d2c3744a711ff025a5ba411a7213faad2"
+}

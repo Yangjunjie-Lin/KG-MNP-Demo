@@ -2,6 +2,7 @@
 
 from .compiler import SemanticCompiler, compile_plan
 from .policy import load_compiler_policy
+from .version import COMPILER_VERSION
 
 __all__ = ["SemanticCompiler", "compile_plan", "load_compiler_policy"]
-__version__ = "0.5.0"
+__version__ = COMPILER_VERSION

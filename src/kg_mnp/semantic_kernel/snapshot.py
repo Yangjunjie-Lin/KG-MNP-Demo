@@ -10,9 +10,11 @@ from importlib import resources
 from pathlib import Path
 from typing import Any
 
+from kg_mnp import __version__ as toolchain_version
 from kg_mnp.contracts.canonical import semantic_hash, stable_urn
 
 from .contracts import finalize_artifact
+from .version import COMPILER_VERSION
 
 ROBOT_VERSION = "1.9.7"
 ROBOT_SHA256 = "91890c2e83d0f092dd08731376f154b36610544cfbe8685337a1bf7244ccaa2d"
@@ -64,6 +66,7 @@ IMPLEMENTATION_FILES = (
     "semantic_kernel/validators/provenance.py",
     "semantic_kernel/validators/rdf_syntax.py",
     "semantic_kernel/validators/shacl.py",
+    "semantic_kernel/version.py",
 )
 
 
@@ -88,6 +91,8 @@ def _hermit_version(path: Path) -> str:
 
 
 def build_compiler_snapshot(policy: dict[str, Any], *, reasoner_jar: Path | str | None = None) -> dict[str, Any]:
+    if policy["compiler_version"] != COMPILER_VERSION:
+        raise ValueError("compiler policy targets a different semantic compiler version")
     package = resources.files("kg_mnp")
     files = []
     for relative in IMPLEMENTATION_FILES:
@@ -109,10 +114,10 @@ def build_compiler_snapshot(policy: dict[str, Any], *, reasoner_jar: Path | str 
     ]
     core = {
         "manifest_kind": "KG_MNP_SEMANTIC_COMPILER_SNAPSHOT",
-        "schema_version": "1.0.0",
-        "compiler_id": stable_urn("semantic-compiler", {"version": "0.5.0"}),
-        "compiler_version": "0.5.0",
-        "toolchain_version": "0.5.0",
+        "schema_version": "1.1.0",
+        "compiler_id": stable_urn("semantic-compiler", {"version": COMPILER_VERSION}),
+        "compiler_version": COMPILER_VERSION,
+        "toolchain_version": toolchain_version,
         "policy_id": policy["policy_id"],
         "policy_semantic_sha256": policy["content_digest"],
         "canonicalization_profile": policy["canonicalization_profile"],

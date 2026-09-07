@@ -1,0 +1,186 @@
+{
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/semantic-compiler-snapshot/1.1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "canonicalization_profile": {
+      "const": "KG-MNP RDF Canonical Profile v1"
+    },
+    "compiler_id": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/stableId"
+    },
+    "compiler_version": {
+      "const": "0.5.1"
+    },
+    "content_digest": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/sha256"
+    },
+    "dependency_versions": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "maxLength": 64,
+            "pattern": "^[A-Za-z0-9_.-]+$",
+            "type": "string"
+          },
+          "version": {
+            "maxLength": 64,
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "version"
+        ],
+        "type": "object"
+      },
+      "maxItems": 32,
+      "minItems": 5,
+      "type": "array"
+    },
+    "implementation_digest": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/sha256"
+    },
+    "implementation_files": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "path": {
+            "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/safePath"
+          },
+          "sha256": {
+            "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/sha256"
+          }
+        },
+        "required": [
+          "path",
+          "sha256"
+        ],
+        "type": "object"
+      },
+      "maxItems": 128,
+      "minItems": 1,
+      "type": "array"
+    },
+    "manifest_kind": {
+      "const": "KG_MNP_SEMANTIC_COMPILER_SNAPSHOT"
+    },
+    "policy_id": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/stableId"
+    },
+    "policy_semantic_sha256": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/sha256"
+    },
+    "python_version": {
+      "maxLength": 32,
+      "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$",
+      "type": "string"
+    },
+    "reasoner_bundle": {
+      "additionalProperties": false,
+      "properties": {
+        "availability": {
+          "enum": [
+            "AVAILABLE",
+            "UNAVAILABLE"
+          ]
+        },
+        "engine": {
+          "const": "HermiT"
+        },
+        "hermit_version": {
+          "const": "1.4.5.456"
+        },
+        "java_requirement": {
+          "maxLength": 32,
+          "pattern": "^Java [0-9]+\\+$",
+          "type": "string"
+        },
+        "robot_jar_sha256": {
+          "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/sha256"
+        },
+        "robot_version": {
+          "const": "1.9.7"
+        },
+        "validation_profile": {
+          "enum": [
+            "OWL_2_DL_STRICT",
+            "OWL_RL_STRUCTURAL"
+          ]
+        }
+      },
+      "required": [
+        "engine",
+        "robot_version",
+        "robot_jar_sha256",
+        "hermit_version",
+        "java_requirement",
+        "availability",
+        "validation_profile"
+      ],
+      "type": "object"
+    },
+    "schema_version": {
+      "const": "1.1.0"
+    },
+    "skolemization_profile": {
+      "const": "KG-MNP Structural Skolem Profile v1"
+    },
+    "snapshot_id": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/stableId"
+    },
+    "toolchain_version": {
+      "maxLength": 128,
+      "minLength": 1,
+      "type": "string"
+    },
+    "validation_engines": {
+      "items": {
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "maxLength": 64,
+            "pattern": "^[A-Za-z0-9_.-]+$",
+            "type": "string"
+          },
+          "version": {
+            "maxLength": 64,
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "version"
+        ],
+        "type": "object"
+      },
+      "maxItems": 32,
+      "minItems": 1,
+      "type": "array"
+    }
+  },
+  "required": [
+    "manifest_kind",
+    "schema_version",
+    "snapshot_id",
+    "compiler_id",
+    "compiler_version",
+    "toolchain_version",
+    "policy_id",
+    "policy_semantic_sha256",
+    "canonicalization_profile",
+    "skolemization_profile",
+    "implementation_files",
+    "implementation_digest",
+    "python_version",
+    "dependency_versions",
+    "reasoner_bundle",
+    "validation_engines",
+    "content_digest"
+  ],
+  "title": "KG-MNP Semantic Compiler Snapshot 1.1",
+  "type": "object"
+}

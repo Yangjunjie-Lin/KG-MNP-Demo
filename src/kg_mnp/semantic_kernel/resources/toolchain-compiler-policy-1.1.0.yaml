@@ -1,0 +1,89 @@
+manifest_kind: KG_MNP_SEMANTIC_COMPILER_POLICY
+schema_version: 1.1.0
+policy_id: urn:kg-mnp:semantic-compiler-policy:fc49161707f2bb83a454384720aa4ee624adf284e4f06df534a73da16133d696
+policy_version: 1.1.0
+compiler_version: 0.5.1
+input_contract: ontology-confirmed-modeling-package/1.0.0
+canonicalization_profile: KG-MNP RDF Canonical Profile v1
+skolemization_profile: KG-MNP Structural Skolem Profile v1
+package_profile: PORTABLE_OFFLINE
+ontology_module_policy: OVERLAY_MODULE
+supported_candidate_types:
+- CLASS
+- OBJECT_PROPERTY
+- DATA_PROPERTY
+- SUBCLASS_AXIOM
+- DOMAIN_AXIOM
+- RANGE_AXIOM
+- DISJOINT_CLASSES_AXIOM
+- RECORD_TO_CLASS
+- FIELD_TO_DATA_PROPERTY
+- REFERENCE_TO_OBJECT_PROPERTY
+- VALUE_MAPPING
+- IRI_TEMPLATE
+- NULL_HANDLING_POLICY
+- INDIVIDUAL
+- CLASS_ASSERTION
+- DATA_PROPERTY_ASSERTION
+- OBJECT_PROPERTY_ASSERTION
+- NODE_SHAPE
+- PROPERTY_SHAPE
+- MIN_COUNT
+- MAX_COUNT
+- DATATYPE
+- CLASS_CONSTRAINT
+- NODE_KIND
+- IN_VALUES
+output_formats:
+- NT
+- TTL
+- NQ
+- TRIG
+- JSON
+- XML
+- KGOP
+named_graph_policy: ROLE_AND_SEMANTIC_DIGEST
+baseline_policy: LOCAL_LOCKED_CLOSURE
+mapping_policy: DECLARATIVE_ONLY
+provenance_policy: STATEMENT_LEVEL_CLOSED
+owl_profile_policy: OWL_2_DL_STRICT
+owl_consistency_policy: PINNED_HERMIT
+shacl_policy: OFFLINE_CORE_ONLY
+competency_question_policy: REGISTERED_READ_ONLY_WITH_ORACLE
+package_validation_policy: STRICT_CLOSED_SET
+resource_limits:
+  max_confirmed_items: 100000
+  max_tbox_statements: 500000
+  max_abox_statements: 1000000
+  max_shacl_statements: 500000
+  max_mapping_rules: 100000
+  max_provenance_statements: 5000000
+  max_dataset_quads: 10000000
+  max_rdf_bytes_per_file: 268435456
+  max_package_files: 10000
+  max_package_uncompressed_bytes: 1073741824
+  max_archive_compression_ratio: 100
+  max_reasoner_input_triples: 2000000
+  max_reasoner_seconds: 180
+  max_reasoner_output_bytes: 16777216
+  max_shacl_results: 100000
+  max_shacl_seconds: 120
+  max_cq_count: 10000
+  max_query_characters: 100000
+  max_query_results: 100000
+  max_query_seconds: 30
+  max_query_path_depth: 8
+prohibited_operations:
+- NETWORK_ACCESS
+- REMOTE_IMPORT
+- SPARQL_UPDATE
+- SHACL_JAVASCRIPT
+- DYNAMIC_CODE
+- PLUGIN_COMPILER
+- GRAPHDB_WRITE
+- PACKAGE_REGISTRATION
+- RELEASE_PUBLICATION
+- VERSION_ACTIVATION
+- AUTOMATIC_REPAIR
+- AUTOMATIC_VERSION_BUMP
+content_digest: 64747b2832c1c3e44f22909a8f2b04964341315c28535c130d9df401bec2138c

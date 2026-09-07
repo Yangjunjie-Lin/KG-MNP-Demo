@@ -9,7 +9,7 @@ from pathlib import Path
 from kg_mnp.contracts import ContractCatalog
 
 ROOT = Path(__file__).resolve().parents[2]
-CURRENT_CONTRACT_COUNT = 115
+CURRENT_CONTRACT_COUNT = len(ContractCatalog.load().specs)
 
 
 def _run(*arguments: str, cwd: Path) -> subprocess.CompletedProcess[str]:
@@ -110,7 +110,7 @@ def test_wheel_contains_catalog_and_schemas_and_loads_outside_source_tree(
     completed = _run("-I", "-c", probe, cwd=probe_cwd)
     assert json.loads(completed.stdout) == {
         "catalog": True,
-        "compiler": "0.5.0",
+        "compiler": "0.5.1",
         "count": CURRENT_CONTRACT_COUNT,
         "title": "KG-MNP ProjectLock 1.0",
         "vocabulary": True,

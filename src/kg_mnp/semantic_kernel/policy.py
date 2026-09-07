@@ -12,13 +12,14 @@ import yaml
 from kg_mnp.contracts.canonical import semantic_hash, stable_urn
 from kg_mnp.contracts.registry import validate_contract
 
+from .contracts import versioned_contract
 from .limits import SemanticLimits
 
 
 def _read_policy(path: Path | str | None) -> dict[str, Any]:
     if path is None:
         raw = resources.files("kg_mnp.semantic_kernel").joinpath(
-            "resources/toolchain-compiler-policy-1.0.0.yaml"
+            "resources/toolchain-compiler-policy-1.1.0.yaml"
         ).read_bytes()
     else:
         source = Path(path)
@@ -41,11 +42,11 @@ def load_compiler_policy(path: Path | str | None = None) -> dict[str, Any]:
     if actual_digest != expected_digest or actual_id != expected_id:
         raise ValueError("semantic compiler policy identity mismatch")
     SemanticLimits(**policy["resource_limits"])
-    validate_contract("semantic-compiler-policy", policy)
+    validate_contract(versioned_contract("semantic-compiler-policy", policy), policy)
     return copy.deepcopy(policy)
 
 
 def policy_resource_bytes() -> bytes:
     return resources.files("kg_mnp.semantic_kernel").joinpath(
-        "resources/toolchain-compiler-policy-1.0.0.yaml"
+        "resources/toolchain-compiler-policy-1.1.0.yaml"
     ).read_bytes()

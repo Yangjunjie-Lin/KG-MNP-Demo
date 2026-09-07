@@ -9,6 +9,12 @@ from kg_mnp.contracts.canonical import semantic_hash, stable_urn
 from kg_mnp.contracts.registry import validate_contract
 
 
+def versioned_contract(contract: str, value: dict[str, Any]) -> str:
+    if contract in {"semantic-compiler-policy", "semantic-compiler-snapshot"} and value.get("schema_version") == "1.1.0":
+        return contract + "-v1-1"
+    return contract
+
+
 def finalize_artifact(
     value: dict[str, Any],
     *,
@@ -25,7 +31,7 @@ def finalize_artifact(
     document["content_digest"] = digest
     document[id_field] = stable_urn(urn_kind, {"content_digest": digest})
     if contract is not None:
-        validate_contract(contract, document)
+        validate_contract(versioned_contract(contract, document), document)
     return document
 
 
@@ -36,7 +42,7 @@ def verify_artifact(
     urn_kind: str,
     contract: str,
 ) -> None:
-    validate_contract(contract, value)
+    validate_contract(versioned_contract(contract, value), value)
     expected = finalize_artifact(value, id_field=id_field, urn_kind=urn_kind)
     if expected != value:
         raise ValueError(f"{id_field} or content_digest mismatch")

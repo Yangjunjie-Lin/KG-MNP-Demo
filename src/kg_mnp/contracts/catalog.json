@@ -172,6 +172,16 @@
       "version": "1.0.0"
     },
     {
+      "authority_level": "control",
+      "name": "semantic-compiler-policy-v1-1",
+      "resource_path": "schemas/compilation/semantic_compiler_policy_v1_1.schema.json",
+      "schema_id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/semantic-compiler-policy/1.1",
+      "scope": "compilation",
+      "sha256": "00b720ee083fe42495d7e6090dbb2573e194df52d55d908bfaa4c11ea83c15f4",
+      "stability": "experimental",
+      "version": "1.1.0"
+    },
+    {
       "authority_level": "lock",
       "name": "semantic-compiler-snapshot",
       "resource_path": "schemas/compilation/semantic_compiler_snapshot.schema.json",
@@ -180,6 +190,16 @@
       "sha256": "c8ea4152be9660754b448f4bfb4777888463a26313834bf6fb169d6fe218173c",
       "stability": "experimental",
       "version": "1.0.0"
+    },
+    {
+      "authority_level": "lock",
+      "name": "semantic-compiler-snapshot-v1-1",
+      "resource_path": "schemas/compilation/semantic_compiler_snapshot_v1_1.schema.json",
+      "schema_id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/semantic-compiler-snapshot/1.1",
+      "scope": "compilation",
+      "sha256": "2fd992a390349046c5d3e8dc0ec5116531df710aa41fd0bfd5b990bd49327825",
+      "stability": "experimental",
+      "version": "1.1.0"
     },
     {
       "authority_level": "descriptive",

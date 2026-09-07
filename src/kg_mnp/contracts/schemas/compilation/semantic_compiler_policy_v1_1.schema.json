@@ -1,0 +1,271 @@
+{
+  "$id": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/semantic-compiler-policy/1.1",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "properties": {
+    "baseline_policy": {
+      "const": "LOCAL_LOCKED_CLOSURE"
+    },
+    "canonicalization_profile": {
+      "const": "KG-MNP RDF Canonical Profile v1"
+    },
+    "competency_question_policy": {
+      "const": "REGISTERED_READ_ONLY_WITH_ORACLE"
+    },
+    "compiler_version": {
+      "const": "0.5.1"
+    },
+    "content_digest": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/sha256"
+    },
+    "input_contract": {
+      "const": "ontology-confirmed-modeling-package/1.0.0"
+    },
+    "manifest_kind": {
+      "const": "KG_MNP_SEMANTIC_COMPILER_POLICY"
+    },
+    "mapping_policy": {
+      "const": "DECLARATIVE_ONLY"
+    },
+    "named_graph_policy": {
+      "const": "ROLE_AND_SEMANTIC_DIGEST"
+    },
+    "ontology_module_policy": {
+      "const": "OVERLAY_MODULE"
+    },
+    "output_formats": {
+      "items": {
+        "enum": [
+          "NT",
+          "TTL",
+          "NQ",
+          "TRIG",
+          "JSON",
+          "XML",
+          "KGOP"
+        ]
+      },
+      "maxItems": 16,
+      "minItems": 1,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "owl_consistency_policy": {
+      "const": "PINNED_HERMIT"
+    },
+    "owl_profile_policy": {
+      "enum": [
+        "OWL_2_DL_STRICT",
+        "OWL_RL_STRUCTURAL"
+      ]
+    },
+    "package_profile": {
+      "const": "PORTABLE_OFFLINE"
+    },
+    "package_validation_policy": {
+      "const": "STRICT_CLOSED_SET"
+    },
+    "policy_id": {
+      "$ref": "https://yangjunjie-lin.github.io/KG-MNP-Demo/schemas/compilation/compilation-common/1.0#/$defs/stableId"
+    },
+    "policy_version": {
+      "const": "1.1.0"
+    },
+    "prohibited_operations": {
+      "items": {
+        "maxLength": 64,
+        "pattern": "^[A-Z][A-Z0-9_]*$",
+        "type": "string"
+      },
+      "maxItems": 64,
+      "minItems": 1,
+      "type": "array",
+      "uniqueItems": true
+    },
+    "provenance_policy": {
+      "const": "STATEMENT_LEVEL_CLOSED"
+    },
+    "resource_limits": {
+      "additionalProperties": false,
+      "properties": {
+        "max_abox_statements": {
+          "maximum": 1073741824,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_archive_compression_ratio": {
+          "maximum": 1073741824,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_confirmed_items": {
+          "maximum": 1073741824,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_cq_count": {
+          "maximum": 1073741824,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_dataset_quads": {
+          "maximum": 1073741824,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_mapping_rules": {
+          "maximum": 1073741824,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_package_files": {
+          "maximum": 1073741824,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_package_uncompressed_bytes": {
+          "maximum": 1073741824,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_provenance_statements": {
+          "maximum": 1073741824,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_query_characters": {
+          "maximum": 1073741824,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_query_path_depth": {
+          "maximum": 1073741824,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_query_results": {
+          "maximum": 1073741824,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_query_seconds": {
+          "maximum": 1073741824,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_rdf_bytes_per_file": {
+          "maximum": 1073741824,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_reasoner_input_triples": {
+          "maximum": 1073741824,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_reasoner_output_bytes": {
+          "maximum": 1073741824,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_reasoner_seconds": {
+          "maximum": 1073741824,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_shacl_results": {
+          "maximum": 1073741824,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_shacl_seconds": {
+          "maximum": 1073741824,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_shacl_statements": {
+          "maximum": 1073741824,
+          "minimum": 1,
+          "type": "integer"
+        },
+        "max_tbox_statements": {
+          "maximum": 1073741824,
+          "minimum": 1,
+          "type": "integer"
+        }
+      },
+      "required": [
+        "max_confirmed_items",
+        "max_tbox_statements",
+        "max_abox_statements",
+        "max_shacl_statements",
+        "max_mapping_rules",
+        "max_provenance_statements",
+        "max_dataset_quads",
+        "max_rdf_bytes_per_file",
+        "max_package_files",
+        "max_package_uncompressed_bytes",
+        "max_archive_compression_ratio",
+        "max_reasoner_input_triples",
+        "max_reasoner_seconds",
+        "max_reasoner_output_bytes",
+        "max_shacl_results",
+        "max_shacl_seconds",
+        "max_cq_count",
+        "max_query_characters",
+        "max_query_results",
+        "max_query_seconds",
+        "max_query_path_depth"
+      ],
+      "type": "object"
+    },
+    "schema_version": {
+      "const": "1.1.0"
+    },
+    "shacl_policy": {
+      "const": "OFFLINE_CORE_ONLY"
+    },
+    "skolemization_profile": {
+      "const": "KG-MNP Structural Skolem Profile v1"
+    },
+    "supported_candidate_types": {
+      "items": {
+        "maxLength": 64,
+        "pattern": "^[A-Z][A-Z0-9_]*$",
+        "type": "string"
+      },
+      "maxItems": 64,
+      "minItems": 1,
+      "type": "array",
+      "uniqueItems": true
+    }
+  },
+  "required": [
+    "manifest_kind",
+    "schema_version",
+    "policy_id",
+    "policy_version",
+    "compiler_version",
+    "input_contract",
+    "canonicalization_profile",
+    "skolemization_profile",
+    "package_profile",
+    "ontology_module_policy",
+    "supported_candidate_types",
+    "output_formats",
+    "named_graph_policy",
+    "baseline_policy",
+    "mapping_policy",
+    "provenance_policy",
+    "owl_profile_policy",
+    "owl_consistency_policy",
+    "shacl_policy",
+    "competency_question_policy",
+    "package_validation_policy",
+    "resource_limits",
+    "prohibited_operations",
+    "content_digest"
+  ],
+  "title": "KG-MNP Semantic Compiler Policy 1.1",
+  "type": "object"
+}

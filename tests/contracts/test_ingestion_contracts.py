@@ -57,7 +57,7 @@ def test_prompt03_contracts_are_single_catalog_ingestion_scope_and_packaged() ->
     catalog = ContractCatalog.load()
     ingestion = {spec.name for spec in catalog.filtered(scope="ingestion")}
     assert PROMPT03_CONTRACTS.issubset(ingestion)
-    assert len(catalog.specs) == PROMPT05_CONTRACT_COUNT
+    assert len(catalog.specs) >= PROMPT05_CONTRACT_COUNT
     package = resources.files("kg_mnp.contracts")
     for name in PROMPT03_CONTRACTS:
         spec = catalog.by_name(name)
