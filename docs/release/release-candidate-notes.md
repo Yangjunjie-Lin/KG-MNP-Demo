@@ -1,176 +1,80 @@
-# Delivery scope — NO_GO_OPEN_CORE_REQUIREMENTS
+# 实施检查点 — NO_GO_REFACTOR_INCOMPLETE
 
-This branch is a recoverable development increment, **not complete final
-consolidation and not a verified release candidate**. No candidate tag or public
-Release is authorized by these results. Product version: 0.9.0.dev0; compiler,
-contract and Domain Pack versions remain independent.
+这不是完整重构结束，也不是已经通过最终验收的发行候选。没有成功候选 Tag、公共 Release、生产部署或 main 合并。
 
-## Baseline and actual increments
+## 修订与证据
 
-Source: 9da17d126cb37166ff06084080770108da20afbe.
-Target: codex/toolchain-final-consolidation-p09.
-The fixed P8 1498-file protected tree was actually checked at entry and again
-from git archive. P1-P8 ancestry and the historical baseline tag were checked.
-The annotated pre-consolidation tag points to the exact P8 source, not a release.
+- Source：9da17d126cb37166ff06084080770108da20afbe。
+- 目标分支：codex/toolchain-final-consolidation-p09。
+- 本检查点代码：aefe6509480ae28706dcc38712bf56d73ed0988b。
+- 最终 tested_commit：尚未建立。旧 3c0d0ad 全量通过仍在 final-verification.json 中作为历史检查点保留，不能认证后续代码。
+- 当前产品 0.9.0.dev0；编译器 0.5.1；快照/策略新增 1.1.0 契约；原 115 Schema 原字节和 ID 保留，当前 Catalog 117 项。
 
-G0: baseline audit and a single requirement ledger established. Existing source
-and reports were read; the full old-code caller/retirement audit is incomplete.
+## G0–G6
 
-G1: real TCP upload/Source/Batch/Worker/ingestion/KG-IR/Evidence/raw download chain.
-Core publication now uses the existing project authority mapping and a
-credential/lease/fencing/CAS-protected atomic commit receipt. Actual fault tests
-cover precommit lease loss, superseded fencing, revocation, cancellation,
-computation failure, before/after publication exceptions, restart reconciliation
-and lost Job completion. Tests simulate process-death boundaries; hard-kill at
-every filesystem-write boundary and power-loss behavior are not certified.
+| 门 | 实际结果 |
+| --- | --- |
+| G0 | 固定源 SHA、1498 文件历史树、Tag 与祖先关系已核验 |
+| G1 | 实际上传/Source/Batch/Worker/KG-IR/Evidence/原文下载，含权限、fencing、幂等和骤停恢复测试 |
+| G2 | 明确 Scope/CQ、候选、逐项审核、修订与确认、实际语义编译 |
+| G3 | 真实 Diff/Impact/九类回归与消费者契约、后续发布、独立审核的 CAS 激活和历史回滚 |
+| G4 | Minimal、Forestry、MNP 的增量真实浏览器流程已通过；不是当前最终修订全量认证 |
+| G5 | 旧 UI/审批 CLI/历史冻结测试/首批 CI 和文档已收敛；旧后端重复代码及剩余报告脚本仍未完全退役 |
+| G6 | 尚未执行最终固定修订完整验收与新发行包全平台干净安装 |
 
-G2: nonempty Minimal scope/approval/CQ/baseline/terminology/alignment/proposal,
-per-candidate human review, confirmation and real fixed Reasoner/SHACL/CQ/
-Provenance compilation. The public modeling subset does not yet expose all core
-manual/recorded Provider, edit/revalidation and conflict-resolution capabilities.
-The Workspace's old blanket rejection of all confirmed files was replaced by
-actual confirmation manifest/authority validation; arbitrary files still fail.
+## 已完成的可复现增量
 
-G3: actual package import with source ProjectLock bytes/digest, initial release
-candidate/review/CAS publish/attestation and nonempty fixed-package object query.
-The complete successor change/regression/environment/rollback services remain
-open. Local package query is not proof of a complete version-bound ODS product.
+原 53 项操作作为追踪基线保留，新增操作另列；接口或 handler 数量不视为完成证明。完整映射见 final-requirements.json，状态均标明尚未完成最终同修订验证。
 
-G4: one Chinese React/TypeScript/Vite workbench, session login, projects, sources,
-evidence table, scope/CQ forms, mappings, individual review, compiler reports,
-initial release, object query and jobs. A real Minimal browser scenario passed
-during development with no mocked core API. Screenshots were actually opened.
-Full Forestry/MNP/fourth-pack workflows, candidate editing, complete evidence and
-version linking, 1000-row/200-node benchmarks and accessibility audit are absent.
+核心提交在隔离完整 Workspace 中计算，使用凭证锁、JobStore fencing、项目 CAS 和原子提交回执。真实进程退出覆盖提交前后；原凭证撤销、取消、失效租约和旧 Worker 不能发布未提交工件。恢复入口覆盖 API、SDK、CLI 和任务中心，不重放不确定外部副作用。
 
-G5: runtime source-tree freeze converted to fixed-history audit; service DTO
-tests adapted while preserving security assertions; receipt plugin renamed to a
-capability name; README and commit-boundary guide updated. Old UI and business
-entry retirement/complete CI migration are **not done**, since their replacement
-equivalence gate has not passed. No archive/legacy tree was created. Existing
-P8 receipt path prefixes were normalized for hygiene, without changing outcomes.
+审核身份与角色来自服务端。生产发布要求五类角色覆盖及两位独立审核人；后续拒绝会撤销旧批准的计数。候选修改重新生成 ID 并重验；Scope 和 Review 均有修订冲突检查。
 
-G6: final fixed-revision test/build/install evidence is recorded separately in
-final-verification.json once actually run. Development PASS results at different
-revisions must not be combined into a final full-suite claim.
+实际回归包括 Package、Candidate CQ、Base CQ、Diff、依赖、Impact、Provenance、Release metadata 和映射，以及当前消费者契约。它执行真正的查询/Oracle，不以文件存在或布尔字典替代正确性。
 
-## Remaining service operations and other required work
+## 领域与浏览器
 
-The original 53 rows are retained. 41 currently have application adapters; this
-does not mean 41 complete product requirements. Remaining declared operations:
+- Minimal：完整真实流程、第二版本、发布、两次激活与指定历史回滚复测通过，9.1 分钟。
+- Forestry 0.2.0 EXPERIMENTAL：6 树、6 巡查、2 地点，83 项逐项审核；真实验证、发布、6 条实例、Evidence 回溯和下载字节核对通过，20.9 分钟。
+- MNP 1.0.0：原 84 资产不变；非空合成 MappingRecord 经过相同 API/UI/核心，实际查询和来源下载通过，18.5 分钟。
+- 任意名称第四包、错误凭证/CSRF/Origin/身份切换隔离、自动键盘与可访问性检查通过。
 
-- change.diff, change.impact, change.regression, change.evaluate;
-- environment.activate, environment.rollback;
-- visualization.export;
-- integration.plan, integration.review, integration.execute, integration.verify;
-- workflow.enqueue.
+原始失败未改写：Forestry 初期 HTTP/等待失败，后续 15 秒对象查询等待不足；MNP 编译/导入等待及 20 秒下载等待不足；Minimal 曾点击旧提案，被后端 CAS 正确拒绝。分别定位、修复并复测。下载/完整校验可能需数十秒，不承诺未测量的性能 SLA。
 
-Forestry remains the unchanged 0.1.0 PLANNED pack; the authorized synthetic 0.2.0
-upgrade has **not** been delivered. Minimal/MNP assets and all 115 public schema
-files are unchanged relative to P8. MNP's 84-asset preservation check was run.
-No new Forestry lock/digest or pilot effect is claimed. Existing packages retain
-their versioned schemas; the compiler's implementation files were not edited.
+组件容量在实际 Chromium 中测量：1000 表格记录保持分页，图限制 200 节点/400 边；单次首屏两帧测量约 197.7 ms，机器 i7-12700H/约 34 GB 内存/Windows。它不是业务吞吐提升百分比。实际截图已查看；交互式登录键盘焦点和空输入中文错误提示另行查看，未冒充人工用户研究。
 
-Additional missing scope is explicitly retained in final-requirements.json:
-production multi-role full-browser negatives, unsafe preview/query adversarial
-coverage, complete CAS/recovery fault matrix, historical-package clean-install
-coverage, Linux execution, full UI/CLI/API/SDK parity, old implementation cleanup,
-test migration and CI execution, full release build/install verification.
+## 实际退役和保留
 
-## Dependencies and evidence boundaries
+已删除 web/workbench、web/diagnostics、web/governance 的 9 个 HTML/JS/CSS 文件；旧 URL 返回 410。没有 iframe 或 archive/legacy 备份。
 
-The Python environment was created with venv and installed from declared extras;
-requirements-dev.lock records its dependency resolution. Existing backend pins
-were retained; this is not an exhaustive dependency-vulnerability audit. Node 24
-matches the selected Vite engines. Frontend dependencies are exact and locked;
-npm install reported zero advisories at that time. Legacy Python Playwright is
-separate from the new Node browser runner. Browser/JAR acquisition is preparation,
-not core runtime. No host pytest/httpx fallback is needed.
+约 1550 行旧本地建模/审核/生命周期 CLI 分发被同一认证 ApplicationService 入口替换。旧 application/workbench/diagnostics/governance/amendment/activation 根 CLI 返回退役提示，未知参数不再回落旧建模入口。旧调用者指定角色与 zero Prompt digest 行为不作为兼容保证。
 
-The development-version installation reproduced and fixed a bundled-plugin
-version parser defect. PEP 440 development/RC versions are compared correctly;
-snapshot spelling is explicitly normalized to SemVer without changing frozen
-schemas. Stable versions are unchanged and external plugin matching is still
-exact. The independent plugin-wheel test also exposed undeclared setuptools and
-wheel tooling; both are now explicit pinned build/development requirements.
-These original failures are preserved in the ignored logs, not called external
-blockers. MNP's actual unchanged Pack version is 1.0.0 (not 0.1.0).
+重复整树冻结测试归并为固定 Git 历史审计；MNP 查询资产摘要单独保留。旧 UI 安全断言迁移到真实 React 与 API，11 类 XSS 字符串全部保留，历史格式篡改断言未删除。精确路径/节点映射见 final-retirement-ledger.json。
 
-Raw JUnit/logs/screenshots and synthetic IDs live under ignored runtime_logs/p09.
-Browser traces/video are disabled to avoid recording login credentials. Source
-and job data, sessions, tokens, node_modules and dist are not committed. Wheel
-and sdist include generated static resources from the same build pipeline.
+旧后端 application/workbench/diagnostics/governance/amendment/activation/compilation 及部分 graphdb/webvowl/旧 modeling 实现仍存在。它们还需按真实调用者和版本化只读兼容需求合并/删除，不能将当前首批退役宣称为 REFACTOR_COMPLETE。
 
-GraphDB live remains an optional external-license/environment blocker. Missing
-local adapters and local core requirements are **not** attributed to that blocker.
-Outbox/Pointer changes are not business execution or external deployment.
+## 版本与兼容
 
-## Research claims
+新增编译器 0.5.1 快照/策略契约不更改原 Schema。旧 0.5.0 真实合成 Package 冻结为兼容样本：
 
-Implemented mechanisms include contract-bound engineering, evidence-bound KG-IR,
-separation of proposals/review/compiler authority and integrity-bound lifecycle
-records. These mechanisms are evidenced by the concrete services/core tests, not
-schema/file counts. Academic novelty, source truth, business correctness,
-cross-industry generality, forestry field effectiveness and production security
-certification have not been demonstrated. Hashes prove byte bindings, not truth;
-OWL/SHACL/CQ results are limited to the actual inputs, constraints and Oracles run.
+- SHA256：4e6ba7225348a201c1ba2076e58f3c1bff370a97dae7000e99ebe53f9be3f983。
+- 76928 字节；原包 payload 在导出前后相同。
+- 新 reader 验证通过；不修改旧包后重算 Hash。
 
-## Fixed-revision verification actually completed
+## 测试与发行状态
 
-Tested commit: `3c0d0ad18e9640ceacc60502e227354cfff939d0`.
-Source-tree digest: `1cee0c28d4ef2012ab8056259661ba5e30809fc6038c85cdb4f876065f6de88e`.
-The earlier fixed attempts are superseded and were not merged into this result.
+当前检查点分别记录了 UI/兼容/安全 169 项、CLI 9 项、版本契约 16 项、真实编译 5 项、前端 14 项等通过结果。它们不是同一最终冻结修订的累计全绿。
 
-- Complete Windows collection: 1575 unique nodes. Serial 449 + parallel 1126,
-  disjoint union exactly equals collection. Result: **1566 passed, 9 skipped,
-  0 failed/errors**. Skips and original command outcomes are in final-verification.json.
-- Ubuntu 24.04 / Python 3.12.3: **60 POSIX tests passed, no skips** on an actual
-  source checkout of the tested commit, with a clean installed dependency environment.
-  The first Linux failure exposed drive-path rejection and three frozen CRLF schema
-  byte bindings. The path code and exact checkout rules were fixed; schema blobs,
-  IDs and old hashes were not changed. This is not a full Linux semantic suite.
-- Real Chromium 153 Minimal browser scenario passed in about 442 seconds with
-  Source, KG-IR, Proposal, per-item synthetic-human Review, fixed Reasoner,
-  Package, initial Release and nonempty object query. No core API was mocked.
-- Frontend type/build, npm audit, backend Ruff, hygiene, pip consistency,
-  MNP 84-asset preservation, OpenAPI export and requirement-generator module check passed.
-- Wheel/Sdist built; sdist actually rebuilt into a wheel. An isolated Windows wheel
-  probe read packaged Contract/Policy resources, loaded Workbench/deep links and
-  confirmed API 401/404 boundaries without importing source-tree code.
-- Six final screenshots were actually inspected. Dense review tables and incomplete
-  UX/a11y/benchmark coverage remain limitations, not a completed visual acceptance.
+新 CI 分为 quality/backend/workbench/security/release-check，完整后端集合不递归重复历史 aggregate。配置解析和本地命令验证不等于远端 CI 成功。
 
-Main browser IDs:
+Python 依赖按已知公告作必要升级，并在独立环境验证；保留 httpx/anyio/rdflib deprecation 信息。新完整 Wheel/Sdist 干净安装、Linux 验证、最终 collection/分区、浏览器 0.5.1、证据提交源码一致性和交付包摘要仍需最终执行。
 
-    Source: urn:kg-mnp:source:a6b96e697f242db622efb316e435372f68ce9881611213756e7736b9b406cbb6
-    KG-IR: urn:kg-mnp:kg-ir-dataset:85a7bec0652e59ac231cadf29fe6d9c510539fb73643132277e7bad780ed861e
-    Proposal: urn:kg-mnp:ontology-modeling-proposal:aecdd0bcd56c598d89c5f626f2229b8fe62d65e59dc309484a5308c30ee9dec8
-    Review: urn:kg-mnp:ontology-review-queue:80ea2665657764f1cc18df6f0acaac81321df174f9440f6bc37aa12c6cd63202
-    Package: urn:kg-mnp:ontology-package:f18aa1412acaaecfff05eb4b21cc080c776192b70a94c93091080bb60155b16c
-    Release: urn:kg-mnp:release:86374b5d36f9f92fa67d99eecf6418d13268c62358764a983499395c7af4d649
+## 明确剩余项
 
-The exact Job/Scope/Confirmation/Compilation/Attestation IDs and artifact hashes
-are in final-verification.json. Development artifacts (not release candidates):
+1. 完成旧后端重复权威、脚本和历史文档的实际收敛及逐项测试迁移。
+2. 补全最终验证入口的前端、平台、安装、恢复、文档命令和交付包步骤。
+3. 在新 CODE_FREEZE 上完整执行所有必需门，不能复用旧修订补齐。
+4. 形成完整证据包、tested/delivery 修订一致性证明和远端状态核验。
+5. 只有全部必需门通过，才考虑候选 Tag。
 
-- `runtime/p09-final-distribution/domain-packs-and-minimal-example-3c0d0ad.tar.gz` — SHA-256 `b1a6423dfee6d6e23f989eb395dd04e818be0757db12d726c173ab92c7cbac3a`
-- `runtime/p09-final-distribution/kg_mnp_toolchain-0.9.0.dev0-py3-none-any.whl` — SHA-256 `0121ce397964c19e130bfcd7d81f86643667ef152cf6badd2d57c5dbed1957c3`
-- `runtime/p09-final-distribution/kg_mnp_toolchain-0.9.0.dev0.tar.gz` — SHA-256 `d1f1871b549be8d3b7da26e8605cf974458762140f6bc9b48e4f8ea7adee864d`
-
-The delivery commit is an evidence-only successor of the tested commit. Its exact
-SHA is supplied after creation; no file contains its own commit hash. Only
-final-verification.json, final-requirements.json and these notes are excluded from
-the tested-input comparison. These files are not included in Wheel/Sdist inputs.
-All source/config/test/build inputs must match the tested revision.
-
-The original required operation map remains complete, with 12 declarations still
-unconnected and several implemented operations explicitly partial. No candidate
-tag, public Release, main merge, force push or production deployment is performed.
-The original 1687 tracked files became 1726 at the tested commit; this is inventory,
-not a quality score. Only the shared receipt helper moved; full retirement and CI
-reorganization are not complete.
-
-Raw acceptance archive: `runtime/p09-final-distribution/acceptance-evidence-3c0d0ad.zip`
-(958548 bytes), SHA-256
-`bb24845ce801d08c388b1a71c1be3191e5176d7229e8012729a5c5bc26ddb93b`.
-Its 93 selected files passed the credential-pattern scan; runtime workspaces,
-source blobs, session/token stores and browser auth state are not included.
+GraphDB live 与外部业务执行器未配置，单列可选外部阻断；不能用来掩盖上述本地未完成项。没有 Live LLM/OCR/ASR、真实林业试点、外部 exactly-once 或生产安全认证声明。

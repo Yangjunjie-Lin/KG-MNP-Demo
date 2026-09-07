@@ -29,7 +29,9 @@
       "execution_mode": "INLINE",
       "implementation": "kg_mnp.services.projects.create_project",
       "maps_to": "project.create",
-      "missing": [],
+      "missing": [
+        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
+      ],
       "negative_tests": [
         "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[project.create]"
       ],
@@ -39,8 +41,10 @@
       "requirement_id": "project.create",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_AND_TESTED",
-      "ui": "/"
+      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "ui": "/",
+      "final_revision_verified": false,
+      "request_contract": "ProjectCreateRequest"
     },
     {
       "api": "GET /api/v1/projects/{project_id}",
@@ -54,7 +58,9 @@
       "execution_mode": "INLINE",
       "implementation": "kg_mnp.services.projects.inspect_project",
       "maps_to": "project.open",
-      "missing": [],
+      "missing": [
+        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
+      ],
       "negative_tests": [
         "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[project.open]"
       ],
@@ -64,8 +70,10 @@
       "requirement_id": "project.open",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_AND_TESTED",
-      "ui": "overview"
+      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "ui": "overview",
+      "final_revision_verified": false,
+      "request_contract": "ProjectOpenRequest"
     },
     {
       "api": "GET /api/v1/projects",
@@ -79,7 +87,9 @@
       "execution_mode": "INLINE",
       "implementation": "kg_mnp.services.projects.list_projects",
       "maps_to": "project.list",
-      "missing": [],
+      "missing": [
+        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
+      ],
       "negative_tests": [
         "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[project.list]"
       ],
@@ -89,8 +99,10 @@
       "requirement_id": "project.list",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_AND_TESTED",
-      "ui": "/"
+      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "ui": "/",
+      "final_revision_verified": false,
+      "request_contract": "EmptyRequest"
     },
     {
       "api": "GET /api/v1/projects/{project_id}/validation",
@@ -104,7 +116,9 @@
       "execution_mode": "INLINE",
       "implementation": "kg_mnp.services.projects.inspect_project",
       "maps_to": "project.validate",
-      "missing": [],
+      "missing": [
+        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
+      ],
       "negative_tests": [
         "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[project.validate]"
       ],
@@ -114,8 +128,10 @@
       "requirement_id": "project.validate",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_AND_TESTED",
-      "ui": "overview via project state"
+      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "ui": "overview via project state",
+      "final_revision_verified": false,
+      "request_contract": "EmptyRequest"
     },
     {
       "api": "POST /api/v1/projects/{project_id}/lock",
@@ -129,7 +145,9 @@
       "execution_mode": "INLINE",
       "implementation": "kg_mnp.services.projects.lock_project",
       "maps_to": "project.lock",
-      "missing": [],
+      "missing": [
+        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
+      ],
       "negative_tests": [
         "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[project.lock]"
       ],
@@ -139,8 +157,10 @@
       "requirement_id": "project.lock",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_AND_TESTED",
-      "ui": "NOT_IMPLEMENTED"
+      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "ui": "NOT_IMPLEMENTED",
+      "final_revision_verified": false,
+      "request_contract": "EmptyRequest"
     },
     {
       "api": "GET /api/v1/domain-packs",
@@ -154,7 +174,9 @@
       "execution_mode": "INLINE",
       "implementation": "kg_mnp.services.packs.discover",
       "maps_to": "domain-pack.discover",
-      "missing": [],
+      "missing": [
+        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
+      ],
       "negative_tests": [
         "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[domain-pack.discover]"
       ],
@@ -164,8 +186,10 @@
       "requirement_id": "domain-pack.discover",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_AND_TESTED",
-      "ui": "/"
+      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "ui": "/",
+      "final_revision_verified": false,
+      "request_contract": "EmptyRequest"
     },
     {
       "api": "POST /api/v1/operations/domain-pack.inspect",
@@ -179,7 +203,9 @@
       "execution_mode": "INLINE",
       "implementation": "kg_mnp.services.packs.discover",
       "maps_to": "domain-pack.inspect",
-      "missing": [],
+      "missing": [
+        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
+      ],
       "negative_tests": [
         "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[domain-pack.inspect]"
       ],
@@ -189,8 +215,10 @@
       "requirement_id": "domain-pack.inspect",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_AND_TESTED",
-      "ui": "NOT_IMPLEMENTED"
+      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "ui": "NOT_IMPLEMENTED",
+      "final_revision_verified": false,
+      "request_contract": "PackInspectRequest"
     },
     {
       "api": "POST /api/v1/projects/{project_id}/sources",
@@ -204,7 +232,9 @@
       "execution_mode": "JOB",
       "implementation": "kg_mnp.services.sources.execute",
       "maps_to": "source.register",
-      "missing": [],
+      "missing": [
+        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
+      ],
       "negative_tests": [
         "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[source.register]"
       ],
@@ -214,8 +244,10 @@
       "requirement_id": "source.register",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_AND_TESTED",
-      "ui": "sources"
+      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "ui": "sources",
+      "final_revision_verified": false,
+      "request_contract": "SourceRegisterRequest"
     },
     {
       "api": "GET /api/v1/projects/{project_id}/sources/{source_id}",
@@ -229,7 +261,9 @@
       "execution_mode": "INLINE",
       "implementation": "kg_mnp.services.sources.execute",
       "maps_to": "source.inspect",
-      "missing": [],
+      "missing": [
+        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
+      ],
       "negative_tests": [
         "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[source.inspect]"
       ],
@@ -239,8 +273,10 @@
       "requirement_id": "source.inspect",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_AND_TESTED",
-      "ui": "sources"
+      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "ui": "sources",
+      "final_revision_verified": false,
+      "request_contract": "SourceRequest"
     },
     {
       "api": "POST /api/v1/projects/{project_id}/ingestion/plans",
@@ -254,7 +290,9 @@
       "execution_mode": "JOB",
       "implementation": "kg_mnp.services.sources.execute",
       "maps_to": "ingestion.plan",
-      "missing": [],
+      "missing": [
+        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
+      ],
       "negative_tests": [
         "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[ingestion.plan]"
       ],
@@ -264,8 +302,10 @@
       "requirement_id": "ingestion.plan",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_AND_TESTED",
-      "ui": "sources"
+      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "ui": "sources",
+      "final_revision_verified": false,
+      "request_contract": "IngestionPlanRequest"
     },
     {
       "api": "POST /api/v1/projects/{project_id}/ingestion/runs",
@@ -279,7 +319,9 @@
       "execution_mode": "JOB",
       "implementation": "kg_mnp.services.sources.execute",
       "maps_to": "ingestion.run",
-      "missing": [],
+      "missing": [
+        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
+      ],
       "negative_tests": [
         "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[ingestion.run]"
       ],
@@ -289,8 +331,10 @@
       "requirement_id": "ingestion.run",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_AND_TESTED",
-      "ui": "sources"
+      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "ui": "sources",
+      "final_revision_verified": false,
+      "request_contract": "IngestionRunRequest"
     },
     {
       "api": "GET /api/v1/projects/{project_id}/ingestion/runs/{run_id}",
@@ -304,7 +348,9 @@
       "execution_mode": "INLINE",
       "implementation": "kg_mnp.services.sources.execute",
       "maps_to": "ingestion.inspect",
-      "missing": [],
+      "missing": [
+        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
+      ],
       "negative_tests": [
         "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[ingestion.inspect]"
       ],
@@ -314,8 +360,10 @@
       "requirement_id": "ingestion.inspect",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_AND_TESTED",
-      "ui": "sources"
+      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "ui": "sources",
+      "final_revision_verified": false,
+      "request_contract": "IngestionInspectRequest"
     },
     {
       "api": "GET /api/v1/projects/{project_id}/evidence?run_id=...&item_id=...",
@@ -329,7 +377,9 @@
       "execution_mode": "INLINE",
       "implementation": "kg_mnp.services.sources.execute",
       "maps_to": "ingestion.trace",
-      "missing": [],
+      "missing": [
+        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
+      ],
       "negative_tests": [
         "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[ingestion.trace]"
       ],
@@ -339,8 +389,10 @@
       "requirement_id": "ingestion.trace",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_AND_TESTED",
-      "ui": "sources"
+      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "ui": "sources",
+      "final_revision_verified": false,
+      "request_contract": "IngestionInspectRequest"
     },
     {
       "api": "POST /api/v1/projects/{project_id}/modeling/scopes",
@@ -354,7 +406,9 @@
       "execution_mode": "JOB",
       "implementation": "kg_mnp.services.modeling.execute",
       "maps_to": "modeling.scope",
-      "missing": [],
+      "missing": [
+        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
+      ],
       "negative_tests": [
         "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[modeling.scope]"
       ],
@@ -364,8 +418,10 @@
       "requirement_id": "modeling.scope",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_AND_TESTED",
-      "ui": "modeling"
+      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "ui": "modeling",
+      "final_revision_verified": false,
+      "request_contract": "ScopeRequest"
     },
     {
       "api": "POST /api/v1/projects/{project_id}/modeling/scope-approvals",
@@ -380,7 +436,7 @@
       "implementation": "kg_mnp.services.modeling.execute",
       "maps_to": "modeling.scope.approve",
       "missing": [
-        "explicit approval revision CAS UX not completed"
+        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
       ],
       "negative_tests": [
         "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[modeling.scope.approve]"
@@ -391,8 +447,10 @@
       "requirement_id": "modeling.scope.approve",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "PARTIAL",
-      "ui": "modeling"
+      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "ui": "modeling",
+      "final_revision_verified": false,
+      "request_contract": "ScopeApprovalRequest"
     },
     {
       "api": "POST /api/v1/operations/modeling.candidate",
@@ -407,7 +465,7 @@
       "implementation": "kg_mnp.services.modeling.execute",
       "maps_to": "modeling.proposal",
       "missing": [
-        "manual/recorded Provider application adapters not connected"
+        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
       ],
       "negative_tests": [
         "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[modeling.candidate]"
@@ -418,8 +476,10 @@
       "requirement_id": "modeling.candidate",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "PARTIAL",
-      "ui": "NOT_IMPLEMENTED"
+      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "ui": "NOT_IMPLEMENTED",
+      "final_revision_verified": false,
+      "request_contract": "ProposalRequest"
     },
     {
       "api": "POST /api/v1/projects/{project_id}/modeling/preparations",
@@ -433,7 +493,9 @@
       "execution_mode": "JOB",
       "implementation": "kg_mnp.services.modeling.execute",
       "maps_to": "modeling.prepare",
-      "missing": [],
+      "missing": [
+        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
+      ],
       "negative_tests": [
         "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[modeling.cq]"
       ],
@@ -443,8 +505,10 @@
       "requirement_id": "modeling.cq",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_AND_TESTED",
-      "ui": "modeling"
+      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "ui": "modeling",
+      "final_revision_verified": false,
+      "request_contract": "ModelingPrepareRequest"
     },
     {
       "api": "POST /api/v1/projects/{project_id}/modeling/preparations",
@@ -458,7 +522,9 @@
       "execution_mode": "JOB",
       "implementation": "kg_mnp.services.modeling.execute",
       "maps_to": "modeling.prepare",
-      "missing": [],
+      "missing": [
+        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
+      ],
       "negative_tests": [
         "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[modeling.baseline]"
       ],
@@ -468,8 +534,10 @@
       "requirement_id": "modeling.baseline",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_AND_TESTED",
-      "ui": "modeling"
+      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "ui": "modeling",
+      "final_revision_verified": false,
+      "request_contract": "ModelingPrepareRequest"
     },
     {
       "api": "POST /api/v1/projects/{project_id}/modeling/preparations",
@@ -483,7 +551,9 @@
       "execution_mode": "JOB",
       "implementation": "kg_mnp.services.modeling.execute",
       "maps_to": "modeling.prepare",
-      "missing": [],
+      "missing": [
+        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
+      ],
       "negative_tests": [
         "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[modeling.alignment]"
       ],
@@ -493,8 +563,10 @@
       "requirement_id": "modeling.alignment",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_AND_TESTED",
-      "ui": "modeling"
+      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "ui": "modeling",
+      "final_revision_verified": false,
+      "request_contract": "ModelingPrepareRequest"
     },
     {
       "api": "POST /api/v1/projects/{project_id}/modeling/proposals",
@@ -509,7 +581,7 @@
       "implementation": "kg_mnp.services.modeling.execute",
       "maps_to": "modeling.proposal",
       "missing": [
-        "manual/recorded Provider application adapters not connected"
+        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
       ],
       "negative_tests": [
         "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[modeling.proposal]"
@@ -520,8 +592,10 @@
       "requirement_id": "modeling.proposal",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "PARTIAL",
-      "ui": "modeling"
+      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "ui": "modeling",
+      "final_revision_verified": false,
+      "request_contract": "ProposalRequest"
     },
     {
       "api": "POST /api/v1/projects/{project_id}/reviews/actions",
@@ -536,7 +610,7 @@
       "implementation": "kg_mnp.services.modeling.execute",
       "maps_to": "review.action",
       "missing": [
-        "modify-and-revalidate, conflict-resolution and evidence-request completion UI absent"
+        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
       ],
       "negative_tests": [
         "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[review.action]"
@@ -547,8 +621,10 @@
       "requirement_id": "review.action",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "PARTIAL",
-      "ui": "modeling"
+      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "ui": "modeling",
+      "final_revision_verified": false,
+      "request_contract": "ReviewActionRequest"
     },
     {
       "api": "GET /api/v1/projects/{project_id}/reviews/{review_id}",
@@ -562,7 +638,9 @@
       "execution_mode": "INLINE",
       "implementation": "kg_mnp.services.modeling.execute",
       "maps_to": "review.replay",
-      "missing": [],
+      "missing": [
+        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
+      ],
       "negative_tests": [
         "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[review.replay]"
       ],
@@ -570,9 +648,11 @@
       "requirement_id": "review.replay",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "OPEN",
+      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
       "ui": "modeling",
-      "browser_evidence": "workbench/tests/minimal.e2e.ts; fixed-3c0d0ad-72018325/browser/receipt.json"
+      "browser_evidence": "workbench/tests/minimal.e2e.ts; fixed-3c0d0ad-72018325/browser/receipt.json",
+      "final_revision_verified": false,
+      "request_contract": "ReviewRequest"
     },
     {
       "api": "POST /api/v1/projects/{project_id}/reviews/finalizations",
@@ -586,7 +666,9 @@
       "execution_mode": "JOB",
       "implementation": "kg_mnp.services.modeling.execute",
       "maps_to": "review.finalize",
-      "missing": [],
+      "missing": [
+        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
+      ],
       "negative_tests": [
         "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[review.finalize]"
       ],
@@ -596,8 +678,10 @@
       "requirement_id": "review.finalize",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_AND_TESTED",
-      "ui": "modeling"
+      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "ui": "modeling",
+      "final_revision_verified": false,
+      "request_contract": "ReviewRequest"
     },
     {
       "api": "POST /api/v1/projects/{project_id}/compilations/plans",
@@ -612,7 +696,7 @@
       "implementation": "kg_mnp.services.compilation.execute",
       "maps_to": "compile.plan",
       "missing": [
-        "only SELECT/minimum-row/required-binding Oracle form is connected"
+        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
       ],
       "negative_tests": [
         "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[compile.plan]"
@@ -623,8 +707,10 @@
       "requirement_id": "compile.plan",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "PARTIAL",
-      "ui": "releases"
+      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "ui": "releases",
+      "final_revision_verified": false,
+      "request_contract": "CompilePlanRequest"
     },
     {
       "api": "POST /api/v1/projects/{project_id}/compilations/builds",
@@ -638,7 +724,9 @@
       "execution_mode": "JOB",
       "implementation": "kg_mnp.services.compilation.execute",
       "maps_to": "compile.build",
-      "missing": [],
+      "missing": [
+        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
+      ],
       "negative_tests": [
         "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[compile.build]"
       ],
@@ -648,8 +736,10 @@
       "requirement_id": "compile.build",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_AND_TESTED",
-      "ui": "releases"
+      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "ui": "releases",
+      "final_revision_verified": false,
+      "request_contract": "CompileBuildRequest"
     },
     {
       "api": "POST /api/v1/operations/compile.validate",
@@ -663,7 +753,9 @@
       "execution_mode": "JOB",
       "implementation": "kg_mnp.services.compilation.execute",
       "maps_to": "compile.validate",
-      "missing": [],
+      "missing": [
+        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
+      ],
       "negative_tests": [
         "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[compile.validate]"
       ],
@@ -671,8 +763,10 @@
       "requirement_id": "compile.validate",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "OPEN",
-      "ui": "NOT_IMPLEMENTED"
+      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "ui": "NOT_IMPLEMENTED",
+      "final_revision_verified": false,
+      "request_contract": "PackageRequest"
     },
     {
       "api": "POST /api/v1/operations/compile.reproduce",
@@ -686,7 +780,9 @@
       "execution_mode": "JOB",
       "implementation": "kg_mnp.services.compilation.execute",
       "maps_to": "compile.reproduce",
-      "missing": [],
+      "missing": [
+        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
+      ],
       "negative_tests": [
         "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[compile.reproduce]"
       ],
@@ -694,8 +790,10 @@
       "requirement_id": "compile.reproduce",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "OPEN",
-      "ui": "NOT_IMPLEMENTED"
+      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "ui": "NOT_IMPLEMENTED",
+      "final_revision_verified": false,
+      "request_contract": "CompileBuildRequest"
     },
     {
       "api": "POST /api/v1/operations/package.inspect",
@@ -709,7 +807,9 @@
       "execution_mode": "INLINE",
       "implementation": "kg_mnp.lifecycle.store.list_records",
       "maps_to": "package.inspect",
-      "missing": [],
+      "missing": [
+        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
+      ],
       "negative_tests": [
         "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[package.inspect]"
       ],
@@ -717,8 +817,10 @@
       "requirement_id": "package.inspect",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_NOT_VERIFIED",
-      "ui": "NOT_IMPLEMENTED"
+      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "ui": "NOT_IMPLEMENTED",
+      "final_revision_verified": false,
+      "request_contract": "PackageRequest"
     },
     {
       "api": "POST /api/v1/operations/package.verify",
@@ -732,7 +834,9 @@
       "execution_mode": "INLINE",
       "implementation": "kg_mnp.services.compilation.execute",
       "maps_to": "package.verify",
-      "missing": [],
+      "missing": [
+        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
+      ],
       "negative_tests": [
         "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[package.verify]"
       ],
@@ -742,8 +846,10 @@
       "requirement_id": "package.verify",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_AND_TESTED",
-      "ui": "NOT_IMPLEMENTED"
+      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "ui": "NOT_IMPLEMENTED",
+      "final_revision_verified": false,
+      "request_contract": "PackageRequest"
     },
     {
       "api": "POST /api/v1/operations/package.export",
@@ -757,7 +863,9 @@
       "execution_mode": "JOB",
       "implementation": "kg_mnp.services.compilation.execute",
       "maps_to": "package.export",
-      "missing": [],
+      "missing": [
+        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
+      ],
       "negative_tests": [
         "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[package.export]"
       ],
@@ -767,8 +875,10 @@
       "requirement_id": "package.export",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_AND_TESTED",
-      "ui": "NOT_IMPLEMENTED"
+      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "ui": "NOT_IMPLEMENTED",
+      "final_revision_verified": false,
+      "request_contract": "PackageRequest"
     },
     {
       "api": "POST /api/v1/projects/{project_id}/lifecycle/imports",
@@ -782,7 +892,9 @@
       "execution_mode": "JOB",
       "implementation": "kg_mnp.services.lifecycle.execute",
       "maps_to": "registry.import",
-      "missing": [],
+      "missing": [
+        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
+      ],
       "negative_tests": [
         "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[registry.import]"
       ],
@@ -792,8 +904,10 @@
       "requirement_id": "registry.import",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_AND_TESTED",
-      "ui": "releases"
+      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "ui": "releases",
+      "final_revision_verified": false,
+      "request_contract": "PackageRequest"
     },
     {
       "api": "POST /api/v1/operations/registry.verify",
@@ -807,7 +921,9 @@
       "execution_mode": "INLINE",
       "implementation": "kg_mnp.lifecycle.registry.replay.verify_registry",
       "maps_to": "registry.verify",
-      "missing": [],
+      "missing": [
+        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
+      ],
       "negative_tests": [
         "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[registry.verify]"
       ],
@@ -817,96 +933,102 @@
       "requirement_id": "registry.verify",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_AND_TESTED",
-      "ui": "NOT_IMPLEMENTED"
+      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "ui": "NOT_IMPLEMENTED",
+      "final_revision_verified": false,
+      "request_contract": "EmptyRequest"
     },
     {
       "api": "POST /api/v1/operations/change.diff",
       "baseline_status": "DECLARED_ONLY",
-      "blocker": "local implementation missing; not an external integration blocker",
+      "blocker": null,
       "cli": "kg-mnp service call change.diff",
       "commits": [],
       "core_required": true,
       "execution_mode": "JOB",
-      "implementation": null,
+      "implementation": "kg_mnp.services.lifecycle.execute",
       "maps_to": "change.diff",
       "missing": [
-        "typed service-to-core handler",
-        "positive workflow test"
+        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
       ],
       "negative_tests": [],
       "positive_tests": [],
       "requirement_id": "change.diff",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "OPEN",
-      "ui": "NOT_IMPLEMENTED"
+      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "ui": "NOT_IMPLEMENTED",
+      "final_revision_verified": false,
+      "request_contract": "DiffRequest"
     },
     {
       "api": "POST /api/v1/operations/change.impact",
       "baseline_status": "DECLARED_ONLY",
-      "blocker": "local implementation missing; not an external integration blocker",
+      "blocker": null,
       "cli": "kg-mnp service call change.impact",
       "commits": [],
       "core_required": true,
       "execution_mode": "JOB",
-      "implementation": null,
+      "implementation": "kg_mnp.services.lifecycle.execute",
       "maps_to": "change.impact",
       "missing": [
-        "typed service-to-core handler",
-        "positive workflow test"
+        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
       ],
       "negative_tests": [],
       "positive_tests": [],
       "requirement_id": "change.impact",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "OPEN",
-      "ui": "NOT_IMPLEMENTED"
+      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "ui": "NOT_IMPLEMENTED",
+      "final_revision_verified": false,
+      "request_contract": "DiffReferenceRequest"
     },
     {
       "api": "POST /api/v1/operations/change.regression",
       "baseline_status": "DECLARED_ONLY",
-      "blocker": "local implementation missing; not an external integration blocker",
+      "blocker": null,
       "cli": "kg-mnp service call change.regression",
       "commits": [],
       "core_required": true,
       "execution_mode": "JOB",
-      "implementation": null,
+      "implementation": "kg_mnp.services.lifecycle.execute",
       "maps_to": "change.regression",
       "missing": [
-        "typed service-to-core handler",
-        "positive workflow test"
+        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
       ],
       "negative_tests": [],
       "positive_tests": [],
       "requirement_id": "change.regression",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "OPEN",
-      "ui": "NOT_IMPLEMENTED"
+      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "ui": "NOT_IMPLEMENTED",
+      "final_revision_verified": false,
+      "request_contract": "RegressionRequest"
     },
     {
       "api": "POST /api/v1/operations/change.evaluate",
       "baseline_status": "DECLARED_ONLY",
-      "blocker": "local implementation missing; not an external integration blocker",
+      "blocker": null,
       "cli": "kg-mnp service call change.evaluate",
       "commits": [],
       "core_required": true,
       "execution_mode": "JOB",
-      "implementation": null,
+      "implementation": "kg_mnp.services.lifecycle.execute",
       "maps_to": "change.evaluate",
       "missing": [
-        "typed service-to-core handler",
-        "positive workflow test"
+        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
       ],
       "negative_tests": [],
       "positive_tests": [],
       "requirement_id": "change.evaluate",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "OPEN",
-      "ui": "NOT_IMPLEMENTED"
+      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "ui": "NOT_IMPLEMENTED",
+      "final_revision_verified": false,
+      "request_contract": "ChangeEvaluationRequest"
     },
     {
       "api": "POST /api/v1/projects/{project_id}/lifecycle/release-reviews",
@@ -920,7 +1042,9 @@
       "execution_mode": "JOB",
       "implementation": "kg_mnp.services.lifecycle.execute",
       "maps_to": "release.review",
-      "missing": [],
+      "missing": [
+        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
+      ],
       "negative_tests": [
         "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[release.review]"
       ],
@@ -930,8 +1054,10 @@
       "requirement_id": "release.review",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_AND_TESTED",
-      "ui": "releases"
+      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "ui": "releases",
+      "final_revision_verified": false,
+      "request_contract": "ReleaseReviewRequest"
     },
     {
       "api": "POST /api/v1/projects/{project_id}/lifecycle/releases",
@@ -946,7 +1072,7 @@
       "implementation": "kg_mnp.services.lifecycle.execute",
       "maps_to": "release.publish",
       "missing": [
-        "only initial lineage service path verified; successor governance remains open"
+        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
       ],
       "negative_tests": [
         "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[release.publish]"
@@ -957,8 +1083,10 @@
       "requirement_id": "release.publish",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "PARTIAL",
-      "ui": "releases"
+      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "ui": "releases",
+      "final_revision_verified": false,
+      "request_contract": "ReleasePublishRequest"
     },
     {
       "api": "POST /api/v1/operations/release.inspect",
@@ -972,7 +1100,9 @@
       "execution_mode": "INLINE",
       "implementation": "kg_mnp.lifecycle.store.list_records",
       "maps_to": "release.inspect",
-      "missing": [],
+      "missing": [
+        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
+      ],
       "negative_tests": [
         "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[release.inspect]"
       ],
@@ -982,52 +1112,56 @@
       "requirement_id": "release.inspect",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_AND_TESTED",
-      "ui": "NOT_IMPLEMENTED"
+      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "ui": "NOT_IMPLEMENTED",
+      "final_revision_verified": false,
+      "request_contract": "ReleaseRequest"
     },
     {
       "api": "POST /api/v1/operations/environment.activate",
       "baseline_status": "DECLARED_ONLY",
-      "blocker": "local implementation missing; not an external integration blocker",
+      "blocker": null,
       "cli": "kg-mnp service call environment.activate",
       "commits": [],
       "core_required": true,
       "execution_mode": "JOB",
-      "implementation": null,
+      "implementation": "kg_mnp.services.lifecycle.execute",
       "maps_to": "environment.activate",
       "missing": [
-        "typed service-to-core handler",
-        "positive workflow test"
+        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
       ],
       "negative_tests": [],
       "positive_tests": [],
       "requirement_id": "environment.activate",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "OPEN",
-      "ui": "NOT_IMPLEMENTED"
+      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "ui": "NOT_IMPLEMENTED",
+      "final_revision_verified": false,
+      "request_contract": "EnvironmentExecutionRequest"
     },
     {
       "api": "POST /api/v1/operations/environment.rollback",
       "baseline_status": "DECLARED_ONLY",
-      "blocker": "local implementation missing; not an external integration blocker",
+      "blocker": null,
       "cli": "kg-mnp service call environment.rollback",
       "commits": [],
       "core_required": true,
       "execution_mode": "JOB",
-      "implementation": null,
+      "implementation": "kg_mnp.services.lifecycle.execute",
       "maps_to": "environment.rollback",
       "missing": [
-        "typed service-to-core handler",
-        "positive workflow test"
+        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
       ],
       "negative_tests": [],
       "positive_tests": [],
       "requirement_id": "environment.rollback",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "OPEN",
-      "ui": "NOT_IMPLEMENTED"
+      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "ui": "NOT_IMPLEMENTED",
+      "final_revision_verified": false,
+      "request_contract": "EnvironmentExecutionRequest"
     },
     {
       "api": "POST /api/v1/operations/environment.inspect",
@@ -1041,7 +1175,9 @@
       "execution_mode": "INLINE",
       "implementation": "kg_mnp.lifecycle.store.list_records",
       "maps_to": "environment.inspect",
-      "missing": [],
+      "missing": [
+        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
+      ],
       "negative_tests": [
         "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[environment.inspect]"
       ],
@@ -1051,8 +1187,10 @@
       "requirement_id": "environment.inspect",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_AND_TESTED",
-      "ui": "NOT_IMPLEMENTED"
+      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "ui": "NOT_IMPLEMENTED",
+      "final_revision_verified": false,
+      "request_contract": "EnvironmentRequest"
     },
     {
       "api": "GET /api/v1/projects/{project_id}/metadata",
@@ -1067,7 +1205,7 @@
       "implementation": "kg_mnp.services.lifecycle.execute",
       "maps_to": "oms.metadata",
       "missing": [
-        "explicit Release selector and complete OMS views not implemented"
+        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
       ],
       "negative_tests": [
         "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[oms.metadata]"
@@ -1076,9 +1214,11 @@
       "requirement_id": "oms.metadata",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "PARTIAL",
+      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
       "ui": "releases",
-      "browser_evidence": "workbench/tests/minimal.e2e.ts; fixed-3c0d0ad-72018325/browser/receipt.json"
+      "browser_evidence": "workbench/tests/minimal.e2e.ts; fixed-3c0d0ad-72018325/browser/receipt.json",
+      "final_revision_verified": false,
+      "request_contract": "MetadataRequest"
     },
     {
       "api": "POST /api/v1/projects/{project_id}/objects/query",
@@ -1093,7 +1233,7 @@
       "implementation": "kg_mnp.services.lifecycle.execute",
       "maps_to": "ods.query",
       "missing": [
-        "only bounded class/instance primitives connected; full query timeout and trace UI not verified"
+        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
       ],
       "negative_tests": [
         "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[ods.query]"
@@ -1102,141 +1242,149 @@
       "requirement_id": "ods.query",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "PARTIAL",
+      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
       "ui": "releases",
-      "browser_evidence": "workbench/tests/minimal.e2e.ts; fixed-3c0d0ad-72018325/browser/receipt.json"
+      "browser_evidence": "workbench/tests/minimal.e2e.ts; fixed-3c0d0ad-72018325/browser/receipt.json",
+      "final_revision_verified": false,
+      "request_contract": "ObjectRequest"
     },
     {
       "api": "POST /api/v1/operations/visualization.export",
       "baseline_status": "DECLARED_ONLY",
-      "blocker": "local implementation missing; not an external integration blocker",
+      "blocker": null,
       "cli": "kg-mnp service call visualization.export",
       "commits": [],
       "core_required": false,
       "execution_mode": "JOB",
-      "implementation": null,
+      "implementation": "kg_mnp.services.integrations.execute",
       "maps_to": "visualization.export",
       "missing": [
-        "typed service-to-core handler",
-        "positive workflow test"
+        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
       ],
       "negative_tests": [],
       "positive_tests": [],
       "requirement_id": "visualization.export",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "OPEN",
-      "ui": "NOT_IMPLEMENTED"
+      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "ui": "NOT_IMPLEMENTED",
+      "final_revision_verified": false,
+      "request_contract": "PackageRequest"
     },
     {
       "api": "POST /api/v1/operations/integration.plan",
       "baseline_status": "DECLARED_ONLY",
-      "blocker": "local implementation missing; not an external integration blocker",
+      "blocker": null,
       "cli": "kg-mnp service call integration.plan",
       "commits": [],
       "core_required": false,
-      "execution_mode": "INLINE",
-      "implementation": null,
+      "execution_mode": "JOB",
+      "implementation": "kg_mnp.services.integrations.execute",
       "maps_to": "integration.plan",
       "missing": [
-        "typed service-to-core handler",
-        "positive workflow test"
+        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
       ],
       "negative_tests": [],
       "positive_tests": [],
       "requirement_id": "integration.plan",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "OPEN",
-      "ui": "NOT_IMPLEMENTED"
+      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "ui": "NOT_IMPLEMENTED",
+      "final_revision_verified": false,
+      "request_contract": "IntegrationPlanRequest"
     },
     {
       "api": "POST /api/v1/operations/integration.review",
       "baseline_status": "DECLARED_ONLY",
-      "blocker": "local implementation missing; not an external integration blocker",
+      "blocker": null,
       "cli": "kg-mnp service call integration.review",
       "commits": [],
       "core_required": false,
-      "execution_mode": "INLINE",
-      "implementation": null,
+      "execution_mode": "JOB",
+      "implementation": "kg_mnp.services.integrations.execute",
       "maps_to": "integration.review",
       "missing": [
-        "typed service-to-core handler",
-        "positive workflow test"
+        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
       ],
       "negative_tests": [],
       "positive_tests": [],
       "requirement_id": "integration.review",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "OPEN",
-      "ui": "NOT_IMPLEMENTED"
+      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "ui": "NOT_IMPLEMENTED",
+      "final_revision_verified": false,
+      "request_contract": "IntegrationReviewRequest"
     },
     {
       "api": "POST /api/v1/operations/integration.execute",
       "baseline_status": "DECLARED_ONLY",
-      "blocker": "local implementation missing; not an external integration blocker",
+      "blocker": null,
       "cli": "kg-mnp service call integration.execute",
       "commits": [],
       "core_required": false,
       "execution_mode": "JOB",
-      "implementation": null,
+      "implementation": "kg_mnp.services.integrations.execute",
       "maps_to": "integration.execute",
       "missing": [
-        "typed service-to-core handler",
-        "positive workflow test"
+        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
       ],
       "negative_tests": [],
       "positive_tests": [],
       "requirement_id": "integration.execute",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "OPEN",
-      "ui": "NOT_IMPLEMENTED"
+      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "ui": "NOT_IMPLEMENTED",
+      "final_revision_verified": false,
+      "request_contract": "IntegrationExecuteRequest"
     },
     {
       "api": "POST /api/v1/operations/integration.verify",
       "baseline_status": "DECLARED_ONLY",
-      "blocker": "local implementation missing; not an external integration blocker",
+      "blocker": null,
       "cli": "kg-mnp service call integration.verify",
       "commits": [],
       "core_required": false,
       "execution_mode": "JOB",
-      "implementation": null,
+      "implementation": "kg_mnp.services.integrations.execute",
       "maps_to": "integration.verify",
       "missing": [
-        "typed service-to-core handler",
-        "positive workflow test"
+        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
       ],
       "negative_tests": [],
       "positive_tests": [],
       "requirement_id": "integration.verify",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "OPEN",
-      "ui": "NOT_IMPLEMENTED"
+      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "ui": "NOT_IMPLEMENTED",
+      "final_revision_verified": false,
+      "request_contract": "IntegrationExecuteRequest"
     },
     {
       "api": "POST /api/v1/operations/workflow.enqueue",
       "baseline_status": "DECLARED_ONLY",
-      "blocker": "local implementation missing; not an external integration blocker",
+      "blocker": null,
       "cli": "kg-mnp service call workflow.enqueue",
       "commits": [],
       "core_required": false,
-      "execution_mode": "INLINE",
-      "implementation": null,
+      "execution_mode": "JOB",
+      "implementation": "kg_mnp.services.integrations.execute",
       "maps_to": "workflow.enqueue",
       "missing": [
-        "typed service-to-core handler",
-        "positive workflow test"
+        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
       ],
       "negative_tests": [],
       "positive_tests": [],
       "requirement_id": "workflow.enqueue",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "OPEN",
-      "ui": "NOT_IMPLEMENTED"
+      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "ui": "NOT_IMPLEMENTED",
+      "final_revision_verified": false,
+      "request_contract": "WorkflowRequest"
     },
     {
       "api": "GET /api/v1/jobs/{job_id}",
@@ -1250,7 +1398,9 @@
       "execution_mode": "INLINE",
       "implementation": "kg_mnp.jobs.store.JobStore.get",
       "maps_to": "job.get",
-      "missing": [],
+      "missing": [
+        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
+      ],
       "negative_tests": [
         "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[job.get]"
       ],
@@ -1260,8 +1410,10 @@
       "requirement_id": "job.get",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_AND_TESTED",
-      "ui": "jobs via project state"
+      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "ui": "jobs via project state",
+      "final_revision_verified": false,
+      "request_contract": "JobRequest"
     },
     {
       "api": "GET /api/v1/jobs/{job_id}/events",
@@ -1275,7 +1427,9 @@
       "execution_mode": "INLINE",
       "implementation": "kg_mnp.jobs.store.JobStore.events",
       "maps_to": "job.events",
-      "missing": [],
+      "missing": [
+        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
+      ],
       "negative_tests": [
         "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[job.events]"
       ],
@@ -1285,8 +1439,10 @@
       "requirement_id": "job.events",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_AND_TESTED",
-      "ui": "NOT_IMPLEMENTED"
+      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "ui": "NOT_IMPLEMENTED",
+      "final_revision_verified": false,
+      "request_contract": "JobRequest"
     },
     {
       "api": "GET /api/v1/operations",
@@ -1300,7 +1456,9 @@
       "execution_mode": "INLINE",
       "implementation": "kg_mnp.services.facade.ApplicationService.operation_catalog",
       "maps_to": "operation.catalog",
-      "missing": [],
+      "missing": [
+        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
+      ],
       "negative_tests": [
         "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[operation.catalog]"
       ],
@@ -1310,8 +1468,10 @@
       "requirement_id": "operation.catalog",
       "sdk": "LocalClient.execute / HTTPClient.execute",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_AND_TESTED",
-      "ui": "NOT_IMPLEMENTED"
+      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "ui": "NOT_IMPLEMENTED",
+      "final_revision_verified": false,
+      "request_contract": "EmptyRequest"
     },
     {
       "api": null,
@@ -1332,7 +1492,8 @@
       "sdk": null,
       "source_requirement": "Fixed source, clean entry, ancestors, P8 protected tree and domain/schema byte audit",
       "status": "VERIFIED",
-      "ui": null
+      "ui": null,
+      "final_revision_verified": false
     },
     {
       "api": null,
@@ -1350,7 +1511,8 @@
       "sdk": null,
       "source_requirement": "Bounded authenticated stream and Blob/SourceAsset/SourceBatch, cleanup and downloads",
       "status": "VERIFIED_LOCAL_JSON_CSV_CHAIN",
-      "ui": null
+      "ui": null,
+      "final_revision_verified": false
     },
     {
       "api": null,
@@ -1368,7 +1530,8 @@
       "sdk": null,
       "source_requirement": "Verified KG-IR, locators and Source Blob trace with project authorization",
       "status": "VERIFIED_LOCAL_JSON_CSV_CHAIN",
-      "ui": null
+      "ui": null,
+      "final_revision_verified": false
     },
     {
       "api": null,
@@ -1388,7 +1551,8 @@
       "sdk": null,
       "source_requirement": "Core CAS, revocation, two workers, crash/restart and idempotency recovery",
       "status": "PARTIAL_VERIFIED",
-      "ui": null
+      "ui": null,
+      "final_revision_verified": false
     },
     {
       "api": null,
@@ -1406,7 +1570,8 @@
       "sdk": null,
       "source_requirement": "Scope/CQ/baseline/terminology/alignment/input/provider/prevalidation/confirmation",
       "status": "OPEN",
-      "ui": null
+      "ui": null,
+      "final_revision_verified": false
     },
     {
       "api": null,
@@ -1424,7 +1589,8 @@
       "sdk": null,
       "source_requirement": "Server identities, roles, quorum, revisions and review action replay",
       "status": "OPEN",
-      "ui": null
+      "ui": null,
+      "final_revision_verified": false
     },
     {
       "api": null,
@@ -1442,7 +1608,8 @@
       "sdk": null,
       "source_requirement": "Real reasoner, SHACL, explicit CQ oracle and provenance closure",
       "status": "OPEN",
-      "ui": null
+      "ui": null,
+      "final_revision_verified": false
     },
     {
       "api": null,
@@ -1460,7 +1627,8 @@
       "sdk": null,
       "source_requirement": "Feedback/change/consumer/diff/impact/regression/release/environment review and historical rollback",
       "status": "OPEN",
-      "ui": null
+      "ui": null,
+      "final_revision_verified": false
     },
     {
       "api": null,
@@ -1478,7 +1646,8 @@
       "sdk": null,
       "source_requirement": "Version-bound local OMS/ODS, typed literals, paging, timeouts and safe query grammar",
       "status": "OPEN",
-      "ui": null
+      "ui": null,
+      "final_revision_verified": false
     },
     {
       "api": null,
@@ -1499,7 +1668,8 @@
       "sdk": null,
       "source_requirement": "Opaque HttpOnly sessions, CSRF, origin, expiration, revoke, logout and cache isolation",
       "status": "PARTIAL_VERIFIED",
-      "ui": null
+      "ui": null,
+      "final_revision_verified": false
     },
     {
       "api": null,
@@ -1522,7 +1692,8 @@
       "sdk": null,
       "source_requirement": "One Chinese React/TypeScript/Vite workbench with actual forms, graph/table and API",
       "status": "PARTIAL",
-      "ui": null
+      "ui": null,
+      "final_revision_verified": false
     },
     {
       "api": null,
@@ -1540,7 +1711,8 @@
       "sdk": null,
       "source_requirement": "Minimal/MNP/Forestry full graded workflows and arbitrary fourth pack",
       "status": "OPEN",
-      "ui": null
+      "ui": null,
+      "final_revision_verified": false
     },
     {
       "api": null,
@@ -1558,7 +1730,8 @@
       "sdk": null,
       "source_requirement": "Synthetic EXPERIMENTAL 0.2.0 tree/inspection/site assets and negative cases",
       "status": "OPEN",
-      "ui": null
+      "ui": null,
+      "final_revision_verified": false
     },
     {
       "api": null,
@@ -1576,7 +1749,8 @@
       "sdk": null,
       "source_requirement": "Actual browser scenarios A-E, artifact IDs, screenshots, keyboard/a11y and performance",
       "status": "OPEN",
-      "ui": null
+      "ui": null,
+      "final_revision_verified": false
     },
     {
       "api": null,
@@ -1594,7 +1768,8 @@
       "sdk": null,
       "source_requirement": "Actual caller-led old code/UI/CLI/docs/script retirement after G1-G4",
       "status": "OPEN",
-      "ui": null
+      "ui": null,
+      "final_revision_verified": false
     },
     {
       "api": null,
@@ -1612,7 +1787,8 @@
       "sdk": null,
       "source_requirement": "115 versioned schema bytes, minimal/mnp and 84 MNP asset preservation",
       "status": "OPEN",
-      "ui": null
+      "ui": null,
+      "final_revision_verified": false
     },
     {
       "api": null,
@@ -1630,7 +1806,8 @@
       "sdk": null,
       "source_requirement": "Capability test migration ledger, unique test sets and capability CI",
       "status": "OPEN",
-      "ui": null
+      "ui": null,
+      "final_revision_verified": false
     },
     {
       "api": null,
@@ -1648,7 +1825,8 @@
       "sdk": null,
       "source_requirement": "Current product docs, operating commands, research implementation/evidence limits",
       "status": "OPEN",
-      "ui": null
+      "ui": null,
+      "final_revision_verified": false
     },
     {
       "api": null,
@@ -1666,7 +1844,8 @@
       "sdk": null,
       "source_requirement": "Wheel/sdist/static bundle with digests, clean install/startup/recovery on Windows and POSIX",
       "status": "OPEN",
-      "ui": null
+      "ui": null,
+      "final_revision_verified": false
     },
     {
       "api": null,
@@ -1689,7 +1868,8 @@
       "sdk": null,
       "source_requirement": "Clean fixed commit, complete pytest/browser collection, full command receipts and delivery consistency",
       "status": "PARTIAL_VERIFIED",
-      "ui": null
+      "ui": null,
+      "final_revision_verified": false
     },
     {
       "api": null,
@@ -1707,9 +1887,20 @@
       "sdk": null,
       "source_requirement": "Normal target push, final decision and no success tag until required gates pass",
       "status": "OPEN",
-      "ui": null
+      "ui": null,
+      "final_revision_verified": false
     }
   ],
   "source_commit": "9da17d126cb37166ff06084080770108da20afbe",
-  "target_branch": "codex/toolchain-final-consolidation-p09"
+  "target_branch": "codex/toolchain-final-consolidation-p09",
+  "current_status": "IMPLEMENTATION_AND_REFACTOR_IN_PROGRESS_NOT_FINAL_RELEASE_ACCEPTANCE",
+  "implementation_checkpoint": "aefe6509480ae28706dcc38712bf56d73ed0988b",
+  "remaining_required": [
+    "Consolidate/delete remaining legacy backend engines and their duplicate authorities; current legacy backend roots still present",
+    "Complete per-file/per-node retirement ledger and clean obsolete reports/scripts/configuration without dropping safety assertions",
+    "Finish full release-verification entry: Windows/Linux clean install, startup/recovery, source/SDist/wheel equality and documentation command runs",
+    "Run all required checks on one new clean code freeze; all current browserpassesprecedecompiler0.5.1 and cannotcertifyitsfinalrelease",
+    "Update the original53operation mapping and allclosed/openrequirements against completed implementation and fixed evidence",
+    "Final evidence-only commit/equalityproof, artifactbundlehashes and remoteconsistency; no successcandidateTaguntilallrequiredgates"
+  ]
 }
