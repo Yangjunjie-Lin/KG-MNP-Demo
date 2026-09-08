@@ -13,6 +13,8 @@ from fastapi.responses import FileResponse, JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
 
 from kg_mnp import __version__
+from kg_mnp.contracts.document_io import parse_json_bytes
+from kg_mnp.contracts.errors import DocumentError
 from kg_mnp.services.errors import ServiceBoundaryError
 from kg_mnp.services.facade import ApplicationService
 from kg_mnp.services.models import OperationRequest
@@ -75,13 +77,24 @@ def create_app(service: ApplicationService) -> FastAPI:
             response = JSONResponse({"error": {"code": "ORIGIN_FORBIDDEN", "message": "origin is not allowed"}}, status_code=403)
         else:
             try:
-                if request.method in {"POST", "PUT", "PATCH"} and not path.endswith("/sources"):
+                upload = request.method == "POST" and re.fullmatch(r"/api/v1/projects/[^/]+/sources", path)
+                if not upload:
                     body = bytearray()
                     async for chunk in request.stream():
                         body.extend(chunk)
                         if len(body) > 1024 * 1024:
                             raise ServiceBoundaryError("REQUEST_TOO_LARGE", "JSON request byte limit exceeded", status_code=413)
                     request._body = bytes(body)
+                    if body and request.method in {"GET", "HEAD"}:
+                        raise ServiceBoundaryError("METHOD_BODY_FORBIDDEN", "read requests cannot carry command bodies", status_code=405)
+                    if body and path.startswith("/api/"):
+                        media_type = request.headers.get("content-type", "").split(";", 1)[0].strip().casefold()
+                        if media_type != "application/json" and not (media_type.startswith("application/") and media_type.endswith("+json")):
+                            raise ServiceBoundaryError("REQUEST_MEDIA_TYPE_INVALID", "JSON resources require application/json", status_code=415)
+                        try:
+                            parse_json_bytes(bytes(body))
+                        except DocumentError as exc:
+                            raise ServiceBoundaryError("REQUEST_JSON_INVALID", "invalid or ambiguous JSON request", status_code=400) from exc
                 cookie = request.cookies.get("kgmnp_session")
                 if cookie and not request.headers.get("authorization"):
                     _principal, csrf = service.sessions.resolve(cookie)
@@ -99,6 +112,10 @@ def create_app(service: ApplicationService) -> FastAPI:
         response.headers["X-Content-Type-Options"] = "nosniff"
         response.headers["X-Frame-Options"] = "DENY"
         response.headers["Cache-Control"] = "no-store"
+        response.headers["Referrer-Policy"] = "no-referrer"
+        response.headers["Permissions-Policy"] = "camera=(), microphone=(), geolocation=(), payment=()"
+        response.headers["Cross-Origin-Resource-Policy"] = "same-origin"
+        response.headers["Cross-Origin-Opener-Policy"] = "same-origin"
         return response
     if service.configuration.allowed_origins:
         app.add_middleware(CORSMiddleware, allow_origins=list(service.configuration.allowed_origins), allow_methods=["GET", "POST"], allow_headers=["Authorization", "Content-Type", "Idempotency-Key", "X-Request-ID"], allow_credentials=False)
@@ -119,14 +136,13 @@ def create_app(service: ApplicationService) -> FastAPI:
     def healthz():
         return {"status": "ALIVE"}
 
-    @app.get("/workbench", include_in_schema=False)
-    @app.get("/workbench/{retired_path:path}", include_in_schema=False)
-    @app.get("/diagnostics", include_in_schema=False)
-    @app.get("/diagnostics/{retired_path:path}", include_in_schema=False)
-    @app.get("/governance", include_in_schema=False)
-    @app.get("/governance/{retired_path:path}", include_in_schema=False)
     def retired_ui(retired_path: str = ""):
         return JSONResponse({"error":{"code":"UI_RETIRED","message":"Use the unified workbench at /"}},status_code=410)
+
+    for retired_prefix in ("workbench", "diagnostics", "governance"):
+        for retired_route in (f"/{retired_prefix}", f"/{retired_prefix}/{{retired_path:path}}"):
+            app.add_api_route(retired_route, retired_ui,
+                methods=["GET", "HEAD", "POST", "PUT", "PATCH", "DELETE"], include_in_schema=False)
 
     @app.get("/api/v1/health", operation_id="serviceHealth")
     def health(authorization: str | None = Header(default=None)):

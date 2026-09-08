@@ -6,7 +6,6 @@ import pytest
 from rdflib import URIRef
 
 from kg_mnp.application.errors import ApplicationError, ErrorCode
-from kg_mnp.application.http import create_app
 from kg_mnp.application.query_registry import QueryRegistry
 from kg_mnp.application.service import ApplicationService
 
@@ -107,7 +106,7 @@ def test_runtime_check_rejects_one_deleted_explicit_triple_with_same_repository_
     _assert_not_ready(_service(client))
 
 
-def test_runtime_check_rejects_equal_count_replacement_and_startup_fails_closed():
+def test_runtime_check_rejects_equal_count_replacement():
     client = DatasetClient()
     quad = next(iter(client.dataset.quads((None, None, None, None))))
     graph = quad[3]
@@ -125,6 +124,3 @@ def test_runtime_check_rejects_equal_count_replacement_and_startup_fails_closed(
     service = _service(client)
 
     _assert_not_ready(service)
-    with pytest.raises(ApplicationError) as caught:
-        create_app(service)
-    assert caught.value.code == ErrorCode.APPLICATION_NOT_READY

@@ -66,6 +66,20 @@ def _assert_json_value(value: Any, path: str = "$") -> None:
     raise DocumentError(f"non-JSON-compatible value at {path}: {type(value).__name__}")
 
 
+def parse_json_bytes(raw: bytes, *, max_bytes: int = DEFAULT_MAX_DOCUMENT_BYTES) -> Any:
+    """Decode one bounded UTF-8 JSON document, without duplicate/NaN ambiguity."""
+    if len(raw) > max_bytes:
+        raise DocumentTooLargeError(f"document exceeds {max_bytes} bytes")
+    try:
+        value = json.loads(raw.decode("utf-8"), object_pairs_hook=_pairs_no_duplicates)
+        _assert_json_value(value)
+        return value
+    except DocumentError:
+        raise
+    except (ValueError, UnicodeError, RecursionError) as exc:
+        raise DocumentError("invalid UTF-8 JSON document") from exc
+
+
 def read_document(
     path: Path | str,
     *,
@@ -89,13 +103,7 @@ def read_document(
         raise DocumentError(f"cannot read UTF-8 document {source.name}: {exc}") from exc
     try:
         if source.suffix.casefold() == ".json":
-            value = json.loads(
-                text,
-                object_pairs_hook=_pairs_no_duplicates,
-                parse_constant=lambda token: (_ for _ in ()).throw(
-                    DocumentError(f"non-finite JSON number: {token}")
-                ),
-            )
+            return parse_json_bytes(raw, max_bytes=max_bytes)
         else:
             if text.count("*") > MAX_YAML_ALIASES:
                 raise DocumentError("YAML alias limit exceeded")

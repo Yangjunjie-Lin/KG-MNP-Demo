@@ -6,11 +6,9 @@ from pathlib import Path
 import pytest
 
 import kg_mnp.governance as governance_api
-import kg_mnp.governance.runtime as production_runtime
 import scripts.governance_controlled_fixture as controlled_fixture_module
 from kg_mnp.governance.authority_binding import GovernanceAuthority
 from kg_mnp.governance.errors import GovernanceError, GovernanceErrorCode
-from kg_mnp.governance.runtime import create_governance_app
 from kg_mnp.governance.workspace import (
     GovernanceWorkspace,
     GovernanceWorkspaceStore,
@@ -130,7 +128,7 @@ def test_fixture_only_enters_governance_through_named_test_adapter() -> None:
     assert all(key.startswith(FIXTURE_NAMESPACE) for key in authority.issues)
 
 
-def test_production_runtime_rejects_controlled_harness(
+def test_production_store_rejects_controlled_harness(
     tmp_path: Path,
 ) -> None:
     authority = controlled_governance_authority_for_test_harness(
@@ -140,12 +138,16 @@ def test_production_runtime_rejects_controlled_harness(
         tmp_path / "governance-workspace.json", lambda: authority
     )
     with pytest.raises(GovernanceError) as caught:
-        create_governance_app(store)
+        store.initialize(authority)
     assert (
         caught.value.code
         == GovernanceErrorCode.TEST_FIXTURE_NOT_ALLOWED_AS_PRODUCTION_AUTHORITY
     )
-    assert not hasattr(production_runtime, "_create_governance_app_core")
+
+
+def test_workspace_path_is_frozen_at_startup(tmp_path: Path) -> None:
+    with pytest.raises(GovernanceError):
+        GovernanceWorkspaceStore(tmp_path / ".." / "escape.json", lambda: None)
 
 
 def test_controlled_governance_outputs_keep_test_fixture_namespace() -> None:

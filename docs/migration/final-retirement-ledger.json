@@ -36,7 +36,7 @@
         "tests/diagnostics/test_phase02_freeze_phase03.py",
         "tests/workbench/test_phase01_freeze_phase02.py"
       ],
-      "replacement_path": "tests/refactor/_historical_freeze.py",
+      "replacement_path": "tests/compatibility/repository_history.py",
       "replacement_behavior": "Only audit fixed P8 Git bytes and P1-P8 ancestry; live behavior protected by existing tests plus new services tests",
       "replacement_test_nodeids": [
         "tests/services/test_core_fencing.py",
@@ -45,7 +45,7 @@
       ],
       "artifact_compatibility": "No schema/domain/package bytes changed",
       "decision": "MERGE",
-      "reason": "Explicit P9 section 16 authorization; historical wrappers retained pending full capability test migration"
+      "reason": "All historical wrappers now removed; one fixed-Git object audit remains, not a live source freeze"
     },
     {
       "old_path": "web/workbench/index.html, web/workbench/assets/app.js, web/workbench/assets/styles.css",
@@ -286,6 +286,231 @@
       "artifact_compatibility": "Closed artifact scanner, duplicate-key rejection and hash/semantic checks preserved",
       "decision": "REPLACE_AND_DELETE",
       "reason": "No recursive historical aggregate; CI configuration is not evidence of execution"
+    },
+    {
+      "old_path": "src/kg_mnp/application/http.py",
+      "old_responsibility": "Independent historical HTTP runtime or CLI dispatcher",
+      "actual_callers": [
+        "scripts/application_integration.py",
+        "scripts/workbench_integration.py",
+        "tests/application/test_application_http_phase01.py",
+        "tests/application/test_root_cli_phase01.py"
+      ],
+      "replacement_path": "src/kg_mnp/api/app.py; src/kg_mnp/services/cli.py; tools/run_browser_verification.py",
+      "replacement_behavior": "Only the authenticated current API/Worker starts; old application server modules and harnesses actually deleted, no copied HTTP fixture. All old workbench/diagnostics/governance URL methods retired.",
+      "replacement_test_nodeids": [
+        "tests/cli/test_root_dispatch.py::test_removed_servers_cannot_be_imported_as_alternate_product_entrypoints",
+        "tests/security/test_http_wire_boundary.py::test_retired_runtime_urls_have_no_read_or_write_authority"
+      ],
+      "artifact_compatibility": "No frozen schema, saved artifact, or historical integrity validator deleted",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "G1-G4 replacement workflow gate passed; HTTP security now exercised against real current credentials/project storage."
+    },
+    {
+      "old_path": "src/kg_mnp/application/cli.py",
+      "old_responsibility": "Independent historical HTTP runtime or CLI dispatcher",
+      "actual_callers": [
+        "scripts/application_integration.py",
+        "scripts/workbench_integration.py",
+        "tests/application/test_application_http_phase01.py",
+        "tests/application/test_root_cli_phase01.py"
+      ],
+      "replacement_path": "src/kg_mnp/api/app.py; src/kg_mnp/services/cli.py; tools/run_browser_verification.py",
+      "replacement_behavior": "Only the authenticated current API/Worker starts; old application server modules and harnesses actually deleted, no copied HTTP fixture. All old workbench/diagnostics/governance URL methods retired.",
+      "replacement_test_nodeids": [
+        "tests/cli/test_root_dispatch.py::test_removed_servers_cannot_be_imported_as_alternate_product_entrypoints",
+        "tests/security/test_http_wire_boundary.py::test_retired_runtime_urls_have_no_read_or_write_authority"
+      ],
+      "artifact_compatibility": "No frozen schema, saved artifact, or historical integrity validator deleted",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "G1-G4 replacement workflow gate passed; HTTP security now exercised against real current credentials/project storage."
+    },
+    {
+      "old_path": "src/kg_mnp/workbench/runtime.py",
+      "old_responsibility": "Independent historical HTTP runtime or CLI dispatcher",
+      "actual_callers": [
+        "scripts/workbench_integration.py",
+        "tests/workbench/test_runtime_http.py",
+        "tests/workbench/test_xss_security.py"
+      ],
+      "replacement_path": "src/kg_mnp/api/app.py; src/kg_mnp/services/cli.py; tools/run_browser_verification.py",
+      "replacement_behavior": "Only the authenticated current API/Worker starts; old application server modules and harnesses actually deleted, no copied HTTP fixture. All old workbench/diagnostics/governance URL methods retired.",
+      "replacement_test_nodeids": [
+        "tests/cli/test_root_dispatch.py::test_removed_servers_cannot_be_imported_as_alternate_product_entrypoints",
+        "tests/security/test_http_wire_boundary.py::test_retired_runtime_urls_have_no_read_or_write_authority"
+      ],
+      "artifact_compatibility": "No frozen schema, saved artifact, or historical integrity validator deleted",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "G1-G4 replacement workflow gate passed; HTTP security now exercised against real current credentials/project storage."
+    },
+    {
+      "old_path": "src/kg_mnp/workbench/cli.py",
+      "old_responsibility": "Independent historical HTTP runtime or CLI dispatcher",
+      "actual_callers": [
+        "scripts/workbench_integration.py",
+        "tests/workbench/test_runtime_http.py",
+        "tests/workbench/test_xss_security.py"
+      ],
+      "replacement_path": "src/kg_mnp/api/app.py; src/kg_mnp/services/cli.py; tools/run_browser_verification.py",
+      "replacement_behavior": "Only the authenticated current API/Worker starts; old application server modules and harnesses actually deleted, no copied HTTP fixture. All old workbench/diagnostics/governance URL methods retired.",
+      "replacement_test_nodeids": [
+        "tests/cli/test_root_dispatch.py::test_removed_servers_cannot_be_imported_as_alternate_product_entrypoints",
+        "tests/security/test_http_wire_boundary.py::test_retired_runtime_urls_have_no_read_or_write_authority"
+      ],
+      "artifact_compatibility": "No frozen schema, saved artifact, or historical integrity validator deleted",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "G1-G4 replacement workflow gate passed; HTTP security now exercised against real current credentials/project storage."
+    },
+    {
+      "old_path": "src/kg_mnp/diagnostics/runtime.py",
+      "old_responsibility": "Independent historical HTTP runtime or CLI dispatcher",
+      "actual_callers": [
+        "scripts/diagnostics_integration.py",
+        "tests/diagnostics/test_runtime_security.py"
+      ],
+      "replacement_path": "src/kg_mnp/api/app.py; src/kg_mnp/services/cli.py; tools/run_browser_verification.py",
+      "replacement_behavior": "Only the authenticated current API/Worker starts; old application server modules and harnesses actually deleted, no copied HTTP fixture. All old workbench/diagnostics/governance URL methods retired.",
+      "replacement_test_nodeids": [
+        "tests/cli/test_root_dispatch.py::test_removed_servers_cannot_be_imported_as_alternate_product_entrypoints",
+        "tests/security/test_http_wire_boundary.py::test_retired_runtime_urls_have_no_read_or_write_authority"
+      ],
+      "artifact_compatibility": "No frozen schema, saved artifact, or historical integrity validator deleted",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "G1-G4 replacement workflow gate passed; HTTP security now exercised against real current credentials/project storage."
+    },
+    {
+      "old_path": "src/kg_mnp/diagnostics/cli.py",
+      "old_responsibility": "Independent historical HTTP runtime or CLI dispatcher",
+      "actual_callers": [
+        "scripts/diagnostics_integration.py",
+        "tests/diagnostics/test_runtime_security.py"
+      ],
+      "replacement_path": "src/kg_mnp/api/app.py; src/kg_mnp/services/cli.py; tools/run_browser_verification.py",
+      "replacement_behavior": "Only the authenticated current API/Worker starts; old application server modules and harnesses actually deleted, no copied HTTP fixture. All old workbench/diagnostics/governance URL methods retired.",
+      "replacement_test_nodeids": [
+        "tests/cli/test_root_dispatch.py::test_removed_servers_cannot_be_imported_as_alternate_product_entrypoints",
+        "tests/security/test_http_wire_boundary.py::test_retired_runtime_urls_have_no_read_or_write_authority"
+      ],
+      "artifact_compatibility": "No frozen schema, saved artifact, or historical integrity validator deleted",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "G1-G4 replacement workflow gate passed; HTTP security now exercised against real current credentials/project storage."
+    },
+    {
+      "old_path": "src/kg_mnp/governance/runtime.py",
+      "old_responsibility": "Independent historical HTTP runtime or CLI dispatcher",
+      "actual_callers": [
+        "scripts/governance_integration.py",
+        "scripts/governance_controlled_fixture.py",
+        "tests/application_governance/test_runtime_security.py"
+      ],
+      "replacement_path": "src/kg_mnp/api/app.py; src/kg_mnp/services/cli.py; tools/run_browser_verification.py",
+      "replacement_behavior": "Only the authenticated current API/Worker starts; old application server modules and harnesses actually deleted, no copied HTTP fixture. All old workbench/diagnostics/governance URL methods retired.",
+      "replacement_test_nodeids": [
+        "tests/cli/test_root_dispatch.py::test_removed_servers_cannot_be_imported_as_alternate_product_entrypoints",
+        "tests/security/test_http_wire_boundary.py::test_retired_runtime_urls_have_no_read_or_write_authority"
+      ],
+      "artifact_compatibility": "No frozen schema, saved artifact, or historical integrity validator deleted",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "G1-G4 replacement workflow gate passed; HTTP security now exercised against real current credentials/project storage."
+    },
+    {
+      "old_path": "src/kg_mnp/governance/cli.py",
+      "old_responsibility": "Independent historical HTTP runtime or CLI dispatcher",
+      "actual_callers": [
+        "scripts/governance_integration.py",
+        "scripts/governance_controlled_fixture.py",
+        "tests/application_governance/test_runtime_security.py"
+      ],
+      "replacement_path": "src/kg_mnp/api/app.py; src/kg_mnp/services/cli.py; tools/run_browser_verification.py",
+      "replacement_behavior": "Only the authenticated current API/Worker starts; old application server modules and harnesses actually deleted, no copied HTTP fixture. All old workbench/diagnostics/governance URL methods retired.",
+      "replacement_test_nodeids": [
+        "tests/cli/test_root_dispatch.py::test_removed_servers_cannot_be_imported_as_alternate_product_entrypoints",
+        "tests/security/test_http_wire_boundary.py::test_retired_runtime_urls_have_no_read_or_write_authority"
+      ],
+      "artifact_compatibility": "No frozen schema, saved artifact, or historical integrity validator deleted",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "G1-G4 replacement workflow gate passed; HTTP security now exercised against real current credentials/project storage."
+    },
+    {
+      "old_path": "scripts/application_integration.py",
+      "old_responsibility": "Start a retired application integration stack",
+      "actual_callers": [
+        "historical integration command; no current service caller"
+      ],
+      "replacement_path": "src/kg_mnp/api/app.py; src/kg_mnp/services/cli.py; tools/run_browser_verification.py",
+      "replacement_behavior": "Only the authenticated current API/Worker starts; old application server modules and harnesses actually deleted, no copied HTTP fixture. All old workbench/diagnostics/governance URL methods retired.",
+      "replacement_test_nodeids": [
+        "tests/cli/test_root_dispatch.py::test_removed_servers_cannot_be_imported_as_alternate_product_entrypoints",
+        "tests/security/test_http_wire_boundary.py::test_retired_runtime_urls_have_no_read_or_write_authority"
+      ],
+      "artifact_compatibility": "No frozen schema, saved artifact, or historical integrity validator deleted",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "G1-G4 replacement workflow gate passed; HTTP security now exercised against real current credentials/project storage."
+    },
+    {
+      "old_path": "scripts/workbench_integration.py",
+      "old_responsibility": "Start a retired application integration stack",
+      "actual_callers": [
+        "historical integration command; no current service caller"
+      ],
+      "replacement_path": "src/kg_mnp/api/app.py; src/kg_mnp/services/cli.py; tools/run_browser_verification.py",
+      "replacement_behavior": "Only the authenticated current API/Worker starts; old application server modules and harnesses actually deleted, no copied HTTP fixture. All old workbench/diagnostics/governance URL methods retired.",
+      "replacement_test_nodeids": [
+        "tests/cli/test_root_dispatch.py::test_removed_servers_cannot_be_imported_as_alternate_product_entrypoints",
+        "tests/security/test_http_wire_boundary.py::test_retired_runtime_urls_have_no_read_or_write_authority"
+      ],
+      "artifact_compatibility": "No frozen schema, saved artifact, or historical integrity validator deleted",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "G1-G4 replacement workflow gate passed; HTTP security now exercised against real current credentials/project storage."
+    },
+    {
+      "old_path": "scripts/diagnostics_integration.py",
+      "old_responsibility": "Start a retired application integration stack",
+      "actual_callers": [
+        "historical integration command; no current service caller"
+      ],
+      "replacement_path": "src/kg_mnp/api/app.py; src/kg_mnp/services/cli.py; tools/run_browser_verification.py",
+      "replacement_behavior": "Only the authenticated current API/Worker starts; old application server modules and harnesses actually deleted, no copied HTTP fixture. All old workbench/diagnostics/governance URL methods retired.",
+      "replacement_test_nodeids": [
+        "tests/cli/test_root_dispatch.py::test_removed_servers_cannot_be_imported_as_alternate_product_entrypoints",
+        "tests/security/test_http_wire_boundary.py::test_retired_runtime_urls_have_no_read_or_write_authority"
+      ],
+      "artifact_compatibility": "No frozen schema, saved artifact, or historical integrity validator deleted",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "G1-G4 replacement workflow gate passed; HTTP security now exercised against real current credentials/project storage."
+    },
+    {
+      "old_path": "scripts/governance_integration.py",
+      "old_responsibility": "Start a retired application integration stack",
+      "actual_callers": [
+        "historical integration command; no current service caller"
+      ],
+      "replacement_path": "src/kg_mnp/api/app.py; src/kg_mnp/services/cli.py; tools/run_browser_verification.py",
+      "replacement_behavior": "Only the authenticated current API/Worker starts; old application server modules and harnesses actually deleted, no copied HTTP fixture. All old workbench/diagnostics/governance URL methods retired.",
+      "replacement_test_nodeids": [
+        "tests/cli/test_root_dispatch.py::test_removed_servers_cannot_be_imported_as_alternate_product_entrypoints",
+        "tests/security/test_http_wire_boundary.py::test_retired_runtime_urls_have_no_read_or_write_authority"
+      ],
+      "artifact_compatibility": "No frozen schema, saved artifact, or historical integrity validator deleted",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "G1-G4 replacement workflow gate passed; HTTP security now exercised against real current credentials/project storage."
+    },
+    {
+      "old_path": "scripts/governance_controlled_fixture.py::controlled_governance_app_for_test_harness",
+      "decision": "REPLACE_AND_DELETE",
+      "old_responsibility": "Duplicate test-only HTTP implementation",
+      "actual_callers": [
+        "tests/application_governance/test_runtime_security.py",
+        "scripts/governance_integration.py"
+      ],
+      "replacement_path": "tests/security/test_http_wire_boundary.py",
+      "replacement_behavior": "Exercise current production HTTP boundary; only existing historical data fixture remains pending further core retirement",
+      "replacement_test_nodeids": [
+        "tests/security/test_http_wire_boundary.py::test_client_cannot_inject_paths_authority_or_roles",
+        "tests/security/test_http_wire_boundary.py::test_ambiguous_or_invalid_json_is_rejected_before_authority_dispatch"
+      ],
+      "artifact_compatibility": "Controlled fixture authority rejection retained on store and loader",
+      "reason": "Testing a duplicate fixture server does not establish security of current API"
     }
   ],
   "test_migration": [
@@ -380,6 +605,340 @@
       "new_nodeid": "tests/workbench/test_workbench_package.py::test_package_validation_fails_on_bundle_or_manifest_tampering",
       "decision": "REPLACE_OR_RETAIN_ASSURANCE",
       "reason": "No tamper assertion removed; inert explicit fixture bytes replace removed UI implementation as historical-format test input"
+    },
+    {
+      "old_nodeid": "tests/application/test_application_http_phase01.py::test_encoded_path_traversal_double_encoding_and_request_body_fail_closed",
+      "behavior": "Transport path denial and read-body denial retained; selectors are RDF terms, never file paths.",
+      "new_nodeids": [
+        "tests/services/test_request_target_boundary.py::test_windows_unc_static_request_never_reaches_filesystem_resolution",
+        "tests/security/test_http_wire_boundary.py::test_read_request_bodies_are_not_interpreted_as_hidden_commands"
+      ],
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Transport path denial and read-body denial retained; selectors are RDF terms, never file paths.",
+      "evidence": "runtime_logs/p09/http-retirement-20260908.xml (111 PASS subset; heavy existing replacements remain incremental, not final freeze acceptance)"
+    },
+    {
+      "old_nodeid": "tests/application/test_application_http_phase01.py::test_http_entity_fact_provenance_unknown_entity_and_invalid_iri_contracts",
+      "behavior": "Typed fixed-package reads and actual Source/Evidence download replace the GraphDB-only projection.",
+      "new_nodeids": [
+        "tests/integrations/test_object_query.py::test_actual_package_object_query_is_bounded_and_typed",
+        "tests/services/test_source_workflow.py::test_real_tcp_source_ingestion_evidence_chain"
+      ],
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Typed fixed-package reads and actual Source/Evidence download replace the GraphDB-only projection.",
+      "evidence": "runtime_logs/p09/http-retirement-20260908.xml (111 PASS subset; heavy existing replacements remain incremental, not final freeze acceptance)"
+    },
+    {
+      "old_nodeid": "tests/application/test_application_http_phase01.py::test_http_surface_is_local_read_only_and_has_no_arbitrary_sparql_route",
+      "behavior": "No arbitrary SPARQL/proxy; governed resource writes intentionally replace global read-only restriction.",
+      "new_nodeids": [
+        "tests/security/test_http_wire_boundary.py::test_no_proxy_or_arbitrary_sparql_endpoint"
+      ],
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "No arbitrary SPARQL/proxy; governed resource writes intentionally replace global read-only restriction.",
+      "evidence": "runtime_logs/p09/http-retirement-20260908.xml (111 PASS subset; heavy existing replacements remain incremental, not final freeze acceptance)"
+    },
+    {
+      "old_nodeid": "tests/application/test_root_cli_phase01.py::test_application_runtime_parsers_require_a_controlled_scenario",
+      "behavior": "Controlled historical scenario selector removed with obsolete server; no alternative server can start.",
+      "new_nodeids": [
+        "tests/cli/test_root_dispatch.py::test_removed_servers_cannot_be_imported_as_alternate_product_entrypoints"
+      ],
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Controlled historical scenario selector removed with obsolete server; no alternative server can start.",
+      "evidence": "runtime_logs/p09/http-retirement-20260908.xml (111 PASS subset; heavy existing replacements remain incremental, not final freeze acceptance)"
+    },
+    {
+      "old_nodeid": "tests/application/test_root_cli_phase01.py::test_query_run_checks_runtime_before_executing",
+      "behavior": "Current queries verify an explicit Package before execution; no historical live GraphDB prerequisite.",
+      "new_nodeids": [
+        "tests/integrations/test_object_query.py::test_actual_package_object_query_is_bounded_and_typed"
+      ],
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Current queries verify an explicit Package before execution; no historical live GraphDB prerequisite.",
+      "evidence": "runtime_logs/p09/http-retirement-20260908.xml (111 PASS subset; heavy existing replacements remain incremental, not final freeze acceptance)"
+    },
+    {
+      "old_nodeid": "tests/application/test_root_cli_phase01.py::test_root_cli_routes_public_contracts_and_preserves_foundation_tokens",
+      "behavior": "One dispatcher; old implicit fallback rejected.",
+      "new_nodeids": [
+        "tests/cli/test_root_dispatch.py::test_root_routes_current_authorities_and_preserves_arguments"
+      ],
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "One dispatcher; old implicit fallback rejected.",
+      "evidence": "runtime_logs/p09/http-retirement-20260908.xml (111 PASS subset; heavy existing replacements remain incremental, not final freeze acceptance)"
+    },
+    {
+      "old_nodeid": "tests/application/test_root_cli_phase01.py::test_serve_checks_runtime_before_starting_server",
+      "behavior": "Old server removed; current API requires authenticated operations. Live GraphDB is not a startup prerequisite.",
+      "new_nodeids": [
+        "tests/cli/test_root_dispatch.py::test_removed_servers_cannot_be_imported_as_alternate_product_entrypoints",
+        "tests/services/test_http_e2e.py::test_real_http_port_exposes_authenticated_service"
+      ],
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Old server removed; current API requires authenticated operations. Live GraphDB is not a startup prerequisite.",
+      "evidence": "runtime_logs/p09/http-retirement-20260908.xml (111 PASS subset; heavy existing replacements remain incremental, not final freeze acceptance)"
+    },
+    {
+      "old_nodeid": "tests/application_governance/test_runtime_security.py::test_duplicate_json_keys_fail_closed",
+      "behavior": "Migrated test exposed real duplicate-key acceptance; strict shared JSON parser now rejects duplicates, nonfinite values, malformed UTF8 and excessive nesting.",
+      "new_nodeids": [
+        "tests/security/test_http_wire_boundary.py::test_ambiguous_or_invalid_json_is_rejected_before_authority_dispatch"
+      ],
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Migrated test exposed real duplicate-key acceptance; strict shared JSON parser now rejects duplicates, nonfinite values, malformed UTF8 and excessive nesting.",
+      "evidence": "runtime_logs/p09/http-retirement-20260908.xml (111 PASS subset; heavy existing replacements remain incremental, not final freeze acceptance)"
+    },
+    {
+      "old_nodeid": "tests/application_governance/test_runtime_security.py::test_http_body_cannot_control_paths[artifact_path]",
+      "behavior": "Actual authenticated API rejects all four old path fields plus injected authority/principal/roles.",
+      "new_nodeids": [
+        "tests/security/test_http_wire_boundary.py::test_client_cannot_inject_paths_authority_or_roles"
+      ],
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Actual authenticated API rejects all four old path fields plus injected authority/principal/roles.",
+      "evidence": "runtime_logs/p09/http-retirement-20260908.xml (111 PASS subset; heavy existing replacements remain incremental, not final freeze acceptance)"
+    },
+    {
+      "old_nodeid": "tests/application_governance/test_runtime_security.py::test_http_body_cannot_control_paths[authority_package_path]",
+      "behavior": "Actual authenticated API rejects all four old path fields plus injected authority/principal/roles.",
+      "new_nodeids": [
+        "tests/security/test_http_wire_boundary.py::test_client_cannot_inject_paths_authority_or_roles"
+      ],
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Actual authenticated API rejects all four old path fields plus injected authority/principal/roles.",
+      "evidence": "runtime_logs/p09/http-retirement-20260908.xml (111 PASS subset; heavy existing replacements remain incremental, not final freeze acceptance)"
+    },
+    {
+      "old_nodeid": "tests/application_governance/test_runtime_security.py::test_http_body_cannot_control_paths[file_path]",
+      "behavior": "Actual authenticated API rejects all four old path fields plus injected authority/principal/roles.",
+      "new_nodeids": [
+        "tests/security/test_http_wire_boundary.py::test_client_cannot_inject_paths_authority_or_roles"
+      ],
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Actual authenticated API rejects all four old path fields plus injected authority/principal/roles.",
+      "evidence": "runtime_logs/p09/http-retirement-20260908.xml (111 PASS subset; heavy existing replacements remain incremental, not final freeze acceptance)"
+    },
+    {
+      "old_nodeid": "tests/application_governance/test_runtime_security.py::test_http_body_cannot_control_paths[workspace_path]",
+      "behavior": "Actual authenticated API rejects all four old path fields plus injected authority/principal/roles.",
+      "new_nodeids": [
+        "tests/security/test_http_wire_boundary.py::test_client_cannot_inject_paths_authority_or_roles"
+      ],
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Actual authenticated API rejects all four old path fields plus injected authority/principal/roles.",
+      "evidence": "runtime_logs/p09/http-retirement-20260908.xml (111 PASS subset; heavy existing replacements remain incremental, not final freeze acceptance)"
+    },
+    {
+      "old_nodeid": "tests/application_governance/test_runtime_security.py::test_oversized_body_and_forbidden_methods_are_blocked",
+      "behavior": "Actual byte limit and method denial preserved, independent of Content-Length.",
+      "new_nodeids": [
+        "tests/services/test_browser_sessions.py::test_actual_json_body_limit_before_parsing",
+        "tests/security/test_http_wire_boundary.py::test_forbidden_health_methods_do_not_mutate"
+      ],
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Actual byte limit and method denial preserved, independent of Content-Length.",
+      "evidence": "runtime_logs/p09/http-retirement-20260908.xml (111 PASS subset; heavy existing replacements remain incremental, not final freeze acceptance)"
+    },
+    {
+      "old_nodeid": "tests/application_governance/test_runtime_security.py::test_status_bootstrap_and_pages_are_loopback_only",
+      "behavior": "Server-issued opaque identity replaces anti-CSRF-only bootstrap; loopback HTTP exception remains explicit.",
+      "new_nodeids": [
+        "tests/services/test_browser_sessions.py::test_session_logout_and_http_require_explicit_loopback_exception",
+        "tests/security/test_http_wire_boundary.py::test_retired_runtime_urls_have_no_read_or_write_authority"
+      ],
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Server-issued opaque identity replaces anti-CSRF-only bootstrap; loopback HTTP exception remains explicit.",
+      "evidence": "runtime_logs/p09/http-retirement-20260908.xml (111 PASS subset; heavy existing replacements remain incremental, not final freeze acceptance)"
+    },
+    {
+      "old_nodeid": "tests/application_governance/test_runtime_security.py::test_valid_http_create_submit_review_and_replay",
+      "behavior": "Real authenticated source/model/review plus stale CAS and replay replaces synthetic governance HTTP store.",
+      "new_nodeids": [
+        "tests/services/test_modeling_workflow.py::test_nonempty_review_confirmed_workflow",
+        "tests/services/test_scope_revision.py::test_scope_decisions_require_observed_revision_and_rejection_invalidates_bundle",
+        "tests/services/test_prompt08_boundary.py::test_sync_idempotency_rejects_changed_body"
+      ],
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Real authenticated source/model/review plus stale CAS and replay replaces synthetic governance HTTP store.",
+      "evidence": "runtime_logs/p09/http-retirement-20260908.xml (111 PASS subset; heavy existing replacements remain incremental, not final freeze acceptance)"
+    },
+    {
+      "old_nodeid": "tests/application_governance/test_runtime_security.py::test_workspace_path_is_frozen_at_startup",
+      "behavior": "Exact old traversal assertion retained on the still-present historical store while its HTTP runtime is removed.",
+      "new_nodeids": [
+        "tests/application_governance/test_controlled_fixture_authority.py::test_workspace_path_is_frozen_at_startup"
+      ],
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Exact old traversal assertion retained on the still-present historical store while its HTTP runtime is removed.",
+      "evidence": "runtime_logs/p09/http-retirement-20260908.xml (111 PASS subset; heavy existing replacements remain incremental, not final freeze acceptance)"
+    },
+    {
+      "old_nodeid": "tests/application_governance/test_runtime_security.py::test_write_security_rejects_csrf_origin_and_content_type[kwargs0-403-CSRF_REJECTED]",
+      "behavior": "Current cookie session must prove Origin and CSRF; non-JSON mutation content is rejected before dispatch.",
+      "new_nodeids": [
+        "tests/services/test_browser_sessions.py::test_opaque_cookie_session_csrf_logout_and_revoke",
+        "tests/security/test_http_wire_boundary.py::test_non_json_mutation_content_type_cannot_reach_dispatch"
+      ],
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Current cookie session must prove Origin and CSRF; non-JSON mutation content is rejected before dispatch.",
+      "evidence": "runtime_logs/p09/http-retirement-20260908.xml (111 PASS subset; heavy existing replacements remain incremental, not final freeze acceptance)"
+    },
+    {
+      "old_nodeid": "tests/application_governance/test_runtime_security.py::test_write_security_rejects_csrf_origin_and_content_type[kwargs1-403-ORIGIN_REJECTED]",
+      "behavior": "Current cookie session must prove Origin and CSRF; non-JSON mutation content is rejected before dispatch.",
+      "new_nodeids": [
+        "tests/services/test_browser_sessions.py::test_opaque_cookie_session_csrf_logout_and_revoke",
+        "tests/security/test_http_wire_boundary.py::test_non_json_mutation_content_type_cannot_reach_dispatch"
+      ],
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Current cookie session must prove Origin and CSRF; non-JSON mutation content is rejected before dispatch.",
+      "evidence": "runtime_logs/p09/http-retirement-20260908.xml (111 PASS subset; heavy existing replacements remain incremental, not final freeze acceptance)"
+    },
+    {
+      "old_nodeid": "tests/application_governance/test_runtime_security.py::test_write_security_rejects_csrf_origin_and_content_type[kwargs2-400-CONTENT_TYPE_REJECTED]",
+      "behavior": "Current cookie session must prove Origin and CSRF; non-JSON mutation content is rejected before dispatch.",
+      "new_nodeids": [
+        "tests/services/test_browser_sessions.py::test_opaque_cookie_session_csrf_logout_and_revoke",
+        "tests/security/test_http_wire_boundary.py::test_non_json_mutation_content_type_cannot_reach_dispatch"
+      ],
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Current cookie session must prove Origin and CSRF; non-JSON mutation content is rejected before dispatch.",
+      "evidence": "runtime_logs/p09/http-retirement-20260908.xml (111 PASS subset; heavy existing replacements remain incremental, not final freeze acceptance)"
+    },
+    {
+      "old_nodeid": "tests/application_governance/test_runtime_security.py::test_xss_is_text_only_and_no_external_browser_capabilities",
+      "behavior": "Eleven original attack strings retained on production RDF projection/JSON serialization and actual React rendering.",
+      "new_nodeids": [
+        "tests/security/test_http_wire_boundary.py::test_untrusted_text_roundtrips_as_json_never_active_content",
+        "workbench/src/components.test.tsx"
+      ],
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Eleven original attack strings retained on production RDF projection/JSON serialization and actual React rendering.",
+      "evidence": "runtime_logs/p09/http-retirement-20260908.xml (111 PASS subset; heavy existing replacements remain incremental, not final freeze acceptance)"
+    },
+    {
+      "old_nodeid": "tests/diagnostics/test_runtime_security.py::test_runtime_is_read_only_and_escapes_text",
+      "behavior": "Old read-only diagnostics runtime removed; no active HTML; current service diagnostics remain authorized.",
+      "new_nodeids": [
+        "tests/security/test_http_wire_boundary.py::test_untrusted_text_roundtrips_as_json_never_active_content",
+        "tests/security/test_http_wire_boundary.py::test_retired_runtime_urls_have_no_read_or_write_authority"
+      ],
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Old read-only diagnostics runtime removed; no active HTML; current service diagnostics remain authorized.",
+      "evidence": "runtime_logs/p09/http-retirement-20260908.xml (111 PASS subset; heavy existing replacements remain incremental, not final freeze acceptance)"
+    },
+    {
+      "old_nodeid": "tests/workbench/test_phase02_boundaries.py::test_browser_bundle_has_only_local_assets_and_internal_navigation",
+      "behavior": "Local-only bundle requirement retained on current single React build.",
+      "new_nodeids": [
+        "tests/workbench/test_current_client_boundaries.py::test_only_the_current_local_bundle_is_a_product_frontend"
+      ],
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Local-only bundle requirement retained on current single React build.",
+      "evidence": "runtime_logs/p09/http-retirement-20260908.xml (111 PASS subset; heavy existing replacements remain incremental, not final freeze acceptance)"
+    },
+    {
+      "old_nodeid": "tests/workbench/test_phase02_boundaries.py::test_live_harness_uses_an_isolated_dynamic_graphdb_host_port",
+      "behavior": "Old GraphDB harness removed, local target restriction retained; no live GraphDB availability claim.",
+      "new_nodeids": [
+        "tests/integrations/test_local_target_policy.py::test_explicit_loopback_target_remains_available",
+        "tests/integrations/test_local_target_policy.py::test_local_name_cannot_resolve_to_metadata_address"
+      ],
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Old GraphDB harness removed, local target restriction retained; no live GraphDB availability claim.",
+      "evidence": "runtime_logs/p09/http-retirement-20260908.xml (111 PASS subset; heavy existing replacements remain incremental, not final freeze acceptance)"
+    },
+    {
+      "old_nodeid": "tests/workbench/test_phase02_boundaries.py::test_phase02_contains_no_ai_write_review_or_persistent_data_surface",
+      "behavior": "Phase no-form/no-persistence restrictions superseded by explicitly requested authenticated writes; client authority prohibition retained.",
+      "new_nodeids": [
+        "tests/workbench/test_current_client_boundaries.py::test_client_does_not_execute_untrusted_markup_or_persist_credentials"
+      ],
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Phase no-form/no-persistence restrictions superseded by explicitly requested authenticated writes; client authority prohibition retained.",
+      "evidence": "runtime_logs/p09/http-retirement-20260908.xml (111 PASS subset; heavy existing replacements remain incremental, not final freeze acceptance)"
+    },
+    {
+      "old_nodeid": "tests/workbench/test_runtime_http.py::test_all_view_routes_return_deterministic_view_models",
+      "behavior": "Historical relay-view shape retired; fixed-version typed deterministic page reads and real Evidence chain replace it.",
+      "new_nodeids": [
+        "tests/integrations/test_object_query.py::test_actual_package_object_query_is_bounded_and_typed",
+        "tests/services/test_source_workflow.py::test_real_tcp_source_ingestion_evidence_chain"
+      ],
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Historical relay-view shape retired; fixed-version typed deterministic page reads and real Evidence chain replace it.",
+      "evidence": "runtime_logs/p09/http-retirement-20260908.xml (111 PASS subset; heavy existing replacements remain incremental, not final freeze acceptance)"
+    },
+    {
+      "old_nodeid": "tests/workbench/test_runtime_http.py::test_mutations_bodies_unknown_routes_and_invalid_inputs_fail_closed",
+      "behavior": "No hidden commands, proxy or unsafe methods; intentional authenticated writes not subject to obsolete global read-only rule.",
+      "new_nodeids": [
+        "tests/security/test_http_wire_boundary.py::test_read_request_bodies_are_not_interpreted_as_hidden_commands",
+        "tests/security/test_http_wire_boundary.py::test_no_proxy_or_arbitrary_sparql_endpoint",
+        "tests/security/test_http_wire_boundary.py::test_forbidden_health_methods_do_not_mutate"
+      ],
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "No hidden commands, proxy or unsafe methods; intentional authenticated writes not subject to obsolete global read-only rule.",
+      "evidence": "runtime_logs/p09/http-retirement-20260908.xml (111 PASS subset; heavy existing replacements remain incremental, not final freeze acceptance)"
+    },
+    {
+      "old_nodeid": "tests/workbench/test_runtime_http.py::test_pages_assets_status_and_csp_are_same_origin_read_only",
+      "behavior": "All old URL methods return 410; CSP/no-store checked on actual current API.",
+      "new_nodeids": [
+        "tests/security/test_http_wire_boundary.py::test_retired_runtime_urls_have_no_read_or_write_authority",
+        "tests/workbench/test_current_client_boundaries.py::test_only_the_current_local_bundle_is_a_product_frontend"
+      ],
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "All old URL methods return 410; CSP/no-store checked on actual current API.",
+      "evidence": "runtime_logs/p09/http-retirement-20260908.xml (111 PASS subset; heavy existing replacements remain incremental, not final freeze acceptance)"
+    },
+    {
+      "old_nodeid": "tests/workbench/test_xss_security.py::test_frontend_uses_only_text_dom_rendering_and_no_persistent_authority",
+      "behavior": "Current client cannot execute markup or persist authority; actual React malicious strings retained.",
+      "new_nodeids": [
+        "tests/workbench/test_current_client_boundaries.py::test_client_does_not_execute_untrusted_markup_or_persist_credentials",
+        "workbench/src/components.test.tsx"
+      ],
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Current client cannot execute markup or persist authority; actual React malicious strings retained.",
+      "evidence": "runtime_logs/p09/http-retirement-20260908.xml (111 PASS subset; heavy existing replacements remain incremental, not final freeze acceptance)"
+    },
+    {
+      "old_nodeid": "tests/workbench/test_xss_security.py::test_malicious_rdf_text_remains_json_data_for_text_renderer",
+      "behavior": "Original eleven strings retained; changed typed literal field name value follows current contract, not historical lexical_form.",
+      "new_nodeids": [
+        "tests/security/test_http_wire_boundary.py::test_untrusted_text_roundtrips_as_json_never_active_content",
+        "workbench/src/components.test.tsx"
+      ],
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Original eleven strings retained; changed typed literal field name value follows current contract, not historical lexical_form.",
+      "evidence": "runtime_logs/p09/http-retirement-20260908.xml (111 PASS subset; heavy existing replacements remain incremental, not final freeze acceptance)"
+    },
+    {
+      "old_nodeid": "tests/application/test_application_boundaries_phase01.py::test_http_openapi_contains_only_get_and_head_application_operations",
+      "new_nodeids": [
+        "tests/security/test_http_wire_boundary.py::test_no_proxy_or_arbitrary_sparql_endpoint"
+      ],
+      "decision": "REPLACE_AND_DELETE",
+      "behavior": "No arbitrary query endpoint remains; global read-only restriction expressly superseded by guarded writes"
+    },
+    {
+      "old_nodeid": "tests/application/test_live_repository_binding_phase01.py::test_runtime_check_rejects_equal_count_replacement_and_startup_fails_closed",
+      "new_nodeids": [
+        "tests/application/test_live_repository_binding_phase01.py::test_runtime_check_rejects_equal_count_replacement",
+        "tests/cli/test_root_dispatch.py::test_removed_servers_cannot_be_imported_as_alternate_product_entrypoints"
+      ],
+      "decision": "RETAIN_AND_STRENGTHEN",
+      "behavior": "Same-count triple replacement rejection retained; old app factory cannot start because removed"
+    },
+    {
+      "old_nodeid": "tests/application_governance/test_controlled_fixture_authority.py::test_production_runtime_rejects_controlled_harness",
+      "new_nodeids": [
+        "tests/application_governance/test_controlled_fixture_authority.py::test_production_store_rejects_controlled_harness"
+      ],
+      "decision": "REPLACE_ASSERTION",
+      "behavior": "Exact controlled-harness authority rejection now checked directly on store initialization; removed runtime has no alternate import"
     }
   ],
   "replacement_gate": {
@@ -409,5 +968,34 @@
       "tests/compatibility/test_contract_versions.py",
       "tests/compatibility/test_historical_compiler_package.py"
     ]
+  },
+  "http_retirement_checkpoint": {
+    "parent_commit": "3840498b3bb2c9268efef743b3d18cf99d83e561",
+    "removed_files": [
+      "src/kg_mnp/application/http.py",
+      "src/kg_mnp/application/cli.py",
+      "src/kg_mnp/workbench/runtime.py",
+      "src/kg_mnp/workbench/cli.py",
+      "src/kg_mnp/diagnostics/runtime.py",
+      "src/kg_mnp/diagnostics/cli.py",
+      "src/kg_mnp/governance/runtime.py",
+      "src/kg_mnp/governance/cli.py",
+      "scripts/application_integration.py",
+      "scripts/workbench_integration.py",
+      "scripts/diagnostics_integration.py",
+      "scripts/governance_integration.py",
+      "tests/workbench/test_runtime_http.py",
+      "tests/workbench/test_xss_security.py",
+      "tests/application/test_application_http_phase01.py",
+      "tests/diagnostics/test_runtime_security.py",
+      "tests/application_governance/test_runtime_security.py",
+      "tests/workbench/test_phase02_boundaries.py",
+      "tests/application/test_root_cli_phase01.py"
+    ],
+    "security_red": "runtime_logs/p09/wire-red-20260908.xml",
+    "security_green": "runtime_logs/p09/wire-green2-20260908.xml",
+    "post_retirement": "runtime_logs/p09/http-retirement-20260908.xml",
+    "post_retirement_passed": 111,
+    "remaining": "Historical business builders/stores/verifiers and old modeling/compilation/activation CLI still require closure; not REFACTOR_COMPLETE"
   }
 }
