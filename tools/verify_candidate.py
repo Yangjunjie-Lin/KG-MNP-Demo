@@ -4,9 +4,22 @@ import json
 import os
 import subprocess
 import sys
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 ROOT=Path(__file__).resolve().parents[1]
+
+
+def backend_partitions(directory, execute):
+    """Overlap disjoint partitions; critical nodes remain serial within theirs."""
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        pending = {name: pool.submit(execute, directory, 'backend-' + name,
+            [sys.executable, 'tools/verify_release_candidate.py', name, '--run-dir', str(directory)])
+            for name in ('serial', 'parallel')}
+        receipts = {'backend-' + name: future.result() for name, future in pending.items()}
+    receipts['backend-summarize'] = execute(directory, 'backend-summarize',
+        [sys.executable, 'tools/verify_release_candidate.py', 'summarize', '--run-dir', str(directory)])
+    return receipts
 
 
 def main():
@@ -50,8 +63,7 @@ def main():
     # Distribution tests consume generated static assets, so building the one
     # current frontend must precede backend execution, never reuse an old dist.
     if all(receipt['exit_code']==0 for receipt in receipts.values()):
-        for partition in ('serial','parallel','summarize'):
-            receipts['backend-'+partition]=run(directory,'backend-'+partition,[sys.executable,'tools/verify_release_candidate.py',partition,'--run-dir',str(directory)])
+        receipts.update(backend_partitions(directory, run))
         assert_frozen(plan)
         receipts['browser']=run(directory,'browser',[sys.executable,'tools/run_browser_verification.py'])
         assert_frozen(plan)
