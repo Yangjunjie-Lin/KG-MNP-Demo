@@ -1,4 +1,8 @@
-"""Deterministic read-only query orchestration bound to a verified publication."""
+"""Offline reconstruction of versioned historical query-result artifacts.
+
+This reader has no HTTP/GraphDB client, runtime readiness or publication API.
+Queries execute in the current bounded local RDF subprocess, on verified bytes.
+"""
 
 from __future__ import annotations
 
@@ -6,7 +10,10 @@ import datetime as dt
 import time
 from typing import Any
 
-from rdflib import URIRef
+from rdflib import Literal, URIRef
+from rdflib.util import from_n3
+
+from kg_mnp.semantic_kernel.validators.competency_questions import _execute
 
 from ..graphdb.rdf_semantics import graphdb_semantic_hash_nquads
 from ..modeling.canonical_json import semantic_hash
@@ -25,7 +32,6 @@ from .policy import DEFAULT_RESULT_LIMIT
 from .publication_binding import PUBLICATION_SCENARIOS, PublicationBinding
 from .query_registry import ParameterSpec, QueryDefinition, QueryRegistry
 from .query_validator import validate_bound_graph_values, validate_query_text
-from .readonly_client import ReadOnlyGraphDBClient
 from .result_normalizer import normalize_select
 from .traceability import build_traceability
 
@@ -38,63 +44,68 @@ def _canonical_parameter(value: Any) -> Any:
     return value
 
 
-class ApplicationService:
+class HistoricalQueryReader:
     def __init__(
         self,
         *,
         binding: PublicationBinding,
         registry: QueryRegistry,
-        client: ReadOnlyGraphDBClient,
+        dataset: bytes,
     ) -> None:
         self.binding = binding
         self.registry = registry
-        self.client = client
+        if not isinstance(dataset, bytes) or len(dataset) > 64 * 1024 * 1024:
+            raise ApplicationError(ErrorCode.INVALID_PARAMETER)
+        self._dataset = dataset
 
-    def runtime_check(self) -> dict[str, Any]:
-        try:
-            health = self.client.health()
-            if not isinstance(health, dict) or health.get("healthy") is not True:
-                raise ApplicationError(ErrorCode.APPLICATION_NOT_READY)
-            info = self.client.repository_info(self.binding.repository_id)
-            reported_id = info.get("id") or info.get("repositoryID")
-            if reported_id != self.binding.repository_id:
-                raise ApplicationError(ErrorCode.APPLICATION_NOT_READY)
-            if self.binding.attestation.get("status") != "PUBLICATION_VERIFIED":
-                raise ApplicationError(ErrorCode.APPLICATION_NOT_READY)
-            reconstruction = self.binding.publication_authority_reconstruction
-            if (
-                reconstruction.get("status") != "PASS"
-                or reconstruction.get("scenario") not in PUBLICATION_SCENARIOS
-                or reconstruction.get("scenario")
-                != self.binding.publication_scenario
-                or reconstruction.get("publication_id") != self.binding.publication_id
-                or reconstruction.get("deterministic_reconstruction_match") is not True
-            ):
-                raise ApplicationError(ErrorCode.APPLICATION_NOT_READY)
-            explicit_nquads = self.client.export_explicit_nquads(
-                self.binding.repository_id
-            )
-            live_semantic_hash = graphdb_semantic_hash_nquads(explicit_nquads)
-            if live_semantic_hash != self.binding.graphdb_semantic_hash:
-                raise ApplicationError(ErrorCode.APPLICATION_NOT_READY)
-        except ApplicationError as exc:
-            if exc.code == ErrorCode.APPLICATION_NOT_READY:
-                raise
-            raise ApplicationError(ErrorCode.APPLICATION_NOT_READY) from exc
-        except Exception as exc:
-            raise ApplicationError(ErrorCode.APPLICATION_NOT_READY) from exc
+    def verify_input(self) -> dict[str, Any]:
+        """Recheck authority and the captured explicit dataset on every read."""
+        reconstruction = self.binding.publication_authority_reconstruction
+        if (
+            self.binding.attestation.get("status") != "PUBLICATION_VERIFIED"
+            or reconstruction.get("status") != "PASS"
+            or reconstruction.get("scenario") not in PUBLICATION_SCENARIOS
+            or reconstruction.get("scenario") != self.binding.publication_scenario
+            or reconstruction.get("publication_id") != self.binding.publication_id
+            or reconstruction.get("deterministic_reconstruction_match") is not True
+        ):
+            raise ApplicationError(ErrorCode.APPLICATION_NOT_READY)
+        digest = graphdb_semantic_hash_nquads(self._dataset)
+        if digest != self.binding.graphdb_semantic_hash:
+            raise ApplicationError(ErrorCode.APPLICATION_NOT_READY)
         return {
-            "status": "APPLICATION_READY",
-            "read_only": True,
-            "publication_id": self.binding.publication_id,
-            "publication_semantic_hash": self.binding.publication_semantic_hash,
-            "repository_id": self.binding.repository_id,
-            "expected_graphdb_semantic_hash": self.binding.graphdb_semantic_hash,
-            "live_graphdb_semantic_hash": live_semantic_hash,
+            "status": "HISTORICAL_DATASET_VERIFIED",
             "repository_semantic_identity_verified": True,
+            "expected_graphdb_semantic_hash": self.binding.graphdb_semantic_hash,
+            "dataset_semantic_hash": digest,
             "publication_authority_reconstruction": reconstruction,
-            "health": health,
+            "external_deployment_observed": False,
         }
+
+    def _select(self, query: str, *, timeout: int) -> dict[str, Any]:
+        status, result = _execute(self._dataset, query, "SELECT", timeout, 1000)
+        if status != "OK":
+            raise ApplicationError(ErrorCode.INTERNAL_ERROR, message="historical query execution " + status)
+        rows = []
+        for row in result["rows"]:
+            bindings = {}
+            for name, value in row.items():
+                if value is None:
+                    continue
+                term = from_n3(value)
+                if isinstance(term, URIRef):
+                    bindings[name] = {"type": "uri", "value": str(term)}
+                elif isinstance(term, Literal):
+                    binding = {"type": "literal", "value": str(term)}
+                    if term.datatype is not None:
+                        binding["datatype"] = str(term.datatype)
+                    if term.language is not None:
+                        binding["xml:lang"] = term.language
+                    bindings[name] = binding
+                else:
+                    raise ApplicationError(ErrorCode.INTERNAL_ERROR)
+            rows.append(bindings)
+        return {"head": {"vars": result["variables"]}, "results": {"bindings": rows}}
 
     def _parameter_value(self, spec: ParameterSpec, raw: Any) -> Any:
         if spec.type == "iri":
@@ -173,16 +184,13 @@ class ApplicationService:
 
     def run(self, query_id: str, parameters: dict[str, Any]) -> dict[str, Any]:
         started = time.monotonic()
+        self.verify_input()
         definition = self.registry.get(query_id)
         validated = self._validate_parameters(definition, parameters)
         query, requested_limit = self._render(definition, validated)
         if definition.query_type != "SELECT":
             raise ApplicationError(ErrorCode.READ_ONLY_POLICY_VIOLATION)
-        raw = self.client.select(
-            self.binding.repository_id,
-            query,
-            timeout=definition.timeout_seconds,
-        )
+        raw = self._select(query, timeout=definition.timeout_seconds)
         variables, normalized = normalize_select(raw)
         truncated = len(normalized) > requested_limit
         rows = normalized[:requested_limit]

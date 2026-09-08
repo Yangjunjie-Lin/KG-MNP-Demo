@@ -1,7 +1,7 @@
 from __future__ import annotations
 
+from kg_mnp.application.query_reader import HistoricalQueryReader
 from kg_mnp.application.query_registry import QueryRegistry
-from kg_mnp.application.service import ApplicationService
 
 from ._phase01_helpers import DatasetClient, synthetic_binding
 
@@ -12,10 +12,11 @@ REJECTED_CANDIDATE = "urn:kg-mnp:candidate:d34f2db397b76e7e026a66d34d3953cf3891b
 
 
 def service(scenario="full-confirmation"):
-    return ApplicationService(
+    binding = synthetic_binding(scenario)
+    return HistoricalQueryReader(
         binding=synthetic_binding(scenario),
         registry=QueryRegistry.load(),
-        client=DatasetClient(scenario),
+        dataset=DatasetClient(scenario).export_explicit_nquads(binding.repository_id),
     )
 
 

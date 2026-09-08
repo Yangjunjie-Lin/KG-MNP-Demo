@@ -1,4 +1,5 @@
 """Historical byte reconstruction does not expose another product writer."""
+import importlib.util
 import inspect
 
 import pytest
@@ -16,6 +17,10 @@ def test_old_compilation_has_no_writable_entrypoint():
 
 def test_old_workbench_has_no_writable_entrypoint():
     assert not hasattr(manifest, "build_workbench_package")
+
+
+def test_only_current_application_service_is_available():
+    assert importlib.util.find_spec("kg_mnp.application.service") is None
 
 
 @pytest.mark.parametrize("builder", [build_graphdb_import_package,

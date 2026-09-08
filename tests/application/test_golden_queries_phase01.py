@@ -5,8 +5,8 @@ import json
 import pytest
 
 from kg_mnp.application.errors import ApplicationError
+from kg_mnp.application.query_reader import HistoricalQueryReader
 from kg_mnp.application.query_registry import QueryRegistry
-from kg_mnp.application.service import ApplicationService
 
 from ._phase01_helpers import ROOT, DatasetClient, synthetic_binding
 
@@ -16,7 +16,8 @@ def _json(path):
 
 
 def _service(scenario):
-    return ApplicationService(binding=synthetic_binding(scenario), registry=QueryRegistry.load(), client=DatasetClient(scenario))
+    binding = synthetic_binding(scenario)
+    return HistoricalQueryReader(binding=binding, registry=QueryRegistry.load(), dataset=DatasetClient(scenario).export_explicit_nquads(binding.repository_id))
 
 
 def test_all_ten_golden_case_directories_are_present_and_deterministic():

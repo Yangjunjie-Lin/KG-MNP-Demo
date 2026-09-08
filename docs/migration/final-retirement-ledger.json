@@ -26,6 +26,32 @@
   ],
   "entries": [
     {
+      "old_path": "src/kg_mnp/application/service.py; src/kg_mnp/application/__init__.py::ApplicationService",
+      "old_responsibility": "Second ApplicationService, bound to old GraphDB runtime and Phase01 readiness",
+      "actual_callers": [
+        "tests/application/test_application_queries_phase01.py",
+        "tests/application/test_golden_queries_phase01.py",
+        "tests/application/test_live_repository_binding_phase01.py"
+      ],
+      "replacement_path": "src/kg_mnp/services/facade.py; src/kg_mnp/application/query_reader.py; src/kg_mnp/semantic_kernel/validators/competency_questions.py",
+      "replacement_behavior": "One current ApplicationService. Minimal historical query-result reconstruction takes bounded captured bytes, verifies source identity and executes through the existing local process executor. All ten old golden query scenarios preserve result identity/trace semantics; old HTTP/live GraphDB runtime orchestration removed, not aliased.",
+      "replacement_test_nodeids": [
+        "tests/application/test_golden_queries_phase01.py::test_all_ten_golden_case_directories_are_present_and_deterministic",
+        "tests/application/test_application_queries_phase01.py::test_exact_fact_provenance_closes_review_evidence_source_and_publication_lineage",
+        "tests/compatibility/test_readonly_reconstruction.py::test_only_current_application_service_is_available",
+        "tests/application/test_live_repository_binding_phase01.py::test_reader_binds_the_captured_explicit_dataset_semantic_hash",
+        "tests/application/test_live_repository_binding_phase01.py::test_reader_has_no_live_client_or_readiness_claim",
+        "tests/application/test_live_repository_binding_phase01.py::test_reader_requires_verified_attestation_and_authority_reconstruction",
+        "tests/application/test_live_repository_binding_phase01.py::test_reader_rejects_one_added_explicit_triple_with_same_repository_id",
+        "tests/application/test_live_repository_binding_phase01.py::test_reader_rejects_one_deleted_explicit_triple_with_same_repository_id",
+        "tests/application/test_live_repository_binding_phase01.py::test_reader_rejects_equal_count_replacement"
+      ],
+      "artifact_compatibility": "Original golden hashes preserved; RDF types/languages, rejected review plane and publication/evidence binding retained.",
+      "decision": "MERGE",
+      "reason": "Current product does not import these old projection contracts. Only versioned result reconstruction remains; no network client, server, publication path or second ApplicationService retained.",
+      "evidence": "runtime_logs/p09/query-reader-red.xml (expected retirement assertion FAIL); query-reader-golden.xml (11 PASS); query-reader-integrity.xml (6 PASS)"
+    },
+    {
       "old_path": "src/kg_mnp/pipeline.py; scripts/showcase_demo.py",
       "old_responsibility": "Standalone MNP assessment publication/HTML generator, not the ontology engineering product",
       "actual_callers": [
@@ -2301,6 +2327,54 @@
     }
   ],
   "test_migration": [
+    {
+      "old_nodeid": "tests/application/test_live_repository_binding_phase01.py::test_runtime_check_binds_the_live_explicit_dataset_semantic_hash",
+      "new_nodeid": "tests/application/test_live_repository_binding_phase01.py::test_reader_binds_the_captured_explicit_dataset_semantic_hash",
+      "behavior": "Exact explicit RDF identity, trusted publication binding and fail-closed external-state classification",
+      "decision": "REPLACE",
+      "reason": "Historical result reader now accepts only captured dataset bytes, rechecks identity on every query and uses the current bounded local subprocess. No live client or runtime health claim remains. Existing GraphDB protocol/integration tests retain external checks separately; offline compatibility never reports deployment.",
+      "evidence": "runtime_logs/p09/query-reader-integrity.xml (6 PASS)"
+    },
+    {
+      "old_nodeid": "tests/application/test_live_repository_binding_phase01.py::test_runtime_check_requires_health_and_an_exact_reported_repository_id",
+      "new_nodeid": "tests/application/test_live_repository_binding_phase01.py::test_reader_has_no_live_client_or_readiness_claim",
+      "behavior": "Exact explicit RDF identity, trusted publication binding and fail-closed external-state classification",
+      "decision": "REPLACE",
+      "reason": "Historical result reader now accepts only captured dataset bytes, rechecks identity on every query and uses the current bounded local subprocess. No live client or runtime health claim remains. Existing GraphDB protocol/integration tests retain external checks separately; offline compatibility never reports deployment.",
+      "evidence": "runtime_logs/p09/query-reader-integrity.xml (6 PASS)"
+    },
+    {
+      "old_nodeid": "tests/application/test_live_repository_binding_phase01.py::test_runtime_check_requires_verified_attestation_and_authority_reconstruction",
+      "new_nodeid": "tests/application/test_live_repository_binding_phase01.py::test_reader_requires_verified_attestation_and_authority_reconstruction",
+      "behavior": "Exact explicit RDF identity, trusted publication binding and fail-closed external-state classification",
+      "decision": "REPLACE",
+      "reason": "Historical result reader now accepts only captured dataset bytes, rechecks identity on every query and uses the current bounded local subprocess. No live client or runtime health claim remains. Existing GraphDB protocol/integration tests retain external checks separately; offline compatibility never reports deployment.",
+      "evidence": "runtime_logs/p09/query-reader-integrity.xml (6 PASS)"
+    },
+    {
+      "old_nodeid": "tests/application/test_live_repository_binding_phase01.py::test_runtime_check_rejects_one_added_explicit_triple_with_same_repository_id",
+      "new_nodeid": "tests/application/test_live_repository_binding_phase01.py::test_reader_rejects_one_added_explicit_triple_with_same_repository_id",
+      "behavior": "Exact explicit RDF identity, trusted publication binding and fail-closed external-state classification",
+      "decision": "REPLACE",
+      "reason": "Historical result reader now accepts only captured dataset bytes, rechecks identity on every query and uses the current bounded local subprocess. No live client or runtime health claim remains. Existing GraphDB protocol/integration tests retain external checks separately; offline compatibility never reports deployment.",
+      "evidence": "runtime_logs/p09/query-reader-integrity.xml (6 PASS)"
+    },
+    {
+      "old_nodeid": "tests/application/test_live_repository_binding_phase01.py::test_runtime_check_rejects_one_deleted_explicit_triple_with_same_repository_id",
+      "new_nodeid": "tests/application/test_live_repository_binding_phase01.py::test_reader_rejects_one_deleted_explicit_triple_with_same_repository_id",
+      "behavior": "Exact explicit RDF identity, trusted publication binding and fail-closed external-state classification",
+      "decision": "REPLACE",
+      "reason": "Historical result reader now accepts only captured dataset bytes, rechecks identity on every query and uses the current bounded local subprocess. No live client or runtime health claim remains. Existing GraphDB protocol/integration tests retain external checks separately; offline compatibility never reports deployment.",
+      "evidence": "runtime_logs/p09/query-reader-integrity.xml (6 PASS)"
+    },
+    {
+      "old_nodeid": "tests/application/test_live_repository_binding_phase01.py::test_runtime_check_rejects_equal_count_replacement",
+      "new_nodeid": "tests/application/test_live_repository_binding_phase01.py::test_reader_rejects_equal_count_replacement",
+      "behavior": "Exact explicit RDF identity, trusted publication binding and fail-closed external-state classification",
+      "decision": "REPLACE",
+      "reason": "Historical result reader now accepts only captured dataset bytes, rechecks identity on every query and uses the current bounded local subprocess. No live client or runtime health claim remains. Existing GraphDB protocol/integration tests retain external checks separately; offline compatibility never reports deployment.",
+      "evidence": "runtime_logs/p09/query-reader-integrity.xml (6 PASS)"
+    },
     {
       "old_nodeid": "tests/test_pipeline.py::test_json_case03_blocked",
       "new_nodeid": [
