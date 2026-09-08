@@ -2,7 +2,7 @@
   "decision": "NO_GO_REFACTOR_INCOMPLETE",
   "source_commit": "9da17d126cb37166ff06084080770108da20afbe",
   "branch": "codex/toolchain-final-consolidation-p09",
-  "implementation_checkpoint": "feba20fcbc569f52ce51a20af786ae5caf10fb03",
+  "implementation_checkpoint": "cd74d8912d6f4ef336a466760e22e7eeb0ee741f",
   "tested_commit": null,
   "final_fixed_revision_status": "NOT_RUN_AFTER_COMPLETE_CONSOLIDATION",
   "candidate_tag": null,
@@ -1151,10 +1151,44 @@
     "caveat": "Artifacts precede later readiness/export/ingestion/control-channel changes; must rebuild and rerun after final code freeze"
   },
   "current_browser_retest": {
-    "status": "RUNNING_NOT_ACCEPTANCE",
+    "status": "FAIL_INCREMENTAL_FIXED_SOURCE",
     "source_commit": "feba20fcbc569f52ce51a20af786ae5caf10fb03",
     "checkout": "runtime/p09-browser-feba20f-src",
     "core_mocks": false,
-    "note": "Fixed isolated source; includes actual browser .kgop download/verification"
-  }
+    "passed": 2,
+    "failed": 3,
+    "evidence": "runtime/p09-browser-feba20f-src/runtime_logs/p09/browser-runs/managed-be4aa44abd194bc3b8ae439d78fe3726",
+    "failures": [
+      "Minimal version flow selected old import action before React refreshed; replayed old idempotent Job",
+      "Forestry locked CSV/TXT changed to CRLF in a new checkout; Pack correctly disabled",
+      "MNP verified-archive download exceeded 120 seconds with redundant full verifications"
+    ],
+    "later_repairs": [
+      "045040e: exact artifact action locators, imported-action disablement and LF checkout rules",
+      "cd74d89: one captured/verified export byte set plus final permission recheck"
+    ],
+    "scope": "Later fixes have targeted tests, not a fresh complete browser PASS"
+  },
+  "package_download_repair": {
+    "code_commit": "cd74d8912d6f4ef336a466760e22e7eeb0ee741f",
+    "tests": {
+      "passed": 6,
+      "evidence": "runtime_logs/p09/archive-regression.xml"
+    },
+    "actual_mnp_probe": {
+      "status": "PASS",
+      "package_id": "urn:kg-mnp:ontology-package:dd6bc1d9fb4d150ec778dffb5acc9850120c93946e5729dcd008758ed8eb94b5",
+      "archive_sha256": "53ccc9455224d822832b513b3a5041bb099eb4730550d2877d0dd68fd66c19da",
+      "bytes": 1597671,
+      "seconds": 43.64684470000793,
+      "evidence": "runtime_logs/p09/mnp-download-snapshot/receipt.json",
+      "qualification": "Current read implementation on genuine prior MNP package, not final full-revision workflow acceptance"
+    }
+  },
+  "required_remaining": [
+    "Complete legacy backend/state-writer/reader consolidation with exact assurance migration",
+    "Finish remaining obsolete scripts/config/capability docs consolidation",
+    "New clean code freeze and complete backend/browser/manual QA/platform/distribution verification",
+    "Build and verify actual final Wheel/Sdist/examples/evidence bundle, and tested/delivery input equality"
+  ]
 }
