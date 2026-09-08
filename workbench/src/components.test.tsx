@@ -1,9 +1,20 @@
 import {afterEach,describe,expect,it} from 'vitest';
 import {cleanup,fireEvent,render,screen} from '@testing-library/react';
-import {DataTable,Field} from './components';
+import {DataTable,Field,PackageDownload} from './components';
 
 afterEach(cleanup);
 describe('working surfaces',()=>{
+ it('downloads the explicit package through the same-origin authorized endpoint',()=>{
+  render(<PackageDownload projectId="urn:project:1" packageId="urn:package:1" allowed/>);
+  const link=screen.getByRole('link',{name:'下载已验证本体包（.kgop）'});
+  expect(link).toHaveAttribute('href','/api/v1/projects/urn%3Aproject%3A1/packages/urn%3Apackage%3A1/archive');
+  expect(link).toHaveAttribute('download','ontology.kgop');
+ });
+ it('does not offer package export to an unauthorized identity',()=>{
+  render(<PackageDownload projectId="urn:project:1" packageId="urn:package:1" allowed={false}/>);
+  expect(screen.queryByRole('link')).toBeNull();
+  expect(screen.getByText(/package:export/)).toBeInTheDocument();
+ });
  it('paginates 1000 actual component records without 1000 DOM rows',()=>{
   render(<DataTable data={Array.from({length:1000},(_,i)=>({id:`record-${i}`}))} fields={[["id","记录"]]}/>);
   expect(screen.getAllByRole('row')).toHaveLength(26);

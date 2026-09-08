@@ -6,6 +6,10 @@ export function Field({label, children}: {label: string; children: ReactNode}) {
 export function Panel({title, children}: {title: string; children: ReactNode}) { return <section className="panel"><h2>{title}</h2>{children}</section>; }
 export function Id({value}: {value: unknown}) { return <code title={str(value)}>{str(value)}</code>; }
 export function Status({value}: {value: unknown}) { return <span className="status">{str(value)}</span>; }
+export function PackageDownload({projectId, packageId, allowed}: {projectId: string; packageId: string; allowed: boolean}) {
+  if (!allowed) return <p className="muted">下载本体包需要 package:export 权限。</p>;
+  return <p><a download="ontology.kgop" href={`/api/v1/projects/${encodeURIComponent(projectId)}/packages/${encodeURIComponent(packageId)}/archive`}>下载已验证本体包（.kgop）</a></p>;
+}
 export function SelectDocument({label, items, idKey, value, onChange}: {label: string; items: Document[]; idKey: string; value: string; onChange: (v: string) => void}) {
   return <Field label={label}><select required value={value} onChange={e => onChange(e.target.value)}><option value="">请选择</option>{items.map(item => <option key={str(item[idKey])} value={str(item[idKey])}>{str(item[idKey])}</option>)}</select></Field>;
 }

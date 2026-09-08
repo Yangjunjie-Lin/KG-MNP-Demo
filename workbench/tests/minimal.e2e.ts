@@ -4,6 +4,7 @@ import path from 'node:path';
 import {versionFlow} from './version-flow';
 import AxeBuilder from '@axe-core/playwright';
 import os from 'node:os';
+import {execFileSync} from 'node:child_process';
 const scenarios=[
  {id:'minimal',version:'0.1.0',files:[],concepts:'Entity',question:'Which entities and labels are present?',query:'minimal-query-list-entities',bindings:'entity,label',count:1,classIri:'https://yangjunjie-lin.github.io/KG-MNP-Demo/domain-packs/minimal/terms#Entity'},
  {id:'forestry',version:'0.2.0',files:['sites.csv','trees.csv','inspections.csv'],concepts:'TreeRecord,InspectionRecord,Site',question:'Which synthetic trees have inspections and sites?',query:'forestry-query-tree-inspections',bindings:'tree,treeCode,inspection,inspectionCode,site',count:6,classIri:'https://example.invalid/forestry#TreeRecord'}
@@ -126,6 +127,18 @@ for(const scenario of scenarios) test(`real browser ${scenario.id} source review
   await page.getByRole('button',{name:'执行真实编译与验证',exact:true}).click();
   const built=await output('compile.build');
   expect(built.reports['competency-question-test-report.json'].required_passed).toBe(true);
+  const archiveDownloadPromise=page.waitForEvent('download',{timeout:120000});
+  await page.getByRole('link',{name:'下载已验证本体包（.kgop）',exact:true}).click();
+  const packageDownload=await archiveDownloadPromise;
+  expect(packageDownload.suggestedFilename()).toBe('ontology.kgop');
+  const packageFile=path.join(evidenceRoot,'ontology.kgop');
+  await packageDownload.saveAs(packageFile);
+  const python=process.env.KG_MNP_TEST_PYTHON;
+  if(!python)throw new Error('Explicit test Python is required for downloaded package verification');
+  const packageVerification=JSON.parse(execFileSync(python,['-m','kg_mnp','package','verify-archive',packageFile,'--json'],{encoding:'utf8',timeout:120000}));
+  expect(packageVerification.result.package_id).toBe(built.package_id);
+  expect(packageVerification.result.status).toBe('VALID');
+  fs.writeFileSync(path.join(evidenceRoot,'downloaded-package-verification.json'),JSON.stringify(packageVerification,null,2));
   await screenshot('compilation');
   await page.getByRole('button',{name:'验证并导入本地 Registry',exact:true}).click();
   await output('registry.import');

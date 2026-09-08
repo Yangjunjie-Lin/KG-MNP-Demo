@@ -102,7 +102,7 @@ def main() -> int:
                 wait_healthy(server, ready["url"], args.startup_timeout)
                 receipt["startup_seconds"] = time.monotonic() - start
                 environment = {**os.environ, "KG_MNP_BROWSER_URL": ready["url"], "KG_MNP_BROWSER_CREDENTIAL": ready["credential_path"],
-                    "KG_MNP_BROWSER_EVIDENCE": str(directory)}
+                    "KG_MNP_BROWSER_EVIDENCE": str(directory), "KG_MNP_TEST_PYTHON": sys.executable}
                 receipt["browser_exit_code"] = None
                 if not args.smoke_only:
                     npm = "npm.cmd" if os.name == "nt" else "npm"
