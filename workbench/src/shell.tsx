@@ -20,7 +20,7 @@ function Login({onLogin}: {onLogin: () => void}) {
   return <main className="login"><div className="brand">KG-MNP <span>Ontology Toolchain</span></div><Panel title="登录本体工程工作台"><p>使用本地管理员签发的凭证。此页面不提供管理员注册。</p><form onSubmit={login} onInvalid={event=>{event.preventDefault();setError('请填写访问凭证。');(event.target as HTMLInputElement).focus();}}><Field label="访问凭证"><input name="credential" aria-describedby={error?'login-error':undefined} aria-invalid={!!error} type="password" autoComplete="off" required /></Field><button disabled={busy}>登录</button></form>{error && <p id="login-error" role="alert" className="error">{error}</p>}<p className="muted">长期凭证不会保存到浏览器存储。后台任务由当前服务器授权控制。</p></Panel></main>;
 }
 export function App() {
-  const session = useQuery({queryKey: ['session'], queryFn: ({signal}) => api<{principal: Principal; csrf_token: string}>('/session', {signal}), refetchInterval: 30000});
+  const session = useQuery({queryKey: ['session'], queryFn: ({signal}) => api<{principal: Principal; csrf_token: string}>('/session', {signal}), refetchInterval: query => query.state.data ? 30000 : false, refetchOnWindowFocus: query => !!query.state.data, refetchOnReconnect: query => !!query.state.data});
   useEffect(() => {if (session.data) setCsrf(session.data.csrf_token);}, [session.data]);
   if (session.isPending) return <main className="login" role="status">正在检查会话…</main>;
   if (!session.data || session.isError) return <Login onLogin={() => window.location.assign('/')} />;

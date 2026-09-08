@@ -7,6 +7,14 @@ test('real session negative boundaries and identity cache isolation',async({page
   const credentials=JSON.parse(fs.readFileSync(process.env.KG_MNP_BROWSER_CREDENTIAL!,'utf8'));
   if(!credentials.viewer_token)throw new Error('synthetic isolated viewer credential required');
   await page.goto('/');
+  // Unauthenticated polling must not erase drafts or move keyboard focus.
+  await page.getByLabel('访问凭证').fill('synthetic-keyboard-draft');
+  await page.getByLabel('访问凭证').focus();
+  await page.waitForTimeout(32000);
+  await page.evaluate(()=>{window.dispatchEvent(new Event('visibilitychange'));window.dispatchEvent(new Event('online'));});
+  await page.waitForTimeout(1000);
+  await expect(page.getByLabel('访问凭证')).toHaveValue('synthetic-keyboard-draft');
+  await expect(page.getByLabel('访问凭证')).toBeFocused();
   // Actively prove CSP rejects HTTP(S)/WS(S) egress. Routing is a safety net:
   // if CSP regresses, abort before any external network connection and fail.
   const intercepted:string[]=[];
