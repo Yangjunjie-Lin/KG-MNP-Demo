@@ -1,11 +1,12 @@
 from __future__ import annotations
 
-import json
 import os
 from dataclasses import asdict
 from pathlib import Path
 
 from kg_mnp.api.openapi import export_openapi
+from kg_mnp.contracts.cli import emit_json
+from kg_mnp.contracts.document_io import read_document
 from kg_mnp.jobs.worker import JobWorker
 from kg_mnp.service_runtime.configuration import load_configuration
 
@@ -51,20 +52,20 @@ def main(argv: list[str] | None = None) -> int:
                 if not operation:
                     raise ValueError("call requires --operation")
                 request_file = _arg(args, "--request")
-                parameters = json.loads(Path(request_file).read_bytes()) if request_file else {}
+                parameters = read_document(Path(request_file)) if request_file else {}
                 result = asdict(client.execute(OperationRequest(operation, project_id, parameters, key)))
-            print(json.dumps(result, ensure_ascii=False, sort_keys=True))
+            emit_json(result)
             return 0
         finally:
             client.close()
     config = load_configuration(_arg(args, "--workspace", ".") or ".")
     service = ApplicationService(config)
     if action == "doctor":
-        print(json.dumps(service.runtime_check(), sort_keys=True))
+        emit_json(service.runtime_check())
         return 0
     if action == "openapi":
         destination = export_openapi(service, _arg(args, "--output", "openapi.json") or "openapi.json")
-        print(json.dumps({"status": "EXPORTED", "path": str(destination)}, sort_keys=True))
+        emit_json({"status": "EXPORTED", "path": str(destination)})
         return 0
     if action == "token":
         subaction = args[1] if len(args) > 1 else "create"
@@ -72,10 +73,10 @@ def main(argv: list[str] | None = None) -> int:
             principal_id = _arg(args, "--principal-id")
             created_by = _arg(args, "--created-by")
             if not principal_id or not created_by:
-                print(json.dumps({"status": "FAIL", "message": "--principal-id and --created-by are required"}))
+                emit_json({"status": "FAIL", "message": "--principal-id and --created-by are required"})
                 return 2
             token, principal = service.tokens.create(principal_id=principal_id, principal_type=_arg(args, "--principal-type", "HUMAN") or "HUMAN", permissions=set((_arg(args, "--permissions", "project:read") or "").split(",")), project_ids=set(filter(None, (_arg(args, "--project-ids", "") or "").split(","))), created_by=created_by)
-            print(json.dumps({"token": token, "principal": principal.to_dict()}, sort_keys=True))
+            emit_json({"token": token, "principal": principal.to_dict()})
             return 0
         if subaction == "revoke":
             token_id = _arg(args, "--token-id")
@@ -98,7 +99,7 @@ def main(argv: list[str] | None = None) -> int:
                 pass
             return 0
         result = worker.run_once(_arg(args, "--worker-id", "worker") or "worker")
-        print(json.dumps({"status": "IDLE" if result is None else result.status}, sort_keys=True))
+        emit_json({"status": "IDLE" if result is None else result.status})
         return 0
-    print(json.dumps({"status": "FAIL", "message": "unknown service command"}))
+    emit_json({"status": "FAIL", "message": "unknown service command"})
     return 2

@@ -28,10 +28,11 @@ Run `kg-mnp <command> --help` for command-specific help.
 
 
 def main(argv: list[str] | None = None) -> int:
-    """Route Application commands and preserve every Foundation argument verbatim."""
+    """Route current commands; reject retired entry points before loading them."""
 
     arguments = list(sys.argv[1:] if argv is None else argv)
-    if arguments and arguments[0] in {"application","workbench","diagnostics","governance","amendment","activation"}:
+    if arguments and arguments[0] in {"application","workbench","diagnostics","governance","amendment","activation",
+        "evaluate","trace","validate","infer","mappings","sources","run-all","propose","confirm","graphdb","publication","webvowl"}:
         print("CLI_RETIRED: use kg-mnp service serve and authenticated model/review/lifecycle resources")
         return 2
     if arguments in ([], ["-h"], ["--help"]):

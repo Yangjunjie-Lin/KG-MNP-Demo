@@ -11,7 +11,6 @@ import pytest
 from kg_mnp.application.assessment_service import AssessmentService
 from kg_mnp.application.contracts import ASSESSMENT_RESPONSE_KEYS, SCHEMA_VERSION
 from kg_mnp.application.errors import ApplicationError, ErrorCode
-from kg_mnp.cli import cmd_evaluate_rdf
 from kg_mnp.pipeline import run_pipeline
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -132,13 +131,6 @@ def test_cli_and_service_agree(service, case03_payload, tmp_path):
         pipeline_result["evaluation"]["blocking_reasons"][0]["reason_code"]
         == service_result["blocking_reasons"][0]["reason_code"]
     )
-
-
-def test_cli_rdf_case03_blocked(capsys):
-    code = cmd_evaluate_rdf("CASE-03")
-    assert code == 0
-    payload = json.loads(capsys.readouterr().out)
-    assert payload["decision"] == "BLOCKED"
 
 
 def test_application_error_structure():

@@ -3,14 +3,11 @@
 from __future__ import annotations
 
 import copy
-import io
 import json
 from pathlib import Path
 
 import pytest
 
-from kg_mnp import cli
-from kg_mnp.cli import main
 from kg_mnp.input_adapter import (
     InputValidationError,
     load_and_normalize,
@@ -53,27 +50,3 @@ def test_normalize_rejects_unexpected_contract_field() -> None:
 
     with pytest.raises(InputValidationError, match="Additional properties"):
         normalize_case_input(payload)
-
-
-@pytest.mark.parametrize("command", ["evaluate", "trace"])
-def test_legacy_cli_commands_continue_to_work(command: str, capsys) -> None:
-    assert main([command, "--case", "CASE-03", "--backend", "rdf"]) == 0
-
-    payload = json.loads(capsys.readouterr().out)
-    assert payload["case_id"] == "CASE-03"
-    assert payload["backend"] == "rdf"
-    assert "decision" in payload if command == "evaluate" else "decision_trace" in payload
-
-
-def test_legacy_cli_json_is_safe_on_non_utf8_stdout(monkeypatch) -> None:
-    class AsciiStream(io.StringIO):
-        encoding = "ascii"
-
-    stream = AsciiStream()
-    monkeypatch.setattr(cli.sys, "stdout", stream)
-
-    cli._json_print({"label": "资格判断"})
-
-    rendered = stream.getvalue()
-    assert "\\u" in rendered
-    assert json.loads(rendered) == {"label": "资格判断"}

@@ -8,7 +8,8 @@ import pytest
 ROOT=Path(__file__).resolve().parents[2]
 
 
-@pytest.mark.parametrize('name',['application','workbench','diagnostics','governance','amendment','activation'])
+@pytest.mark.parametrize('name',['application','workbench','diagnostics','governance','amendment','activation',
+    'evaluate','trace','validate','infer','mappings','sources','run-all','propose','confirm','graphdb','publication','webvowl'])
 def test_old_runtime_commands_report_retirement_without_starting(name):
     result=subprocess.run([sys.executable,'-m','kg_mnp.root_cli',name,'--help'],cwd=ROOT,capture_output=True,text=True,check=False)
     assert result.returncode==2

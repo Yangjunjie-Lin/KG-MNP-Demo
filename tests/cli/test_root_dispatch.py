@@ -24,6 +24,7 @@ def test_root_routes_current_authorities_and_preserves_arguments(monkeypatch):
     "diagnostics.runtime", "diagnostics.cli", "governance.runtime", "governance.cli",
     "modeling.cli", "graphdb.cli", "publication.cli", "webvowl.cli",
     "activation.runtime", "activation.cli", "amendment.cli",
+    "cli",
 ])
 def test_removed_servers_cannot_be_imported_as_alternate_product_entrypoints(module):
     assert importlib.util.find_spec("kg_mnp." + module) is None

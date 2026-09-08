@@ -625,6 +625,40 @@
       "artifact_compatibility": "No schema, golden artifacts or read validation functions changed. Exact rehash/illegal-finalize attacks verified before dispatcher deletion and retained directly.",
       "decision": "REPLACE_AND_DELETE",
       "reason": "G1-G4 required workflows passed; obsolete local mutation routes cannot remain a second product."
+    },
+    {
+      "old_path": "src/kg_mnp/cli.py",
+      "old_responsibility": "Domain-specific eligibility/evaluate/trace/run-all root runtime",
+      "actual_callers": [
+        "tests/test_cli.py",
+        "tests/application/test_assessment_service.py",
+        "tests/schema_governance/test_legacy_schema_runtime.py",
+        "tests/governance/test_stage_01_closure.py"
+      ],
+      "replacement_path": "src/kg_mnp/root_cli.py; src/kg_mnp/contracts/cli.py; src/kg_mnp/services/resource_cli.py",
+      "replacement_behavior": "Legacy console surface removed; current commands share strict Unicode-preserving JSON emission. Direct historical MNP evidence/rule tests remain until deeper implementation closure.",
+      "replacement_test_nodeids": [
+        "tests/cli/test_root_dispatch.py::test_removed_servers_cannot_be_imported_as_alternate_product_entrypoints",
+        "tests/cli/test_console_encoding.py::test_current_json_emitter_preserves_unicode_on_real_encoded_stream"
+      ],
+      "artifact_compatibility": "Original MNP assets and legacy input-adapter validation (missing evidence, invalid datetime, extra fields) unchanged",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "MNP-specific runtime is not a current public product entrypoint; no default fallback or second CLI platform."
+    },
+    {
+      "old_path": "tests/governance/test_stage_01_closure.py",
+      "old_responsibility": "Historical source/title/CLI boundary assertions",
+      "actual_callers": [
+        "pytest"
+      ],
+      "replacement_path": "tests/refactor/test_product_boundaries.py",
+      "replacement_behavior": "Capability-oriented product and exact dependency lock assertions, no obsolete runtime file requirement",
+      "replacement_test_nodeids": [
+        "tests/refactor/test_product_boundaries.py"
+      ],
+      "artifact_compatibility": "MNP modules/source/license assertions preserved",
+      "decision": "MOVE",
+      "reason": "Removed historical heading/runtime expectations; retained durable architecture decisions"
     }
   ],
   "test_migration": [
@@ -1274,6 +1308,186 @@
       ],
       "decision": "REPLACE_AND_DELETE",
       "behavior": "Old parser shape assertions superseded; no-bypass behavior preserved on actual authenticated route, old module absent"
+    },
+    {
+      "old_nodeid": "tests/test_cli.py::test_cli_evaluate_case_03",
+      "new_nodeids": [
+        "tests/test_rules.py::test_case_03_contract_block_full_trace"
+      ],
+      "decision": "REPLACE_AND_DELETE",
+      "behavior": "Retired MNP eligibility CLI wrapper; exact original MNP rule/trace/mapping assertions remain on core and domain assets",
+      "reason": "Old CLI removed, not copied to an archive. Business/invalid-input/trace assertions remain; non-UTF8 test exposed and fixed current UnicodeEncodeError.",
+      "evidence": "runtime_logs/p09/console-encoding-red-20260908.xml; runtime_logs/p09/final-cli-20260908.xml (64 PASS subset)"
+    },
+    {
+      "old_nodeid": "tests/test_cli.py::test_cli_mappings",
+      "new_nodeids": [
+        "tests/test_mappings.py::test_mapping_structure_valid"
+      ],
+      "decision": "REPLACE_AND_DELETE",
+      "behavior": "Retired MNP eligibility CLI wrapper; exact original MNP rule/trace/mapping assertions remain on core and domain assets",
+      "reason": "Old CLI removed, not copied to an archive. Business/invalid-input/trace assertions remain; non-UTF8 test exposed and fixed current UnicodeEncodeError.",
+      "evidence": "runtime_logs/p09/console-encoding-red-20260908.xml; runtime_logs/p09/final-cli-20260908.xml (64 PASS subset)"
+    },
+    {
+      "old_nodeid": "tests/test_cli.py::test_cli_sources",
+      "new_nodeids": [
+        "tests/test_mappings.py::test_source_manifest_contains_required"
+      ],
+      "decision": "REPLACE_AND_DELETE",
+      "behavior": "Retired MNP eligibility CLI wrapper; exact original MNP rule/trace/mapping assertions remain on core and domain assets",
+      "reason": "Old CLI removed, not copied to an archive. Business/invalid-input/trace assertions remain; non-UTF8 test exposed and fixed current UnicodeEncodeError.",
+      "evidence": "runtime_logs/p09/console-encoding-red-20260908.xml; runtime_logs/p09/final-cli-20260908.xml (64 PASS subset)"
+    },
+    {
+      "old_nodeid": "tests/test_cli.py::test_cli_run_all_twice_consistent",
+      "new_nodeids": [
+        "tests/test_showcase.py::test_showcase_repeatable",
+        "tests/test_showcase.py::test_all_cases_summary"
+      ],
+      "decision": "REPLACE_AND_DELETE",
+      "behavior": "Retired MNP eligibility CLI wrapper; exact original MNP rule/trace/mapping assertions remain on core and domain assets",
+      "reason": "Old CLI removed, not copied to an archive. Business/invalid-input/trace assertions remain; non-UTF8 test exposed and fixed current UnicodeEncodeError.",
+      "evidence": "runtime_logs/p09/console-encoding-red-20260908.xml; runtime_logs/p09/final-cli-20260908.xml (64 PASS subset)"
+    },
+    {
+      "old_nodeid": "tests/application/test_assessment_service.py::test_cli_rdf_case03_blocked",
+      "new_nodeids": [
+        "tests/test_rules.py::test_case_03_contract_block_full_trace"
+      ],
+      "decision": "REPLACE_AND_DELETE",
+      "behavior": "Retired MNP eligibility CLI wrapper; exact original MNP rule/trace/mapping assertions remain on core and domain assets",
+      "reason": "Old CLI removed, not copied to an archive. Business/invalid-input/trace assertions remain; non-UTF8 test exposed and fixed current UnicodeEncodeError.",
+      "evidence": "runtime_logs/p09/console-encoding-red-20260908.xml; runtime_logs/p09/final-cli-20260908.xml (64 PASS subset)"
+    },
+    {
+      "old_nodeid": "tests/schema_governance/test_legacy_schema_runtime.py::test_legacy_cli_commands_continue_to_work[evaluate]",
+      "new_nodeids": [
+        "tests/test_rules.py::test_case_03_contract_block_full_trace"
+      ],
+      "decision": "REPLACE_AND_DELETE",
+      "behavior": "Retired MNP eligibility CLI wrapper; exact original MNP rule/trace/mapping assertions remain on core and domain assets",
+      "reason": "Old CLI removed, not copied to an archive. Business/invalid-input/trace assertions remain; non-UTF8 test exposed and fixed current UnicodeEncodeError.",
+      "evidence": "runtime_logs/p09/console-encoding-red-20260908.xml; runtime_logs/p09/final-cli-20260908.xml (64 PASS subset)"
+    },
+    {
+      "old_nodeid": "tests/schema_governance/test_legacy_schema_runtime.py::test_legacy_cli_commands_continue_to_work[trace]",
+      "new_nodeids": [
+        "tests/test_trace.py::test_decision_trace_query_runs"
+      ],
+      "decision": "REPLACE_AND_DELETE",
+      "behavior": "Retired MNP eligibility CLI wrapper; exact original MNP rule/trace/mapping assertions remain on core and domain assets",
+      "reason": "Old CLI removed, not copied to an archive. Business/invalid-input/trace assertions remain; non-UTF8 test exposed and fixed current UnicodeEncodeError.",
+      "evidence": "runtime_logs/p09/console-encoding-red-20260908.xml; runtime_logs/p09/final-cli-20260908.xml (64 PASS subset)"
+    },
+    {
+      "old_nodeid": "tests/schema_governance/test_legacy_schema_runtime.py::test_legacy_cli_json_is_safe_on_non_utf8_stdout",
+      "new_nodeids": [
+        "tests/cli/test_console_encoding.py::test_current_json_emitter_preserves_unicode_on_real_encoded_stream"
+      ],
+      "decision": "REPLACE_AND_DELETE",
+      "behavior": "Unicode-safe JSON for real ASCII/cp1252/UTF8 streams, now shared by current CLI families",
+      "reason": "Old CLI removed, not copied to an archive. Business/invalid-input/trace assertions remain; non-UTF8 test exposed and fixed current UnicodeEncodeError.",
+      "evidence": "runtime_logs/p09/console-encoding-red-20260908.xml; runtime_logs/p09/final-cli-20260908.xml (64 PASS subset)"
+    },
+    {
+      "old_nodeid": "tests/governance/test_stage_01_closure.py::test_domain_specific_eligibility_console_entry_is_not_public",
+      "new_nodeids": [
+        "tests/refactor/test_product_boundaries.py::test_domain_specific_eligibility_console_entry_is_not_public"
+      ],
+      "decision": "MOVE",
+      "behavior": "Current product registration/no-Neo4j/domain-source policy; HTTP pin checked against current exact lock",
+      "reason": "Historical phase heading and hardcoded vulnerable FastAPI version are not compatibility requirements; substantive boundary assertions retained"
+    },
+    {
+      "old_nodeid": "tests/governance/test_stage_01_closure.py::test_frontend_absent",
+      "new_nodeids": [
+        "tests/refactor/test_product_boundaries.py::test_frontend_absent"
+      ],
+      "decision": "MOVE",
+      "behavior": "Current product registration/no-Neo4j/domain-source policy; HTTP pin checked against current exact lock",
+      "reason": "Historical phase heading and hardcoded vulnerable FastAPI version are not compatibility requirements; substantive boundary assertions retained"
+    },
+    {
+      "old_nodeid": "tests/governance/test_stage_01_closure.py::test_kg_mnp_console_entry_uses_the_application_aware_root_dispatcher",
+      "new_nodeids": [
+        "tests/refactor/test_product_boundaries.py::test_kg_mnp_console_entry_uses_the_application_aware_root_dispatcher"
+      ],
+      "decision": "MOVE",
+      "behavior": "Current product registration/no-Neo4j/domain-source policy; HTTP pin checked against current exact lock",
+      "reason": "Historical phase heading and hardcoded vulnerable FastAPI version are not compatibility requirements; substantive boundary assertions retained"
+    },
+    {
+      "old_nodeid": "tests/governance/test_stage_01_closure.py::test_legacy_cli_description_marks_legacy",
+      "new_nodeids": [
+        "tests/cli/test_root_dispatch.py::test_removed_servers_cannot_be_imported_as_alternate_product_entrypoints"
+      ],
+      "decision": "REPLACE_AND_DELETE",
+      "behavior": "Removed CLI is absent, not merely labelled legacy",
+      "reason": "Historical phase heading and hardcoded vulnerable FastAPI version are not compatibility requirements; substantive boundary assertions retained"
+    },
+    {
+      "old_nodeid": "tests/governance/test_stage_01_closure.py::test_legacy_cli_module_docstring_marks_legacy",
+      "new_nodeids": [
+        "tests/cli/test_root_dispatch.py::test_removed_servers_cannot_be_imported_as_alternate_product_entrypoints"
+      ],
+      "decision": "REPLACE_AND_DELETE",
+      "behavior": "Removed CLI is absent, not merely labelled legacy",
+      "reason": "Historical phase heading and hardcoded vulnerable FastAPI version are not compatibility requirements; substantive boundary assertions retained"
+    },
+    {
+      "old_nodeid": "tests/governance/test_stage_01_closure.py::test_neo4j_absent_and_phase01_http_dependencies_are_exactly_pinned",
+      "new_nodeids": [
+        "tests/refactor/test_product_boundaries.py::test_no_neo4j_and_current_http_dependency_is_exactly_locked"
+      ],
+      "decision": "MOVE",
+      "behavior": "Current product registration/no-Neo4j/domain-source policy; HTTP pin checked against current exact lock",
+      "reason": "Historical phase heading and hardcoded vulnerable FastAPI version are not compatibility requirements; substantive boundary assertions retained"
+    },
+    {
+      "old_nodeid": "tests/governance/test_stage_01_closure.py::test_node_and_playwright_entrypoints_absent",
+      "new_nodeids": [
+        "tests/refactor/test_product_boundaries.py::test_node_and_playwright_entrypoints_absent"
+      ],
+      "decision": "MOVE",
+      "behavior": "Current product registration/no-Neo4j/domain-source policy; HTTP pin checked against current exact lock",
+      "reason": "Historical phase heading and hardcoded vulnerable FastAPI version are not compatibility requirements; substantive boundary assertions retained"
+    },
+    {
+      "old_nodeid": "tests/governance/test_stage_01_closure.py::test_old_docker_entrypoints_absent",
+      "new_nodeids": [
+        "tests/refactor/test_product_boundaries.py::test_old_docker_entrypoints_absent"
+      ],
+      "decision": "MOVE",
+      "behavior": "Current product registration/no-Neo4j/domain-source policy; HTTP pin checked against current exact lock",
+      "reason": "Historical phase heading and hardcoded vulnerable FastAPI version are not compatibility requirements; substantive boundary assertions retained"
+    },
+    {
+      "old_nodeid": "tests/governance/test_stage_01_closure.py::test_ontology_modules_catalog_still_loads",
+      "new_nodeids": [
+        "tests/refactor/test_product_boundaries.py::test_ontology_modules_catalog_still_loads"
+      ],
+      "decision": "MOVE",
+      "behavior": "Current product registration/no-Neo4j/domain-source policy; HTTP pin checked against current exact lock",
+      "reason": "Historical phase heading and hardcoded vulnerable FastAPI version are not compatibility requirements; substantive boundary assertions retained"
+    },
+    {
+      "old_nodeid": "tests/governance/test_stage_01_closure.py::test_readme_does_not_treat_eligibility_as_central_task",
+      "new_nodeids": [
+        "tests/refactor/test_product_boundaries.py::test_readme_does_not_treat_eligibility_as_central_task"
+      ],
+      "decision": "MOVE",
+      "behavior": "Current product registration/no-Neo4j/domain-source policy; HTTP pin checked against current exact lock",
+      "reason": "Historical phase heading and hardcoded vulnerable FastAPI version are not compatibility requirements; substantive boundary assertions retained"
+    },
+    {
+      "old_nodeid": "tests/governance/test_stage_01_closure.py::test_service_api_is_explicit_and_neo4j_packages_absent",
+      "new_nodeids": [
+        "tests/refactor/test_product_boundaries.py::test_service_api_is_explicit_and_neo4j_packages_absent"
+      ],
+      "decision": "MOVE",
+      "behavior": "Current product registration/no-Neo4j/domain-source policy; HTTP pin checked against current exact lock",
+      "reason": "Historical phase heading and hardcoded vulnerable FastAPI version are not compatibility requirements; substantive boundary assertions retained"
     }
   ],
   "replacement_gate": {
@@ -1358,6 +1572,14 @@
       "evidence": "runtime_logs/p09/cli-security-before-20260908.xml"
     },
     "post_deletion_evidence": "runtime_logs/p09/cli-retired-20260908.xml",
-    "scope_limit": "Not a whole-backend retirement. Historical business builders/stores and legacy MNP evaluation pipeline still need further consolidation."
+    "scope_limit": "Not a whole-backend retirement. Historical business builders/stores and legacy MNP evaluation pipeline still need further consolidation.",
+    "post_deletion_passed": 37
+  },
+  "local_install_preflight": {
+    "status": "PASS_INCREMENTAL_DIRTY_BUILD_NOT_FINAL",
+    "evidence": "runtime_logs/p09/distribution-preflight-20260908/distribution-verification.json",
+    "platform": "Windows 11 / Python 3.12.6",
+    "result": "Wheel and Sdist-rebuilt Wheel have identical package/resource payload; each installed in a separate fresh environment; source-free API/Worker/download/replay probes passed",
+    "limitations": "Later frontend export/readiness changes and strengthened direct-process shutdown probe are not part of this build; final clean fixed-revision rebuild still mandatory."
   }
 }

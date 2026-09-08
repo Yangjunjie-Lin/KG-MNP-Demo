@@ -2,11 +2,11 @@
 from __future__ import annotations
 
 import argparse
-import json
 import os
 from dataclasses import asdict
 from pathlib import Path
 
+from kg_mnp.contracts.cli import emit_json
 from kg_mnp.contracts.document_io import read_document
 from kg_mnp.contracts.errors import ContractError
 from kg_mnp.sdk.errors import SDKError
@@ -45,12 +45,12 @@ def main(namespace: str, argv: list[str] | None = None) -> int:
     parser.add_argument("--json", action="store_true")
     parsed, unknown = parser.parse_known_args(arguments)
     if unknown:
-        print(json.dumps({"status":"ERROR","code":"CLI_OPTION_FORBIDDEN","message":"unsupported options; request identity and policy cannot be overridden"}))
+        emit_json({"status":"ERROR","code":"CLI_OPTION_FORBIDDEN","message":"unsupported options; request identity and policy cannot be overridden"})
         return 42
     group = parsed.resource if namespace == "lifecycle" else namespace
     operation = ROUTES[group].get(parsed.action)
     if operation is None:
-        print(json.dumps({"status":"ERROR","code":"CLI_OPERATION_UNKNOWN"}))
+        emit_json({"status":"ERROR","code":"CLI_OPERATION_UNKNOWN"})
         return 2
     try:
         parameters = read_document(parsed.request) if parsed.request else {}
@@ -62,13 +62,13 @@ def main(namespace: str, argv: list[str] | None = None) -> int:
         client = HTTPClient(parsed.url,os.environ.get("KG_MNP_TOKEN",""),timeout=180)
         try:
             result = client.execute(request)
-            print(json.dumps(asdict(result),ensure_ascii=False,sort_keys=True))
+            emit_json(asdict(result))
         finally:
             client.close()
         return 0
     except (SDKError, ServiceBoundaryError) as exc:
-        print(json.dumps({"status":"ERROR","code":exc.code,"message":str(exc)},ensure_ascii=False))
+        emit_json({"status":"ERROR","code":exc.code,"message":str(exc)})
         return 2
     except (OSError, ValueError, TypeError, ContractError) as exc:
-        print(json.dumps({"status":"ERROR","code":"CLI_REQUEST_INVALID","message":type(exc).__name__}))
+        emit_json({"status":"ERROR","code":"CLI_REQUEST_INVALID","message":type(exc).__name__})
         return 2

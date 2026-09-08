@@ -1,4 +1,4 @@
-"""Stage 01 closure checks for CLI registration and legacy system exit."""
+"""Current product registration, dependency policy and obsolete platform exit."""
 
 from __future__ import annotations
 
@@ -45,23 +45,6 @@ def test_domain_specific_eligibility_console_entry_is_not_public():
     assert "kg-mnp-eligibility" not in scripts
 
 
-def test_legacy_cli_description_marks_legacy():
-    from kg_mnp.cli import build_parser
-
-    parser = build_parser()
-    description = (parser.description or "").lower()
-    assert "legacy" in description
-    assert "eligibility" in description
-
-
-def test_legacy_cli_module_docstring_marks_legacy():
-    from kg_mnp import cli
-
-    assert cli.__doc__ is not None
-    assert "legacy" in cli.__doc__.lower()
-    assert "eligibility" in cli.__doc__.lower()
-
-
 def test_frontend_absent():
     assert not (ROOT / "frontend").exists()
 
@@ -86,12 +69,16 @@ def test_node_and_playwright_entrypoints_absent():
         assert not (ROOT / relative).exists(), relative
 
 
-def test_neo4j_absent_and_phase01_http_dependencies_are_exactly_pinned():
+def test_no_neo4j_and_current_http_dependency_is_exactly_locked():
     text = _read_text("pyproject.toml").lower()
     assert "neo4j" not in text
-    assert '"fastapi==0.115.0"' in text
+    import tomllib
+    project = tomllib.loads(text)
+    locked = _read_text("requirements-dev.lock").lower().splitlines()
+    fastapi = next(pin for pin in project["project"]["dependencies"] if pin.startswith("fastapi=="))
+    assert fastapi in locked
     assert '"uvicorn==0.30.6"' in text
-    assert (ROOT / "src/kg_mnp/application/http.py").is_file()
+    assert (ROOT / "src/kg_mnp/api/app.py").is_file()
 
 
 def test_service_api_is_explicit_and_neo4j_packages_absent():
@@ -106,9 +93,7 @@ def test_service_api_is_explicit_and_neo4j_packages_absent():
 
 def test_readme_does_not_treat_eligibility_as_central_task():
     readme = _read_text("README.md").lower()
-    assert "不以携号转网资格判断为中央任务" in _read_text("README.md") or (
-        "eligibility" in readme and "central" in readme and "not" in readme
-    )
+    assert "独立领域包" in _read_text("README.md")
     assert "ontology" in readme
     assert "toolchain" in readme
 

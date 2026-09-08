@@ -9,6 +9,7 @@ import traceback
 from pathlib import Path
 from typing import Any
 
+from kg_mnp.contracts.cli import emit_json
 from kg_mnp.domain_packs.registry import discover_domain_packs_root
 
 from .artifact_resolver import WorkspaceArtifactResolver
@@ -232,16 +233,16 @@ def _entry(arguments: list[str], *, package: bool) -> int:
         label, subject, result = (_run_package(filtered) if package else _run_compile(filtered))
         envelope = {"command": label, "status": "OK", "code": 0, "subject": subject, "errors": [], "warnings": [], "result": result}
         if json_output:
-            print(json.dumps(envelope, ensure_ascii=False, sort_keys=True))
+            emit_json(envelope)
         else:
-            print(json.dumps(result, ensure_ascii=False, indent=2, sort_keys=True))
+            emit_json(result)
         return 0
     except (SemanticKernelError, ValueError, TypeError, OSError, json.JSONDecodeError) as exc:
         code_name = exc.code if isinstance(exc, SemanticKernelError) else "COMPILATION_FAILED"
         code = EXIT_CODES.get(code_name, 30)
         envelope = {"command": command, "status": "ERROR", "code": code, "subject": None, "errors": [{"code": code_name, "message": str(exc)}], "warnings": [], "result": None}
         if json_output:
-            print(json.dumps(envelope, ensure_ascii=False, sort_keys=True))
+            emit_json(envelope)
         else:
             print(f"{code_name}: {exc}")
         if debug:

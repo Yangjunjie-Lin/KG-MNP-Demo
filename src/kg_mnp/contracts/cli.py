@@ -48,7 +48,13 @@ def command_result(
 
 
 def emit_json(value: Any) -> None:
-    print(json.dumps(value, ensure_ascii=False, sort_keys=True, indent=2, allow_nan=False))
+    text = json.dumps(value, ensure_ascii=False, sort_keys=True, indent=2, allow_nan=False)
+    try:
+        text.encode(getattr(sys.stdout, "encoding", None) or "utf-8")
+    except (LookupError, UnicodeEncodeError):
+        # Escape code points, never replace/drop them or partially print JSON.
+        text = json.dumps(value, ensure_ascii=True, sort_keys=True, indent=2, allow_nan=False)
+    print(text)
 
 
 def _parser() -> argparse.ArgumentParser:
