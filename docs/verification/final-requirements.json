@@ -18,1889 +18,2546 @@
   "original_operation_count": 53,
   "requirements": [
     {
-      "api": "POST /api/v1/projects",
+      "api": "POST /api/v1/operations/project.create (typed compatibility operation)",
       "baseline_status": "IMPLEMENTED_AND_TESTED",
       "blocker": null,
-      "cli": "kg-mnp service call project.create",
+      "cli": "kg-mnp service call --operation project.create --request <typed-request.json> (revocable KG_MNP_TOKEN; project/key as required)",
       "commits": [
-        "3c0d0ad18e9640ceacc60502e227354cfff939d0"
+        "b63ba379327af4eb102d4a852498509cef9a3bf8"
       ],
       "core_required": true,
       "execution_mode": "INLINE",
       "implementation": "kg_mnp.services.projects.create_project",
       "maps_to": "project.create",
-      "missing": [
-        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
-      ],
+      "missing": [],
       "negative_tests": [
-        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[project.create]"
+        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[project.create]",
+        "tests/services/test_prompt08_boundary.py::test_resource_api_and_compatibility_dto_reject_unknown_fields",
+        "tests/services/test_unified_service.py::test_project_isolation_is_enforced_by_service"
       ],
       "positive_tests": [
-        "tests/services/test_prompt08_boundary.py::test_created_project_is_valid_workspace_without_path_disclosure"
+        "tests/services/test_prompt08_boundary.py::test_created_project_is_valid_workspace_without_path_disclosure",
+        "tests/services/test_prompt08_boundary.py"
       ],
       "requirement_id": "project.create",
-      "sdk": "LocalClient.execute / HTTPClient.execute",
+      "sdk": "LocalClient.execute / HTTPClient.execute(OperationRequest)",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "ui": "/",
-      "final_revision_verified": false,
-      "request_contract": "ProjectCreateRequest"
+      "status": "IMPLEMENTED_AND_VERIFIED",
+      "ui": "workbench/src/shell.tsx",
+      "final_revision_verified": true,
+      "request_contract": "ProjectCreateRequest",
+      "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
+      "verification_ref": "docs/verification/final-verification.json"
     },
     {
-      "api": "GET /api/v1/projects/{project_id}",
+      "api": "POST /api/v1/operations/project.open (typed compatibility operation)",
       "baseline_status": "IMPLEMENTED_AND_TESTED",
       "blocker": null,
-      "cli": "kg-mnp service call project.open",
+      "cli": "kg-mnp service call --operation project.open --request <typed-request.json> (revocable KG_MNP_TOKEN; project/key as required)",
       "commits": [
-        "3c0d0ad18e9640ceacc60502e227354cfff939d0"
+        "b63ba379327af4eb102d4a852498509cef9a3bf8"
       ],
       "core_required": true,
       "execution_mode": "INLINE",
       "implementation": "kg_mnp.services.projects.inspect_project",
       "maps_to": "project.open",
-      "missing": [
-        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
-      ],
+      "missing": [],
       "negative_tests": [
-        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[project.open]"
+        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[project.open]",
+        "tests/services/test_prompt08_boundary.py::test_resource_api_and_compatibility_dto_reject_unknown_fields",
+        "tests/services/test_unified_service.py::test_project_isolation_is_enforced_by_service"
       ],
       "positive_tests": [
-        "tests/services/test_prompt08_boundary.py::test_owner_open_validate_catalog_pack_inspect_and_empty_environment"
+        "tests/services/test_prompt08_boundary.py::test_owner_open_validate_catalog_pack_inspect_and_empty_environment",
+        "tests/services/test_prompt08_boundary.py"
       ],
       "requirement_id": "project.open",
-      "sdk": "LocalClient.execute / HTTPClient.execute",
+      "sdk": "LocalClient.execute / HTTPClient.execute(OperationRequest)",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "ui": "overview",
-      "final_revision_verified": false,
-      "request_contract": "ProjectOpenRequest"
+      "status": "IMPLEMENTED_AND_VERIFIED",
+      "ui": "workbench/src/shell.tsx",
+      "final_revision_verified": true,
+      "request_contract": "ProjectOpenRequest",
+      "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
+      "verification_ref": "docs/verification/final-verification.json"
     },
     {
-      "api": "GET /api/v1/projects",
+      "api": "POST /api/v1/operations/project.list (typed compatibility operation)",
       "baseline_status": "IMPLEMENTED_AND_TESTED",
       "blocker": null,
-      "cli": "kg-mnp service call project.list",
+      "cli": "kg-mnp service call --operation project.list --request <typed-request.json> (revocable KG_MNP_TOKEN; project/key as required)",
       "commits": [
-        "3c0d0ad18e9640ceacc60502e227354cfff939d0"
+        "b63ba379327af4eb102d4a852498509cef9a3bf8"
       ],
       "core_required": true,
       "execution_mode": "INLINE",
       "implementation": "kg_mnp.services.projects.list_projects",
       "maps_to": "project.list",
-      "missing": [
-        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
-      ],
+      "missing": [],
       "negative_tests": [
-        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[project.list]"
+        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[project.list]",
+        "tests/services/test_prompt08_boundary.py::test_resource_api_and_compatibility_dto_reject_unknown_fields",
+        "tests/services/test_unified_service.py::test_project_isolation_is_enforced_by_service"
       ],
       "positive_tests": [
-        "tests/services/test_prompt08_boundary.py::test_project_list_and_open_reject_empty_scope_outsider"
+        "tests/services/test_prompt08_boundary.py::test_project_list_and_open_reject_empty_scope_outsider",
+        "tests/services/test_prompt08_boundary.py"
       ],
       "requirement_id": "project.list",
-      "sdk": "LocalClient.execute / HTTPClient.execute",
+      "sdk": "LocalClient.execute / HTTPClient.execute(OperationRequest)",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "ui": "/",
-      "final_revision_verified": false,
-      "request_contract": "EmptyRequest"
+      "status": "IMPLEMENTED_AND_VERIFIED",
+      "ui": "workbench/src/shell.tsx",
+      "final_revision_verified": true,
+      "request_contract": "EmptyRequest",
+      "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
+      "verification_ref": "docs/verification/final-verification.json"
     },
     {
-      "api": "GET /api/v1/projects/{project_id}/validation",
+      "api": "POST /api/v1/operations/project.validate (typed compatibility operation)",
       "baseline_status": "IMPLEMENTED_AND_TESTED",
       "blocker": null,
-      "cli": "kg-mnp service call project.validate",
+      "cli": "kg-mnp service call --operation project.validate --request <typed-request.json> (revocable KG_MNP_TOKEN; project/key as required)",
       "commits": [
-        "3c0d0ad18e9640ceacc60502e227354cfff939d0"
+        "b63ba379327af4eb102d4a852498509cef9a3bf8"
       ],
       "core_required": true,
       "execution_mode": "INLINE",
       "implementation": "kg_mnp.services.projects.inspect_project",
       "maps_to": "project.validate",
-      "missing": [
-        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
-      ],
+      "missing": [],
       "negative_tests": [
-        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[project.validate]"
+        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[project.validate]",
+        "tests/services/test_prompt08_boundary.py::test_resource_api_and_compatibility_dto_reject_unknown_fields",
+        "tests/services/test_unified_service.py::test_project_isolation_is_enforced_by_service"
       ],
       "positive_tests": [
-        "tests/services/test_prompt08_boundary.py::test_owner_open_validate_catalog_pack_inspect_and_empty_environment"
+        "tests/services/test_prompt08_boundary.py::test_owner_open_validate_catalog_pack_inspect_and_empty_environment",
+        "tests/services/test_prompt08_boundary.py"
       ],
       "requirement_id": "project.validate",
-      "sdk": "LocalClient.execute / HTTPClient.execute",
+      "sdk": "LocalClient.execute / HTTPClient.execute(OperationRequest)",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "ui": "overview via project state",
-      "final_revision_verified": false,
-      "request_contract": "EmptyRequest"
+      "status": "IMPLEMENTED_AND_VERIFIED",
+      "ui": "workbench/src/shell.tsx (state/capability metadata or advanced typed operation; no arbitrary operation JSON editor required)",
+      "final_revision_verified": true,
+      "request_contract": "EmptyRequest",
+      "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
+      "verification_ref": "docs/verification/final-verification.json"
     },
     {
-      "api": "POST /api/v1/projects/{project_id}/lock",
+      "api": "POST /api/v1/operations/project.lock (typed compatibility operation)",
       "baseline_status": "IMPLEMENTED_AND_TESTED",
       "blocker": null,
-      "cli": "kg-mnp service call project.lock",
+      "cli": "kg-mnp service call --operation project.lock --request <typed-request.json> (revocable KG_MNP_TOKEN; project/key as required)",
       "commits": [
-        "3c0d0ad18e9640ceacc60502e227354cfff939d0"
+        "b63ba379327af4eb102d4a852498509cef9a3bf8"
       ],
       "core_required": true,
       "execution_mode": "INLINE",
       "implementation": "kg_mnp.services.projects.lock_project",
       "maps_to": "project.lock",
-      "missing": [
-        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
-      ],
+      "missing": [],
       "negative_tests": [
-        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[project.lock]"
+        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[project.lock]",
+        "tests/services/test_prompt08_boundary.py::test_resource_api_and_compatibility_dto_reject_unknown_fields",
+        "tests/services/test_unified_service.py::test_project_isolation_is_enforced_by_service"
       ],
       "positive_tests": [
-        "tests/services/test_prompt08_boundary.py::test_formal_lock_check_is_byte_preserving_and_rejects_tampering"
+        "tests/services/test_prompt08_boundary.py::test_formal_lock_check_is_byte_preserving_and_rejects_tampering",
+        "tests/services/test_prompt08_boundary.py"
       ],
       "requirement_id": "project.lock",
-      "sdk": "LocalClient.execute / HTTPClient.execute",
+      "sdk": "LocalClient.execute / HTTPClient.execute(OperationRequest)",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "ui": "NOT_IMPLEMENTED",
-      "final_revision_verified": false,
-      "request_contract": "EmptyRequest"
+      "status": "IMPLEMENTED_AND_VERIFIED",
+      "ui": "workbench/src/shell.tsx (state/capability metadata or advanced typed operation; no arbitrary operation JSON editor required)",
+      "final_revision_verified": true,
+      "request_contract": "EmptyRequest",
+      "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
+      "verification_ref": "docs/verification/final-verification.json"
     },
     {
-      "api": "GET /api/v1/domain-packs",
+      "api": "POST /api/v1/operations/domain-pack.discover (typed compatibility operation)",
       "baseline_status": "IMPLEMENTED_AND_TESTED",
       "blocker": null,
-      "cli": "kg-mnp service call domain-pack.discover",
+      "cli": "kg-mnp service call --operation domain-pack.discover --request <typed-request.json> (revocable KG_MNP_TOKEN; project/key as required)",
       "commits": [
-        "3c0d0ad18e9640ceacc60502e227354cfff939d0"
+        "b63ba379327af4eb102d4a852498509cef9a3bf8"
       ],
       "core_required": true,
       "execution_mode": "INLINE",
       "implementation": "kg_mnp.services.packs.discover",
       "maps_to": "domain-pack.discover",
-      "missing": [
-        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
-      ],
+      "missing": [],
       "negative_tests": [
-        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[domain-pack.discover]"
+        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[domain-pack.discover]",
+        "tests/services/test_prompt08_boundary.py::test_resource_api_and_compatibility_dto_reject_unknown_fields",
+        "tests/services/test_unified_service.py::test_project_isolation_is_enforced_by_service"
       ],
       "positive_tests": [
-        "tests/services/test_prompt08_boundary.py::test_discovery_is_real_and_available_before_project_creation"
+        "tests/services/test_prompt08_boundary.py::test_discovery_is_real_and_available_before_project_creation",
+        "tests/services/test_prompt08_boundary.py"
       ],
       "requirement_id": "domain-pack.discover",
-      "sdk": "LocalClient.execute / HTTPClient.execute",
+      "sdk": "LocalClient.execute / HTTPClient.execute(OperationRequest)",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "ui": "/",
-      "final_revision_verified": false,
-      "request_contract": "EmptyRequest"
+      "status": "IMPLEMENTED_AND_VERIFIED",
+      "ui": "workbench/src/shell.tsx",
+      "final_revision_verified": true,
+      "request_contract": "EmptyRequest",
+      "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
+      "verification_ref": "docs/verification/final-verification.json"
     },
     {
-      "api": "POST /api/v1/operations/domain-pack.inspect",
+      "api": "POST /api/v1/operations/domain-pack.inspect (typed compatibility operation)",
       "baseline_status": "IMPLEMENTED_AND_TESTED",
       "blocker": null,
-      "cli": "kg-mnp service call domain-pack.inspect",
+      "cli": "kg-mnp service call --operation domain-pack.inspect --request <typed-request.json> (revocable KG_MNP_TOKEN; project/key as required)",
       "commits": [
-        "3c0d0ad18e9640ceacc60502e227354cfff939d0"
+        "b63ba379327af4eb102d4a852498509cef9a3bf8"
       ],
       "core_required": true,
       "execution_mode": "INLINE",
       "implementation": "kg_mnp.services.packs.discover",
       "maps_to": "domain-pack.inspect",
-      "missing": [
-        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
-      ],
+      "missing": [],
       "negative_tests": [
-        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[domain-pack.inspect]"
+        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[domain-pack.inspect]",
+        "tests/services/test_prompt08_boundary.py::test_resource_api_and_compatibility_dto_reject_unknown_fields",
+        "tests/services/test_unified_service.py::test_project_isolation_is_enforced_by_service"
       ],
       "positive_tests": [
-        "tests/services/test_prompt08_boundary.py::test_owner_open_validate_catalog_pack_inspect_and_empty_environment"
+        "tests/services/test_prompt08_boundary.py::test_owner_open_validate_catalog_pack_inspect_and_empty_environment",
+        "tests/services/test_prompt08_boundary.py"
       ],
       "requirement_id": "domain-pack.inspect",
-      "sdk": "LocalClient.execute / HTTPClient.execute",
+      "sdk": "LocalClient.execute / HTTPClient.execute(OperationRequest)",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "ui": "NOT_IMPLEMENTED",
-      "final_revision_verified": false,
-      "request_contract": "PackInspectRequest"
+      "status": "IMPLEMENTED_AND_VERIFIED",
+      "ui": "workbench/src/shell.tsx (state/capability metadata or advanced typed operation; no arbitrary operation JSON editor required)",
+      "final_revision_verified": true,
+      "request_contract": "PackInspectRequest",
+      "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
+      "verification_ref": "docs/verification/final-verification.json"
     },
     {
-      "api": "POST /api/v1/projects/{project_id}/sources",
+      "api": "POST /api/v1/operations/source.register (typed compatibility operation)",
       "baseline_status": "DECLARED_ONLY",
       "blocker": null,
-      "cli": "kg-mnp service call source.register",
+      "cli": "kg-mnp service call --operation source.register --request <typed-request.json> (revocable KG_MNP_TOKEN; project/key as required)",
       "commits": [
-        "3c0d0ad18e9640ceacc60502e227354cfff939d0"
+        "b63ba379327af4eb102d4a852498509cef9a3bf8"
       ],
       "core_required": true,
       "execution_mode": "JOB",
       "implementation": "kg_mnp.services.sources.execute",
       "maps_to": "source.register",
-      "missing": [
-        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
-      ],
+      "missing": [],
       "negative_tests": [
-        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[source.register]"
+        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[source.register]",
+        "tests/services/test_prompt08_boundary.py::test_resource_api_and_compatibility_dto_reject_unknown_fields",
+        "tests/services/test_unified_service.py::test_project_isolation_is_enforced_by_service"
       ],
       "positive_tests": [
-        "tests/services/test_source_workflow.py::test_real_tcp_source_ingestion_evidence_chain"
+        "tests/services/test_source_workflow.py::test_real_tcp_source_ingestion_evidence_chain",
+        "tests/services/test_source_workflow.py"
       ],
       "requirement_id": "source.register",
-      "sdk": "LocalClient.execute / HTTPClient.execute",
+      "sdk": "LocalClient.execute / HTTPClient.execute(OperationRequest)",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "ui": "sources",
-      "final_revision_verified": false,
-      "request_contract": "SourceRegisterRequest"
+      "status": "IMPLEMENTED_AND_VERIFIED",
+      "ui": "workbench/src/sources.tsx",
+      "final_revision_verified": true,
+      "request_contract": "SourceRegisterRequest",
+      "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
+      "verification_ref": "docs/verification/final-verification.json"
     },
     {
       "api": "GET /api/v1/projects/{project_id}/sources/{source_id}",
       "baseline_status": "DECLARED_ONLY",
       "blocker": null,
-      "cli": "kg-mnp service call source.inspect",
+      "cli": "kg-mnp service call --operation source.inspect --request <typed-request.json> (revocable KG_MNP_TOKEN; project/key as required)",
       "commits": [
-        "3c0d0ad18e9640ceacc60502e227354cfff939d0"
+        "b63ba379327af4eb102d4a852498509cef9a3bf8"
       ],
       "core_required": true,
       "execution_mode": "INLINE",
       "implementation": "kg_mnp.services.sources.execute",
       "maps_to": "source.inspect",
-      "missing": [
-        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
-      ],
+      "missing": [],
       "negative_tests": [
-        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[source.inspect]"
+        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[source.inspect]",
+        "tests/services/test_prompt08_boundary.py::test_resource_api_and_compatibility_dto_reject_unknown_fields",
+        "tests/services/test_unified_service.py::test_project_isolation_is_enforced_by_service"
       ],
       "positive_tests": [
-        "tests/services/test_source_workflow.py::test_real_tcp_source_ingestion_evidence_chain"
+        "tests/services/test_source_workflow.py::test_real_tcp_source_ingestion_evidence_chain",
+        "tests/services/test_source_workflow.py"
       ],
       "requirement_id": "source.inspect",
-      "sdk": "LocalClient.execute / HTTPClient.execute",
+      "sdk": "LocalClient.execute / HTTPClient.execute(OperationRequest)",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "ui": "sources",
-      "final_revision_verified": false,
-      "request_contract": "SourceRequest"
+      "status": "IMPLEMENTED_AND_VERIFIED",
+      "ui": "workbench/src/sources.tsx",
+      "final_revision_verified": true,
+      "request_contract": "SourceRequest",
+      "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
+      "verification_ref": "docs/verification/final-verification.json"
     },
     {
       "api": "POST /api/v1/projects/{project_id}/ingestion/plans",
       "baseline_status": "DECLARED_ONLY",
       "blocker": null,
-      "cli": "kg-mnp service call ingestion.plan",
+      "cli": "kg-mnp service call --operation ingestion.plan --request <typed-request.json> (revocable KG_MNP_TOKEN; project/key as required)",
       "commits": [
-        "3c0d0ad18e9640ceacc60502e227354cfff939d0"
+        "b63ba379327af4eb102d4a852498509cef9a3bf8"
       ],
       "core_required": true,
       "execution_mode": "JOB",
       "implementation": "kg_mnp.services.sources.execute",
       "maps_to": "ingestion.plan",
-      "missing": [
-        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
-      ],
+      "missing": [],
       "negative_tests": [
-        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[ingestion.plan]"
+        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[ingestion.plan]",
+        "tests/services/test_prompt08_boundary.py::test_resource_api_and_compatibility_dto_reject_unknown_fields",
+        "tests/services/test_unified_service.py::test_project_isolation_is_enforced_by_service"
       ],
       "positive_tests": [
-        "tests/services/test_source_workflow.py::test_real_tcp_source_ingestion_evidence_chain"
+        "tests/services/test_source_workflow.py::test_real_tcp_source_ingestion_evidence_chain",
+        "tests/services/test_source_workflow.py"
       ],
       "requirement_id": "ingestion.plan",
-      "sdk": "LocalClient.execute / HTTPClient.execute",
+      "sdk": "LocalClient.execute / HTTPClient.execute(OperationRequest)",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "ui": "sources",
-      "final_revision_verified": false,
-      "request_contract": "IngestionPlanRequest"
+      "status": "IMPLEMENTED_AND_VERIFIED",
+      "ui": "workbench/src/sources.tsx",
+      "final_revision_verified": true,
+      "request_contract": "IngestionPlanRequest",
+      "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
+      "verification_ref": "docs/verification/final-verification.json"
     },
     {
       "api": "POST /api/v1/projects/{project_id}/ingestion/runs",
       "baseline_status": "DECLARED_ONLY",
       "blocker": null,
-      "cli": "kg-mnp service call ingestion.run",
+      "cli": "kg-mnp service call --operation ingestion.run --request <typed-request.json> (revocable KG_MNP_TOKEN; project/key as required)",
       "commits": [
-        "3c0d0ad18e9640ceacc60502e227354cfff939d0"
+        "b63ba379327af4eb102d4a852498509cef9a3bf8"
       ],
       "core_required": true,
       "execution_mode": "JOB",
       "implementation": "kg_mnp.services.sources.execute",
       "maps_to": "ingestion.run",
-      "missing": [
-        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
-      ],
+      "missing": [],
       "negative_tests": [
-        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[ingestion.run]"
+        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[ingestion.run]",
+        "tests/services/test_prompt08_boundary.py::test_resource_api_and_compatibility_dto_reject_unknown_fields",
+        "tests/services/test_unified_service.py::test_project_isolation_is_enforced_by_service"
       ],
       "positive_tests": [
-        "tests/services/test_source_workflow.py::test_real_tcp_source_ingestion_evidence_chain"
+        "tests/services/test_source_workflow.py::test_real_tcp_source_ingestion_evidence_chain",
+        "tests/services/test_source_workflow.py"
       ],
       "requirement_id": "ingestion.run",
-      "sdk": "LocalClient.execute / HTTPClient.execute",
+      "sdk": "LocalClient.execute / HTTPClient.execute(OperationRequest)",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "ui": "sources",
-      "final_revision_verified": false,
-      "request_contract": "IngestionRunRequest"
+      "status": "IMPLEMENTED_AND_VERIFIED",
+      "ui": "workbench/src/sources.tsx",
+      "final_revision_verified": true,
+      "request_contract": "IngestionRunRequest",
+      "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
+      "verification_ref": "docs/verification/final-verification.json"
     },
     {
       "api": "GET /api/v1/projects/{project_id}/ingestion/runs/{run_id}",
       "baseline_status": "DECLARED_ONLY",
       "blocker": null,
-      "cli": "kg-mnp service call ingestion.inspect",
+      "cli": "kg-mnp service call --operation ingestion.inspect --request <typed-request.json> (revocable KG_MNP_TOKEN; project/key as required)",
       "commits": [
-        "3c0d0ad18e9640ceacc60502e227354cfff939d0"
+        "b63ba379327af4eb102d4a852498509cef9a3bf8"
       ],
       "core_required": true,
       "execution_mode": "INLINE",
       "implementation": "kg_mnp.services.sources.execute",
       "maps_to": "ingestion.inspect",
-      "missing": [
-        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
-      ],
+      "missing": [],
       "negative_tests": [
-        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[ingestion.inspect]"
+        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[ingestion.inspect]",
+        "tests/services/test_prompt08_boundary.py::test_resource_api_and_compatibility_dto_reject_unknown_fields",
+        "tests/services/test_unified_service.py::test_project_isolation_is_enforced_by_service"
       ],
       "positive_tests": [
-        "tests/services/test_source_workflow.py::test_real_tcp_source_ingestion_evidence_chain"
+        "tests/services/test_source_workflow.py::test_real_tcp_source_ingestion_evidence_chain",
+        "tests/services/test_source_workflow.py"
       ],
       "requirement_id": "ingestion.inspect",
-      "sdk": "LocalClient.execute / HTTPClient.execute",
+      "sdk": "LocalClient.execute / HTTPClient.execute(OperationRequest)",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "ui": "sources",
-      "final_revision_verified": false,
-      "request_contract": "IngestionInspectRequest"
+      "status": "IMPLEMENTED_AND_VERIFIED",
+      "ui": "workbench/src/sources.tsx",
+      "final_revision_verified": true,
+      "request_contract": "IngestionInspectRequest",
+      "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
+      "verification_ref": "docs/verification/final-verification.json"
     },
     {
-      "api": "GET /api/v1/projects/{project_id}/evidence?run_id=...&item_id=...",
+      "api": "POST /api/v1/operations/ingestion.trace (typed compatibility operation)",
       "baseline_status": "DECLARED_ONLY",
       "blocker": null,
-      "cli": "kg-mnp service call ingestion.trace",
+      "cli": "kg-mnp service call --operation ingestion.trace --request <typed-request.json> (revocable KG_MNP_TOKEN; project/key as required)",
       "commits": [
-        "3c0d0ad18e9640ceacc60502e227354cfff939d0"
+        "b63ba379327af4eb102d4a852498509cef9a3bf8"
       ],
       "core_required": true,
       "execution_mode": "INLINE",
       "implementation": "kg_mnp.services.sources.execute",
       "maps_to": "ingestion.trace",
-      "missing": [
-        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
-      ],
+      "missing": [],
       "negative_tests": [
-        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[ingestion.trace]"
+        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[ingestion.trace]",
+        "tests/services/test_prompt08_boundary.py::test_resource_api_and_compatibility_dto_reject_unknown_fields",
+        "tests/services/test_unified_service.py::test_project_isolation_is_enforced_by_service"
       ],
       "positive_tests": [
-        "tests/services/test_source_workflow.py::test_real_tcp_source_ingestion_evidence_chain"
+        "tests/services/test_source_workflow.py::test_real_tcp_source_ingestion_evidence_chain",
+        "tests/services/test_source_workflow.py"
       ],
       "requirement_id": "ingestion.trace",
-      "sdk": "LocalClient.execute / HTTPClient.execute",
+      "sdk": "LocalClient.execute / HTTPClient.execute(OperationRequest)",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "ui": "sources",
-      "final_revision_verified": false,
-      "request_contract": "IngestionInspectRequest"
+      "status": "IMPLEMENTED_AND_VERIFIED",
+      "ui": "workbench/src/sources.tsx",
+      "final_revision_verified": true,
+      "request_contract": "IngestionInspectRequest",
+      "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
+      "verification_ref": "docs/verification/final-verification.json"
     },
     {
       "api": "POST /api/v1/projects/{project_id}/modeling/scopes",
       "baseline_status": "DECLARED_ONLY",
       "blocker": null,
-      "cli": "kg-mnp service call modeling.scope",
+      "cli": "kg-mnp service call --operation modeling.scope --request <typed-request.json> (revocable KG_MNP_TOKEN; project/key as required)",
       "commits": [
-        "3c0d0ad18e9640ceacc60502e227354cfff939d0"
+        "b63ba379327af4eb102d4a852498509cef9a3bf8"
       ],
       "core_required": true,
       "execution_mode": "JOB",
       "implementation": "kg_mnp.services.modeling.execute",
       "maps_to": "modeling.scope",
-      "missing": [
-        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
-      ],
+      "missing": [],
       "negative_tests": [
-        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[modeling.scope]"
+        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[modeling.scope]",
+        "tests/services/test_prompt08_boundary.py::test_resource_api_and_compatibility_dto_reject_unknown_fields",
+        "tests/services/test_unified_service.py::test_project_isolation_is_enforced_by_service"
       ],
       "positive_tests": [
-        "tests/services/test_modeling_workflow.py::test_nonempty_review_confirmed_workflow"
+        "tests/services/test_modeling_workflow.py::test_nonempty_review_confirmed_workflow",
+        "tests/services/test_modeling_workflow.py",
+        "tests/services/test_scope_revision.py",
+        "tests/services/test_review_revisions.py"
       ],
       "requirement_id": "modeling.scope",
-      "sdk": "LocalClient.execute / HTTPClient.execute",
+      "sdk": "LocalClient.execute / HTTPClient.execute(OperationRequest)",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "ui": "modeling",
-      "final_revision_verified": false,
-      "request_contract": "ScopeRequest"
+      "status": "IMPLEMENTED_AND_VERIFIED",
+      "ui": "workbench/src/modeling.tsx",
+      "final_revision_verified": true,
+      "request_contract": "ScopeRequest",
+      "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
+      "verification_ref": "docs/verification/final-verification.json"
     },
     {
       "api": "POST /api/v1/projects/{project_id}/modeling/scope-approvals",
       "baseline_status": "DECLARED_ONLY",
       "blocker": null,
-      "cli": "kg-mnp service call modeling.scope.approve",
+      "cli": "kg-mnp service call --operation modeling.scope.approve --request <typed-request.json> (revocable KG_MNP_TOKEN; project/key as required)",
       "commits": [
-        "3c0d0ad18e9640ceacc60502e227354cfff939d0"
+        "b63ba379327af4eb102d4a852498509cef9a3bf8"
       ],
       "core_required": true,
       "execution_mode": "JOB",
       "implementation": "kg_mnp.services.modeling.execute",
       "maps_to": "modeling.scope.approve",
-      "missing": [
-        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
-      ],
+      "missing": [],
       "negative_tests": [
-        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[modeling.scope.approve]"
+        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[modeling.scope.approve]",
+        "tests/services/test_prompt08_boundary.py::test_resource_api_and_compatibility_dto_reject_unknown_fields",
+        "tests/services/test_unified_service.py::test_project_isolation_is_enforced_by_service"
       ],
       "positive_tests": [
-        "tests/services/test_modeling_workflow.py::test_nonempty_review_confirmed_workflow"
+        "tests/services/test_modeling_workflow.py::test_nonempty_review_confirmed_workflow",
+        "tests/services/test_modeling_workflow.py",
+        "tests/services/test_scope_revision.py",
+        "tests/services/test_review_revisions.py"
       ],
       "requirement_id": "modeling.scope.approve",
-      "sdk": "LocalClient.execute / HTTPClient.execute",
+      "sdk": "LocalClient.execute / HTTPClient.execute(OperationRequest)",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "ui": "modeling",
-      "final_revision_verified": false,
-      "request_contract": "ScopeApprovalRequest"
+      "status": "IMPLEMENTED_AND_VERIFIED",
+      "ui": "workbench/src/modeling.tsx",
+      "final_revision_verified": true,
+      "request_contract": "ScopeApprovalRequest",
+      "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
+      "verification_ref": "docs/verification/final-verification.json"
     },
     {
-      "api": "POST /api/v1/operations/modeling.candidate",
+      "api": "POST /api/v1/projects/{project_id}/modeling/proposals (canonical alias)",
       "baseline_status": "DECLARED_ONLY",
       "blocker": null,
-      "cli": "kg-mnp service call modeling.candidate",
+      "cli": "kg-mnp service call --operation modeling.candidate --request <typed-request.json> (revocable KG_MNP_TOKEN; project/key as required)",
       "commits": [
-        "3c0d0ad18e9640ceacc60502e227354cfff939d0"
+        "b63ba379327af4eb102d4a852498509cef9a3bf8"
       ],
       "core_required": true,
       "execution_mode": "JOB",
       "implementation": "kg_mnp.services.modeling.execute",
       "maps_to": "modeling.proposal",
-      "missing": [
-        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
-      ],
+      "missing": [],
       "negative_tests": [
-        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[modeling.candidate]"
+        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[modeling.candidate]",
+        "tests/services/test_prompt08_boundary.py::test_resource_api_and_compatibility_dto_reject_unknown_fields",
+        "tests/services/test_unified_service.py::test_project_isolation_is_enforced_by_service"
       ],
       "positive_tests": [
-        "tests/services/test_modeling_workflow.py::test_nonempty_review_confirmed_workflow"
+        "tests/services/test_modeling_workflow.py::test_nonempty_review_confirmed_workflow",
+        "tests/services/test_modeling_workflow.py",
+        "tests/services/test_scope_revision.py",
+        "tests/services/test_review_revisions.py"
       ],
       "requirement_id": "modeling.candidate",
-      "sdk": "LocalClient.execute / HTTPClient.execute",
+      "sdk": "LocalClient.execute / HTTPClient.execute(OperationRequest)",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "ui": "NOT_IMPLEMENTED",
-      "final_revision_verified": false,
-      "request_contract": "ProposalRequest"
+      "status": "IMPLEMENTED_AND_VERIFIED",
+      "ui": "workbench/src/modeling.tsx",
+      "final_revision_verified": true,
+      "request_contract": "ProposalRequest",
+      "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "equivalence": "Explicit existing implementation delegation; no separate engine. GUI uses canonical preparation/proposal/validation flow; reproduction remains a typed SDK/CLI advanced operation.",
+      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
+      "verification_ref": "docs/verification/final-verification.json"
     },
     {
-      "api": "POST /api/v1/projects/{project_id}/modeling/preparations",
+      "api": "POST /api/v1/projects/{project_id}/modeling/preparations (canonical alias)",
       "baseline_status": "DECLARED_ONLY",
       "blocker": null,
-      "cli": "kg-mnp service call modeling.cq",
+      "cli": "kg-mnp service call --operation modeling.cq --request <typed-request.json> (revocable KG_MNP_TOKEN; project/key as required)",
       "commits": [
-        "3c0d0ad18e9640ceacc60502e227354cfff939d0"
+        "b63ba379327af4eb102d4a852498509cef9a3bf8"
       ],
       "core_required": true,
       "execution_mode": "JOB",
       "implementation": "kg_mnp.services.modeling.execute",
       "maps_to": "modeling.prepare",
-      "missing": [
-        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
-      ],
+      "missing": [],
       "negative_tests": [
-        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[modeling.cq]"
+        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[modeling.cq]",
+        "tests/services/test_prompt08_boundary.py::test_resource_api_and_compatibility_dto_reject_unknown_fields",
+        "tests/services/test_unified_service.py::test_project_isolation_is_enforced_by_service"
       ],
       "positive_tests": [
-        "tests/services/test_modeling_workflow.py::test_nonempty_review_confirmed_workflow"
+        "tests/services/test_modeling_workflow.py::test_nonempty_review_confirmed_workflow",
+        "tests/services/test_modeling_workflow.py",
+        "tests/services/test_scope_revision.py",
+        "tests/services/test_review_revisions.py"
       ],
       "requirement_id": "modeling.cq",
-      "sdk": "LocalClient.execute / HTTPClient.execute",
+      "sdk": "LocalClient.execute / HTTPClient.execute(OperationRequest)",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "ui": "modeling",
-      "final_revision_verified": false,
-      "request_contract": "ModelingPrepareRequest"
+      "status": "IMPLEMENTED_AND_VERIFIED",
+      "ui": "workbench/src/modeling.tsx",
+      "final_revision_verified": true,
+      "request_contract": "ModelingPrepareRequest",
+      "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "equivalence": "Explicit existing implementation delegation; no separate engine. GUI uses canonical preparation/proposal/validation flow; reproduction remains a typed SDK/CLI advanced operation.",
+      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
+      "verification_ref": "docs/verification/final-verification.json"
     },
     {
-      "api": "POST /api/v1/projects/{project_id}/modeling/preparations",
+      "api": "POST /api/v1/projects/{project_id}/modeling/preparations (canonical alias)",
       "baseline_status": "DECLARED_ONLY",
       "blocker": null,
-      "cli": "kg-mnp service call modeling.baseline",
+      "cli": "kg-mnp service call --operation modeling.baseline --request <typed-request.json> (revocable KG_MNP_TOKEN; project/key as required)",
       "commits": [
-        "3c0d0ad18e9640ceacc60502e227354cfff939d0"
+        "b63ba379327af4eb102d4a852498509cef9a3bf8"
       ],
       "core_required": true,
       "execution_mode": "JOB",
       "implementation": "kg_mnp.services.modeling.execute",
       "maps_to": "modeling.prepare",
-      "missing": [
-        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
-      ],
+      "missing": [],
       "negative_tests": [
-        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[modeling.baseline]"
+        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[modeling.baseline]",
+        "tests/services/test_prompt08_boundary.py::test_resource_api_and_compatibility_dto_reject_unknown_fields",
+        "tests/services/test_unified_service.py::test_project_isolation_is_enforced_by_service"
       ],
       "positive_tests": [
-        "tests/services/test_modeling_workflow.py::test_nonempty_review_confirmed_workflow"
+        "tests/services/test_modeling_workflow.py::test_nonempty_review_confirmed_workflow",
+        "tests/services/test_modeling_workflow.py",
+        "tests/services/test_scope_revision.py",
+        "tests/services/test_review_revisions.py"
       ],
       "requirement_id": "modeling.baseline",
-      "sdk": "LocalClient.execute / HTTPClient.execute",
+      "sdk": "LocalClient.execute / HTTPClient.execute(OperationRequest)",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "ui": "modeling",
-      "final_revision_verified": false,
-      "request_contract": "ModelingPrepareRequest"
+      "status": "IMPLEMENTED_AND_VERIFIED",
+      "ui": "workbench/src/modeling.tsx",
+      "final_revision_verified": true,
+      "request_contract": "ModelingPrepareRequest",
+      "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "equivalence": "Explicit existing implementation delegation; no separate engine. GUI uses canonical preparation/proposal/validation flow; reproduction remains a typed SDK/CLI advanced operation.",
+      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
+      "verification_ref": "docs/verification/final-verification.json"
     },
     {
-      "api": "POST /api/v1/projects/{project_id}/modeling/preparations",
+      "api": "POST /api/v1/projects/{project_id}/modeling/preparations (canonical alias)",
       "baseline_status": "DECLARED_ONLY",
       "blocker": null,
-      "cli": "kg-mnp service call modeling.alignment",
+      "cli": "kg-mnp service call --operation modeling.alignment --request <typed-request.json> (revocable KG_MNP_TOKEN; project/key as required)",
       "commits": [
-        "3c0d0ad18e9640ceacc60502e227354cfff939d0"
+        "b63ba379327af4eb102d4a852498509cef9a3bf8"
       ],
       "core_required": true,
       "execution_mode": "JOB",
       "implementation": "kg_mnp.services.modeling.execute",
       "maps_to": "modeling.prepare",
-      "missing": [
-        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
-      ],
+      "missing": [],
       "negative_tests": [
-        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[modeling.alignment]"
+        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[modeling.alignment]",
+        "tests/services/test_prompt08_boundary.py::test_resource_api_and_compatibility_dto_reject_unknown_fields",
+        "tests/services/test_unified_service.py::test_project_isolation_is_enforced_by_service"
       ],
       "positive_tests": [
-        "tests/services/test_modeling_workflow.py::test_nonempty_review_confirmed_workflow"
+        "tests/services/test_modeling_workflow.py::test_nonempty_review_confirmed_workflow",
+        "tests/services/test_modeling_workflow.py",
+        "tests/services/test_scope_revision.py",
+        "tests/services/test_review_revisions.py"
       ],
       "requirement_id": "modeling.alignment",
-      "sdk": "LocalClient.execute / HTTPClient.execute",
+      "sdk": "LocalClient.execute / HTTPClient.execute(OperationRequest)",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "ui": "modeling",
-      "final_revision_verified": false,
-      "request_contract": "ModelingPrepareRequest"
+      "status": "IMPLEMENTED_AND_VERIFIED",
+      "ui": "workbench/src/modeling.tsx",
+      "final_revision_verified": true,
+      "request_contract": "ModelingPrepareRequest",
+      "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "equivalence": "Explicit existing implementation delegation; no separate engine. GUI uses canonical preparation/proposal/validation flow; reproduction remains a typed SDK/CLI advanced operation.",
+      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
+      "verification_ref": "docs/verification/final-verification.json"
     },
     {
       "api": "POST /api/v1/projects/{project_id}/modeling/proposals",
       "baseline_status": "DECLARED_ONLY",
       "blocker": null,
-      "cli": "kg-mnp service call modeling.proposal",
+      "cli": "kg-mnp service call --operation modeling.proposal --request <typed-request.json> (revocable KG_MNP_TOKEN; project/key as required)",
       "commits": [
-        "3c0d0ad18e9640ceacc60502e227354cfff939d0"
+        "b63ba379327af4eb102d4a852498509cef9a3bf8"
       ],
       "core_required": true,
       "execution_mode": "JOB",
       "implementation": "kg_mnp.services.modeling.execute",
       "maps_to": "modeling.proposal",
-      "missing": [
-        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
-      ],
+      "missing": [],
       "negative_tests": [
-        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[modeling.proposal]"
+        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[modeling.proposal]",
+        "tests/services/test_prompt08_boundary.py::test_resource_api_and_compatibility_dto_reject_unknown_fields",
+        "tests/services/test_unified_service.py::test_project_isolation_is_enforced_by_service"
       ],
       "positive_tests": [
-        "tests/services/test_modeling_workflow.py::test_nonempty_review_confirmed_workflow"
+        "tests/services/test_modeling_workflow.py::test_nonempty_review_confirmed_workflow",
+        "tests/services/test_modeling_workflow.py",
+        "tests/services/test_scope_revision.py",
+        "tests/services/test_review_revisions.py"
       ],
       "requirement_id": "modeling.proposal",
-      "sdk": "LocalClient.execute / HTTPClient.execute",
+      "sdk": "LocalClient.execute / HTTPClient.execute(OperationRequest)",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "ui": "modeling",
-      "final_revision_verified": false,
-      "request_contract": "ProposalRequest"
+      "status": "IMPLEMENTED_AND_VERIFIED",
+      "ui": "workbench/src/modeling.tsx",
+      "final_revision_verified": true,
+      "request_contract": "ProposalRequest",
+      "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
+      "verification_ref": "docs/verification/final-verification.json"
     },
     {
       "api": "POST /api/v1/projects/{project_id}/reviews/actions",
       "baseline_status": "DECLARED_ONLY",
       "blocker": null,
-      "cli": "kg-mnp service call review.action",
+      "cli": "kg-mnp service call --operation review.action --request <typed-request.json> (revocable KG_MNP_TOKEN; project/key as required)",
       "commits": [
-        "3c0d0ad18e9640ceacc60502e227354cfff939d0"
+        "b63ba379327af4eb102d4a852498509cef9a3bf8"
       ],
       "core_required": true,
       "execution_mode": "JOB",
       "implementation": "kg_mnp.services.modeling.execute",
       "maps_to": "review.action",
-      "missing": [
-        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
-      ],
+      "missing": [],
       "negative_tests": [
-        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[review.action]"
+        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[review.action]",
+        "tests/services/test_prompt08_boundary.py::test_resource_api_and_compatibility_dto_reject_unknown_fields",
+        "tests/services/test_unified_service.py::test_project_isolation_is_enforced_by_service"
       ],
       "positive_tests": [
-        "tests/services/test_modeling_workflow.py::test_nonempty_review_confirmed_workflow"
+        "tests/services/test_modeling_workflow.py::test_nonempty_review_confirmed_workflow",
+        "tests/services/test_modeling_workflow.py",
+        "tests/services/test_scope_revision.py",
+        "tests/services/test_review_revisions.py"
       ],
       "requirement_id": "review.action",
-      "sdk": "LocalClient.execute / HTTPClient.execute",
+      "sdk": "LocalClient.execute / HTTPClient.execute(OperationRequest)",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "ui": "modeling",
-      "final_revision_verified": false,
-      "request_contract": "ReviewActionRequest"
+      "status": "IMPLEMENTED_AND_VERIFIED",
+      "ui": "workbench/src/modeling.tsx",
+      "final_revision_verified": true,
+      "request_contract": "ReviewActionRequest",
+      "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
+      "verification_ref": "docs/verification/final-verification.json"
     },
     {
       "api": "GET /api/v1/projects/{project_id}/reviews/{review_id}",
       "baseline_status": "DECLARED_ONLY",
       "blocker": null,
-      "cli": "kg-mnp service call review.replay",
+      "cli": "kg-mnp service call --operation review.replay --request <typed-request.json> (revocable KG_MNP_TOKEN; project/key as required)",
       "commits": [
-        "3c0d0ad18e9640ceacc60502e227354cfff939d0"
+        "b63ba379327af4eb102d4a852498509cef9a3bf8"
       ],
       "core_required": true,
       "execution_mode": "INLINE",
       "implementation": "kg_mnp.services.modeling.execute",
       "maps_to": "review.replay",
-      "missing": [
-        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
-      ],
+      "missing": [],
       "negative_tests": [
-        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[review.replay]"
+        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[review.replay]",
+        "tests/services/test_prompt08_boundary.py::test_resource_api_and_compatibility_dto_reject_unknown_fields",
+        "tests/services/test_unified_service.py::test_project_isolation_is_enforced_by_service"
       ],
-      "positive_tests": [],
+      "positive_tests": [
+        "tests/services/test_modeling_workflow.py",
+        "tests/services/test_scope_revision.py",
+        "tests/services/test_review_revisions.py"
+      ],
       "requirement_id": "review.replay",
-      "sdk": "LocalClient.execute / HTTPClient.execute",
+      "sdk": "LocalClient.execute / HTTPClient.execute(OperationRequest)",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "ui": "modeling",
+      "status": "IMPLEMENTED_AND_VERIFIED",
+      "ui": "workbench/src/modeling.tsx",
       "browser_evidence": "workbench/tests/minimal.e2e.ts; fixed-3c0d0ad-72018325/browser/receipt.json",
-      "final_revision_verified": false,
-      "request_contract": "ReviewRequest"
+      "final_revision_verified": true,
+      "request_contract": "ReviewRequest",
+      "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
+      "verification_ref": "docs/verification/final-verification.json"
     },
     {
       "api": "POST /api/v1/projects/{project_id}/reviews/finalizations",
       "baseline_status": "DECLARED_ONLY",
       "blocker": null,
-      "cli": "kg-mnp service call review.finalize",
+      "cli": "kg-mnp service call --operation review.finalize --request <typed-request.json> (revocable KG_MNP_TOKEN; project/key as required)",
       "commits": [
-        "3c0d0ad18e9640ceacc60502e227354cfff939d0"
+        "b63ba379327af4eb102d4a852498509cef9a3bf8"
       ],
       "core_required": true,
       "execution_mode": "JOB",
       "implementation": "kg_mnp.services.modeling.execute",
       "maps_to": "review.finalize",
-      "missing": [
-        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
-      ],
+      "missing": [],
       "negative_tests": [
-        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[review.finalize]"
+        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[review.finalize]",
+        "tests/services/test_prompt08_boundary.py::test_resource_api_and_compatibility_dto_reject_unknown_fields",
+        "tests/services/test_unified_service.py::test_project_isolation_is_enforced_by_service"
       ],
       "positive_tests": [
-        "tests/services/test_modeling_workflow.py::test_nonempty_review_confirmed_workflow"
+        "tests/services/test_modeling_workflow.py::test_nonempty_review_confirmed_workflow",
+        "tests/services/test_modeling_workflow.py",
+        "tests/services/test_scope_revision.py",
+        "tests/services/test_review_revisions.py"
       ],
       "requirement_id": "review.finalize",
-      "sdk": "LocalClient.execute / HTTPClient.execute",
+      "sdk": "LocalClient.execute / HTTPClient.execute(OperationRequest)",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "ui": "modeling",
-      "final_revision_verified": false,
-      "request_contract": "ReviewRequest"
+      "status": "IMPLEMENTED_AND_VERIFIED",
+      "ui": "workbench/src/modeling.tsx",
+      "final_revision_verified": true,
+      "request_contract": "ReviewRequest",
+      "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
+      "verification_ref": "docs/verification/final-verification.json"
     },
     {
       "api": "POST /api/v1/projects/{project_id}/compilations/plans",
       "baseline_status": "DECLARED_ONLY",
       "blocker": null,
-      "cli": "kg-mnp service call compile.plan",
+      "cli": "kg-mnp service call --operation compile.plan --request <typed-request.json> (revocable KG_MNP_TOKEN; project/key as required)",
       "commits": [
-        "3c0d0ad18e9640ceacc60502e227354cfff939d0"
+        "b63ba379327af4eb102d4a852498509cef9a3bf8"
       ],
       "core_required": true,
       "execution_mode": "JOB",
       "implementation": "kg_mnp.services.compilation.execute",
       "maps_to": "compile.plan",
-      "missing": [
-        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
-      ],
+      "missing": [],
       "negative_tests": [
-        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[compile.plan]"
+        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[compile.plan]",
+        "tests/services/test_prompt08_boundary.py::test_resource_api_and_compatibility_dto_reject_unknown_fields",
+        "tests/services/test_unified_service.py::test_project_isolation_is_enforced_by_service"
       ],
       "positive_tests": [
-        "tests/services/test_modeling_workflow.py::test_nonempty_review_confirmed_workflow"
+        "tests/services/test_modeling_workflow.py::test_nonempty_review_confirmed_workflow",
+        "tests/services/test_modeling_workflow.py",
+        "tests/e2e/test_minimal_ontology_package.py"
       ],
       "requirement_id": "compile.plan",
-      "sdk": "LocalClient.execute / HTTPClient.execute",
+      "sdk": "LocalClient.execute / HTTPClient.execute(OperationRequest)",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "ui": "releases",
-      "final_revision_verified": false,
-      "request_contract": "CompilePlanRequest"
+      "status": "IMPLEMENTED_AND_VERIFIED",
+      "ui": "workbench/src/releases.tsx",
+      "final_revision_verified": true,
+      "request_contract": "CompilePlanRequest",
+      "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
+      "verification_ref": "docs/verification/final-verification.json"
     },
     {
       "api": "POST /api/v1/projects/{project_id}/compilations/builds",
       "baseline_status": "DECLARED_ONLY",
       "blocker": null,
-      "cli": "kg-mnp service call compile.build",
+      "cli": "kg-mnp service call --operation compile.build --request <typed-request.json> (revocable KG_MNP_TOKEN; project/key as required)",
       "commits": [
-        "3c0d0ad18e9640ceacc60502e227354cfff939d0"
+        "b63ba379327af4eb102d4a852498509cef9a3bf8"
       ],
       "core_required": true,
       "execution_mode": "JOB",
       "implementation": "kg_mnp.services.compilation.execute",
       "maps_to": "compile.build",
-      "missing": [
-        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
-      ],
+      "missing": [],
       "negative_tests": [
-        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[compile.build]"
+        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[compile.build]",
+        "tests/services/test_prompt08_boundary.py::test_resource_api_and_compatibility_dto_reject_unknown_fields",
+        "tests/services/test_unified_service.py::test_project_isolation_is_enforced_by_service"
       ],
       "positive_tests": [
-        "tests/services/test_modeling_workflow.py::test_nonempty_review_confirmed_workflow"
+        "tests/services/test_modeling_workflow.py::test_nonempty_review_confirmed_workflow",
+        "tests/services/test_modeling_workflow.py",
+        "tests/e2e/test_minimal_ontology_package.py"
       ],
       "requirement_id": "compile.build",
-      "sdk": "LocalClient.execute / HTTPClient.execute",
+      "sdk": "LocalClient.execute / HTTPClient.execute(OperationRequest)",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "ui": "releases",
-      "final_revision_verified": false,
-      "request_contract": "CompileBuildRequest"
+      "status": "IMPLEMENTED_AND_VERIFIED",
+      "ui": "workbench/src/releases.tsx",
+      "final_revision_verified": true,
+      "request_contract": "CompileBuildRequest",
+      "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
+      "verification_ref": "docs/verification/final-verification.json"
     },
     {
-      "api": "POST /api/v1/operations/compile.validate",
+      "api": "POST /api/v1/operations/compile.validate (typed compatibility operation)",
       "baseline_status": "DECLARED_ONLY",
       "blocker": null,
-      "cli": "kg-mnp service call compile.validate",
+      "cli": "kg-mnp service call --operation compile.validate --request <typed-request.json> (revocable KG_MNP_TOKEN; project/key as required)",
       "commits": [
-        "3c0d0ad18e9640ceacc60502e227354cfff939d0"
+        "b63ba379327af4eb102d4a852498509cef9a3bf8"
       ],
       "core_required": true,
       "execution_mode": "JOB",
       "implementation": "kg_mnp.services.compilation.execute",
-      "maps_to": "compile.validate",
-      "missing": [
-        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
-      ],
+      "maps_to": "package.verify",
+      "missing": [],
       "negative_tests": [
-        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[compile.validate]"
+        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[compile.validate]",
+        "tests/services/test_prompt08_boundary.py::test_resource_api_and_compatibility_dto_reject_unknown_fields",
+        "tests/services/test_unified_service.py::test_project_isolation_is_enforced_by_service"
       ],
-      "positive_tests": [],
+      "positive_tests": [
+        "tests/services/test_modeling_workflow.py",
+        "tests/e2e/test_minimal_ontology_package.py"
+      ],
       "requirement_id": "compile.validate",
-      "sdk": "LocalClient.execute / HTTPClient.execute",
+      "sdk": "LocalClient.execute / HTTPClient.execute(OperationRequest)",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "ui": "NOT_IMPLEMENTED",
-      "final_revision_verified": false,
-      "request_contract": "PackageRequest"
+      "status": "IMPLEMENTED_AND_VERIFIED",
+      "ui": "Workbench real validation reports/import gate; canonical verifier also exposed via typed API/SDK/CLI",
+      "final_revision_verified": true,
+      "request_contract": "PackageRequest",
+      "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "equivalence": "Explicit existing implementation delegation; no separate engine. GUI uses canonical preparation/proposal/validation flow; reproduction remains a typed SDK/CLI advanced operation.",
+      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
+      "verification_ref": "docs/verification/final-verification.json"
     },
     {
-      "api": "POST /api/v1/operations/compile.reproduce",
+      "api": "POST /api/v1/operations/compile.reproduce (typed compatibility operation)",
       "baseline_status": "DECLARED_ONLY",
       "blocker": null,
-      "cli": "kg-mnp service call compile.reproduce",
+      "cli": "kg-mnp service call --operation compile.reproduce --request <typed-request.json> (revocable KG_MNP_TOKEN; project/key as required)",
       "commits": [
-        "3c0d0ad18e9640ceacc60502e227354cfff939d0"
+        "b63ba379327af4eb102d4a852498509cef9a3bf8"
       ],
       "core_required": true,
       "execution_mode": "JOB",
       "implementation": "kg_mnp.services.compilation.execute",
-      "maps_to": "compile.reproduce",
-      "missing": [
-        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
-      ],
+      "maps_to": "SemanticCompiler.reproduce",
+      "missing": [],
       "negative_tests": [
-        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[compile.reproduce]"
+        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[compile.reproduce]",
+        "tests/services/test_prompt08_boundary.py::test_resource_api_and_compatibility_dto_reject_unknown_fields",
+        "tests/services/test_unified_service.py::test_project_isolation_is_enforced_by_service"
       ],
-      "positive_tests": [],
+      "positive_tests": [
+        "tests/services/test_modeling_workflow.py",
+        "tests/e2e/test_minimal_ontology_package.py"
+      ],
       "requirement_id": "compile.reproduce",
-      "sdk": "LocalClient.execute / HTTPClient.execute",
+      "sdk": "LocalClient.execute / HTTPClient.execute(OperationRequest)",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "ui": "NOT_IMPLEMENTED",
-      "final_revision_verified": false,
-      "request_contract": "CompileBuildRequest"
+      "status": "IMPLEMENTED_AND_VERIFIED",
+      "ui": "Advanced typed SDK/CLI reproduction; same SemanticCompiler.reproduce, no separate GUI action claimed",
+      "final_revision_verified": true,
+      "request_contract": "CompileBuildRequest",
+      "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "equivalence": "Explicit existing implementation delegation; no separate engine. GUI uses canonical preparation/proposal/validation flow; reproduction remains a typed SDK/CLI advanced operation.",
+      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
+      "verification_ref": "docs/verification/final-verification.json"
     },
     {
-      "api": "POST /api/v1/operations/package.inspect",
+      "api": "POST /api/v1/operations/package.inspect (typed compatibility operation)",
       "baseline_status": "IMPLEMENTED_NOT_VERIFIED",
       "blocker": null,
-      "cli": "kg-mnp service call package.inspect",
+      "cli": "kg-mnp service call --operation package.inspect --request <typed-request.json> (revocable KG_MNP_TOKEN; project/key as required)",
       "commits": [
-        "3c0d0ad18e9640ceacc60502e227354cfff939d0"
+        "b63ba379327af4eb102d4a852498509cef9a3bf8"
       ],
       "core_required": true,
       "execution_mode": "INLINE",
-      "implementation": "kg_mnp.lifecycle.store.list_records",
+      "implementation": "kg_mnp.services.facade.ApplicationService._execute_inline → project-scoped lifecycle records",
       "maps_to": "package.inspect",
-      "missing": [
-        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
-      ],
+      "missing": [],
       "negative_tests": [
-        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[package.inspect]"
+        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[package.inspect]",
+        "tests/services/test_prompt08_boundary.py::test_resource_api_and_compatibility_dto_reject_unknown_fields",
+        "tests/services/test_unified_service.py::test_project_isolation_is_enforced_by_service"
       ],
-      "positive_tests": [],
+      "positive_tests": [
+        "tests/services/test_modeling_workflow.py",
+        "tests/e2e/test_minimal_ontology_package.py"
+      ],
       "requirement_id": "package.inspect",
-      "sdk": "LocalClient.execute / HTTPClient.execute",
+      "sdk": "LocalClient.execute / HTTPClient.execute(OperationRequest)",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "ui": "NOT_IMPLEMENTED",
-      "final_revision_verified": false,
-      "request_contract": "PackageRequest"
+      "status": "IMPLEMENTED_AND_VERIFIED",
+      "ui": "Workbench package metadata/build results; registry-record inspect is also available as typed API/SDK/CLI",
+      "final_revision_verified": true,
+      "request_contract": "PackageRequest",
+      "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
+      "verification_ref": "docs/verification/final-verification.json"
     },
     {
-      "api": "POST /api/v1/operations/package.verify",
+      "api": "POST /api/v1/operations/package.verify (typed compatibility operation)",
       "baseline_status": "DECLARED_ONLY",
       "blocker": null,
-      "cli": "kg-mnp service call package.verify",
+      "cli": "kg-mnp service call --operation package.verify --request <typed-request.json> (revocable KG_MNP_TOKEN; project/key as required)",
       "commits": [
-        "3c0d0ad18e9640ceacc60502e227354cfff939d0"
+        "b63ba379327af4eb102d4a852498509cef9a3bf8"
       ],
       "core_required": true,
       "execution_mode": "INLINE",
       "implementation": "kg_mnp.services.compilation.execute",
       "maps_to": "package.verify",
-      "missing": [
-        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
-      ],
+      "missing": [],
       "negative_tests": [
-        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[package.verify]"
+        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[package.verify]",
+        "tests/services/test_prompt08_boundary.py::test_resource_api_and_compatibility_dto_reject_unknown_fields",
+        "tests/services/test_unified_service.py::test_project_isolation_is_enforced_by_service"
       ],
       "positive_tests": [
-        "tests/services/test_modeling_workflow.py::test_nonempty_review_confirmed_workflow"
+        "tests/services/test_modeling_workflow.py::test_nonempty_review_confirmed_workflow",
+        "tests/services/test_modeling_workflow.py",
+        "tests/e2e/test_minimal_ontology_package.py"
       ],
       "requirement_id": "package.verify",
-      "sdk": "LocalClient.execute / HTTPClient.execute",
+      "sdk": "LocalClient.execute / HTTPClient.execute(OperationRequest)",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "ui": "NOT_IMPLEMENTED",
-      "final_revision_verified": false,
-      "request_contract": "PackageRequest"
+      "status": "IMPLEMENTED_AND_VERIFIED",
+      "ui": "Workbench verified import/download uses real package verifier; standalone typed verify operation available",
+      "final_revision_verified": true,
+      "request_contract": "PackageRequest",
+      "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
+      "verification_ref": "docs/verification/final-verification.json"
     },
     {
-      "api": "POST /api/v1/operations/package.export",
+      "api": "POST /api/v1/operations/package.export (typed compatibility operation)",
       "baseline_status": "DECLARED_ONLY",
       "blocker": null,
-      "cli": "kg-mnp service call package.export",
+      "cli": "kg-mnp service call --operation package.export --request <typed-request.json> (revocable KG_MNP_TOKEN; project/key as required)",
       "commits": [
-        "3c0d0ad18e9640ceacc60502e227354cfff939d0"
+        "b63ba379327af4eb102d4a852498509cef9a3bf8"
       ],
       "core_required": true,
       "execution_mode": "JOB",
       "implementation": "kg_mnp.services.compilation.execute",
       "maps_to": "package.export",
-      "missing": [
-        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
-      ],
+      "missing": [],
       "negative_tests": [
-        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[package.export]"
+        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[package.export]",
+        "tests/services/test_prompt08_boundary.py::test_resource_api_and_compatibility_dto_reject_unknown_fields",
+        "tests/services/test_unified_service.py::test_project_isolation_is_enforced_by_service"
       ],
       "positive_tests": [
-        "tests/services/test_modeling_workflow.py::test_nonempty_review_confirmed_workflow"
+        "tests/services/test_modeling_workflow.py::test_nonempty_review_confirmed_workflow",
+        "tests/services/test_modeling_workflow.py",
+        "tests/e2e/test_minimal_ontology_package.py"
       ],
       "requirement_id": "package.export",
-      "sdk": "LocalClient.execute / HTTPClient.execute",
+      "sdk": "LocalClient.execute / HTTPClient.execute(OperationRequest)",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "ui": "NOT_IMPLEMENTED",
-      "final_revision_verified": false,
-      "request_contract": "PackageRequest"
+      "status": "IMPLEMENTED_AND_VERIFIED",
+      "ui": "Authorized GUI archive download uses the same captured verified package bytes; typed export job also available",
+      "final_revision_verified": true,
+      "request_contract": "PackageRequest",
+      "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
+      "verification_ref": "docs/verification/final-verification.json"
     },
     {
       "api": "POST /api/v1/projects/{project_id}/lifecycle/imports",
       "baseline_status": "DECLARED_ONLY",
       "blocker": null,
-      "cli": "kg-mnp service call registry.import",
+      "cli": "kg-mnp service call --operation registry.import --request <typed-request.json> (revocable KG_MNP_TOKEN; project/key as required)",
       "commits": [
-        "3c0d0ad18e9640ceacc60502e227354cfff939d0"
+        "b63ba379327af4eb102d4a852498509cef9a3bf8"
       ],
       "core_required": true,
       "execution_mode": "JOB",
       "implementation": "kg_mnp.services.lifecycle.execute",
       "maps_to": "registry.import",
-      "missing": [
-        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
-      ],
+      "missing": [],
       "negative_tests": [
-        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[registry.import]"
+        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[registry.import]",
+        "tests/services/test_prompt08_boundary.py::test_resource_api_and_compatibility_dto_reject_unknown_fields",
+        "tests/services/test_unified_service.py::test_project_isolation_is_enforced_by_service"
       ],
       "positive_tests": [
-        "tests/services/test_modeling_workflow.py::test_nonempty_review_confirmed_workflow"
+        "tests/services/test_modeling_workflow.py::test_nonempty_review_confirmed_workflow",
+        "tests/services/test_lifecycle_completion.py",
+        "tests/services/test_release_policy.py"
       ],
       "requirement_id": "registry.import",
-      "sdk": "LocalClient.execute / HTTPClient.execute",
+      "sdk": "LocalClient.execute / HTTPClient.execute(OperationRequest)",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "ui": "releases",
-      "final_revision_verified": false,
-      "request_contract": "PackageRequest"
+      "status": "IMPLEMENTED_AND_VERIFIED",
+      "ui": "workbench/src/versions.tsx; workbench/src/releases.tsx",
+      "final_revision_verified": true,
+      "request_contract": "PackageRequest",
+      "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
+      "verification_ref": "docs/verification/final-verification.json"
     },
     {
-      "api": "POST /api/v1/operations/registry.verify",
+      "api": "POST /api/v1/operations/registry.verify (typed compatibility operation)",
       "baseline_status": "IMPLEMENTED_AND_TESTED",
       "blocker": null,
-      "cli": "kg-mnp service call registry.verify",
+      "cli": "kg-mnp service call --operation registry.verify --request <typed-request.json> (revocable KG_MNP_TOKEN; project/key as required)",
       "commits": [
-        "3c0d0ad18e9640ceacc60502e227354cfff939d0"
+        "b63ba379327af4eb102d4a852498509cef9a3bf8"
       ],
       "core_required": true,
       "execution_mode": "INLINE",
       "implementation": "kg_mnp.lifecycle.registry.replay.verify_registry",
       "maps_to": "registry.verify",
-      "missing": [
-        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
-      ],
+      "missing": [],
       "negative_tests": [
-        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[registry.verify]"
-      ],
-      "positive_tests": [
+        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[registry.verify]",
+        "tests/services/test_prompt08_boundary.py::test_resource_api_and_compatibility_dto_reject_unknown_fields",
         "tests/services/test_unified_service.py::test_project_isolation_is_enforced_by_service"
       ],
+      "positive_tests": [
+        "tests/services/test_unified_service.py::test_project_isolation_is_enforced_by_service",
+        "tests/services/test_lifecycle_completion.py",
+        "tests/services/test_release_policy.py"
+      ],
       "requirement_id": "registry.verify",
-      "sdk": "LocalClient.execute / HTTPClient.execute",
+      "sdk": "LocalClient.execute / HTTPClient.execute(OperationRequest)",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "ui": "NOT_IMPLEMENTED",
-      "final_revision_verified": false,
-      "request_contract": "EmptyRequest"
+      "status": "IMPLEMENTED_AND_VERIFIED",
+      "ui": "Verified import in Workbench; standalone registry integrity operation uses typed API/SDK/CLI",
+      "final_revision_verified": true,
+      "request_contract": "EmptyRequest",
+      "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
+      "verification_ref": "docs/verification/final-verification.json"
     },
     {
-      "api": "POST /api/v1/operations/change.diff",
+      "api": "POST /api/v1/projects/{project_id}/lifecycle/diffs",
       "baseline_status": "DECLARED_ONLY",
       "blocker": null,
-      "cli": "kg-mnp service call change.diff",
-      "commits": [],
+      "cli": "kg-mnp service call --operation change.diff --request <typed-request.json> (revocable KG_MNP_TOKEN; project/key as required)",
+      "commits": [
+        "b63ba379327af4eb102d4a852498509cef9a3bf8"
+      ],
       "core_required": true,
       "execution_mode": "JOB",
       "implementation": "kg_mnp.services.lifecycle.execute",
       "maps_to": "change.diff",
-      "missing": [
-        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
+      "missing": [],
+      "negative_tests": [
+        "tests/services/test_prompt08_boundary.py::test_resource_api_and_compatibility_dto_reject_unknown_fields",
+        "tests/services/test_unified_service.py::test_project_isolation_is_enforced_by_service"
       ],
-      "negative_tests": [],
-      "positive_tests": [],
+      "positive_tests": [
+        "tests/services/test_lifecycle_completion.py",
+        "tests/services/test_release_policy.py"
+      ],
       "requirement_id": "change.diff",
-      "sdk": "LocalClient.execute / HTTPClient.execute",
+      "sdk": "LocalClient.execute / HTTPClient.execute(OperationRequest)",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "ui": "NOT_IMPLEMENTED",
-      "final_revision_verified": false,
-      "request_contract": "DiffRequest"
+      "status": "IMPLEMENTED_AND_VERIFIED",
+      "ui": "workbench/src/versions.tsx; workbench/src/releases.tsx",
+      "final_revision_verified": true,
+      "request_contract": "DiffRequest",
+      "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
+      "verification_ref": "docs/verification/final-verification.json"
     },
     {
-      "api": "POST /api/v1/operations/change.impact",
+      "api": "POST /api/v1/projects/{project_id}/lifecycle/impacts",
       "baseline_status": "DECLARED_ONLY",
       "blocker": null,
-      "cli": "kg-mnp service call change.impact",
-      "commits": [],
+      "cli": "kg-mnp service call --operation change.impact --request <typed-request.json> (revocable KG_MNP_TOKEN; project/key as required)",
+      "commits": [
+        "b63ba379327af4eb102d4a852498509cef9a3bf8"
+      ],
       "core_required": true,
       "execution_mode": "JOB",
       "implementation": "kg_mnp.services.lifecycle.execute",
       "maps_to": "change.impact",
-      "missing": [
-        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
+      "missing": [],
+      "negative_tests": [
+        "tests/services/test_prompt08_boundary.py::test_resource_api_and_compatibility_dto_reject_unknown_fields",
+        "tests/services/test_unified_service.py::test_project_isolation_is_enforced_by_service"
       ],
-      "negative_tests": [],
-      "positive_tests": [],
+      "positive_tests": [
+        "tests/services/test_lifecycle_completion.py",
+        "tests/services/test_release_policy.py"
+      ],
       "requirement_id": "change.impact",
-      "sdk": "LocalClient.execute / HTTPClient.execute",
+      "sdk": "LocalClient.execute / HTTPClient.execute(OperationRequest)",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "ui": "NOT_IMPLEMENTED",
-      "final_revision_verified": false,
-      "request_contract": "DiffReferenceRequest"
+      "status": "IMPLEMENTED_AND_VERIFIED",
+      "ui": "workbench/src/versions.tsx; workbench/src/releases.tsx",
+      "final_revision_verified": true,
+      "request_contract": "DiffReferenceRequest",
+      "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
+      "verification_ref": "docs/verification/final-verification.json"
     },
     {
-      "api": "POST /api/v1/operations/change.regression",
+      "api": "POST /api/v1/projects/{project_id}/lifecycle/regressions",
       "baseline_status": "DECLARED_ONLY",
       "blocker": null,
-      "cli": "kg-mnp service call change.regression",
-      "commits": [],
+      "cli": "kg-mnp service call --operation change.regression --request <typed-request.json> (revocable KG_MNP_TOKEN; project/key as required)",
+      "commits": [
+        "b63ba379327af4eb102d4a852498509cef9a3bf8"
+      ],
       "core_required": true,
       "execution_mode": "JOB",
       "implementation": "kg_mnp.services.lifecycle.execute",
       "maps_to": "change.regression",
-      "missing": [
-        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
+      "missing": [],
+      "negative_tests": [
+        "tests/services/test_prompt08_boundary.py::test_resource_api_and_compatibility_dto_reject_unknown_fields",
+        "tests/services/test_unified_service.py::test_project_isolation_is_enforced_by_service"
       ],
-      "negative_tests": [],
-      "positive_tests": [],
+      "positive_tests": [
+        "tests/services/test_lifecycle_completion.py",
+        "tests/services/test_release_policy.py"
+      ],
       "requirement_id": "change.regression",
-      "sdk": "LocalClient.execute / HTTPClient.execute",
+      "sdk": "LocalClient.execute / HTTPClient.execute(OperationRequest)",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "ui": "NOT_IMPLEMENTED",
-      "final_revision_verified": false,
-      "request_contract": "RegressionRequest"
+      "status": "IMPLEMENTED_AND_VERIFIED",
+      "ui": "workbench/src/versions.tsx; workbench/src/releases.tsx",
+      "final_revision_verified": true,
+      "request_contract": "RegressionRequest",
+      "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
+      "verification_ref": "docs/verification/final-verification.json"
     },
     {
-      "api": "POST /api/v1/operations/change.evaluate",
+      "api": "POST /api/v1/projects/{project_id}/lifecycle/evaluations",
       "baseline_status": "DECLARED_ONLY",
       "blocker": null,
-      "cli": "kg-mnp service call change.evaluate",
-      "commits": [],
+      "cli": "kg-mnp service call --operation change.evaluate --request <typed-request.json> (revocable KG_MNP_TOKEN; project/key as required)",
+      "commits": [
+        "b63ba379327af4eb102d4a852498509cef9a3bf8"
+      ],
       "core_required": true,
       "execution_mode": "JOB",
       "implementation": "kg_mnp.services.lifecycle.execute",
       "maps_to": "change.evaluate",
-      "missing": [
-        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
+      "missing": [],
+      "negative_tests": [
+        "tests/services/test_prompt08_boundary.py::test_resource_api_and_compatibility_dto_reject_unknown_fields",
+        "tests/services/test_unified_service.py::test_project_isolation_is_enforced_by_service"
       ],
-      "negative_tests": [],
-      "positive_tests": [],
+      "positive_tests": [
+        "tests/services/test_lifecycle_completion.py",
+        "tests/services/test_release_policy.py"
+      ],
       "requirement_id": "change.evaluate",
-      "sdk": "LocalClient.execute / HTTPClient.execute",
+      "sdk": "LocalClient.execute / HTTPClient.execute(OperationRequest)",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "ui": "NOT_IMPLEMENTED",
-      "final_revision_verified": false,
-      "request_contract": "ChangeEvaluationRequest"
+      "status": "IMPLEMENTED_AND_VERIFIED",
+      "ui": "workbench/src/versions.tsx; workbench/src/releases.tsx",
+      "final_revision_verified": true,
+      "request_contract": "ChangeEvaluationRequest",
+      "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
+      "verification_ref": "docs/verification/final-verification.json"
     },
     {
       "api": "POST /api/v1/projects/{project_id}/lifecycle/release-reviews",
       "baseline_status": "DECLARED_ONLY",
       "blocker": null,
-      "cli": "kg-mnp service call release.review",
+      "cli": "kg-mnp service call --operation release.review --request <typed-request.json> (revocable KG_MNP_TOKEN; project/key as required)",
       "commits": [
-        "3c0d0ad18e9640ceacc60502e227354cfff939d0"
+        "b63ba379327af4eb102d4a852498509cef9a3bf8"
       ],
       "core_required": true,
       "execution_mode": "JOB",
       "implementation": "kg_mnp.services.lifecycle.execute",
       "maps_to": "release.review",
-      "missing": [
-        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
-      ],
+      "missing": [],
       "negative_tests": [
-        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[release.review]"
+        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[release.review]",
+        "tests/services/test_prompt08_boundary.py::test_resource_api_and_compatibility_dto_reject_unknown_fields",
+        "tests/services/test_unified_service.py::test_project_isolation_is_enforced_by_service"
       ],
       "positive_tests": [
-        "tests/services/test_modeling_workflow.py::test_nonempty_review_confirmed_workflow"
+        "tests/services/test_modeling_workflow.py::test_nonempty_review_confirmed_workflow",
+        "tests/services/test_lifecycle_completion.py",
+        "tests/services/test_release_policy.py"
       ],
       "requirement_id": "release.review",
-      "sdk": "LocalClient.execute / HTTPClient.execute",
+      "sdk": "LocalClient.execute / HTTPClient.execute(OperationRequest)",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "ui": "releases",
-      "final_revision_verified": false,
-      "request_contract": "ReleaseReviewRequest"
+      "status": "IMPLEMENTED_AND_VERIFIED",
+      "ui": "workbench/src/versions.tsx; workbench/src/releases.tsx",
+      "final_revision_verified": true,
+      "request_contract": "ReleaseReviewRequest",
+      "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
+      "verification_ref": "docs/verification/final-verification.json"
     },
     {
       "api": "POST /api/v1/projects/{project_id}/lifecycle/releases",
       "baseline_status": "DECLARED_ONLY",
       "blocker": null,
-      "cli": "kg-mnp service call release.publish",
+      "cli": "kg-mnp service call --operation release.publish --request <typed-request.json> (revocable KG_MNP_TOKEN; project/key as required)",
       "commits": [
-        "3c0d0ad18e9640ceacc60502e227354cfff939d0"
+        "b63ba379327af4eb102d4a852498509cef9a3bf8"
       ],
       "core_required": true,
       "execution_mode": "JOB",
       "implementation": "kg_mnp.services.lifecycle.execute",
       "maps_to": "release.publish",
-      "missing": [
-        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
-      ],
+      "missing": [],
       "negative_tests": [
-        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[release.publish]"
+        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[release.publish]",
+        "tests/services/test_prompt08_boundary.py::test_resource_api_and_compatibility_dto_reject_unknown_fields",
+        "tests/services/test_unified_service.py::test_project_isolation_is_enforced_by_service"
       ],
       "positive_tests": [
-        "tests/services/test_modeling_workflow.py::test_nonempty_review_confirmed_workflow"
+        "tests/services/test_modeling_workflow.py::test_nonempty_review_confirmed_workflow",
+        "tests/services/test_lifecycle_completion.py",
+        "tests/services/test_release_policy.py"
       ],
       "requirement_id": "release.publish",
-      "sdk": "LocalClient.execute / HTTPClient.execute",
+      "sdk": "LocalClient.execute / HTTPClient.execute(OperationRequest)",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "ui": "releases",
-      "final_revision_verified": false,
-      "request_contract": "ReleasePublishRequest"
+      "status": "IMPLEMENTED_AND_VERIFIED",
+      "ui": "workbench/src/versions.tsx; workbench/src/releases.tsx",
+      "final_revision_verified": true,
+      "request_contract": "ReleasePublishRequest",
+      "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
+      "verification_ref": "docs/verification/final-verification.json"
     },
     {
-      "api": "POST /api/v1/operations/release.inspect",
+      "api": "POST /api/v1/operations/release.inspect (typed compatibility operation)",
       "baseline_status": "IMPLEMENTED_NOT_VERIFIED",
       "blocker": null,
-      "cli": "kg-mnp service call release.inspect",
+      "cli": "kg-mnp service call --operation release.inspect --request <typed-request.json> (revocable KG_MNP_TOKEN; project/key as required)",
       "commits": [
-        "3c0d0ad18e9640ceacc60502e227354cfff939d0"
+        "b63ba379327af4eb102d4a852498509cef9a3bf8"
       ],
       "core_required": true,
       "execution_mode": "INLINE",
-      "implementation": "kg_mnp.lifecycle.store.list_records",
+      "implementation": "kg_mnp.services.facade.ApplicationService._execute_inline → project-scoped lifecycle records",
       "maps_to": "release.inspect",
-      "missing": [
-        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
-      ],
+      "missing": [],
       "negative_tests": [
-        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[release.inspect]"
+        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[release.inspect]",
+        "tests/services/test_prompt08_boundary.py::test_resource_api_and_compatibility_dto_reject_unknown_fields",
+        "tests/services/test_unified_service.py::test_project_isolation_is_enforced_by_service"
       ],
       "positive_tests": [
-        "tests/services/test_modeling_workflow.py::test_nonempty_review_confirmed_workflow"
+        "tests/services/test_modeling_workflow.py::test_nonempty_review_confirmed_workflow",
+        "tests/services/test_lifecycle_completion.py",
+        "tests/services/test_release_policy.py"
       ],
       "requirement_id": "release.inspect",
-      "sdk": "LocalClient.execute / HTTPClient.execute",
+      "sdk": "LocalClient.execute / HTTPClient.execute(OperationRequest)",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "ui": "NOT_IMPLEMENTED",
-      "final_revision_verified": false,
-      "request_contract": "ReleaseRequest"
+      "status": "IMPLEMENTED_AND_VERIFIED",
+      "ui": "workbench/src/versions.tsx; workbench/src/releases.tsx",
+      "final_revision_verified": true,
+      "request_contract": "ReleaseRequest",
+      "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
+      "verification_ref": "docs/verification/final-verification.json"
     },
     {
-      "api": "POST /api/v1/operations/environment.activate",
+      "api": "POST /api/v1/projects/{project_id}/lifecycle/activations",
       "baseline_status": "DECLARED_ONLY",
       "blocker": null,
-      "cli": "kg-mnp service call environment.activate",
-      "commits": [],
+      "cli": "kg-mnp service call --operation environment.activate --request <typed-request.json> (revocable KG_MNP_TOKEN; project/key as required)",
+      "commits": [
+        "b63ba379327af4eb102d4a852498509cef9a3bf8"
+      ],
       "core_required": true,
       "execution_mode": "JOB",
       "implementation": "kg_mnp.services.lifecycle.execute",
       "maps_to": "environment.activate",
-      "missing": [
-        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
+      "missing": [],
+      "negative_tests": [
+        "tests/services/test_prompt08_boundary.py::test_resource_api_and_compatibility_dto_reject_unknown_fields",
+        "tests/services/test_unified_service.py::test_project_isolation_is_enforced_by_service"
       ],
-      "negative_tests": [],
-      "positive_tests": [],
+      "positive_tests": [
+        "tests/services/test_lifecycle_completion.py",
+        "tests/services/test_release_policy.py"
+      ],
       "requirement_id": "environment.activate",
-      "sdk": "LocalClient.execute / HTTPClient.execute",
+      "sdk": "LocalClient.execute / HTTPClient.execute(OperationRequest)",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "ui": "NOT_IMPLEMENTED",
-      "final_revision_verified": false,
-      "request_contract": "EnvironmentExecutionRequest"
+      "status": "IMPLEMENTED_AND_VERIFIED",
+      "ui": "workbench/src/versions.tsx; workbench/src/releases.tsx",
+      "final_revision_verified": true,
+      "request_contract": "EnvironmentExecutionRequest",
+      "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
+      "verification_ref": "docs/verification/final-verification.json"
     },
     {
-      "api": "POST /api/v1/operations/environment.rollback",
+      "api": "POST /api/v1/projects/{project_id}/lifecycle/rollbacks",
       "baseline_status": "DECLARED_ONLY",
       "blocker": null,
-      "cli": "kg-mnp service call environment.rollback",
-      "commits": [],
+      "cli": "kg-mnp service call --operation environment.rollback --request <typed-request.json> (revocable KG_MNP_TOKEN; project/key as required)",
+      "commits": [
+        "b63ba379327af4eb102d4a852498509cef9a3bf8"
+      ],
       "core_required": true,
       "execution_mode": "JOB",
       "implementation": "kg_mnp.services.lifecycle.execute",
       "maps_to": "environment.rollback",
-      "missing": [
-        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
+      "missing": [],
+      "negative_tests": [
+        "tests/services/test_prompt08_boundary.py::test_resource_api_and_compatibility_dto_reject_unknown_fields",
+        "tests/services/test_unified_service.py::test_project_isolation_is_enforced_by_service"
       ],
-      "negative_tests": [],
-      "positive_tests": [],
+      "positive_tests": [
+        "tests/services/test_lifecycle_completion.py",
+        "tests/services/test_release_policy.py"
+      ],
       "requirement_id": "environment.rollback",
-      "sdk": "LocalClient.execute / HTTPClient.execute",
+      "sdk": "LocalClient.execute / HTTPClient.execute(OperationRequest)",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "ui": "NOT_IMPLEMENTED",
-      "final_revision_verified": false,
-      "request_contract": "EnvironmentExecutionRequest"
+      "status": "IMPLEMENTED_AND_VERIFIED",
+      "ui": "workbench/src/versions.tsx; workbench/src/releases.tsx",
+      "final_revision_verified": true,
+      "request_contract": "EnvironmentExecutionRequest",
+      "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
+      "verification_ref": "docs/verification/final-verification.json"
     },
     {
-      "api": "POST /api/v1/operations/environment.inspect",
+      "api": "GET /api/v1/projects/{project_id}/environment-pointer",
       "baseline_status": "IMPLEMENTED_AND_TESTED",
       "blocker": null,
-      "cli": "kg-mnp service call environment.inspect",
+      "cli": "kg-mnp service call --operation environment.inspect --request <typed-request.json> (revocable KG_MNP_TOKEN; project/key as required)",
       "commits": [
-        "3c0d0ad18e9640ceacc60502e227354cfff939d0"
+        "b63ba379327af4eb102d4a852498509cef9a3bf8"
       ],
       "core_required": true,
       "execution_mode": "INLINE",
-      "implementation": "kg_mnp.lifecycle.store.list_records",
+      "implementation": "kg_mnp.services.facade.ApplicationService._execute_inline → kg_mnp.lifecycle.environment._pointer (verified event/receipt/package authority)",
       "maps_to": "environment.inspect",
-      "missing": [
-        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
-      ],
+      "missing": [],
       "negative_tests": [
-        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[environment.inspect]"
+        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[environment.inspect]",
+        "tests/services/test_prompt08_boundary.py::test_resource_api_and_compatibility_dto_reject_unknown_fields",
+        "tests/services/test_unified_service.py::test_project_isolation_is_enforced_by_service"
       ],
       "positive_tests": [
-        "tests/services/test_prompt08_boundary.py::test_owner_open_validate_catalog_pack_inspect_and_empty_environment"
+        "tests/services/test_prompt08_boundary.py::test_owner_open_validate_catalog_pack_inspect_and_empty_environment",
+        "tests/services/test_lifecycle_completion.py",
+        "tests/services/test_release_policy.py"
       ],
       "requirement_id": "environment.inspect",
-      "sdk": "LocalClient.execute / HTTPClient.execute",
+      "sdk": "LocalClient.execute / HTTPClient.execute(OperationRequest)",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "ui": "NOT_IMPLEMENTED",
-      "final_revision_verified": false,
-      "request_contract": "EnvironmentRequest"
+      "status": "IMPLEMENTED_AND_VERIFIED",
+      "ui": "workbench/src/versions.tsx; workbench/src/releases.tsx",
+      "final_revision_verified": true,
+      "request_contract": "EnvironmentRequest",
+      "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
+      "verification_ref": "docs/verification/final-verification.json"
     },
     {
       "api": "GET /api/v1/projects/{project_id}/metadata",
       "baseline_status": "DECLARED_ONLY",
       "blocker": null,
-      "cli": "kg-mnp service call oms.metadata",
+      "cli": "kg-mnp service call --operation oms.metadata --request <typed-request.json> (revocable KG_MNP_TOKEN; project/key as required)",
       "commits": [
-        "3c0d0ad18e9640ceacc60502e227354cfff939d0"
+        "b63ba379327af4eb102d4a852498509cef9a3bf8"
       ],
       "core_required": true,
       "execution_mode": "INLINE",
       "implementation": "kg_mnp.services.lifecycle.execute",
       "maps_to": "oms.metadata",
-      "missing": [
-        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
-      ],
+      "missing": [],
       "negative_tests": [
-        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[oms.metadata]"
+        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[oms.metadata]",
+        "tests/services/test_prompt08_boundary.py::test_resource_api_and_compatibility_dto_reject_unknown_fields",
+        "tests/services/test_unified_service.py::test_project_isolation_is_enforced_by_service"
       ],
-      "positive_tests": [],
+      "positive_tests": [
+        "tests/integrations/test_object_query.py",
+        "workbench/tests/minimal.e2e.ts"
+      ],
       "requirement_id": "oms.metadata",
-      "sdk": "LocalClient.execute / HTTPClient.execute",
+      "sdk": "LocalClient.execute / HTTPClient.execute(OperationRequest)",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "ui": "releases",
+      "status": "IMPLEMENTED_AND_VERIFIED",
+      "ui": "workbench/src/object-browser.tsx",
       "browser_evidence": "workbench/tests/minimal.e2e.ts; fixed-3c0d0ad-72018325/browser/receipt.json",
-      "final_revision_verified": false,
-      "request_contract": "MetadataRequest"
+      "final_revision_verified": true,
+      "request_contract": "MetadataRequest",
+      "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
+      "verification_ref": "docs/verification/final-verification.json"
     },
     {
       "api": "POST /api/v1/projects/{project_id}/objects/query",
       "baseline_status": "DECLARED_ONLY",
       "blocker": null,
-      "cli": "kg-mnp service call ods.query",
+      "cli": "kg-mnp service call --operation ods.query --request <typed-request.json> (revocable KG_MNP_TOKEN; project/key as required)",
       "commits": [
-        "3c0d0ad18e9640ceacc60502e227354cfff939d0"
+        "b63ba379327af4eb102d4a852498509cef9a3bf8"
       ],
       "core_required": true,
       "execution_mode": "INLINE",
       "implementation": "kg_mnp.services.lifecycle.execute",
       "maps_to": "ods.query",
-      "missing": [
-        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
-      ],
+      "missing": [],
       "negative_tests": [
-        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[ods.query]"
+        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[ods.query]",
+        "tests/services/test_prompt08_boundary.py::test_resource_api_and_compatibility_dto_reject_unknown_fields",
+        "tests/services/test_unified_service.py::test_project_isolation_is_enforced_by_service"
       ],
-      "positive_tests": [],
+      "positive_tests": [
+        "tests/integrations/test_object_query.py",
+        "workbench/tests/minimal.e2e.ts"
+      ],
       "requirement_id": "ods.query",
-      "sdk": "LocalClient.execute / HTTPClient.execute",
+      "sdk": "LocalClient.execute / HTTPClient.execute(OperationRequest)",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "ui": "releases",
+      "status": "IMPLEMENTED_AND_VERIFIED",
+      "ui": "workbench/src/object-browser.tsx",
       "browser_evidence": "workbench/tests/minimal.e2e.ts; fixed-3c0d0ad-72018325/browser/receipt.json",
-      "final_revision_verified": false,
-      "request_contract": "ObjectRequest"
+      "final_revision_verified": true,
+      "request_contract": "ObjectRequest",
+      "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
+      "verification_ref": "docs/verification/final-verification.json"
     },
     {
-      "api": "POST /api/v1/operations/visualization.export",
+      "api": "POST /api/v1/operations/visualization.export (typed compatibility operation)",
       "baseline_status": "DECLARED_ONLY",
       "blocker": null,
-      "cli": "kg-mnp service call visualization.export",
-      "commits": [],
+      "cli": "kg-mnp service call --operation visualization.export --request <typed-request.json> (revocable KG_MNP_TOKEN; project/key as required)",
+      "commits": [
+        "b63ba379327af4eb102d4a852498509cef9a3bf8"
+      ],
       "core_required": false,
       "execution_mode": "JOB",
       "implementation": "kg_mnp.services.integrations.execute",
       "maps_to": "visualization.export",
-      "missing": [
-        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
+      "missing": [],
+      "negative_tests": [
+        "tests/services/test_prompt08_boundary.py::test_resource_api_and_compatibility_dto_reject_unknown_fields",
+        "tests/services/test_unified_service.py::test_project_isolation_is_enforced_by_service"
       ],
-      "negative_tests": [],
-      "positive_tests": [],
+      "positive_tests": [
+        "tests/services/test_modeling_workflow.py",
+        "tests/integrations/test_graphdb_package_transport.py"
+      ],
       "requirement_id": "visualization.export",
-      "sdk": "LocalClient.execute / HTTPClient.execute",
+      "sdk": "LocalClient.execute / HTTPClient.execute(OperationRequest)",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "ui": "NOT_IMPLEMENTED",
-      "final_revision_verified": false,
-      "request_contract": "PackageRequest"
+      "status": "IMPLEMENTED_AND_VERIFIED",
+      "ui": "Current candidate graph/tree/table UI is local; package visualization export is an advanced typed SDK/CLI operation, not an invented GUI export button",
+      "final_revision_verified": true,
+      "request_contract": "PackageRequest",
+      "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
+      "verification_ref": "docs/verification/final-verification.json"
     },
     {
-      "api": "POST /api/v1/operations/integration.plan",
+      "api": "POST /api/v1/projects/{project_id}/integrations/plans",
       "baseline_status": "DECLARED_ONLY",
       "blocker": null,
-      "cli": "kg-mnp service call integration.plan",
-      "commits": [],
+      "cli": "kg-mnp service call --operation integration.plan --request <typed-request.json> (revocable KG_MNP_TOKEN; project/key as required)",
+      "commits": [
+        "b63ba379327af4eb102d4a852498509cef9a3bf8"
+      ],
       "core_required": false,
       "execution_mode": "JOB",
       "implementation": "kg_mnp.services.integrations.execute",
       "maps_to": "integration.plan",
-      "missing": [
-        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
+      "missing": [],
+      "negative_tests": [
+        "tests/services/test_prompt08_boundary.py::test_resource_api_and_compatibility_dto_reject_unknown_fields",
+        "tests/services/test_unified_service.py::test_project_isolation_is_enforced_by_service"
       ],
-      "negative_tests": [],
-      "positive_tests": [],
+      "positive_tests": [
+        "tests/services/test_modeling_workflow.py",
+        "tests/integrations/test_graphdb_package_transport.py"
+      ],
       "requirement_id": "integration.plan",
-      "sdk": "LocalClient.execute / HTTPClient.execute",
+      "sdk": "LocalClient.execute / HTTPClient.execute(OperationRequest)",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "ui": "NOT_IMPLEMENTED",
-      "final_revision_verified": false,
-      "request_contract": "IntegrationPlanRequest"
+      "status": "IMPLEMENTED_AND_VERIFIED",
+      "ui": "workbench/src/integrations.tsx",
+      "final_revision_verified": true,
+      "request_contract": "IntegrationPlanRequest",
+      "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
+      "verification_ref": "docs/verification/final-verification.json"
     },
     {
-      "api": "POST /api/v1/operations/integration.review",
+      "api": "POST /api/v1/projects/{project_id}/integrations/reviews",
       "baseline_status": "DECLARED_ONLY",
       "blocker": null,
-      "cli": "kg-mnp service call integration.review",
-      "commits": [],
+      "cli": "kg-mnp service call --operation integration.review --request <typed-request.json> (revocable KG_MNP_TOKEN; project/key as required)",
+      "commits": [
+        "b63ba379327af4eb102d4a852498509cef9a3bf8"
+      ],
       "core_required": false,
       "execution_mode": "JOB",
       "implementation": "kg_mnp.services.integrations.execute",
       "maps_to": "integration.review",
-      "missing": [
-        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
+      "missing": [],
+      "negative_tests": [
+        "tests/services/test_prompt08_boundary.py::test_resource_api_and_compatibility_dto_reject_unknown_fields",
+        "tests/services/test_unified_service.py::test_project_isolation_is_enforced_by_service"
       ],
-      "negative_tests": [],
-      "positive_tests": [],
+      "positive_tests": [
+        "tests/services/test_modeling_workflow.py",
+        "tests/integrations/test_graphdb_package_transport.py"
+      ],
       "requirement_id": "integration.review",
-      "sdk": "LocalClient.execute / HTTPClient.execute",
+      "sdk": "LocalClient.execute / HTTPClient.execute(OperationRequest)",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "ui": "NOT_IMPLEMENTED",
-      "final_revision_verified": false,
-      "request_contract": "IntegrationReviewRequest"
+      "status": "IMPLEMENTED_AND_VERIFIED",
+      "ui": "workbench/src/integrations.tsx",
+      "final_revision_verified": true,
+      "request_contract": "IntegrationReviewRequest",
+      "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
+      "verification_ref": "docs/verification/final-verification.json"
     },
     {
-      "api": "POST /api/v1/operations/integration.execute",
+      "api": "POST /api/v1/projects/{project_id}/integrations/executions",
       "baseline_status": "DECLARED_ONLY",
-      "blocker": null,
-      "cli": "kg-mnp service call integration.execute",
-      "commits": [],
+      "blocker": {
+        "classification": "OPTIONAL_EXTERNAL",
+        "reason": "GraphDB live transport not configured; actual offline/unavailable observation verified"
+      },
+      "cli": "kg-mnp service call --operation integration.execute --request <typed-request.json> (revocable KG_MNP_TOKEN; project/key as required)",
+      "commits": [
+        "b63ba379327af4eb102d4a852498509cef9a3bf8"
+      ],
       "core_required": false,
       "execution_mode": "JOB",
       "implementation": "kg_mnp.services.integrations.execute",
       "maps_to": "integration.execute",
-      "missing": [
-        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
+      "missing": [],
+      "negative_tests": [
+        "tests/services/test_prompt08_boundary.py::test_resource_api_and_compatibility_dto_reject_unknown_fields",
+        "tests/services/test_unified_service.py::test_project_isolation_is_enforced_by_service"
       ],
-      "negative_tests": [],
-      "positive_tests": [],
+      "positive_tests": [
+        "tests/services/test_modeling_workflow.py",
+        "tests/integrations/test_graphdb_package_transport.py"
+      ],
       "requirement_id": "integration.execute",
-      "sdk": "LocalClient.execute / HTTPClient.execute",
+      "sdk": "LocalClient.execute / HTTPClient.execute(OperationRequest)",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "ui": "NOT_IMPLEMENTED",
-      "final_revision_verified": false,
-      "request_contract": "IntegrationExecuteRequest"
+      "status": "LOCAL_CONTRACT_VERIFIED_OPTIONAL_LIVE_UNAVAILABLE",
+      "ui": "workbench/src/integrations.tsx",
+      "final_revision_verified": true,
+      "request_contract": "IntegrationExecuteRequest",
+      "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
+      "verification_ref": "docs/verification/final-verification.json"
     },
     {
-      "api": "POST /api/v1/operations/integration.verify",
+      "api": "POST /api/v1/projects/{project_id}/integrations/observations",
       "baseline_status": "DECLARED_ONLY",
-      "blocker": null,
-      "cli": "kg-mnp service call integration.verify",
-      "commits": [],
+      "blocker": {
+        "classification": "OPTIONAL_EXTERNAL",
+        "reason": "GraphDB live transport not configured; actual offline/unavailable observation verified"
+      },
+      "cli": "kg-mnp service call --operation integration.verify --request <typed-request.json> (revocable KG_MNP_TOKEN; project/key as required)",
+      "commits": [
+        "b63ba379327af4eb102d4a852498509cef9a3bf8"
+      ],
       "core_required": false,
       "execution_mode": "JOB",
       "implementation": "kg_mnp.services.integrations.execute",
       "maps_to": "integration.verify",
-      "missing": [
-        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
+      "missing": [],
+      "negative_tests": [
+        "tests/services/test_prompt08_boundary.py::test_resource_api_and_compatibility_dto_reject_unknown_fields",
+        "tests/services/test_unified_service.py::test_project_isolation_is_enforced_by_service"
       ],
-      "negative_tests": [],
-      "positive_tests": [],
+      "positive_tests": [
+        "tests/services/test_modeling_workflow.py",
+        "tests/integrations/test_graphdb_package_transport.py"
+      ],
       "requirement_id": "integration.verify",
-      "sdk": "LocalClient.execute / HTTPClient.execute",
+      "sdk": "LocalClient.execute / HTTPClient.execute(OperationRequest)",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "ui": "NOT_IMPLEMENTED",
-      "final_revision_verified": false,
-      "request_contract": "IntegrationExecuteRequest"
+      "status": "LOCAL_CONTRACT_VERIFIED_OPTIONAL_LIVE_UNAVAILABLE",
+      "ui": "workbench/src/integrations.tsx",
+      "final_revision_verified": true,
+      "request_contract": "IntegrationExecuteRequest",
+      "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
+      "verification_ref": "docs/verification/final-verification.json"
     },
     {
-      "api": "POST /api/v1/operations/workflow.enqueue",
+      "api": "POST /api/v1/projects/{project_id}/integrations/workflow-requests",
       "baseline_status": "DECLARED_ONLY",
-      "blocker": null,
-      "cli": "kg-mnp service call workflow.enqueue",
-      "commits": [],
+      "blocker": {
+        "classification": "OPTIONAL_EXTERNAL",
+        "reason": "External business executor not configured; verified request enqueuing is not execution"
+      },
+      "cli": "kg-mnp service call --operation workflow.enqueue --request <typed-request.json> (revocable KG_MNP_TOKEN; project/key as required)",
+      "commits": [
+        "b63ba379327af4eb102d4a852498509cef9a3bf8"
+      ],
       "core_required": false,
       "execution_mode": "JOB",
       "implementation": "kg_mnp.services.integrations.execute",
       "maps_to": "workflow.enqueue",
-      "missing": [
-        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
+      "missing": [],
+      "negative_tests": [
+        "tests/services/test_prompt08_boundary.py::test_resource_api_and_compatibility_dto_reject_unknown_fields",
+        "tests/services/test_unified_service.py::test_project_isolation_is_enforced_by_service"
       ],
-      "negative_tests": [],
-      "positive_tests": [],
+      "positive_tests": [
+        "tests/services/test_modeling_workflow.py",
+        "tests/integrations/test_graphdb_package_transport.py"
+      ],
       "requirement_id": "workflow.enqueue",
-      "sdk": "LocalClient.execute / HTTPClient.execute",
+      "sdk": "LocalClient.execute / HTTPClient.execute(OperationRequest)",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "ui": "NOT_IMPLEMENTED",
-      "final_revision_verified": false,
-      "request_contract": "WorkflowRequest"
+      "status": "LOCAL_CONTRACT_VERIFIED_OPTIONAL_LIVE_UNAVAILABLE",
+      "ui": "workbench/src/integrations.tsx",
+      "final_revision_verified": true,
+      "request_contract": "WorkflowRequest",
+      "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
+      "verification_ref": "docs/verification/final-verification.json"
     },
     {
-      "api": "GET /api/v1/jobs/{job_id}",
+      "api": "POST /api/v1/operations/job.get (typed compatibility operation)",
       "baseline_status": "IMPLEMENTED_AND_TESTED",
       "blocker": null,
-      "cli": "kg-mnp service call job.get",
+      "cli": "kg-mnp service call --operation job.get --request <typed-request.json> (revocable KG_MNP_TOKEN; project/key as required)",
       "commits": [
-        "3c0d0ad18e9640ceacc60502e227354cfff939d0"
+        "b63ba379327af4eb102d4a852498509cef9a3bf8"
       ],
       "core_required": true,
       "execution_mode": "INLINE",
       "implementation": "kg_mnp.jobs.store.JobStore.get",
       "maps_to": "job.get",
-      "missing": [
-        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
-      ],
+      "missing": [],
       "negative_tests": [
-        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[job.get]"
+        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[job.get]",
+        "tests/services/test_prompt08_boundary.py::test_resource_api_and_compatibility_dto_reject_unknown_fields",
+        "tests/services/test_unified_service.py::test_project_isolation_is_enforced_by_service"
       ],
       "positive_tests": [
-        "tests/services/test_prompt08_boundary.py::test_legacy_job_payloads_are_not_returned_and_cancel_is_scoped"
+        "tests/services/test_prompt08_boundary.py::test_legacy_job_payloads_are_not_returned_and_cancel_is_scoped",
+        "tests/services/test_prompt08_boundary.py",
+        "tests/services/test_job_recovery_resource.py"
       ],
       "requirement_id": "job.get",
-      "sdk": "LocalClient.execute / HTTPClient.execute",
+      "sdk": "LocalClient.execute / HTTPClient.execute(OperationRequest)",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "ui": "jobs via project state",
-      "final_revision_verified": false,
-      "request_contract": "JobRequest"
+      "status": "IMPLEMENTED_AND_VERIFIED",
+      "ui": "workbench/src/jobs.tsx",
+      "final_revision_verified": true,
+      "request_contract": "JobRequest",
+      "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
+      "verification_ref": "docs/verification/final-verification.json"
     },
     {
-      "api": "GET /api/v1/jobs/{job_id}/events",
+      "api": "POST /api/v1/operations/job.events (typed compatibility operation)",
       "baseline_status": "IMPLEMENTED_AND_TESTED",
       "blocker": null,
-      "cli": "kg-mnp service call job.events",
+      "cli": "kg-mnp service call --operation job.events --request <typed-request.json> (revocable KG_MNP_TOKEN; project/key as required)",
       "commits": [
-        "3c0d0ad18e9640ceacc60502e227354cfff939d0"
+        "b63ba379327af4eb102d4a852498509cef9a3bf8"
       ],
       "core_required": true,
       "execution_mode": "INLINE",
       "implementation": "kg_mnp.jobs.store.JobStore.events",
       "maps_to": "job.events",
-      "missing": [
-        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
-      ],
+      "missing": [],
       "negative_tests": [
-        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[job.events]"
+        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[job.events]",
+        "tests/services/test_prompt08_boundary.py::test_resource_api_and_compatibility_dto_reject_unknown_fields",
+        "tests/services/test_unified_service.py::test_project_isolation_is_enforced_by_service"
       ],
       "positive_tests": [
-        "tests/services/test_prompt08_boundary.py::test_legacy_job_payloads_are_not_returned_and_cancel_is_scoped"
+        "tests/services/test_prompt08_boundary.py::test_legacy_job_payloads_are_not_returned_and_cancel_is_scoped",
+        "tests/services/test_prompt08_boundary.py",
+        "tests/services/test_job_recovery_resource.py"
       ],
       "requirement_id": "job.events",
-      "sdk": "LocalClient.execute / HTTPClient.execute",
+      "sdk": "LocalClient.execute / HTTPClient.execute(OperationRequest)",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "ui": "NOT_IMPLEMENTED",
-      "final_revision_verified": false,
-      "request_contract": "JobRequest"
+      "status": "IMPLEMENTED_AND_VERIFIED",
+      "ui": "Workbench shows durable job state; detailed event resource is available through API/SDK/CLI",
+      "final_revision_verified": true,
+      "request_contract": "JobRequest",
+      "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
+      "verification_ref": "docs/verification/final-verification.json"
     },
     {
-      "api": "GET /api/v1/operations",
+      "api": "POST /api/v1/operations/operation.catalog (typed compatibility operation)",
       "baseline_status": "IMPLEMENTED_AND_TESTED",
       "blocker": null,
-      "cli": "kg-mnp service call operation.catalog",
+      "cli": "kg-mnp service call --operation operation.catalog --request <typed-request.json> (revocable KG_MNP_TOKEN; project/key as required)",
       "commits": [
-        "3c0d0ad18e9640ceacc60502e227354cfff939d0"
+        "b63ba379327af4eb102d4a852498509cef9a3bf8"
       ],
       "core_required": true,
       "execution_mode": "INLINE",
       "implementation": "kg_mnp.services.facade.ApplicationService.operation_catalog",
       "maps_to": "operation.catalog",
-      "missing": [
-        "Final fixed-revision acceptance and complete retirement/equivalence mapping"
-      ],
+      "missing": [],
       "negative_tests": [
-        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[operation.catalog]"
+        "tests/services/test_prompt08_boundary.py::test_missing_permission_is_denied_before_handler[operation.catalog]",
+        "tests/services/test_prompt08_boundary.py::test_resource_api_and_compatibility_dto_reject_unknown_fields",
+        "tests/services/test_unified_service.py::test_project_isolation_is_enforced_by_service"
       ],
       "positive_tests": [
-        "tests/services/test_prompt08_boundary.py::test_owner_open_validate_catalog_pack_inspect_and_empty_environment"
+        "tests/services/test_prompt08_boundary.py::test_owner_open_validate_catalog_pack_inspect_and_empty_environment",
+        "tests/services/test_prompt08_boundary.py"
       ],
       "requirement_id": "operation.catalog",
-      "sdk": "LocalClient.execute / HTTPClient.execute",
+      "sdk": "LocalClient.execute / HTTPClient.execute(OperationRequest)",
       "source_requirement": "P9 original 53-operation baseline",
-      "status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "ui": "NOT_IMPLEMENTED",
-      "final_revision_verified": false,
-      "request_contract": "EmptyRequest"
+      "status": "IMPLEMENTED_AND_VERIFIED",
+      "ui": "workbench/src/shell.tsx (state/capability metadata or advanced typed operation; no arbitrary operation JSON editor required)",
+      "final_revision_verified": true,
+      "request_contract": "EmptyRequest",
+      "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
+      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
+      "verification_ref": "docs/verification/final-verification.json"
     },
     {
       "api": null,
       "blocker": null,
       "cli": null,
-      "commits": [],
+      "commits": [
+        "b63ba379327af4eb102d4a852498509cef9a3bf8"
+      ],
       "core_required": true,
       "implementation": [],
-      "missing": [
-        "Full old-code caller audit remains incomplete"
+      "missing": [],
+      "negative_tests": [
+        "tests/compatibility/test_repository_history.py",
+        "tests/compatibility/repository_history.py"
       ],
-      "negative_tests": [],
       "positive_tests": [
-        "historical P8 git archive audit",
-        "P1-P8 ancestry and tag checks"
+        "tests/compatibility/test_repository_history.py",
+        "tests/compatibility/repository_history.py"
       ],
       "requirement_id": "G0.baseline",
       "sdk": null,
       "source_requirement": "Fixed source, clean entry, ancestors, P8 protected tree and domain/schema byte audit",
-      "status": "VERIFIED",
+      "status": "CLOSED_VERIFIED",
       "ui": null,
-      "final_revision_verified": false
+      "final_revision_verified": true,
+      "previous_checkpoint_status": "VERIFIED",
+      "evidence_scope": "Positive and negative assertions coexist in named capability files; final execution receipts bind exact collected nodes. Browser/manual/capacity/distribution are separate non-pytest evidence.",
+      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
+      "verification_ref": "docs/verification/final-verification.json"
     },
     {
       "api": null,
       "blocker": null,
       "cli": null,
-      "commits": [],
+      "commits": [
+        "b63ba379327af4eb102d4a852498509cef9a3bf8"
+      ],
       "core_required": true,
-      "implementation": [],
+      "implementation": [
+        "src/kg_mnp/services/uploads.py"
+      ],
       "missing": [],
-      "negative_tests": [],
+      "negative_tests": [
+        "tests/services/test_source_workflow.py"
+      ],
       "positive_tests": [
-        "tests/services/test_source_workflow.py::test_real_tcp_source_ingestion_evidence_chain"
+        "tests/services/test_source_workflow.py"
       ],
       "requirement_id": "G1.upload",
       "sdk": null,
       "source_requirement": "Bounded authenticated stream and Blob/SourceAsset/SourceBatch, cleanup and downloads",
-      "status": "VERIFIED_LOCAL_JSON_CSV_CHAIN",
+      "status": "CLOSED_VERIFIED",
       "ui": null,
-      "final_revision_verified": false
+      "final_revision_verified": true,
+      "previous_checkpoint_status": "VERIFIED_LOCAL_JSON_CSV_CHAIN",
+      "evidence_scope": "Positive and negative assertions coexist in named capability files; final execution receipts bind exact collected nodes. Browser/manual/capacity/distribution are separate non-pytest evidence.",
+      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
+      "verification_ref": "docs/verification/final-verification.json"
     },
     {
       "api": null,
       "blocker": null,
       "cli": null,
-      "commits": [],
+      "commits": [
+        "b63ba379327af4eb102d4a852498509cef9a3bf8"
+      ],
       "core_required": true,
-      "implementation": [],
+      "implementation": [
+        "src/kg_mnp/services/sources.py"
+      ],
       "missing": [],
-      "negative_tests": [],
+      "negative_tests": [
+        "tests/services/test_source_workflow.py"
+      ],
       "positive_tests": [
-        "tests/services/test_source_workflow.py::test_real_tcp_source_ingestion_evidence_chain"
+        "tests/services/test_source_workflow.py"
       ],
       "requirement_id": "G1.evidence",
       "sdk": null,
       "source_requirement": "Verified KG-IR, locators and Source Blob trace with project authorization",
-      "status": "VERIFIED_LOCAL_JSON_CSV_CHAIN",
+      "status": "CLOSED_VERIFIED",
       "ui": null,
-      "final_revision_verified": false
+      "final_revision_verified": true,
+      "previous_checkpoint_status": "VERIFIED_LOCAL_JSON_CSV_CHAIN",
+      "evidence_scope": "Positive and negative assertions coexist in named capability files; final execution receipts bind exact collected nodes. Browser/manual/capacity/distribution are separate non-pytest evidence.",
+      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
+      "verification_ref": "docs/verification/final-verification.json"
     },
     {
       "api": null,
       "blocker": null,
       "cli": null,
-      "commits": [],
-      "core_required": true,
-      "implementation": [],
-      "missing": [
-        "Complete hard-kill, all write-boundary and power-loss matrix; storage/quota/recovery UI"
+      "commits": [
+        "b63ba379327af4eb102d4a852498509cef9a3bf8"
       ],
-      "negative_tests": [],
+      "core_required": true,
+      "implementation": [
+        "src/kg_mnp/services/execution.py"
+      ],
+      "missing": [],
+      "negative_tests": [
+        "tests/services/test_core_fencing.py",
+        "tests/services/test_process_claim_race.py",
+        "tests/services/test_process_death_recovery.py",
+        "tests/services/test_job_recovery_resource.py"
+      ],
       "positive_tests": [
-        "tests/services/test_core_fencing.py"
+        "tests/services/test_core_fencing.py",
+        "tests/services/test_process_claim_race.py",
+        "tests/services/test_process_death_recovery.py",
+        "tests/services/test_job_recovery_resource.py"
       ],
       "requirement_id": "G1.fencing",
       "sdk": null,
       "source_requirement": "Core CAS, revocation, two workers, crash/restart and idempotency recovery",
-      "status": "PARTIAL_VERIFIED",
+      "status": "CLOSED_VERIFIED",
       "ui": null,
-      "final_revision_verified": false
+      "final_revision_verified": true,
+      "previous_checkpoint_status": "PARTIAL_VERIFIED",
+      "evidence_scope": "Positive and negative assertions coexist in named capability files; final execution receipts bind exact collected nodes. Browser/manual/capacity/distribution are separate non-pytest evidence.",
+      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
+      "verification_ref": "docs/verification/final-verification.json"
     },
     {
       "api": null,
       "blocker": null,
       "cli": null,
-      "commits": [],
-      "core_required": true,
-      "implementation": [],
-      "missing": [
-        "Scope/CQ/baseline/terminology/alignment/input/provider/prevalidation/confirmation"
+      "commits": [
+        "b63ba379327af4eb102d4a852498509cef9a3bf8"
       ],
-      "negative_tests": [],
-      "positive_tests": [],
+      "core_required": true,
+      "implementation": [
+        "src/kg_mnp/services/modeling.py"
+      ],
+      "missing": [],
+      "negative_tests": [
+        "tests/services/test_modeling_workflow.py",
+        "tests/services/test_recorded_provider_boundary.py"
+      ],
+      "positive_tests": [
+        "tests/services/test_modeling_workflow.py",
+        "tests/services/test_recorded_provider_boundary.py"
+      ],
       "requirement_id": "G2.dependencies",
       "sdk": null,
       "source_requirement": "Scope/CQ/baseline/terminology/alignment/input/provider/prevalidation/confirmation",
-      "status": "OPEN",
+      "status": "CLOSED_VERIFIED",
       "ui": null,
-      "final_revision_verified": false
+      "final_revision_verified": true,
+      "previous_checkpoint_status": "OPEN",
+      "evidence_scope": "Positive and negative assertions coexist in named capability files; final execution receipts bind exact collected nodes. Browser/manual/capacity/distribution are separate non-pytest evidence.",
+      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
+      "verification_ref": "docs/verification/final-verification.json"
     },
     {
       "api": null,
       "blocker": null,
       "cli": null,
-      "commits": [],
-      "core_required": true,
-      "implementation": [],
-      "missing": [
-        "Server identities, roles, quorum, revisions and review action replay"
+      "commits": [
+        "b63ba379327af4eb102d4a852498509cef9a3bf8"
       ],
-      "negative_tests": [],
-      "positive_tests": [],
+      "core_required": true,
+      "implementation": [
+        "src/kg_mnp/modeling/control_plane/review"
+      ],
+      "missing": [],
+      "negative_tests": [
+        "tests/services/test_review_revisions.py",
+        "tests/services/test_scope_revision.py",
+        "tests/services/test_release_policy.py"
+      ],
+      "positive_tests": [
+        "tests/services/test_review_revisions.py",
+        "tests/services/test_scope_revision.py",
+        "tests/services/test_release_policy.py"
+      ],
       "requirement_id": "G2.review",
       "sdk": null,
       "source_requirement": "Server identities, roles, quorum, revisions and review action replay",
-      "status": "OPEN",
+      "status": "CLOSED_VERIFIED",
       "ui": null,
-      "final_revision_verified": false
+      "final_revision_verified": true,
+      "previous_checkpoint_status": "OPEN",
+      "evidence_scope": "Positive and negative assertions coexist in named capability files; final execution receipts bind exact collected nodes. Browser/manual/capacity/distribution are separate non-pytest evidence.",
+      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
+      "verification_ref": "docs/verification/final-verification.json"
     },
     {
       "api": null,
       "blocker": null,
       "cli": null,
-      "commits": [],
-      "core_required": true,
-      "implementation": [],
-      "missing": [
-        "Real reasoner, SHACL, explicit CQ oracle and provenance closure"
+      "commits": [
+        "b63ba379327af4eb102d4a852498509cef9a3bf8"
       ],
-      "negative_tests": [],
-      "positive_tests": [],
+      "core_required": true,
+      "implementation": [
+        "src/kg_mnp/semantic_kernel"
+      ],
+      "missing": [],
+      "negative_tests": [
+        "tests/e2e/test_minimal_ontology_package.py",
+        "tests/security/test_semantic_compiler_security.py"
+      ],
+      "positive_tests": [
+        "tests/e2e/test_minimal_ontology_package.py",
+        "tests/security/test_semantic_compiler_security.py"
+      ],
       "requirement_id": "G2.validation",
       "sdk": null,
       "source_requirement": "Real reasoner, SHACL, explicit CQ oracle and provenance closure",
-      "status": "OPEN",
+      "status": "CLOSED_VERIFIED",
       "ui": null,
-      "final_revision_verified": false
+      "final_revision_verified": true,
+      "previous_checkpoint_status": "OPEN",
+      "evidence_scope": "Positive and negative assertions coexist in named capability files; final execution receipts bind exact collected nodes. Browser/manual/capacity/distribution are separate non-pytest evidence.",
+      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
+      "verification_ref": "docs/verification/final-verification.json"
     },
     {
       "api": null,
       "blocker": null,
       "cli": null,
-      "commits": [],
-      "core_required": true,
-      "implementation": [],
-      "missing": [
-        "Feedback/change/consumer/diff/impact/regression/release/environment review and historical rollback"
+      "commits": [
+        "b63ba379327af4eb102d4a852498509cef9a3bf8"
       ],
-      "negative_tests": [],
-      "positive_tests": [],
+      "core_required": true,
+      "implementation": [
+        "src/kg_mnp/lifecycle"
+      ],
+      "missing": [],
+      "negative_tests": [
+        "tests/services/test_lifecycle_completion.py",
+        "tests/services/test_environment_read_boundary.py"
+      ],
+      "positive_tests": [
+        "tests/services/test_lifecycle_completion.py",
+        "tests/services/test_environment_read_boundary.py"
+      ],
       "requirement_id": "G3.lifecycle",
       "sdk": null,
       "source_requirement": "Feedback/change/consumer/diff/impact/regression/release/environment review and historical rollback",
-      "status": "OPEN",
+      "status": "CLOSED_VERIFIED",
       "ui": null,
-      "final_revision_verified": false
+      "final_revision_verified": true,
+      "previous_checkpoint_status": "OPEN",
+      "evidence_scope": "Positive and negative assertions coexist in named capability files; final execution receipts bind exact collected nodes. Browser/manual/capacity/distribution are separate non-pytest evidence.",
+      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
+      "verification_ref": "docs/verification/final-verification.json"
     },
     {
       "api": null,
       "blocker": null,
       "cli": null,
-      "commits": [],
-      "core_required": true,
-      "implementation": [],
-      "missing": [
-        "Version-bound local OMS/ODS, typed literals, paging, timeouts and safe query grammar"
+      "commits": [
+        "b63ba379327af4eb102d4a852498509cef9a3bf8"
       ],
-      "negative_tests": [],
-      "positive_tests": [],
+      "core_required": true,
+      "implementation": [
+        "src/kg_mnp/services/lifecycle.py"
+      ],
+      "missing": [],
+      "negative_tests": [
+        "tests/integrations/test_object_query.py",
+        "tests/integrations/test_package_read_snapshots.py"
+      ],
+      "positive_tests": [
+        "tests/integrations/test_object_query.py",
+        "tests/integrations/test_package_read_snapshots.py"
+      ],
       "requirement_id": "G3.queries",
       "sdk": null,
       "source_requirement": "Version-bound local OMS/ODS, typed literals, paging, timeouts and safe query grammar",
-      "status": "OPEN",
+      "status": "CLOSED_VERIFIED",
       "ui": null,
-      "final_revision_verified": false
+      "final_revision_verified": true,
+      "previous_checkpoint_status": "OPEN",
+      "evidence_scope": "Positive and negative assertions coexist in named capability files; final execution receipts bind exact collected nodes. Browser/manual/capacity/distribution are separate non-pytest evidence.",
+      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
+      "verification_ref": "docs/verification/final-verification.json"
     },
     {
       "api": null,
       "blocker": null,
       "cli": null,
-      "commits": [],
-      "core_required": true,
-      "implementation": [],
-      "missing": [
-        "Complete browser adversarial/multitab/production-policy matrix"
+      "commits": [
+        "b63ba379327af4eb102d4a852498509cef9a3bf8"
       ],
-      "negative_tests": [],
+      "core_required": true,
+      "implementation": [
+        "src/kg_mnp/services/sessions.py"
+      ],
+      "missing": [],
+      "negative_tests": [
+        "tests/services/test_browser_sessions.py",
+        "workbench/tests/security.e2e.ts"
+      ],
       "positive_tests": [
         "tests/services/test_browser_sessions.py",
-        "workbench/tests/minimal.e2e.ts"
+        "workbench/tests/security.e2e.ts"
       ],
       "requirement_id": "G4.sessions",
       "sdk": null,
       "source_requirement": "Opaque HttpOnly sessions, CSRF, origin, expiration, revoke, logout and cache isolation",
-      "status": "PARTIAL_VERIFIED",
+      "status": "CLOSED_VERIFIED",
       "ui": null,
-      "final_revision_verified": false
+      "final_revision_verified": true,
+      "previous_checkpoint_status": "PARTIAL_VERIFIED",
+      "evidence_scope": "Positive and negative assertions coexist in named capability files; final execution receipts bind exact collected nodes. Browser/manual/capacity/distribution are separate non-pytest evidence.",
+      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
+      "verification_ref": "docs/verification/final-verification.json"
     },
     {
       "api": null,
       "blocker": null,
       "cli": null,
-      "commits": [],
+      "commits": [
+        "b63ba379327af4eb102d4a852498509cef9a3bf8"
+      ],
       "core_required": true,
       "implementation": [
         "workbench/src",
-        "src/kg_mnp/api/app.py"
+        "workbench/src/project-overview.tsx",
+        "workbench/src/field-mapping-preview.tsx"
       ],
-      "missing": [
-        "Full candidate edit/conflict, field mapping, evidence linking, version governance, integrations and required UX/accessibility/performance matrix"
+      "missing": [],
+      "negative_tests": [
+        "workbench/tests/minimal.e2e.ts",
+        "workbench/tests/security.e2e.ts",
+        "workbench/src/workflow-projections.test.tsx"
       ],
-      "negative_tests": [],
       "positive_tests": [
-        "workbench/tests/minimal.e2e.ts"
+        "workbench/tests/minimal.e2e.ts",
+        "workbench/tests/security.e2e.ts",
+        "workbench/src/workflow-projections.test.tsx"
       ],
       "requirement_id": "G4.workbench",
       "sdk": null,
       "source_requirement": "One Chinese React/TypeScript/Vite workbench with actual forms, graph/table and API",
-      "status": "PARTIAL",
+      "status": "CLOSED_VERIFIED",
       "ui": null,
-      "final_revision_verified": false
+      "final_revision_verified": true,
+      "previous_checkpoint_status": "PARTIAL",
+      "evidence_scope": "Positive and negative assertions coexist in named capability files; final execution receipts bind exact collected nodes. Browser/manual/capacity/distribution are separate non-pytest evidence.",
+      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
+      "verification_ref": "docs/verification/final-verification.json"
     },
     {
       "api": null,
       "blocker": null,
       "cli": null,
-      "commits": [],
-      "core_required": true,
-      "implementation": [],
-      "missing": [
-        "Minimal/MNP/Forestry full graded workflows and arbitrary fourth pack"
+      "commits": [
+        "b63ba379327af4eb102d4a852498509cef9a3bf8"
       ],
-      "negative_tests": [],
-      "positive_tests": [],
+      "core_required": true,
+      "implementation": [
+        "domain_packs"
+      ],
+      "missing": [],
+      "negative_tests": [
+        "workbench/tests/minimal.e2e.ts",
+        "workbench/tests/arbitrary-pack.e2e.ts",
+        "tests/services/test_mnp_nonempty_workflow.py",
+        "tests/services/test_forestry_workflow.py"
+      ],
+      "positive_tests": [
+        "workbench/tests/minimal.e2e.ts",
+        "workbench/tests/arbitrary-pack.e2e.ts",
+        "tests/services/test_mnp_nonempty_workflow.py",
+        "tests/services/test_forestry_workflow.py"
+      ],
       "requirement_id": "G4.domains",
       "sdk": null,
       "source_requirement": "Minimal/MNP/Forestry full graded workflows and arbitrary fourth pack",
-      "status": "OPEN",
+      "status": "CLOSED_VERIFIED",
       "ui": null,
-      "final_revision_verified": false
+      "final_revision_verified": true,
+      "previous_checkpoint_status": "OPEN",
+      "evidence_scope": "Positive and negative assertions coexist in named capability files; final execution receipts bind exact collected nodes. Browser/manual/capacity/distribution are separate non-pytest evidence.",
+      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
+      "verification_ref": "docs/verification/final-verification.json"
     },
     {
       "api": null,
       "blocker": null,
       "cli": null,
-      "commits": [],
-      "core_required": true,
-      "implementation": [],
-      "missing": [
-        "Synthetic EXPERIMENTAL 0.2.0 tree/inspection/site assets and negative cases"
+      "commits": [
+        "b63ba379327af4eb102d4a852498509cef9a3bf8"
       ],
-      "negative_tests": [],
-      "positive_tests": [],
+      "core_required": true,
+      "implementation": [
+        "domain_packs/forestry"
+      ],
+      "missing": [],
+      "negative_tests": [
+        "tests/domain_packs/test_forestry_synthetic.py",
+        "tests/services/test_forestry_workflow.py"
+      ],
+      "positive_tests": [
+        "tests/domain_packs/test_forestry_synthetic.py",
+        "tests/services/test_forestry_workflow.py"
+      ],
       "requirement_id": "G4.forestry",
       "sdk": null,
       "source_requirement": "Synthetic EXPERIMENTAL 0.2.0 tree/inspection/site assets and negative cases",
-      "status": "OPEN",
+      "status": "CLOSED_VERIFIED",
       "ui": null,
-      "final_revision_verified": false
+      "final_revision_verified": true,
+      "previous_checkpoint_status": "OPEN",
+      "evidence_scope": "Positive and negative assertions coexist in named capability files; final execution receipts bind exact collected nodes. Browser/manual/capacity/distribution are separate non-pytest evidence.",
+      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
+      "verification_ref": "docs/verification/final-verification.json"
     },
     {
       "api": null,
       "blocker": null,
       "cli": null,
-      "commits": [],
-      "core_required": true,
-      "implementation": [],
-      "missing": [
-        "Actual browser scenarios A-E, artifact IDs, screenshots, keyboard/a11y and performance"
+      "commits": [
+        "b63ba379327af4eb102d4a852498509cef9a3bf8"
       ],
-      "negative_tests": [],
-      "positive_tests": [],
+      "core_required": true,
+      "implementation": [
+        "tools/run_browser_verification.py"
+      ],
+      "missing": [],
+      "negative_tests": [
+        "workbench/tests/minimal.e2e.ts",
+        "workbench/tests/security.e2e.ts",
+        "workbench/tests/arbitrary-pack.e2e.ts",
+        "workbench/tests/rendering.spec.ts"
+      ],
+      "positive_tests": [
+        "workbench/tests/minimal.e2e.ts",
+        "workbench/tests/security.e2e.ts",
+        "workbench/tests/arbitrary-pack.e2e.ts",
+        "workbench/tests/rendering.spec.ts"
+      ],
       "requirement_id": "G4.browser",
       "sdk": null,
       "source_requirement": "Actual browser scenarios A-E, artifact IDs, screenshots, keyboard/a11y and performance",
-      "status": "OPEN",
+      "status": "CLOSED_VERIFIED",
       "ui": null,
-      "final_revision_verified": false
+      "final_revision_verified": true,
+      "previous_checkpoint_status": "OPEN",
+      "evidence_scope": "Positive and negative assertions coexist in named capability files; final execution receipts bind exact collected nodes. Browser/manual/capacity/distribution are separate non-pytest evidence.",
+      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
+      "verification_ref": "docs/verification/final-verification.json"
     },
     {
       "api": null,
       "blocker": null,
       "cli": null,
-      "commits": [],
-      "core_required": true,
-      "implementation": [],
-      "missing": [
-        "Actual caller-led old code/UI/CLI/docs/script retirement after G1-G4"
+      "commits": [
+        "b63ba379327af4eb102d4a852498509cef9a3bf8"
       ],
-      "negative_tests": [],
-      "positive_tests": [],
+      "core_required": true,
+      "implementation": [
+        "docs/migration/final-retirement-ledger.json"
+      ],
+      "missing": [],
+      "negative_tests": [
+        "tests/compatibility/test_readonly_reconstruction.py",
+        "tests/scripts/test_retired_asset_writers.py",
+        "tests/refactor/test_product_boundaries.py"
+      ],
+      "positive_tests": [
+        "tests/compatibility/test_readonly_reconstruction.py",
+        "tests/scripts/test_retired_asset_writers.py",
+        "tests/refactor/test_product_boundaries.py"
+      ],
       "requirement_id": "G5.retirement",
       "sdk": null,
       "source_requirement": "Actual caller-led old code/UI/CLI/docs/script retirement after G1-G4",
-      "status": "OPEN",
+      "status": "CLOSED_VERIFIED",
       "ui": null,
-      "final_revision_verified": false
+      "final_revision_verified": true,
+      "previous_checkpoint_status": "OPEN",
+      "evidence_scope": "Positive and negative assertions coexist in named capability files; final execution receipts bind exact collected nodes. Browser/manual/capacity/distribution are separate non-pytest evidence.",
+      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
+      "verification_ref": "docs/verification/final-verification.json"
     },
     {
       "api": null,
       "blocker": null,
       "cli": null,
-      "commits": [],
-      "core_required": true,
-      "implementation": [],
-      "missing": [
-        "115 versioned schema bytes, minimal/mnp and 84 MNP asset preservation"
+      "commits": [
+        "b63ba379327af4eb102d4a852498509cef9a3bf8"
       ],
-      "negative_tests": [],
-      "positive_tests": [],
+      "core_required": true,
+      "implementation": [
+        "src/kg_mnp/contracts"
+      ],
+      "missing": [],
+      "negative_tests": [
+        "tests/compatibility/test_contract_versions.py",
+        "tests/compatibility/test_domain_baseline_audit.py"
+      ],
+      "positive_tests": [
+        "tests/compatibility/test_contract_versions.py",
+        "tests/compatibility/test_domain_baseline_audit.py"
+      ],
       "requirement_id": "G5.contracts",
       "sdk": null,
       "source_requirement": "115 versioned schema bytes, minimal/mnp and 84 MNP asset preservation",
-      "status": "OPEN",
+      "status": "CLOSED_VERIFIED",
       "ui": null,
-      "final_revision_verified": false
+      "final_revision_verified": true,
+      "previous_checkpoint_status": "OPEN",
+      "evidence_scope": "Positive and negative assertions coexist in named capability files; final execution receipts bind exact collected nodes. Browser/manual/capacity/distribution are separate non-pytest evidence.",
+      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
+      "verification_ref": "docs/verification/final-verification.json"
     },
     {
       "api": null,
       "blocker": null,
       "cli": null,
-      "commits": [],
-      "core_required": true,
-      "implementation": [],
-      "missing": [
-        "Capability test migration ledger, unique test sets and capability CI"
+      "commits": [
+        "b63ba379327af4eb102d4a852498509cef9a3bf8"
       ],
-      "negative_tests": [],
-      "positive_tests": [],
+      "core_required": true,
+      "implementation": [
+        "tools/verify_candidate.py",
+        ".github/workflows"
+      ],
+      "missing": [],
+      "negative_tests": [
+        "tests/scripts/test_verification_receipts.py",
+        "tests/scripts/test_candidate_orchestration.py"
+      ],
+      "positive_tests": [
+        "tests/scripts/test_verification_receipts.py",
+        "tests/scripts/test_candidate_orchestration.py"
+      ],
       "requirement_id": "G5.quality",
       "sdk": null,
       "source_requirement": "Capability test migration ledger, unique test sets and capability CI",
-      "status": "OPEN",
+      "status": "CLOSED_VERIFIED",
       "ui": null,
-      "final_revision_verified": false
+      "final_revision_verified": true,
+      "previous_checkpoint_status": "OPEN",
+      "evidence_scope": "Positive and negative assertions coexist in named capability files; final execution receipts bind exact collected nodes. Browser/manual/capacity/distribution are separate non-pytest evidence.",
+      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
+      "verification_ref": "docs/verification/final-verification.json"
     },
     {
       "api": null,
       "blocker": null,
       "cli": null,
-      "commits": [],
-      "core_required": true,
-      "implementation": [],
-      "missing": [
-        "Current product docs, operating commands, research implementation/evidence limits"
+      "commits": [
+        "b63ba379327af4eb102d4a852498509cef9a3bf8"
       ],
-      "negative_tests": [],
-      "positive_tests": [],
+      "core_required": true,
+      "implementation": [
+        "README.md",
+        "docs/architecture/toolchain.md",
+        "docs/security/authority-boundaries.md",
+        "docs/research/implementation-evidence.md"
+      ],
+      "missing": [],
+      "negative_tests": [
+        "tests/refactor/test_product_docs.py"
+      ],
+      "positive_tests": [
+        "tests/refactor/test_product_docs.py"
+      ],
       "requirement_id": "G5.docs",
       "sdk": null,
       "source_requirement": "Current product docs, operating commands, research implementation/evidence limits",
-      "status": "OPEN",
+      "status": "CLOSED_VERIFIED",
       "ui": null,
-      "final_revision_verified": false
+      "final_revision_verified": true,
+      "previous_checkpoint_status": "OPEN",
+      "evidence_scope": "Positive and negative assertions coexist in named capability files; final execution receipts bind exact collected nodes. Browser/manual/capacity/distribution are separate non-pytest evidence.",
+      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
+      "verification_ref": "docs/verification/final-verification.json"
     },
     {
       "api": null,
       "blocker": null,
       "cli": null,
-      "commits": [],
-      "core_required": true,
-      "implementation": [],
-      "missing": [
-        "Wheel/sdist/static bundle with digests, clean install/startup/recovery on Windows and POSIX"
+      "commits": [
+        "b63ba379327af4eb102d4a852498509cef9a3bf8"
       ],
-      "negative_tests": [],
-      "positive_tests": [],
+      "core_required": true,
+      "implementation": [
+        "tools/verify_distribution.py",
+        "tools/probe_installed_distribution.py"
+      ],
+      "missing": [],
+      "negative_tests": [
+        "tests/scripts/test_distribution_archives.py"
+      ],
+      "positive_tests": [
+        "tests/scripts/test_distribution_archives.py"
+      ],
       "requirement_id": "G6.distribution",
       "sdk": null,
       "source_requirement": "Wheel/sdist/static bundle with digests, clean install/startup/recovery on Windows and POSIX",
-      "status": "OPEN",
+      "status": "CLOSED_VERIFIED",
       "ui": null,
-      "final_revision_verified": false
+      "final_revision_verified": true,
+      "previous_checkpoint_status": "OPEN",
+      "evidence_scope": "Positive and negative assertions coexist in named capability files; final execution receipts bind exact collected nodes. Browser/manual/capacity/distribution are separate non-pytest evidence.",
+      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
+      "verification_ref": "docs/verification/final-verification.json"
     },
     {
       "api": null,
       "blocker": null,
       "cli": null,
-      "commits": [],
-      "core_required": true,
-      "implementation": [],
-      "missing": [
-        "All required feature/domain acceptance and full platform/browser/quality coverage"
+      "commits": [
+        "b63ba379327af4eb102d4a852498509cef9a3bf8"
       ],
-      "negative_tests": [],
+      "core_required": true,
+      "implementation": [
+        "tools/verify_release_candidate.py",
+        "tools/verify_candidate.py"
+      ],
+      "missing": [],
+      "negative_tests": [
+        "tests/scripts/test_verification_receipts.py"
+      ],
       "positive_tests": [
-        "1575-node fixed backend partition union",
-        "60 Linux POSIX cases",
-        "one actual Minimal browser scenario",
-        "isolated Wheel/static/API resource probe"
+        "tests/scripts/test_verification_receipts.py"
       ],
       "requirement_id": "G6.freeze",
       "sdk": null,
       "source_requirement": "Clean fixed commit, complete pytest/browser collection, full command receipts and delivery consistency",
-      "status": "PARTIAL_VERIFIED",
+      "status": "CLOSED_VERIFIED",
       "ui": null,
-      "final_revision_verified": false
+      "final_revision_verified": true,
+      "previous_checkpoint_status": "PARTIAL_VERIFIED",
+      "evidence_scope": "Positive and negative assertions coexist in named capability files; final execution receipts bind exact collected nodes. Browser/manual/capacity/distribution are separate non-pytest evidence.",
+      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
+      "verification_ref": "docs/verification/final-verification.json"
     },
     {
       "api": null,
       "blocker": null,
       "cli": null,
-      "commits": [],
-      "core_required": true,
-      "implementation": [],
-      "missing": [
-        "Normal target push, final decision and no success tag until required gates pass"
+      "commits": [
+        "b63ba379327af4eb102d4a852498509cef9a3bf8"
       ],
-      "negative_tests": [],
-      "positive_tests": [],
+      "core_required": true,
+      "implementation": [
+        "docs/release/release-candidate-notes.md"
+      ],
+      "missing": [],
+      "negative_tests": [
+        "tests/compatibility/test_repository_history.py"
+      ],
+      "positive_tests": [
+        "tests/compatibility/test_repository_history.py"
+      ],
       "requirement_id": "G6.delivery",
       "sdk": null,
       "source_requirement": "Normal target push, final decision and no success tag until required gates pass",
-      "status": "OPEN",
+      "status": "CLOSED_VERIFIED",
       "ui": null,
-      "final_revision_verified": false
+      "final_revision_verified": true,
+      "previous_checkpoint_status": "OPEN",
+      "evidence_scope": "Positive and negative assertions coexist in named capability files; final execution receipts bind exact collected nodes. Browser/manual/capacity/distribution are separate non-pytest evidence.",
+      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
+      "verification_ref": "docs/verification/final-verification.json"
     }
   ],
   "source_commit": "9da17d126cb37166ff06084080770108da20afbe",
   "target_branch": "codex/toolchain-final-consolidation-p09",
-  "current_status": "IMPLEMENTATION_AND_REFACTOR_IN_PROGRESS_NOT_FINAL_RELEASE_ACCEPTANCE",
-  "implementation_checkpoint": "aefe6509480ae28706dcc38712bf56d73ed0988b",
-  "remaining_required": [
-    "Consolidate/delete remaining legacy backend engines and their duplicate authorities; current legacy backend roots still present",
-    "Complete per-file/per-node retirement ledger and clean obsolete reports/scripts/configuration without dropping safety assertions",
-    "Finish full release-verification entry: Windows/Linux clean install, startup/recovery, source/SDist/wheel equality and documentation command runs",
-    "Run all required checks on one new clean code freeze; all current browserpassesprecedecompiler0.5.1 and cannotcertifyitsfinalrelease",
-    "Update the original53operation mapping and allclosed/openrequirements against completed implementation and fixed evidence",
-    "Final evidence-only commit/equalityproof, artifactbundlehashes and remoteconsistency; no successcandidateTaguntilallrequiredgates"
-  ]
+  "current_status": "GO_RELEASE_CANDIDATE_WITH_OPTIONAL_EXTERNAL_BLOCKERS",
+  "implementation_checkpoint": "b63ba379327af4eb102d4a852498509cef9a3bf8",
+  "remaining_required": [],
+  "added_operations": [
+    {
+      "operation": "source.list",
+      "implementation": "kg_mnp.services.sources.execute",
+      "api": "GET /api/v1/projects/{project_id}/sources",
+      "request_contract": "EmptyRequest"
+    },
+    {
+      "operation": "source.batch",
+      "implementation": "kg_mnp.services.sources.execute",
+      "api": "POST /api/v1/projects/{project_id}/source-batches",
+      "request_contract": "SourceBatchRequest"
+    },
+    {
+      "operation": "source.verify",
+      "implementation": "kg_mnp.services.sources.execute",
+      "api": "typed compatibility operation",
+      "request_contract": "SourceRequest"
+    },
+    {
+      "operation": "evidence.list",
+      "implementation": "kg_mnp.services.sources.execute",
+      "api": "GET /api/v1/projects/{project_id}/evidence",
+      "request_contract": "IngestionInspectRequest"
+    },
+    {
+      "operation": "kgir.inspect",
+      "implementation": "kg_mnp.services.sources.execute",
+      "api": "typed compatibility operation",
+      "request_contract": "IngestionInspectRequest"
+    },
+    {
+      "operation": "kgir.validate",
+      "implementation": "kg_mnp.services.sources.execute",
+      "api": "typed compatibility operation",
+      "request_contract": "IngestionInspectRequest"
+    },
+    {
+      "operation": "object.trace",
+      "implementation": "kg_mnp.services.lifecycle.execute",
+      "api": "POST /api/v1/projects/{project_id}/objects/trace",
+      "request_contract": "ObjectTraceRequest"
+    },
+    {
+      "operation": "modeling.prepare",
+      "implementation": "kg_mnp.services.modeling.execute",
+      "api": "POST /api/v1/projects/{project_id}/modeling/preparations",
+      "request_contract": "ModelingPrepareRequest"
+    },
+    {
+      "operation": "release.candidate",
+      "implementation": "kg_mnp.services.lifecycle.execute",
+      "api": "POST /api/v1/projects/{project_id}/lifecycle/release-candidates",
+      "request_contract": "ReleaseCandidateRequest"
+    },
+    {
+      "operation": "feedback.add",
+      "implementation": "kg_mnp.services.lifecycle.execute",
+      "api": "POST /api/v1/projects/{project_id}/lifecycle/feedback",
+      "request_contract": "FeedbackRequest"
+    },
+    {
+      "operation": "consumer.register",
+      "implementation": "kg_mnp.services.lifecycle.execute",
+      "api": "POST /api/v1/projects/{project_id}/lifecycle/consumers",
+      "request_contract": "ConsumerRequest"
+    },
+    {
+      "operation": "environment.create",
+      "implementation": "kg_mnp.services.lifecycle.execute",
+      "api": "POST /api/v1/projects/{project_id}/lifecycle/environments",
+      "request_contract": "EnvironmentCreateRequest"
+    },
+    {
+      "operation": "environment.propose",
+      "implementation": "kg_mnp.services.lifecycle.execute",
+      "api": "POST /api/v1/projects/{project_id}/lifecycle/environment-proposals",
+      "request_contract": "EnvironmentProposalRequest"
+    },
+    {
+      "operation": "environment.review",
+      "implementation": "kg_mnp.services.lifecycle.execute",
+      "api": "POST /api/v1/projects/{project_id}/lifecycle/environment-reviews",
+      "request_contract": "EnvironmentReviewRequest"
+    }
+  ],
+  "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
+  "evidence_scope": "Complete same-commit Windows/Linux and browser receipts; explicit canonical mappings, not count-based coverage or a claim that every compatibility alias has a separate GUI button"
 }

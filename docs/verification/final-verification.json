@@ -1,1718 +1,1809 @@
 {
-  "decision": "NO_GO_REFACTOR_INCOMPLETE",
+  "decision": "GO_RELEASE_CANDIDATE_WITH_OPTIONAL_EXTERNAL_BLOCKERS",
   "source_commit": "9da17d126cb37166ff06084080770108da20afbe",
+  "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
+  "tested_source_tree_digest": "9d32656393ca26a77e2a2fe9d4196fa7778fc37c5cbea15188a269fd98524a87",
+  "tree_digest_method": "SHA256 of sorted Git mode/blob/path records excluding only four named evidence files; raw checkout digests are separately recorded for CRLF/LF platform representations",
   "branch": "codex/toolchain-final-consolidation-p09",
-  "implementation_checkpoint": "dfcfa8ce3a0a9b4ed2f5017df2371eaf81cfff41",
-  "incremental_evidence_bundle": {
-    "path": "runtime_logs/p09/checkpoint-evidence-20260908.zip",
-    "sha256": "6c21f1d3318f55bddf83658daeedd402f25fdf54b2d39b575ef070ba9dc58a8a",
-    "size_bytes": 4286279,
-    "crc_verified": true,
-    "credential_scan": "No runtime bearer/session token pattern found in included text; runtime workspaces/token stores excluded",
-    "qualification": "Separate c77/a231/dfc incremental evidence, not final acceptance or a release-candidate distribution"
+  "criteria": {
+    "CORE_COMPLETE": "PASS",
+    "WORKBENCH_COMPLETE": "PASS",
+    "GENERALIZATION_VERIFIED": "PASS",
+    "SECURITY_VERIFIED": "PASS",
+    "REFACTOR_COMPLETE": "PASS",
+    "COMPATIBILITY_VERIFIED": "PASS",
+    "RELEASE_CANDIDATE_VERIFIED": "PASS"
   },
-  "continuation_g5_checkpoint": {
-    "kind": "INCREMENTAL_G5_NOT_FINAL_ACCEPTANCE",
-    "implementation_commit": "a23102dc5891e26600abd262fd958110260f37a8",
-    "commits": [
-      "435d2d0",
-      "d8250b5",
-      "c77c655",
-      "a23102d"
-    ],
-    "tests": [
-      {
-        "path": "runtime_logs/p09/current-transactions.xml",
-        "tests": 46,
-        "failures": 0,
-        "errors": 0,
-        "skipped": 0,
-        "seconds": 64.969,
-        "sha256": "82b08fa34b04cc21f1f8bcff7bd91408677226847f49bb2f6dbb419c16c289ac"
-      },
-      {
-        "path": "runtime_logs/p09/current-staging-green.xml",
-        "tests": 14,
-        "failures": 0,
-        "errors": 0,
-        "skipped": 0,
-        "seconds": 5.726,
-        "sha256": "0d980aec18ed5eeff1b00277fbf31daf55ff276e18f3c38796de1d4fcc6a834d"
-      },
-      {
-        "path": "runtime_logs/p09/relay-retirement-green.xml",
-        "tests": 37,
-        "failures": 0,
-        "errors": 0,
-        "skipped": 0,
-        "seconds": 7.08,
-        "sha256": "20c581ccb02546efde2ccc46432a4524c04ccbb4711661ec574b9daf2ff17546"
-      },
-      {
-        "path": "runtime_logs/p09/workbench-writer-retirement-green-b.xml",
-        "tests": 15,
-        "failures": 0,
-        "errors": 0,
-        "skipped": 0,
-        "seconds": 2.537,
-        "sha256": "6cb7ee19447b309ee34174edef90c1a2000a86e7c891a6020e1d2386dc49fbee"
-      },
-      {
-        "path": "runtime_logs/p09/mnp-reader-green.xml",
-        "tests": 56,
-        "failures": 0,
-        "errors": 0,
-        "skipped": 0,
-        "seconds": 115.494,
-        "sha256": "d23c0f134f7f356314535b29497ace464d0ee78a41ee624b02422897d4f00f00"
-      },
-      {
-        "path": "runtime_logs/p09/retirement-compatibility.xml",
-        "tests": 9,
-        "failures": 0,
-        "errors": 0,
-        "skipped": 0,
-        "seconds": 8.442,
-        "sha256": "5e9a7e4dc3caf951338bdca9175a82b7e21907798dd0fd4ee671817bba4bffe3"
-      },
-      {
-        "path": "runtime_logs/p09/reconstruction-retirement.xml",
-        "tests": 219,
-        "failures": 15,
-        "errors": 0,
-        "skipped": 0,
-        "seconds": 665.536,
-        "sha256": "7dcf0f05384a34458b5ebdf89559966c3edc0da66160d5e1de748a26a4d7373f"
-      },
-      {
-        "path": "runtime_logs/p09/reconstruction-retirement-repair.xml",
-        "tests": 24,
-        "failures": 0,
-        "errors": 0,
-        "skipped": 0,
-        "seconds": 362.373,
-        "sha256": "4d7c483f58f05494957f5705b6f5a8c534630d000a1605666a364d1eb6058e79"
-      },
-      {
-        "path": "runtime_logs/p09/query-reader-golden.xml",
-        "tests": 11,
-        "failures": 0,
-        "errors": 0,
-        "skipped": 0,
-        "seconds": 78.686,
-        "sha256": "ee45ae7102262308d1003a2c6544563dbd17125e8809df47c9e3358fb78d4b41"
-      },
-      {
-        "path": "runtime_logs/p09/query-reader-integrity.xml",
-        "tests": 6,
-        "failures": 0,
-        "errors": 0,
-        "skipped": 0,
-        "seconds": 30.683,
-        "sha256": "5da0188c69af30d2368fc37219ed599ce3e9745fb04799cb2d90d64f88ea532b"
-      },
-      {
-        "path": "runtime_logs/p09/query-reader-final.xml",
-        "tests": 2,
-        "failures": 0,
-        "errors": 0,
-        "skipped": 0,
-        "seconds": 1.299,
-        "sha256": "1901d113b70f79865477f4e63038bf54c87ee9cf8be6176632ac64420ac2b219"
-      },
-      {
-        "path": "runtime_logs/p09/retirement-final-helpers.xml",
-        "tests": 16,
-        "failures": 0,
-        "errors": 0,
-        "skipped": 0,
-        "seconds": 1.834,
-        "sha256": "78118f634d4eebb4a5091ed93b269f3423542e8b9e08125bcecff1f55a953ecd"
-      }
-    ],
-    "count_policy": "Separate working-increment runs with overlaps and intermediate fixes; never sum these into unique full-revision PASS.",
-    "implementations": [
-      "Shared current Workspace directory commit and uniquely owned staging; failure cleanup preserves unowned targets and old staging; semantic entry failure releases lock.",
-      "Retired historical compilation/GraphDB/publication/WebVOWL/workbench writer interfaces and old HTTP relay; pure historical byte reconstruction retained.",
-      "Retired root MNP pipeline, standalone showcase HTML and assessment file publishers; frozen MNP semantic/rule/evidence/SHACL tests migrated.",
-      "Exactly one ApplicationService declaration remains. Historical query-result reader is offline, bounded and uses the current RDF subprocess; original golden result hashes preserved."
-    ],
-    "compatibility": {
-      "original_115_schema_bytes": "PRESERVED_BY_EXECUTED_TEST",
-      "mnp_original_84_assets": "PRESERVED_BY_EXECUTED_TEST",
-      "minimal_assets": "PRESERVED_BY_EXECUTED_TEST",
-      "prior_050_archive_sha256": "4e6ba7225348a201c1ba2076e58f3c1bff370a97dae7000e99ebe53f9be3f983",
-      "actual_controlled_reconstruction": {
-        "exit_code": 0,
-        "seconds": 232.219,
-        "evidence": "runtime_logs/p09/controlled-reconstruction-c77c655/historical-controlled-reader"
-      }
-    },
-    "linux": {
-      "commit": "a23102dc5891e26600abd262fd958110260f37a8",
-      "checkout": "/var/tmp/kg-mnp-a231.BeqQqs",
-      "evidence": "runtime_logs/p09/linux-current-staging/junit.xml",
-      "passed": 57,
-      "failed": 0,
-      "skipped": 0,
-      "scope": "Workspace, ingestion/workspace security, compatibility, historical query identity, modeling transaction subset. Reuses prepared locked Python3.12.3 environment; not a new clean installation or full Linux suite."
-    },
-    "browser": {
-      "commit": "c77c6555d5b555eea639fc8f2258043e5c096b21",
+  "gates": {
+    "G0": {
       "status": "PASS",
-      "passed": 5,
-      "failed": 0,
-      "evidence": "runtime/p09-browser-c77c655-src/runtime_logs/p09/browser-runs/managed-9ed49be445e9478bb4411c5684976267",
-      "receipt_sha256": "37ab8e6c965895132b96cc7c5dd8c1f0d48810e7055213f6da8089e87db506a7",
-      "junit_sha256": "ff139c78350f4c7832612af1aa74f4a41337c9806f2164140395dbd10ab871bd",
-      "shutdown": {
-        "credentials_removed": true,
-        "credentials_revoked": true,
-        "worker_stopped": true
-      },
-      "domain_runs": [
-        {
-          "measurement": {
-            "domain": "mnp",
-            "elapsed_seconds": 758.0597253999999,
-            "browser": "153.0.8010.12",
-            "platform": "win32",
-            "os_release": "10.0.26200",
-            "cpu": "12th Gen Intel(R) Core(TM) i7-12700H",
-            "logical_cpus": 20,
-            "total_memory_bytes": 34003582976,
-            "source_count": 1,
-            "reviewed_candidate_count": 10,
-            "expected_instance_count": 1,
-            "viewports": [
-              {
-                "width": 1024,
-                "height": 768
-              },
-              {
-                "width": 1366,
-                "height": 768
-              },
-              {
-                "width": 1440,
-                "height": 900
-              },
-              {
-                "width": 1920,
-                "height": 1080
-              }
-            ],
-            "method": "Real Chromium form actions; persistent worker completion observed through authorized HTTP state. Wall time includes polling and actual reasoner execution."
-          },
-          "ids": {
-            "project_id": "urn:kg-mnp:project:3c9c58c959faaa2060d8f4f28827ce0934cbd0a2ac945bfcdd265a8ad61345e4",
-            "source_id": "urn:kg-mnp:source:e1a1ab7efe1facd155bce8a4a689cac0f11d545f0c19d7aff441182489eb87f3",
-            "run_id": "urn:kg-mnp:ingestion-run:52be5e8ef5075a588376d11be4694f99dd015bc78070dbe724203b316c0d0b89",
-            "scope_id": "urn:kg-mnp:ontology-scope:28b40f5bac63f672a3e3e6af91897c69b45da840c08efe5fbe54e681e4521c0e",
-            "proposal_id": "urn:kg-mnp:ontology-modeling-proposal:e81f7cc889f05d3a854c8b53a43d27ebcca219c680e04f61cd1838d9738f941d",
-            "review_id": "urn:kg-mnp:ontology-review-queue:bf1ce9aad14eb3f4d5ae55a00fe2d4639ec4b5284458495deb676c8d0ce2d104",
-            "package_id": "urn:kg-mnp:ontology-package:4a7f6627d6b51719bb4fb1ed359c5f77465776e23f6078786ad232a7acc64556",
-            "release_id": "urn:kg-mnp:release:2035d852f15f923adf9552a0db1938d995c006f5f9ba5ad6e429bc7377bc89b3",
-            "job_ids": [
-              "job_83337777ddfb4622b2752327fb730200",
-              "job_fd95638c53fe4dc08e5d39d86ce26743",
-              "job_9d96deb0eac24fb1bdf264ad8274cb40",
-              "job_16f3f924b3614644a2e02d36084879a0",
-              "job_d0a112e5b3a2474a8cff74e774cfc7b9",
-              "job_ee37e7525e9d4ea9a145419d59c875aa",
-              "job_fb52dcd673e948a4818e75c3e8554f86",
-              "job_78cd24bf7cea496b8ccd397a9dd5d3f2",
-              "job_3b90cac8c02f4053bbd631d802b3f2a6",
-              "job_48e58ce778064ee785e00ce2f635c055",
-              "job_3e1ef79b93c74a7bae9dc826c9f35c8f",
-              "job_a20d645269c54136801f6a2b18c5ccc6",
-              "job_427522f716eb41b4a8e9bb204c282a91",
-              "job_2a8195703270412da1ebef8bb26d3d43",
-              "job_60a7638647654998a2d69429f953e5ab",
-              "job_7539ba73aa89412cbfeab7ee7f93f47c",
-              "job_bb10fb0ff9ab448589cb2d320f846b51",
-              "job_00d80cdb5ed34aa3ac6f3fed92ce31fd",
-              "job_beb86e18b37b4185a45ec71f3ae1d56e",
-              "job_b2cbf24f4c514e979b7c6f643851074a",
-              "job_dc8c38574edf4bbf9755372113565ccf",
-              "job_8641b7c4582e4fc48a9494678c687311",
-              "job_a0614499fba940d9b1af3a3209421f5d",
-              "job_45cdbd10a619479992c9deb9d4060c82"
-            ]
-          }
-        },
-        {
-          "measurement": {
-            "domain": "forestry",
-            "elapsed_seconds": 808.7881841000001,
-            "browser": "153.0.8010.12",
-            "platform": "win32",
-            "os_release": "10.0.26200",
-            "cpu": "12th Gen Intel(R) Core(TM) i7-12700H",
-            "logical_cpus": 20,
-            "total_memory_bytes": 34003582976,
-            "source_count": 3,
-            "reviewed_candidate_count": 83,
-            "expected_instance_count": 6,
-            "viewports": [
-              {
-                "width": 1024,
-                "height": 768
-              },
-              {
-                "width": 1366,
-                "height": 768
-              },
-              {
-                "width": 1440,
-                "height": 900
-              },
-              {
-                "width": 1920,
-                "height": 1080
-              }
-            ],
-            "method": "Real Chromium form actions; persistent worker completion observed through authorized HTTP state. Wall time includes polling and actual reasoner execution."
-          },
-          "ids": {
-            "project_id": "urn:kg-mnp:project:d3c7c24d8a818560a8b5b76fcd316c78e9f43909aea16c84ee9f189dd88854b4",
-            "source_id": "urn:kg-mnp:source:d390bf268ec4e4fcc0c6963adae20c80486535c037e68f0d4b2dcbab25e476e5",
-            "run_id": "urn:kg-mnp:ingestion-run:7bcac66b984f39f9badf48025a25a54130004ed5f1a9f909ba1ed2b497bf1929",
-            "scope_id": "urn:kg-mnp:ontology-scope:db31b581cd8d012d2579fd8c1e1ce42cc4e71697879cc9434e7e4cf704b42fe6",
-            "proposal_id": "urn:kg-mnp:ontology-modeling-proposal:998eb5366de9b682eddb4e68b0008320818a4303565ddb58681cba1090b9f1dd",
-            "review_id": "urn:kg-mnp:ontology-review-queue:51f95051b4105f6801c70e41c76ca5c6e73ffb404af8684d8384fde25bbdb3c5",
-            "package_id": "urn:kg-mnp:ontology-package:4b1645891f7819585b83a9dd8a05f75437a73297aed70e6130b99d7f9bb20b9c",
-            "release_id": "urn:kg-mnp:release:5133e91760a4a2de00d24a2d31384844734ec9676759aceebb488fe1f7bbd2b3",
-            "job_ids": [
-              "job_5cec61774b6a4b64813558f501f4a27f",
-              "job_1b9134799ff6408785c43810682c9bcb",
-              "job_238259ad955647e8aa8f7a7a19f503c1",
-              "job_c15b4f31c187466da47afc853a867037",
-              "job_d6bf730c4e6e4b49969288b3ba74daf8",
-              "job_925ae8579a3246218118812085077add",
-              "job_74533baab68e40aa81734e88f24ea259",
-              "job_192195e8eceb48a39ab8621ae1655139",
-              "job_27ee5c28702b47a0ab06f04b0c723681",
-              "job_e26a11d81f9843dfac4020e5fa568ea7",
-              "job_9e5d83ec10b443ff92552105c871e654",
-              "job_91ee658e4af6417aae3e6be99212e71f",
-              "job_3ec87b4b52b6456ebb96db9d1f61ba7c",
-              "job_1846957236ee4275ba694e40ea278301",
-              "job_1b7d0fc54a17448896fc2e25ee889cf5",
-              "job_4309060836a44170b35d9e13609a2301",
-              "job_4a94f90ef5a44f87818245345f617bf9",
-              "job_9939383760014947b2ec307a5f0601a9",
-              "job_027a74cbd1be4e2cb7d405a96d887b42",
-              "job_c127e5aa26f949e4a2e51c257ecdf04f",
-              "job_80c30652755948618c1aba886e6fbd56",
-              "job_38d6774d232e47fca6bfa016e741068e",
-              "job_27bc1cb7393e4e3a8b88cd2a1732016e",
-              "job_cc9dffed513f49f4b4061d2ab12aaf94",
-              "job_e491da7c7609427fa3832361446402f1",
-              "job_492a36d5e9e44e3d8dc44f39529cab13",
-              "job_e4079781e1f54aa7ab8c410fc1c00e26",
-              "job_e41ea18a6fc34b6099f5ca81fe3e8d43",
-              "job_162f42b504b04d94ac2dd7121d32db32",
-              "job_ce199be5d7c146598c29f7dd4d9f4465",
-              "job_5340332b0df643a88ef17e0ba5f4dd77",
-              "job_a3b31b0913424faaaac282b0cac88504",
-              "job_cd9361a44eae486f9a66d0e891f3e41f",
-              "job_8846bc3b5e5b4be8a122ac43300d2a27",
-              "job_027061303dd847c48def0c6439254a63",
-              "job_f7e66750520b440a8cf1c57478b1548d",
-              "job_de36cdcdd10a4471a94237638ad29481",
-              "job_05f8570896e34d0189d14c32606e9578",
-              "job_a9b328ef9da44cf59e6c1962c610997e",
-              "job_181d263fd0dc4626b446985a17b454fa",
-              "job_08b1784fde984feea40c5492cde9118c",
-              "job_3335e94f509a49deaea42f070fa7913c",
-              "job_dc6ff5632841401693ed9e58584c406d",
-              "job_8ae3120deb7247fe84c60b95b1519a07",
-              "job_6e3ea96feecd4987a2f16e699605654f",
-              "job_4b44ff1e25da41ff94eea5e0b90ee067",
-              "job_5e0afcb8dd4344c1a9b258d023b5a194",
-              "job_5fcebcabc50945de87c8bb45edf61efa",
-              "job_2486050025c044ed919b01b90b0a5027",
-              "job_975f5410e4d74f8b94140d6a47b470c3",
-              "job_c1bc55b310d948c78b8e8251c79f4a8b",
-              "job_36251227cebd4589b88a3ba601c36a67",
-              "job_e225ffcde45f4e60be6dd89eaecaf916",
-              "job_0ef5aae379144ed19bb9d792364220c9",
-              "job_b388014b8f7e41789664cdf99555f042",
-              "job_8a4b76f4e06c432db21070c868328beb",
-              "job_cc1e63bd847442e1af54303b0e47882e",
-              "job_e3dd93d52a7d4d8d9975bf96c58aa8ad",
-              "job_8abd72c41a554feea9d644427e022f8e",
-              "job_7d2c87fef97846e8838805d1c434bedf",
-              "job_47e0d28b8bd9480bae512b6e6a7cc08a",
-              "job_ee0d869804754433b105c6a900003faa",
-              "job_ed686ebc1bfc4779acf63055762821bf",
-              "job_c5b9d97a2d3c483589cbe9f568f1f7d4",
-              "job_b0f17568b87247d6b0390ef632a8f392",
-              "job_d2bc573eca3841518968e5dd0afa66b1",
-              "job_1c86f3050837430286fee838f8be7f91",
-              "job_a03ca7e916b94b8095779a5ac6868529",
-              "job_6a6a5d7c238a41628a035e7003256ba6",
-              "job_e425392e69a54c53bf65b435c755c98d",
-              "job_1341c24ad79e408eb91cf734ecb156e0",
-              "job_59fe987a2c534bd8a5102209f46832a8",
-              "job_0bfd5762db484609a1b000169f6c30a6",
-              "job_6300424f73e0434ebe54378442dc594d",
-              "job_3e67bdb59b7b48ee84a40d61d6668437",
-              "job_f536003c28754b359093956e8365ecf6",
-              "job_3aff201ff0d547dc83414089f219cf1e",
-              "job_2309fbcf15d7461e9462b2540be7450a",
-              "job_27c210a744ed423899afd1852f9fd0f4",
-              "job_36d8f7f16b1f448d898c9c99ec33c14a",
-              "job_dfced825010d4d2e80d7ea6c3770710f",
-              "job_363953691a8f481cac082314af8495f9",
-              "job_c92c5e4ea92c46d99300047f56fc7058",
-              "job_e89d394a58e643a0bde2421791499510",
-              "job_2d7086e3d26043118a51d54e6bb5b403",
-              "job_91223e10b4be43d99f24774db958a396",
-              "job_fabe331e8f7747d3b2c80e51e41b33bd",
-              "job_b787c44e88ab430d8bdfb8fa628f4746",
-              "job_fdd294d0d62c4bb6998700c1a583a06e",
-              "job_7fb89102b0634995b6c51067fb29715c",
-              "job_c94ee3ec5d31467a80fad4d4d59cd980",
-              "job_f8c4771a506540fdaa6683113ff50ab5",
-              "job_fa3f16c3486644c186cae1a9b92e49f9",
-              "job_68047bab1dfa48ec9c8e11c81e833e79",
-              "job_eb6add857ae64075a2f1700a8580a085",
-              "job_44421cb84e82433fa5c08caf4e857f6a",
-              "job_8408c83f6fdf486083e4782331c4e9ae",
-              "job_4cba14a2ce1a4b3bb25d97422c64e0b9",
-              "job_02436b4f3dd0486ba3a5a16a5742ef61",
-              "job_9d715e57d1bf4674b33ffa9469608f68"
-            ]
-          }
-        },
-        {
-          "measurement": {
-            "domain": "minimal",
-            "elapsed_seconds": 377.8799804,
-            "browser": "153.0.8010.12",
-            "platform": "win32",
-            "os_release": "10.0.26200",
-            "cpu": "12th Gen Intel(R) Core(TM) i7-12700H",
-            "logical_cpus": 20,
-            "total_memory_bytes": 34003582976,
-            "source_count": 1,
-            "reviewed_candidate_count": 6,
-            "expected_instance_count": 1,
-            "viewports": [
-              {
-                "width": 1024,
-                "height": 768
-              },
-              {
-                "width": 1366,
-                "height": 768
-              },
-              {
-                "width": 1440,
-                "height": 900
-              },
-              {
-                "width": 1920,
-                "height": 1080
-              }
-            ],
-            "method": "Real Chromium form actions; persistent worker completion observed through authorized HTTP state. Wall time includes polling and actual reasoner execution."
-          },
-          "ids": {
-            "project_id": "urn:kg-mnp:project:15f7feb3da70fe31c8b4f33c22559c8903cc3ff56f1f0f49b56da6ddd46f5165",
-            "source_id": "urn:kg-mnp:source:a6b96e697f242db622efb316e435372f68ce9881611213756e7736b9b406cbb6",
-            "run_id": "urn:kg-mnp:ingestion-run:6182041d7074a8ddf89ce9e9c3e25f9ec4ee9a0da7e3bd7be4efa3022da68ea1",
-            "scope_id": "urn:kg-mnp:ontology-scope:02207d0c5c4d4a32e85ae890aa5fa51d19b13f683952f5a716075cf43df98468",
-            "proposal_id": "urn:kg-mnp:ontology-modeling-proposal:fff068ccfcf97e59366cf65c73bca833974fd74d240a4a5c1376fca85156e00c",
-            "review_id": "urn:kg-mnp:ontology-review-queue:7b8721eb73a159569f38c62ffec0caca8bae80caa8290ffc47c41430999bda07",
-            "package_id": "urn:kg-mnp:ontology-package:4d2d1e63e62a73d14650d350587cccdaa88ec4c044c67a3666c02823ce75c4b3",
-            "release_id": "urn:kg-mnp:release:7216bc6432b8f23b430df061e08216f8a197006349ae0513f2eb1c65440434b1",
-            "job_ids": [
-              "job_c822f99b46a444318816bd66df168a87",
-              "job_e5c9a45e39914f8d8e8877e8484f27be",
-              "job_48d823e881674b92bf55917257bb0f19",
-              "job_370750f8050645b38ed6553d012284d0",
-              "job_f036e1b4517f4baabc3c63b7924c30c9",
-              "job_f659ba04f3d942fa9cb5afc99230555b",
-              "job_1c1764f5d89e46b39b278b14310d293f",
-              "job_bccf180e5b4b42caac900c93563c7ad4",
-              "job_acafa14d07234f719315d6e290170965",
-              "job_47ad398911714c0ab2e022896a1bd82f",
-              "job_ec856e886d774d388f475d567b88e452",
-              "job_91a954ebab644a2aaacac66b8e4178d6",
-              "job_f2af98dfce394219b24db8aa6742e020",
-              "job_07da2019bf124b32b9bcb93e51219cae",
-              "job_b3fe135ea7f04f4892f7e79cda22297a",
-              "job_b46627c6071a494e9c34e82b0ca99d5c",
-              "job_f8847c7cfdb14bf092e4484ed6e67881",
-              "job_9b9ff5dce8d843ca9536e89f06870beb",
-              "job_2da7a2bab3404da58129e93ab2d76320",
-              "job_60eb794ad3cd4faaa729ab7dd82bd8a3",
-              "job_53766f6c598247418d8e35f2835ed44e",
-              "job_ddc21425ec064733aa69701cb6462e7a",
-              "job_d4a0c90017514f06bea5332efb2a1fcb",
-              "job_dcd0d5d6af8f45989fcf18f9efa8401b",
-              "job_abdb09b3b7d04691ad5b173092501330",
-              "job_589d061dbbf7432eb27da78e2e42af8e",
-              "job_ea9975481beb41aa9dd081d292ab65f7",
-              "job_8935d5a7599a41fa87eb5bab9dc7f4fd",
-              "job_50c0acd7332144e599bf93ee97f35d66",
-              "job_e37636e1eab94b6b825cb23e56db69a7",
-              "job_282f61fd21f242efb012ca287be16c79",
-              "job_9bfdbdd928a74af6930f144c195877e9",
-              "job_1b13cf4f183049498546801d14427bc1",
-              "job_9bda5c4a6ef34b2494191a5522c6d495",
-              "job_ef581c8d5c264bb99b6053e6277406fc",
-              "job_e3061263838f45e1a008221f54920a75",
-              "job_19b95cfebe4c4a2b98313635e3f8b96c",
-              "job_c40207763f96402e9753855a40c8470c",
-              "job_4710453d3e5d4f5eaf47fa0b2176b12c",
-              "job_8cdaf519bfbb45a99f180b7ba975c945"
-            ]
-          }
-        }
-      ],
-      "qualification": "Fixed c77 browser workflows, not the final source revision; later query-reader and verified-byte snapshot changes require final-revision acceptance. Timings include concurrent local diagnostic work and are not an isolated benchmark."
+      "result": "Fixed P8, ancestors/tags and protected historical audit verified"
     },
-    "observed_visual_review": {
-      "scope": "Actual c77 Minimal viewport1024 and Scope/CQ; Forestry/MNP release-object pages; automated keyboard-focus screenshot inspected",
-      "finding": "No observed overflow/occluded controls in these five screenshots; labels are faithfully rendered structured data and can be improved. Complete final visual and manual keyboard acceptance not claimed."
+    "G1": {
+      "status": "PASS",
+      "result": "Authenticated bounded upload, Source/Batch, durable Worker, KG-IR/Evidence and authorized source download"
     },
-    "retained_failures": [
-      "reconstruction-retirement.xml: 204 PASS/15 FAIL, missed output_dir=None caller; subsequently fixed and all failing cases included in 24-PASS repair run.",
-      "First workbench reader repair had set-versus-dict TypeError; next15-PASS run after fix.",
-      "First MNP reader test incorrectly matched Chinese error text against a code; replaced by explicit ErrorCode assertion; next56-PASS run.",
-      "Standalone controlled fixture import initially failed outside repository-root module context; fixed and actual harness subsequently passed."
-    ],
-    "remaining_required": [
-      "Retire/consolidate remaining historical Phase01-06 writable stores/controllers and old GraphDB/WebVOWL runtimes, with exact assurance mapping.",
-      "Finish remaining config/docs/script consolidation and complete CODE_FREEZE.",
-      "Full unique backend collection, all browser/domain scenarios, both-platform clean distribution/startup/recovery, full visual and manual keyboard verification on the final fixed source.",
-      "Evidence delivery bundle, verified wheel/sdist and tested/delivery source equality. No successful candidate tag before required gates pass."
-    ],
-    "subsequent_security_commit": "dfcfa8ce3a0a9b4ed2f5017df2371eaf81cfff41",
-    "read_snapshot_repair": {
-      "commit": "dfcfa8ce3a0a9b4ed2f5017df2371eaf81cfff41",
-      "defect": "Actual post-verification source replacement caused object queries, local RDF, metadata and visualization to expose unverified facts/IDs.",
-      "fix": "Common per-call captured-byte verification shared with downloads; no cached verdict, bounded read, no later mutable-source read.",
-      "original_failures": [
-        "runtime_logs/p09/object-snapshot-red.xml (1 FAIL)",
-        "runtime_logs/p09/projection-snapshot-red.xml (3 FAIL)"
-      ],
-      "targeted_passes": [
-        "runtime_logs/p09/object-snapshot-green.xml (7 PASS)",
-        "runtime_logs/p09/projection-snapshot-green.xml (44 PASS)",
-        "runtime_logs/p09/shared-snapshot-archive.xml (5 PASS)"
-      ],
-      "linux_regression": {
-        "commit": "dfcfa8ce3a0a9b4ed2f5017df2371eaf81cfff41",
-        "passed": 15,
-        "failed": 0,
-        "skipped": 0,
-        "seconds": 13.95,
-        "evidence": "/var/tmp/kg-mnp-a231.BeqQqs/runtime_logs/p09/linux-snapshot-dfc/junit.xml",
-        "bundled_copy": "linux-dfc-snapshot.xml",
-        "scope": "Object/projection snapshots, archives, revocation, genuine historical package; not complete Linux suite or clean installation"
-      },
-      "final_full_verification": "NOT_RUN"
+    "G2": {
+      "status": "PASS",
+      "result": "Real scope/CQ/baseline/provider/proposal/review/confirmation and fixed reasoner/SHACL/CQ/provenance compilation"
     },
-    "collection_only": {
-      "commit": "a23102dc5891e26600abd262fd958110260f37a8",
-      "nodes": 1728,
-      "executed_tests": 0,
-      "evidence": "runtime_logs/p09/collection-a23102d/collection",
-      "collection_sha256": "d9c082bc69d71515dff971a0cc32d947886d045927fb7cb318568ea0a1e70b79",
-      "qualification": "Before subsequent four snapshot-negative cases; not final collection"
+    "G3": {
+      "status": "PASS",
+      "result": "Verified registry, semantic diff/impact/regression, independently reviewed release/activation and specified historical rollback"
+    },
+    "G4": {
+      "status": "PASS",
+      "result": "One Chinese Workbench; real Minimal/Forestry/MNP/fourth-pack flows, sessions, linked views, keyboard, accessibility and screenshots"
+    },
+    "G5": {
+      "status": "PASS",
+      "result": "Actual retirement of duplicate writable runtimes/UI/one-time writers; preserved original schemas/assets/history; current docs/CI/test migration"
+    },
+    "G6": {
+      "status": "PASS",
+      "result": "Same clean B63 full Windows/Linux collection, five browser scenarios each, wheel/sdist installations and identical delivery artifact cross-platform verification"
     }
   },
-  "tested_commit": null,
-  "final_fixed_revision_status": "NOT_RUN_AFTER_COMPLETE_CONSOLIDATION",
-  "candidate_tag": null,
-  "historical_fixed_checkpoint": {
-    "backend": {
-      "collection_count": 1575,
-      "collection_file_sha256": "6455d60ece97683304066056ef98e16210333f1e62ca3c4e97fc8e83aa05222d",
-      "errors": 0,
-      "extra": [],
-      "failed": 0,
-      "missing": [],
-      "partition_counts": {
-        "parallel": 1126,
-        "serial": 449
+  "versions": {
+    "product": "0.9.0rc1",
+    "workbench": "0.9.0-rc.1",
+    "compiler": "0.5.1",
+    "original_contracts_preserved": 115,
+    "current_catalog_entries": 117
+  },
+  "platforms": {
+    "windows": {
+      "versions": {
+        "node": "v24.15.0",
+        "java": "java version \"23.0.2\" 2025-01-21\r\nJava(TM) SE Runtime Environment (build 23.0.2+7-58)\r\nJava HotSpot(TM) 64-Bit Server VM (build 23.0.2+7-58, mixed mode, sharing)",
+        "python": "3.12.6 (tags/v3.12.6:a4a2d2b, Sep  6 2024, 20:11:23) [MSC v.1940 64 bit (AMD64)]",
+        "browser": "153.0.8010.12"
       },
-      "partition_nodeids_sha256": {
-        "parallel": "327ae698136d9537fa209f3801a41d8e4bc494db887f80c7e13058f0392a5078",
-        "serial": "e72b08cad245dcafdd0a158d2e49f954b9421851b5c1c350a5ac324d807a2215"
+      "environment": "Windows-11-10.0.26200-SP0",
+      "worktree_input_digest": "ce3c7c0ede6bdd417874760b8071420af26d6d7f928dc0e2fb7ab70466b6749c",
+      "collection_digest": "70a54ea5ac5da16a13f77c5e41ff9f502b8c72ef82e377ef160ece6501eb1daf",
+      "collection_count": 1772,
+      "partitions": {
+        "serial": {
+          "count": 502,
+          "nodeids_sha256": "9d4db1afb9d0a8dcd4a06fcefb483cc60455a4b744a16d2a4f418163cb7c4c8e"
+        },
+        "parallel": {
+          "count": 1270,
+          "nodeids_sha256": "4e2674026d762bf61365ec45530cfc5f4fa7ade4e2e6c7c9a6976d27cf78fed3"
+        }
       },
-      "passed": 1566,
-      "skipped": 9,
-      "status": "PASS",
-      "unique_executed_count": 1575,
-      "xfailed": 0
-    },
-    "branch": "codex/toolchain-final-consolidation-p09",
-    "browser": {
-      "ids": {
-        "attestation_id": "urn:kg-mnp:release-attestation:f338dad9477b049c0dbe8a42d30785b67ccd570e7463f6da052eda470c8ccdbc",
-        "compilation_plan_id": "urn:kg-mnp:semantic-compilation-plan:16e844c7311d005548e39069ff38cd819935744b0bf3642e7a298655fc9bac3a",
-        "confirmed_package_id": "urn:kg-mnp:ontology-confirmed-modeling-package:76109566c067bbe126b45629a567bf5337bc8e0cd5ad37243ab87300f32568f5",
-        "dataset_id": "urn:kg-mnp:kg-ir-dataset:85a7bec0652e59ac231cadf29fe6d9c510539fb73643132277e7bad780ed861e",
-        "job_ids": [
-          "job_da7ca33d020e4fbbad672f0cbd7eae5f",
-          "job_61b13bf729f148e7adb280d2834a229b",
-          "job_9ab927e4a6254697a069fa37c4327019",
-          "job_804d0de9635f46ccb9b24571a0d69a5d",
-          "job_63053eb91c594aef833cb81be376b2b3",
-          "job_86ade1e2cc5845ae910544c8b9afb9c3",
-          "job_b856d794b2994960b9a011fc478c8dba",
-          "job_9efd544d79fc4c238f2484de197857d0",
-          "job_d5f05b4358e34f3ebda56e62b5ed30e9",
-          "job_c4e262a9bab64e04a4306582cfa34f87",
-          "job_91fdf9b7d3ef44baa8082baaca1b1297",
-          "job_89f52d633f534fdc9cc1b40e0b1ca9c5",
-          "job_05d16d4f874341c289a55074b815b4ec",
-          "job_7e6292b929ca48f8849f6037f48ead7b",
-          "job_b3abe1e0e10948948dbcc1ff1be8d103",
-          "job_497dbada7a704753bd887077b5ea704f",
-          "job_92fa5592822a4cda87aad212ad14c316",
-          "job_8245899855954e65ad55a2a98dcde6ce",
-          "job_cd277d0ef852489ebbb2dfc1449a3c4c",
-          "job_4a4d341372fc4b818be74b8e9cd6b850"
+      "backend": {
+        "status": "PASS",
+        "counts": {
+          "errors": 0,
+          "failed": 0,
+          "passed": 1764,
+          "skipped": 8,
+          "xfailed": 0,
+          "xpassed": 0
+        },
+        "unique_executed_count": 1772,
+        "missing": [],
+        "extra": [],
+        "skipped_nodeids": [
+          "tests/activation/test_artifact_verifier_phase06.py::test_artifact_file_symlink_is_rejected",
+          "tests/activation/test_artifact_verifier_phase06.py::test_artifact_directory_symlink_is_rejected",
+          "tests/sources/test_source_store.py::test_fifo_is_rejected",
+          "tests/sources/test_source_store.py::test_symlink_and_non_regular_source_are_rejected",
+          "tests/security/test_workspace_security.py::test_workspace_symlink_escape_is_rejected_or_explicitly_skipped",
+          "tests/security/test_domain_pack_security.py::test_symlink_escape_is_rejected_or_explicitly_skipped",
+          "tests/security/test_domain_pack_security.py::test_executable_permission_is_rejected",
+          "tests/security/test_source_security.py::test_source_store_rejects_symlinked_authority_directory"
         ],
-        "package_id": "urn:kg-mnp:ontology-package:f18aa1412acaaecfff05eb4b21cc080c776192b70a94c93091080bb60155b16c",
-        "project_id": "urn:kg-mnp:project:d3978b962b81a1adef6e984abc72294efbb8ef102d60fef3f3603e2f1cebd9f7",
-        "proposal_id": "urn:kg-mnp:ontology-modeling-proposal:aecdd0bcd56c598d89c5f626f2229b8fe62d65e59dc309484a5308c30ee9dec8",
-        "release_id": "urn:kg-mnp:release:86374b5d36f9f92fa67d99eecf6418d13268c62358764a983499395c7af4d649",
-        "review_id": "urn:kg-mnp:ontology-review-queue:80ea2665657764f1cc18df6f0acaac81321df174f9440f6bc37aa12c6cd63202",
-        "run_id": "urn:kg-mnp:ingestion-run:1e916ed0d47a3586296b90bb97dd7c094a2313596e22bacd930f190c2e3d224f",
-        "scope_id": "urn:kg-mnp:ontology-scope:87dd94dbbcad5ed87ab0b31731e43cf83142683871ef1d1fae63f0bbccbf32f1",
-        "source_batch_id": "urn:kg-mnp:source-batch:af8ee2adb9e96f8cfcdf2f3effe7ef4663ba2954e4b444ed83a7a00b4cc8bfd0",
-        "source_id": "urn:kg-mnp:source:a6b96e697f242db622efb316e435372f68ce9881611213756e7736b9b406cbb6"
+        "warning_counts": {
+          "serial": 1444,
+          "parallel": 1592
+        }
       },
-      "limitations": [
-        "Only the Minimal initial-release scenario is covered.",
-        "Dense technical/JSON review tables; full UX/graph acceptance incomplete.",
-        "No complete keyboard/a11y audit or 1000-row/200-node benchmark."
-      ],
-      "mocked_core_api": false,
-      "reasoner": "ROBOT 1.9.7 / HermiT 1.4.5.456",
-      "review_identity": "Synthetic HUMAN test identity with automated per-item clicks; not a real expert signature.",
-      "screenshots": [
+      "commands": [
         {
-          "path": "runtime_logs/p09/browser-runs/2026-09-07T10-33-40-063Z/output/minimal.e2e.ts-real-browse-dc8aa-package-and-initial-release/screenshots/compilation.png",
-          "sha256": "4aa71f890663c42cda349328d9168997c54b065081d4bd1632f75be2ddf450d3",
-          "visually_inspected": true
+          "name": "python-environment",
+          "command": [
+            "{repo}\\runtime\\p09-final-rc1-venv\\Scripts\\python.exe",
+            "-m",
+            "pip",
+            "check"
+          ],
+          "exit_code": 0,
+          "duration_seconds": 0.7030000000086147,
+          "receipt_sha256": "a6390a0d48777193968c25dbc471ccc44ace75d87a344eeb3fd72853c516bd03"
         },
         {
-          "path": "runtime_logs/p09/browser-runs/2026-09-07T10-33-40-063Z/output/minimal.e2e.ts-real-browse-dc8aa-package-and-initial-release/screenshots/project-overview.png",
-          "sha256": "b5c490b7b82ebf8689794fc70a750e7e6890e97bea0e397cddff7698406536fa",
-          "visually_inspected": true
+          "name": "python-version",
+          "command": [
+            "{repo}\\runtime\\p09-final-rc1-venv\\Scripts\\python.exe",
+            "--version"
+          ],
+          "exit_code": 0,
+          "duration_seconds": 0.01600000000325963,
+          "receipt_sha256": "ade6a7b78d65817bb48020d2c87ae5ab8635a6d47467aaeda70614f25efdde77"
         },
         {
-          "path": "runtime_logs/p09/browser-runs/2026-09-07T10-33-40-063Z/output/minimal.e2e.ts-real-browse-dc8aa-package-and-initial-release/screenshots/release-objects.png",
-          "sha256": "5876ca13b8fd33e162ae95c046bb6731867826da215e73928fbea6751b8bd467",
-          "visually_inspected": true
+          "name": "node-version",
+          "command": [
+            "node",
+            "--version"
+          ],
+          "exit_code": 0,
+          "duration_seconds": 0.030999999988125637,
+          "receipt_sha256": "f78215fa20333285d132399651fda39d3c47706362241504844baa49cb1275ed"
         },
         {
-          "path": "runtime_logs/p09/browser-runs/2026-09-07T10-33-40-063Z/output/minimal.e2e.ts-real-browse-dc8aa-package-and-initial-release/screenshots/review.png",
-          "sha256": "d2b948656abaa64fbc0ccb72643259787d2d40d12f863dfba58d1a15aaef37a2",
-          "visually_inspected": true
+          "name": "java-version",
+          "command": [
+            "java",
+            "-version"
+          ],
+          "exit_code": 0,
+          "duration_seconds": 0.14100000000325963,
+          "receipt_sha256": "42afbfe09e59336210857c692bec4b8d0f67d5d78d5616f947108f0b9b13fba0"
         },
         {
-          "path": "runtime_logs/p09/browser-runs/2026-09-07T10-33-40-063Z/output/minimal.e2e.ts-real-browse-dc8aa-package-and-initial-release/screenshots/scope-cq.png",
-          "sha256": "943535eae928ee28be8412696ae87f8aeca43c4cbf44db7d12d8b076b6cdd93d",
-          "visually_inspected": true
+          "name": "frontend-install",
+          "command": [
+            "npm.cmd",
+            "--prefix",
+            "workbench",
+            "ci",
+            "--no-fund"
+          ],
+          "exit_code": 0,
+          "duration_seconds": 28.53200000000652,
+          "receipt_sha256": "027050c41b8ea54f82b03ebbd6375abbef2aaef3684140b7ce4bb8cfb2f55ad4"
         },
         {
-          "path": "runtime_logs/p09/browser-runs/2026-09-07T10-33-40-063Z/output/minimal.e2e.ts-real-browse-dc8aa-package-and-initial-release/screenshots/source-evidence.png",
-          "sha256": "54e6e13b6260b64b6695c3f0b9568b03689a47a2f8493f2170644db0f5d43b02",
-          "visually_inspected": true
+          "name": "lint",
+          "command": [
+            "{repo}\\runtime\\p09-final-rc1-venv\\Scripts\\python.exe",
+            "-m",
+            "ruff",
+            "check",
+            "."
+          ],
+          "exit_code": 0,
+          "duration_seconds": 0.14100000000325963,
+          "receipt_sha256": "1b27bfa2114ceaf8da46e9bf519e7ee2ddf3b6914df0b94305747509fec51f55"
+        },
+        {
+          "name": "types",
+          "command": [
+            "{repo}\\runtime\\p09-final-rc1-venv\\Scripts\\python.exe",
+            "tools/check_types.py"
+          ],
+          "exit_code": 0,
+          "duration_seconds": 3.6570000000065193,
+          "receipt_sha256": "95d2aa4c9d34ac2fcf97ad5bc5d2d928875a9ddaba25c80d7c02d55b4765b25f"
+        },
+        {
+          "name": "compiler-contracts",
+          "command": [
+            "{repo}\\runtime\\p09-final-rc1-venv\\Scripts\\python.exe",
+            "tools/generate_compiler_contracts.py",
+            "--check"
+          ],
+          "exit_code": 0,
+          "duration_seconds": 0.28099999998812564,
+          "receipt_sha256": "76fe2cb5e6f5fe515c2ad8cdb7bec4096838db2e28724c9f8c00d40f649b9cfd"
+        },
+        {
+          "name": "catalog",
+          "command": [
+            "{repo}\\runtime\\p09-final-rc1-venv\\Scripts\\python.exe",
+            "scripts/generate_contract_catalog.py",
+            "--check"
+          ],
+          "exit_code": 0,
+          "duration_seconds": 1.2190000000118744,
+          "receipt_sha256": "94021b95da93af53d88602847ae125cd36004a222050a06557267761162d0686"
+        },
+        {
+          "name": "domain-baselines",
+          "command": [
+            "{repo}\\runtime\\p09-final-rc1-venv\\Scripts\\python.exe",
+            "tools/check_domain_baselines.py",
+            "--check"
+          ],
+          "exit_code": 0,
+          "duration_seconds": 9.219000000011874,
+          "receipt_sha256": "b5154bf00d2ec9a1cd310b75b12449249383505b3ada1407ff974174d11827a2"
+        },
+        {
+          "name": "ingestion-example-determinism",
+          "command": [
+            "{repo}\\runtime\\p09-final-rc1-venv\\Scripts\\python.exe",
+            "scripts/generate_ingestion_examples.py",
+            "--check"
+          ],
+          "exit_code": 0,
+          "duration_seconds": 0.7030000000086147,
+          "receipt_sha256": "cbf7028e0854b73957d1a1d1c1644c6b38402a74b7efdffc6daf610d190fa12e"
+        },
+        {
+          "name": "frontend-lint",
+          "command": [
+            "npm.cmd",
+            "--prefix",
+            "workbench",
+            "run",
+            "lint"
+          ],
+          "exit_code": 0,
+          "duration_seconds": 12.703000000008615,
+          "receipt_sha256": "4620a68fb8d811dea7560114c6f581ba9d9aec1286c1344b6f2dfe9b790676b2"
+        },
+        {
+          "name": "frontend-types",
+          "command": [
+            "npm.cmd",
+            "--prefix",
+            "workbench",
+            "run",
+            "typecheck"
+          ],
+          "exit_code": 0,
+          "duration_seconds": 5.296999999991385,
+          "receipt_sha256": "9e5bbddfec14a13458ea03cdae2c37aaaa982173dffe5e1a19470a1cfa1cb230"
+        },
+        {
+          "name": "frontend-unit",
+          "command": [
+            "npm.cmd",
+            "--prefix",
+            "workbench",
+            "test"
+          ],
+          "exit_code": 0,
+          "duration_seconds": 22.015999999974156,
+          "receipt_sha256": "9fc051c16cdd800d5a5fa85b39dc906f84d3a12d9d9f128cc9942149c6fa8892"
+        },
+        {
+          "name": "frontend-build",
+          "command": [
+            "npm.cmd",
+            "--prefix",
+            "workbench",
+            "run",
+            "build"
+          ],
+          "exit_code": 0,
+          "duration_seconds": 2.6719999999913853,
+          "receipt_sha256": "b39ccd52ccaf715f962fe5bcfd22b0112ee087794478adadb31ebfa88b690c86"
+        },
+        {
+          "name": "browser-collection",
+          "command": [
+            "npm.cmd",
+            "--prefix",
+            "workbench",
+            "run",
+            "test:e2e",
+            "--",
+            "--list"
+          ],
+          "exit_code": 0,
+          "duration_seconds": 1.4539999999979045,
+          "receipt_sha256": "c4a756af4e9702c486d516df69e6decbd5a8f0b599e4a64e7302d669e849c98c"
+        },
+        {
+          "name": "repository-hygiene",
+          "command": [
+            "{repo}\\runtime\\p09-final-rc1-venv\\Scripts\\python.exe",
+            "scripts/check_repo_hygiene.py"
+          ],
+          "exit_code": 0,
+          "duration_seconds": 2.562000000005355,
+          "receipt_sha256": "6a845e55914000b7a21fc5cc93cf76ee07c604cf4a3e4eb9e38da316a5b0b965"
+        },
+        {
+          "name": "backend-serial",
+          "command": [
+            "{repo}\\runtime\\p09-final-rc1-venv\\Scripts\\python.exe",
+            "tools/verify_release_candidate.py",
+            "serial",
+            "--run-dir",
+            "{repo}\\runtime_logs\\p09\\fixed-b63ba37-31ce1932"
+          ],
+          "exit_code": 0,
+          "duration_seconds": 2387.594000000012,
+          "receipt_sha256": "1ad646e6014cece77ade2b4f01f207ffa353d99bc4afc58a113f719b4e1d2cb9"
+        },
+        {
+          "name": "backend-parallel",
+          "command": [
+            "{repo}\\runtime\\p09-final-rc1-venv\\Scripts\\python.exe",
+            "tools/verify_release_candidate.py",
+            "parallel",
+            "--run-dir",
+            "{repo}\\runtime_logs\\p09\\fixed-b63ba37-31ce1932"
+          ],
+          "exit_code": 0,
+          "duration_seconds": 1462.2820000000065,
+          "receipt_sha256": "268adaf6d17331047cf731aab437e7f8a893b90f2882f6847847a71373f72be4"
+        },
+        {
+          "name": "backend-summarize",
+          "command": [
+            "{repo}\\runtime\\p09-final-rc1-venv\\Scripts\\python.exe",
+            "tools/verify_release_candidate.py",
+            "summarize",
+            "--run-dir",
+            "{repo}\\runtime_logs\\p09\\fixed-b63ba37-31ce1932"
+          ],
+          "exit_code": 0,
+          "duration_seconds": 0.46799999999348074,
+          "receipt_sha256": "83dfaf0b6d1308cbd02e11f0a5da7ecea241af999b6c4225404baefe00393129"
+        },
+        {
+          "name": "browser",
+          "command": [
+            "{repo}\\runtime\\p09-final-rc1-venv\\Scripts\\python.exe",
+            "tools/run_browser_verification.py"
+          ],
+          "exit_code": 0,
+          "duration_seconds": 2345.7660000000033,
+          "receipt_sha256": "43f0c6d40c2853bad7bf3f2d3ddec0fd549ae86e654aa74abb778d26e4428db0"
+        },
+        {
+          "name": "distribution",
+          "command": [
+            "{repo}\\runtime\\p09-final-rc1-venv\\Scripts\\python.exe",
+            "tools/verify_distribution.py",
+            "--output",
+            "{repo}\\runtime_logs\\p09\\fixed-b63ba37-31ce1932\\distribution-evidence"
+          ],
+          "exit_code": 0,
+          "duration_seconds": 187.28100000001723,
+          "receipt_sha256": "f0d2b157252a19d3a5b3506a36bf014532445b97b4086cc2271c50d74d888743"
         }
       ],
-      "status": "PASS_MINIMAL_INITIAL_RELEASE_SCENARIO",
-      "viewports_checked": [
-        1024,
-        1366,
-        1440,
-        1920
+      "browser": {
+        "status": "PASS",
+        "cases": [
+          {
+            "name": "arbitrary pack identifier uses the same real project UI",
+            "classname": "arbitrary-pack.e2e.ts",
+            "time": "4.323"
+          },
+          {
+            "name": "real browser minimal source review fixed reasoner and release",
+            "classname": "minimal.e2e.ts",
+            "time": "480.246"
+          },
+          {
+            "name": "real browser forestry source review fixed reasoner and release",
+            "classname": "minimal.e2e.ts",
+            "time": "932.2"
+          },
+          {
+            "name": "real browser mnp source review fixed reasoner and release",
+            "classname": "minimal.e2e.ts",
+            "time": "859.665"
+          },
+          {
+            "name": "real session negative boundaries and identity cache isolation",
+            "classname": "security.e2e.ts",
+            "time": "59.048"
+          }
+        ],
+        "domains": {
+          "mnp": {
+            "status": "PASS",
+            "measurement": {
+              "domain": "mnp",
+              "elapsed_seconds": 859.4430939,
+              "browser": "153.0.8010.12",
+              "platform": "win32",
+              "os_release": "10.0.26200",
+              "cpu": "12th Gen Intel(R) Core(TM) i7-12700H",
+              "logical_cpus": 20,
+              "total_memory_bytes": 34003582976,
+              "source_count": 1,
+              "reviewed_candidate_count": 10,
+              "expected_instance_count": 1,
+              "viewports": [
+                {
+                  "width": 1024,
+                  "height": 768
+                },
+                {
+                  "width": 1366,
+                  "height": 768
+                },
+                {
+                  "width": 1440,
+                  "height": 900
+                },
+                {
+                  "width": 1920,
+                  "height": 1080
+                }
+              ],
+              "method": "Real Chromium form actions; persistent worker completion observed through authorized HTTP state. Wall time includes polling and actual reasoner execution."
+            },
+            "ids": {
+              "project_id": "urn:kg-mnp:project:47f636f75fe65ad5fa9e5b85c931f781d75689b0ceac3754259b678a464883a3",
+              "source_id": "urn:kg-mnp:source:e1a1ab7efe1facd155bce8a4a689cac0f11d545f0c19d7aff441182489eb87f3",
+              "run_id": "urn:kg-mnp:ingestion-run:ddd70a7f26aec2dadd141c0bce5d3ee8404f506e674602b985b7af21f29739d6",
+              "scope_id": "urn:kg-mnp:ontology-scope:11747154a78b5e9a4bcde32d4f7da01f1997d94fb3e84bd753884e39775ccdd0",
+              "proposal_id": "urn:kg-mnp:ontology-modeling-proposal:54b6e4569e6023f90d4405898e31cfa1e7684ad4f75ce7799fa16d27b72632f0",
+              "review_id": "urn:kg-mnp:ontology-review-queue:7b92dbcb2400e2826e6004c5832ea8273f9cc052afe6872850eebf0290301788",
+              "package_id": "urn:kg-mnp:ontology-package:7c5c30dc42e0891680f1cd65e58bb90b5f53c9bca962e7c9361ad6497a26d77d",
+              "release_id": "urn:kg-mnp:release:60451c348e780327228793cc2742fdb8023d8b6df8e0419a3d6993b3d024edd9",
+              "job_ids": [
+                "job_6531646780ed45f99c339cc1f7cab3e5",
+                "job_17a8c49def27460a92482020147d424d",
+                "job_21f9d43f00b24c0294eb720220929f83",
+                "job_3a73311cf2a34066bd263e4f8fbd8dc4",
+                "job_c2af30f350fb4d0c96295592b116e48f",
+                "job_92cc6029b3fc4091860d969c67f9d40a",
+                "job_12f6d6de873743a19b6ce61acce14eae",
+                "job_6aa47a5b2692419ba8360de3f47d448d",
+                "job_de902a7f60d74740a73873f75b3da1f2",
+                "job_2d7e56f482ca483f8beb6174a9ebdd76",
+                "job_e6c223b6b04e4188a9c0d1c5544d67d5",
+                "job_f7be9d3950fe4b289b481da5ed571f1c",
+                "job_9fb6b5f0cc4946139339234764dc3006",
+                "job_b192c6ef56714d25a777fd55399e14bb",
+                "job_44522e667d3448e3848cbd045aedab31",
+                "job_62b0d0e7e7ec43bdb5394d25af78ff1a",
+                "job_d284b3362f70440d81e7beabf1efb0e1",
+                "job_8995305966134433b51423dd2f81b591",
+                "job_087acbc74cd9440f91126fe2506534ac",
+                "job_9879c709a3e24e5ba0d71ceed20c9f13",
+                "job_6ab82a2fd66e4792bb0c722d65da8b21",
+                "job_2446a7ac324e469488b16b9f9f113f32",
+                "job_b5f7ec90f7414239a39e3163b7e45c3d",
+                "job_5477b6b3285146c981fef6d51be1f775"
+              ],
+              "kg_ir_dataset_ids": [
+                "urn:kg-mnp:kg-ir-dataset:f0ee866188c1e25d62ab1cd5b881bb1c6fb0c40094ea9247738b3bc07fc643ef"
+              ]
+            },
+            "grade": {
+              "pack_validated": true,
+              "ingestion_executed": true,
+              "evidence_closed": true,
+              "modeling_executed": true,
+              "review_completed": true,
+              "compilation_validated": true,
+              "package_verified": true,
+              "release_verified": true,
+              "browser_passed": true
+            }
+          },
+          "forestry": {
+            "status": "PASS",
+            "measurement": {
+              "domain": "forestry",
+              "elapsed_seconds": 931.9359820000001,
+              "browser": "153.0.8010.12",
+              "platform": "win32",
+              "os_release": "10.0.26200",
+              "cpu": "12th Gen Intel(R) Core(TM) i7-12700H",
+              "logical_cpus": 20,
+              "total_memory_bytes": 34003582976,
+              "source_count": 3,
+              "reviewed_candidate_count": 83,
+              "expected_instance_count": 6,
+              "viewports": [
+                {
+                  "width": 1024,
+                  "height": 768
+                },
+                {
+                  "width": 1366,
+                  "height": 768
+                },
+                {
+                  "width": 1440,
+                  "height": 900
+                },
+                {
+                  "width": 1920,
+                  "height": 1080
+                }
+              ],
+              "method": "Real Chromium form actions; persistent worker completion observed through authorized HTTP state. Wall time includes polling and actual reasoner execution."
+            },
+            "ids": {
+              "project_id": "urn:kg-mnp:project:4d56a278294e9bf6573d3a237b7e280ed1c72b081c736e87f354eb6e0ec9a820",
+              "source_id": "urn:kg-mnp:source:d390bf268ec4e4fcc0c6963adae20c80486535c037e68f0d4b2dcbab25e476e5",
+              "run_id": "urn:kg-mnp:ingestion-run:84f5ab42aaee0c4e387bdb888bd4bfb4ab183e82d40b755f1f16e74389c4cd03",
+              "scope_id": "urn:kg-mnp:ontology-scope:980d76463591aecc6ad15e8402934d11dfd5029b07964f1f9c9e4354ac21116f",
+              "proposal_id": "urn:kg-mnp:ontology-modeling-proposal:4ac168c00b433bfbd93813d7f58a7abe1f2728f18ca773e439f958d0c2a1290e",
+              "review_id": "urn:kg-mnp:ontology-review-queue:a2019b94a513ad323bd790904feb389578103b066f7317c29af264bd6266edf8",
+              "package_id": "urn:kg-mnp:ontology-package:3f27d73f7f92751bf495974a7a8d2d6ba9bc40b910b3eef2266d809c24e22d7d",
+              "release_id": "urn:kg-mnp:release:a249b698dff2559d02bd21a360d10656138c1909faff901a7aa5ee3463d2bf89",
+              "job_ids": [
+                "job_ea3fd1f6e9d248bdab4b6892f3172b8d",
+                "job_700e0a0c98da46039d7eb87cb9bb7d4d",
+                "job_4a560b82ecf947df96ed89c06e96495e",
+                "job_17971325261847d3a285473e4c5f3cc4",
+                "job_bacb1bd5f5a34467b3c81dbd8c7f9c15",
+                "job_a00300ffbe5042219ca0c498b43731d9",
+                "job_aff428e7d31d4df88aef5fa2c02f10d1",
+                "job_13fc168d05a14ea7b69a5a1113bca487",
+                "job_d5e28325112e4f778fc34dd819cdbf71",
+                "job_f6826aadc5804c79a0195100523441c1",
+                "job_c797ba6d50a44877b5e097f83d3e8f76",
+                "job_f0aeeaa340ff48c09b80fa783763a7d8",
+                "job_f1325fea38754b02a2ab88399031b85e",
+                "job_81e81a4906434d629b057186fb10cb8e",
+                "job_c6b653ecc01846768ac6aba28c9cc292",
+                "job_464c26563c124378a5cf01f8c8223f7e",
+                "job_de893509fd8242cd8da053fd8c8fdcda",
+                "job_9698978130a74c70a00aa79ae20108de",
+                "job_5e416934a17843c6a00b1f72b6186d94",
+                "job_6f7e1ac826ef4d6f9f4edaf0168591e8",
+                "job_62042febc9bd41c99e167fe8f7bb385a",
+                "job_d26e65e8ab3343279dc79315de8eff91",
+                "job_058d7a7498d542cbb71b18736a16c69c",
+                "job_b2aa8cf1e2014fddab4cd281b5d1aa89",
+                "job_f8c46547e479416280a6671524ac53fb",
+                "job_84b558317b2c491f86f2fd236dae2e2a",
+                "job_0fb56950132948a5bcc9368148d80942",
+                "job_8e410c68e4464fdc90eeee18801a5166",
+                "job_952c182fad85413fb3aea67555d9922c",
+                "job_388bba9fe8334b80ac3d479f35005fe2",
+                "job_5ca5aed879ab4ed58aec4ed7cce5cac3",
+                "job_8d3c2215b4444fed87a5af3807a6382a",
+                "job_e44c9e8c81b04bec9f097186a4fbdde6",
+                "job_d57eb9b5469f4c86a8d841181163ffd5",
+                "job_004d4009e71a424989a7a86334f3d9df",
+                "job_764bde5b16e04785b2c64c2afbdd81d4",
+                "job_7a5288247d384c27b567356a671ff64e",
+                "job_6db97908b36444efb7c6ca6c5b17aaf2",
+                "job_a2d08cb63f624968bf52d4e11fc1e4f5",
+                "job_2f3c71df88364da38857fae299dab311",
+                "job_9b7a40dc8d44493686b799ec9cc0940f",
+                "job_5460ab2a61374de5b4e9ceddb04ea581",
+                "job_442791bfe1794401b929dceadcb801aa",
+                "job_5aa4c8f5c7544fdcb78d97978014eec9",
+                "job_ab4b9f3877b9427f8fba7592d3a37bcb",
+                "job_206f8715859149e0af7db27e111b77b6",
+                "job_278b63a850ac4b61857f23a4c99daf31",
+                "job_1740b2269a7145358cbc9e5fa9776465",
+                "job_f4b83300253540eb834fa4e4486632b5",
+                "job_cbdc95e9cbaf40748d94c273eaca3a00",
+                "job_02ba857fbfef4a6180b3c142ed3a06a1",
+                "job_16527aa64b664ee6a4f2cc28439dde11",
+                "job_8a503dcf7cce45ec9b89c6553ab43bce",
+                "job_d0bcc7945ec0487e91374ec2942fbcd5",
+                "job_1b79a2ee4ad944bf9dba3e5d92699205",
+                "job_3e58451d2c0748bd9a77f6644df0bdc1",
+                "job_5b6de90307e640d29ccc975f76f1b7f7",
+                "job_3897295aa7474ff3a3e6a89c62f1f81f",
+                "job_2d7b66fa84be45b59cb0aa184b531da1",
+                "job_bd0b1a1501f3458481ec5fad2148ab92",
+                "job_d9c29aa3287a42ce9f92ad3fd9197b33",
+                "job_d204eb8ac7864a84ba354d421b8ab177",
+                "job_ae67b2cde70942528ff350dfbdd8e919",
+                "job_9bb4f009bf554a3299ed9ab5bd5ef071",
+                "job_e23093119e814dc896cac3cd828c87f6",
+                "job_2a03aa0724164bd8badbb2b01769530a",
+                "job_6aa472300730411398e356662e69e5dd",
+                "job_757bed0378b24c2fa5389ab513ef5118",
+                "job_d2782fff3e204fc69a4dca6489acffd2",
+                "job_3aa77874f5cc408895510990013f5fc5",
+                "job_e01f13afc65c4451b3b7d2dc0a3d65f0",
+                "job_c2fb0ed09ce646c49224eba7ccf634d9",
+                "job_45a686c613074cddbd7325c97587509e",
+                "job_88d8d6ad9b30468c8f24043f195c6765",
+                "job_eadda2a27d3841e1b2e6e8b6ee4574be",
+                "job_01293fb523e5471eaabedeeb878652b9",
+                "job_c4272c7a045247c3943ebd0732151c30",
+                "job_81cc441807f74ebfacea15489515ca42",
+                "job_b6ee1511f28c4d0989d5fcf5f4a58085",
+                "job_ded736d3a55f44f79d5c108113297ab5",
+                "job_698330dcc7a44fc1943438186de063cc",
+                "job_18e3a5e502754edca4a2e1409fa9d049",
+                "job_d288b608901243b88bc20d3d952ede29",
+                "job_da613255ab794fbf97ad810a32a1e501",
+                "job_52bfad00dd724e8fa660eeac4aaf8b54",
+                "job_8fe425125c2a4d55bff7d130ca577f47",
+                "job_b9f8d14ce9ad40f98626ab9db7f85286",
+                "job_7986baf7b7014e759c35e526294b3b8f",
+                "job_b4fe6c79f29543e393a2c9a56a508ba5",
+                "job_09335d33a8ab49989a271199bfdabd39",
+                "job_71ec5f4acff6415291de89dd8d24c489",
+                "job_7e70b437abb54516aa24c499a9abd020",
+                "job_6e78f153e2104a2a92318423d51a792c",
+                "job_616326a5079c46dfb8b72f0762e3f743",
+                "job_f3fa8cefe3b6498f8bc57dbe0e4bcaf2",
+                "job_7b81d395f5f34d5084d5bf8e1d9d7cee",
+                "job_a9eb809d5de048cf8a3cdaf4084b0950",
+                "job_6467e9e5bcc0469c8a083a64905dcb06",
+                "job_759d059225fc49248997788b98273c2e",
+                "job_75457a3cde2f4ea7bb7414dfc8e3fa1b"
+              ],
+              "kg_ir_dataset_ids": [
+                "urn:kg-mnp:kg-ir-dataset:ed24deb907ca3ce370e59d21e1dd27db9ee3922cb6c8e414948a8d68d9fc553e"
+              ]
+            },
+            "grade": {
+              "pack_validated": true,
+              "ingestion_executed": true,
+              "evidence_closed": true,
+              "modeling_executed": true,
+              "review_completed": true,
+              "compilation_validated": true,
+              "package_verified": true,
+              "release_verified": true,
+              "browser_passed": true
+            }
+          },
+          "minimal": {
+            "status": "PASS",
+            "measurement": {
+              "domain": "minimal",
+              "elapsed_seconds": 480.00480189999996,
+              "browser": "153.0.8010.12",
+              "platform": "win32",
+              "os_release": "10.0.26200",
+              "cpu": "12th Gen Intel(R) Core(TM) i7-12700H",
+              "logical_cpus": 20,
+              "total_memory_bytes": 34003582976,
+              "source_count": 1,
+              "reviewed_candidate_count": 6,
+              "expected_instance_count": 1,
+              "viewports": [
+                {
+                  "width": 1024,
+                  "height": 768
+                },
+                {
+                  "width": 1366,
+                  "height": 768
+                },
+                {
+                  "width": 1440,
+                  "height": 900
+                },
+                {
+                  "width": 1920,
+                  "height": 1080
+                }
+              ],
+              "method": "Real Chromium form actions; persistent worker completion observed through authorized HTTP state. Wall time includes polling and actual reasoner execution."
+            },
+            "ids": {
+              "project_id": "urn:kg-mnp:project:d1c973237328a17304b05202068ff08b60e87e30ff24d322375ab8499b112370",
+              "source_id": "urn:kg-mnp:source:a6b96e697f242db622efb316e435372f68ce9881611213756e7736b9b406cbb6",
+              "run_id": "urn:kg-mnp:ingestion-run:8cbc9b899049d2006ee700907ff1529f5f96e7581351aa92cd0d73d68d0a5577",
+              "scope_id": "urn:kg-mnp:ontology-scope:ad6288f33bdfc7379111ffd9a7e7c798a7286d8bff12554c76889aebc4a13bdd",
+              "proposal_id": "urn:kg-mnp:ontology-modeling-proposal:1ecc6ff55b95ec495816fbab6925a6520f6cfd6a826f7a62f690fefa78c3a256",
+              "review_id": "urn:kg-mnp:ontology-review-queue:e438532e37d524322f4864ca397d46385bc995b055d95faaedcf2cae80766222",
+              "package_id": "urn:kg-mnp:ontology-package:12a9493ccf28d1437880b84ef143b96b353e0ddd59dfed849fe18585a82a3fe5",
+              "release_id": "urn:kg-mnp:release:5ae2405115d30b958ee1d11c2e37eca50d484792c2411de6210f44666f943e9c",
+              "job_ids": [
+                "job_20f717cef11d4b739a479a5994800f41",
+                "job_83c702a961db4debb5194afc23431b55",
+                "job_caa186efbf354794a4e7392ba18dd28e",
+                "job_85d998c4e26e4fad87a8ea85d866027c",
+                "job_d944be3ee44d4d8c97c005c093d4f39e",
+                "job_ba39d6e6dfc343f3b76813c37f47a9c6",
+                "job_261326ae74b4472d96a70679daf43109",
+                "job_8157da7e40f744e499431ff11e05a68f",
+                "job_d4f88ce0f1ab4a1c952a37c20790eb51",
+                "job_f12b3da361614f1cb59d1877c36e69d3",
+                "job_bdaab989092e4ffdb84d1d3e0cf8a9b4",
+                "job_2bcf860acdc448d4bd48f2c15dfd285f",
+                "job_52c563f95a934cefa67941e16fca2696",
+                "job_05b1052cafaa41878cfe13db31280bb4",
+                "job_76f0d71d2918424899e4d7ed71c11235",
+                "job_e0140fdaaabc471b9bcb5504f4592bde",
+                "job_0ce7f889c9044be59d72681c014421b5",
+                "job_05f0137ccc464e67b71d1170f629fcc9",
+                "job_697515a079224cfe82a51cc1d4e8d489",
+                "job_219f49c75e1f46009bf4024a52ba41e1",
+                "job_e2b5760c437b479db57549dbbfdde594",
+                "job_3adb5defce96440f826d214303b6a7e5",
+                "job_1873196d78ea475cac61c446c4ca0e73",
+                "job_adff1f8b291e43c2bdcc7c558a51fb63",
+                "job_94d285e390cf4c72ba695e6e769f9d0e",
+                "job_2aa3a8fe68524076a006fc05f20cf714",
+                "job_e12656c1fac846ce8928dd65f1da9a56",
+                "job_991e80a3bfd0459b8da00acb7319129e",
+                "job_d86421e1a8384899bd11de37ace3f4c1",
+                "job_96c76d03dd814304a22a9597ee9968c7",
+                "job_54693deda9dc473a82469e18221b63b9",
+                "job_9938dd343f724f3c88d6b85b6fe8a620",
+                "job_3559055274224674ac12b4ba6f1c1c76",
+                "job_d24e6f164be94017805901540f6708cd",
+                "job_3d891c3f8ffe4e56b0e471b4b6093c46",
+                "job_594adc359cba42e59a70376c80516dd3",
+                "job_99666c4c578840c4bcaae9087f1d2c99",
+                "job_3479b784ade24d00932499b975d24ea0",
+                "job_d01f563b189f44bfa71ef92acd231946",
+                "job_962add5782664de0836dba72843ebd6e",
+                "job_9b7234cc7aab4f28982d481625524ab4",
+                "job_c4eb73200dc0488c80b9ad4ea5d23a0b",
+                "job_460f5ad3d5cb4c5097984eced0040ce6",
+                "job_fa85dcf2faa3419bbd11e3d87c22273d"
+              ],
+              "kg_ir_dataset_ids": [
+                "urn:kg-mnp:kg-ir-dataset:4c2f1fa5f854ba3e3395cc718fee0998bb05ccd6eab2eb4f4e13fc62bbb65cf7"
+              ]
+            },
+            "versions": {
+              "successor_package_id": "urn:kg-mnp:ontology-package:17281be298853b4b78fb3e3621c74e6aa8a6523b5aaa8cf785d2558f2714f1fa",
+              "successor_release_id": "urn:kg-mnp:release:0b690adf1193de8c557289915c16feb449001ea934478b13086cfb0343994416",
+              "environment_id": "urn:kg-mnp:environment-manifest:b4f4dd6a8d0d361c78fa4ad574daa3d9d6bdc9e80303e52518b9e4e529cfdb49",
+              "rollback_target": "urn:kg-mnp:release:5ae2405115d30b958ee1d11c2e37eca50d484792c2411de6210f44666f943e9c"
+            },
+            "grade": {
+              "pack_validated": true,
+              "ingestion_executed": true,
+              "evidence_closed": true,
+              "modeling_executed": true,
+              "review_completed": true,
+              "compilation_validated": true,
+              "package_verified": true,
+              "release_verified": true,
+              "browser_passed": true
+            }
+          }
+        },
+        "shutdown": {
+          "credentials_removed": true,
+          "credentials_revoked": true,
+          "worker_stopped": true
+        }
+      },
+      "distribution": {
+        "status": "PASS",
+        "input_artifacts": [
+          {
+            "name": "kg_mnp_toolchain-0.9.0rc1-py3-none-any.whl",
+            "sha256": "3b31d11fc03e96d310c1dd1cedbcde494f09768dbb766bf9b03f2d2f19557ac8",
+            "bytes": 1119316
+          },
+          {
+            "name": "kg_mnp_toolchain-0.9.0rc1.tar.gz",
+            "sha256": "27bcdf19c7d60e9d651d588fbc9fb1e4957f03fe1c9a44d25bf8ee9841bbae58",
+            "bytes": 888907
+          },
+          {
+            "name": "toolchain-examples.zip",
+            "sha256": "999b9298b57c68a34b0114ab6c888f052688e53e4e6f8e124fd64b8c259f75ae",
+            "bytes": 109656
+          }
+        ]
+      },
+      "raw_evidence_prefix": "windows/fixed"
+    },
+    "linux": {
+      "versions": {
+        "node": "v24.18.0",
+        "java": "openjdk version \"17.0.20.1\" 2026-08-18\nOpenJDK Runtime Environment Temurin-17.0.20.1+1 (build 17.0.20.1+1)\nOpenJDK 64-Bit Server VM Temurin-17.0.20.1+1 (build 17.0.20.1+1, mixed mode, sharing)",
+        "python": "3.12.3 (main, Jun 19 2026, 12:46:00) [GCC 13.3.0]",
+        "browser": "153.0.8010.12"
+      },
+      "environment": "Linux-6.18.33.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+      "worktree_input_digest": "5ddf05925a5b156f3a935b6bc5db4ea15eca9dabe7e703efa0dc01d866c255b4",
+      "collection_digest": "70a54ea5ac5da16a13f77c5e41ff9f502b8c72ef82e377ef160ece6501eb1daf",
+      "collection_count": 1772,
+      "partitions": {
+        "serial": {
+          "count": 502,
+          "nodeids_sha256": "a5e71a79555e3d2be45e56b60ded89d59438bcbe8189031bb732f8a357e609fc"
+        },
+        "parallel": {
+          "count": 1270,
+          "nodeids_sha256": "bbb6a85924235fc54fb7cc8bb885b99c76b7800474bb5557fdc8891d345bff0e"
+        }
+      },
+      "backend": {
+        "status": "PASS",
+        "counts": {
+          "errors": 0,
+          "failed": 0,
+          "passed": 1772,
+          "skipped": 0,
+          "xfailed": 0,
+          "xpassed": 0
+        },
+        "unique_executed_count": 1772,
+        "missing": [],
+        "extra": [],
+        "skipped_nodeids": [],
+        "warning_counts": {
+          "serial": 1444,
+          "parallel": 1592
+        }
+      },
+      "commands": [
+        {
+          "name": "python-environment",
+          "command": [
+            "{repo}/.venv/bin/python",
+            "-m",
+            "pip",
+            "check"
+          ],
+          "exit_code": 0,
+          "duration_seconds": 0.7227557090000118,
+          "receipt_sha256": "56bbf23de233398b3d87eba88c69e412d634859d5f368627dbf932f99f098786"
+        },
+        {
+          "name": "python-version",
+          "command": [
+            "{repo}/.venv/bin/python",
+            "--version"
+          ],
+          "exit_code": 0,
+          "duration_seconds": 0.0013066060000710422,
+          "receipt_sha256": "fd29df0354189ece529b2d6bca3a345c3686bdd7e01231050dfffc341ae1e3a0"
+        },
+        {
+          "name": "node-version",
+          "command": [
+            "node",
+            "--version"
+          ],
+          "exit_code": 0,
+          "duration_seconds": 0.0038646140001219464,
+          "receipt_sha256": "6e7239b20ce738f1824cb17dafba8dbc5595fc1dfea01ef864bd0b81681e9ccf"
+        },
+        {
+          "name": "java-version",
+          "command": [
+            "java",
+            "-version"
+          ],
+          "exit_code": 0,
+          "duration_seconds": 0.09069735299999593,
+          "receipt_sha256": "23296ead45cdbcce96c2e085eaf19dfcb30f7da40e1971f519d0fc7c4cb970cb"
+        },
+        {
+          "name": "frontend-install",
+          "command": [
+            "npm",
+            "--prefix",
+            "workbench",
+            "ci",
+            "--no-fund"
+          ],
+          "exit_code": 0,
+          "duration_seconds": 12.217596191999974,
+          "receipt_sha256": "278870ab068d9ecf7399cad71a92ffc9ef96c6777cf38032a3e7a891d8929bf7"
+        },
+        {
+          "name": "lint",
+          "command": [
+            "{repo}/.venv/bin/python",
+            "-m",
+            "ruff",
+            "check",
+            "."
+          ],
+          "exit_code": 0,
+          "duration_seconds": 0.059140299000091545,
+          "receipt_sha256": "824ea6eada3bdc76bcbc744b9711322b9b4146e4077a6423d950e01ff8e816d5"
+        },
+        {
+          "name": "types",
+          "command": [
+            "{repo}/.venv/bin/python",
+            "tools/check_types.py"
+          ],
+          "exit_code": 0,
+          "duration_seconds": 4.342726610999989,
+          "receipt_sha256": "79f37626d88b368040735aec2309f33d9a986ecffebd94696fff9e14efb9a8c3"
+        },
+        {
+          "name": "compiler-contracts",
+          "command": [
+            "{repo}/.venv/bin/python",
+            "tools/generate_compiler_contracts.py",
+            "--check"
+          ],
+          "exit_code": 0,
+          "duration_seconds": 0.12124968599982822,
+          "receipt_sha256": "40d2fe4a8aa73210eb049c27f323019a7eac57887b7f9c3eacd58061b63bc071"
+        },
+        {
+          "name": "catalog",
+          "command": [
+            "{repo}/.venv/bin/python",
+            "scripts/generate_contract_catalog.py",
+            "--check"
+          ],
+          "exit_code": 0,
+          "duration_seconds": 1.3403947650001555,
+          "receipt_sha256": "1f824b0a16cb5ad31520f3180715910ef637c3434e652deba89b3b546c8e760e"
+        },
+        {
+          "name": "domain-baselines",
+          "command": [
+            "{repo}/.venv/bin/python",
+            "tools/check_domain_baselines.py",
+            "--check"
+          ],
+          "exit_code": 0,
+          "duration_seconds": 4.400983202999896,
+          "receipt_sha256": "b1bc84a3e59ff5f74c38d04536d63a9544481b4614ba35a5664f81a2c430d231"
+        },
+        {
+          "name": "ingestion-example-determinism",
+          "command": [
+            "{repo}/.venv/bin/python",
+            "scripts/generate_ingestion_examples.py",
+            "--check"
+          ],
+          "exit_code": 0,
+          "duration_seconds": 0.2879116789999898,
+          "receipt_sha256": "bc8fd25b606c00e926593925e3912cc91bd3ebfe55fe662adb3bf755069b67b6"
+        },
+        {
+          "name": "frontend-lint",
+          "command": [
+            "npm",
+            "--prefix",
+            "workbench",
+            "run",
+            "lint"
+          ],
+          "exit_code": 0,
+          "duration_seconds": 1.6532625039999402,
+          "receipt_sha256": "bb26f7261420536482dd666ae08ce008379e5070e6c90172fa4192d8190891c9"
+        },
+        {
+          "name": "frontend-types",
+          "command": [
+            "npm",
+            "--prefix",
+            "workbench",
+            "run",
+            "typecheck"
+          ],
+          "exit_code": 0,
+          "duration_seconds": 2.198045157999786,
+          "receipt_sha256": "d80cc4b9418f41812f7326684038c8aa3e565f6939c13b5802522fbc42d6bad7"
+        },
+        {
+          "name": "frontend-unit",
+          "command": [
+            "npm",
+            "--prefix",
+            "workbench",
+            "test"
+          ],
+          "exit_code": 0,
+          "duration_seconds": 2.1991201380001257,
+          "receipt_sha256": "22887ebac43c3bd090c186139decca41d96604d8aa8821c6fa14c34f74faa183"
+        },
+        {
+          "name": "frontend-build",
+          "command": [
+            "npm",
+            "--prefix",
+            "workbench",
+            "run",
+            "build"
+          ],
+          "exit_code": 0,
+          "duration_seconds": 2.9577049499998793,
+          "receipt_sha256": "c7a68be43542b9a4907f24d1c59cc328348432ad9b9e3b9f0409bca860cecddb"
+        },
+        {
+          "name": "browser-collection",
+          "command": [
+            "npm",
+            "--prefix",
+            "workbench",
+            "run",
+            "test:e2e",
+            "--",
+            "--list"
+          ],
+          "exit_code": 0,
+          "duration_seconds": 1.24741410799993,
+          "receipt_sha256": "8dab571dab7b97578a845fd52ad735e7f0536ab34bc4b01b3abd4e9d72a9a273"
+        },
+        {
+          "name": "repository-hygiene",
+          "command": [
+            "{repo}/.venv/bin/python",
+            "scripts/check_repo_hygiene.py"
+          ],
+          "exit_code": 0,
+          "duration_seconds": 1.4260084369998367,
+          "receipt_sha256": "0691585ffad749a9fa5a8b2f3873d288d4b6a9c5c4193a5d74d0d8543407c35e"
+        },
+        {
+          "name": "backend-serial",
+          "command": [
+            "{repo}/.venv/bin/python",
+            "tools/verify_release_candidate.py",
+            "serial",
+            "--run-dir",
+            "{repo}/runtime_logs/p09/fixed-b63ba37-168e7197"
+          ],
+          "exit_code": 0,
+          "duration_seconds": 731.0680927260003,
+          "receipt_sha256": "fb1653e45fe5967e0dddd13d43641964b243ce59c3740090a7765f939409f9ef"
+        },
+        {
+          "name": "backend-parallel",
+          "command": [
+            "{repo}/.venv/bin/python",
+            "tools/verify_release_candidate.py",
+            "parallel",
+            "--run-dir",
+            "{repo}/runtime_logs/p09/fixed-b63ba37-168e7197"
+          ],
+          "exit_code": 0,
+          "duration_seconds": 621.0120785840002,
+          "receipt_sha256": "1112e749127a50d78f7a472760e61b2c80f710fe7e45d5af79f394b8ab58c5ec"
+        },
+        {
+          "name": "backend-summarize",
+          "command": [
+            "{repo}/.venv/bin/python",
+            "tools/verify_release_candidate.py",
+            "summarize",
+            "--run-dir",
+            "{repo}/runtime_logs/p09/fixed-b63ba37-168e7197"
+          ],
+          "exit_code": 0,
+          "duration_seconds": 0.11389368500022101,
+          "receipt_sha256": "5a6f1ca63abfb770780736ccdbf092bfc44965cdd8e7a76316c008d37079f6fb"
+        },
+        {
+          "name": "browser",
+          "command": [
+            "{repo}/.venv/bin/python",
+            "tools/run_browser_verification.py"
+          ],
+          "exit_code": 0,
+          "duration_seconds": 974.0905902079999,
+          "receipt_sha256": "58c5e56195350eb319e45f84bf16a56c2deb7ad7a2e0a88fb149123a8d5874ee"
+        },
+        {
+          "name": "distribution",
+          "command": [
+            "{repo}/.venv/bin/python",
+            "tools/verify_distribution.py",
+            "--output",
+            "{repo}/runtime_logs/p09/fixed-b63ba37-168e7197/distribution-evidence"
+          ],
+          "exit_code": 0,
+          "duration_seconds": 59.6896540759999,
+          "receipt_sha256": "2750958e0ab2900d64ee86d7284e25c2b658561c301fade9987408ee87669b9f"
+        }
+      ],
+      "browser": {
+        "status": "PASS",
+        "cases": [
+          {
+            "name": "arbitrary pack identifier uses the same real project UI",
+            "classname": "arbitrary-pack.e2e.ts",
+            "time": "2.772"
+          },
+          {
+            "name": "real browser minimal source review fixed reasoner and release",
+            "classname": "minimal.e2e.ts",
+            "time": "173.846"
+          },
+          {
+            "name": "real browser forestry source review fixed reasoner and release",
+            "classname": "minimal.e2e.ts",
+            "time": "369.727"
+          },
+          {
+            "name": "real browser mnp source review fixed reasoner and release",
+            "classname": "minimal.e2e.ts",
+            "time": "372.773"
+          },
+          {
+            "name": "real session negative boundaries and identity cache isolation",
+            "classname": "security.e2e.ts",
+            "time": "46.621"
+          }
+        ],
+        "domains": {
+          "mnp": {
+            "status": "PASS",
+            "measurement": {
+              "domain": "mnp",
+              "elapsed_seconds": 372.48173892200003,
+              "browser": "153.0.8010.12",
+              "platform": "linux",
+              "os_release": "6.18.33.2-microsoft-standard-WSL2",
+              "cpu": "12th Gen Intel(R) Core(TM) i7-12700H",
+              "logical_cpus": 20,
+              "total_memory_bytes": 16591257600,
+              "source_count": 1,
+              "reviewed_candidate_count": 10,
+              "expected_instance_count": 1,
+              "viewports": [
+                {
+                  "width": 1024,
+                  "height": 768
+                },
+                {
+                  "width": 1366,
+                  "height": 768
+                },
+                {
+                  "width": 1440,
+                  "height": 900
+                },
+                {
+                  "width": 1920,
+                  "height": 1080
+                }
+              ],
+              "method": "Real Chromium form actions; persistent worker completion observed through authorized HTTP state. Wall time includes polling and actual reasoner execution."
+            },
+            "ids": {
+              "project_id": "urn:kg-mnp:project:b1c0f532923c22c431cac78be59c83115c2f3ea3adb332e7cac9457d693a4ea6",
+              "source_id": "urn:kg-mnp:source:e1a1ab7efe1facd155bce8a4a689cac0f11d545f0c19d7aff441182489eb87f3",
+              "run_id": "urn:kg-mnp:ingestion-run:29e05c9667dff7a62027c63f34b72abd4fb7457246326141e5bcf543611f9774",
+              "scope_id": "urn:kg-mnp:ontology-scope:eba44eb3b3743ca15d81335753e132260658442f3af78e1494ad0fd582c4c15c",
+              "proposal_id": "urn:kg-mnp:ontology-modeling-proposal:fe4b6073c29ef022b677c7fa53cb550f2dafd05b73fcd7137e7180b5808dd113",
+              "review_id": "urn:kg-mnp:ontology-review-queue:4c1f5640073d4bd49561413a61b7aec437e724e8426382b73656c6c386f9f7ed",
+              "package_id": "urn:kg-mnp:ontology-package:31c5aa44eb785e172b993661c3131b5dffed4ff384773ab3788da02ed073a42a",
+              "release_id": "urn:kg-mnp:release:a98ea752a9c635a36a61b4db020e3ef884fdb8b2a28629d7f95c3ca71b769c6c",
+              "job_ids": [
+                "job_63c4ea202a964ca68678e5770900bd1a",
+                "job_4365a5c7e6a546998b69ffbbb04fdbf5",
+                "job_01c6b79eda7e4e159edb647d73da6133",
+                "job_a949f8caeb93468daa22091ac08923e3",
+                "job_0d3bc68f2674474697ae95c2ebe599e0",
+                "job_6460a942dbf54c7bb901ba45c5ac4a79",
+                "job_f930733198ef4190868bcf3afb45bc58",
+                "job_6727d5a28eec4476a7f25094e0f35a78",
+                "job_dd73f5909f174cd2913e966733cac4e4",
+                "job_2744a4e04450437eaf5a8395a05592f2",
+                "job_20fe5cc53de745019f4ffc50376db6c4",
+                "job_3095cfc3ebcf41df948d3cd24026ae62",
+                "job_9b00908d0ddd4a1f9bbb59fca52bd3fd",
+                "job_1ea1a5a1f9784731b63a4ce7b09a1852",
+                "job_6e59c641ab704c09abf43f0e80b558ee",
+                "job_7938186925b64269ae81b7af8a12b9d7",
+                "job_f01efb3b39fd4ed9acdac5136409e30b",
+                "job_9fa9cf47eacd46349e1445106f1eba49",
+                "job_c119c33aee4b43d29435044d12df1dbb",
+                "job_4455a06aa44a44099db4f51a2f1c20a9",
+                "job_027ffe267e094a1a9bc46de06561c0bb",
+                "job_9b2a3678812b4865b768541273f8710f",
+                "job_73d33dec29354c18bf111d04867193e7",
+                "job_91c0dfad53b14f86a24e2863379e035a"
+              ],
+              "kg_ir_dataset_ids": [
+                "urn:kg-mnp:kg-ir-dataset:6b38a2ce5f4f7a87a46eae4008b248c1d4e0c4dcf33ae323ec29794bb3cd600a"
+              ]
+            },
+            "grade": {
+              "pack_validated": true,
+              "ingestion_executed": true,
+              "evidence_closed": true,
+              "modeling_executed": true,
+              "review_completed": true,
+              "compilation_validated": true,
+              "package_verified": true,
+              "release_verified": true,
+              "browser_passed": true
+            }
+          },
+          "forestry": {
+            "status": "PASS",
+            "measurement": {
+              "domain": "forestry",
+              "elapsed_seconds": 369.4419329980001,
+              "browser": "153.0.8010.12",
+              "platform": "linux",
+              "os_release": "6.18.33.2-microsoft-standard-WSL2",
+              "cpu": "12th Gen Intel(R) Core(TM) i7-12700H",
+              "logical_cpus": 20,
+              "total_memory_bytes": 16591257600,
+              "source_count": 3,
+              "reviewed_candidate_count": 83,
+              "expected_instance_count": 6,
+              "viewports": [
+                {
+                  "width": 1024,
+                  "height": 768
+                },
+                {
+                  "width": 1366,
+                  "height": 768
+                },
+                {
+                  "width": 1440,
+                  "height": 900
+                },
+                {
+                  "width": 1920,
+                  "height": 1080
+                }
+              ],
+              "method": "Real Chromium form actions; persistent worker completion observed through authorized HTTP state. Wall time includes polling and actual reasoner execution."
+            },
+            "ids": {
+              "project_id": "urn:kg-mnp:project:0845c1b7f1cfe4f60c0e3b1071bc44d177d28376793fd58eaea56309238815ab",
+              "source_id": "urn:kg-mnp:source:d390bf268ec4e4fcc0c6963adae20c80486535c037e68f0d4b2dcbab25e476e5",
+              "run_id": "urn:kg-mnp:ingestion-run:520b146bf7d73245c1efb78ea91a9e51628467138c46177f3e397fd61c2f841d",
+              "scope_id": "urn:kg-mnp:ontology-scope:6a60a8822afa02ac22ca5f625e3238e61bf5de46dca23b9183f132b70d4104c6",
+              "proposal_id": "urn:kg-mnp:ontology-modeling-proposal:b5c03d8bdf2d7e1f50ef696265cf2e19ad54f3638d99fb8b606a130a6dc8a1ae",
+              "review_id": "urn:kg-mnp:ontology-review-queue:4e0e6110ca867597a005bc66204f53df48917116069b19918c254c22b034725b",
+              "package_id": "urn:kg-mnp:ontology-package:0d031d217af5092003ad258df55cfe99d5bcccfb272591b03e15adcf66b51b16",
+              "release_id": "urn:kg-mnp:release:71b1d9c8264702b015873125edd0745a156c926176b547fb3950d19211bec47d",
+              "job_ids": [
+                "job_16a7c6607af645aba4aeb0278f8661b1",
+                "job_1ebdcb73bff14110b25e9a4aabb8540f",
+                "job_373dfd9417c44daa80b65c1715ebaaaa",
+                "job_61369a1254c343929d7e190842045fe8",
+                "job_bd9738dd7579453eb1c81e90cf982daf",
+                "job_67574ad7fd2242539a073818bcc74716",
+                "job_24f3b2bcac7f41a3b4c6f55b9c6e83ca",
+                "job_6b76824ab92642908a9be7d01bcd9207",
+                "job_d6462bf4bf3b4f3098d59576679bdf49",
+                "job_47209b59866b49c48e16fc9fb71b0154",
+                "job_0a9ddfe1ad9f4456b57807397d6b079d",
+                "job_2ffe195140794091a58a6dbc2121a0ca",
+                "job_868563ec32f9475a831d65c1ed42cf17",
+                "job_d5e27c7b9d9641fc9aa1a72c6c373a4e",
+                "job_a5dc1eaab73f45209460b829a59d19a6",
+                "job_001cc120363043f596962a47d06f2f1b",
+                "job_ddf9fcfb5ee345188273c235b54aa91e",
+                "job_f165b7d6800347ae8732d1e1b22860dc",
+                "job_fb3dd21e05f641d0866dc15f23e8a6a9",
+                "job_3f1f259ed3e54db6825143f586be94ac",
+                "job_bc2cc9a0b60b40579e156d98d38fcc31",
+                "job_daa89f2ff4a947478fc707877f648cbe",
+                "job_21cdd3a891c648a8ad4bea0dc6eca87a",
+                "job_ffaa342500524c5ebcaa0f9641d08db0",
+                "job_ca8b4864a7f642889ac5dfbce4baeafd",
+                "job_985a69a29c8547f1bf8c3084a9fd4b20",
+                "job_9fffaf53d62a48a6970bf95d4654f161",
+                "job_169fad858702430a871478d1111c7bc3",
+                "job_c794f75d51004960b9c3ab105fc1db05",
+                "job_5eea3fa67cac4e52958f725b3d9f02d7",
+                "job_0e19263715de49e9bc91a20375beafd5",
+                "job_c457425956da4ae1834737500a6e24be",
+                "job_35cbc6dd6def44ffa9124e409a7c67a8",
+                "job_f7f3994a52704281aad8d80215d6b0eb",
+                "job_1dff64adfcc445bf85b69e7df893f0aa",
+                "job_bfeaf9502df242dd99ab9bc602e60f83",
+                "job_357e864ed9e5447a8ca1e18bb71515e7",
+                "job_a46ed1644758446cb36f4822b0b61860",
+                "job_c070272d45f14e1ab3a40a594f4d3f98",
+                "job_3917a93dacb24d0093b65400cf6af1f5",
+                "job_7eee8847174f4b81a9f490536d9ad2fc",
+                "job_a21b964b692b45abb532a39de7d7b3b2",
+                "job_550dd3cf020b4a8f8a395153ebd4c230",
+                "job_c2096dd527b7401cacf6267241986c20",
+                "job_988a3222da3d4360989846686b391f75",
+                "job_277e5e10cb4640eeb5156e30f035a2cf",
+                "job_09484c75886944caac147a9dbb4c2e3d",
+                "job_09230374c3584728b22289ea44bf367c",
+                "job_14edc8a4f8cc4e86aa2605ce2cb91847",
+                "job_84bb3502ef2744a79e422555c01a90ef",
+                "job_162b24c208634648a58894b82be09f4a",
+                "job_3d0c0ff9926d4e34978aca27297791a0",
+                "job_ca723e731eb74bdb93a5b87ea74b7e62",
+                "job_f0bc74b84f44448c97055aecbeff2dc5",
+                "job_34ac5fe64826468da1d6ae7529b03043",
+                "job_8fbd2eff04c64089b52c76c96c4bc237",
+                "job_3ddb584abb574c44b49b678cd3cb5cbd",
+                "job_13d09d82e8c44a13bf3484d5c6a0f7e1",
+                "job_4d165943c3d14056be0552984de1ae87",
+                "job_7180d52020994080a5d7873b64f49a69",
+                "job_e0b79ffed7764b4b9ce4080cfee869a2",
+                "job_fa67089252a544a693265ad2df399f4e",
+                "job_3b6bfe1d1c1440bab6e370e9f53af48d",
+                "job_db4e4d5ed28d49ba96913c4b5a94f786",
+                "job_b2eecf1ccb664f9b9e01de27fb08d948",
+                "job_a9789863d6cb41bf8fb9f06059ded48d",
+                "job_44f1134738f34ebebdbd68ad5abd6d89",
+                "job_0259a0970dd047549f0890e8d0b766bc",
+                "job_bac214e181fd479f8c332d0d1e3900d2",
+                "job_7212b26f9f304481ac4ed581584d4993",
+                "job_b454ba4df11c4bfe93ca1c8d3c2e4a1f",
+                "job_dd5114f82df84a9abe6aad0478e0dd6a",
+                "job_69bc467e4c904767851a7a3e26ee07dc",
+                "job_49d8729c5abc49d387da8b140be44d21",
+                "job_f193d24fb76246daa1e918294dc5161a",
+                "job_3a47411288fc49888bec63d4ca411406",
+                "job_770bafcc53a747e194ee2020a3ad71f7",
+                "job_cdb8fc5a25da4b77b8dc6aabf48e575b",
+                "job_4ee8b7c18bd8499da0c4b4d419529752",
+                "job_8375ed9bbd9341908b5eb9d7413728ca",
+                "job_2b42bd4308f9427ba2ddfde920361040",
+                "job_4f527a1423bb4f10a4020ede7eccc5c2",
+                "job_9938f9e7806f4249a14d2fd621b4f3cd",
+                "job_67e373e4b09b4b12a191325ea27fbe70",
+                "job_935739682d184b5489afdaddfadd28fc",
+                "job_535c1c3c97984cd480bbc282a7014bee",
+                "job_93fe038c63d84f2a8c451b6f4affa681",
+                "job_b1d4c1e9e80b408eb59787c1da3e65a4",
+                "job_3fc3e58ada0f452aabb58428e8f4d552",
+                "job_bd62d1a57cf4487fa82bd6caec906483",
+                "job_6c0ce34f9d654d6daca89c3cba53e505",
+                "job_55b7dd12a16445b381bdd4da1f6fc89a",
+                "job_20d8460f09654aa094e84fe8c2c24a36",
+                "job_05f92d0eef154602bad4d6ab4e9cc8cc",
+                "job_ced50593b11e48b4b184e870ea7d46a1",
+                "job_78fecdfc5ae64c04b03d78dbf672a44e",
+                "job_6afccbe7b3614b70aca8b49381df37be",
+                "job_53591a1f364a4eac994e13382a23c1e7",
+                "job_2ae77d3681cf45dc872d7424e447f996",
+                "job_ec1ca3941e9d4dc2a539310fb10b47bf"
+              ],
+              "kg_ir_dataset_ids": [
+                "urn:kg-mnp:kg-ir-dataset:61cfc0942601c84003a2c0a9e57535ab0bd5dfb9c4fd011bd69329c905965f33"
+              ]
+            },
+            "grade": {
+              "pack_validated": true,
+              "ingestion_executed": true,
+              "evidence_closed": true,
+              "modeling_executed": true,
+              "review_completed": true,
+              "compilation_validated": true,
+              "package_verified": true,
+              "release_verified": true,
+              "browser_passed": true
+            }
+          },
+          "minimal": {
+            "status": "PASS",
+            "measurement": {
+              "domain": "minimal",
+              "elapsed_seconds": 173.552831518,
+              "browser": "153.0.8010.12",
+              "platform": "linux",
+              "os_release": "6.18.33.2-microsoft-standard-WSL2",
+              "cpu": "12th Gen Intel(R) Core(TM) i7-12700H",
+              "logical_cpus": 20,
+              "total_memory_bytes": 16591257600,
+              "source_count": 1,
+              "reviewed_candidate_count": 6,
+              "expected_instance_count": 1,
+              "viewports": [
+                {
+                  "width": 1024,
+                  "height": 768
+                },
+                {
+                  "width": 1366,
+                  "height": 768
+                },
+                {
+                  "width": 1440,
+                  "height": 900
+                },
+                {
+                  "width": 1920,
+                  "height": 1080
+                }
+              ],
+              "method": "Real Chromium form actions; persistent worker completion observed through authorized HTTP state. Wall time includes polling and actual reasoner execution."
+            },
+            "ids": {
+              "project_id": "urn:kg-mnp:project:8cf19aa0e379ea709289106a1c4c17a363961672458707bdc2c5dc3d6345dbf3",
+              "source_id": "urn:kg-mnp:source:a6b96e697f242db622efb316e435372f68ce9881611213756e7736b9b406cbb6",
+              "run_id": "urn:kg-mnp:ingestion-run:55c7088b9b9d99f5c169797b46557db13abc8d5cb95c44dbb396729d0d09f321",
+              "scope_id": "urn:kg-mnp:ontology-scope:a10db876319312a7e309ce13829de25bdcd16adb65696c97dbf593f4e3ae73a8",
+              "proposal_id": "urn:kg-mnp:ontology-modeling-proposal:f5b60ebbbb3f86863a84bccf1cb0edd9a420efd03355113ea96cfa9a5e919376",
+              "review_id": "urn:kg-mnp:ontology-review-queue:1f17842dcdc134b6a78583f6a5e23cbe8053838a6862e47deed6c87bdeec1eab",
+              "package_id": "urn:kg-mnp:ontology-package:a71efe9b6fff1764c4766e6bb6d6190f7add2517399ce92c320d31954d6d9a55",
+              "release_id": "urn:kg-mnp:release:007ebcdde7aabe0b59630e4896dface19698ddbdb3591895f2f9c850ef893c0d",
+              "job_ids": [
+                "job_6c26bc35f42845f781c99edfdb197329",
+                "job_650cb2fdc8aa41cab883f85f786a03a8",
+                "job_1246d62c8cfb4555b655b2848364ff16",
+                "job_89f83e9abd734e0b87e3ca25714ddfa4",
+                "job_fd750be32c8141e5a6c58309c944b97f",
+                "job_4c0ceaf79abd4be089c137f5f0d8d029",
+                "job_3af0ea46cee14842b5b76a3bc700135d",
+                "job_cccc76903e374fd8872f60ae1a7b74b9",
+                "job_8d1ff15f028048108bb3221da506d9a6",
+                "job_f9465699137e46eb96c75f9ce74397d1",
+                "job_f22e295c009d4123baacdc1b4f5d2b41",
+                "job_b1a6eff4d36d435b9664adc8fc66f340",
+                "job_89b64921d73644ba87f753fb692f9f87",
+                "job_1e336b95649d4c559c33f222a88627e3",
+                "job_2c685abc87bf463bafeeb846b28da484",
+                "job_5e2f061ab01c4f6896a28379aa8f3427",
+                "job_fda6105551b945a18803df4914633285",
+                "job_8cb4f12281f14418aaef8387ad567173",
+                "job_86a591424116492386303ca4adf1365e",
+                "job_04ccf7e9d4404b85ac822ee4035b9973",
+                "job_5381556dce9c49fc982882be3e09f7b4",
+                "job_d626f00224aa436ca76ec1ccd9c36dad",
+                "job_5a305d81d69542fab19cb9c9fef7f312",
+                "job_cac780d4ece34a45b6d63e734dde67d4",
+                "job_ab43ead612e94c3084d6f544551a3566",
+                "job_e6d6a9bbddec45f2899f8767ccc5c901",
+                "job_958ee64478454a599f774ddbf8d6e6aa",
+                "job_5a2f046406c545449e4206139889bb77",
+                "job_f4688aa6b95d4ee09d14a0d4c554ed6e",
+                "job_23cfb1287a244e6f8c4ef2641bc341d6",
+                "job_9afb9675b8bc46c389c71e6a9f07ca84",
+                "job_be5659fd42244ae1b154a1c26ce3a50e",
+                "job_6a241ef5605d49889b3d87801221cffe",
+                "job_c76a85bdff114c32b011f6a7e4b19c40",
+                "job_eaffac4d962c4056bcb98ada5659c64b",
+                "job_a7cde729e73241f1b05457dff60e3b19",
+                "job_bc41dbb316eb4a1a86f3632b49372aa0",
+                "job_71f91488d0614b8689049c30120e9c0d",
+                "job_07b2c2cb6a8944e58bea98cd72de233c",
+                "job_5f63e688ea7643a5808a4e554ee6149e",
+                "job_9ecc9ac0ee6341909b10728702b0c28b",
+                "job_0123da5da30c4d358c2d843472bcea4d",
+                "job_407ec304afcd407cb153d8fc7150f89e",
+                "job_f76716c19799454091b89e8a71b6b7db"
+              ],
+              "kg_ir_dataset_ids": [
+                "urn:kg-mnp:kg-ir-dataset:d89856f77888544deb28e398c08f199124fe6b9206c7009c412110691773942e"
+              ]
+            },
+            "versions": {
+              "successor_package_id": "urn:kg-mnp:ontology-package:121fc7e53e0b84d5335849a37155036ecde0052f3a52185bd0b39c0c25bcb6a3",
+              "successor_release_id": "urn:kg-mnp:release:371f71690567bc66f06328f61f2661584ac3bfe431933c269c5d0a5e07dbde5a",
+              "environment_id": "urn:kg-mnp:environment-manifest:1c3a8925f6af0708ca3d2afa2890ff4674c1c63cc4b5880f5f4284b61b6c0304",
+              "rollback_target": "urn:kg-mnp:release:007ebcdde7aabe0b59630e4896dface19698ddbdb3591895f2f9c850ef893c0d"
+            },
+            "grade": {
+              "pack_validated": true,
+              "ingestion_executed": true,
+              "evidence_closed": true,
+              "modeling_executed": true,
+              "review_completed": true,
+              "compilation_validated": true,
+              "package_verified": true,
+              "release_verified": true,
+              "browser_passed": true
+            }
+          }
+        },
+        "shutdown": {
+          "credentials_removed": true,
+          "credentials_revoked": true,
+          "worker_stopped": true
+        }
+      },
+      "distribution": {
+        "status": "PASS",
+        "input_artifacts": [
+          {
+            "name": "kg_mnp_toolchain-0.9.0rc1-py3-none-any.whl",
+            "sha256": "e0ee2db493701bd0df3fde7d958abaaf077e00d1c9857354354c5c4a3eb1786b",
+            "bytes": 1073485
+          },
+          {
+            "name": "kg_mnp_toolchain-0.9.0rc1.tar.gz",
+            "sha256": "8876c4f876b804bb1ac8f18411ef7a29c710e07adee8cc5d9bc0ea5b0db643e4",
+            "bytes": 880773
+          },
+          {
+            "name": "toolchain-examples.zip",
+            "sha256": "9d9687cbf410f21d3755291e8897ba7dd9f22cdea6d346be97ed79b9f8c921e6",
+            "bytes": 109656
+          }
+        ]
+      },
+      "raw_evidence_prefix": "linux/fixed"
+    }
+  },
+  "original_operations": 53,
+  "requirement_map": "docs/verification/final-requirements.json",
+  "retirement_map": "docs/migration/final-retirement-ledger.json",
+  "history_audit": {
+    "ancestor_heads": [
+      "a7114eef25f2f2a262cd69793a8d3e2b444836fc",
+      "d04e9b494a99932532ae9c359653878aa32261d7",
+      "52fb0bc064ed7a715ddc3269d23e89a1a78c917c",
+      "eccc5092831503974c8aa54f158e6674445b1cb4",
+      "7aaa039b2b2c4eb80fa959b956e6452a814bb5b3",
+      "1e31c53f6a441cf9c0c11b02ad9db5fca1ebabfc",
+      "9ae308ef86e74a08eb4daab1e20dd66cced87b16",
+      "9da17d126cb37166ff06084080770108da20afbe"
+    ],
+    "file_count": 1498,
+    "method": "git archive of fixed P8, LF-normalized source bytes",
+    "status": "PASS",
+    "tree_digest": "595558b7b32f0b64cd84729349dc81aae58dde6bc93624188646766727ce69cd"
+  },
+  "preservation": {
+    "original_schema_bytes_and_ids": {
+      "checked": 115,
+      "mismatches": [],
+      "evidence": "supplemental/original-schema-bytes.json"
+    },
+    "minimal_content_digest": "9243d8a995a4a87b8d2048bf7cb0069203e3d7d528e57409e6d3f985ac11e014",
+    "mnp_content_digest": "2554d6d4bbd98b4defd2a46243d6f4f01842320bcc929aff0a3a03ba7cc6ddd1",
+    "mnp_original_assets": 84,
+    "compiler_0_5_0_archive_sha256": "4e6ba7225348a201c1ba2076e58f3c1bff370a97dae7000e99ebe53f9be3f983",
+    "forestry": {
+      "old_version": "0.1.0",
+      "old_digest": "58dbf2ab75189ecefdaf79e6c5e49ae7c796471e9be65aa48cbf0e21a21d66e9",
+      "version": "0.2.0",
+      "lifecycle": "EXPERIMENTAL",
+      "synthetic": true,
+      "content_digest": "c9c0d502aa9476cd35eb929f7abf90c3d65887a8ed25c88b1fca18760a479387",
+      "lock_id": "urn:kg-mnp:domain-pack-lock:c53e0af34a632f56df94ea25e0ceab9573a0e941491a7e2cf5e8e0d25fee4dd1",
+      "counts": {
+        "trees": 6,
+        "inspections": 6,
+        "sites": 2
+      },
+      "old_version_silently_substituted": false
+    }
+  },
+  "frontend": {
+    "unit": {
+      "passed": 24,
+      "scope": "Synthetic component/API projections; distinct from real E2E"
+    },
+    "browser_scenarios_per_platform": 5,
+    "capacity": {
+      "passed": 2,
+      "table_input": 1000,
+      "table_dom_rows": 26,
+      "graph_input": 250,
+      "graph_nodes": 200,
+      "graph_edges": 400,
+      "first_render_ms": 74.1,
+      "method": "Actual shared components to two animation frames; not business throughput or improvement percentage"
+    },
+    "manual": {
+      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
+      "status": "PASS",
+      "method": "Agent-assisted interactive Chromium keyboard and visual inspection; separate from scripted E2E/axe. Not human usability research or Windows SendInput.",
+      "browser": "153.0.8010.12",
+      "checks": [
+        {
+          "check": "login-tab-focus-visible",
+          "passed": true
+        },
+        {
+          "check": "unauthenticated-draft-and-focus",
+          "passed": true,
+          "elapsed_ms": 54469
+        },
+        {
+          "check": "keyboard-create-project-exact-pack",
+          "passed": true,
+          "project_path": "/projects/urn%3Akg-mnp%3Aproject%3Abc4f70689ec1c7f3b94dd04a0c76eb1293a205fe5b908471b16d0820fb3a4220"
+        },
+        {
+          "check": "authenticated-draft-focus-retention",
+          "passed": true,
+          "elapsed_ms": 86322
+        },
+        {
+          "check": "viewport",
+          "width": 1024,
+          "height": 768,
+          "no_page_overflow": true
+        },
+        {
+          "check": "viewport",
+          "width": 1366,
+          "height": 768,
+          "no_page_overflow": true
+        },
+        {
+          "check": "viewport",
+          "width": 1440,
+          "height": 900,
+          "no_page_overflow": true
+        },
+        {
+          "check": "viewport",
+          "width": 1920,
+          "height": 1080,
+          "no_page_overflow": true
+        },
+        {
+          "check": "keyboard-job-creation-reload-completed-cancel",
+          "passed": true,
+          "job_id": "job_243093ea37c74529911d893924c04e5b"
+        },
+        {
+          "check": "identity-project-job-cache-isolation",
+          "passed": true
+        },
+        {
+          "check": "empty-login-chinese-error-and-focus",
+          "passed": true
+        }
       ]
     },
-    "build_artifacts": [
-      {
-        "bytes": 59330,
-        "path": "runtime/p09-final-distribution/domain-packs-and-minimal-example-3c0d0ad.tar.gz",
-        "sha256": "b1a6423dfee6d6e23f989eb395dd04e818be0757db12d726c173ab92c7cbac3a"
-      },
-      {
-        "bytes": 1144449,
-        "path": "runtime/p09-final-distribution/kg_mnp_toolchain-0.9.0.dev0-py3-none-any.whl",
-        "sha256": "0121ce397964c19e130bfcd7d81f86643667ef152cf6badd2d57c5dbed1957c3"
-      },
-      {
-        "bytes": 857688,
-        "path": "runtime/p09-final-distribution/kg_mnp_toolchain-0.9.0.dev0.tar.gz",
-        "sha256": "d1f1871b549be8d3b7da26e8605cf974458762140f6bc9b48e4f8ea7adee864d"
-      }
-    ],
-    "ci": "No successful new capability CI run claimed. Existing workflows retained; CI refactor incomplete.",
-    "commands": {
-      "browser": {
-        "command": [
-          "D:\\npm.CMD",
-          "--prefix",
-          "workbench",
-          "run",
-          "test:e2e"
+    "visual": {
+      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
+      "platform": "Linux browser screenshots inspected on Windows",
+      "browser_run": "managed-d714d309d59248c98b06df3339c1f18b",
+      "method": "Actual PNGs opened individually with view_image; no fabricated screenshot",
+      "reviewed": [
+        "overview-artifacts.png",
+        "upload-ingestion.png",
+        "source-evidence.png",
+        "field-mapping.png",
+        "field-sample.png",
+        "scope-cq.png",
+        "concept-graph.png",
+        "candidate-tree.png",
+        "review.png",
+        "compilation.png",
+        "version-diff.png",
+        "environment-rollback.png",
+        "graphdb-blocked.png"
+      ],
+      "findings": "Readable labels/data, no page spill or blocked controls. Overview capture records a truthful transient review-loading state; artifact IDs are present. Field sample gives complete source locator and authorized download.",
+      "forestry_reviewed": [
+        "inspection-tree-relation.png",
+        "field-sample.png",
+        "release-objects.png"
+      ],
+      "forestry_findings": "Actual typed literal values and inspectedTree link to an explicit tree IRI; source sample row/column/evidence IDs visible. Fixed package digest and class/property domain/range displayed.",
+      "mnp_reviewed": [
+        "field-sample.png",
+        "overview-artifacts.png",
+        "release-objects.png"
+      ],
+      "mnp_findings": "Synthetic MappingRecord source sample, actual package/release IDs and unchanged baseline term metadata visible. No empty ABox claim.",
+      "security_reviewed": [
+        "permission-denied.png",
+        "keyboard-focus.png"
+      ],
+      "security_findings": "Explicit403withprojectcontentnotrendered;keyboardoutlinevisible. Syntheticonly, no credentials in screenshots.",
+      "windows_reviewed": {
+        "browser_run": "managed-6da98f7452d443cdb2475a18f94b869f",
+        "images": [
+          "minimal/environment-rollback.png",
+          "forestry/inspection-tree-relation.png",
+          "forestry/field-sample.png",
+          "mnp/field-sample.png",
+          "security/permission-denied.png"
         ],
-        "duration_seconds": 441.89000000001397,
-        "exit_code": 0,
-        "files": {
-          "command.log": "064bf25743323fcc0336bf2a51f82e620f2ecbe9e0a6ae0f374c0c391926a5dc"
-        }
-      },
-      "clean-wheel-probe": {
-        "command": [
-          "<repository>\\runtime\\p09-clean-win-c355e95\\Scripts\\python.exe",
-          "-I",
-          "-c",
-          "import os,tempfile,sysconfig,json\nfrom pathlib import Path\nos.chdir(tempfile.mkdtemp(prefix=\"kg-mnp-clean-probe-\"))\nimport kg_mnp\nassert Path(kg_mnp.__file__).is_relative_to(Path(sysconfig.get_paths()[\"purelib\"]))\nfrom kg_mnp.contracts.catalog import verify_catalog_lock\nverify_catalog_lock()\nfrom kg_mnp.semantic_kernel.policy import load_compiler_policy\nfrom kg_mnp.lifecycle.policy import load_policy\nassert load_compiler_policy()[\"policy_id\"]\nassert load_policy(\"release-policy-1.0.0.yaml\")[\"policy_id\"]\nfrom kg_mnp.services.facade import ApplicationService\nfrom kg_mnp.services.models import ServiceConfiguration\nfrom kg_mnp.api.app import create_app\nfrom fastapi.testclient import TestClient\nservice = ApplicationService(ServiceConfiguration(tempfile.mkdtemp()))\nwith TestClient(create_app(service)) as client:\n    statuses={path:client.get(path).status_code for path in [\"/\",\"/projects/example/overview\",\"/api/v1/projects\",\"/api/v1/not-a-resource\"]}\n    assert list(statuses.values()) == [200,200,401,404]\n    assert \"token_digest\" not in client.get(\"/service-data/tokens.json\").text\nprint(json.dumps({\"version\":kg_mnp.__version__,\"status_codes\":statuses,\"imported_from_site_packages\":True}))\n"
-        ],
-        "duration_seconds": 13.796999999991385,
-        "exit_code": 0,
-        "files": {
-          "command.log": "ec0cd165cd38f78e9b24cb27ad10c598f320efdc8cda504eab34858406960941"
-        }
-      },
-      "collection": {
-        "command": [
-          "<repository>\\.venv-p09\\Scripts\\python.exe",
-          "-m",
-          "pytest",
-          "--collect-only",
-          "-q",
-          "-p",
-          "tests.verification_receipts",
-          "--junitxml=<repository>\\runtime_logs\\p09\\fixed-3c0d0ad-72018325\\collection\\junit.xml"
-        ],
-        "duration_seconds": 12.625,
-        "exit_code": 0,
-        "files": {
-          "collection.json": "6455d60ece97683304066056ef98e16210333f1e62ca3c4e97fc8e83aa05222d",
-          "command.log": "1687d1e1abe6afc9ebb8ffa8e1213ca0fe4def11c8315abd01eb64c69670cbdf",
-          "junit.xml": "86c9cd059d37e94f0e6a27a56152ec107897914537ba431411eff5112a4662bf",
-          "reports.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945"
-        },
-        "skips": [],
-        "suites": [
-          {
-            "errors": "0",
-            "failures": "0",
-            "hostname": "Yangjunjie",
-            "name": "pytest",
-            "skipped": "0",
-            "tests": "0",
-            "time": "9.890",
-            "timestamp": "2026-09-07T11:25:39.656451+01:00"
-          }
-        ]
-      },
-      "frontend-audit": {
-        "command": [
-          "D:\\npm.CMD",
-          "--prefix",
-          "workbench",
-          "audit",
-          "--json"
-        ],
-        "duration_seconds": 2.9060000000172295,
-        "exit_code": 0,
-        "files": {
-          "command.log": "f4266260db47c19344b0c0dcb48bcc2fc951773f487e607114f5492b32f608dd"
-        }
-      },
-      "frontend-build": {
-        "command": [
-          "D:\\npm.CMD",
-          "--prefix",
-          "workbench",
-          "run",
-          "build"
-        ],
-        "duration_seconds": 5.967999999993481,
-        "exit_code": 0,
-        "files": {
-          "command.log": "91aa290f805054cb2d2a6ca47a049ccb920a2d85ec48cfaa87404efd46026b63"
-        }
-      },
-      "hygiene": {
-        "command": [
-          "<repository>\\.venv-p09\\Scripts\\python.exe",
-          "scripts/check_repo_hygiene.py"
-        ],
-        "duration_seconds": 8.23499999998603,
-        "exit_code": 0,
-        "files": {
-          "command.log": "ae36cd7b8eea1bcb09bdd630de10509586d32f9dcfb4f14ceabbbe1ed5991d37"
-        }
-      },
-      "lint": {
-        "command": [
-          "<repository>\\.venv-p09\\Scripts\\python.exe",
-          "-m",
-          "ruff",
-          "check",
-          "."
-        ],
-        "duration_seconds": 0.45300000000861473,
-        "exit_code": 0,
-        "files": {
-          "command.log": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
-        }
-      },
-      "linux": {
-        "commands": [
-          {
-            "command": [
-              "git",
-              "-c",
-              "safe.directory=<repository>",
-              "clone",
-              "--no-hardlinks",
-              "--single-branch",
-              "--branch",
-              "codex/toolchain-final-consolidation-p09",
-              "<repository>",
-              "/var/tmp/kg-mnp-final-3p0ulp1a/source"
-            ],
-            "exit_code": 0,
-            "log_sha256": "c78bbb52a4f7dc0304ae5575aff5966d189ca23eea5714d2c4155cc4c17f85a8",
-            "name": "clone",
-            "seconds": 34.890591079000004
-          },
-          {
-            "command": [
-              "/usr/bin/python3",
-              "-m",
-              "venv",
-              "/var/tmp/kg-mnp-final-3p0ulp1a/.venv"
-            ],
-            "exit_code": 0,
-            "log_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-            "name": "venv",
-            "seconds": 9.834396515999998
-          },
-          {
-            "command": [
-              "/var/tmp/kg-mnp-final-3p0ulp1a/.venv/bin/python",
-              "-m",
-              "pip",
-              "install",
-              "-c",
-              "/var/tmp/kg-mnp-final-3p0ulp1a/source/requirements-dev.lock",
-              "<repository>/runtime/p09-final-distribution/kg_mnp_toolchain-0.9.0.dev0-py3-none-any.whl[dev]"
-            ],
-            "exit_code": 0,
-            "log_sha256": "acee4318640881a034c2e0f8d42461ead2a48ae1f6d8cbc1332646168b93c518",
-            "name": "install",
-            "seconds": 40.633856324
-          },
-          {
-            "command": [
-              "/var/tmp/kg-mnp-final-3p0ulp1a/.venv/bin/python",
-              "-m",
-              "pytest",
-              "tests/workspace",
-              "tests/sources",
-              "tests/security/test_domain_pack_security.py",
-              "tests/security/test_workspace_security.py",
-              "tests/security/test_source_security.py",
-              "tests/security/test_ingestion_security.py",
-              "tests/security/test_contract_document_security.py",
-              "--junitxml=<repository>/runtime_logs/p09/fixed-3c0d0ad-72018325/linux/junit.xml"
-            ],
-            "exit_code": 0,
-            "log_sha256": "0d34ca49bf527cbf2c2b542b9efc4a138e8a03d8e2dfa04f8a7214ca1eec4067",
-            "name": "posix-tests",
-            "seconds": 43.478178306000004
-          }
-        ],
-        "platform": "Linux-6.18.33.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
-        "python": "3.12.3 (main, Jun 19 2026, 12:46:00) [GCC 13.3.0]",
-        "tested_commit": "3c0d0ad18e9640ceacc60502e227354cfff939d0",
-        "uid": 1003,
-        "wheel_sha256": "0121ce397964c19e130bfcd7d81f86643667ef152cf6badd2d57c5dbed1957c3",
-        "workspace": "/var/tmp/kg-mnp-final-3p0ulp1a"
-      },
-      "mnp-assets": {
-        "command": [
-          "<repository>\\.venv-p09\\Scripts\\python.exe",
-          "scripts/generate_mnp_prompt01_content_golden.py",
-          "--check"
-        ],
-        "duration_seconds": 9.5,
-        "exit_code": 0,
-        "files": {
-          "command.log": "aed5de2419a5e62600eff4619ff3c539be40db1b5387b608f4898a99bd39e354"
-        }
-      },
-      "openapi": {
-        "command": [
-          "<repository>\\.venv-p09\\Scripts\\python.exe",
-          "-m",
-          "kg_mnp",
-          "service",
-          "openapi",
-          "--workspace",
-          "runtime/p09-openapi-check",
-          "--output",
-          "<repository>\\runtime_logs\\p09\\fixed-3c0d0ad-72018325\\openapi.json"
-        ],
-        "duration_seconds": 3.75,
-        "exit_code": 0,
-        "files": {
-          "command.log": "ba8766501341230eb84da5ae6b9b7b0dafeb3e329bf0bb90967d2772c3d849ec"
-        }
-      },
-      "parallel": {
-        "command": [
-          "<repository>\\.venv-p09\\Scripts\\python.exe",
-          "-m",
-          "pytest",
-          "@<repository>\\runtime_logs\\p09\\fixed-3c0d0ad-72018325\\parallel.args",
-          "-p",
-          "xdist.plugin",
-          "-n",
-          "3",
-          "-p",
-          "tests.verification_receipts",
-          "--junitxml=<repository>\\runtime_logs\\p09\\fixed-3c0d0ad-72018325\\parallel\\junit.xml"
-        ],
-        "duration_seconds": 1619.4379999999946,
-        "exit_code": 0,
-        "files": {
-          "collection.json": "4f53cda18c2baa0c0354bb5f9a3ecbe5ed12ab4d8e11ba873c2f11161202b945",
-          "command.log": "f04369b58d2c2a648467819d5cd1b93da53e86f92c0de9d67a0a9cde149f618a",
-          "junit.xml": "584aca4ace72ac05e23468da37260d5b33ab65c67e77531e0ba3940d1bc71fcd",
-          "progress-12512.jsonl": "a4b3b28ec791b736944de4b061a7edfbc8329482287a935efbac0a1ce8d49dab",
-          "progress-16660.jsonl": "599e76a349487b44eb3961622333ff27b4f181a3ac531187321b95ff6a55bd26",
-          "progress-17084.jsonl": "5ab852976d0a625aba6a48a65b948b26ec08c060fc84328f8f28e722dfe89204",
-          "progress-24076.jsonl": "b1f786b81c828f6bd547311882e21e97426281c04545aac05c670c01758b999a",
-          "reports.json": "c36cc6ecd66d3c544fc914de2029d43a0b2389c4afd902362a40720abbc5195f"
-        },
-        "skips": [
-          {
-            "reason": {
-              "message": "POSIX execute permission bits are not exposed on Windows",
-              "type": "pytest.skip"
-            },
-            "test": {
-              "classname": "tests.security.test_domain_pack_security",
-              "name": "test_executable_permission_is_rejected",
-              "time": "0.001"
-            }
-          },
-          {
-            "reason": {
-              "message": "platform cannot create test symlink: [WinError 1314] 客户端没有所需的特权。: '<user-home>\\\\AppData\\\\Local\\\\Temp\\\\pytest-of-Yangjunjie Lin\\\\pytest-2616\\\\popen-gw2\\\\test_symlink_escape_is_rejecte0\\\\outside.ttl' -> '<user-home>\\\\AppData\\\\Local\\\\Temp\\\\pytest-of-Yangjunjie Lin\\\\pytest-2616\\\\popen-gw2\\\\test_symlink_escape_is_rejecte0\\\\minimal\\\\shadow.ttl'",
-              "type": "pytest.skip"
-            },
-            "test": {
-              "classname": "tests.security.test_domain_pack_security",
-              "name": "test_symlink_escape_is_rejected_or_explicitly_skipped",
-              "time": "0.059"
-            }
-          },
-          {
-            "reason": {
-              "message": "directory symlink creation unavailable on this platform: [WinError 1314] 客户端没有所需的特权。: '<user-home>\\\\AppData\\\\Local\\\\Temp\\\\pytest-of-Yangjunjie Lin\\\\pytest-2616\\\\popen-gw2\\\\test_source_store_rejects_syml0\\\\external' -> '<user-home>\\\\AppData\\\\Local\\\\Temp\\\\pytest-of-Yangjunjie Lin\\\\pytest-2616\\\\popen-gw2\\\\test_source_store_rejects_syml0\\\\workspace\\\\sources\\\\blobs\\\\sha256'",
-              "type": "pytest.skip"
-            },
-            "test": {
-              "classname": "tests.security.test_source_security",
-              "name": "test_source_store_rejects_symlinked_authority_directory",
-              "time": "0.590"
-            }
-          },
-          {
-            "reason": {
-              "message": "platform cannot create test symlink: [WinError 1314] 客户端没有所需的特权。: '<user-home>\\\\AppData\\\\Local\\\\Temp\\\\pytest-of-Yangjunjie Lin\\\\pytest-2616\\\\popen-gw2\\\\test_workspace_symlink_escape_0\\\\outside.txt' -> '<user-home>\\\\AppData\\\\Local\\\\Temp\\\\pytest-of-Yangjunjie Lin\\\\pytest-2616\\\\popen-gw2\\\\test_workspace_symlink_escape_0\\\\workspace\\\\sources\\\\escape.txt'",
-              "type": "pytest.skip"
-            },
-            "test": {
-              "classname": "tests.security.test_workspace_security",
-              "name": "test_workspace_symlink_escape_is_rejected_or_explicitly_skipped",
-              "time": "0.538"
-            }
-          },
-          {
-            "reason": {
-              "message": "POSIX FIFO semantics are exercised by Ubuntu CI",
-              "type": "pytest.skip"
-            },
-            "test": {
-              "classname": "tests.sources.test_source_store",
-              "name": "test_fifo_is_rejected",
-              "time": "0.001"
-            }
-          },
-          {
-            "reason": {
-              "message": "symlink creation unavailable on this platform: [WinError 1314] 客户端没有所需的特权。: '<user-home>\\\\AppData\\\\Local\\\\Temp\\\\pytest-of-Yangjunjie Lin\\\\pytest-2616\\\\popen-gw2\\\\test_symlink_and_non_regular_s0\\\\target.txt' -> '<user-home>\\\\AppData\\\\Local\\\\Temp\\\\pytest-of-Yangjunjie Lin\\\\pytest-2616\\\\popen-gw2\\\\test_symlink_and_non_regular_s0\\\\link.txt'",
-              "type": "pytest.skip"
-            },
-            "test": {
-              "classname": "tests.sources.test_source_store",
-              "name": "test_symlink_and_non_regular_source_are_rejected",
-              "time": "0.569"
-            }
-          }
-        ],
-        "suites": [
-          {
-            "errors": "0",
-            "failures": "0",
-            "hostname": "Yangjunjie",
-            "name": "pytest",
-            "skipped": "6",
-            "tests": "1126",
-            "time": "1615.749",
-            "timestamp": "2026-09-07T11:28:51.799880+01:00"
-          }
-        ]
-      },
-      "pip-check": {
-        "command": [
-          "<repository>\\.venv-p09\\Scripts\\python.exe",
-          "-m",
-          "pip",
-          "check"
-        ],
-        "duration_seconds": 3.1559999999881256,
-        "exit_code": 0,
-        "files": {
-          "command.log": "672aec65a45bed50e70229c70934a7eebf0462595c459b83023027645d57cccf"
-        }
-      },
-      "python-build": {
-        "command": [
-          "<repository>\\.venv-p09\\Scripts\\python.exe",
-          "-m",
-          "build",
-          "--wheel",
-          "--sdist",
-          "--outdir",
-          "runtime/p09-final-distribution"
-        ],
-        "duration_seconds": 62.64100000000326,
-        "exit_code": 0,
-        "files": {
-          "command.log": "f705f61f2949630b897642b011d8044884a8e9bae17e22c4d12ab0879786b523"
-        }
-      },
-      "requirement-ledger": {
-        "command": [
-          "<repository>\\.venv-p09\\Scripts\\python.exe",
-          "-m",
-          "tools.consolidation_audit",
-          "--check"
-        ],
-        "duration_seconds": 4.60899999999674,
-        "exit_code": 0,
-        "files": {
-          "command.log": "f93d9fcf96e70004f694e00128b240751af9694643b9969f360a95f09118787c"
-        }
-      },
-      "sdist-wheel-rebuild": {
-        "command": [
-          "<repository>\\.venv-p09\\Scripts\\python.exe",
-          "-m",
-          "pip",
-          "wheel",
-          "--no-deps",
-          "--wheel-dir",
-          "runtime/p09-sdist-wheel",
-          "runtime/p09-final-distribution/kg_mnp_toolchain-0.9.0.dev0.tar.gz"
-        ],
-        "duration_seconds": 64.95300000000861,
-        "exit_code": 0,
-        "files": {
-          "command.log": "96cd6126ff11cb4411d12b19af3f9fe865b2c3d1fa158dd04c501feff883eca6"
-        }
-      },
-      "serial": {
-        "command": [
-          "<repository>\\.venv-p09\\Scripts\\python.exe",
-          "-m",
-          "pytest",
-          "@<repository>\\runtime_logs\\p09\\fixed-3c0d0ad-72018325\\serial.args",
-          "-p",
-          "tests.verification_receipts",
-          "--junitxml=<repository>\\runtime_logs\\p09\\fixed-3c0d0ad-72018325\\serial\\junit.xml"
-        ],
-        "duration_seconds": 1369.9839999999967,
-        "exit_code": 0,
-        "files": {
-          "collection.json": "e72b08cad245dcafdd0a158d2e49f954b9421851b5c1c350a5ac324d807a2215",
-          "command.log": "7ed555d6c5405bdd8e875fbebe588f5de25328a973850f42e864c5d441470700",
-          "junit.xml": "0a59c3f472e42123bb59c71f1c6d1132038f7ed28b950325f37cacb94ee25c97",
-          "progress-37752.jsonl": "94aa257adf631c1c609da23f36f4b7b647f16033ba8c539c697279fa90cd849a",
-          "reports.json": "736f5c47d50f6c87b6ecf1c5098390061433249e8f08220b9c0ed416280a7d47"
-        },
-        "skips": [
-          {
-            "reason": {
-              "message": "directory symlinks are unavailable to this test user",
-              "type": "pytest.skip"
-            },
-            "test": {
-              "classname": "tests.activation.test_artifact_verifier_phase06",
-              "name": "test_artifact_directory_symlink_is_rejected",
-              "time": "2.751"
-            }
-          },
-          {
-            "reason": {
-              "message": "file symlinks are unavailable to this test user",
-              "type": "pytest.skip"
-            },
-            "test": {
-              "classname": "tests.activation.test_artifact_verifier_phase06",
-              "name": "test_artifact_file_symlink_is_rejected",
-              "time": "0.039"
-            }
-          },
-          {
-            "reason": {
-              "message": "directory symlinks are not available to this test user",
-              "type": "pytest.skip"
-            },
-            "test": {
-              "classname": "tests.activation.test_persistence_and_concurrency",
-              "name": "test_state_directory_rejects_symlink_escape",
-              "time": "0.009"
-            }
-          }
-        ],
-        "suites": [
-          {
-            "errors": "0",
-            "failures": "0",
-            "hostname": "Yangjunjie",
-            "name": "pytest",
-            "skipped": "3",
-            "tests": "449",
-            "time": "1347.854",
-            "timestamp": "2026-09-07T11:28:40.792886+01:00"
-          }
-        ]
+        "findings": "Actual Windows UI: historical target at CAS generation3; typed inspection→tree relationship; source sample/locator/download readable."
       }
     },
-    "commits": [
-      "3c0d0ad18e9640ceacc60502e227354cfff939d0 fix(contracts): preserve frozen schema bytes across platform checkouts",
-      "10b3f92f2f08ba16d9d538f472d86af5a3380e69 test(product): replace stale version and prose freezes with current invariants",
-      "598c7b03ca748663889518adfe2333e78408cd2a fix(security): reject drive syntax in portable source display paths",
-      "c355e9527dad9ba0a6d4246dbe8585126eace229 fix(packaging): include dependency notices and isolate generated build output",
-      "5330df3ac02463e8c32c30e64d9ecb58f9ef0984 refactor(verification): audit fixed history and retain open consolidation scope",
-      "d587d578c7bc5b365882645a7b18a026594c2223 feat(workbench): add authenticated Chinese minimal engineering workflow",
-      "dc5694dbf7b5b2b0273e70d3b61595c005b28580 feat(services): connect fenced source modeling and initial release workflows"
-    ],
-    "decision": "NO_GO_OPEN_CORE_REQUIREMENTS",
-    "delivery_commit_policy": "Evidence-only successor, exact SHA reported after creating that commit; no self-referential SHA.",
-    "domains": {
-      "forestry": {
-        "new_digest": null,
-        "new_service_browser_workflow": "NOT_RUN",
-        "pack": "PLANNED_METADATA_ONLY",
-        "requested_0_2_0_upgrade": "NOT_IMPLEMENTED",
-        "version": "0.1.0"
-      },
-      "fourth_pack": {
-        "browser": "NOT_RUN"
-      },
-      "minimal": {
-        "browser": "PASS",
-        "compilation": "PASS",
-        "evidence": "PASS",
-        "ingestion": "PASS",
-        "initial_release": "PASS",
-        "modeling": "PASS",
-        "pack": "PASS",
-        "package": "PASS",
-        "review": "DEVELOPMENT_HUMAN_TEST_PROFILE"
-      },
-      "mnp": {
-        "assets": "84/84 PASS",
-        "new_service_browser_workflow": "NOT_RUN",
-        "pack": "PASS",
-        "version": "1.0.0"
-      }
-    },
-    "environment": {
-      "chromium": "153.0.8010.12",
-      "dependencies": {
-        "fastapi": "0.115.0",
-        "httpx": "0.27.2",
-        "jsonschema": "4.26.0",
-        "kg-mnp-toolchain": "0.9.0.dev0",
-        "owlrl": "6.0.2",
-        "pydantic": "2.13.5",
-        "pyshacl": "0.28.1",
-        "pytest": "8.4.2",
-        "rdflib": "7.6.0",
-        "setuptools": "80.9.0",
-        "uvicorn": "0.30.6",
-        "wheel": "0.45.1"
-      },
-      "java": "java version \"23.0.2\" 2025-01-21\nJava(TM) SE Runtime Environment (build 23.0.2+7-58)\nJava HotSpot(TM) 64-Bit Server VM (build 23.0.2+7-58, mixed mode, sharing)",
-      "machine": "AMD64",
-      "node": "v24.15.0",
-      "platform": "Windows-11-10.0.26200-SP0",
-      "python": "3.12.6"
-    },
-    "external_blockers": [
-      "GraphDB live license/environment not provisioned; missing local adapters are distinct implementation gaps."
-    ],
-    "linux": {
-      "failed": 0,
-      "full_linux_suite_and_reasoner": "NOT_RUN",
-      "junit_sha256": "45195fcde7d686e97261d5abc67759d2e2e3ccbb730f02a02325780516dac9f6",
-      "passed": 60,
-      "skipped": 0,
-      "status": "PASS_POSIX_SUBSET"
-    },
-    "lock_digests": {
-      "requirements-dev.lock": "32ba3b28e5db528eac3cb1fa34d6ecf36b1ead39d6df06a9efa5da31d20dd8ec",
-      "workbench/package-lock.json": "3e36a1f6dc2990a2b5cb39af1b343e7b659befc6eed6e298e6bfec63e0bc867d"
-    },
-    "not_run_or_incomplete": [
-      "Remaining 12 declared operations and detailed partial-operation gaps in final-requirements.json.",
-      "Manual/recorded-provider application flows and full candidate modification/conflict/evidence workflow.",
-      "Successor Diff/Impact/Regression/Release/Environment/Rollback workflow.",
-      "Forestry 0.2.0, MNP service/browser and fourth-pack workflow.",
-      "Full old UI/business/CLI/script retirement and capability CI migration/execution.",
-      "Backend standalone static typing and frontend standalone lint/unit suites.",
-      "Full adversarial browser, accessibility/keyboard and scale/performance acceptance.",
-      "Full Linux semantic/browser suite and comprehensive hard-kill/power-loss recovery."
-    ],
-    "original_failures_and_repairs": [
-      "Upload 404/Source 501 reproduced and connected.",
-      "Blanket rejection of confirmed Workspace files replaced by authority checks.",
-      "Actual core commit fencing/revocation/cancel/recovery boundaries tested.",
-      "Registry import now binds real source ProjectLock bytes/hash.",
-      "Browser login cache, table reference loop and ambiguous labels fixed.",
-      "Built-in distribution prerelease support fixed without relaxing external version matching.",
-      "Missing clean-environment setuptools/wheel requirements declared and pinned.",
-      "Frontend license notices and clean build outputs added.",
-      "Four obsolete version/prose assertions migrated, then complete fixed-revision tests rerun.",
-      "POSIX drive syntax and frozen schema checkout bytes fixed; Linux subset rerun."
-    ],
-    "protected_packs": {
-      "forestry": {
-        "content_digest": "58dbf2ab75189ecefdaf79e6c5e49ae7c796471e9be65aa48cbf0e21a21d66e9",
-        "lock_sha256": "d8286ebeeeaab3a409fdee1de241bae1c1db8bd79cec3c60030dd7cb3e2a196b"
-      },
-      "minimal": {
-        "content_digest": "9243d8a995a4a87b8d2048bf7cb0069203e3d7d528e57409e6d3f985ac11e014",
-        "lock_sha256": "533c4730303765b98a17006421535f543969846afbff007347fdd7e7aea601d3"
-      },
-      "mnp": {
-        "content_digest": "2554d6d4bbd98b4defd2a46243d6f4f01842320bcc929aff0a3a03ba7cc6ddd1",
-        "lock_sha256": "f7b53a9031a66423ed6fe7569c52457ffd8914fed150b0cf95c5ef5e4f32e619"
-      }
-    },
-    "public_schemas": {
-      "catalog_lock_verified": true,
-      "checkout_policy": "Three frozen historical review schemas explicitly use CRLF to match their unchanged Catalog hashes.",
-      "count": 115,
-      "git_blob_changes_from_source": []
-    },
-    "raw_evidence_root": "runtime_logs/p09/fixed-3c0d0ad-72018325",
-    "research_limits": [
-      "Engineering mechanisms do not establish academic novelty.",
-      "Hash bindings do not establish source truth.",
-      "OWL/SHACL/CQ claims are limited to actual inputs, constraints and Oracles.",
-      "No live LLM, forestry field trial or external business/deployment success."
-    ],
-    "retirement": {
-      "complete": false,
-      "helper_move": "tests/prompt08_receipts.py -> tests/verification_receipts.py",
-      "product_ui_or_business_files_deleted": [],
-      "tracked_files_at_source": 1687,
-      "tracked_files_at_tested_commit": 1726
-    },
-    "source_commit": "9da17d126cb37166ff06084080770108da20afbe",
-    "source_equivalence_exclusions": [
-      "docs/release/release-candidate-notes.md",
-      "docs/verification/final-requirements.json",
-      "docs/verification/final-verification.json"
-    ],
-    "source_equivalence_method": "SHA-256 of tracked tested inputs, plus git diff; only the three named evidence files may differ.",
-    "tested_commit": "3c0d0ad18e9640ceacc60502e227354cfff939d0",
-    "tested_source_tree_digest": "1cee0c28d4ef2012ab8056259661ba5e30809fc6038c85cdb4f876065f6de88e",
-    "evidence_archive": {
-      "path": "runtime/p09-final-distribution/acceptance-evidence-3c0d0ad.zip",
-      "sha256": "bb24845ce801d08c388b1a71c1be3191e5176d7229e8012729a5c5bc26ddb93b",
-      "bytes": 958548,
-      "file_count": 93,
-      "secret_scan": "PASS",
-      "scope": "Final raw command/JUnit/collection evidence, final synthetic screenshots/IDs and development JUnit failures; no runtime workspace or credentials."
-    },
-    "installed_wheel_security_module_sha256": "0e3b0182487c356cb824b18bc4a6543b886ecee60c610791385a34a9913cf579",
-    "additional_test_migrations": [
-      {
-        "old_nodeid": "tests/refactor/test_product_identity.py::test_source_package_identity",
-        "new_nodeid": "tests/refactor/test_product_identity.py::test_source_package_identity",
-        "decision": "REPLACE_FIXED_VERSION_ASSERTION",
-        "evidence": "Valid PEP 440 source version, no old package namespace; installed metadata equality separately tested"
-      },
-      {
-        "old_nodeid": "tests/refactor/test_product_identity.py::test_distribution_metadata_and_console_surface",
-        "new_nodeid": "tests/refactor/test_product_identity.py::test_distribution_metadata_and_console_surface",
-        "decision": "STRENGTHEN_SINGLE_VERSION_AUTHORITY",
-        "evidence": "pyproject dynamic version points to kg_mnp.__version__; installed distribution and console entries must agree"
-      },
-      {
-        "old_nodeid": "tests/webvowl/test_stage08_boundaries.py::test_stage08_ci_cleanup_and_publication_boundary_are_closed",
-        "new_nodeid": "tests/webvowl/test_stage08_boundaries.py::test_stage08_ci_cleanup_and_publication_boundary_are_closed",
-        "decision": "REPLACE_STALE_PROSE_ASSERTIONS",
-        "evidence": "CI secret/cleanup and publication boundary checks retained; actual historical tag target checked"
-      }
-    ]
+    "accessibility": "Actual axe wcag2a/wcag2aa/wcag21aa scans per workflow screen; no violations; separate from agent-assisted keyboard inspection, not certification"
   },
-  "domain_workflows": {
-    "minimal": {
-      "status": "PASS_INCREMENTAL_BROWSER_WORKFLOW",
-      "compiler_version": "0.5.0",
-      "ids": {
-        "project_id": "urn:kg-mnp:project:03e7faaf30effcfa60f4912e1ba65404d9487f47f362be65cd680d88d3a5ec6b",
-        "source_id": "urn:kg-mnp:source:a6b96e697f242db622efb316e435372f68ce9881611213756e7736b9b406cbb6",
-        "run_id": "urn:kg-mnp:ingestion-run:23ed0feb24b27ead983e63be8a8547611830410d70730444970f639bc547db08",
-        "scope_id": "urn:kg-mnp:ontology-scope:0344ab37fe1a2b54f092252e9d8393fde714fdebeae6cc97a9861e8eb24be6eb",
-        "proposal_id": "urn:kg-mnp:ontology-modeling-proposal:89484729d512d859bd43264f63fe646a727b4f0bb0a3c41dac84986ceef81724",
-        "review_id": "urn:kg-mnp:ontology-review-queue:ac1c1077b57571a63b1e577df02edc775c90c468e8cb2f9d3e0aa90dae575157",
-        "package_id": "urn:kg-mnp:ontology-package:6840f4db27afb04e274be7878ef49d96f9e8877d2d21d5c3b9f48c4211f5b36d",
-        "release_id": "urn:kg-mnp:release:cedf0631d05e64987d4c0e90ed7c6c0fd8cd5316891c3bc7c4d9481661c8f95d",
-        "job_ids": [
-          "job_05790d7e35ca491cbeadc03a12be59e7",
-          "job_ed519ec5b6e045579dd65f8446524b1d",
-          "job_74405d7433b543e2a1f07abe9ac81b88",
-          "job_043abfd76c604d0cbbc57d7d7f8f9108",
-          "job_ffe2ad0c62d64b87b9332458b0df774d",
-          "job_e9ceb209d3264b168f8c052d47a3772d",
-          "job_bc8563c193404e09bb553684c95c94d7",
-          "job_bbbf544fd01f443fbbf70fb00ff07886",
-          "job_bae6aa3933bd452a8a312ec2d6964baa",
-          "job_afd3e5702c7d454a88660cb631f704a8",
-          "job_05aeb33f6f714d21aa7a3f7eb268a081",
-          "job_09dafe90ba2d4297b874a617a8f3608a",
-          "job_59d80e159e6d4587b993ed709609bffd",
-          "job_49b8eaa4b5ad44859c3ef55d0b11ffbe",
-          "job_38bf22d270634f57818395bc279c1b30",
-          "job_257952912020481aa7f4b6d49712c93c",
-          "job_e9f6b6869dd5419b964881e64e2af006",
-          "job_6b9fd4f99a644d75a555e7a7764d80d1",
-          "job_4fe5794ee9f5428dbf8d18d78aa73214",
-          "job_1ad46d4ce6d14f2b9465dc5a4c22ca8a",
-          "job_7e09e3b779e3405dbf2200d49b5c287b",
-          "job_e8a4556fa701424191b5da3d93034efc",
-          "job_4f13add51f5f47bf97cc2239f85502da",
-          "job_e67281f2b87645efa3ba7d94cdbcd31d",
-          "job_062028d5c3ae4258b25f468b746ea289",
-          "job_4e5e878e50de40388bbc126e30b25824",
-          "job_14d82acf065c44a290e4f46d1d11f9d4",
-          "job_7595b299f55e40a88a9d2188336e71ee",
-          "job_847841838bbc418e9c90747777851c9a",
-          "job_3757894f60ac499b952a9b31d8553230",
-          "job_9cd79be28525424ab1ae7575179a1488",
-          "job_3185b5a7d40541549fd7ff27f3aaa3e3",
-          "job_6e98142e435c4610ac17cf9609d15696",
-          "job_1099e6fd1fa14516a900de87e11e492e",
-          "job_623548825c1f4134839eb4566cd362bc",
-          "job_3721402a34734a68ac88ab089954ff11",
-          "job_290e3c30a7664851a917119c62ec8e52",
-          "job_d1426a9723924c4e82946f1700e6adcb",
-          "job_3c917148e888453aa4c2d5d7b1bb06b1",
-          "job_c045ecdf162149d2bbeccd8d48530bf2"
-        ]
+  "delivery": {
+    "build_source_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
+    "artifacts": [
+      {
+        "name": "kg_mnp_toolchain-0.9.0rc1-py3-none-any.whl",
+        "sha256": "e0ee2db493701bd0df3fde7d958abaaf077e00d1c9857354354c5c4a3eb1786b",
+        "bytes": 1073485
       },
-      "evidence": "runtime_logs/p09/browser-runs/2026-09-07T20-36-40-259Z/output/minimal.e2e.ts-real-browse-f61d0--fixed-reasoner-and-release/screenshots/ids.json",
-      "final_revision_acceptance": false
+      {
+        "name": "kg_mnp_toolchain-0.9.0rc1.tar.gz",
+        "sha256": "8876c4f876b804bb1ac8f18411ef7a29c710e07adee8cc5d9bc0ea5b0db643e4",
+        "bytes": 880773
+      },
+      {
+        "name": "toolchain-examples.zip",
+        "sha256": "9d9687cbf410f21d3755291e8897ba7dd9f22cdea6d346be97ed79b9f8c921e6",
+        "bytes": 109656
+      }
+    ],
+    "workbench_files": {
+      "assets/index-BCtqn_M7.js": "94c76266ecdb956519b0e1ed7034e7d484ee709b4781d03c8569e811734e4136",
+      "assets/index-C4ScrT0i.css": "da57e23a6cc27424b630526252e02ad2d3e6741df67c4dcaba88ba9c0bf2baa0",
+      "assets/modeling-CTQ7Etqi.js": "b1ce571a5b55b5e43a58787a68c39f7071b726449bdf6cd5bea409af32aff9a7",
+      "assets/modeling-DLioOiRN.css": "b0cb7bd6fec5951c9c8f5808821438206604b1629a912c96009ac427f38e7d69",
+      "index.html": "a13defcc7b1c87853f182ada71dd734bce0f20333602c28d1421fd37e17dd45a",
+      "third-party-notices.txt": "7af40730ac180b6a28c6852d9d1e698cadaa792e906e5a451f0829c3c60174af"
     },
-    "mnp": {
-      "status": "PASS_INCREMENTAL_BROWSER_WORKFLOW",
-      "compiler_version": "0.5.0",
-      "ids": {
-        "project_id": "urn:kg-mnp:project:91863e3f2582e5900cd2d19e85aed0adf15da30890395ede3ea8ee9b4457979f",
-        "source_id": "urn:kg-mnp:source:e1a1ab7efe1facd155bce8a4a689cac0f11d545f0c19d7aff441182489eb87f3",
-        "run_id": "urn:kg-mnp:ingestion-run:09eb2d38854f1f3f0ffe38dc4f9929655d090b28dc70eb06106e8e172acabde6",
-        "scope_id": "urn:kg-mnp:ontology-scope:304c38eb196e8dd8a058125808a6f3c35a49fb3777ae6c71f7a023edb4c08b94",
-        "proposal_id": "urn:kg-mnp:ontology-modeling-proposal:8e9717a9c6db21b32b3fc126f92353b371b36497beeebf1e2101cef5e570c418",
-        "review_id": "urn:kg-mnp:ontology-review-queue:9996d1b42c632cfb5e6425289eb1cf8804a6aec538c8f75d6033d15111a61d6c",
-        "package_id": "urn:kg-mnp:ontology-package:6fc6d6db9988b40d66997ad17cb715125daf42a26afb8e3206e773fa15ee03d9",
-        "release_id": "urn:kg-mnp:release:cbeabd44c79487db55450cc9b648393d510c8a5ebb62dd35ab4b40c880deace1",
-        "job_ids": [
-          "job_8f0739d9d88342dc8630147d8c97dad8",
-          "job_15496369a0bc43d6bded1faf95ab0d89",
-          "job_7bd8344b2f11492aa0151ba6c99de90a",
-          "job_ee9acf6f116f4890835166122dc471f3",
-          "job_33b3519716834d3ea4c487c9a64e5d3a",
-          "job_90bc8fcec68a45a6bd7f3bd690546e58",
-          "job_9494ce04bd464fb99d44b3a35874d6ec",
-          "job_8117df63106f47d2a623a5a6a2a07d77",
-          "job_9779cc7058134352b229c5f5b36e2f55",
-          "job_cbdd3e43d5ac4c1e8c94150fd3fe28b2",
-          "job_a1f9086c17a74824b13cca0200805fd4",
-          "job_abb2557ebcf445d0805364aa36012ce3",
-          "job_62365def0f384e788634d27e6b38bdc4",
-          "job_00760a57b63746d39f2e46d3ef45da23",
-          "job_a5679be41684414f8cc81cade4a70634",
-          "job_afe09dde8846461686cb56db9e0a2d74",
-          "job_9511384c8cd742fa914444e25d22500f",
-          "job_c96c5728dbea485caf627fbb55592168",
-          "job_546bccdc03874494a50f1dc0ca6e19f4",
-          "job_925e09ad6e904ebb83a0a82d89cddca2",
-          "job_730c9ab9baee496ba5a9582ccf4b21eb",
-          "job_9e9f3fe97bb845d29288e1fca9f19206",
-          "job_80d0bd769798495997954f250457a462",
-          "job_6bc4d5092a434ca48fffa6810621c95e"
-        ]
-      },
-      "evidence": "runtime_logs/p09/browser-runs/2026-09-07T20-36-40-259Z/output/minimal.e2e.ts-real-browse-d5fae--fixed-reasoner-and-release/screenshots/ids.json",
-      "final_revision_acceptance": false
+    "same_bytes_cross_platform": {
+      "source_platform": "linux",
+      "verification_platform": "windows",
+      "status": "PASS",
+      "input_artifacts": [
+        {
+          "name": "kg_mnp_toolchain-0.9.0rc1-py3-none-any.whl",
+          "sha256": "e0ee2db493701bd0df3fde7d958abaaf077e00d1c9857354354c5c4a3eb1786b",
+          "bytes": 1073485
+        },
+        {
+          "name": "kg_mnp_toolchain-0.9.0rc1.tar.gz",
+          "sha256": "8876c4f876b804bb1ac8f18411ef7a29c710e07adee8cc5d9bc0ea5b0db643e4",
+          "bytes": 880773
+        },
+        {
+          "name": "toolchain-examples.zip",
+          "sha256": "9d9687cbf410f21d3755291e8897ba7dd9f22cdea6d346be97ed79b9f8c921e6",
+          "bytes": 109656
+        }
+      ],
+      "evidence_prefix": "same-bytes-cross-platform"
     },
-    "forestry": {
-      "status": "PASS_INCREMENTAL_BROWSER_WORKFLOW",
-      "compiler_version": "0.5.0",
-      "ids": {
-        "project_id": "urn:kg-mnp:project:8790979679796bbf68e25668aafef1f5fc54dbf6178b7574450dd3924fd095f1",
-        "source_id": "urn:kg-mnp:source:d390bf268ec4e4fcc0c6963adae20c80486535c037e68f0d4b2dcbab25e476e5",
-        "run_id": "urn:kg-mnp:ingestion-run:dd36edafb2ece143fbf2f62508f0cebb22e829d6d34244c73bb5074bd9f1dc35",
-        "scope_id": "urn:kg-mnp:ontology-scope:2ff4022aacd4d9ef85f7f268ffff411fdaf71b82da15a776164a7dc979a616a1",
-        "proposal_id": "urn:kg-mnp:ontology-modeling-proposal:d2a79846276b9f692572f3a4b789735bab843ea761bb124aad0dfce60689a24f",
-        "review_id": "urn:kg-mnp:ontology-review-queue:577174404b4268c075655a872173ed2c76f61c7979818ea9c60328bf96eb14f3",
-        "package_id": "urn:kg-mnp:ontology-package:7005c5fae6c704dcab4f18b29d1ea4f1513fbb7531d19e41a5c5198668bdf45d",
-        "release_id": "urn:kg-mnp:release:76da31f03fdb9cf6d5ca40c22faaee6c605ef2e300d16f17327f99df20c38ab4",
-        "job_ids": [
-          "job_4247433582a642149259832ff5828cf3",
-          "job_938450981f834ffb9f948f9ddac2d664",
-          "job_90b8972e828d4656927d35b7d526160f",
-          "job_2450d19162734fd88d5a1905ece1804e",
-          "job_16c2c711919644eab8a5b620abbddd53",
-          "job_af163344be814bad88635047ebb86c34",
-          "job_bf24026e7e7e4bd68bac1f46ad599a79",
-          "job_1dadd82513214d8992c12ad0f2b84b0a",
-          "job_ef5870c2eaed42788ef79c767cb6a8ac",
-          "job_a4b8ac7e8034444fae4291e0de30afa0",
-          "job_6c477516e4754e6f82a4249d9f48e805",
-          "job_166d44b7be71476fa2b2e96d3946eec5",
-          "job_1b48cafd9d7d4c7cb20a0cd50d801f8f",
-          "job_324da85461614a31808997a085b785ee",
-          "job_3fb60091278241f2b4344b663ffa249a",
-          "job_111353d02a234db7920590a30400ff5c",
-          "job_1ae60364066340c3b463cf318b4a1c2f",
-          "job_16714de06edb42589a17f96ba41e8d74",
-          "job_66dea5b87366476d8c9eb41747f390ff",
-          "job_c5ba9e17d4c64c9d8b116e6139ab53b7",
-          "job_076bb269ea20441391db252faed34756",
-          "job_f49aa5fd97ad4613a6b55dfcd6dbd921",
-          "job_5105797836ff4c808e0fca1fd51f1cac",
-          "job_4f48d207a7704be090f4f8b0527ac812",
-          "job_cd31e1023a414278956b8fee6e9eacb9",
-          "job_f004f325bbab4a9ab75b192b59eac227",
-          "job_d407e22a044342559b5bc0ffa887ad3e",
-          "job_cc8fc3e9f8fc4e469164f4470fa11aba",
-          "job_595b61c109d941e185104683174564ac",
-          "job_e0ccf2bf1097473c80b7ec316b297656",
-          "job_1464543d045b4b44a3857032d5d158f5",
-          "job_a5a5e017a8434be486c3e37df4ca7c81",
-          "job_a85df7fd8f264914b652440e72c7d7fa",
-          "job_4eef4621ab9d46c6a0c1245fd4c8f6c6",
-          "job_1307e31ebf2642a8b7872eb1ceacbc1f",
-          "job_572f3a8b144146f78faa6f12689d1444",
-          "job_cffb9909d8fd4d098f48ef0ed1a983f5",
-          "job_fc4acc652237426e982b671d8d66fe7e",
-          "job_419c6f5de0ce482f815888d3b065aeb8",
-          "job_50f6b733c61a42a9addd5f39d2f04e34",
-          "job_bca687044d974252bde8f8de8ed4eecc",
-          "job_f5e3f19c9d72440b96be6a392bb10098",
-          "job_8c9123a571684b23884381cc90f593ad",
-          "job_6fae83e011b048f39e96fdd3e1912803",
-          "job_fed805f14a3247df8641074b5cabc9c3",
-          "job_2e184553c7584701a6f92314020bf966",
-          "job_c3866de9e7ef4297bc658e118b574c3c",
-          "job_6d3e212d312a4157a9f881d52d187322",
-          "job_dfb54b4600024d3fa6dc75cff4446855",
-          "job_7e18574dd7844652a683ca8dda83fc87",
-          "job_ab7c5bd4b1bd4706a8a4baa57ba9e909",
-          "job_bb71087bae1b4a65bfa2f6cd1fa4a13f",
-          "job_2d409b7105994bf1abf2fcf5626991bd",
-          "job_8bda0fbef19a408fad975350d91a800f",
-          "job_513f324e48444e86b2f7ce70d585e3be",
-          "job_5d27e244106b4c1893f208ac659def08",
-          "job_6f67c4c27ed04cae9aeac120737191e2",
-          "job_dc27663df65346ce8c608cde3a24497d",
-          "job_f857a0669d404f52bb61028d040b6b00",
-          "job_4a8e42a8e3dc4503a76976878401f850",
-          "job_97c431daa9ca41568805979926ac6bc3",
-          "job_3d97bf0010a4403a99cc6bd48bbe01ea",
-          "job_c72f518bb8a9404bb4fb229fd7b210d2",
-          "job_d79424ac8e0f4cab8587cd408860af9b",
-          "job_39f204f61bbe4ef3b972917100e4b99c",
-          "job_825d2e5cbb2a45888b7a2a7959fffa41",
-          "job_34b8e79e3fbb47669e0956bd391362ac",
-          "job_e2ca470ab51643e28ddadc9691a4922b",
-          "job_5e693dd6158443baafb69405f3698880",
-          "job_be3abba4df394d909fe495e28e157258",
-          "job_ed0766afbe2e41c89230b6c136291a76",
-          "job_5d6730a4273e4626b648500ad270bcf1",
-          "job_9509bb7551dc435f892838bd60ce15fe",
-          "job_9bb927c073c6453b98a6b21e4f6e86ce",
-          "job_f48967bac1d741dc9acb45eb725a0957",
-          "job_be725485d76147a7b8895fdcfb3fcb1f",
-          "job_22331d62eb2043e69cabeff5347119ee",
-          "job_33db84f343ba43ee88f9e5069a07fbab",
-          "job_f75561da6da64545a43c10cb6ac1fa88",
-          "job_fe53adf1a79d48e7bf97caa22d2e2fb4",
-          "job_51821ec7c2934f4784ec516b0506a211",
-          "job_77620f00ea0c4dfb9f57a4cccfbcbbfb",
-          "job_b5c13f2988954d4e9e2bb93e076ad9e2",
-          "job_2511325c646343bc8ab76112181dd34f",
-          "job_8f5d978fb1da4841a00137f91c696db5",
-          "job_5b49ca143eed4bd0a6e0ec78352edf19",
-          "job_9351fc775a284fe490027f8924f1ff5a",
-          "job_bce43920414c46eea155ffccebfdf133",
-          "job_210df1da460b4b0183facf456c37a30e",
-          "job_240ffa10f94e469b86cb3334461b755c",
-          "job_dd35de852331452a99974b3366f6527d",
-          "job_a4a3d41e7f6047b891941bf713a82eed",
-          "job_0b5e40a1c37840389d6a77d3b3f61807",
-          "job_f9b7f3ac250540d882aee712c1366dd6",
-          "job_9772c55ec04d4313a562b24f734d9381",
-          "job_3ae286d773a243e9b9f028d0b6847390",
-          "job_e24360f491d24f429f12aa6fc2c58828",
-          "job_e6e5ffd4a94f4d1abe4b81b57adece45",
-          "job_211caac767b644f4a9bc92246308f402",
-          "job_e6c74af47b4e4b44af838d0e76a69f08"
-        ]
-      },
-      "evidence": "runtime_logs/p09/browser-runs/2026-09-07T19-40-38-997Z/output/minimal.e2e.ts-real-browse-e4cce--fixed-reasoner-and-release/screenshots/ids.json",
-      "final_revision_acceptance": false
+    "evidence_bundle": {
+      "path": "runtime_logs/p09/p09-0.9.0rc1-evidence.zip",
+      "sha256": "4d20c39fbbbd8664d42a17442e6d94c035ef091096c7355e59bf6dd16423d31c",
+      "bytes": 23366594,
+      "entries": 1164,
+      "crc_verified": true,
+      "credential_scan": "No runtime bearer/session token pattern in included files; workspaces, token stores, DBs, license keys and browser auth state excluded; screenshots synthetic only"
+    },
+    "evidence_commit_protocol": {
+      "exact_exclusions": [
+        "docs/verification/final-verification.json",
+        "docs/verification/final-requirements.json",
+        "docs/migration/final-retirement-ledger.json",
+        "docs/release/release-candidate-notes.md"
+      ],
+      "input_equality_digest": "9d32656393ca26a77e2a2fe9d4196fa7778fc37c5cbea15188a269fd98524a87",
+      "detached_receipt": "runtime_logs/p09/delivery-b63ba37/delivery-receipt.json",
+      "reason": "Delivery SHA is recorded after evidence-only commit; it is never embedded in the file that creates its own commit",
+      "verifier": "runtime/p09-delivery-equality.py"
     }
   },
-  "current_compiler": {
-    "version": "0.5.1",
-    "new_contract_version": "1.1.0",
-    "original_contracts_preserved": 115,
-    "current_catalog_entries": 117,
-    "actual_minimal_build_tests": {
-      "tests": 5,
-      "failed": 0,
-      "evidence": "runtime_logs/p09/compiler051-build.xml"
-    },
-    "historical_package_sha256": "4e6ba7225348a201c1ba2076e58f3c1bff370a97dae7000e99ebe53f9be3f983"
-  },
-  "checkpoint_tests": [
-    {
-      "command": "pytest tests/workbench tests/diagnostics tests/application_governance tests/cli/test_retired_product_routes.py",
-      "tests": 169,
-      "failed": 0,
-      "skipped": 0,
-      "evidence": "runtime_logs/p09/ui-compat-migration.xml"
-    },
-    {
-      "command": "contract/version and historical reader subset",
-      "tests": 16,
-      "failed": 0,
-      "evidence": "runtime_logs/p09/versioned-compiler-contracts.xml"
-    },
-    {
-      "command": "real authenticated resource CLI subset",
-      "tests": 9,
-      "failed": 0,
-      "evidence": "runtime_logs/p09/cli-consolidation.xml"
-    },
-    {
-      "command": "actual Recorded Provider byte binding",
-      "tests": 1,
-      "failed": 0,
-      "evidence": "runtime_logs/p09/recorded-migration-resolver.xml"
-    },
-    {
-      "command": "frontend component tests including eleven XSS inputs",
-      "tests": 14,
-      "failed": 0
-    },
-    {
-      "command": "application Python static types (services/jobs/api/sdk/integrations)",
-      "errors": 0
-    },
-    {
-      "command": "repository Ruff",
-      "errors": 0
-    }
-  ],
-  "important_failures_preserved": [
-    "Original Forestry HTTP/state and timeout failures remain in raw browser evidence; no retroactive PASS rewrite",
-    "Forestry object query required ~14.8s and six real rows; old15s browser wait failed; final successful incremental run included trace/download equality",
-    "MNP source download required23.610s and returned133bytes matchingSourceSHA; old20s browser download wait failed; later120s bounded test passed",
-    "Minimal environment test selected an already-applied proposal; coreCAS rejected it; exactproposal UI/test binding and stale-button disabling fixed and fullworkflowretested",
-    "Stronger current source snapshot/CLI/refactor tests exposed staleForestryPLANNED/defaultWindowsencoding assertions; migrated to actual0.2EXPERIMENTAL/UTF8",
-    "Historical artifact scanner migration13passed1READMEwordassertionfailed; thatassertionwasthenretestedPASS separately, notcountedasonefixedfullsuite"
-  ],
-  "gates": {
-    "G0": "BASELINE_VERIFIED",
-    "G1": "REAL_LOCAL_FLOW_AND_FENCING_CHECKPOINT_PASSED",
-    "G2": "REAL_REVIEW_AND_COMPILATION_CHECKPOINT_PASSED",
-    "G3": "TWO_VERSION_RELEASE_AND_ROLLBACK_CHECKPOINT_PASSED",
-    "G4": "THREE_DOMAIN_BROWSER_CHECKPOINTS_PASSED",
-    "G5": "IN_PROGRESS",
-    "G6": "NOT_RUN_ON_FINAL_REVISION"
-  },
-  "remaining_required": [
-    "Consolidate/delete remaining legacy backend engines and their duplicate authorities; current legacy backend roots still present",
-    "Complete per-file/per-node retirement ledger and clean obsolete reports/scripts/configuration without dropping safety assertions",
-    "Finish full release-verification entry: Windows/Linux clean install, startup/recovery, source/SDist/wheel equality and documentation command runs",
-    "Run all required checks on one new clean code freeze; all current browserpassesprecedecompiler0.5.1 and cannotcertifyitsfinalrelease",
-    "Update the original53operation mapping and allclosed/openrequirements against completed implementation and fixed evidence",
-    "Final evidence-only commit/equalityproof, artifactbundlehashes and remoteconsistency; no successcandidateTaguntilallrequiredgates"
-  ],
   "external_blockers": [
     {
-      "name": "GraphDB live / external business executor",
+      "name": "GraphDB live",
       "classification": "OPTIONAL_EXTERNAL",
-      "status": "NOT_CONFIGURED_NOT_EXECUTED"
+      "status": "NOT_CONFIGURED_NOT_EXECUTED",
+      "local_observation_and_protocol_tests": "PASS; not a live deployment"
+    },
+    {
+      "name": "External business executor",
+      "classification": "OPTIONAL_EXTERNAL",
+      "status": "NOT_CONFIGURED_NOT_EXECUTED",
+      "outbox": "REQUEST_ENQUEUED is not executed"
     }
   ],
+  "security": {
+    "original_windows_skip_nodes_executed_on_linux": true,
+    "synthetic_orphan_credential_files_revoked_and_removed": 6,
+    "workspace_data_removed_by_cleanup": false,
+    "advisories": {
+      "python_pins_checked": 50,
+      "known_affected": 0,
+      "npm_known_vulnerabilities": 0,
+      "scope": "Public advisory metadata only; unknown vulnerabilities not excluded"
+    },
+    "runtime_workspace_paths_disclosed_to_browser": false
+  },
+  "repo_statistics": {
+    "source_whole_tree_files": 1687,
+    "tested_whole_tree_files": 1696,
+    "changed_files": 528,
+    "insertions": 24875,
+    "deletions": 44634,
+    "quality_metric": false
+  },
+  "original_failures_preserved": {
+    "earlier": [
+      "Original Forestry HTTP/state and timeout failures remain in raw browser evidence; no retroactive PASS rewrite",
+      "Forestry object query required ~14.8s and six real rows; old15s browser wait failed; final successful incremental run included trace/download equality",
+      "MNP source download required23.610s and returned133bytes matchingSourceSHA; old20s browser download wait failed; later120s bounded test passed",
+      "Minimal environment test selected an already-applied proposal; coreCAS rejected it; exactproposal UI/test binding and stale-button disabling fixed and fullworkflowretested",
+      "Stronger current source snapshot/CLI/refactor tests exposed staleForestryPLANNED/defaultWindowsencoding assertions; migrated to actual0.2EXPERIMENTAL/UTF8",
+      "Historical artifact scanner migration13passed1READMEwordassertionfailed; thatassertionwasthenretestedPASS separately, notcountedasonefixedfullsuite"
+    ],
+    "current": [
+      "Cf2: 1767 passed/5 failed/0 skipped; minimalist negative fixture lacked Evidence records, repaired without removing original assertions",
+      "Cf2 browser: 4 passed/1 failed; last() selected old candidate before new DOM; backend CAS correctly rejected; explicit candidate ID binding and already-published controls fixed",
+      "Multi-source CSV/XLSX headers mixed across tables; actual ingestion red tests, then Source/sheet Evidence-bound resolution and duplicate-header rejection",
+      "First graph opening used hidden-parent dimensions and long labels overflowed; visible-mount/wrap and real first-open/reopen regressions",
+      "Windows npm ci EPERM from owned Vite native binding; owned preview stopped, full same-commit entry rerun; no security privilege or lockfile workaround"
+    ],
+    "qualification": "All earlier failures and interrupted runs are history, never added to final B63 coverage"
+  },
   "known_limitations": [
-    "Local copy-on-write workspace publication scales with workspace size",
-    "No liveLLM/OCR/ASRorrealforestrypilotclaim",
-    "No external exactly-onceorproductionsecuritycertification",
-    "Deprecation warnings retained; Windows skips are not LinuxPASS",
-    "CI workflowconfigurationparsed,butnewremoteCIhasnotbeenexecuted"
+    "Only synthetic demonstrations, not forestry field trial or real MNP eligibility deployment",
+    "Recorded Provider is not Live LLM; no fabricated OCR/ASR results",
+    "Local copy-on-write cost grows with workspace; no distributed HA/external exactly-once/hardware power-loss guarantee",
+    "Core/contract/behavior coverage and application-boundary type analysis are not production security certification or proof of academic novelty",
+    "Chromium is the browser tested here; remote CI configuration is not reported as executed CI",
+    "Original frozen domain asset README text may contain historical commands; root product guide is current",
+    "Deprecations and platform skips preserved; no warning-free claim"
   ],
-  "diagnostic_checkpoint_95": {
-    "tested_commit": "95b4d50f1f66a27e15d245facec43061cc0f2d73",
-    "tested_source_tree_digest": "a6f72846069178e414f3dd0cc3847357f54efc4d460f9889cc31177307a96825",
-    "backend": {
-      "status": "FAIL",
-      "collection_count": 1703,
-      "unique_executed_count": 1703,
-      "passed": 1689,
-      "failed": 5,
-      "errors": 0,
-      "skipped": 9,
-      "xfailed": 0,
-      "missing": [],
-      "extra": [],
-      "evidence": "runtime_logs/p09/fixed-95b4d50-559cf039/summary.json"
-    },
-    "failures": [
-      "Old Forestry version/zero-asset/lock assertions (four nodes)",
-      "Ingestion accepted an unrecognized file in confirmed authority directory (one node)"
-    ],
-    "browser": {
-      "status": "FAIL",
-      "passed": 1,
-      "failed": 4,
-      "evidence": "runtime_logs/p09/browser-runs/managed-beccddca65cb44c5bbdec7c2a188de25",
-      "cause": "Managed stdin reader blocked Windows multiprocessing startup; later source jobs queued behind it",
-      "shutdown": "Worker stopped, test credentials revoked/removed; no forged Package success"
-    },
-    "repairs": {
-      "commit": "7430719",
-      "evidence": [
-        "runtime_logs/p09/checkpoint-repairs.xml",
-        "runtime_logs/p09/confirmed-ingestion-repair2.xml",
-        "runtime_logs/p09/runner-parent-repair.xml"
-      ],
-      "meaning": "Targeted repair selections only; not a new full-revision PASS"
-    },
-    "linux": {
-      "checkout": "/var/tmp/kg-mnp-p95.aKXknQ",
-      "source_commit": "95b4d50f1f66a27e15d245facec43061cc0f2d73",
-      "python": "3.12.3",
-      "java": "Temurin 17.0.20.1+1",
-      "node": "24.18.0",
-      "npm": "11.16.0",
-      "first_subset": {
-        "passed": 87,
-        "failed": 1,
-        "errors": 97,
-        "cause": "Parent of explicit pytest basetemp absent in fresh checkout",
-        "evidence": "runtime_logs/p09/linux-capabilities-95/junit.xml"
-      },
-      "prepared_subset": {
-        "passed": 184,
-        "failed": 1,
-        "errors": 0,
-        "skipped": 0,
-        "cause": "Old Forestry lock freeze only",
-        "evidence": "runtime_logs/p09/linux-capabilities-95b/junit.xml"
-      },
-      "scope": "Subset, not all Linux backend tests"
-    }
-  },
-  "installation_preflight": {
-    "status": "PASS_INCREMENTAL_NOT_FINAL",
-    "compiler": "0.5.1",
-    "build_dirty": true,
-    "windows": "runtime_logs/p09/distribution-preflight-20260908/distribution-verification.json",
-    "linux": "/var/tmp/kg-mnp-p95.aKXknQ/runtime_logs/p09/linux-prebuilt-install/distribution-verification.json",
-    "checks": [
-      "Wheel/Sdist build",
-      "Wheel rebuilt from Sdist has identical package/resources",
-      "Two new non-editable venvs per OS",
-      "Isolated Contract/Policy/historical .kgop read",
-      "Bundled SPA/deep refresh/API 401+404",
-      "Independent Worker",
-      "Authorized Source download",
-      "Process restart/Job/idempotency",
-      "Port conflict does not kill original server",
-      "Unconfigured reasoner reported"
-    ],
-    "caveat": "Artifacts precede later readiness/export/ingestion/control-channel changes; must rebuild and rerun after final code freeze"
-  },
-  "current_browser_retest": {
-    "status": "FAIL_INCREMENTAL_FIXED_SOURCE",
-    "source_commit": "feba20fcbc569f52ce51a20af786ae5caf10fb03",
-    "checkout": "runtime/p09-browser-feba20f-src",
-    "core_mocks": false,
-    "passed": 2,
-    "failed": 3,
-    "evidence": "runtime/p09-browser-feba20f-src/runtime_logs/p09/browser-runs/managed-be4aa44abd194bc3b8ae439d78fe3726",
-    "failures": [
-      "Minimal version flow selected old import action before React refreshed; replayed old idempotent Job",
-      "Forestry locked CSV/TXT changed to CRLF in a new checkout; Pack correctly disabled",
-      "MNP verified-archive download exceeded 120 seconds with redundant full verifications"
-    ],
-    "later_repairs": [
-      "045040e: exact artifact action locators, imported-action disablement and LF checkout rules",
-      "cd74d89: one captured/verified export byte set plus final permission recheck"
-    ],
-    "scope": "Later fixes have targeted tests, not a fresh complete browser PASS"
-  },
-  "package_download_repair": {
-    "code_commit": "cd74d8912d6f4ef336a466760e22e7eeb0ee741f",
-    "tests": {
-      "passed": 6,
-      "evidence": "runtime_logs/p09/archive-regression.xml"
-    },
-    "actual_mnp_probe": {
-      "status": "PASS",
-      "package_id": "urn:kg-mnp:ontology-package:dd6bc1d9fb4d150ec778dffb5acc9850120c93946e5729dcd008758ed8eb94b5",
-      "archive_sha256": "53ccc9455224d822832b513b3a5041bb099eb4730550d2877d0dd68fd66c19da",
-      "bytes": 1597671,
-      "seconds": 43.64684470000793,
-      "evidence": "runtime_logs/p09/mnp-download-snapshot/receipt.json",
-      "qualification": "Current read implementation on genuine prior MNP package, not final full-revision workflow acceptance"
-    }
-  },
-  "required_remaining": [
-    "Complete legacy backend/state-writer/reader consolidation with exact assurance migration",
-    "Finish remaining obsolete scripts/config/capability docs consolidation",
-    "New clean code freeze and complete backend/browser/manual QA/platform/distribution verification",
-    "Build and verify actual final Wheel/Sdist/examples/evidence bundle, and tested/delivery input equality"
-  ]
+  "remaining_required": []
 }

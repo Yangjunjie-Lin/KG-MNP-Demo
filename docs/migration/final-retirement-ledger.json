@@ -1,5 +1,5 @@
 {
-  "status": "CURRENT_RUNTIME_CONSOLIDATED_PENDING_FINAL_FIXED_REVISION_ACCEPTANCE",
+  "status": "REFACTOR_COMPLETE_VERIFIED",
   "source_commit": "9da17d126cb37166ff06084080770108da20afbe",
   "retired_product_files": [
     "web/workbench/index.html",
@@ -26,12 +26,35 @@
   ],
   "entries": [
     {
+      "old_path": "tests/modeling/test_record_mapping_negatives.py; workbench/tests/version-flow.ts; workbench/src/release-review.tsx",
+      "old_responsibility": "Identity/reference negative fixture and successor release selection",
+      "actual_callers": [
+        "Full capability collection",
+        "Minimal browser version workflow"
+      ],
+      "replacement_path": "tests/modeling/test_record_mapping_negatives.py; workbench/tests/version-flow.ts; workbench/src/release-review.tsx",
+      "replacement_behavior": "Fixture now has required table Evidence records without changing original negative assertions; successor forms selected by returned Candidate ID, already-published review/publish controls disabled, coreCAS unchanged",
+      "replacement_test_nodeids": [
+        "tests/modeling/test_record_mapping_negatives.py",
+        "workbench/src/workflow-projections.test.tsx",
+        "workbench/tests/minimal.e2e.ts"
+      ],
+      "artifact_compatibility": "No schema/package/domain byte change; no automatic review retry",
+      "decision": "MERGE",
+      "reason": "Cf2 full run exposed fixture precondition and old-button race. B63 full Windows/Linux rerun and all10 platform browser scenarios passed."
+    },
+    {
       "old_path": "src/kg_mnp/modeling/control_plane/mappings.py (column-only header index); src/kg_mnp/modeling/control_plane/providers/record_mapping.py (multi-sheet collapse)",
       "old_responsibility": "Build KG-IR field observations and declarative record candidates",
-      "actual_callers": ["src/kg_mnp/services/modeling.py", "modeling control-plane fixture builders"],
+      "actual_callers": [
+        "src/kg_mnp/services/modeling.py",
+        "modeling control-plane fixture builders"
+      ],
       "replacement_path": "src/kg_mnp/modeling/control_plane/mappings.py; src/kg_mnp/modeling/control_plane/providers/record_mapping.py",
       "replacement_behavior": "One shared table identity binds Source and sheet from exact Evidence locators; headers cannot cross sources or sheets and conflicting coordinates fail closed. Closed record mapping profiles refuse an ambiguous multi-sheet Source instead of choosing its last table.",
-      "replacement_test_nodeids": ["tests/modeling_alignment/test_mapping_table_boundaries.py"],
+      "replacement_test_nodeids": [
+        "tests/modeling_alignment/test_mapping_table_boundaries.py"
+      ],
       "artifact_compatibility": "Original Schema/domain/old package bytes unchanged. New modeling candidates bind corrected observations; historical confirmed/package readers do not regenerate old artifacts.",
       "decision": "MERGE",
       "reason": "Actual two-CSV and XLSX ingestion reproduced incorrect field labels and last-writer-wins headers. This is an input binding correction, not a compiler contract change. Red and green receipts retained under runtime_logs/p09/table-scope-*.xml."
@@ -39,10 +62,17 @@
     {
       "old_path": "workbench/src/shell.tsx::Overview; workbench/src/candidate-explorer.tsx; workbench/src/object-browser.tsx; workbench/src/modeling.tsx",
       "old_responsibility": "Basic latest-job overview, graph/table projection, class-only browser and unlinked field map table",
-      "actual_callers": ["workbench/src/shell.tsx", "workbench/src/releases.tsx"],
+      "actual_callers": [
+        "workbench/src/shell.tsx",
+        "workbench/src/releases.tsx"
+      ],
       "replacement_path": "workbench/src/project-overview.tsx; workbench/src/candidate-explorer.tsx; workbench/src/object-browser.tsx; workbench/src/field-mapping-preview.tsx",
       "replacement_behavior": "Actual artifact IDs and server-replayed pending reviews; bounded linked dependency tree; evidence-bound field samples/types/ambiguity/null policy; paginated term metadata and typed object properties/relations with stale-response fencing on version changes",
-      "replacement_test_nodeids": ["workbench/src/workflow-projections.test.tsx", "workbench/tests/rendering.spec.ts", "workbench/tests/minimal.e2e.ts"],
+      "replacement_test_nodeids": [
+        "workbench/src/workflow-projections.test.tsx",
+        "workbench/tests/rendering.spec.ts",
+        "workbench/tests/minimal.e2e.ts"
+      ],
       "artifact_compatibility": "No new authority/API engine, mock fallback, external navigation or inference of successful review. Existing authorized resource endpoints reused.",
       "decision": "REPLACE_AND_DELETE",
       "reason": "Final requirement audit identified missing interface coverage. Basic inline Overview removed; new projections are actual data consumers. Synthetic component mocks remain separate from real E2E."
@@ -50,10 +80,15 @@
     {
       "old_path": "workbench/src/candidate-explorer.tsx (hidden ReactFlow mount); workbench/src/styles.css (unbroken node labels)",
       "old_responsibility": "Bounded candidate graph and keyboard/table alternative",
-      "actual_callers": ["workbench/src/modeling.tsx"],
+      "actual_callers": [
+        "workbench/src/modeling.tsx"
+      ],
       "replacement_path": "workbench/src/candidate-explorer.tsx; workbench/src/styles.css",
       "replacement_behavior": "Mount graph only after details is visibly open; wrap technical labels within node boundaries; closing/reopening keeps the semantic candidates unchanged",
-      "replacement_test_nodeids": ["workbench/tests/rendering.spec.ts (first graph expansion fits visible nodes and wraps long labels)", "workbench/tests/minimal.e2e.ts (real Minimal first-open graph bounds)"],
+      "replacement_test_nodeids": [
+        "workbench/tests/rendering.spec.ts (first graph expansion fits visible nodes and wraps long labels)",
+        "workbench/tests/minimal.e2e.ts (real Minimal first-open graph bounds)"
+      ],
       "artifact_compatibility": "Layout only; no Schema, Package, Domain Pack or semantic compiler input changed",
       "decision": "MERGE",
       "reason": "Real visual QA on 0ee66b9 showed clipped first-open nodes and overflowing labels. Failure screenshots retained under visual-0ee66b9; new component browser regression passed twice-open and capacity cases. Final fixed-revision E2E remains mandatory."
@@ -61,7 +96,9 @@
     {
       "old_path": "tools/consolidation_audit.py; scripts/build_ontology_release.py; scripts/stage03_term.py; scripts/stage03_term_catalog_part2.py; scripts/stage03_term_catalog_part3.py; scripts/stage03_term_catalog_part4.py; scripts/stage03_constants.py; scripts/migrate_ontology_iris.py; scripts/rewrite_case_semantics.py; scripts/normalize_domain_pack_text.py; scripts/generate_competency_questions.py; scripts/prompt03_cli_smoke.py",
       "old_responsibility": "One-time requirement writer, source-asset migrations/catalog generation, and retired pre-service CLI smoke",
-      "actual_callers": ["Removed catalog parts called only by removed builder; checker was the sole remaining constants caller"],
+      "actual_callers": [
+        "Removed catalog parts called only by removed builder; checker was the sole remaining constants caller"
+      ],
       "replacement_path": "scripts/check_ontology_release.py; src/kg_mnp/namespaces.py; tests/compatibility; tests/ontology_release; tests/services; tools/verify_candidate.py",
       "replacement_behavior": "Current read-only asset/semantic checks, fixed-source history and original-operation mapping, authenticated source-to-evidence workflow and transport equivalence; requirement evidence is not regenerated from obsolete hard-coded limitations",
       "replacement_test_nodeids": [
@@ -3826,11 +3863,15 @@
       "old_nodeid": "tests/application_governance/test_runtime_security.py::test_workspace_path_is_frozen_at_startup",
       "behavior": "Exact old traversal assertion retained on the still-present historical store while its HTTP runtime is removed.",
       "new_nodeids": [
-        "tests/application_governance/test_controlled_fixture_authority.py::test_workspace_path_is_frozen_at_startup"
+        "tests/application_governance/test_controlled_fixture_authority.py::test_current_project_contract_has_no_client_workspace_path"
       ],
       "decision": "REPLACE_AND_DELETE",
       "reason": "Exact old traversal assertion retained on the still-present historical store while its HTTP runtime is removed.",
-      "evidence": "runtime_logs/p09/http-retirement-20260908.xml (111 PASS subset; heavy existing replacements remain incremental, not final freeze acceptance)"
+      "evidence": "runtime_logs/p09/http-retirement-20260908.xml (111 PASS subset; heavy existing replacements remain incremental, not final freeze acceptance)",
+      "intermediate_historical_nodeids": [
+        "tests/application_governance/test_controlled_fixture_authority.py::test_workspace_path_is_frozen_at_startup"
+      ],
+      "final_mapping_note": "Flattened retirement chain; intermediate names retained only as history. Final collection confirms these endpoints."
     },
     {
       "old_nodeid": "tests/application_governance/test_runtime_security.py::test_write_security_rejects_csrf_origin_and_content_type[kwargs0-403-CSRF_REJECTED]",
@@ -3985,19 +4026,28 @@
     {
       "old_nodeid": "tests/application/test_live_repository_binding_phase01.py::test_runtime_check_rejects_equal_count_replacement_and_startup_fails_closed",
       "new_nodeids": [
-        "tests/application/test_live_repository_binding_phase01.py::test_runtime_check_rejects_equal_count_replacement",
+        "tests/application/test_live_repository_binding_phase01.py::test_reader_rejects_equal_count_replacement",
         "tests/cli/test_root_dispatch.py::test_removed_servers_cannot_be_imported_as_alternate_product_entrypoints"
       ],
       "decision": "RETAIN_AND_STRENGTHEN",
-      "behavior": "Same-count triple replacement rejection retained; old app factory cannot start because removed"
+      "behavior": "Same-count triple replacement rejection retained; old app factory cannot start because removed",
+      "intermediate_historical_nodeids": [
+        "tests/application/test_live_repository_binding_phase01.py::test_runtime_check_rejects_equal_count_replacement",
+        "tests/cli/test_root_dispatch.py::test_removed_servers_cannot_be_imported_as_alternate_product_entrypoints"
+      ],
+      "final_mapping_note": "Flattened retirement chain; intermediate names retained only as history. Final collection confirms these endpoints."
     },
     {
       "old_nodeid": "tests/application_governance/test_controlled_fixture_authority.py::test_production_runtime_rejects_controlled_harness",
       "new_nodeids": [
-        "tests/application_governance/test_controlled_fixture_authority.py::test_production_store_rejects_controlled_harness"
+        "tests/application_governance/test_controlled_fixture_authority.py::test_production_reconstruction_rejects_controlled_harness"
       ],
       "decision": "REPLACE_ASSERTION",
-      "behavior": "Exact controlled-harness authority rejection now checked directly on store initialization; removed runtime has no alternate import"
+      "behavior": "Exact controlled-harness authority rejection now checked directly on store initialization; removed runtime has no alternate import",
+      "intermediate_historical_nodeids": [
+        "tests/application_governance/test_controlled_fixture_authority.py::test_production_store_rejects_controlled_harness"
+      ],
+      "final_mapping_note": "Flattened retirement chain; intermediate names retained only as history. Final collection confirms these endpoints."
     },
     {
       "old_nodeid": "tests/activation/test_cli.py::test_main_serializes_activation_errors_canonically",
@@ -4253,13 +4303,26 @@
     {
       "old_nodeid": "tests/test_cli.py::test_cli_run_all_twice_consistent",
       "new_nodeids": [
-        "tests/test_showcase.py::test_showcase_repeatable",
-        "tests/test_showcase.py::test_all_cases_summary"
+        "tests/compatibility/test_mnp_assessment_reader.py::test_repeatable_reader_leaves_source_and_workspace_unchanged",
+        "tests/test_rules.py::test_deterministic_repeat",
+        "tests/test_rules.py::test_case_01_eligible",
+        "tests/test_rules.py::test_case_04_two_independent_blocks",
+        "tests/test_rules.py::test_case_05_manual_review_expired_evidence",
+        "tests/test_rules.py::test_case_06_updated_rule_blocks_port_interval",
+        "tests/test_trace_graph.py::test_case06_affected_assessments_deduped",
+        "tests/cases/test_case07_case09.py::test_case07_eligible_process_blocked",
+        "tests/cases/test_case07_case09.py::test_case08_termination_pending",
+        "tests/cases/test_case07_case09.py::test_case09_identity_conflict"
       ],
       "decision": "REPLACE_AND_DELETE",
       "behavior": "Retired MNP eligibility CLI wrapper; exact original MNP rule/trace/mapping assertions remain on core and domain assets",
       "reason": "Old CLI removed, not copied to an archive. Business/invalid-input/trace assertions remain; non-UTF8 test exposed and fixed current UnicodeEncodeError.",
-      "evidence": "runtime_logs/p09/console-encoding-red-20260908.xml; runtime_logs/p09/final-cli-20260908.xml (64 PASS subset)"
+      "evidence": "runtime_logs/p09/console-encoding-red-20260908.xml; runtime_logs/p09/final-cli-20260908.xml (64 PASS subset)",
+      "intermediate_historical_nodeids": [
+        "tests/test_showcase.py::test_showcase_repeatable",
+        "tests/test_showcase.py::test_all_cases_summary"
+      ],
+      "final_mapping_note": "Flattened retirement chain; intermediate names retained only as history. Final collection confirms these endpoints."
     },
     {
       "old_nodeid": "tests/application/test_assessment_service.py::test_cli_rdf_case03_blocked",
@@ -4482,13 +4545,6 @@
       "behavior": "Same semantic authority/no-direct-tool-writeback/no-auto-approval assertions now inspect current Chinese product architecture instead of a deleted historical duplicate."
     }
   ],
-  "replacement_gate": {
-    "status": "PASS_INCREMENTAL_NOT_FINAL_RELEASE_ACCEPTANCE",
-    "minimal": "Real browser full workflow and two-version activation/rollback: 9.1 minutes",
-    "forestry": "Real browser full workflow, six objects, trace/download byte equality: 20.9 minutes",
-    "mnp": "Real browser nonempty MappingRecord workflow, trace/download byte equality: 18.5 minutes",
-    "final_freeze_still_required": true
-  },
   "pre_retirement_collection": {
     "source_commit": "442a1e35dcc6e1ceacae48f8f045dcb923491c70",
     "unique_nodes": 1658,
@@ -4714,5 +4770,21 @@
       "scope": "Actual prior package, current read implementation only; not final browser acceptance"
     },
     "compiler_note": "Unreleased compiler0.5.1 implementation digest changes through archive.py; old plans require new snapshot; old packages remain verified unchanged."
+  },
+  "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
+  "pre_retirement_replacement_gate": {
+    "status": "PASS_INCREMENTAL_NOT_FINAL_RELEASE_ACCEPTANCE",
+    "minimal": "Real browser full workflow and two-version activation/rollback: 9.1 minutes",
+    "forestry": "Real browser full workflow, six objects, trace/download byte equality: 20.9 minutes",
+    "mnp": "Real browser nonempty MappingRecord workflow, trace/download byte equality: 18.5 minutes",
+    "final_freeze_still_required": true
+  },
+  "final_acceptance": {
+    "status": "PASS",
+    "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
+    "collection_count": 1772,
+    "migration_terminal_reference_check": "PASS_NO_MISSING_FINAL_NODES",
+    "evidence_ref": "docs/verification/final-verification.json",
+    "source_and_legal_assets_preserved": true
   }
 }
