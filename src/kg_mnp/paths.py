@@ -40,7 +40,8 @@ def domain_pack_path(
 ) -> Path:
     """Resolve a simple local pack identifier without accepting path traversal."""
 
-    if not pack_id or pack_id in {".", ".."} or Path(pack_id).name != pack_id:
+    if (not isinstance(pack_id, str) or not pack_id or pack_id in {".", ".."}
+            or any(char in pack_id for char in "/\\:\0") or Path(pack_id).name != pack_id):
         raise ValueError(f"unsafe Domain Pack identifier: {pack_id!r}")
     return domain_packs_root(repository=repository) / pack_id
 
