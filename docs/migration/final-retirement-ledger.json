@@ -1956,6 +1956,74 @@
       "artifact_compatibility": "No contract changed",
       "decision": "REPLACE_AND_DELETE",
       "reason": "Current product documentation must not instruct the retired Catalog downgrade writer"
+    },
+    {
+      "old_path": "src/kg_mnp/activation/reverification.py",
+      "old_responsibility": "Unused old live-verification/HTTP guard or redundant serialization re-export",
+      "actual_callers": [],
+      "replacement_path": "src/kg_mnp/api/app.py; src/kg_mnp/integrations/targets.py; src/kg_mnp/compilation/rdf_canonical.py; src/kg_mnp/semantic_kernel/rdf",
+      "replacement_behavior": "Current session/body/target policy and same canonical RDF primitive remain; no separate old API or unused adapter",
+      "replacement_test_nodeids": [
+        "tests/compilation/test_deterministic_turtle.py",
+        "tests/compilation/test_deterministic_trig.py",
+        "tests/services/test_browser_sessions.py",
+        "tests/integrations/test_local_target_policy.py"
+      ],
+      "artifact_compatibility": "No artifact/schema/assets changed",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Source, scripts, tests and docs reference search plus module closure found no callers; no test removed",
+      "evidence": "runtime_logs/p09/unused-readers.xml (12 PASS)"
+    },
+    {
+      "old_path": "src/kg_mnp/compilation/deterministic_trig.py",
+      "old_responsibility": "Unused old live-verification/HTTP guard or redundant serialization re-export",
+      "actual_callers": [],
+      "replacement_path": "src/kg_mnp/api/app.py; src/kg_mnp/integrations/targets.py; src/kg_mnp/compilation/rdf_canonical.py; src/kg_mnp/semantic_kernel/rdf",
+      "replacement_behavior": "Current session/body/target policy and same canonical RDF primitive remain; no separate old API or unused adapter",
+      "replacement_test_nodeids": [
+        "tests/compilation/test_deterministic_turtle.py",
+        "tests/compilation/test_deterministic_trig.py",
+        "tests/services/test_browser_sessions.py",
+        "tests/integrations/test_local_target_policy.py"
+      ],
+      "artifact_compatibility": "No artifact/schema/assets changed",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Source, scripts, tests and docs reference search plus module closure found no callers; no test removed",
+      "evidence": "runtime_logs/p09/unused-readers.xml (12 PASS)"
+    },
+    {
+      "old_path": "src/kg_mnp/compilation/deterministic_turtle.py",
+      "old_responsibility": "Unused old live-verification/HTTP guard or redundant serialization re-export",
+      "actual_callers": [],
+      "replacement_path": "src/kg_mnp/api/app.py; src/kg_mnp/integrations/targets.py; src/kg_mnp/compilation/rdf_canonical.py; src/kg_mnp/semantic_kernel/rdf",
+      "replacement_behavior": "Current session/body/target policy and same canonical RDF primitive remain; no separate old API or unused adapter",
+      "replacement_test_nodeids": [
+        "tests/compilation/test_deterministic_turtle.py",
+        "tests/compilation/test_deterministic_trig.py",
+        "tests/services/test_browser_sessions.py",
+        "tests/integrations/test_local_target_policy.py"
+      ],
+      "artifact_compatibility": "No artifact/schema/assets changed",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Source, scripts, tests and docs reference search plus module closure found no callers; no test removed",
+      "evidence": "runtime_logs/p09/unused-readers.xml (12 PASS)"
+    },
+    {
+      "old_path": "src/kg_mnp/governance/security.py",
+      "old_responsibility": "Unused old live-verification/HTTP guard or redundant serialization re-export",
+      "actual_callers": [],
+      "replacement_path": "src/kg_mnp/api/app.py; src/kg_mnp/integrations/targets.py; src/kg_mnp/compilation/rdf_canonical.py; src/kg_mnp/semantic_kernel/rdf",
+      "replacement_behavior": "Current session/body/target policy and same canonical RDF primitive remain; no separate old API or unused adapter",
+      "replacement_test_nodeids": [
+        "tests/compilation/test_deterministic_turtle.py",
+        "tests/compilation/test_deterministic_trig.py",
+        "tests/services/test_browser_sessions.py",
+        "tests/integrations/test_local_target_policy.py"
+      ],
+      "artifact_compatibility": "No artifact/schema/assets changed",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Source, scripts, tests and docs reference search plus module closure found no callers; no test removed",
+      "evidence": "runtime_logs/p09/unused-readers.xml (12 PASS)"
     }
   ],
   "test_migration": [
@@ -3066,5 +3134,19 @@
     ],
     "durable_decisions": "docs/migration/history-and-current-boundaries.md",
     "compatibility": "Original failures retained in history/current summary; original 53 operations are immutable-Git baseline, not a mutable report file."
+  },
+  "fresh_checkout_and_ui_binding_repairs": {
+    "source_commit": "feba20fcbc569f52ce51a20af786ae5caf10fb03",
+    "evidence": "runtime/p09-browser-feba20f-src/runtime_logs/p09/browser-runs/managed-be4aa44abd194bc3b8ae439d78fe3726",
+    "issues": [
+      "Forestry CSV/TXT converted to CRLF on new Windows checkout, invalidating locked bytes",
+      "Version browser observer saw new build before React updated; last() clicked old import and replayed old idempotent Job"
+    ],
+    "repair": "Explicit LF attributes for locked CSV/TSV/TXT; exact plan/package test IDs and disable already-imported package actions. No timeout increase or automatic approval retry.",
+    "tests": [
+      "runtime_logs/p09/checkout-repair.xml (2 PASS)",
+      "frontend typecheck/lint PASS; full browser rerun still required"
+    ],
+    "asset_bytes_changed": false
   }
 }
