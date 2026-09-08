@@ -8,6 +8,23 @@ from kg_mnp.contracts.canonical import stable_urn
 from kg_mnp.contracts.registry import validate_contract
 
 from .artifacts import finalize_document, verify_document
+from .errors import ModelingControlError
+
+
+def table_identity(item: dict[str, Any], evidence: dict[str, dict[str, Any]]) -> tuple[str, str | None]:
+    """Row/column coordinates are meaningful only inside their Source and sheet."""
+    locations = set()
+    for reference in item["evidence_refs"]:
+        record = evidence.get(reference)
+        if record is None or record["source_id"] not in item["source_ids"]:
+            raise ModelingControlError("table cell evidence does not bind its Source")
+        locator = record["locator"]
+        if locator["locator_kind"] not in {"delimited-cell", "spreadsheet-cell"}:
+            raise ModelingControlError("table cell requires an exact table locator")
+        locations.add((record["source_id"], locator.get("sheet")))
+    if len(locations) != 1 or len(item["source_ids"]) != 1:
+        raise ModelingControlError("table cell has ambiguous Source or sheet authority")
+    return next(iter(locations))
 
 
 def build_field_mapping_candidates(
@@ -34,18 +51,21 @@ def build_field_mapping_candidates(
     dataset_ids: list[str] = []
     for dataset in kg_ir_datasets:
         dataset_ids.append(dataset["dataset_id"])
-        table_headers = {
-            item["payload"]["column"]: item
-            for item in dataset["items"]
-            if item["item_kind"] == "table-cell" and item["payload"]["row"] == 1
-        }
+        evidence = {record["evidence_id"]: record for record in dataset["evidence_records"]}
+        table_headers = {}
+        for item in dataset["items"]:
+            if item["item_kind"] == "table-cell" and item["payload"]["row"] == 1:
+                key = (table_identity(item, evidence), item["payload"]["column"])
+                if key in table_headers and table_headers[key] != item:
+                    raise ModelingControlError("ambiguous table header at the same Source/sheet/column")
+                table_headers[key] = item
         for item in dataset["items"]:
             if item["item_kind"] == "scalar-field":
                 field_name = item["payload"]["field_name"]
                 term_source_ref = item["item_id"]
                 value = item["payload"]["value"]
             elif item["item_kind"] == "table-cell" and item["payload"]["row"] > 1:
-                header = table_headers.get(item["payload"]["column"])
+                header = table_headers.get((table_identity(item, evidence), item["payload"]["column"]))
                 if header is None:
                     continue
                 field_name = header["payload"]["value"]["normalized_lexical_value"]

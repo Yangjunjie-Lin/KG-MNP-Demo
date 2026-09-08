@@ -4,6 +4,7 @@ from __future__ import annotations
 import re
 
 from ..errors import ModelingControlError
+from ..mappings import table_identity
 from .models import candidate_body, candidate_draft
 
 
@@ -12,6 +13,7 @@ def record_mapping_drafts(*,rules:dict,datasets:list[dict],source_names:dict[str
         raise ModelingControlError("unsupported declarative record mapping")
     elements={e["iri"]:e for e in baseline["elements"]}
     cells={}
+    evidence={record['evidence_id']:record for dataset in datasets for record in dataset['evidence_records']}
     for dataset in datasets:
         for item in dataset["items"]:
             if item["item_kind"]=="table-cell":
@@ -29,9 +31,16 @@ def record_mapping_drafts(*,rules:dict,datasets:list[dict],source_names:dict[str
         tables[key]=table
         matched=[source for source,name in source_names.items() if name==table["source_name"]]
         if len(matched)!=1:raise ModelingControlError("mapped source must be present exactly once")
+        source_cells=cells.get(matched[0],[])
+        if len({table_identity(item,evidence) for item in source_cells})>1:
+            raise ModelingControlError("MAPPING_TABLE_AMBIGUOUS: closed profile requires exactly one Source table; select separate sources for multiple sheets")
         by_row={}
-        for item in cells.get(matched[0],[]):
-            by_row.setdefault(item["payload"]["row"],{})[item["payload"]["column"]]=item
+        for item in source_cells:
+            row=by_row.setdefault(item["payload"]["row"],{})
+            column=item["payload"]["column"]
+            if column in row and row[column]!=item:
+                raise ModelingControlError("MAPPING_TABLE_AMBIGUOUS: conflicting cells share a table coordinate")
+            row[column]=item
         headers={column:cell["payload"]["value"]["normalized_lexical_value"] for column,cell in by_row.get(1,{}).items()}
         if len(set(headers.values()))!=len(headers):raise ModelingControlError("duplicate CSV header")
         for ordinal,row in sorted(by_row.items()):
