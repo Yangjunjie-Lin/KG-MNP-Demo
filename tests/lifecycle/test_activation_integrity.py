@@ -1,6 +1,7 @@
 """Current lifecycle replacements for retired controller safety assurances."""
 import json
 import shutil
+from pathlib import Path
 
 import pytest
 
@@ -123,3 +124,13 @@ def test_import_without_external_project_lock_is_explicit_and_schema_valid(activ
     verify(stored, contract="registered-package-record")
     assert stored["source_project_lock_ref"] == {"availability": "NOT_PROVIDED"}
     assert stored["source_project_lock_file_sha256"] == "0" * 64
+
+
+@pytest.mark.parametrize("identifier", ["../../secret", "C:/secret", "\\\\external.invalid\\share", "urn:kg-mnp:environment-manifest:../bad"])
+def test_environment_id_is_rejected_before_filesystem_probe(tmp_path, monkeypatch, identifier):
+    def forbidden(path):
+        raise AssertionError("malformed identifier must never become a filesystem probe")
+    monkeypatch.setattr(Path, "is_file", forbidden)
+    with pytest.raises(LifecycleError) as rejected:
+        environment._pointer(tmp_path, identifier)
+    assert rejected.value.code == "LIFECYCLE_CONTRACT_INVALID"

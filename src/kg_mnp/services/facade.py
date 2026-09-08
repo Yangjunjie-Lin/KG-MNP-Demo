@@ -338,9 +338,19 @@ class ApplicationService:
         if name == "environment.inspect":
             from kg_mnp.lifecycle.environment import _pointer
             from kg_mnp.lifecycle.errors import LifecycleError
+            from kg_mnp.lifecycle.security import storage_key
+            from kg_mnp.semantic_kernel.errors import SemanticKernelError
 
+            try:
+                storage_key(params["environment_id"])
+            except LifecycleError as exc:
+                raise ServiceBoundaryError("ARTIFACT_NOT_FOUND", "environment was not found in project", status_code=404) from exc
             try:
                 return _pointer(project.registry_root, params["environment_id"])[1]
             except LifecycleError as exc:
+                if exc.code == "ENVIRONMENT_INVALID":
+                    raise ServiceBoundaryError("ARTIFACT_NOT_FOUND", "environment was not found in project", status_code=404) from exc
                 raise ServiceBoundaryError(exc.code, "environment state is absent, unverified or inconsistent", status_code=409) from exc
+            except SemanticKernelError as exc:
+                raise ServiceBoundaryError("PACKAGE_INVALID", "selected environment package is not verified", status_code=409) from exc
         raise ServiceBoundaryError("OPERATION_BLOCKED", "operation handler is not implemented", status_code=501)

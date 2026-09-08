@@ -22,7 +22,7 @@ from .guards import (
 )
 from .registry.events import append_event, read_events
 from .registry.manifest import load_manifest
-from .security import human
+from .security import human, storage_key
 from .store import bind_identity, list_records, save
 
 
@@ -45,7 +45,7 @@ def init_environment(workspace: Path | str, *, environment_name: str, environmen
 
 
 def _pointer(root: Path, environment_id: str) -> tuple[Path, dict[str, Any]]:
-    path = root / "state" / f"environment-pointer-{environment_id.rsplit(':', 1)[1]}.json"
+    path = root / "state" / f"environment-pointer-{storage_key(environment_id)}.json"
     if not path.is_file():
         raise LifecycleError("ENVIRONMENT_INVALID", "environment pointer not found")
     try:
