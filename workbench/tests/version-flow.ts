@@ -12,10 +12,10 @@ export async function versionFlow(page:Page,projectPath:string,initialPackage:st
   await page.getByLabel('本体包版本',{exact:true}).first().fill('0.1.1');
   await page.getByLabel('Version IRI',{exact:true}).fill('urn:synthetic:browser:minimal:0.1.1');
   await page.getByRole('button',{name:'生成编译计划',exact:true}).click();
-  await changed('compile.plan',1);
-  await page.getByRole('button',{name:'执行真实编译与验证',exact:true}).last().click();
+  const planned=await changed('compile.plan',1);
+  await page.getByTestId('compilation-plan-'+planned.plan.plan_id).getByRole('button',{name:'执行真实编译与验证',exact:true}).click();
   const built=await changed('compile.build',1);
-  await page.getByRole('button',{name:'验证并导入本地 Registry',exact:true}).last().click();
+  await page.getByTestId('package-build-'+built.package_id).getByRole('button',{name:'验证并导入本地 Registry',exact:true}).click();
   await changed('registry.import',1);
   await page.getByRole('link',{name:'差异与环境',exact:true}).click();
   await page.getByLabel('Base Package',{exact:true}).selectOption(initialPackage);
