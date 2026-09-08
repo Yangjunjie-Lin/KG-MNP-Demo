@@ -81,7 +81,7 @@ def execute(service, project, request, principal):
         if name == "ingestion.plan":
             return {"plan": create_ingestion_plan(root, batch_id=params["batch_id"]).plan}
         if name == "ingestion.run":
-            result = execute_ingestion_plan(root, params["plan_id"])
+            result = execute_ingestion_plan(root, params["plan_id"], domain_packs_root=service.configuration.domain_packs_root)
             return {"run": result.run, "dataset_id": result.dataset["dataset_id"], "quality": result.quality_report}
         result = verified_run(root, params["run_id"])
         if name in {"ingestion.inspect", "kgir.inspect", "kgir.validate"}:

@@ -22,7 +22,7 @@ from .conftest import ROOT, read_manifest, write_manifest
 
 @pytest.mark.parametrize(
     "pack,lifecycle,version",
-    [("minimal", "EXPERIMENTAL", "0.1.0"), ("mnp", "MIGRATED_BASELINE", "1.0.0"), ("forestry", "PLANNED", "0.1.0")],
+    [("minimal", "EXPERIMENTAL", "0.1.0"), ("mnp", "MIGRATED_BASELINE", "1.0.0"), ("forestry", "EXPERIMENTAL", "0.2.0")],
 )
 def test_repository_packs_are_formal_valid_and_locked(pack: str, lifecycle: str, version: str) -> None:
     result = validate_domain_pack(ROOT / "domain_packs" / pack)
@@ -35,13 +35,15 @@ def test_repository_packs_are_formal_valid_and_locked(pack: str, lifecycle: str,
 
 def test_forestry_has_no_fabricated_semantic_claims() -> None:
     manifest = load_domain_pack_manifest(ROOT / "domain_packs" / "forestry").document
-    assert manifest["lifecycle"] == "PLANNED"
-    assert manifest["capabilities"] == []
-    assert manifest["assets"] == []
-    assert not any(
-        path.suffix in {".ttl", ".rdf", ".json"} and path.name != "pack.lock.json"
-        for path in (ROOT / "domain_packs" / "forestry").iterdir()
-    )
+    assert manifest["lifecycle"] == "EXPERIMENTAL"
+    assert manifest["pack_version"] == "0.2.0"
+    assert "合成数据" in manifest["display_name"]
+    declaration = json.loads((ROOT / "domain_packs/forestry/fixtures/source-declaration.json").read_bytes())
+    assert declaration["synthetic"] is True
+    assert declaration["tree_records"] == declaration["inspection_records"] == 6
+    assert declaration["sites"] == 2
+    for claim in ("private_coordinates", "field_trial", "expert_signature", "diagnosis_or_risk_prediction"):
+        assert declaration[claim] is False
 
 
 def test_lock_generation_and_check_are_byte_deterministic(minimal_copy: Path) -> None:

@@ -8,6 +8,7 @@ from typing import Any
 
 from jsonschema import ValidationError
 
+from kg_mnp._path_security import _is_link_like
 from kg_mnp.contracts.canonical import bytes_sha256, semantic_hash, stable_urn
 from kg_mnp.contracts.document_io import atomic_write_json, deterministic_json_bytes
 from kg_mnp.contracts.identifiers import resolve_within
@@ -88,8 +89,10 @@ def _formal_artifact_digests(workspace: Path) -> dict[str, str]:
     result = {}
     for relative in ("artifacts/confirmed", "artifacts/packages"):
         directory = workspace / relative
+        if _is_link_like(directory):
+            raise IngestionError("linked formal authority directory rejected")
         for path in sorted(directory.rglob("*")):
-            if path.is_symlink() or (hasattr(path, "is_junction") and path.is_junction()):
+            if _is_link_like(path):
                 raise IngestionError("linked formal artifact rejected")
             if path.is_file():
                 result[path.relative_to(workspace).as_posix()] = bytes_sha256(path.read_bytes())
@@ -102,6 +105,7 @@ def execute_ingestion_plan(
     *,
     enabled_plugins: tuple[str, ...] = (),
     allow_partial: bool = False,
+    domain_packs_root: Path | str | None = None,
 ) -> IngestionResult:
     root = Path(workspace).resolve(strict=True)
     plan = load_ingestion_plan(root, plan_path_or_id)
@@ -132,6 +136,12 @@ def execute_ingestion_plan(
     limits = ResourceLimits(**plan["resource_limits"])
     with WorkspaceOperationLock(root, "ingestion"):
         formal_before = _formal_artifact_digests(root)
+        if any(path.startswith("artifacts/confirmed/") for path in formal_before):
+            from kg_mnp.workspace.security import validate_confirmed_authority
+            try:
+                validate_confirmed_authority(root, domain_packs_root=domain_packs_root)
+            except Exception as exc:  # the single Workspace validator remains the authority
+                raise IngestionError("confirmed authority is invalid; ingestion cannot legitimize it") from exc
         existing = _load_existing_run(root, run_hash)
         if existing is not None:
             return existing

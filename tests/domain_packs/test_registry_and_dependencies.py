@@ -28,11 +28,13 @@ def _pack(root: Path, pack_id: str, dependencies: list[dict[str, object]]) -> Pa
 def test_registry_lists_and_resolves_exact_repository_versions() -> None:
     registry = DomainPackRegistry(ROOT / "domain_packs")
     assert [(item[0], item[1]) for item in registry.list()] == [
-        ("forestry", "0.1.0"),
+        ("forestry", "0.2.0"),
         ("minimal", "0.1.0"),
         ("mnp", "1.0.0"),
     ]
     assert registry.resolve("minimal", "0.1.0").manifest.pack_id == "minimal"
+    with pytest.raises(DomainPackRegistryError, match="not found"):
+        registry.resolve("forestry", "0.1.0")
     with pytest.raises(DomainPackRegistryError, match="not found"):
         registry.resolve("minimal", "9.9.9")
 
@@ -95,4 +97,3 @@ def test_dependency_version_conflict_is_detected_before_resolution() -> None:
             registry,
             (("minimal", "0.1.0"), ("minimal", "9.9.9")),
         )
-

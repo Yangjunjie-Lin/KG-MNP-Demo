@@ -5,7 +5,6 @@ import argparse
 import json
 import shutil
 import socket
-import sys
 import tempfile
 from pathlib import Path
 from threading import Event, Thread
@@ -23,7 +22,8 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--port", type=int, default=0)
     parser.add_argument("--temporary-pack", action="store_true")
-    parser.add_argument("--managed", action="store_true", help="stop on an owned stdin command or EOF")
+    parser.add_argument("--stop-file", type=Path, help="owned local test-control marker; never a public API")
+    parser.add_argument("--probe-subprocess", action="store_true", help="exercise actual isolated validation before browser readiness")
     args = parser.parse_args()
     root = Path(__file__).resolve().parents[1]
     runtime = root / "runtime"
@@ -61,16 +61,33 @@ def main():
     stop = Event()
     worker = Thread(target=JobWorker(service.jobs, service).run_forever, kwargs={"worker_id":"browser-test-worker", "stop":stop}, daemon=True)
     server = uvicorn.Server(uvicorn.Config(create_app(service), access_log=False, log_level="warning"))
-    if args.managed:
+    if args.stop_file:
+        control = args.stop_file.resolve()
+        if not control.is_relative_to((root / "runtime_logs/p09/browser-runs").resolve()):
+            raise ValueError("test stop marker must remain in owned browser evidence")
         def watch_owner():
-            # Owner death closes this pipe; no public shutdown route exists.
-            sys.stdin.readline()
-            stop.set()
-            server.should_exit = True
+            # Never block on stdin: Windows spawn can inherit a blocked standard
+            # input read and hang before Process.start returns.
+            while not stop.wait(.1):
+                if control.exists():
+                    stop.set()
+                    server.should_exit = True
         Thread(target=watch_owner, daemon=True).start()
     worker.start()
-    print(json.dumps({"url":f"http://127.0.0.1:{port}", "credential_path":str(credentials), "workspace":str(workspace)}), flush=True)
     try:
+        if args.probe_subprocess:
+            from rdflib import Graph, Literal, URIRef
+
+            from kg_mnp.semantic_kernel.validators.shacl import validate_shacl
+            data = Graph().parse(data="<urn:item> a <urn:Thing> .", format="turtle")
+            shapes = Graph().parse(data='@prefix sh: <http://www.w3.org/ns/shacl#> . <urn:Shape> a sh:NodeShape; sh:targetClass <urn:Thing>; sh:property <urn:Field> . <urn:Field> sh:path <urn:label>; sh:minCount 1 .', format="turtle")
+            failed, _ = validate_shacl(data_graph=data, shapes_graph=shapes, ontology_graph=Graph(), max_seconds=20)
+            assert failed["status"] == "VIOLATION"
+            data.add((URIRef("urn:item"), URIRef("urn:label"), Literal("Synthetic")))
+            passed, _ = validate_shacl(data_graph=data, shapes_graph=shapes, ontology_graph=Graph(), max_seconds=20)
+            assert passed["status"] == "CONFORMS"
+            atomic_write_json(workspace / "subprocess-probe.json", {"negative": failed["status"], "positive": passed["status"], "mocked": False})
+        print(json.dumps({"url":f"http://127.0.0.1:{port}", "credential_path":str(credentials), "workspace":str(workspace)}), flush=True)
         server.run(sockets=[sock])
     finally:
         stop.set()

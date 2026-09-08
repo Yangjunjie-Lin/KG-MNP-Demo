@@ -4,11 +4,19 @@ import shutil
 from kg_mnp.ingestion.executor import execute_ingestion_plan
 from kg_mnp.ingestion.planner import create_ingestion_plan
 from kg_mnp.ingestion.source_store import SourceStore
+from kg_mnp.services.projects import get_project
+from tests.services.test_modeling_workflow import (
+    modeling_case,  # noqa: F401 - imported pytest fixture
+    run_confirmed_initial_chain,
+)
 
 
-def test_ingestion_after_confirmation_keeps_formal_artifacts(prompt05_case, tmp_path):
+def test_ingestion_after_confirmation_keeps_formal_artifacts(modeling_case, tmp_path):  # noqa: F811 - real service fixture
+    case = run_confirmed_initial_chain(modeling_case)
     root = tmp_path / "workspace"
-    shutil.copytree(prompt05_case["workspace"], root)
+    # Copy a genuinely published Workspace with the current deterministic
+    # confirmation layout, not the compiler unit fixture's ad-hoc input folder.
+    shutil.copytree(get_project(case["service"].root, case["project_id"]).root, root)
     formal = [root / "artifacts/confirmed", root / "artifacts/packages"]
     before = {p.relative_to(root).as_posix(): p.read_bytes() for d in formal for p in d.rglob("*") if p.is_file()}
     assert before

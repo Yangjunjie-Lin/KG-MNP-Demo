@@ -136,7 +136,7 @@ def main():
         if receipt["exit_code"]:
             raise SystemExit(receipt["exit_code"])
         nodes = json.loads((directory / "collection/collection.json").read_bytes())
-        serial_prefixes = ("tests/services/", "tests/lifecycle", "tests/activation/", "tests/amendment/", "tests/application_governance/", "tests/review/", "tests/workspace/")
+        serial_prefixes = ("tests/services/", "tests/lifecycle", "tests/activation/", "tests/amendment/", "tests/application_governance/", "tests/review/", "tests/workspace/", "tests/ingestion/test_evolving_workspace.py")
         serial = [node for node in nodes if node.startswith(serial_prefixes) or any(part in node.lower() for part in ("concurr", "fencing", "transaction", "atomic", "recovery", "locking"))]
         parallel = sorted(set(nodes) - set(serial))
         for name, values in (("serial",serial),("parallel",parallel)):

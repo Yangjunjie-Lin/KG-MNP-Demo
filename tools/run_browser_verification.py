@@ -58,15 +58,11 @@ def wait_healthy(server, url: str, timeout: float) -> None:
     raise TimeoutError("Synthetic browser server health deadline exceeded")
 
 
-def stop_owned(server, timeout: float = 45) -> int:
+def stop_owned(server, stop_file: Path, timeout: float = 45) -> int:
     """No port-based process search/kill; only this Popen handle is controlled."""
     try:
         if server.poll() is None:
-            try:
-                server.stdin.write("STOP\n")
-                server.stdin.flush()
-            except (BrokenPipeError, OSError):
-                pass
+            stop_file.touch(exist_ok=False)
             try:
                 server.wait(timeout=timeout)
             except subprocess.TimeoutExpired:
@@ -84,6 +80,7 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--smoke-only", action="store_true", help="verify startup/shutdown only, never claim Browser E2E")
     parser.add_argument("--startup-timeout", type=float, default=45)
+    parser.add_argument("--probe-subprocess", action="store_true", help="include actual SHACL subprocess startup in smoke verification")
     args = parser.parse_args()
     if not 0 < args.startup_timeout <= 120:
         parser.error("startup timeout must be in (0, 120]")
@@ -91,10 +88,14 @@ def main() -> int:
     directory.mkdir(parents=True, exist_ok=False)
     receipt = {"mode": "STARTUP_SHUTDOWN_ONLY" if args.smoke_only else "REAL_BROWSER_E2E", "status": "FAIL"}
     ready = None
+    stop_file = directory / "stop-requested"
     try:
         with (directory / "server.log").open("w", encoding="utf-8") as log:
-            server = subprocess.Popen([sys.executable, str(ROOT / "tools/run_workbench_test_server.py"), "--temporary-pack", "--managed"],
-                cwd=ROOT, stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=log, text=True,
+            command = [sys.executable, str(ROOT / "tools/run_workbench_test_server.py"), "--temporary-pack", "--stop-file", str(stop_file)]
+            if args.probe_subprocess:
+                command.append("--probe-subprocess")
+            server = subprocess.Popen(command,
+                cwd=ROOT, stdin=subprocess.DEVNULL, stdout=subprocess.PIPE, stderr=log, text=True,
                 encoding="utf-8", creationflags=subprocess.CREATE_NO_WINDOW if os.name == "nt" else 0)
             try:
                 start = time.monotonic()
@@ -110,10 +111,12 @@ def main() -> int:
                     receipt["browser_exit_code"] = result.returncode
                 receipt["status"] = "PASS" if receipt["browser_exit_code"] in {None, 0} else "FAIL"
             finally:
-                receipt["server_exit_code"] = stop_owned(server)
+                receipt["server_exit_code"] = stop_owned(server, stop_file)
                 if receipt["server_exit_code"]:
                     receipt["status"] = "FAIL"
         if ready:
+            if args.probe_subprocess:
+                receipt["subprocess_probe"] = json.loads((Path(ready["workspace"]) / "subprocess-probe.json").read_bytes())
             shutdown = json.loads((Path(ready["workspace"]) / "browser-server-shutdown.json").read_bytes())
             receipt["shutdown"] = shutdown
             if not all(shutdown.get(key) is True for key in ("worker_stopped", "credentials_revoked", "credentials_removed")):

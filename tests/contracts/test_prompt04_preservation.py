@@ -61,6 +61,8 @@ def test_plugin_api_1_0_manifests_and_pack_locks_are_byte_identical() -> None:
     assert len(manifests) == 13
     for path in manifests:
         assert _filtered_worktree_blob(path) == _baseline_blob(path), path
-    for pack in ("minimal", "mnp", "forestry"):
+    # Forestry 0.2.0 is the explicitly authorized synthetic content upgrade;
+    # its own lock/version/no-real-claim tests replace the old 0.1.0 freeze.
+    for pack in ("minimal", "mnp"):
         path = f"domain_packs/{pack}/pack.lock.json"
         assert _filtered_worktree_blob(path) == _baseline_blob(path), path
