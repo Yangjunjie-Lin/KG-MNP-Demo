@@ -5,20 +5,19 @@ from pathlib import Path
 
 from rdflib import OWL, RDF, RDFS, Graph, Literal, URIRef
 
-from kg_mnp.semantic_kernel.packaging.verifier import verify_package
+from kg_mnp.semantic_kernel.packaging.archive import read_verified_package_files
 
 
 class OMSMetadataService:
     def __init__(self, package_root: Path | str):
         self.root = Path(package_root)
-        verification = verify_package(self.root)
+        files, verification = read_verified_package_files(self.root)
         if verification.get("status") != "VALID":
             raise ValueError("verified package required")
-        self.manifest = json.loads((self.root / "ontology-package.json").read_bytes())
+        self.manifest = json.loads(files["ontology-package.json"])
         self.graph = Graph()
-        path = self.root / "ontology" / "effective-tbox.nt"
-        if path.is_file():
-            self.graph.parse(path, format="nt")
+        if "ontology/effective-tbox.nt" in files:
+            self.graph.parse(data=files["ontology/effective-tbox.nt"].decode("utf-8"), format="nt")
 
     def metadata(self, *, limit: int = 100, offset: int = 0) -> dict:
         classes = sorted({str(item) for class_iri in (RDFS.Class, OWL.Class) for item in self.graph.subjects(RDF.type, class_iri) if isinstance(item, URIRef)})

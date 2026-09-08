@@ -10,7 +10,7 @@ import zipfile
 from pathlib import Path, PurePosixPath
 from typing import Any
 
-from kg_mnp._path_security import _is_link_like
+from kg_mnp._path_security import UnsafePathError, _is_link_like, validated_directory
 
 from ..errors import PackageError
 from ..security import validate_relative_path
@@ -36,14 +36,16 @@ def archive_mapping_bytes(files: dict[str, bytes]) -> bytes:
     return output.getvalue()
 
 
-def archive_bytes(package_directory: Path | str, *, expected_package_id: str | None = None) -> bytes:
-    """Verify exactly the captured bytes once; never export a post-check reread."""
-    supplied = Path(package_directory)
-    if _is_link_like(supplied):
-        raise PackageError("linked package root rejected", code="PACKAGE_ARCHIVE_INVALID")
-    root = supplied.resolve(strict=True)
-    if not root.is_dir():
-        raise PackageError("package directory is absent", code="PACKAGE_ARCHIVE_INVALID")
+def read_verified_package_files(package_directory: Path | str, *, expected_package_id: str | None = None) -> tuple[dict[str, bytes], dict[str, Any]]:
+    """Capture and freshly verify exactly the bytes used by this one read.
+
+    Neither files nor verification results are cached across operations.
+    Queries and downloads must never reread the mutable source after this.
+    """
+    try:
+        root = validated_directory(Path(package_directory), label="package read root")
+    except (OSError, UnsafePathError) as exc:
+        raise PackageError("package directory is absent or linked", code="PACKAGE_ARCHIVE_INVALID") from exc
     files: dict[str, bytes] = {}
     total = 0
     for directory, directories, names in os.walk(root, followlinks=False):
@@ -60,7 +62,8 @@ def archive_bytes(package_directory: Path | str, *, expected_package_id: str | N
             size = path.stat().st_size
             if total + size > 1_073_741_824 or len(files) >= 100_000:
                 raise PackageError("package export size limit exceeded", code="PACKAGE_ARCHIVE_INVALID")
-            data = path.read_bytes()
+            with path.open("rb") as stream:
+                data = stream.read(1_073_741_824 - total + 1)
             total += len(data)
             if total > 1_073_741_824:
                 raise PackageError("package changed beyond export size limit", code="PACKAGE_ARCHIVE_INVALID")
@@ -74,6 +77,12 @@ def archive_bytes(package_directory: Path | str, *, expected_package_id: str | N
         verified = verify_package(snapshot)
         if expected_package_id is not None and verified["package_id"] != expected_package_id:
             raise PackageError("requested package identity differs", code="PACKAGE_ARCHIVE_INVALID")
+    return files, verified
+
+
+def archive_bytes(package_directory: Path | str, *, expected_package_id: str | None = None) -> bytes:
+    """Export the freshly verified snapshot, never a post-check reread."""
+    files, _verified = read_verified_package_files(package_directory, expected_package_id=expected_package_id)
     return archive_mapping_bytes(files)
 
 

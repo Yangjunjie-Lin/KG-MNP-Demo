@@ -6,7 +6,7 @@ from typing import Any
 from rdflib import Graph, Literal, URIRef
 from rdflib.namespace import RDF
 
-from kg_mnp.semantic_kernel.packaging.verifier import verify_package
+from kg_mnp.semantic_kernel.packaging.archive import read_verified_package_files
 
 
 class LocalRDFQueryAdapter:
@@ -14,14 +14,14 @@ class LocalRDFQueryAdapter:
 
     def __init__(self, package_root: Path | str, *, max_results: int = 1000):
         self.root = Path(package_root)
-        if verify_package(self.root).get("status") != "VALID":
+        files, verification = read_verified_package_files(self.root)
+        if verification.get("status") != "VALID":
             raise ValueError("verified package required")
         self.max_results = max_results
         self.graph = Graph()
         for relative in ("ontology/effective-tbox.nt", "data/abox.nt", "shapes/effective-shapes.nt"):
-            path = self.root / relative
-            if path.is_file():
-                self.graph.parse(path, format="nt")
+            if relative in files:
+                self.graph.parse(data=files[relative].decode("utf-8"), format="nt")
 
     def _bounded(self, rows: list[dict[str, Any]], limit: int) -> dict[str, Any]:
         if limit < 1 or limit > self.max_results:

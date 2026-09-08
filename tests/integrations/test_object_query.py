@@ -26,3 +26,41 @@ def test_query_timeout_is_not_empty_success(prompt05_case, monkeypatch):
     monkeypatch.setattr("kg_mnp.integrations.object_query._execute", lambda *args: ("TIMEOUT", None))
     with pytest.raises(TimeoutError):
         query_objects(prompt05_case["result"].package_directory, instance_iri="urn:synthetic:instance")
+
+
+def test_object_query_uses_the_exact_verified_bytes_if_live_package_changes(prompt05_case, monkeypatch):
+    import json
+
+    from rdflib import RDF, Dataset, URIRef
+
+    from kg_mnp.integrations import object_query
+    from kg_mnp.semantic_kernel.packaging import archive
+    from kg_mnp.semantic_kernel.packaging.verifier import verify_package
+
+    package = prompt05_case["result"].package_directory
+    path = package / "dataset/dataset.nq"
+    original = path.read_bytes()
+    manifest = json.loads((package / "dataset/rdf-dataset-manifest.json").read_bytes())
+    graph_iri = next(item["graph_iri"] for item in manifest["graphs"] if item["role"] == "abox")
+    dataset = Dataset()
+    dataset.parse(data=original.decode(), format="nquads")
+    subject = str(next(dataset.graph(URIRef(graph_iri)).subjects(RDF.type, None)))
+    tamper = f'<{subject}> <urn:unverified:predicate> "UNVERIFIED" <{graph_iri}> .\n'.encode()
+    calls = []
+
+    def verify_then_change_live_files(snapshot):
+        result = verify_package(snapshot)
+        calls.append(snapshot)
+        path.write_bytes(original + tamper)
+        return result
+
+    # Cover the old imported verifier and the shared snapshot path, without
+    # simulating successful validation: both delegate to the real verifier.
+    monkeypatch.setattr(object_query, "verify_package", verify_then_change_live_files, raising=False)
+    monkeypatch.setattr(archive, "verify_package", verify_then_change_live_files)
+    try:
+        result = query_objects(package, instance_iri=subject)
+        assert len(calls) == 1
+        assert not any(row["predicate"] == "urn:unverified:predicate" for row in result["rows"])
+    finally:
+        path.write_bytes(original)

@@ -26,6 +26,28 @@
   ],
   "entries": [
     {
+      "old_path": "src/kg_mnp/integrations/object_query.py; src/kg_mnp/integrations/local_rdf.py; src/kg_mnp/integrations/oms.py; src/kg_mnp/integrations/webvowl.py (verify-then-reread paths)",
+      "old_responsibility": "Validate package and later parse mutable original RDF/manifest paths",
+      "actual_callers": [
+        "ApplicationService OMS/ODS operations",
+        "local RDF and visualization adapters"
+      ],
+      "replacement_path": "src/kg_mnp/semantic_kernel/packaging/archive.py::read_verified_package_files",
+      "replacement_behavior": "Queries, metadata, projections and downloads all consume the freshly captured and verified byte mapping. Bounded actual reads, lexical link checks, no stored/cached verdict or post-check source reread. Data-tamper tests are placed in the serial release partition.",
+      "replacement_test_nodeids": [
+        "tests/integrations/test_object_query.py::test_object_query_uses_the_exact_verified_bytes_if_live_package_changes",
+        "tests/integrations/test_package_read_snapshots.py::test_projection_does_not_reread_mutated_package_after_verification[local-rdf]",
+        "tests/integrations/test_package_read_snapshots.py::test_projection_does_not_reread_mutated_package_after_verification[metadata]",
+        "tests/integrations/test_package_read_snapshots.py::test_projection_does_not_reread_mutated_package_after_verification[visualization]",
+        "tests/package_archive/test_snapshot_export.py",
+        "tests/services/test_archive_read_authorization.py"
+      ],
+      "artifact_compatibility": "Historical0.5.0 archive byte identity and current download permission recheck remain verified; unreleased0.5.1 implementation snapshot changes.",
+      "decision": "MERGE",
+      "reason": "Genuine package verification followed by injected source mutation reproduced four unverified-read cases; common snapshot path closes those windows rather than caching validation.",
+      "evidence": "runtime_logs/p09/object-snapshot-red.xml (1 FAIL), projection-snapshot-red.xml (3 FAIL), object-snapshot-green.xml (7 PASS), projection-snapshot-green.xml (44 PASS), shared-snapshot-archive.xml (5 PASS). Separate runs, not a final full-suite result."
+    },
+    {
       "old_path": "src/kg_mnp/application/service.py; src/kg_mnp/application/__init__.py::ApplicationService",
       "old_responsibility": "Second ApplicationService, bound to old GraphDB runtime and Phase01 readiness",
       "actual_callers": [

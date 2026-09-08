@@ -6,7 +6,7 @@ from pathlib import Path
 from rdflib import URIRef
 from rdflib.util import from_n3
 
-from kg_mnp.semantic_kernel.packaging.verifier import verify_package
+from kg_mnp.semantic_kernel.packaging.archive import read_verified_package_files
 from kg_mnp.semantic_kernel.validators.competency_questions import _execute
 
 from .local_rdf import LocalRDFQueryAdapter
@@ -26,8 +26,8 @@ def query_objects(package_root: Path, *, class_iri: str | None = None, instance_
     if selector is None:
         raise ValueError("object selector is required")
     selected = _iri(selector)
-    verified = verify_package(package_root)
-    manifest = json.loads((package_root / "dataset/rdf-dataset-manifest.json").read_bytes())
+    files, verified = read_verified_package_files(package_root)
+    manifest = json.loads(files["dataset/rdf-dataset-manifest.json"])
     graphs = " ".join(_iri(g["graph_iri"]) for g in manifest["graphs"] if g["role"] in {"effective-tbox", "abox", "effective-shapes"})
     if class_iri:
         variables, pattern, order = "?iri", f"?iri a {selected} . FILTER(isIRI(?iri))", "?iri"
@@ -39,7 +39,7 @@ def query_objects(package_root: Path, *, class_iri: str | None = None, instance_
         variables = "?predicate ?object " + " ".join(f"({expression} AS ?{key})" for expression, key in zip(expressions, sort_keys, strict=True))
         pattern, order = f"{selected} ?predicate ?object", " ".join("?" + key for key in sort_keys)
     query = f"SELECT DISTINCT {variables} WHERE {{ VALUES ?graph {{ {graphs} }} GRAPH ?graph {{ {pattern} }} }} ORDER BY {order} OFFSET {offset} LIMIT {limit+1}"
-    status, result = _execute((package_root / "dataset/dataset.nq").read_bytes(), query, "SELECT", timeout_seconds, limit+1)
+    status, result = _execute(files["dataset/dataset.nq"], query, "SELECT", timeout_seconds, limit+1)
     if status == "TIMEOUT":
         raise TimeoutError("local object query exceeded its isolated time limit")
     if status != "OK":
