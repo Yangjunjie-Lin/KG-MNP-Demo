@@ -2,7 +2,513 @@
   "decision": "NO_GO_REFACTOR_INCOMPLETE",
   "source_commit": "9da17d126cb37166ff06084080770108da20afbe",
   "branch": "codex/toolchain-final-consolidation-p09",
-  "implementation_checkpoint": "cd74d8912d6f4ef336a466760e22e7eeb0ee741f",
+  "implementation_checkpoint": "dfcfa8ce3a0a9b4ed2f5017df2371eaf81cfff41",
+  "continuation_g5_checkpoint": {
+    "kind": "INCREMENTAL_G5_NOT_FINAL_ACCEPTANCE",
+    "implementation_commit": "a23102dc5891e26600abd262fd958110260f37a8",
+    "commits": [
+      "435d2d0",
+      "d8250b5",
+      "c77c655",
+      "a23102d"
+    ],
+    "tests": [
+      {
+        "path": "runtime_logs/p09/current-transactions.xml",
+        "tests": 46,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "seconds": 64.969,
+        "sha256": "82b08fa34b04cc21f1f8bcff7bd91408677226847f49bb2f6dbb419c16c289ac"
+      },
+      {
+        "path": "runtime_logs/p09/current-staging-green.xml",
+        "tests": 14,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "seconds": 5.726,
+        "sha256": "0d980aec18ed5eeff1b00277fbf31daf55ff276e18f3c38796de1d4fcc6a834d"
+      },
+      {
+        "path": "runtime_logs/p09/relay-retirement-green.xml",
+        "tests": 37,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "seconds": 7.08,
+        "sha256": "20c581ccb02546efde2ccc46432a4524c04ccbb4711661ec574b9daf2ff17546"
+      },
+      {
+        "path": "runtime_logs/p09/workbench-writer-retirement-green-b.xml",
+        "tests": 15,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "seconds": 2.537,
+        "sha256": "6cb7ee19447b309ee34174edef90c1a2000a86e7c891a6020e1d2386dc49fbee"
+      },
+      {
+        "path": "runtime_logs/p09/mnp-reader-green.xml",
+        "tests": 56,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "seconds": 115.494,
+        "sha256": "d23c0f134f7f356314535b29497ace464d0ee78a41ee624b02422897d4f00f00"
+      },
+      {
+        "path": "runtime_logs/p09/retirement-compatibility.xml",
+        "tests": 9,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "seconds": 8.442,
+        "sha256": "5e9a7e4dc3caf951338bdca9175a82b7e21907798dd0fd4ee671817bba4bffe3"
+      },
+      {
+        "path": "runtime_logs/p09/reconstruction-retirement.xml",
+        "tests": 219,
+        "failures": 15,
+        "errors": 0,
+        "skipped": 0,
+        "seconds": 665.536,
+        "sha256": "7dcf0f05384a34458b5ebdf89559966c3edc0da66160d5e1de748a26a4d7373f"
+      },
+      {
+        "path": "runtime_logs/p09/reconstruction-retirement-repair.xml",
+        "tests": 24,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "seconds": 362.373,
+        "sha256": "4d7c483f58f05494957f5705b6f5a8c534630d000a1605666a364d1eb6058e79"
+      },
+      {
+        "path": "runtime_logs/p09/query-reader-golden.xml",
+        "tests": 11,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "seconds": 78.686,
+        "sha256": "ee45ae7102262308d1003a2c6544563dbd17125e8809df47c9e3358fb78d4b41"
+      },
+      {
+        "path": "runtime_logs/p09/query-reader-integrity.xml",
+        "tests": 6,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "seconds": 30.683,
+        "sha256": "5da0188c69af30d2368fc37219ed599ce3e9745fb04799cb2d90d64f88ea532b"
+      },
+      {
+        "path": "runtime_logs/p09/query-reader-final.xml",
+        "tests": 2,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "seconds": 1.299,
+        "sha256": "1901d113b70f79865477f4e63038bf54c87ee9cf8be6176632ac64420ac2b219"
+      },
+      {
+        "path": "runtime_logs/p09/retirement-final-helpers.xml",
+        "tests": 16,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "seconds": 1.834,
+        "sha256": "78118f634d4eebb4a5091ed93b269f3423542e8b9e08125bcecff1f55a953ecd"
+      }
+    ],
+    "count_policy": "Separate working-increment runs with overlaps and intermediate fixes; never sum these into unique full-revision PASS.",
+    "implementations": [
+      "Shared current Workspace directory commit and uniquely owned staging; failure cleanup preserves unowned targets and old staging; semantic entry failure releases lock.",
+      "Retired historical compilation/GraphDB/publication/WebVOWL/workbench writer interfaces and old HTTP relay; pure historical byte reconstruction retained.",
+      "Retired root MNP pipeline, standalone showcase HTML and assessment file publishers; frozen MNP semantic/rule/evidence/SHACL tests migrated.",
+      "Exactly one ApplicationService declaration remains. Historical query-result reader is offline, bounded and uses the current RDF subprocess; original golden result hashes preserved."
+    ],
+    "compatibility": {
+      "original_115_schema_bytes": "PRESERVED_BY_EXECUTED_TEST",
+      "mnp_original_84_assets": "PRESERVED_BY_EXECUTED_TEST",
+      "minimal_assets": "PRESERVED_BY_EXECUTED_TEST",
+      "prior_050_archive_sha256": "4e6ba7225348a201c1ba2076e58f3c1bff370a97dae7000e99ebe53f9be3f983",
+      "actual_controlled_reconstruction": {
+        "exit_code": 0,
+        "seconds": 232.219,
+        "evidence": "runtime_logs/p09/controlled-reconstruction-c77c655/historical-controlled-reader"
+      }
+    },
+    "linux": {
+      "commit": "a23102dc5891e26600abd262fd958110260f37a8",
+      "checkout": "/var/tmp/kg-mnp-a231.BeqQqs",
+      "evidence": "runtime_logs/p09/linux-current-staging/junit.xml",
+      "passed": 57,
+      "failed": 0,
+      "skipped": 0,
+      "scope": "Workspace, ingestion/workspace security, compatibility, historical query identity, modeling transaction subset. Reuses prepared locked Python3.12.3 environment; not a new clean installation or full Linux suite."
+    },
+    "browser": {
+      "commit": "c77c6555d5b555eea639fc8f2258043e5c096b21",
+      "status": "PASS",
+      "passed": 5,
+      "failed": 0,
+      "evidence": "runtime/p09-browser-c77c655-src/runtime_logs/p09/browser-runs/managed-9ed49be445e9478bb4411c5684976267",
+      "receipt_sha256": "37ab8e6c965895132b96cc7c5dd8c1f0d48810e7055213f6da8089e87db506a7",
+      "junit_sha256": "ff139c78350f4c7832612af1aa74f4a41337c9806f2164140395dbd10ab871bd",
+      "shutdown": {
+        "credentials_removed": true,
+        "credentials_revoked": true,
+        "worker_stopped": true
+      },
+      "domain_runs": [
+        {
+          "measurement": {
+            "domain": "mnp",
+            "elapsed_seconds": 758.0597253999999,
+            "browser": "153.0.8010.12",
+            "platform": "win32",
+            "os_release": "10.0.26200",
+            "cpu": "12th Gen Intel(R) Core(TM) i7-12700H",
+            "logical_cpus": 20,
+            "total_memory_bytes": 34003582976,
+            "source_count": 1,
+            "reviewed_candidate_count": 10,
+            "expected_instance_count": 1,
+            "viewports": [
+              {
+                "width": 1024,
+                "height": 768
+              },
+              {
+                "width": 1366,
+                "height": 768
+              },
+              {
+                "width": 1440,
+                "height": 900
+              },
+              {
+                "width": 1920,
+                "height": 1080
+              }
+            ],
+            "method": "Real Chromium form actions; persistent worker completion observed through authorized HTTP state. Wall time includes polling and actual reasoner execution."
+          },
+          "ids": {
+            "project_id": "urn:kg-mnp:project:3c9c58c959faaa2060d8f4f28827ce0934cbd0a2ac945bfcdd265a8ad61345e4",
+            "source_id": "urn:kg-mnp:source:e1a1ab7efe1facd155bce8a4a689cac0f11d545f0c19d7aff441182489eb87f3",
+            "run_id": "urn:kg-mnp:ingestion-run:52be5e8ef5075a588376d11be4694f99dd015bc78070dbe724203b316c0d0b89",
+            "scope_id": "urn:kg-mnp:ontology-scope:28b40f5bac63f672a3e3e6af91897c69b45da840c08efe5fbe54e681e4521c0e",
+            "proposal_id": "urn:kg-mnp:ontology-modeling-proposal:e81f7cc889f05d3a854c8b53a43d27ebcca219c680e04f61cd1838d9738f941d",
+            "review_id": "urn:kg-mnp:ontology-review-queue:bf1ce9aad14eb3f4d5ae55a00fe2d4639ec4b5284458495deb676c8d0ce2d104",
+            "package_id": "urn:kg-mnp:ontology-package:4a7f6627d6b51719bb4fb1ed359c5f77465776e23f6078786ad232a7acc64556",
+            "release_id": "urn:kg-mnp:release:2035d852f15f923adf9552a0db1938d995c006f5f9ba5ad6e429bc7377bc89b3",
+            "job_ids": [
+              "job_83337777ddfb4622b2752327fb730200",
+              "job_fd95638c53fe4dc08e5d39d86ce26743",
+              "job_9d96deb0eac24fb1bdf264ad8274cb40",
+              "job_16f3f924b3614644a2e02d36084879a0",
+              "job_d0a112e5b3a2474a8cff74e774cfc7b9",
+              "job_ee37e7525e9d4ea9a145419d59c875aa",
+              "job_fb52dcd673e948a4818e75c3e8554f86",
+              "job_78cd24bf7cea496b8ccd397a9dd5d3f2",
+              "job_3b90cac8c02f4053bbd631d802b3f2a6",
+              "job_48e58ce778064ee785e00ce2f635c055",
+              "job_3e1ef79b93c74a7bae9dc826c9f35c8f",
+              "job_a20d645269c54136801f6a2b18c5ccc6",
+              "job_427522f716eb41b4a8e9bb204c282a91",
+              "job_2a8195703270412da1ebef8bb26d3d43",
+              "job_60a7638647654998a2d69429f953e5ab",
+              "job_7539ba73aa89412cbfeab7ee7f93f47c",
+              "job_bb10fb0ff9ab448589cb2d320f846b51",
+              "job_00d80cdb5ed34aa3ac6f3fed92ce31fd",
+              "job_beb86e18b37b4185a45ec71f3ae1d56e",
+              "job_b2cbf24f4c514e979b7c6f643851074a",
+              "job_dc8c38574edf4bbf9755372113565ccf",
+              "job_8641b7c4582e4fc48a9494678c687311",
+              "job_a0614499fba940d9b1af3a3209421f5d",
+              "job_45cdbd10a619479992c9deb9d4060c82"
+            ]
+          }
+        },
+        {
+          "measurement": {
+            "domain": "forestry",
+            "elapsed_seconds": 808.7881841000001,
+            "browser": "153.0.8010.12",
+            "platform": "win32",
+            "os_release": "10.0.26200",
+            "cpu": "12th Gen Intel(R) Core(TM) i7-12700H",
+            "logical_cpus": 20,
+            "total_memory_bytes": 34003582976,
+            "source_count": 3,
+            "reviewed_candidate_count": 83,
+            "expected_instance_count": 6,
+            "viewports": [
+              {
+                "width": 1024,
+                "height": 768
+              },
+              {
+                "width": 1366,
+                "height": 768
+              },
+              {
+                "width": 1440,
+                "height": 900
+              },
+              {
+                "width": 1920,
+                "height": 1080
+              }
+            ],
+            "method": "Real Chromium form actions; persistent worker completion observed through authorized HTTP state. Wall time includes polling and actual reasoner execution."
+          },
+          "ids": {
+            "project_id": "urn:kg-mnp:project:d3c7c24d8a818560a8b5b76fcd316c78e9f43909aea16c84ee9f189dd88854b4",
+            "source_id": "urn:kg-mnp:source:d390bf268ec4e4fcc0c6963adae20c80486535c037e68f0d4b2dcbab25e476e5",
+            "run_id": "urn:kg-mnp:ingestion-run:7bcac66b984f39f9badf48025a25a54130004ed5f1a9f909ba1ed2b497bf1929",
+            "scope_id": "urn:kg-mnp:ontology-scope:db31b581cd8d012d2579fd8c1e1ce42cc4e71697879cc9434e7e4cf704b42fe6",
+            "proposal_id": "urn:kg-mnp:ontology-modeling-proposal:998eb5366de9b682eddb4e68b0008320818a4303565ddb58681cba1090b9f1dd",
+            "review_id": "urn:kg-mnp:ontology-review-queue:51f95051b4105f6801c70e41c76ca5c6e73ffb404af8684d8384fde25bbdb3c5",
+            "package_id": "urn:kg-mnp:ontology-package:4b1645891f7819585b83a9dd8a05f75437a73297aed70e6130b99d7f9bb20b9c",
+            "release_id": "urn:kg-mnp:release:5133e91760a4a2de00d24a2d31384844734ec9676759aceebb488fe1f7bbd2b3",
+            "job_ids": [
+              "job_5cec61774b6a4b64813558f501f4a27f",
+              "job_1b9134799ff6408785c43810682c9bcb",
+              "job_238259ad955647e8aa8f7a7a19f503c1",
+              "job_c15b4f31c187466da47afc853a867037",
+              "job_d6bf730c4e6e4b49969288b3ba74daf8",
+              "job_925ae8579a3246218118812085077add",
+              "job_74533baab68e40aa81734e88f24ea259",
+              "job_192195e8eceb48a39ab8621ae1655139",
+              "job_27ee5c28702b47a0ab06f04b0c723681",
+              "job_e26a11d81f9843dfac4020e5fa568ea7",
+              "job_9e5d83ec10b443ff92552105c871e654",
+              "job_91ee658e4af6417aae3e6be99212e71f",
+              "job_3ec87b4b52b6456ebb96db9d1f61ba7c",
+              "job_1846957236ee4275ba694e40ea278301",
+              "job_1b7d0fc54a17448896fc2e25ee889cf5",
+              "job_4309060836a44170b35d9e13609a2301",
+              "job_4a94f90ef5a44f87818245345f617bf9",
+              "job_9939383760014947b2ec307a5f0601a9",
+              "job_027a74cbd1be4e2cb7d405a96d887b42",
+              "job_c127e5aa26f949e4a2e51c257ecdf04f",
+              "job_80c30652755948618c1aba886e6fbd56",
+              "job_38d6774d232e47fca6bfa016e741068e",
+              "job_27bc1cb7393e4e3a8b88cd2a1732016e",
+              "job_cc9dffed513f49f4b4061d2ab12aaf94",
+              "job_e491da7c7609427fa3832361446402f1",
+              "job_492a36d5e9e44e3d8dc44f39529cab13",
+              "job_e4079781e1f54aa7ab8c410fc1c00e26",
+              "job_e41ea18a6fc34b6099f5ca81fe3e8d43",
+              "job_162f42b504b04d94ac2dd7121d32db32",
+              "job_ce199be5d7c146598c29f7dd4d9f4465",
+              "job_5340332b0df643a88ef17e0ba5f4dd77",
+              "job_a3b31b0913424faaaac282b0cac88504",
+              "job_cd9361a44eae486f9a66d0e891f3e41f",
+              "job_8846bc3b5e5b4be8a122ac43300d2a27",
+              "job_027061303dd847c48def0c6439254a63",
+              "job_f7e66750520b440a8cf1c57478b1548d",
+              "job_de36cdcdd10a4471a94237638ad29481",
+              "job_05f8570896e34d0189d14c32606e9578",
+              "job_a9b328ef9da44cf59e6c1962c610997e",
+              "job_181d263fd0dc4626b446985a17b454fa",
+              "job_08b1784fde984feea40c5492cde9118c",
+              "job_3335e94f509a49deaea42f070fa7913c",
+              "job_dc6ff5632841401693ed9e58584c406d",
+              "job_8ae3120deb7247fe84c60b95b1519a07",
+              "job_6e3ea96feecd4987a2f16e699605654f",
+              "job_4b44ff1e25da41ff94eea5e0b90ee067",
+              "job_5e0afcb8dd4344c1a9b258d023b5a194",
+              "job_5fcebcabc50945de87c8bb45edf61efa",
+              "job_2486050025c044ed919b01b90b0a5027",
+              "job_975f5410e4d74f8b94140d6a47b470c3",
+              "job_c1bc55b310d948c78b8e8251c79f4a8b",
+              "job_36251227cebd4589b88a3ba601c36a67",
+              "job_e225ffcde45f4e60be6dd89eaecaf916",
+              "job_0ef5aae379144ed19bb9d792364220c9",
+              "job_b388014b8f7e41789664cdf99555f042",
+              "job_8a4b76f4e06c432db21070c868328beb",
+              "job_cc1e63bd847442e1af54303b0e47882e",
+              "job_e3dd93d52a7d4d8d9975bf96c58aa8ad",
+              "job_8abd72c41a554feea9d644427e022f8e",
+              "job_7d2c87fef97846e8838805d1c434bedf",
+              "job_47e0d28b8bd9480bae512b6e6a7cc08a",
+              "job_ee0d869804754433b105c6a900003faa",
+              "job_ed686ebc1bfc4779acf63055762821bf",
+              "job_c5b9d97a2d3c483589cbe9f568f1f7d4",
+              "job_b0f17568b87247d6b0390ef632a8f392",
+              "job_d2bc573eca3841518968e5dd0afa66b1",
+              "job_1c86f3050837430286fee838f8be7f91",
+              "job_a03ca7e916b94b8095779a5ac6868529",
+              "job_6a6a5d7c238a41628a035e7003256ba6",
+              "job_e425392e69a54c53bf65b435c755c98d",
+              "job_1341c24ad79e408eb91cf734ecb156e0",
+              "job_59fe987a2c534bd8a5102209f46832a8",
+              "job_0bfd5762db484609a1b000169f6c30a6",
+              "job_6300424f73e0434ebe54378442dc594d",
+              "job_3e67bdb59b7b48ee84a40d61d6668437",
+              "job_f536003c28754b359093956e8365ecf6",
+              "job_3aff201ff0d547dc83414089f219cf1e",
+              "job_2309fbcf15d7461e9462b2540be7450a",
+              "job_27c210a744ed423899afd1852f9fd0f4",
+              "job_36d8f7f16b1f448d898c9c99ec33c14a",
+              "job_dfced825010d4d2e80d7ea6c3770710f",
+              "job_363953691a8f481cac082314af8495f9",
+              "job_c92c5e4ea92c46d99300047f56fc7058",
+              "job_e89d394a58e643a0bde2421791499510",
+              "job_2d7086e3d26043118a51d54e6bb5b403",
+              "job_91223e10b4be43d99f24774db958a396",
+              "job_fabe331e8f7747d3b2c80e51e41b33bd",
+              "job_b787c44e88ab430d8bdfb8fa628f4746",
+              "job_fdd294d0d62c4bb6998700c1a583a06e",
+              "job_7fb89102b0634995b6c51067fb29715c",
+              "job_c94ee3ec5d31467a80fad4d4d59cd980",
+              "job_f8c4771a506540fdaa6683113ff50ab5",
+              "job_fa3f16c3486644c186cae1a9b92e49f9",
+              "job_68047bab1dfa48ec9c8e11c81e833e79",
+              "job_eb6add857ae64075a2f1700a8580a085",
+              "job_44421cb84e82433fa5c08caf4e857f6a",
+              "job_8408c83f6fdf486083e4782331c4e9ae",
+              "job_4cba14a2ce1a4b3bb25d97422c64e0b9",
+              "job_02436b4f3dd0486ba3a5a16a5742ef61",
+              "job_9d715e57d1bf4674b33ffa9469608f68"
+            ]
+          }
+        },
+        {
+          "measurement": {
+            "domain": "minimal",
+            "elapsed_seconds": 377.8799804,
+            "browser": "153.0.8010.12",
+            "platform": "win32",
+            "os_release": "10.0.26200",
+            "cpu": "12th Gen Intel(R) Core(TM) i7-12700H",
+            "logical_cpus": 20,
+            "total_memory_bytes": 34003582976,
+            "source_count": 1,
+            "reviewed_candidate_count": 6,
+            "expected_instance_count": 1,
+            "viewports": [
+              {
+                "width": 1024,
+                "height": 768
+              },
+              {
+                "width": 1366,
+                "height": 768
+              },
+              {
+                "width": 1440,
+                "height": 900
+              },
+              {
+                "width": 1920,
+                "height": 1080
+              }
+            ],
+            "method": "Real Chromium form actions; persistent worker completion observed through authorized HTTP state. Wall time includes polling and actual reasoner execution."
+          },
+          "ids": {
+            "project_id": "urn:kg-mnp:project:15f7feb3da70fe31c8b4f33c22559c8903cc3ff56f1f0f49b56da6ddd46f5165",
+            "source_id": "urn:kg-mnp:source:a6b96e697f242db622efb316e435372f68ce9881611213756e7736b9b406cbb6",
+            "run_id": "urn:kg-mnp:ingestion-run:6182041d7074a8ddf89ce9e9c3e25f9ec4ee9a0da7e3bd7be4efa3022da68ea1",
+            "scope_id": "urn:kg-mnp:ontology-scope:02207d0c5c4d4a32e85ae890aa5fa51d19b13f683952f5a716075cf43df98468",
+            "proposal_id": "urn:kg-mnp:ontology-modeling-proposal:fff068ccfcf97e59366cf65c73bca833974fd74d240a4a5c1376fca85156e00c",
+            "review_id": "urn:kg-mnp:ontology-review-queue:7b8721eb73a159569f38c62ffec0caca8bae80caa8290ffc47c41430999bda07",
+            "package_id": "urn:kg-mnp:ontology-package:4d2d1e63e62a73d14650d350587cccdaa88ec4c044c67a3666c02823ce75c4b3",
+            "release_id": "urn:kg-mnp:release:7216bc6432b8f23b430df061e08216f8a197006349ae0513f2eb1c65440434b1",
+            "job_ids": [
+              "job_c822f99b46a444318816bd66df168a87",
+              "job_e5c9a45e39914f8d8e8877e8484f27be",
+              "job_48d823e881674b92bf55917257bb0f19",
+              "job_370750f8050645b38ed6553d012284d0",
+              "job_f036e1b4517f4baabc3c63b7924c30c9",
+              "job_f659ba04f3d942fa9cb5afc99230555b",
+              "job_1c1764f5d89e46b39b278b14310d293f",
+              "job_bccf180e5b4b42caac900c93563c7ad4",
+              "job_acafa14d07234f719315d6e290170965",
+              "job_47ad398911714c0ab2e022896a1bd82f",
+              "job_ec856e886d774d388f475d567b88e452",
+              "job_91a954ebab644a2aaacac66b8e4178d6",
+              "job_f2af98dfce394219b24db8aa6742e020",
+              "job_07da2019bf124b32b9bcb93e51219cae",
+              "job_b3fe135ea7f04f4892f7e79cda22297a",
+              "job_b46627c6071a494e9c34e82b0ca99d5c",
+              "job_f8847c7cfdb14bf092e4484ed6e67881",
+              "job_9b9ff5dce8d843ca9536e89f06870beb",
+              "job_2da7a2bab3404da58129e93ab2d76320",
+              "job_60eb794ad3cd4faaa729ab7dd82bd8a3",
+              "job_53766f6c598247418d8e35f2835ed44e",
+              "job_ddc21425ec064733aa69701cb6462e7a",
+              "job_d4a0c90017514f06bea5332efb2a1fcb",
+              "job_dcd0d5d6af8f45989fcf18f9efa8401b",
+              "job_abdb09b3b7d04691ad5b173092501330",
+              "job_589d061dbbf7432eb27da78e2e42af8e",
+              "job_ea9975481beb41aa9dd081d292ab65f7",
+              "job_8935d5a7599a41fa87eb5bab9dc7f4fd",
+              "job_50c0acd7332144e599bf93ee97f35d66",
+              "job_e37636e1eab94b6b825cb23e56db69a7",
+              "job_282f61fd21f242efb012ca287be16c79",
+              "job_9bfdbdd928a74af6930f144c195877e9",
+              "job_1b13cf4f183049498546801d14427bc1",
+              "job_9bda5c4a6ef34b2494191a5522c6d495",
+              "job_ef581c8d5c264bb99b6053e6277406fc",
+              "job_e3061263838f45e1a008221f54920a75",
+              "job_19b95cfebe4c4a2b98313635e3f8b96c",
+              "job_c40207763f96402e9753855a40c8470c",
+              "job_4710453d3e5d4f5eaf47fa0b2176b12c",
+              "job_8cdaf519bfbb45a99f180b7ba975c945"
+            ]
+          }
+        }
+      ],
+      "qualification": "Fixed c77 browser workflows, not the final source revision; later query-reader and verified-byte snapshot changes require final-revision acceptance. Timings include concurrent local diagnostic work and are not an isolated benchmark."
+    },
+    "observed_visual_review": {
+      "scope": "Actual c77 Minimal viewport1024 and Scope/CQ; Forestry/MNP release-object pages; automated keyboard-focus screenshot inspected",
+      "finding": "No observed overflow/occluded controls in these five screenshots; labels are faithfully rendered structured data and can be improved. Complete final visual and manual keyboard acceptance not claimed."
+    },
+    "retained_failures": [
+      "reconstruction-retirement.xml: 204 PASS/15 FAIL, missed output_dir=None caller; subsequently fixed and all failing cases included in 24-PASS repair run.",
+      "First workbench reader repair had set-versus-dict TypeError; next15-PASS run after fix.",
+      "First MNP reader test incorrectly matched Chinese error text against a code; replaced by explicit ErrorCode assertion; next56-PASS run.",
+      "Standalone controlled fixture import initially failed outside repository-root module context; fixed and actual harness subsequently passed."
+    ],
+    "remaining_required": [
+      "Retire/consolidate remaining historical Phase01-06 writable stores/controllers and old GraphDB/WebVOWL runtimes, with exact assurance mapping.",
+      "Finish remaining config/docs/script consolidation and complete CODE_FREEZE.",
+      "Full unique backend collection, all browser/domain scenarios, both-platform clean distribution/startup/recovery, full visual and manual keyboard verification on the final fixed source.",
+      "Evidence delivery bundle, verified wheel/sdist and tested/delivery source equality. No successful candidate tag before required gates pass."
+    ],
+    "subsequent_security_commit": "dfcfa8ce3a0a9b4ed2f5017df2371eaf81cfff41",
+    "read_snapshot_repair": {
+      "commit": "dfcfa8ce3a0a9b4ed2f5017df2371eaf81cfff41",
+      "defect": "Actual post-verification source replacement caused object queries, local RDF, metadata and visualization to expose unverified facts/IDs.",
+      "fix": "Common per-call captured-byte verification shared with downloads; no cached verdict, bounded read, no later mutable-source read.",
+      "original_failures": [
+        "runtime_logs/p09/object-snapshot-red.xml (1 FAIL)",
+        "runtime_logs/p09/projection-snapshot-red.xml (3 FAIL)"
+      ],
+      "targeted_passes": [
+        "runtime_logs/p09/object-snapshot-green.xml (7 PASS)",
+        "runtime_logs/p09/projection-snapshot-green.xml (44 PASS)",
+        "runtime_logs/p09/shared-snapshot-archive.xml (5 PASS)"
+      ],
+      "final_full_verification": "NOT_RUN"
+    },
+    "collection_only": {
+      "commit": "a23102dc5891e26600abd262fd958110260f37a8",
+      "nodes": 1728,
+      "executed_tests": 0,
+      "evidence": "runtime_logs/p09/collection-a23102d/collection",
+      "collection_sha256": "d9c082bc69d71515dff971a0cc32d947886d045927fb7cb318568ea0a1e70b79",
+      "qualification": "Before subsequent four snapshot-negative cases; not final collection"
+    }
+  },
   "tested_commit": null,
   "final_fixed_revision_status": "NOT_RUN_AFTER_COMPLETE_CONSOLIDATION",
   "candidate_tag": null,
