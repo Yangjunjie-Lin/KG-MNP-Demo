@@ -7,6 +7,7 @@ import {object,str,type Document} from './api';
 
 export function CandidateExplorer({candidates,edit}:{candidates:Document[];edit:(candidate:Document)=>void}){
   const [search,setSearch]=useState(''),[selected,setSelected]=useState(''),[neighbors,setNeighbors]=useState(false);
+  const [graphOpen,setGraphOpen]=useState(false);
   const current=candidates.find(c=>c.candidate_id===selected);
   const dependencies=(candidate:Document)=>Array.isArray(candidate.dependency_candidate_refs)?candidate.dependency_candidate_refs:[];
   const visible=candidates.filter(candidate=>{
@@ -22,8 +23,8 @@ export function CandidateExplorer({candidates,edit}:{candidates:Document[];edit:
     </select></Field>
     <Field label="只看所选项与直接依赖邻居"><input type="checkbox" checked={neighbors} onChange={event=>setNeighbors(event.target.checked)}/></Field>
     {current&&<div className="record"><code>{selected}</code><p>证据：{str(current.evidence_refs)}</p><button onClick={()=>edit(current)}>修改所选候选</button></div>}
-    <details><summary>概念与依赖图（布局拖动不修改语义）</summary>
-      <div className="graph"><ReactFlow nodes={graph.nodes} edges={graph.edges} onNodeClick={(_event,node)=>setSelected(node.id)} fitView nodesConnectable={false}><Background/><Controls/></ReactFlow></div>
+    <details onToggle={event=>setGraphOpen(event.currentTarget.open)}><summary>概念与依赖图（布局拖动不修改语义）</summary>
+      <div className="graph">{graphOpen&&<ReactFlow nodes={graph.nodes} edges={graph.edges} onNodeClick={(_event,node)=>setSelected(node.id)} fitView nodesConnectable={false}><Background/><Controls/></ReactFlow>}</div>
       <p>箭头从被依赖项指向依赖它的候选。{graph.truncated?'结果已截断。':''}最多显示 200 节点 / 400 边；搜索和邻居筛选同时作用于图与下方表格。</p>
     </details>
     <DataTable data={visible} fields={[["candidate_id","候选 ID"],["candidate_kind","分类"],["body","语义内容"],["evidence_refs","证据"],["dependency_candidate_refs","依赖"]]}/>

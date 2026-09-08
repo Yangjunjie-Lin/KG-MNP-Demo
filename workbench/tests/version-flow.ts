@@ -2,7 +2,7 @@ import {expect,type Page} from '@playwright/test';
 
 // All business mutations go through the rendered forms. HTTP is observation
 // only; there are no routed mocks, fabricated records or automatic approvals.
-export async function versionFlow(page:Page,projectPath:string,initialPackage:string,initialRelease:string){
+export async function versionFlow(page:Page,projectPath:string,initialPackage:string,initialRelease:string,capture?:(name:string)=>Promise<void>){
   async function state(){const r=await page.request.get('/api/v1'+projectPath+'/state');if(!r.ok())throw new Error(`State HTTP ${r.status()}: ${await r.text()}`);return r.json();}
   async function count(operation:string){return (await state()).results.filter((r:{operation:string})=>r.operation===operation).length;}
   async function changed(operation:string,before:number){
@@ -28,6 +28,7 @@ export async function versionFlow(page:Page,projectPath:string,initialPackage:st
   await page.getByRole('button',{name:'实际重跑 Candidate 与 Base CQ Oracle',exact:true}).click();
   const regression=await changed('change.regression',0);
   expect(regression.report.required_passed).toBe(true);
+  await capture?.('version-diff');
   await page.getByLabel('后续版本变更理由',{exact:true}).fill('Explicit synthetic successor evaluation');
   await page.getByRole('button',{name:'生成并评估 Change Proposal',exact:true}).click();
   await changed('change.evaluate',0);

@@ -30,7 +30,7 @@ for(const scenario of scenarios) test(`real browser ${scenario.id} source review
   const projectPath=new URL(page.url()).pathname.split('/').slice(0,3).join('/');
   async function state(){const response=await page.request.get('/api/v1'+projectPath+'/state');if(!response.ok())throw new Error(`Project state HTTP ${response.status()}: ${await response.text()}`);return response.json();}
   async function output(operation:string,key?:string){await expect.poll(async()=>{const s=await state();const failed=s.jobs.find((j:{status:string;operation_id:string})=>j.status==='FAILED'&&j.operation_id===operation);if(failed)throw new Error(JSON.stringify(failed));return s.results.filter((r:{operation:string})=>r.operation===operation).length;},{timeout:/^(compile|registry|release|change|environment)\./.test(operation)?600000:120000}).toBeGreaterThan(0);const s=await state();const result=s.results.filter((r:{operation:string})=>r.operation===operation).at(-1).result;return key?result[key]:result;}
-  async function screenshot(name:string){const targets:Record<string,string>={'source-evidence':'证据定位与转换记录','scope-cq':'范围确认与能力问题','review':'候选审核','compilation':'正式验证结果','release-objects':'固定 Package 对象浏览'};if(targets[name])await page.getByRole('heading',{name:targets[name],exact:true}).scrollIntoViewIfNeeded();else await page.evaluate(()=>window.scrollTo(0,0));const scan=await new AxeBuilder({page}).withTags(['wcag2a','wcag2aa','wcag21aa']).analyze();fs.writeFileSync(path.join(evidenceRoot,name+'-accessibility.json'),JSON.stringify(scan,null,2));expect(scan.violations).toEqual([]);await page.screenshot({path:path.join(evidenceRoot,name+'.png'),fullPage:false});}
+  async function screenshot(name:string){const targets:Record<string,string>={'source-evidence':'证据定位与转换记录','scope-cq':'范围确认与能力问题','field-mapping':'术语与字段映射候选','review':'候选审核','compilation':'正式验证结果','release-objects':'固定 Package 对象浏览','version-diff':'语义版本对比','environment-rollback':'环境与指定历史回滚','graphdb-blocked':'GraphDB 可用性与审核计划'};if(name==='review')await page.getByTestId('review-head').evaluate(e=>e.scrollIntoView({block:'start'}));else if(targets[name])await page.getByRole('heading',{name:targets[name],exact:true}).evaluate(e=>e.scrollIntoView({block:'start'}));else await page.evaluate(()=>window.scrollTo(0,0));const scan=await new AxeBuilder({page}).withTags(['wcag2a','wcag2aa','wcag21aa']).analyze();fs.writeFileSync(path.join(evidenceRoot,name+'-accessibility.json'),JSON.stringify(scan,null,2));expect(scan.violations).toEqual([]);await page.screenshot({path:path.join(evidenceRoot,name+'.png'),fullPage:false});}
   await screenshot('project-overview');
   await page.getByRole('link',{name:'资料与证据',exact:true}).click();
   const inputs=scenario.files.length?scenario.files.map(name=>({name,mimeType:'text/csv',buffer:fs.readFileSync(path.resolve('../domain_packs',scenario.id,'fixtures',name))})):scenario.id==='mnp'?[{name:'mapping.csv',mimeType:'text/csv',buffer:Buffer.from(['mappingCode,sourceApi,sourceFieldPath,targetTerm,mappingReviewStatus','SYN-M01,Synthetic source,sample.field,Subscriber,SYNTHETIC_TEST',''].join(String.fromCharCode(10)))}]:[{name:'synthetic.csv',mimeType:'text/csv',buffer:Buffer.from(['entity,label','synthetic,Synthetic entity',''].join(String.fromCharCode(10)))}];
@@ -52,6 +52,7 @@ for(const scenario of scenarios) test(`real browser ${scenario.id} source review
   await expect(page.getByRole('button',{name:'运行解析',exact:true})).toBeEnabled({timeout:15000});
   await page.getByRole('button',{name:'运行解析',exact:true}).click();
   const run=await output('ingestion.run','run');
+  await screenshot('upload-ingestion');
   await page.getByLabel('解析运行').selectOption(run.run_id);
   await expect(page.getByRole('heading',{name:'证据定位与转换记录',exact:true})).toBeVisible();
   await screenshot('source-evidence');
@@ -87,7 +88,26 @@ for(const scenario of scenarios) test(`real browser ${scenario.id} source review
     await page.getByRole('button',{name:'生成自定义映射候选',exact:true}).click();
   } else await page.getByRole('button',{name:'运行离线候选 Provider',exact:true}).click();
   const proposal=await output('modeling.proposal');
+  await screenshot('field-mapping');
   await page.getByLabel('审核队列').selectOption(proposal.queue.review_queue_id);
+  // The graph must fit the visible panel on first expansion, without a manual
+  // Fit View workaround. Mounting inside closed details used hidden dimensions.
+  if(scenario.id==='minimal'){
+    await expect(page.locator('.react-flow')).toHaveCount(0);
+    await page.getByText('概念与依赖图（布局拖动不修改语义）',{exact:true}).click();
+    await expect(page.locator('.react-flow__node')).toHaveCount(6);
+    await expect.poll(()=>page.locator('.graph').evaluate(container=>{
+      const bounds=container.getBoundingClientRect();
+      return [...container.querySelectorAll<HTMLElement>('.react-flow__node')].every(node=>{
+        const box=node.getBoundingClientRect();
+        return box.width>50&&box.left>=bounds.left&&box.right<=bounds.right&&box.top>=bounds.top&&box.bottom<=bounds.bottom&&node.scrollWidth<=node.clientWidth;
+      });
+    })).toBe(true);
+    await page.getByText('概念与依赖图（布局拖动不修改语义）',{exact:true}).evaluate(e=>e.scrollIntoView({block:'start'}));
+    await page.screenshot({path:path.join(evidenceRoot,'concept-graph.png')});
+    await page.getByText('概念与依赖图（布局拖动不修改语义）',{exact:true}).click();
+    await expect(page.locator('.react-flow')).toHaveCount(0);
+  }
   await page.getByLabel('本次审核理由').fill('Explicit human decision for this synthetic candidate');
   const items=proposal.queue.items.filter((i:{candidate_id?:string})=>i.candidate_id);
   for(let index=0;index<items.length;index++){
@@ -166,7 +186,32 @@ for(const scenario of scenarios) test(`real browser ${scenario.id} source review
   fs.copyFileSync(downloadedPath!,path.join(evidenceRoot,'traced-source.bin'));
   await screenshot('release-objects');
   if(scenario.id==='minimal'){
-    const versionIds=await versionFlow(page,projectPath,built.package_id,released.release.release_id);
+    await page.getByRole('link',{name:'集成状态',exact:true}).click();
+    await page.getByLabel('已发布版本',{exact:true}).selectOption(released.release.release_id);
+    await page.getByRole('button',{name:'生成受版本约束的集成计划',exact:true}).click();
+    await output('integration.plan');
+    await page.getByLabel('计划审核理由',{exact:true}).fill('Review local observation only; no external permission granted');
+    await page.getByRole('button',{name:'人工审核计划',exact:true}).click();
+    await output('integration.review');
+    await page.getByRole('button',{name:'读取实际可用性与部署观测',exact:true}).click();
+    const observed=await output('integration.verify');
+    expect(observed.status).toBe('BLOCKED_BY_OFFLINE_POLICY');
+    expect(observed.external_request_attempted).toBe(false);
+    await page.getByLabel('请求说明',{exact:true}).fill('Synthetic source follow-up; enqueued is not externally executed');
+    await page.getByRole('button',{name:'将来源复核请求加入 Outbox',exact:true}).click();
+    const enqueued=await output('workflow.enqueue');
+    expect(enqueued.status).toBe('REQUEST_ENQUEUED');
+    expect(enqueued.last_verification_status).toBe('NOT_EXECUTED');
+    await screenshot('graphdb-blocked');
+    await page.getByRole('link',{name:'验证与发布',exact:true}).click();
+    // Restore the explicit confirmed package selection after changing routes.
+    await page.getByLabel('确认包',{exact:true}).selectOption(confirmed.package_id);
+    await page.getByLabel('本体包名称',{exact:true}).fill('synthetic-browser-minimal');
+    await page.getByLabel('Ontology IRI',{exact:true}).fill('urn:synthetic:browser:minimal');
+    await page.getByLabel('能力问题',{exact:true}).selectOption(prepared.questions.questions[0].question_id);
+    await page.getByLabel('锁定领域包中的查询 Asset ID',{exact:true}).fill(scenario.query);
+    await page.getByLabel('必须返回的变量（逗号分隔）',{exact:true}).fill(scenario.bindings);
+    const versionIds=await versionFlow(page,projectPath,built.package_id,released.release.release_id,screenshot);
     fs.writeFileSync(path.join(evidenceRoot,'version-ids.json'),JSON.stringify(versionIds,null,2));
     await screenshot('environment-rollback');
     await page.getByRole('link',{name:'验证与发布',exact:true}).click();

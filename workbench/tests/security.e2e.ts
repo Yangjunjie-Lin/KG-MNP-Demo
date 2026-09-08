@@ -89,6 +89,7 @@ test('real session negative boundaries and identity cache isolation',async({page
   await expect(page.getByRole('alert')).toContainText('403');
   await expect(page.getByText('inert.txt',{exact:true})).toHaveCount(0);
   await expect(page.getByLabel('资料文件')).toHaveCount(0);
+  await page.screenshot({path:info.outputPath('permission-denied.png')});
   fs.writeFileSync(info.outputPath('keyboard-check.json'),JSON.stringify({method:'Automated Chromium keyboard focus and Enter, distinct from manual keyboard inspection',focus_visible_checked:focusVisible,navigation:'PASSED',identity_cache_isolation:'PASSED'},null,2));
   await page.getByRole('button',{name:'退出',exact:true}).click();
 });

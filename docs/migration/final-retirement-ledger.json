@@ -26,6 +26,17 @@
   ],
   "entries": [
     {
+      "old_path": "workbench/src/candidate-explorer.tsx (hidden ReactFlow mount); workbench/src/styles.css (unbroken node labels)",
+      "old_responsibility": "Bounded candidate graph and keyboard/table alternative",
+      "actual_callers": ["workbench/src/modeling.tsx"],
+      "replacement_path": "workbench/src/candidate-explorer.tsx; workbench/src/styles.css",
+      "replacement_behavior": "Mount graph only after details is visibly open; wrap technical labels within node boundaries; closing/reopening keeps the semantic candidates unchanged",
+      "replacement_test_nodeids": ["workbench/tests/rendering.spec.ts (first graph expansion fits visible nodes and wraps long labels)", "workbench/tests/minimal.e2e.ts (real Minimal first-open graph bounds)"],
+      "artifact_compatibility": "Layout only; no Schema, Package, Domain Pack or semantic compiler input changed",
+      "decision": "MERGE",
+      "reason": "Real visual QA on 0ee66b9 showed clipped first-open nodes and overflowing labels. Failure screenshots retained under visual-0ee66b9; new component browser regression passed twice-open and capacity cases. Final fixed-revision E2E remains mandatory."
+    },
+    {
       "old_path": "tools/consolidation_audit.py; scripts/build_ontology_release.py; scripts/stage03_term.py; scripts/stage03_term_catalog_part2.py; scripts/stage03_term_catalog_part3.py; scripts/stage03_term_catalog_part4.py; scripts/stage03_constants.py; scripts/migrate_ontology_iris.py; scripts/rewrite_case_semantics.py; scripts/normalize_domain_pack_text.py; scripts/generate_competency_questions.py; scripts/prompt03_cli_smoke.py",
       "old_responsibility": "One-time requirement writer, source-asset migrations/catalog generation, and retired pre-service CLI smoke",
       "actual_callers": ["Removed catalog parts called only by removed builder; checker was the sole remaining constants caller"],
