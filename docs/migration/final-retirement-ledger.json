@@ -2024,6 +2024,51 @@
       "decision": "REPLACE_AND_DELETE",
       "reason": "Source, scripts, tests and docs reference search plus module closure found no callers; no test removed",
       "evidence": "runtime_logs/p09/unused-readers.xml (12 PASS)"
+    },
+    {
+      "old_path": "scripts/generate_graphdb_goldens.py",
+      "old_responsibility": "One-time historical fixture/golden compiler writer",
+      "actual_callers": [],
+      "replacement_path": "Retained examples/*/expected data; current service/Core workflow and independent historical-format validation tests",
+      "replacement_behavior": "Golden bytes remain unchanged; no old script can rewrite them or manufacture caller-labelled review actions as a current workflow",
+      "replacement_test_nodeids": [
+        "tests/review/test_package_reconstruction_validation.py",
+        "tests/modeling/test_determinism.py"
+      ],
+      "artifact_compatibility": "Original golden data and old package validators retained; no test removed",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Audited no active callers; historical one-time generator not a current product entry",
+      "evidence": "runtime_logs/p09/golden-writer-retirement.xml (8 PASS)"
+    },
+    {
+      "old_path": "scripts/generate_stage05_examples.py",
+      "old_responsibility": "One-time historical fixture/golden compiler writer",
+      "actual_callers": [],
+      "replacement_path": "Retained examples/*/expected data; current service/Core workflow and independent historical-format validation tests",
+      "replacement_behavior": "Golden bytes remain unchanged; no old script can rewrite them or manufacture caller-labelled review actions as a current workflow",
+      "replacement_test_nodeids": [
+        "tests/review/test_package_reconstruction_validation.py",
+        "tests/modeling/test_determinism.py"
+      ],
+      "artifact_compatibility": "Original golden data and old package validators retained; no test removed",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Audited no active callers; historical one-time generator not a current product entry",
+      "evidence": "runtime_logs/p09/golden-writer-retirement.xml (8 PASS)"
+    },
+    {
+      "old_path": "scripts/generate_stage06_examples.py",
+      "old_responsibility": "One-time historical fixture/golden compiler writer",
+      "actual_callers": [],
+      "replacement_path": "Retained examples/*/expected data; current service/Core workflow and independent historical-format validation tests",
+      "replacement_behavior": "Golden bytes remain unchanged; no old script can rewrite them or manufacture caller-labelled review actions as a current workflow",
+      "replacement_test_nodeids": [
+        "tests/review/test_package_reconstruction_validation.py",
+        "tests/modeling/test_determinism.py"
+      ],
+      "artifact_compatibility": "Original golden data and old package validators retained; no test removed",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Audited no active callers; historical one-time generator not a current product entry",
+      "evidence": "runtime_logs/p09/golden-writer-retirement.xml (8 PASS)"
     }
   ],
   "test_migration": [
@@ -3148,5 +3193,25 @@
       "frontend typecheck/lint PASS; full browser rerun still required"
     ],
     "asset_bytes_changed": false
+  },
+  "archive_download_repair": {
+    "old_path": "src/kg_mnp/api/app.py::download_package; semantic_kernel/packaging/archive.py::archive_bytes",
+    "problem": "Same request repeated full verification three times, and export reread mutable source after verification",
+    "replacement": "Service permission/project checks plus one captured byte set, one complete verifier run on an isolated snapshot, export exact captured bytes, then current permission/project recheck",
+    "tests": [
+      "tests/package_archive/test_snapshot_export.py",
+      "tests/services/test_archive_read_authorization.py"
+    ],
+    "evidence": "runtime_logs/p09/archive-regression.xml (6 PASS)",
+    "mnp_probe": {
+      "evidence": "runtime_logs/p09/mnp-download-snapshot/receipt.json",
+      "package_id": "urn:kg-mnp:ontology-package:dd6bc1d9fb4d150ec778dffb5acc9850120c93946e5729dcd008758ed8eb94b5",
+      "bytes": 1597671,
+      "seconds": 43.64684470000793,
+      "archive_sha256": "53ccc9455224d822832b513b3a5041bb099eb4730550d2877d0dd68fd66c19da",
+      "status": "VALID",
+      "scope": "Actual prior package, current read implementation only; not final browser acceptance"
+    },
+    "compiler_note": "Unreleased compiler0.5.1 implementation digest changes through archive.py; old plans require new snapshot; old packages remain verified unchanged."
   }
 }
