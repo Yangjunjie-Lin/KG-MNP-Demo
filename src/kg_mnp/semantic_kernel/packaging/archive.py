@@ -4,10 +4,13 @@ from __future__ import annotations
 
 import hashlib
 import io
+import os
 import tempfile
 import zipfile
 from pathlib import Path, PurePosixPath
 from typing import Any
+
+from kg_mnp._path_security import _is_link_like
 
 from ..errors import PackageError
 from ..security import validate_relative_path
@@ -33,14 +36,44 @@ def archive_mapping_bytes(files: dict[str, bytes]) -> bytes:
     return output.getvalue()
 
 
-def archive_bytes(package_directory: Path | str) -> bytes:
-    root = Path(package_directory).resolve(strict=True)
-    verify_package(root)
-    files = {
-        path.relative_to(root).as_posix(): path.read_bytes()
-        for path in root.rglob("*")
-        if path.is_file()
-    }
+def archive_bytes(package_directory: Path | str, *, expected_package_id: str | None = None) -> bytes:
+    """Verify exactly the captured bytes once; never export a post-check reread."""
+    supplied = Path(package_directory)
+    if _is_link_like(supplied):
+        raise PackageError("linked package root rejected", code="PACKAGE_ARCHIVE_INVALID")
+    root = supplied.resolve(strict=True)
+    if not root.is_dir():
+        raise PackageError("package directory is absent", code="PACKAGE_ARCHIVE_INVALID")
+    files: dict[str, bytes] = {}
+    total = 0
+    for directory, directories, names in os.walk(root, followlinks=False):
+        for name in (*directories, *names):
+            path = Path(directory) / name
+            if _is_link_like(path):
+                raise PackageError("linked package entry rejected", code="PACKAGE_ARCHIVE_INVALID")
+        for name in names:
+            path = Path(directory) / name
+            if not path.is_file():
+                raise PackageError("non-regular package entry", code="PACKAGE_ARCHIVE_INVALID")
+            relative = path.relative_to(root).as_posix()
+            validate_relative_path(relative)
+            size = path.stat().st_size
+            if total + size > 1_073_741_824 or len(files) >= 100_000:
+                raise PackageError("package export size limit exceeded", code="PACKAGE_ARCHIVE_INVALID")
+            data = path.read_bytes()
+            total += len(data)
+            if total > 1_073_741_824:
+                raise PackageError("package changed beyond export size limit", code="PACKAGE_ARCHIVE_INVALID")
+            files[relative] = data
+    with tempfile.TemporaryDirectory(prefix="kg-mnp-archive-snapshot-") as directory:
+        snapshot = Path(directory)
+        for relative, data in files.items():
+            target = snapshot / relative
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes(data)
+        verified = verify_package(snapshot)
+        if expected_package_id is not None and verified["package_id"] != expected_package_id:
+            raise PackageError("requested package identity differs", code="PACKAGE_ARCHIVE_INVALID")
     return archive_mapping_bytes(files)
 
 

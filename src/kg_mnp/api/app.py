@@ -486,13 +486,8 @@ def create_app(service: ApplicationService) -> FastAPI:
     @app.get("/api/v1/projects/{project_id}/packages/{package_id}/archive", operation_id="downloadPackageArchive")
     def download_package(project_id: str, package_id: str, authorization: str | None = Header(default=None)):
         principal = service.authenticate(authorization or "")
-        if not principal.can("package:export"):
-            raise ServiceBoundaryError("FORBIDDEN", "package:export required", status_code=403)
-        request = OperationRequest("package.verify", project_id, {"package_id":package_id})
-        service.execute(request, principal)
-        from kg_mnp.semantic_kernel.packaging.archive import archive_bytes
-        from kg_mnp.services.compilation import package_path
-        content = archive_bytes(package_path(service._project(request), package_id))
+        from kg_mnp.services.compilation import read_archive
+        content = read_archive(service, principal, project_id, package_id)
         return Response(content, media_type="application/octet-stream", headers={"Content-Disposition":'attachment; filename="ontology.kgop"'})
 
     static_root = Path(service.configuration.workbench_root) if service.configuration.workbench_root else Path(__file__).parents[1] / "workbench_static"

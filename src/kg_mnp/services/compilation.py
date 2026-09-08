@@ -21,6 +21,40 @@ from .errors import ServiceBoundaryError
 OPERATIONS = frozenset({"compile.plan", "compile.build", "compile.validate", "compile.reproduce", "package.verify", "package.export"})
 
 
+def read_archive(service, principal, project_id: str, package_id: str) -> bytes:
+    """One explicit project snapshot and one byte-bound validation per download."""
+    from kg_mnp.semantic_kernel.packaging.archive import archive_bytes
+
+    from .authorization_policy import authorize
+    from .models import OperationRequest
+    from .projects import get_project, require_access
+    from .requests import validate_parameters
+
+    request = OperationRequest("package.verify", project_id, {"package_id": package_id})
+    operation = service.catalog["package.verify"]
+    principal = service._current(principal)
+    authorize(principal, operation, request)
+    if not principal.can("package:export"):
+        raise ServiceBoundaryError("FORBIDDEN", "package:export required", status_code=403)
+    validate_parameters(request)
+    project = get_project(service.root, project_id)
+    require_access(principal, project)
+    try:
+        # Location is not a cached verdict. archive_bytes verifies the exact
+        # captured file set, including manifest, lock, source and RDF semantics.
+        content = archive_bytes(package_location(project, package_id), expected_package_id=package_id)
+        principal = service._current(principal)
+        authorize(principal, operation, request)
+        if not principal.can("package:export"):
+            raise ServiceBoundaryError("FORBIDDEN", "package:export revoked", status_code=403)
+        require_access(principal, get_project(service.root, project_id))
+        service.audit.append(principal_id=principal.principal_id, operation_id="package.export", project_id=project_id,
+            request_id=request.request_id, outcome="SUCCEEDED", details={"transport": "authorized-download"})
+        return content
+    except (SemanticKernelError, OSError, ValueError) as exc:
+        raise ServiceBoundaryError("PACKAGE_INVALID", "package archive validation failed", status_code=409) from exc
+
+
 def package_location(project, package_id):
     """Resolve project membership/identity; the consuming reader must verify bytes."""
     try:
