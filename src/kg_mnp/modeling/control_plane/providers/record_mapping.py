@@ -9,6 +9,10 @@ from .models import candidate_body, candidate_draft
 
 
 def record_mapping_drafts(*,rules:dict,datasets:list[dict],source_names:dict[str,str],namespace:str,baseline:dict,question_ids:list[str],asset_id:str|None)->list[dict]:
+    if rules.get("profile") == "evidence-record-mapping-v2":
+        from .mixed_mapping import mixed_mapping_drafts
+        return mixed_mapping_drafts(rules=rules, datasets=datasets, namespace=namespace,
+                                    baseline=baseline, question_ids=question_ids, asset_id=asset_id)[0]
     if set(rules)!={"profile","tables"} or rules["profile"]!="evidence-record-mapping-v1":
         raise ModelingControlError("unsupported declarative record mapping")
     elements={e["iri"]:e for e in baseline["elements"]}

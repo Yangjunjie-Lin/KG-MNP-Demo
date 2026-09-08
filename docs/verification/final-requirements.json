@@ -1,4 +1,19 @@
 {
+  "mixed_source_followup": {
+    "version": "0.9.0rc2",
+    "status": "IMPLEMENTED_INCREMENTAL_VERIFIED_FINAL_PENDING",
+    "historical_rows_below_apply_to": "b63ba379327af4eb102d4a852498509cef9a3bf8",
+    "requirements": [
+      {"id": "mixed.table-boundaries", "implementation": "src/kg_mnp/modeling/control_plane/mappings.py", "tests": "tests/modeling_alignment/test_mixed_source_identity.py", "result": "Word table, Excel sheet, CSV Source and JSON record identities do not collapse by row/document root"},
+      {"id": "mixed.text-evidence", "implementation": "src/kg_mnp/modeling/control_plane/providers/mixed_mapping.py", "tests": "tests/modeling/test_mixed_mapping.py", "result": "Bounded literal templates and exact Unicode spans; no unsupported NLP claim"},
+      {"id": "mixed.identity-and-types", "implementation": "src/kg_mnp/modeling/control_plane/providers/record_profile.py", "tests": "tests/modeling/test_mixed_mapping.py", "result": "Explicit shared identities/aliases, typed literals, canonical target references; conflicts and unknown targets blocked"},
+      {"id": "mixed.proposal-binding-and-coverage", "implementation": "src/kg_mnp/services/modeling.py", "tests": "tests/services/test_mixed_source_workflow.py", "result": "Rules digest is bound to candidate provenance; coverage recomputed before confirmation; sidecar tamper and unmapped input blocked"},
+      {"id": "mixed.input-to-output", "implementation": "src/kg_mnp/services/modeling.py", "tests": "tests/services/test_mixed_source_workflow.py", "result": "Real three-format mixed input, deduplicated objects, all-source trace, actual reasoner/SHACL/CQ and .kgop export"},
+      {"id": "mixed.workbench", "implementation": "workbench/src/mixed-mapping-form.tsx", "tests": "workbench/tests/minimal.e2e.ts (mixed)", "result": "Real form-driven upload, table/text/identity configuration, per-item review, compilation, download and release"}
+    ],
+    "unchanged_authorities": ["Original 115 schemas", "Current 117-entry catalog", "Minimal assets", "MNP 84 original assets", "Frozen Forestry v1 record mapping", "Compiler 0.5.1 semantic implementation", "RC1 tag"],
+    "limitations": ["No live LLM/OCR/ASR/Vision", "No inferred semantic correctness or automatic approval", "First-row unique table headers required", "V2 explicit identity applies to the selected verified batch and namespace; no implicit global entity resolution", "Coverage is item-level, not proof that every sentence is understood"]
+  },
   "historical_audit": {
     "ancestor_heads": [
       "a7114eef25f2f2a262cd69793a8d3e2b444836fc",

@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+from kg_mnp.contracts.canonical import semantic_hash
+
+from ..mappings import table_identity
 from .models import ImmutableModelingProviderRequest, candidate_body, candidate_draft
 
 
@@ -51,7 +54,10 @@ class RuleMappingProvider:
             ),
             key=lambda item: item["iri"],
         )
-        default_class = class_elements[0] if class_elements else None
+        # Multiple classes require an explicit mapping; alphabetical order has
+        # no domain meaning and must never decide an individual's type.
+        default_class = class_elements[0] if len(class_elements) == 1 else None
+        evidence = {e["evidence_id"]: e for e in context.get("evidence_records", [])}
         default_namespace = context.get("default_namespace", "urn:kg-mnp:proposed:")
         question_refs = context.get("competency_question_ids", [])
         drafts = []
@@ -62,12 +68,20 @@ class RuleMappingProvider:
                 continue
             parent_ref = source.get("parent_item_id") or source["item_id"]
             if source["item_kind"] == "table-cell":
-                parent_ref = f"{parent_ref}:row:{source['payload']['row']}"
+                parent_ref = semantic_hash({"table": table_identity(source, evidence), "row": source["payload"]["row"]})
+            else:
+                # JSON leaves share a document root in KG-IR, not a business
+                # record. Only the evidence pointer gives their actual parent.
+                locations = [evidence[e]["locator"] for e in source["evidence_refs"] if e in evidence]
+                pointers = {loc["pointer"].rpartition("/")[0] for loc in locations if loc["locator_kind"] == "json-pointer"}
+                parent_ref = semantic_hash({"sources": sorted(source["source_ids"]),
+                    "json_parent": next(iter(pointers)) if len(pointers) == 1 and len(locations) == len(source["evidence_refs"]) else None,
+                    "item": None if len(pointers) == 1 and len(locations) == len(source["evidence_refs"]) else source["item_id"]})
+            subject_iri = f"{default_namespace}entity-{parent_ref}"
             individual_ref = individual_refs.get(parent_ref)
             if individual_ref is None:
                 individual_ref = f"individual-{len(individual_refs):08d}"
                 individual_refs[parent_ref] = individual_ref
-                subject_iri = f"{default_namespace}entity-{parent_ref.rsplit(':', 1)[-1]}"
                 drafts.append(
                     candidate_draft(
                         draft_ref=individual_ref,
@@ -115,7 +129,7 @@ class RuleMappingProvider:
             if mapping["target_property_iri"] and value["null_state"] == "NOT_NULL":
                 drafts.append(candidate_draft(
                     draft_ref=f"abox-{index:08d}", draft_kind="ABOX", candidate_action="ASSERT",
-                    body=candidate_body(candidate_type="DATA_PROPERTY_ASSERTION", subject_iri=f"{default_namespace}entity-{parent_ref.rsplit(':', 1)[-1]}", predicate_iri=mapping["target_property_iri"], literal={"lexical_value": value["normalized_lexical_value"], "datatype_iri": None, "language": None}),
+                    body=candidate_body(candidate_type="DATA_PROPERTY_ASSERTION", subject_iri=subject_iri, predicate_iri=mapping["target_property_iri"], literal={"lexical_value": value["normalized_lexical_value"], "datatype_iri": "http://www.w3.org/2001/XMLSchema#" + value["datatype"] if value["datatype"] in {"integer", "decimal", "boolean"} else None, "language": None}),
                     kg_ir_item_refs=[source["item_id"]], evidence_refs=source["evidence_refs"],
                     competency_question_refs=question_refs,
                     baseline_element_refs=[property_element["element_id"]] if property_element else [],

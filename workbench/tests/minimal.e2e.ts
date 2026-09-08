@@ -2,10 +2,12 @@ import { test, expect } from '@playwright/test';
 import fs from 'node:fs';
 import path from 'node:path';
 import {versionFlow} from './version-flow';
+import {mixedInputs,mixedMapping} from './mixed-flow';
 import AxeBuilder from '@axe-core/playwright';
 import os from 'node:os';
 import {execFileSync} from 'node:child_process';
 const scenarios=[
+ {id:'mixed',version:'0.1.0',files:[],concepts:'Entity',question:'Which entities and labels are present?',query:'minimal-query-list-entities',bindings:'entity,label',count:2,classIri:'https://yangjunjie-lin.github.io/KG-MNP-Demo/domain-packs/minimal/terms#Entity'},
  {id:'minimal',version:'0.1.0',files:[],concepts:'Entity',question:'Which entities and labels are present?',query:'minimal-query-list-entities',bindings:'entity,label',count:1,classIri:'https://yangjunjie-lin.github.io/KG-MNP-Demo/domain-packs/minimal/terms#Entity'},
  {id:'forestry',version:'0.2.0',files:['sites.csv','trees.csv','inspections.csv'],concepts:'TreeRecord,InspectionRecord,Site',question:'Which synthetic trees have inspections and sites?',query:'forestry-query-tree-inspections',bindings:'tree,treeCode,inspection,inspectionCode,site',count:6,classIri:'https://example.invalid/forestry#TreeRecord'}
  ,{id:'mnp',version:'1.0.0',files:[],concepts:'MappingRecord',question:'Which MappingRecord exists?',query:'mnp-queries-source-alignment',bindings:'term,mapApi,mapField,mapTarget,mapReview',count:1,classIri:'https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#MappingRecord'}
@@ -24,7 +26,7 @@ for(const scenario of scenarios) test(`real browser ${scenario.id} source review
   await expect(page.getByRole('heading',{name:'选择项目',exact:true})).toBeVisible();
   const name='合成本体验收-'+Date.now();
   await page.getByLabel('项目名称').fill(name);
-  await page.getByLabel('领域包与版本').selectOption(`${scenario.id}@${scenario.version}`);
+  await page.getByLabel('领域包与版本').selectOption(`${scenario.id==='mixed'?'minimal':scenario.id}@${scenario.version}`);
   await page.getByRole('button',{name:'创建项目',exact:true}).click();
   await expect(page.getByRole('heading',{name:'项目概览',exact:true})).toBeVisible({timeout:60000});
   const projectPath=new URL(page.url()).pathname.split('/').slice(0,3).join('/');
@@ -33,7 +35,7 @@ for(const scenario of scenarios) test(`real browser ${scenario.id} source review
   async function screenshot(name:string){const targets:Record<string,string>={'source-evidence':'证据定位与转换记录','scope-cq':'范围确认与能力问题','field-mapping':'术语与字段映射候选','review':'候选审核','compilation':'正式验证结果','release-objects':'固定 Package 对象浏览','version-diff':'语义版本对比','environment-rollback':'环境与指定历史回滚','graphdb-blocked':'GraphDB 可用性与审核计划'};if(name==='review')await page.getByTestId('review-head').evaluate(e=>e.scrollIntoView({block:'start'}));else if(targets[name])await page.getByRole('heading',{name:targets[name],exact:true}).evaluate(e=>e.scrollIntoView({block:'start'}));else await page.evaluate(()=>window.scrollTo(0,0));const scan=await new AxeBuilder({page}).withTags(['wcag2a','wcag2aa','wcag21aa']).analyze();fs.writeFileSync(path.join(evidenceRoot,name+'-accessibility.json'),JSON.stringify(scan,null,2));expect(scan.violations).toEqual([]);await page.screenshot({path:path.join(evidenceRoot,name+'.png'),fullPage:false});}
   await screenshot('project-overview');
   await page.getByRole('link',{name:'资料与证据',exact:true}).click();
-  const inputs=scenario.files.length?scenario.files.map(name=>({name,mimeType:'text/csv',buffer:fs.readFileSync(path.resolve('../domain_packs',scenario.id,'fixtures',name))})):scenario.id==='mnp'?[{name:'mapping.csv',mimeType:'text/csv',buffer:Buffer.from(['mappingCode,sourceApi,sourceFieldPath,targetTerm,mappingReviewStatus','SYN-M01,Synthetic source,sample.field,Subscriber,SYNTHETIC_TEST',''].join(String.fromCharCode(10)))}]:[{name:'synthetic.csv',mimeType:'text/csv',buffer:Buffer.from(['entity,label','synthetic,Synthetic entity',''].join(String.fromCharCode(10)))}];
+  const inputs=scenario.id==='mixed'?mixedInputs():scenario.files.length?scenario.files.map(name=>({name,mimeType:'text/csv',buffer:fs.readFileSync(path.resolve('../domain_packs',scenario.id,'fixtures',name))})):scenario.id==='mnp'?[{name:'mapping.csv',mimeType:'text/csv',buffer:Buffer.from(['mappingCode,sourceApi,sourceFieldPath,targetTerm,mappingReviewStatus','SYN-M01,Synthetic source,sample.field,Subscriber,SYNTHETIC_TEST',''].join(String.fromCharCode(10)))}]:[{name:'synthetic.csv',mimeType:'text/csv',buffer:Buffer.from(['entity,label','synthetic,Synthetic entity',''].join(String.fromCharCode(10)))}];
   for(let index=0;index<inputs.length;index++){
     await page.getByLabel('资料文件').setInputFiles(inputs[index]);
     await page.getByRole('button',{name:'上传并登记 Source',exact:true}).click();
@@ -86,14 +88,30 @@ for(const scenario of scenarios) test(`real browser ${scenario.id} source review
       await page.getByLabel(`目标数据属性 ${i+1}`,{exact:true}).selectOption('https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#'+fields[i]);
     }
     await page.getByRole('button',{name:'生成自定义映射候选',exact:true}).click();
-  } else await page.getByRole('button',{name:'运行离线候选 Provider',exact:true}).click();
+  } else if(scenario.id==='mixed')await mixedMapping(page,prepared,scenario.classIri);
+  else await page.getByRole('button',{name:'运行离线候选 Provider',exact:true}).click();
   const proposal=await output('modeling.proposal');
+  if(scenario.id==='mixed'){
+    expect(proposal.extraction.unmapped_item_ids).toEqual([]);
+    expect(proposal.extraction.identities).toHaveLength(2);
+    expect(proposal.extraction.text_spans).toHaveLength(4);
+    expect(proposal.proposal.conflicts).toEqual([]);
+    await page.getByRole('heading',{name:'混合资料建模：表格、文本与统一身份',exact:true}).evaluate(e=>e.scrollIntoView({block:'start'}));
+    await page.screenshot({path:path.join(evidenceRoot,'mixed-mapping.png')});
+    await page.getByRole('button',{name:'添加文本模板',exact:true}).focus();
+    await page.keyboard.press('Tab');
+    await expect(page.getByRole('button',{name:'添加原文记录',exact:true})).toBeFocused();
+  }
   await screenshot('field-mapping');
   await page.getByLabel('选择映射查看原始样本',{exact:true}).selectOption(prepared.mappings.mappings[0].field_mapping_id);
   await expect(page.getByRole('link',{name:/^下载映射样本来源 /}).first()).toBeVisible({timeout:90000});
   await page.getByRole('heading',{name:'映射原始样本',exact:true}).evaluate(e=>e.scrollIntoView({block:'start'}));
   await page.screenshot({path:path.join(evidenceRoot,'field-sample.png')});
   await page.getByLabel('审核队列').selectOption(proposal.queue.review_queue_id);
+  if(scenario.id==='mixed'){
+    await page.getByRole('heading',{name:'来源覆盖与身份核对',exact:true}).evaluate(e=>e.scrollIntoView({block:'start'}));
+    await page.screenshot({path:path.join(evidenceRoot,'mixed-coverage.png')});
+  }
   // The graph must fit the visible panel on first expansion, without a manual
   // Fit View workaround. Mounting inside closed details used hidden dimensions.
   if(scenario.id==='minimal'){

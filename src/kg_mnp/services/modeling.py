@@ -5,6 +5,9 @@ client reviewer roles, auto-approval, or direct RDF writing is used.
 """
 from __future__ import annotations
 
+import re
+
+from kg_mnp.contracts.canonical import semantic_hash
 from kg_mnp.contracts.document_io import read_document
 from kg_mnp.domain_packs.registry import DomainPackRegistry
 from kg_mnp.ingestion.source_store import SourceStore
@@ -25,11 +28,16 @@ from kg_mnp.modeling.control_plane.mappings import build_field_mapping_candidate
 from kg_mnp.modeling.control_plane.prevalidation import prevalidate
 from kg_mnp.modeling.control_plane.proposal import build_proposal
 from kg_mnp.modeling.control_plane.providers.execution import execute_provider
+from kg_mnp.modeling.control_plane.providers.mixed_mapping import (
+    input_inventory,
+    mixed_mapping_drafts,
+)
 from kg_mnp.modeling.control_plane.providers.models import (
     build_provider_request,
     build_provider_response,
 )
 from kg_mnp.modeling.control_plane.providers.record_mapping import record_mapping_drafts
+from kg_mnp.modeling.control_plane.providers.record_profile import MixedRecordMapping
 from kg_mnp.modeling.control_plane.providers.recorded_model import (
     import_recorded_model_output,
 )
@@ -52,7 +60,7 @@ from kg_mnp.modeling.control_plane.scope_approval import (
 from kg_mnp.modeling.control_plane.service import ModelingWorkspaceService
 from kg_mnp.modeling.control_plane.terminology import build_terminology_catalog
 from kg_mnp.plugins.registry import PluginRegistry
-from kg_mnp.plugins.snapshot import build_snapshot
+from kg_mnp.plugins.snapshot import build_snapshot, verify_snapshot
 
 from .errors import ServiceBoundaryError
 from .sources import verified_run
@@ -93,7 +101,7 @@ def _record_rules(packs):
         asset=next((a for a in pack.manifest.document["assets"] if a["asset_id"]==identifier),None)
         if asset:
             document=read_document(pack.root/asset["path"])
-            if isinstance(document,dict) and document.get("profile")=="evidence-record-mapping-v1":matches.append((identifier,document))
+            if isinstance(document,dict) and document.get("profile") in {"evidence-record-mapping-v1", "evidence-record-mapping-v2"}:matches.append((identifier,document))
     if len(matches)>1:raise ModelingControlError("ambiguous record mapping profiles")
     return matches[0] if matches else None
 
@@ -138,6 +146,7 @@ def _prepare(app, modeling, params):
     })
     return {"bundle": bundle, "questions": question_set, "baseline": baseline, "terminology": terminology,
             "alignments": alignments, "mappings": mappings, "policy": policy,
+            "input_inventory": input_inventory(datasets),
             "record_mapping":(_record_rules(packs) or (None,None))[1]}
 
 
@@ -154,6 +163,7 @@ def _propose(app,modeling, params):
     evidence_ids = {record["evidence_id"] for dataset in datasets for record in dataset["evidence_records"]}
     provider_context = {"baseline_elements": baseline["elements"], "alignments": context["alignments"]["alignments"],
                         "field_mappings": mappings["mappings"], "kg_ir_items": items,
+                        "evidence_records": [e for d in datasets for e in d["evidence_records"]],
                         "default_namespace": scope["namespace_policy"]["default_namespace"],
                         "competency_question_ids": [q["question_id"] for q in context["question_set"]["questions"]]}
     registry, responses, snapshots, requests = PluginRegistry(), [], [], []
@@ -161,17 +171,29 @@ def _propose(app,modeling, params):
     declared=_record_rules(_packs(app,modeling))
     if params.get("record_mapping") is not None:
         declared=(None,params["record_mapping"])
+    extraction = None
     if declared:
+        if "manual-candidate-provider" not in params["providers"] or "rule-mapping-provider" in params["providers"]:
+            raise ServiceBoundaryError("MAPPING_PROVIDER_CONFLICT", "Explicit mappings require the manual provider and exclude default row identities", status_code=422)
         source_store=SourceStore(modeling.root)
         source_ids={source for data in datasets for source in source_store.load_batch(data["source_batch_id"])["sources"]}
-        provider_context["manual_drafts"]=record_mapping_drafts(rules=declared[1],datasets=datasets,
-            source_names={identifier:source_store.verify_source(identifier)["original_name"] for identifier in source_ids},
-            namespace=scope["namespace_policy"]["default_namespace"],baseline=baseline,
-            question_ids=provider_context["competency_question_ids"],asset_id=declared[0])
+        if declared[1]["profile"] == "evidence-record-mapping-v2":
+            declared = (declared[0], MixedRecordMapping.model_validate(declared[1]).model_dump())
+            provider_context["manual_drafts"], extraction = mixed_mapping_drafts(rules=declared[1], datasets=datasets,
+                namespace=scope["namespace_policy"]["default_namespace"], baseline=baseline,
+                question_ids=provider_context["competency_question_ids"], asset_id=declared[0])
+        else:
+            provider_context["manual_drafts"]=record_mapping_drafts(rules=declared[1],datasets=datasets,
+                source_names={identifier:source_store.verify_source(identifier)["original_name"] for identifier in source_ids},
+                namespace=scope["namespace_policy"]["default_namespace"],baseline=baseline,
+                question_ids=provider_context["competency_question_ids"],asset_id=declared[0])
+    elif "rule-mapping-provider" in params["providers"] and len([e for e in baseline["elements"] if e["element_kind"] == "CLASS"]) > 1:
+        raise ServiceBoundaryError("MAPPING_CLASS_REQUIRED", "Multiple baseline classes require explicit record mappings", status_code=422)
     for provider in sorted(set(params["providers"])):
         if provider not in bundle["provider_policy"]["allowed_provider_ids"]:
             raise ServiceBoundaryError("PROVIDER_FORBIDDEN", "provider not allowed by input bundle", status_code=403)
-        snapshot = build_snapshot(registry.get(provider))
+        configuration = {"record_mapping": declared[1]} if declared and declared[1]["profile"] == "evidence-record-mapping-v2" and provider == "manual-candidate-provider" else None
+        snapshot = build_snapshot(registry.get(provider), configuration=configuration)
         request = build_provider_request(modeling_input_bundle_id=bundle["modeling_input_bundle_id"],
             provider_snapshot_id=snapshot["snapshot_id"], capability={"baseline-reuse-provider": "baseline-reuse", "rule-mapping-provider": "field-mapping-proposal","manual-candidate-provider":"tbox-proposal","recorded-model-output-provider":"tbox-proposal"}[provider],
             scope_id=scope["scope_id"], baseline_snapshot_id=baseline["baseline_snapshot_id"],
@@ -206,12 +228,14 @@ def _propose(app,modeling, params):
     queue = build_review_queue(proposal, report, policy)
     modeling.write_proposal(proposal["proposal_id"], {"ontology-modeling-proposal.json": proposal,
         "record-mapping-proposal.json":{"mapping":declared[1] if declared else None,"source_asset_id":declared[0] if declared else None},
+        "source-extraction-report.json": extraction or {},
         "provider-requests.json": requests, "provider-responses.json": responses, "provider-snapshots.json": snapshots,
         "model-invocation-records.json":invocations,
         "ontology-candidate-set.json": candidates, "formal-prevalidation-report.json": report})
     modeling.write_review(queue["review_queue_id"], {"review-queue.json": queue, "review-policy.json": policy,
         "competency-question-coverage-report.json": coverage})
-    return {"proposal": proposal, "prevalidation": report, "queue": queue, "coverage": coverage}
+    return {"proposal": proposal, "prevalidation": report, "queue": queue, "coverage": coverage,
+            "extraction": extraction}
 
 
 def _review(modeling, request, principal):
@@ -265,7 +289,27 @@ def _review(modeling, request, principal):
     bundle = modeling.find_artifact(proposal["modeling_input_bundle_id"])
     context = _bundle_context(modeling, bundle)
     scope = context["scope"]
-    _datasets(modeling, scope)
+    datasets = _datasets(modeling, scope)
+    # The mapping digest lives in the core-hashed candidate rationales. A
+    # mutable sidecar alone must never authorize identity/exclusion decisions.
+    proposed_candidates = [c for key in ["tbox_candidates", "mapping_candidates", "abox_candidates", "shacl_candidates"] for c in proposal[key]]
+    bound_digests = {r["rationale"].rsplit("mapping-sha256:", 1)[-1]
+                     for c in proposed_candidates for r in c["provider_rationales"] if "mapping-sha256:" in r["rationale"]}
+    if bound_digests:
+        mapping_record = read_document(modeling.proposal_directory(proposal["proposal_id"]) / "record-mapping-proposal.json")
+        rules = MixedRecordMapping.model_validate(mapping_record["mapping"]).model_dump()
+        if bound_digests != {semantic_hash(rules)}:
+            raise ServiceBoundaryError("MAPPING_INTEGRITY_FAILED", "Mapping no longer matches reviewed candidate provenance", status_code=409)
+        snapshots = read_document(modeling.proposal_directory(proposal["proposal_id"]) / "provider-snapshots.json")
+        selected_snapshots = [s for s in snapshots if s["plugin_id"] == "manual-candidate-provider"]
+        if len(selected_snapshots) != 1 or selected_snapshots[0]["snapshot_id"] not in proposal["provider_snapshots"]:
+            raise ServiceBoundaryError("MAPPING_INTEGRITY_FAILED", "Mapping provider snapshot is not bound to this proposal", status_code=409)
+        verify_snapshot(PluginRegistry().get("manual-candidate-provider"), selected_snapshots[0], configuration={"record_mapping": rules})
+        _, extraction = mixed_mapping_drafts(rules=rules, datasets=datasets,
+            namespace=scope["namespace_policy"]["default_namespace"], baseline=context["baseline"],
+            question_ids=[q["question_id"] for q in context["question_set"]["questions"]], asset_id=mapping_record["source_asset_id"])
+        if extraction["unmapped_item_ids"]:
+            raise ServiceBoundaryError("MAPPING_COVERAGE_INCOMPLETE", "Unmapped input items require mapping or explicit reasoned exclusion in a new proposal", status_code=422)
     approval = _approval(modeling, scope)
     coverage = structural_coverage(context["question_set"], proposal)
     final = finalize_review(queue=queue, proposal=proposal, prevalidation=report, policy=policy, actions=actions,
@@ -308,4 +352,7 @@ def execute(app, project, request, principal):
             return _propose(app,modeling, params)
         return _review(modeling, request, principal)
     except ModelingControlError as exc:
+        code, separator, message = str(exc).partition(": ")
+        if separator and re.fullmatch(r"(?:MAPPING|TEXT_TEMPLATE)_[A-Z_]+", code):
+            raise ServiceBoundaryError(code, message, status_code=422) from exc
         raise ServiceBoundaryError("MODELING_BLOCKED", "modeling authority or review precondition failed", status_code=422) from exc

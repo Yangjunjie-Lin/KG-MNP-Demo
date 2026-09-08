@@ -11,17 +11,25 @@ from .artifacts import finalize_document, verify_document
 from .errors import ModelingControlError
 
 
-def table_identity(item: dict[str, Any], evidence: dict[str, dict[str, Any]]) -> tuple[str, str | None]:
-    """Row/column coordinates are meaningful only inside their Source and sheet."""
+def table_identity(item: dict[str, Any], evidence: dict[str, dict[str, Any]]) -> tuple[str, str, str | int | None]:
+    """Coordinates are scoped to a Source, format and exact sheet/Word table."""
     locations = set()
     for reference in item["evidence_refs"]:
         record = evidence.get(reference)
         if record is None or record["source_id"] not in item["source_ids"]:
             raise ModelingControlError("table cell evidence does not bind its Source")
         locator = record["locator"]
-        if locator["locator_kind"] not in {"delimited-cell", "spreadsheet-cell"}:
+        kind = locator["locator_kind"]
+        if kind not in {"delimited-cell", "spreadsheet-cell", "document-table-cell"}:
             raise ModelingControlError("table cell requires an exact table locator")
-        locations.add((record["source_id"], locator.get("sheet")))
+        if any(locator.get(axis) != item["payload"][axis] for axis in ("row", "column")):
+            raise ModelingControlError("table cell coordinate differs from its evidence")
+        selector = locator.get("sheet") if kind == "spreadsheet-cell" else locator.get("table_index")
+        if kind == "spreadsheet-cell" and not isinstance(selector, str):
+            raise ModelingControlError("table cell requires an exact sheet")
+        if kind == "document-table-cell" and (type(selector) is not int or selector < 0):
+            raise ModelingControlError("table cell requires an exact Word table index")
+        locations.add((record["source_id"], kind, selector))
     if len(locations) != 1 or len(item["source_ids"]) != 1:
         raise ModelingControlError("table cell has ambiguous Source or sheet authority")
     return next(iter(locations))
@@ -42,7 +50,7 @@ def build_field_mapping_candidates(
         {
             item["iri"]
             for item in baseline["elements"]
-            if item["element_kind"] in {"DATA_PROPERTY", "OBJECT_PROPERTY"}
+            if item["element_kind"] == "DATA_PROPERTY"
         }
         if baseline is not None
         else None
@@ -86,7 +94,10 @@ def build_field_mapping_candidates(
                 ),
                 key=lambda row: (-row["score_basis_points"], row["target_iri"]),
             ) if term else []
-            target = targets[0]["target_iri"] if targets else None
+            # Lexical ranking alone is not a semantic identity decision. Tied
+            # targets and merely similar spellings remain explicit user work.
+            best = {t["target_iri"] for t in targets if t["score_basis_points"] == targets[0]["score_basis_points"]} if targets else set()
+            target = next(iter(best)) if len(best) == 1 and targets[0]["score_basis_points"] >= 9000 else None
             semantic = {
                 "source_item_id": item["item_id"],
                 "source_field_name": field_name,

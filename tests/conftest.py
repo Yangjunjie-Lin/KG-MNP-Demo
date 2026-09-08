@@ -153,6 +153,7 @@ def prompt04_case(tmp_path_factory: pytest.TempPathFactory) -> dict:
         "alignments": alignments["alignments"],
         "field_mappings": field_mappings["mappings"],
         "kg_ir_items": dataset["items"],
+        "evidence_records": dataset["evidence_records"],
         "default_namespace": scope["namespace_policy"]["default_namespace"],
         "competency_question_ids": [
             item["question_id"] for item in question_set["questions"]

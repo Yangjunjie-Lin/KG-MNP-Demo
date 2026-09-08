@@ -81,7 +81,7 @@ def main() -> int:
     parser.add_argument("--smoke-only", action="store_true", help="verify startup/shutdown only, never claim Browser E2E")
     parser.add_argument("--startup-timeout", type=float, default=45)
     parser.add_argument("--probe-subprocess", action="store_true", help="include actual SHACL subprocess startup in smoke verification")
-    parser.add_argument("--selected-test", choices=("security.e2e.ts", "arbitrary-pack.e2e.ts"), help="bounded incremental check only, never full browser acceptance")
+    parser.add_argument("--selected-test", choices=("security.e2e.ts", "arbitrary-pack.e2e.ts", "mixed"), help="bounded incremental check only, never full browser acceptance")
     args = parser.parse_args()
     if not 0 < args.startup_timeout <= 120:
         parser.error("startup timeout must be in (0, 120]")
@@ -109,7 +109,9 @@ def main() -> int:
                 if not args.smoke_only:
                     npm = "npm.cmd" if os.name == "nt" else "npm"
                     command = [npm, "--prefix", "workbench", "run", "test:e2e"]
-                    if args.selected_test:
+                    if args.selected_test == "mixed":
+                        command.extend(["--", "minimal.e2e.ts", "--grep", "real browser mixed"])
+                    elif args.selected_test:
                         command.extend(["--", args.selected_test])
                     result = subprocess.run(command, cwd=ROOT, env=environment, check=False)
                     receipt["browser_exit_code"] = result.returncode

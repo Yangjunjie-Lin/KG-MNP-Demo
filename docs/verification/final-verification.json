@@ -1,4 +1,11 @@
 {
+  "followup": {
+    "product": "0.9.0rc2",
+    "decision": "NO_GO_FINAL_VERIFICATION_INCOMPLETE",
+    "tested_commit": null,
+    "status": "Mixed-source implementation and incremental verification complete; new fixed-source full acceptance pending",
+    "historical_report_below": "The existing GO and test receipts apply only to the explicitly named RC1 tested commit, not this followup"
+  },
   "decision": "GO_RELEASE_CANDIDATE_WITH_OPTIONAL_EXTERNAL_BLOCKERS",
   "source_commit": "9da17d126cb37166ff06084080770108da20afbe",
   "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",

@@ -1,5 +1,13 @@
 # KG-MNP Ontology Toolchain 0.9.0rc1 验收记录
 
+## 0.9.0rc2 混合来源增量（独立验收中）
+
+本分支增加 TXT / Word 段落与多表 / Excel 多工作表的显式身份建模、类型转换、跨来源关联与原文标注表单。修复了 Word 表定位不支持、默认记录 ID 行号碰撞、JSON 数组整份文档混合以及按字母序选择类型的问题。规则和别名只产生候选，不绕过现有人工审核、fencing、编译或发布控制。
+
+新的边界测试、混合服务链路和单个真实混合 Browser 场景已经增量运行；这不合并为新修订的最终全量通过。当前新版本裁决为 `NO_GO_FINAL_VERIFICATION_INCOMPLETE`，原 RC1 Tag 不移动，不新增成功候选 Tag。以下内容保留原 RC1 的历史验收范围，不自动适用于新代码。新功能使用方法和准确限制见 `docs/user-guide/mixed-source-modeling.md`；本轮需求映射见主台账 `mixed_source_followup`。
+
+## 原 RC1 验收
+
 Final Decision：GO_RELEASE_CANDIDATE_WITH_OPTIONAL_EXTERNAL_BLOCKERS。
 
 ## 修订与交付边界

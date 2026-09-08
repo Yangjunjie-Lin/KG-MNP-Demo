@@ -5,6 +5,8 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
+from kg_mnp.modeling.control_plane.providers.record_profile import MixedRecordMapping
+
 from .errors import ServiceBoundaryError
 
 
@@ -125,7 +127,7 @@ class RecordMappingRequest(RequestDTO):
 class ProposalRequest(RequestDTO):
     bundle_id: str = Field(pattern=r"^urn:kg-mnp:modeling-input-bundle:[a-f0-9]{64}$")
     providers: list[Literal["baseline-reuse-provider", "rule-mapping-provider","manual-candidate-provider","recorded-model-output-provider"]] = Field(min_length=1, max_length=4)
-    record_mapping:RecordMappingRequest|None=None
+    record_mapping:RecordMappingRequest|MixedRecordMapping|None=None
     recorded_response_source_id:str|None=Field(default=None,pattern=r"^urn:kg-mnp:source:[a-f0-9]{64}$")
     recorded_prompt_source_id:str|None=Field(default=None,pattern=r"^urn:kg-mnp:source:[a-f0-9]{64}$")
     recorded_model_id:str|None=Field(default=None,max_length=200)

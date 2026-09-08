@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import re
+from importlib import resources
 from typing import Any
 
 from jsonschema import ValidationError
@@ -41,6 +42,14 @@ def _implementation_digest(descriptor: PluginDescriptor) -> str:
         zip(descriptor.manifest["implementation_files"], files, strict=True)
     ):
         rows.append({"path": relative, "sha256": bytes_sha256(path.read_bytes())})
+    if descriptor.builtin and "modeling-provider" in descriptor.manifest["plugin_kinds"]:
+        # The plugin entry point re-exports core classes. Hashing that wrapper
+        # alone would give changed provider algorithms the old snapshot ID.
+        core_root = resources.files("kg_mnp.modeling.control_plane")
+        for relative in ("mappings.py", "providers/builtin.py", "providers/models.py",
+                         "providers/record_mapping.py", "providers/mixed_mapping.py", "providers/record_profile.py"):
+            rows.append({"path": "kg_mnp/modeling/control_plane/" + relative,
+                         "sha256": bytes_sha256(core_root.joinpath(relative).read_bytes())})
     return semantic_hash(rows)
 
 
