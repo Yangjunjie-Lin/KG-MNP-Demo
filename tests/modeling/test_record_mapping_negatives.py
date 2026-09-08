@@ -12,7 +12,9 @@ def cell(row,column,value):
 
 def fixture():
     rules={"profile":"evidence-record-mapping-v1","tables":[{"table_id":"records","source_name":"records.csv","class_iri":"urn:Class","id_field":"code","literals":{},"references":[]}]}
-    dataset={"items":[cell(1,1,"code"),cell(2,1,"A")]}
+    dataset={"items":[cell(1,1,"code"),cell(2,1,"A")],"evidence_records":[
+        {"evidence_id":f"evidence-{row}-1","source_id":"source","locator":{"locator_kind":"delimited-cell","row":row,"column":1}}
+        for row in (1,2,3)]}
     return {"rules":rules,"datasets":[dataset],"source_names":{"source":"records.csv"},"namespace":"urn:record:","baseline":{"elements":[{"iri":"urn:Class","element_id":"class","element_kind":"CLASS"}]},"question_ids":[],"asset_id":"mapping"}
 
 

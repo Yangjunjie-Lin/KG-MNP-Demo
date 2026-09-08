@@ -1,4 +1,4 @@
-import {str,rows,type Document} from './api';
+import {object,str,rows,type Document} from './api';
 import {DataTable,Field,Id,Panel} from './components';
 import {useWorkspace} from './shell';
 
@@ -8,7 +8,8 @@ export function ReleaseReview({candidates,reviews}:{candidates:Document[];review
     <p>当前身份：{principal.principal_id} · {principal.principal_type}。角色与人数要求来自服务器策略，不能由表单覆盖。</p>
     {candidates.map(candidate=>{
       const current=reviews.filter(r=>r.release_candidate_id===candidate.release_candidate_id).at(-1);
-      return <div className="record" key={str(candidate.release_candidate_id)}>
+      const published=state.results.some(result=>result.operation==='release.publish'&&object(result.result.release).release_candidate_id===candidate.release_candidate_id);
+      return <div className="record" data-testid={'release-candidate-'+str(candidate.release_candidate_id)} key={str(candidate.release_candidate_id)}>
         <Id value={candidate.release_candidate_id}/>
         <p>必需角色：{str(candidate.required_roles)}；独立审核人数至少 {str(candidate.minimum_distinct_reviewers)}。</p>
         <form onSubmit={event=>{
@@ -17,14 +18,15 @@ export function ReleaseReview({candidates,reviews}:{candidates:Document[];review
         }}>
           <Field label="Release 审核决定"><select name="decision"><option value="APPROVE">批准</option><option value="REJECT">拒绝</option></select></Field>
           <Field label="Release 审核理由"><textarea name="rationale" required/></Field>
-          <button disabled={busy||principal.principal_type!=='HUMAN'}>以当前身份批准该 Release</button>
+          <button disabled={busy||published||principal.principal_type!=='HUMAN'}>以当前身份批准该 Release</button>
         </form>
         {current&&<>
           <p>角色与人数满足：{current.quorum_satisfied===true?'是':'否'}；审核完成：{current.finalized===true?'是':'否'}。</p>
           <DataTable data={rows(current.actions)} fields={[["reviewer_id","审核人"],["reviewer_roles","授权角色"],["action","决定"],["rationale","理由"]]}/>
-          <button type="button" disabled={busy||current.quorum_satisfied!==true||current.finalized!==true}
+          <button type="button" disabled={busy||published||current.quorum_satisfied!==true||current.finalized!==true}
             onClick={()=>submit('/lifecycle/releases',{candidate_id:candidate.release_candidate_id,review_id:current.review_id,expected_registry_head_hash:state.registry_head})}>使用当前 Registry CAS 发布</button>
         </>}
+        {published&&<p>此候选已经发布；后续变化必须使用新的 Release Candidate。</p>}
       </div>;
     })}
     <DataTable data={state.results.filter(r=>r.operation==='release.publish').map(r=>r.result.release as Document)} fields={[["release_id","Release"],["package_version","版本"],["release_status","发布状态"]]}/>

@@ -7,8 +7,9 @@ import {api,post,type ProjectState} from './api';
 import {ObjectBrowser} from './object-browser';
 import {FieldMappingPreview} from './field-mapping-preview';
 import {ProjectOverview,projectArtifacts} from './project-overview';
+import {ReleaseReview} from './release-review';
 
-const context=vi.hoisted(()=>({state:{project:{project_id:'project-1',domain_pack:'synthetic',domain_pack_version:'0.1.0',status:'OPEN',authority_revision:4},results:[],jobs:[]} as unknown as ProjectState,prefix:'/projects/project-1'}));
+const context=vi.hoisted(()=>({state:{project:{project_id:'project-1',domain_pack:'synthetic',domain_pack_version:'0.1.0',status:'OPEN',authority_revision:4},results:[],jobs:[]} as unknown as ProjectState,prefix:'/projects/project-1',principal:{principal_id:'human',principal_type:'HUMAN'},busy:false,submit:vi.fn()}));
 vi.mock('./shell',()=>({useWorkspace:()=>context}));
 vi.mock('./api',async importOriginal=>({...await importOriginal<typeof import('./api')>(),api:vi.fn(),post:vi.fn()}));
 const clients:QueryClient[]=[];
@@ -35,6 +36,15 @@ it('keeps an empty project explicitly empty without querying an invented review'
   expect(screen.getByText('尚无审核队列。')).toBeInTheDocument();
   expect(screen.getAllByText('尚未生成')).toHaveLength(6);
   expect(api).not.toHaveBeenCalled();
+});
+
+it('binds release controls to candidate identity and disables already-published candidates',()=>{
+  context.state.results=[entry('release.publish',{release:{release_candidate_id:'old-candidate',release_id:'old-release'}})];
+  mount(<ReleaseReview candidates={[{release_candidate_id:'old-candidate'},{release_candidate_id:'new-candidate'}]} reviews={[{release_candidate_id:'old-candidate',quorum_satisfied:true,finalized:true,review_id:'review-old',actions:[]}]}/>);
+  const old=screen.getByTestId('release-candidate-old-candidate');
+  expect(old.querySelectorAll('button:disabled').length).toBeGreaterThanOrEqual(2);
+  expect(screen.getByTestId('release-candidate-new-candidate').querySelector('button')).not.toBeDisabled();
+  expect(screen.getByText('此候选已经发布；后续变化必须使用新的 Release Candidate。')).toBeInTheDocument();
 });
 
 it('binds mapping samples to their exact dataset run and renders source/type/target',async()=>{
