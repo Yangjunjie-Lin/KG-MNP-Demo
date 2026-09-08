@@ -1,4 +1,4 @@
-"""Deterministic Phase 06 probe aggregation and final attestation projection."""
+"""Versioned historical probe and attestation projections; no runtime executor."""
 
 from __future__ import annotations
 
@@ -9,6 +9,174 @@ from copy import deepcopy
 from typing import Any
 
 from kg_mnp.modeling.canonical_json import semantic_hash
+
+
+def project_historical_artifact_documents(
+    *,
+    commit_sha: str,
+    authority: Any,
+    production_initial_registry: dict[str, Any],
+    production_initial_pointer: dict[str, Any],
+    production_final_registry: dict[str, Any],
+    production_final_pointer: dict[str, Any],
+    production_final_state: dict[str, Any],
+    fixture: dict[str, Any],
+    workflow: dict[str, Any],
+    probes: list[dict[str, Any]],
+    supplemental_probes: list[dict[str, Any]],
+    race: dict[str, Any],
+    repository_hashes: dict[str, str],
+    publication_hashes: dict[str, str],
+    cleanup: dict[str, Any],
+    determinism_runs: int,
+    determinism_passed: int,
+) -> dict[str, dict[str, Any]]:
+    controlled_authority = fixture["authority"]
+    p0 = controlled_authority.base_publication
+    p1 = controlled_authority.activation_candidates[0]
+    final_state = workflow["final_state"]
+    production_pointer_unchanged = bool(
+        production_initial_registry == production_final_registry
+        and production_initial_pointer == production_final_pointer
+    )
+    production_evidence = {
+        "production_base_publication_id": authority.base_publication.publication_id,
+        "production_base_publication_hash": (
+            authority.base_publication.publication_semantic_hash
+        ),
+        "production_base_repository_id": authority.base_publication.repository_id,
+        "production_base_repository_hash": (
+            authority.base_publication.repository_semantic_hash
+        ),
+        "production_activation_candidates": (
+            authority.production_activation_candidate_count
+        ),
+        "production_activation_cycles": production_final_state["activation_cycles"],
+        "production_rollback_cycles": production_final_state["rollback_cycles"],
+        "production_pointer_initial_hash": production_initial_pointer["pointer_hash"],
+        "production_pointer_final_hash": production_final_pointer["pointer_hash"],
+        "production_pointer_unchanged": production_pointer_unchanged,
+    }
+    controlled_evidence = {
+        "controlled_fixture_hash": controlled_authority.controlled_fixture_hash,
+        "controlled_p0_publication_hash": p0.publication_semantic_hash,
+        "controlled_p1_publication_hash": p1.publication_semantic_hash,
+        "controlled_p0_repository_hash": p0.repository_semantic_hash,
+        "controlled_p1_repository_hash": p1.repository_semantic_hash,
+        "controlled_activation_cycles": final_state["activation_cycles"],
+        "controlled_rollback_cycles": final_state["rollback_cycles"],
+        "controlled_initial_generation": workflow["initial_pointer"]["generation"],
+        "controlled_post_activation_generation": workflow["post_activation_state"][
+            "current_pointer"
+        ]["generation"],
+        "controlled_final_generation": workflow["final_pointer"]["generation"],
+        "p0_repository_before_hash": repository_hashes["p0_before"],
+        "p0_repository_after_activation_hash": repository_hashes["p0_after_activation"],
+        "p0_repository_after_rollback_hash": repository_hashes["p0_after_rollback"],
+        "p1_repository_before_hash": repository_hashes["p1_before"],
+        "p1_repository_after_activation_hash": repository_hashes["p1_after_activation"],
+        "p1_repository_after_rollback_hash": repository_hashes["p1_after_rollback"],
+        "p0_publication_tree_before_hash": publication_hashes["p0_before"],
+        "p0_publication_tree_after_hash": publication_hashes["p0_after"],
+        "p1_publication_tree_before_hash": publication_hashes["p1_before"],
+        "p1_publication_tree_after_hash": publication_hashes["p1_after"],
+        "determinism_runs": determinism_runs,
+        "determinism_passed": determinism_passed,
+    }
+    physical_identities = {
+        "stage08_identity": authority.stage08_artifact_tree_sha256,
+        "phase01_identity": authority.phase01_artifact_tree_sha256,
+        "phase02_identity": authority.phase02_artifact_tree_sha256,
+        "phase03_identity": authority.phase03_artifact_tree_sha256,
+        "phase04_identity": authority.phase04_artifact_tree_sha256,
+        "phase05_identity": authority.phase05_artifact_tree_sha256,
+    }
+    attestation = build_application_phase06_attestation(
+        commit_sha=commit_sha,
+        physical_identities=physical_identities,
+        production_evidence=production_evidence,
+        controlled_evidence=controlled_evidence,
+        probe_records=probes,
+    )
+    production_summary = {
+        "activation_candidates": authority.production_activation_candidate_count,
+        "activation_cycles": production_final_state["activation_cycles"],
+        "rollback_cycles": production_final_state["rollback_cycles"],
+        "initial_pointer": production_initial_pointer,
+        "final_pointer": production_final_pointer,
+        "pointer_unchanged": production_pointer_unchanged,
+        "bootstrap_registry": production_initial_registry,
+        "status": "PRODUCTION_BOOTSTRAP_CURRENT_REFERENCE_VERIFIED",
+    }
+    controlled_summary = {
+        "fixture_id": controlled_authority.fixture_id,
+        "controlled_fixture_hash": controlled_authority.controlled_fixture_hash,
+        "test_only": True,
+        "production_authority": False,
+        "p0": p0.descriptor,
+        "p1": p1.descriptor,
+        "initial_pointer": workflow["initial_pointer"],
+        "activation_proposal": workflow["activation_proposal"],
+        "activation_review_decision": workflow["activation_review_decision"],
+        "activation_receipt": workflow["activation_receipt"],
+        "post_activation_pointer": workflow["post_activation_state"]["current_pointer"],
+        "resolved_p1": workflow["resolved_p1"],
+        "final_registry": workflow["final_registry"],
+        "final_pointer": workflow["final_pointer"],
+        "status": "CONTROLLED_ACTIVATION_VERIFIED",
+    }
+    activation_summary = {
+        "contract_version": "1.0",
+        "production_activation_summary": production_summary,
+        "controlled_activation_summary": controlled_summary,
+        "controlled_registry_hash": final_state["registry_hash"],
+        "controlled_head_event_hash": final_state["head_event_hash"],
+        "status": "PASS",
+    }
+    rollback_summary = {
+        "contract_version": "1.0",
+        "test_only": True,
+        "production_authority": False,
+        "rollback_is_pointer_selection_only": True,
+        "rdf_reverse_patch_used": False,
+        "repository_mutation_by_controller": False,
+        "from_publication_id": p1.publication_id,
+        "to_publication_id": p0.publication_id,
+        "rollback_proposal": workflow["rollback_proposal"],
+        "rollback_review_decision": workflow["rollback_review_decision"],
+        "rollback_receipt": workflow["rollback_receipt"],
+        "generation_sequence": [0, 1, 2],
+        "repository_hashes": repository_hashes,
+        "publication_tree_hashes": publication_hashes,
+        "final_active_publication_id": workflow["resolved_p0"]["active_publication_id"],
+        "status": "CONTROLLED_ROLLBACK_VERIFIED",
+    }
+    security_summary = {
+        "contract_version": "1.0",
+        "test_only": True,
+        "production_authority": False,
+        "probe_records": probes,
+        "supplemental_probe_records": supplemental_probes,
+        "counters": aggregate_probe_records(probes),
+        "concurrency_result": race,
+        "activation_controller_graphdb_access": [
+            "repository_info",
+            "export_explicit_nquads",
+        ],
+        "cleanup": cleanup,
+        "status": "PASS",
+    }
+    return {
+        "application-phase06-attestation.json": attestation,
+        "activation-summary.json": activation_summary,
+        "rollback-summary.json": rollback_summary,
+        "authority-binding.json": {
+            "contract_version": "1.0",
+            **authority.binding,
+            "status": "PASS",
+        },
+        "security-summary.json": security_summary,
+    }
 
 from .contracts import (
     APPLICATION_PHASE06_STATUS,

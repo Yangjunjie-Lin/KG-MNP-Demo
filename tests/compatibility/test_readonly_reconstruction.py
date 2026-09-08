@@ -23,6 +23,19 @@ def test_only_current_application_service_is_available():
     assert importlib.util.find_spec("kg_mnp.application.service") is None
 
 
+def test_historical_governance_has_no_writable_store():
+    from kg_mnp.governance import workspace
+    from scripts import governance_controlled_fixture
+
+    assert not hasattr(workspace, "GovernanceWorkspaceStore")
+    assert not hasattr(governance_controlled_fixture, "ControlledGovernanceWorkspaceStoreForTestHarness")
+
+
+def test_historical_activation_has_no_state_controller_or_live_verifier():
+    for module in ("persistence", "execution", "resolver"):
+        assert importlib.util.find_spec("kg_mnp.activation." + module) is None
+
+
 @pytest.mark.parametrize("builder", [build_graphdb_import_package,
                                     build_end_to_end_publication_package,
                                     build_webvowl_visualization_package])

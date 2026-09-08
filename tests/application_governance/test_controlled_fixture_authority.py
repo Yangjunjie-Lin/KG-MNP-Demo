@@ -11,7 +11,6 @@ from kg_mnp.governance.authority_binding import GovernanceAuthority
 from kg_mnp.governance.errors import GovernanceError, GovernanceErrorCode
 from kg_mnp.governance.workspace import (
     GovernanceWorkspace,
-    GovernanceWorkspaceStore,
 )
 from scripts.governance_controlled_fixture import (
     FIXTURE_NAMESPACE,
@@ -128,26 +127,30 @@ def test_fixture_only_enters_governance_through_named_test_adapter() -> None:
     assert all(key.startswith(FIXTURE_NAMESPACE) for key in authority.issues)
 
 
-def test_production_store_rejects_controlled_harness(
+def test_production_reconstruction_rejects_controlled_harness(
     tmp_path: Path,
 ) -> None:
     authority = controlled_governance_authority_for_test_harness(
         ControlledDiagnosticFixture.create()
     )
-    store = GovernanceWorkspaceStore(
-        tmp_path / "governance-workspace.json", lambda: authority
-    )
     with pytest.raises(GovernanceError) as caught:
-        store.initialize(authority)
+        GovernanceWorkspace.initialize(authority)
     assert (
         caught.value.code
         == GovernanceErrorCode.TEST_FIXTURE_NOT_ALLOWED_AS_PRODUCTION_AUTHORITY
     )
+    assert not list(tmp_path.iterdir())
 
 
-def test_workspace_path_is_frozen_at_startup(tmp_path: Path) -> None:
-    with pytest.raises(GovernanceError):
-        GovernanceWorkspaceStore(tmp_path / ".." / "escape.json", lambda: None)
+def test_current_project_contract_has_no_client_workspace_path(tmp_path: Path) -> None:
+    from pydantic import ValidationError
+
+    from kg_mnp.services.requests import ProjectCreateRequest
+
+    with pytest.raises(ValidationError):
+        ProjectCreateRequest.model_validate({"name": "blocked", "domain_pack": "minimal",
+            "domain_pack_version": "0.1.0", "workspace_path": str(tmp_path / ".." / "escape.json")})
+    assert not list(tmp_path.iterdir())
 
 
 def test_controlled_governance_outputs_keep_test_fixture_namespace() -> None:

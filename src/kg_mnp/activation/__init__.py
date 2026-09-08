@@ -1,4 +1,4 @@
-"""Controlled publication selection and rollback governance (Phase 06)."""
+"""Read-only historical activation authority and event compatibility."""
 
 from .authority_binding import (
     ProductionPhase06Authority,

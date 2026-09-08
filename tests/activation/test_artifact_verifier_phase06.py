@@ -23,13 +23,13 @@ from kg_mnp.activation.registry import new_activation_registry
 from kg_mnp.activation.reporting import (
     ATTACK_COUNTER_FIELDS,
     build_probe_record,
+    project_historical_artifact_documents,
 )
 from kg_mnp.activation.validator import (
     validate_activation_registry_against_authorities,
 )
 from kg_mnp.modeling.canonical_json import canonical_json_bytes, semantic_hash
-from scripts.activation_controlled_fixture import run_controlled_activation_workflow
-from scripts.activation_integration import _artifact_documents
+from scripts.activation_controlled_fixture import build_controlled_history
 
 COMMIT_SHA = "a" * 40
 
@@ -284,7 +284,7 @@ def _documents(
         production,
         current_pointer=production_pointer,
     )
-    return _artifact_documents(
+    return project_historical_artifact_documents(
         commit_sha=COMMIT_SHA,
         authority=production,
         production_initial_registry=production_registry,
@@ -389,9 +389,8 @@ def corpus(tmp_path_factory: pytest.TempPathFactory) -> dict[str, Any]:
         "authority": controlled_authority,
         "offline_verifier": _DescriptorVerifier(),
     }
-    workflow = run_controlled_activation_workflow(
+    workflow = build_controlled_history(
         fixture=fixture,
-        state_directory=root / "trusted-state",
         verifier=fixture["offline_verifier"],
     )
     production = _Authority(
@@ -439,7 +438,7 @@ def _patch_reconstruction(
     )
 
     @contextmanager
-    def reconstructed() -> Iterator[tuple[dict[str, Any], dict[str, Any]]]:
+    def reconstructed(*_args) -> Iterator[tuple[dict[str, Any], dict[str, Any]]]:
         yield corpus["fixture"], corpus["workflow"]
 
     monkeypatch.setattr(artifact_verifier, "_controlled_reconstruction", reconstructed)
@@ -718,9 +717,8 @@ def test_self_consistent_fake_p2_fails_against_fresh_controlled_authority(
         fixture_hash=semantic_hash({"attacker_fixture": fake_hash}),
     )
     fake_fixture = {"authority": fake_authority}
-    fake_workflow = run_controlled_activation_workflow(
+    fake_workflow = build_controlled_history(
         fixture=fake_fixture,
-        state_directory=tmp_path / "fake-state",
         verifier=_DescriptorVerifier(),
     )
     fake_documents = _documents(

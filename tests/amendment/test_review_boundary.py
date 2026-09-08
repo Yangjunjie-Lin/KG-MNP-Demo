@@ -1,7 +1,5 @@
 from __future__ import annotations
 
-import subprocess
-import sys
 from pathlib import Path
 
 import pytest
@@ -28,13 +26,5 @@ def test_completed_review_is_required_before_package_build() -> None:
         )
 
 
-def test_licensed_entrypoint_supports_direct_script_execution() -> None:
-    completed = subprocess.run(
-        [sys.executable, "scripts/amendment_integration.py", "--help"],
-        cwd=ROOT,
-        check=False,
-        capture_output=True,
-        text=True,
-    )
-    assert completed.returncode == 0, completed.stderr
-    assert "--stage08-artifact" in completed.stdout
+def test_obsolete_licensed_publisher_is_retired() -> None:
+    assert not (ROOT / "scripts/amendment_integration.py").exists()

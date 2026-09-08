@@ -8,7 +8,7 @@ explicitly named test-harness adapter at the bottom of this file.
 
 from __future__ import annotations
 
-from collections.abc import Callable, Mapping
+from collections.abc import Mapping
 from copy import deepcopy
 from dataclasses import dataclass
 from typing import Any
@@ -18,12 +18,10 @@ from kg_mnp.diagnostics.engine import reconstruct_diagnostics
 from kg_mnp.diagnostics.issue import diagnostic_semantic_basis
 from kg_mnp.diagnostics.policy import diagnostic_policy_hash
 from kg_mnp.governance.authority_binding import GovernanceAuthority
-from kg_mnp.governance.contracts import strict_json_file
 from kg_mnp.governance.errors import GovernanceError, GovernanceErrorCode
 from kg_mnp.governance.identity import CONTROLLED_FIXTURE_NAMESPACE
 from kg_mnp.governance.workspace import (
     GovernanceWorkspace,
-    GovernanceWorkspaceStore,
     _workspace_value,
 )
 from kg_mnp.modeling.canonical_json import semantic_hash
@@ -343,50 +341,3 @@ class ControlledGovernanceWorkspaceForTestHarness(GovernanceWorkspace):
         ):
             raise GovernanceError(GovernanceErrorCode.AUTHORITY_MISMATCH)
         return authority
-
-
-class ControlledGovernanceWorkspaceStoreForTestHarness(GovernanceWorkspaceStore):
-    """TEST-ONLY persistence adapter, outside the production package."""
-
-    def _validate_authority(
-        self, authority: GovernanceAuthority
-    ) -> GovernanceAuthority:
-        if authority.authority_type != "CONTROLLED_TEST_HARNESS":
-            raise GovernanceError(GovernanceErrorCode.AUTHORITY_MISMATCH)
-        return authority
-
-    def initialize(self, authority: GovernanceAuthority) -> GovernanceWorkspace:
-        with self._lock:
-            self._validate_authority(authority)
-            if self.path.exists():
-                raise GovernanceError(
-                    GovernanceErrorCode.REPLAY_DETECTED, "workspace already exists"
-                )
-            workspace = controlled_governance_workspace_for_test_harness(
-                authority, self.current_authority
-            )
-            self._persist(workspace.value)
-            return workspace
-
-    def load(self) -> GovernanceWorkspace:
-        with self._lock:
-            self._validate_authority(self.current_authority())
-            self._assert_safe_path(for_write=False)
-            workspace = ControlledGovernanceWorkspaceForTestHarness(
-                strict_json_file(self.path), self.current_authority
-            )
-            workspace.reconstruct()
-            return workspace
-
-
-def controlled_governance_store_for_test_harness(
-    path,
-    current_authority: Callable[[], GovernanceAuthority],
-) -> ControlledGovernanceWorkspaceStoreForTestHarness:
-    """Create a store that is unreachable from the production runtime API."""
-
-    if current_authority().authority_type != "CONTROLLED_TEST_HARNESS":
-        raise ValueError("controlled authority required")
-    return ControlledGovernanceWorkspaceStoreForTestHarness(
-        path, current_authority
-    )

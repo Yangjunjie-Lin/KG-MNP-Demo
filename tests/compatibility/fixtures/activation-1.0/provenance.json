@@ -1,0 +1,11 @@
+{
+  "source_commit": "c77c6555d5b555eea639fc8f2258043e5c096b21",
+  "source_command": "python scripts/activation_controlled_fixture.py --output-root runtime/p09-controlled-reconstruction-c77c655",
+  "source_evidence": "runtime_logs/p09/controlled-reconstruction-c77c655/historical-controlled-reader/receipt.json",
+  "registry_byte_sha256": "9bd32b9e194fb52ba5a61ff5b22cde839ff25328e753fe3affb532ef297aa599",
+  "pointer_byte_sha256": "590f3e7a9169715b2cdf5ecae088f768b83fefe68ec9a9e7009151058206b4d1",
+  "registry_hash": "6e249fe10ac399c215ee51ce20c1fb439361ed243cc75c4c5574fcc6ecef9af6",
+  "head_event_hash": "1c5b4182b4546b7513c3099da87f365b19397a2a4bee0eb5da072127cc8aeaee",
+  "test_only": true,
+  "production_authority": false
+}

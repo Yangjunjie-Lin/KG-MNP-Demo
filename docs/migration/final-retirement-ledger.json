@@ -26,6 +26,143 @@
   ],
   "entries": [
     {
+      "old_path": "scripts/amendment_integration.py; src/kg_mnp/amendment/attestation.py",
+      "old_responsibility": "Uncalled Phase05 live GraphDB orchestration and report publisher",
+      "actual_callers": [
+        "one --help test; no current product or historical reader callers for attestation builder"
+      ],
+      "replacement_path": "current lifecycle/registry/service operations; retained pure amendment artifact validators and controlled data reconstruction",
+      "replacement_behavior": "No second licensed amendment deployment CLI or runtime report publisher. Existing local reentry, explicit-review, tamper and physical-authority tests remain.",
+      "replacement_test_nodeids": [
+        "tests/amendment/test_review_boundary.py::test_phase05_cannot_auto_confirm",
+        "tests/amendment/test_review_boundary.py::test_completed_review_is_required_before_package_build",
+        "tests/amendment/test_review_boundary.py::test_obsolete_licensed_publisher_is_retired"
+      ],
+      "artifact_compatibility": "Old report schema/IDs/validators remain unchanged. No MNP or package bytes changed.",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Old CLI and generated-attestation producer no longer called after current workflow replacement; not copied to another directory.",
+      "evidence": "runtime_logs/p09/history-platform-retired.xml (170 PASS / 2 Windows symlink skips)"
+    },
+    {
+      "old_path": "src/kg_mnp/lifecycle/environment.py::_pointer; src/kg_mnp/services/facade.py (unverified JSON pointer reads)",
+      "old_responsibility": "Read pointer fields without identity or event/receipt replay",
+      "actual_callers": [
+        "environment.inspect",
+        "environment proposal/execution"
+      ],
+      "replacement_path": "shared verified lifecycle pointer resolution",
+      "replacement_behavior": "Reject tampered and fully rehashed forged selection; bind pointer generation/hash/target to registry events and receipts, and verify currently selected package/release/attestation. No fallback or repair on read.",
+      "replacement_test_nodeids": [
+        "tests/lifecycle/test_activation_integrity.py",
+        "tests/lifecycle/test_prompt07_e2e.py::test_real_package_release_activation_and_explicit_historical_rollback"
+      ],
+      "artifact_compatibility": "Versioned schema unchanged. Old set-like verification-evidence order normalized only in memory; receipt bytes and IDs not rewritten.",
+      "decision": "MERGE",
+      "reason": "Migration of old controller protections exposed missing current reader verification; repaired rather than deleting those protections.",
+      "evidence": "activation-current-red.xml then green-a..e failures retained; activation-current-green-f.xml (13 PASS)"
+    },
+    {
+      "old_path": "src/kg_mnp/lifecycle/registry/import_package.py (absent-source-lock record)",
+      "old_responsibility": "Emit null that violates frozen overlapping oneOf when a portable package has no separate source lock",
+      "actual_callers": [
+        "library portable import; current service passes a real lock"
+      ],
+      "replacement_path": "same importer, explicit NOT_PROVIDED descriptive value and pre-write contract validation",
+      "replacement_behavior": "Missing source-lock bytes are explicitly not provided, never forged or claimed verified. Supplied real source lock retains exact digest binding.",
+      "replacement_test_nodeids": [
+        "tests/lifecycle/test_activation_integrity.py::test_import_without_external_project_lock_is_explicit_and_schema_valid"
+      ],
+      "artifact_compatibility": "Frozen schema unchanged; existing valid package bytes unchanged. Previously schema-invalid null record is not treated as a valid compatibility promise.",
+      "decision": "MERGE",
+      "reason": "Stronger pointer/registry checks exposed malformed old import records; fix producer while retaining protected schema."
+    },
+    {
+      "old_path": "src/kg_mnp/governance/workspace.py::GovernanceWorkspaceStore; scripts/governance_controlled_fixture.py::ControlledGovernanceWorkspaceStoreForTestHarness",
+      "old_responsibility": "Second writable governance JSON store and in-process lock plus unused fixture persistence subclass",
+      "actual_callers": [
+        "two old store-boundary tests; controlled subclass had no callers"
+      ],
+      "replacement_path": "src/kg_mnp/services/execution.py; current Workspace/lifecycle; versioned governance event reconstruction",
+      "replacement_behavior": "Old atomic writer/store/lock deleted. Pure versioned event model and independent authority validators remain; no writable platform moved to scripts.",
+      "replacement_test_nodeids": [
+        "tests/application_governance/test_controlled_fixture_authority.py::test_production_reconstruction_rejects_controlled_harness",
+        "tests/application_governance/test_controlled_fixture_authority.py::test_current_project_contract_has_no_client_workspace_path"
+      ],
+      "artifact_compatibility": "Schema/IDs preserved; synthetic authority remains forbidden",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Current authenticated workflow owns writes; old persistent store had no remaining product or reader caller.",
+      "evidence": "governance-store-red.xml expected failure; green-b69PASS"
+    },
+    {
+      "old_path": "src/kg_mnp/activation/persistence.py; src/kg_mnp/activation/execution.py; src/kg_mnp/activation/resolver.py; scripts/activation_integration.py",
+      "old_responsibility": "Historical mutable registry/pointer store, process locks, execution controller, live resolver and full GraphDB activation harness",
+      "actual_callers": [
+        "legacy tests",
+        "old artifact verifier through controlled fixture",
+        "old integration harness"
+      ],
+      "replacement_path": "src/kg_mnp/activation/history_reader.py; src/kg_mnp/lifecycle/environment.py; src/kg_mnp/services/execution.py",
+      "replacement_behavior": "Historical artifact verifier reads supplied recorded registry with separately trusted anchors and reconstructs physical P0/P1 authority. No state store, execution engine or network verifier is launched. Current authenticated service alone selects environments. Historical receipt/report projections retained as data-only functions.",
+      "replacement_test_nodeids": [
+        "tests/services/test_lifecycle_completion.py::test_environment_cannot_execute_with_invented_approval",
+        "tests/lifecycle/test_environment_review_withdrawal.py::test_environment_gate_rejects_current_review_before_resolving_target[withdrawn]",
+        "tests/lifecycle/test_activation_integrity.py::test_approved_target_drift_never_selects_or_repairs[changed-package]",
+        "tests/services/test_core_fencing.py::test_computed_artifacts_cannot_publish_after_losing_authority[input_changed]",
+        "tests/lifecycle/test_activation_integrity.py::test_approved_target_drift_never_selects_or_repairs[changed-attestation]",
+        "tests/lifecycle/test_activation_integrity.py::test_replayed_approval_does_not_increment_generation",
+        "tests/lifecycle/test_activation_integrity.py::test_current_environment_cas_preserves_pointer_and_receipts[expected_generation]",
+        "tests/lifecycle/test_prompt07_e2e.py::test_real_package_release_activation_and_explicit_historical_rollback",
+        "tests/lifecycle/test_activation_integrity.py::test_selected_package_loss_does_not_fallback_or_repair_pointer",
+        "tests/activation/test_history_reader.py::test_reader_rejects_wrong_external_anchor[registry_hash]",
+        "tests/activation/test_history_reader.py::test_reader_rejects_wrong_external_anchor[head_hash]",
+        "tests/activation/test_history_reader.py::test_reader_cannot_infer_trusted_anchors",
+        "tests/lifecycle/test_activation_integrity.py::test_current_environment_cas_preserves_pointer_and_receipts[expected_registry_head_hash]",
+        "tests/activation/test_history_reader.py::test_reader_rejects_wrong_external_anchor[registry_hash]",
+        "tests/activation/test_history_reader.py::test_reader_rejects_wrong_external_anchor[head_hash]",
+        "tests/activation/test_history_reader.py::test_reader_cannot_infer_trusted_anchors",
+        "tests/lifecycle/test_activation_integrity.py::test_current_environment_cas_preserves_pointer_and_receipts[expected_registry_head_hash]",
+        "tests/activation/test_history_reader.py::test_reader_rejects_wrong_external_anchor[registry_hash]",
+        "tests/activation/test_history_reader.py::test_reader_rejects_wrong_external_anchor[head_hash]",
+        "tests/activation/test_history_reader.py::test_reader_cannot_infer_trusted_anchors",
+        "tests/lifecycle/test_activation_integrity.py::test_current_environment_cas_preserves_pointer_and_receipts[expected_registry_head_hash]",
+        "tests/lifecycle/test_activation_integrity.py::test_selected_package_loss_does_not_fallback_or_repair_pointer",
+        "tests/lifecycle/test_activation_integrity.py::test_pointer_tampering_cannot_manufacture_selection_without_event[True]",
+        "tests/lifecycle/test_activation_integrity.py::test_selected_package_loss_does_not_fallback_or_repair_pointer",
+        "tests/activation/test_history_reader.py::test_historical_reader_has_no_network_or_control_side_effects",
+        "tests/services/test_process_claim_race.py::test_two_process_workers_have_one_claim_and_one_core_commit",
+        "tests/lifecycle/test_activation_integrity.py::test_current_environment_cas_preserves_pointer_and_receipts[expected_generation]",
+        "tests/services/test_process_death_recovery.py::test_abrupt_process_exit_is_recovered_from_authoritative_receipt[before]",
+        "tests/services/test_process_death_recovery.py::test_abrupt_process_exit_is_recovered_from_authoritative_receipt[after]",
+        "tests/services/test_job_recovery_resource.py::test_expired_uncommitted_local_job_has_explicit_authenticated_recovery",
+        "tests/compatibility/test_historical_activation_records.py::test_original_persisted_activation_records_replay_without_state_store",
+        "tests/lifecycle/test_activation_integrity.py::test_replayed_approval_does_not_increment_generation",
+        "tests/security/test_workspace_security.py::test_workspace_identifier_attacks_do_not_create_targets",
+        "tests/security/test_workspace_security.py::test_workspace_symlink_escape_is_rejected_or_explicitly_skipped",
+        "tests/application_governance/test_controlled_fixture_authority.py::test_production_reconstruction_rejects_controlled_harness",
+        "tests/application_governance/test_controlled_fixture_authority.py::test_current_project_contract_has_no_client_workspace_path"
+      ],
+      "artifact_compatibility": "Original115 schemas and existing packages unchanged. Genuine c77 activation registry/pointer bytes copied unchanged into versioned fixtures with source-command/digests. Not synthetic successful API results.",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Removes the writable historical platform and its unused deployment harness, not merely its CLI. Every removed pytest node has an explicit migration row."
+    },
+    {
+      "old_path": "scripts/activation_controlled_fixture.py",
+      "old_responsibility": "Fixture packaging plus filesystem state creation, controller execution, process race and standalone CLI",
+      "actual_callers": [
+        "historical artifact verifier",
+        "historical tests"
+      ],
+      "replacement_path": "scripts/activation_controlled_fixture.py (physical package fixture and bounded in-memory record data only); src/kg_mnp/activation/history_reader.py",
+      "replacement_behavior": "Removed persistent workflow/race/CLI code. Production reader never calls the in-memory event-data builder; it replays external records against independently reconstructed physical authorities. Test builder only constructs marked data for tamper tests.",
+      "replacement_test_nodeids": [
+        "tests/compatibility/test_historical_activation_records.py::test_original_persisted_activation_records_replay_without_state_store",
+        "tests/activation/test_artifact_verifier_phase06.py::test_self_consistent_fake_p2_fails_against_fresh_controlled_authority"
+      ],
+      "artifact_compatibility": "Recorded c77 original registry/pointer hashes pinned with LF checkout; independent old/new transcript equality tested before controller deletion",
+      "decision": "MERGE",
+      "reason": "No store/controller implementation relocated to tests. Only immutable format projections and fixed-fixture record construction retained."
+    },
+    {
       "old_path": "src/kg_mnp/integrations/object_query.py; src/kg_mnp/integrations/local_rdf.py; src/kg_mnp/integrations/oms.py; src/kg_mnp/integrations/webvowl.py (verify-then-reread paths)",
       "old_responsibility": "Validate package and later parse mutable original RDF/manifest paths",
       "actual_callers": [
@@ -2349,6 +2486,351 @@
     }
   ],
   "test_migration": [
+    {
+      "old_nodeid": "tests/amendment/test_review_boundary.py::test_licensed_entrypoint_supports_direct_script_execution",
+      "new_nodeid": "tests/amendment/test_review_boundary.py::test_obsolete_licensed_publisher_is_retired",
+      "behavior": "Old publisher CLI availability, not a semantic/security assertion",
+      "decision": "REPLACE",
+      "reason": "One-time licensed Phase05 CLI retired; explicit approval/authority/reentry tests retained separately."
+    },
+    {
+      "old_nodeid": "tests/scripts/test_artifact_fixture.py::test_controlled_compatibility_script_can_be_invoked_standalone",
+      "new_nodeid": "tests/scripts/test_artifact_fixture.py::test_controlled_compatibility_script_can_be_invoked_standalone",
+      "behavior": "Fixture importing outside repository CWD must not execute stateful work",
+      "decision": "RETAIN_AND_STRENGTHEN",
+      "reason": "Help command retired; direct import remains inert and emits no false success/creates no state."
+    },
+    {
+      "old_nodeid": "tests/lifecycle/test_prompt07_e2e.py::test_real_package_release_activation_and_explicit_historical_rollback",
+      "new_nodeid": "tests/lifecycle/test_prompt07_e2e.py::test_real_package_release_activation_and_explicit_historical_rollback",
+      "behavior": "Real imported package, two releases, approved activation and specified historical rollback with unchanged package bytes",
+      "decision": "RETAIN_AND_REPAIR_FIXTURE",
+      "reason": "Removed schema-invalid variant extension; two candidates distinguished using declared required acknowledgements, which the human review explicitly satisfies. No assertion/quorum weakened."
+    },
+    {
+      "old_nodeid": "tests/activation/test_registry_and_validator.py::test_bootstrap_is_generation_zero_not_activation",
+      "new_nodeid": [
+        "tests/activation/test_registry_and_validator.py::test_bootstrap_is_generation_zero_not_activation"
+      ],
+      "decision": "RETAIN_AND_REWIRE_READONLY",
+      "behavior": "Original event/review/target-integrity, CAS, no-fallback, concurrency, recovery or filesystem confinement assurance",
+      "reason": "Same assertions exercised against versioned in-memory record model and independent replay; no persistent controller used.",
+      "evidence": "runtime_logs/p09/registry-reader-a.xml (initial missed wrapper call), activation-reads-final.xml (22 PASS); controller-replacement-a.xml (20 PASS/1 Windows symlink skip); activation-current-green-f.xml (13 PASS); real-record-replay-a.xml (genuine c77 persisted record PASS). Final same-revision suite still required."
+    },
+    {
+      "old_nodeid": "tests/activation/test_registry_and_validator.py::test_runtime_timestamp_is_excluded_from_registry_identity",
+      "new_nodeid": [
+        "tests/activation/test_registry_and_validator.py::test_runtime_timestamp_is_excluded_from_registry_identity"
+      ],
+      "decision": "RETAIN_AND_REWIRE_READONLY",
+      "behavior": "Original event/review/target-integrity, CAS, no-fallback, concurrency, recovery or filesystem confinement assurance",
+      "reason": "Same assertions exercised against versioned in-memory record model and independent replay; no persistent controller used.",
+      "evidence": "runtime_logs/p09/registry-reader-a.xml (initial missed wrapper call), activation-reads-final.xml (22 PASS); controller-replacement-a.xml (20 PASS/1 Windows symlink skip); activation-current-green-f.xml (13 PASS); real-record-replay-a.xml (genuine c77 persisted record PASS). Final same-revision suite still required."
+    },
+    {
+      "old_nodeid": "tests/activation/test_registry_and_validator.py::test_reject_and_defer_never_change_pointer[REJECT-ActivationReviewRejected]",
+      "new_nodeid": [
+        "tests/activation/test_registry_and_validator.py::test_reject_and_defer_never_change_pointer[REJECT-ActivationReviewRejected]"
+      ],
+      "decision": "RETAIN_AND_REWIRE_READONLY",
+      "behavior": "Original event/review/target-integrity, CAS, no-fallback, concurrency, recovery or filesystem confinement assurance",
+      "reason": "Same assertions exercised against versioned in-memory record model and independent replay; no persistent controller used.",
+      "evidence": "runtime_logs/p09/registry-reader-a.xml (initial missed wrapper call), activation-reads-final.xml (22 PASS); controller-replacement-a.xml (20 PASS/1 Windows symlink skip); activation-current-green-f.xml (13 PASS); real-record-replay-a.xml (genuine c77 persisted record PASS). Final same-revision suite still required."
+    },
+    {
+      "old_nodeid": "tests/activation/test_registry_and_validator.py::test_reject_and_defer_never_change_pointer[DEFER-ActivationReviewDeferred]",
+      "new_nodeid": [
+        "tests/activation/test_registry_and_validator.py::test_reject_and_defer_never_change_pointer[DEFER-ActivationReviewDeferred]"
+      ],
+      "decision": "RETAIN_AND_REWIRE_READONLY",
+      "behavior": "Original event/review/target-integrity, CAS, no-fallback, concurrency, recovery or filesystem confinement assurance",
+      "reason": "Same assertions exercised against versioned in-memory record model and independent replay; no persistent controller used.",
+      "evidence": "runtime_logs/p09/registry-reader-a.xml (initial missed wrapper call), activation-reads-final.xml (22 PASS); controller-replacement-a.xml (20 PASS/1 Windows symlink skip); activation-current-green-f.xml (13 PASS); real-record-replay-a.xml (genuine c77 persisted record PASS). Final same-revision suite still required."
+    },
+    {
+      "old_nodeid": "tests/activation/test_registry_and_validator.py::test_activation_then_governed_rollback_reconstructs_generations",
+      "new_nodeid": [
+        "tests/activation/test_registry_and_validator.py::test_activation_then_governed_rollback_reconstructs_generations"
+      ],
+      "decision": "RETAIN_AND_REWIRE_READONLY",
+      "behavior": "Original event/review/target-integrity, CAS, no-fallback, concurrency, recovery or filesystem confinement assurance",
+      "reason": "Same assertions exercised against versioned in-memory record model and independent replay; no persistent controller used.",
+      "evidence": "runtime_logs/p09/registry-reader-a.xml (initial missed wrapper call), activation-reads-final.xml (22 PASS); controller-replacement-a.xml (20 PASS/1 Windows symlink skip); activation-current-green-f.xml (13 PASS); real-record-replay-a.xml (genuine c77 persisted record PASS). Final same-revision suite still required."
+    },
+    {
+      "old_nodeid": "tests/activation/test_registry_and_validator.py::test_registry_anchor_rejects_self_consistent_full_rehash",
+      "new_nodeid": [
+        "tests/activation/test_registry_and_validator.py::test_registry_anchor_rejects_self_consistent_full_rehash"
+      ],
+      "decision": "RETAIN_AND_REWIRE_READONLY",
+      "behavior": "Original event/review/target-integrity, CAS, no-fallback, concurrency, recovery or filesystem confinement assurance",
+      "reason": "Same assertions exercised against versioned in-memory record model and independent replay; no persistent controller used.",
+      "evidence": "runtime_logs/p09/registry-reader-a.xml (initial missed wrapper call), activation-reads-final.xml (22 PASS); controller-replacement-a.xml (20 PASS/1 Windows symlink skip); activation-current-green-f.xml (13 PASS); real-record-replay-a.xml (genuine c77 persisted record PASS). Final same-revision suite still required."
+    },
+    {
+      "old_nodeid": "tests/activation/test_registry_and_validator.py::test_event_chain_attacks_are_rejected[insert]",
+      "new_nodeid": [
+        "tests/activation/test_registry_and_validator.py::test_event_chain_attacks_are_rejected[insert]"
+      ],
+      "decision": "RETAIN_AND_REWIRE_READONLY",
+      "behavior": "Original event/review/target-integrity, CAS, no-fallback, concurrency, recovery or filesystem confinement assurance",
+      "reason": "Same assertions exercised against versioned in-memory record model and independent replay; no persistent controller used.",
+      "evidence": "runtime_logs/p09/registry-reader-a.xml (initial missed wrapper call), activation-reads-final.xml (22 PASS); controller-replacement-a.xml (20 PASS/1 Windows symlink skip); activation-current-green-f.xml (13 PASS); real-record-replay-a.xml (genuine c77 persisted record PASS). Final same-revision suite still required."
+    },
+    {
+      "old_nodeid": "tests/activation/test_registry_and_validator.py::test_event_chain_attacks_are_rejected[delete]",
+      "new_nodeid": [
+        "tests/activation/test_registry_and_validator.py::test_event_chain_attacks_are_rejected[delete]"
+      ],
+      "decision": "RETAIN_AND_REWIRE_READONLY",
+      "behavior": "Original event/review/target-integrity, CAS, no-fallback, concurrency, recovery or filesystem confinement assurance",
+      "reason": "Same assertions exercised against versioned in-memory record model and independent replay; no persistent controller used.",
+      "evidence": "runtime_logs/p09/registry-reader-a.xml (initial missed wrapper call), activation-reads-final.xml (22 PASS); controller-replacement-a.xml (20 PASS/1 Windows symlink skip); activation-current-green-f.xml (13 PASS); real-record-replay-a.xml (genuine c77 persisted record PASS). Final same-revision suite still required."
+    },
+    {
+      "old_nodeid": "tests/activation/test_registry_and_validator.py::test_event_chain_attacks_are_rejected[reorder]",
+      "new_nodeid": [
+        "tests/activation/test_registry_and_validator.py::test_event_chain_attacks_are_rejected[reorder]"
+      ],
+      "decision": "RETAIN_AND_REWIRE_READONLY",
+      "behavior": "Original event/review/target-integrity, CAS, no-fallback, concurrency, recovery or filesystem confinement assurance",
+      "reason": "Same assertions exercised against versioned in-memory record model and independent replay; no persistent controller used.",
+      "evidence": "runtime_logs/p09/registry-reader-a.xml (initial missed wrapper call), activation-reads-final.xml (22 PASS); controller-replacement-a.xml (20 PASS/1 Windows symlink skip); activation-current-green-f.xml (13 PASS); real-record-replay-a.xml (genuine c77 persisted record PASS). Final same-revision suite still required."
+    },
+    {
+      "old_nodeid": "tests/activation/test_registry_and_validator.py::test_event_chain_attacks_are_rejected[modify]",
+      "new_nodeid": [
+        "tests/activation/test_registry_and_validator.py::test_event_chain_attacks_are_rejected[modify]"
+      ],
+      "decision": "RETAIN_AND_REWIRE_READONLY",
+      "behavior": "Original event/review/target-integrity, CAS, no-fallback, concurrency, recovery or filesystem confinement assurance",
+      "reason": "Same assertions exercised against versioned in-memory record model and independent replay; no persistent controller used.",
+      "evidence": "runtime_logs/p09/registry-reader-a.xml (initial missed wrapper call), activation-reads-final.xml (22 PASS); controller-replacement-a.xml (20 PASS/1 Windows symlink skip); activation-current-green-f.xml (13 PASS); real-record-replay-a.xml (genuine c77 persisted record PASS). Final same-revision suite still required."
+    },
+    {
+      "old_nodeid": "tests/activation/test_registry_and_validator.py::test_unknown_rollback_target_is_rejected_before_event_append",
+      "new_nodeid": [
+        "tests/activation/test_registry_and_validator.py::test_unknown_rollback_target_is_rejected_before_event_append"
+      ],
+      "decision": "RETAIN_AND_REWIRE_READONLY",
+      "behavior": "Original event/review/target-integrity, CAS, no-fallback, concurrency, recovery or filesystem confinement assurance",
+      "reason": "Same assertions exercised against versioned in-memory record model and independent replay; no persistent controller used.",
+      "evidence": "runtime_logs/p09/registry-reader-a.xml (initial missed wrapper call), activation-reads-final.xml (22 PASS); controller-replacement-a.xml (20 PASS/1 Windows symlink skip); activation-current-green-f.xml (13 PASS); real-record-replay-a.xml (genuine c77 persisted record PASS). Final same-revision suite still required."
+    },
+    {
+      "old_nodeid": "tests/activation/test_registry_and_validator.py::test_submit_rejects_target_bytes_changed_after_proposal",
+      "new_nodeid": [
+        "tests/activation/test_registry_and_validator.py::test_submit_rejects_target_bytes_changed_after_proposal"
+      ],
+      "decision": "RETAIN_AND_REWIRE_READONLY",
+      "behavior": "Original event/review/target-integrity, CAS, no-fallback, concurrency, recovery or filesystem confinement assurance",
+      "reason": "Same assertions exercised against versioned in-memory record model and independent replay; no persistent controller used.",
+      "evidence": "runtime_logs/p09/registry-reader-a.xml (initial missed wrapper call), activation-reads-final.xml (22 PASS); controller-replacement-a.xml (20 PASS/1 Windows symlink skip); activation-current-green-f.xml (13 PASS); real-record-replay-a.xml (genuine c77 persisted record PASS). Final same-revision suite still required."
+    },
+    {
+      "old_nodeid": "tests/activation/test_registry_and_validator.py::test_pointer_full_rehash_without_applied_event_is_rejected",
+      "new_nodeid": [
+        "tests/activation/test_registry_and_validator.py::test_pointer_full_rehash_without_applied_event_is_rejected"
+      ],
+      "decision": "RETAIN_AND_REWIRE_READONLY",
+      "behavior": "Original event/review/target-integrity, CAS, no-fallback, concurrency, recovery or filesystem confinement assurance",
+      "reason": "Same assertions exercised against versioned in-memory record model and independent replay; no persistent controller used.",
+      "evidence": "runtime_logs/p09/registry-reader-a.xml (initial missed wrapper call), activation-reads-final.xml (22 PASS); controller-replacement-a.xml (20 PASS/1 Windows symlink skip); activation-current-green-f.xml (13 PASS); real-record-replay-a.xml (genuine c77 persisted record PASS). Final same-revision suite still required."
+    },
+    {
+      "old_nodeid": "tests/activation/test_execution_and_resolver.py::test_execute_requires_explicit_human_approval",
+      "new_nodeid": [
+        "tests/services/test_lifecycle_completion.py::test_environment_cannot_execute_with_invented_approval",
+        "tests/lifecycle/test_environment_review_withdrawal.py::test_environment_gate_rejects_current_review_before_resolving_target[withdrawn]"
+      ],
+      "decision": "REPLACE",
+      "behavior": "Original event/review/target-integrity, CAS, no-fallback, concurrency, recovery or filesystem confinement assurance",
+      "reason": "Runtime guarantee moves to current authenticated lifecycle/Workspace fencing. Versioned record integrity remains in the read-only reader. No old store/controller copied into tests; external deployment is not claimed by local selection.",
+      "evidence": "runtime_logs/p09/registry-reader-a.xml (initial missed wrapper call), activation-reads-final.xml (22 PASS); controller-replacement-a.xml (20 PASS/1 Windows symlink skip); activation-current-green-f.xml (13 PASS); real-record-replay-a.xml (genuine c77 persisted record PASS). Final same-revision suite still required."
+    },
+    {
+      "old_nodeid": "tests/activation/test_execution_and_resolver.py::test_approval_does_not_override_target_hash_drift",
+      "new_nodeid": [
+        "tests/lifecycle/test_activation_integrity.py::test_approved_target_drift_never_selects_or_repairs[changed-package]"
+      ],
+      "decision": "REPLACE",
+      "behavior": "Original event/review/target-integrity, CAS, no-fallback, concurrency, recovery or filesystem confinement assurance",
+      "reason": "Runtime guarantee moves to current authenticated lifecycle/Workspace fencing. Versioned record integrity remains in the read-only reader. No old store/controller copied into tests; external deployment is not claimed by local selection.",
+      "evidence": "runtime_logs/p09/registry-reader-a.xml (initial missed wrapper call), activation-reads-final.xml (22 PASS); controller-replacement-a.xml (20 PASS/1 Windows symlink skip); activation-current-green-f.xml (13 PASS); real-record-replay-a.xml (genuine c77 persisted record PASS). Final same-revision suite still required."
+    },
+    {
+      "old_nodeid": "tests/activation/test_execution_and_resolver.py::test_execute_rechecks_publication_after_live_repository_read",
+      "new_nodeid": [
+        "tests/services/test_core_fencing.py::test_computed_artifacts_cannot_publish_after_losing_authority[input_changed]",
+        "tests/lifecycle/test_activation_integrity.py::test_approved_target_drift_never_selects_or_repairs[changed-attestation]"
+      ],
+      "decision": "REPLACE",
+      "behavior": "Original event/review/target-integrity, CAS, no-fallback, concurrency, recovery or filesystem confinement assurance",
+      "reason": "Runtime guarantee moves to current authenticated lifecycle/Workspace fencing. Versioned record integrity remains in the read-only reader. No old store/controller copied into tests; external deployment is not claimed by local selection.",
+      "evidence": "runtime_logs/p09/registry-reader-a.xml (initial missed wrapper call), activation-reads-final.xml (22 PASS); controller-replacement-a.xml (20 PASS/1 Windows symlink skip); activation-current-green-f.xml (13 PASS); real-record-replay-a.xml (genuine c77 persisted record PASS). Final same-revision suite still required."
+    },
+    {
+      "old_nodeid": "tests/activation/test_execution_and_resolver.py::test_replay_and_stale_cas_do_not_create_generations",
+      "new_nodeid": [
+        "tests/lifecycle/test_activation_integrity.py::test_replayed_approval_does_not_increment_generation",
+        "tests/lifecycle/test_activation_integrity.py::test_current_environment_cas_preserves_pointer_and_receipts[expected_generation]"
+      ],
+      "decision": "REPLACE",
+      "behavior": "Original event/review/target-integrity, CAS, no-fallback, concurrency, recovery or filesystem confinement assurance",
+      "reason": "Runtime guarantee moves to current authenticated lifecycle/Workspace fencing. Versioned record integrity remains in the read-only reader. No old store/controller copied into tests; external deployment is not claimed by local selection.",
+      "evidence": "runtime_logs/p09/registry-reader-a.xml (initial missed wrapper call), activation-reads-final.xml (22 PASS); controller-replacement-a.xml (20 PASS/1 Windows symlink skip); activation-current-green-f.xml (13 PASS); real-record-replay-a.xml (genuine c77 persisted record PASS). Final same-revision suite still required."
+    },
+    {
+      "old_nodeid": "tests/activation/test_execution_and_resolver.py::test_resolver_ready_and_fail_closed_without_fallback",
+      "new_nodeid": [
+        "tests/lifecycle/test_prompt07_e2e.py::test_real_package_release_activation_and_explicit_historical_rollback",
+        "tests/lifecycle/test_activation_integrity.py::test_selected_package_loss_does_not_fallback_or_repair_pointer"
+      ],
+      "decision": "REPLACE",
+      "behavior": "Original event/review/target-integrity, CAS, no-fallback, concurrency, recovery or filesystem confinement assurance",
+      "reason": "Runtime guarantee moves to current authenticated lifecycle/Workspace fencing. Versioned record integrity remains in the read-only reader. No old store/controller copied into tests; external deployment is not claimed by local selection.",
+      "evidence": "runtime_logs/p09/registry-reader-a.xml (initial missed wrapper call), activation-reads-final.xml (22 PASS); controller-replacement-a.xml (20 PASS/1 Windows symlink skip); activation-current-green-f.xml (13 PASS); real-record-replay-a.xml (genuine c77 persisted record PASS). Final same-revision suite still required."
+    },
+    {
+      "old_nodeid": "tests/activation/test_execution_and_resolver.py::test_configured_resolver_anchors_cannot_be_overridden[expected_registry_hash-ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff]",
+      "new_nodeid": [
+        "tests/activation/test_history_reader.py::test_reader_rejects_wrong_external_anchor[registry_hash]",
+        "tests/activation/test_history_reader.py::test_reader_rejects_wrong_external_anchor[head_hash]",
+        "tests/activation/test_history_reader.py::test_reader_cannot_infer_trusted_anchors",
+        "tests/lifecycle/test_activation_integrity.py::test_current_environment_cas_preserves_pointer_and_receipts[expected_registry_head_hash]"
+      ],
+      "decision": "REPLACE",
+      "behavior": "Original event/review/target-integrity, CAS, no-fallback, concurrency, recovery or filesystem confinement assurance",
+      "reason": "Runtime guarantee moves to current authenticated lifecycle/Workspace fencing. Versioned record integrity remains in the read-only reader. No old store/controller copied into tests; external deployment is not claimed by local selection.",
+      "evidence": "runtime_logs/p09/registry-reader-a.xml (initial missed wrapper call), activation-reads-final.xml (22 PASS); controller-replacement-a.xml (20 PASS/1 Windows symlink skip); activation-current-green-f.xml (13 PASS); real-record-replay-a.xml (genuine c77 persisted record PASS). Final same-revision suite still required."
+    },
+    {
+      "old_nodeid": "tests/activation/test_execution_and_resolver.py::test_configured_resolver_anchors_cannot_be_overridden[expected_head_event_hash-eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee]",
+      "new_nodeid": [
+        "tests/activation/test_history_reader.py::test_reader_rejects_wrong_external_anchor[registry_hash]",
+        "tests/activation/test_history_reader.py::test_reader_rejects_wrong_external_anchor[head_hash]",
+        "tests/activation/test_history_reader.py::test_reader_cannot_infer_trusted_anchors",
+        "tests/lifecycle/test_activation_integrity.py::test_current_environment_cas_preserves_pointer_and_receipts[expected_registry_head_hash]"
+      ],
+      "decision": "REPLACE",
+      "behavior": "Original event/review/target-integrity, CAS, no-fallback, concurrency, recovery or filesystem confinement assurance",
+      "reason": "Runtime guarantee moves to current authenticated lifecycle/Workspace fencing. Versioned record integrity remains in the read-only reader. No old store/controller copied into tests; external deployment is not claimed by local selection.",
+      "evidence": "runtime_logs/p09/registry-reader-a.xml (initial missed wrapper call), activation-reads-final.xml (22 PASS); controller-replacement-a.xml (20 PASS/1 Windows symlink skip); activation-current-green-f.xml (13 PASS); real-record-replay-a.xml (genuine c77 persisted record PASS). Final same-revision suite still required."
+    },
+    {
+      "old_nodeid": "tests/activation/test_execution_and_resolver.py::test_configured_resolver_anchors_cannot_be_overridden[expected_registry_hash-]",
+      "new_nodeid": [
+        "tests/activation/test_history_reader.py::test_reader_rejects_wrong_external_anchor[registry_hash]",
+        "tests/activation/test_history_reader.py::test_reader_rejects_wrong_external_anchor[head_hash]",
+        "tests/activation/test_history_reader.py::test_reader_cannot_infer_trusted_anchors",
+        "tests/lifecycle/test_activation_integrity.py::test_current_environment_cas_preserves_pointer_and_receipts[expected_registry_head_hash]"
+      ],
+      "decision": "REPLACE",
+      "behavior": "Original event/review/target-integrity, CAS, no-fallback, concurrency, recovery or filesystem confinement assurance",
+      "reason": "Runtime guarantee moves to current authenticated lifecycle/Workspace fencing. Versioned record integrity remains in the read-only reader. No old store/controller copied into tests; external deployment is not claimed by local selection.",
+      "evidence": "runtime_logs/p09/registry-reader-a.xml (initial missed wrapper call), activation-reads-final.xml (22 PASS); controller-replacement-a.xml (20 PASS/1 Windows symlink skip); activation-current-green-f.xml (13 PASS); real-record-replay-a.xml (genuine c77 persisted record PASS). Final same-revision suite still required."
+    },
+    {
+      "old_nodeid": "tests/activation/test_execution_and_resolver.py::test_resolver_reports_active_hash_mismatch_and_does_not_repair",
+      "new_nodeid": [
+        "tests/lifecycle/test_activation_integrity.py::test_selected_package_loss_does_not_fallback_or_repair_pointer",
+        "tests/lifecycle/test_activation_integrity.py::test_pointer_tampering_cannot_manufacture_selection_without_event[True]"
+      ],
+      "decision": "REPLACE",
+      "behavior": "Original event/review/target-integrity, CAS, no-fallback, concurrency, recovery or filesystem confinement assurance",
+      "reason": "Runtime guarantee moves to current authenticated lifecycle/Workspace fencing. Versioned record integrity remains in the read-only reader. No old store/controller copied into tests; external deployment is not claimed by local selection.",
+      "evidence": "runtime_logs/p09/registry-reader-a.xml (initial missed wrapper call), activation-reads-final.xml (22 PASS); controller-replacement-a.xml (20 PASS/1 Windows symlink skip); activation-current-green-f.xml (13 PASS); real-record-replay-a.xml (genuine c77 persisted record PASS). Final same-revision suite still required."
+    },
+    {
+      "old_nodeid": "tests/activation/test_execution_and_resolver.py::test_resolver_does_not_silently_fallback_from_unavailable_p1",
+      "new_nodeid": [
+        "tests/lifecycle/test_activation_integrity.py::test_selected_package_loss_does_not_fallback_or_repair_pointer"
+      ],
+      "decision": "REPLACE",
+      "behavior": "Original event/review/target-integrity, CAS, no-fallback, concurrency, recovery or filesystem confinement assurance",
+      "reason": "Runtime guarantee moves to current authenticated lifecycle/Workspace fencing. Versioned record integrity remains in the read-only reader. No old store/controller copied into tests; external deployment is not claimed by local selection.",
+      "evidence": "runtime_logs/p09/registry-reader-a.xml (initial missed wrapper call), activation-reads-final.xml (22 PASS); controller-replacement-a.xml (20 PASS/1 Windows symlink skip); activation-current-green-f.xml (13 PASS); real-record-replay-a.xml (genuine c77 persisted record PASS). Final same-revision suite still required."
+    },
+    {
+      "old_nodeid": "tests/activation/test_execution_and_resolver.py::test_concrete_target_verifier_has_only_read_graphdb_dependency",
+      "new_nodeid": [
+        "tests/activation/test_history_reader.py::test_historical_reader_has_no_network_or_control_side_effects"
+      ],
+      "decision": "REPLACE",
+      "behavior": "Original event/review/target-integrity, CAS, no-fallback, concurrency, recovery or filesystem confinement assurance",
+      "reason": "Runtime guarantee moves to current authenticated lifecycle/Workspace fencing. Versioned record integrity remains in the read-only reader. No old store/controller copied into tests; external deployment is not claimed by local selection.",
+      "evidence": "runtime_logs/p09/registry-reader-a.xml (initial missed wrapper call), activation-reads-final.xml (22 PASS); controller-replacement-a.xml (20 PASS/1 Windows symlink skip); activation-current-green-f.xml (13 PASS); real-record-replay-a.xml (genuine c77 persisted record PASS). Final same-revision suite still required."
+    },
+    {
+      "old_nodeid": "tests/activation/test_persistence_and_concurrency.py::test_real_multiprocessing_same_generation_race_has_one_winner",
+      "new_nodeid": [
+        "tests/services/test_process_claim_race.py::test_two_process_workers_have_one_claim_and_one_core_commit",
+        "tests/lifecycle/test_activation_integrity.py::test_current_environment_cas_preserves_pointer_and_receipts[expected_generation]"
+      ],
+      "decision": "REPLACE",
+      "behavior": "Original event/review/target-integrity, CAS, no-fallback, concurrency, recovery or filesystem confinement assurance",
+      "reason": "Runtime guarantee moves to current authenticated lifecycle/Workspace fencing. Versioned record integrity remains in the read-only reader. No old store/controller copied into tests; external deployment is not claimed by local selection.",
+      "evidence": "runtime_logs/p09/registry-reader-a.xml (initial missed wrapper call), activation-reads-final.xml (22 PASS); controller-replacement-a.xml (20 PASS/1 Windows symlink skip); activation-current-green-f.xml (13 PASS); real-record-replay-a.xml (genuine c77 persisted record PASS). Final same-revision suite still required."
+    },
+    {
+      "old_nodeid": "tests/activation/test_persistence_and_concurrency.py::test_prepared_pair_is_fail_closed_for_reader_and_recoverable_for_mutator",
+      "new_nodeid": [
+        "tests/services/test_process_death_recovery.py::test_abrupt_process_exit_is_recovered_from_authoritative_receipt[before]",
+        "tests/services/test_process_death_recovery.py::test_abrupt_process_exit_is_recovered_from_authoritative_receipt[after]",
+        "tests/services/test_job_recovery_resource.py::test_expired_uncommitted_local_job_has_explicit_authenticated_recovery"
+      ],
+      "decision": "REPLACE",
+      "behavior": "Original event/review/target-integrity, CAS, no-fallback, concurrency, recovery or filesystem confinement assurance",
+      "reason": "Runtime guarantee moves to current authenticated lifecycle/Workspace fencing. Versioned record integrity remains in the read-only reader. No old store/controller copied into tests; external deployment is not claimed by local selection.",
+      "evidence": "runtime_logs/p09/registry-reader-a.xml (initial missed wrapper call), activation-reads-final.xml (22 PASS); controller-replacement-a.xml (20 PASS/1 Windows symlink skip); activation-current-green-f.xml (13 PASS); real-record-replay-a.xml (genuine c77 persisted record PASS). Final same-revision suite still required."
+    },
+    {
+      "old_nodeid": "tests/activation/test_persistence_and_concurrency.py::test_state_files_are_complete_canonical_documents",
+      "new_nodeid": [
+        "tests/compatibility/test_historical_activation_records.py::test_original_persisted_activation_records_replay_without_state_store",
+        "tests/lifecycle/test_activation_integrity.py::test_replayed_approval_does_not_increment_generation"
+      ],
+      "decision": "REPLACE",
+      "behavior": "Original event/review/target-integrity, CAS, no-fallback, concurrency, recovery or filesystem confinement assurance",
+      "reason": "Runtime guarantee moves to current authenticated lifecycle/Workspace fencing. Versioned record integrity remains in the read-only reader. No old store/controller copied into tests; external deployment is not claimed by local selection.",
+      "evidence": "runtime_logs/p09/registry-reader-a.xml (initial missed wrapper call), activation-reads-final.xml (22 PASS); controller-replacement-a.xml (20 PASS/1 Windows symlink skip); activation-current-green-f.xml (13 PASS); real-record-replay-a.xml (genuine c77 persisted record PASS). Final same-revision suite still required."
+    },
+    {
+      "old_nodeid": "tests/activation/test_persistence_and_concurrency.py::test_state_directory_rejects_parent_traversal",
+      "new_nodeid": [
+        "tests/security/test_workspace_security.py::test_workspace_identifier_attacks_do_not_create_targets"
+      ],
+      "decision": "REPLACE",
+      "behavior": "Original event/review/target-integrity, CAS, no-fallback, concurrency, recovery or filesystem confinement assurance",
+      "reason": "Runtime guarantee moves to current authenticated lifecycle/Workspace fencing. Versioned record integrity remains in the read-only reader. No old store/controller copied into tests; external deployment is not claimed by local selection.",
+      "evidence": "runtime_logs/p09/registry-reader-a.xml (initial missed wrapper call), activation-reads-final.xml (22 PASS); controller-replacement-a.xml (20 PASS/1 Windows symlink skip); activation-current-green-f.xml (13 PASS); real-record-replay-a.xml (genuine c77 persisted record PASS). Final same-revision suite still required."
+    },
+    {
+      "old_nodeid": "tests/activation/test_persistence_and_concurrency.py::test_state_directory_rejects_symlink_escape",
+      "new_nodeid": [
+        "tests/security/test_workspace_security.py::test_workspace_symlink_escape_is_rejected_or_explicitly_skipped"
+      ],
+      "decision": "REPLACE",
+      "behavior": "Original event/review/target-integrity, CAS, no-fallback, concurrency, recovery or filesystem confinement assurance",
+      "reason": "Runtime guarantee moves to current authenticated lifecycle/Workspace fencing. Versioned record integrity remains in the read-only reader. No old store/controller copied into tests; external deployment is not claimed by local selection.",
+      "evidence": "runtime_logs/p09/registry-reader-a.xml (initial missed wrapper call), activation-reads-final.xml (22 PASS); controller-replacement-a.xml (20 PASS/1 Windows symlink skip); activation-current-green-f.xml (13 PASS); real-record-replay-a.xml (genuine c77 persisted record PASS). Final same-revision suite still required."
+    },
+    {
+      "old_nodeid": "tests/application_governance/test_controlled_fixture_authority.py::test_production_store_rejects_controlled_harness",
+      "new_nodeid": "tests/application_governance/test_controlled_fixture_authority.py::test_production_reconstruction_rejects_controlled_harness",
+      "decision": "REPLACE",
+      "behavior": "Reject synthetic production authority and client-selected writable state path",
+      "reason": "No old governance persistent store remains. Read-only production authority still rejects fixtures; current closed project DTO rejects all client paths.",
+      "evidence": "runtime_logs/p09/governance-store-green-b.xml (69 PASS)"
+    },
+    {
+      "old_nodeid": "tests/application_governance/test_controlled_fixture_authority.py::test_workspace_path_is_frozen_at_startup",
+      "new_nodeid": "tests/application_governance/test_controlled_fixture_authority.py::test_current_project_contract_has_no_client_workspace_path",
+      "decision": "REPLACE",
+      "behavior": "Reject synthetic production authority and client-selected writable state path",
+      "reason": "No old governance persistent store remains. Read-only production authority still rejects fixtures; current closed project DTO rejects all client paths.",
+      "evidence": "runtime_logs/p09/governance-store-green-b.xml (69 PASS)"
+    },
     {
       "old_nodeid": "tests/application/test_live_repository_binding_phase01.py::test_runtime_check_binds_the_live_explicit_dataset_semantic_hash",
       "new_nodeid": "tests/application/test_live_repository_binding_phase01.py::test_reader_binds_the_captured_explicit_dataset_semantic_hash",

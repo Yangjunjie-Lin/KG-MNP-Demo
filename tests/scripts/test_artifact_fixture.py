@@ -31,5 +31,7 @@ def test_controlled_compatibility_script_can_be_invoked_standalone(tmp_path):
     result = subprocess.run([sys.executable, str(script), "--help"], cwd=tmp_path,
                             capture_output=True, text=True, timeout=30, check=False)
     assert result.returncode == 0, result.stderr
-    assert "--output-root" in result.stdout
+    # There is no longer a standalone state-writing command. Importing the
+    # fixture must not start a controller, create state, or claim completion.
+    assert result.stdout == ""
     assert not list(tmp_path.iterdir())

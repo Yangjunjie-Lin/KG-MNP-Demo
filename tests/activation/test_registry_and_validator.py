@@ -7,29 +7,27 @@ import pytest
 
 from kg_mnp.activation.attestation import publication_tree_sha256
 from kg_mnp.activation.errors import ActivationError, ActivationErrorCode
-from kg_mnp.activation.execution import ActivationController
-from kg_mnp.activation.persistence import ActivationStateStore
 from kg_mnp.activation.registry import ActivationRegistry, new_activation_registry
 from kg_mnp.activation.validator import (
     validate_activation_registry_against_authorities,
 )
 from kg_mnp.modeling.canonical_json import semantic_hash
+from tests.activation.test_artifact_verifier_phase06 import (
+    corpus,  # noqa: F401 - fixture
+)
 
-from ._helpers import FakeAuthority, FakeVerifier, create_approved_proposal
+from ._helpers import FakeAuthority
 
 
 def _controller(tmp_path):
     authority = FakeAuthority()
-    controller = ActivationController(
-        ActivationStateStore(tmp_path / "state", authority), FakeVerifier()
-    )
-    controller.initialize()
+    controller = ActivationRegistry.initialize(authority)
     return authority, controller
 
 
 def test_bootstrap_is_generation_zero_not_activation(tmp_path) -> None:
     authority, controller = _controller(tmp_path)
-    registry, pointer, state = controller.store.load()
+    registry, pointer, state = (deepcopy(controller.value), deepcopy(controller.current_pointer), controller.reconstruct())
     assert pointer["generation"] == 0
     assert pointer["active_publication_id"] == authority.base_publication.publication_id
     assert [event["event_type"] for event in registry["events"]] == [
@@ -55,8 +53,8 @@ def test_runtime_timestamp_is_excluded_from_registry_identity() -> None:
 )
 def test_reject_and_defer_never_change_pointer(tmp_path, decision, event_type) -> None:
     authority, controller = _controller(tmp_path)
-    initial = controller.status()["current_pointer"]
-    state = controller.status()
+    initial = controller.reconstruct()["current_pointer"]
+    state = controller.reconstruct()
     proposal = controller.create_proposal(
         target_publication_id=authority.activation_candidates[0].publication_id,
         activation_kind="ACTIVATE_NEW_VERIFIED_PUBLICATION",
@@ -66,13 +64,13 @@ def test_reject_and_defer_never_change_pointer(tmp_path, decision, event_type) -
         expected_registry_revision=state["registry_revision"],
         expected_head_event_hash=state["head_event_hash"],
     )
-    state = controller.status()
+    state = controller.reconstruct()
     controller.submit_proposal(
         proposal["activation_proposal_id"],
         expected_registry_revision=state["registry_revision"],
         expected_head_event_hash=state["head_event_hash"],
     )
-    state = controller.status()
+    state = controller.reconstruct()
     controller.record_review(
         proposal["activation_proposal_id"],
         decision=decision,
@@ -82,63 +80,20 @@ def test_reject_and_defer_never_change_pointer(tmp_path, decision, event_type) -
         expected_registry_revision=state["registry_revision"],
         expected_head_event_hash=state["head_event_hash"],
     )
-    registry, pointer, reconstructed = controller.store.load()
+    registry, pointer, reconstructed = (deepcopy(controller.value), deepcopy(controller.current_pointer), controller.reconstruct())
     assert pointer == initial
     assert reconstructed["activation_cycles"] == 0
     assert registry["events"][-1]["event_type"] == event_type
 
 
-def test_activation_then_governed_rollback_reconstructs_generations(tmp_path) -> None:
-    authority, controller = _controller(tmp_path)
-    proposal, decision = create_approved_proposal(controller, authority)
-    pointer = controller.status()["current_pointer"]
-    activation = controller.execute(
-        proposal["activation_proposal_id"],
-        decision["activation_review_decision_id"],
-        expected_generation=pointer["generation"],
-        expected_pointer_hash=pointer["pointer_hash"],
-    )
-    assert activation["status"] == "ACTIVATION_APPLIED"
-    assert activation["new_generation"] == 1
-
-    state = controller.status()
-    rollback = controller.propose_rollback(
-        target_publication_id=authority.base_publication.publication_id,
-        rationale="Explicitly select the verified immutable P0 again.",
-        created_by_label="operator-label",
-        explicit_human_intent=True,
-        expected_registry_revision=state["registry_revision"],
-        expected_head_event_hash=state["head_event_hash"],
-    )
-    state = controller.status()
-    controller.submit_proposal(
-        rollback["activation_proposal_id"],
-        expected_registry_revision=state["registry_revision"],
-        expected_head_event_hash=state["head_event_hash"],
-    )
-    state = controller.status()
-    rollback_decision = controller.record_review(
-        rollback["activation_proposal_id"],
-        decision="APPROVE_FOR_ACTIVATION",
-        reviewed_by_label="reviewer-label",
-        review_note="Explicit human rollback selection approval.",
-        explicit_human_action=True,
-        expected_registry_revision=state["registry_revision"],
-        expected_head_event_hash=state["head_event_hash"],
-    )
-    pointer = controller.status()["current_pointer"]
-    receipt = controller.execute(
-        rollback["activation_proposal_id"],
-        rollback_decision["activation_review_decision_id"],
-        expected_generation=pointer["generation"],
-        expected_pointer_hash=pointer["pointer_hash"],
-    )
-    final = controller.status()
-    assert receipt["status"] == "ROLLBACK_APPLIED"
+def test_activation_then_governed_rollback_reconstructs_generations(corpus):  # noqa: F811 - fixture
+    workflow = corpus["workflow"]
+    assert workflow["activation_receipt"]["status"] == "ACTIVATION_APPLIED"
+    assert workflow["activation_receipt"]["new_generation"] == 1
+    assert workflow["rollback_receipt"]["status"] == "ROLLBACK_APPLIED"
+    final = workflow["final_state"]
     assert [item["generation"] for item in final["pointer_history"]] == [0, 1, 2]
-    assert final["current_pointer"]["active_publication_id"] == (
-        authority.base_publication.publication_id
-    )
+    assert final["current_pointer"]["active_publication_id"] == corpus["fixture"]["authority"].base_publication.publication_id
     assert final["activation_cycles"] == final["rollback_cycles"] == 1
 
 
@@ -177,7 +132,7 @@ def test_registry_anchor_rejects_self_consistent_full_rehash(tmp_path) -> None:
 @pytest.mark.parametrize("attack", ["insert", "delete", "reorder", "modify"])
 def test_event_chain_attacks_are_rejected(tmp_path, attack) -> None:
     authority, controller = _controller(tmp_path)
-    state = controller.status()
+    state = controller.reconstruct()
     controller.create_proposal(
         target_publication_id=authority.activation_candidates[0].publication_id,
         activation_kind="ACTIVATE_NEW_VERIFIED_PUBLICATION",
@@ -187,7 +142,7 @@ def test_event_chain_attacks_are_rejected(tmp_path, attack) -> None:
         expected_registry_revision=state["registry_revision"],
         expected_head_event_hash=state["head_event_hash"],
     )
-    registry, pointer, _ = controller.store.load()
+    registry, pointer, _ = (deepcopy(controller.value), deepcopy(controller.current_pointer), controller.reconstruct())
     attacked = deepcopy(registry)
     if attack == "insert":
         attacked["events"].append(deepcopy(attacked["events"][-1]))
@@ -208,9 +163,10 @@ def test_event_chain_attacks_are_rejected(tmp_path, attack) -> None:
 
 def test_unknown_rollback_target_is_rejected_before_event_append(tmp_path) -> None:
     authority, controller = _controller(tmp_path)
-    state = controller.status()
+    state = controller.reconstruct()
     with pytest.raises(ActivationError) as caught:
-        controller.propose_rollback(
+        controller.create_proposal(
+            activation_kind="ROLLBACK_TO_PRIOR_VERIFIED_PUBLICATION",
             target_publication_id=authority.activation_candidates[0].publication_id,
             rationale="P1 is eligible but has never been active.",
             created_by_label="operator-label",
@@ -219,7 +175,7 @@ def test_unknown_rollback_target_is_rejected_before_event_append(tmp_path) -> No
             expected_head_event_hash=state["head_event_hash"],
         )
     assert caught.value.code == ActivationErrorCode.UNKNOWN_ROLLBACK_TARGET
-    assert controller.status()["registry_revision"] == state["registry_revision"]
+    assert controller.reconstruct()["registry_revision"] == state["registry_revision"]
 
 
 def test_submit_rejects_target_bytes_changed_after_proposal(tmp_path) -> None:
@@ -241,11 +197,8 @@ def test_submit_rejects_target_bytes_changed_after_proposal(tmp_path) -> None:
         "publication_attestation_sha256",
         hashlib.sha256(attestation.read_bytes()).hexdigest(),
     )
-    controller = ActivationController(
-        ActivationStateStore(tmp_path / "state", authority), FakeVerifier()
-    )
-    controller.initialize()
-    state = controller.status()
+    controller = ActivationRegistry.initialize(authority)
+    state = controller.reconstruct()
     proposal = controller.create_proposal(
         target_publication_id=target.publication_id,
         activation_kind="ACTIVATE_NEW_VERIFIED_PUBLICATION",
@@ -256,7 +209,7 @@ def test_submit_rejects_target_bytes_changed_after_proposal(tmp_path) -> None:
         expected_head_event_hash=state["head_event_hash"],
     )
     artifact.write_bytes(b"tampered bytes")
-    state = controller.status()
+    state = controller.reconstruct()
     with pytest.raises(ActivationError) as caught:
         controller.submit_proposal(
             proposal["activation_proposal_id"],
@@ -268,7 +221,7 @@ def test_submit_rejects_target_bytes_changed_after_proposal(tmp_path) -> None:
 
 def test_pointer_full_rehash_without_applied_event_is_rejected(tmp_path) -> None:
     _authority, controller = _controller(tmp_path)
-    registry, pointer, _state = controller.store.load()
+    registry, pointer, _state = (deepcopy(controller.value), deepcopy(controller.current_pointer), controller.reconstruct())
     attacked = deepcopy(pointer)
     attacked["active_publication_id"] = (
         "urn:kg-mnp:test-fixture:phase06:publication:fake"

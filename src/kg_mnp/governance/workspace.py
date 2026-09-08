@@ -1,23 +1,20 @@
-"""Governance operations and atomic local JSON persistence."""
+"""Historical governance event reconstruction; no filesystem store."""
 
 from __future__ import annotations
 
-import os
-import tempfile
 from collections.abc import Callable, Mapping
 from copy import deepcopy
 from dataclasses import dataclass
-from pathlib import Path
 from typing import Any
 
-from kg_mnp.modeling.canonical_json import canonical_json_bytes, semantic_hash
+from kg_mnp.modeling.canonical_json import semantic_hash
 
 from .amendment_request import build_approved_amendment_request
 from .authority_binding import (
     GovernanceAuthority,
     _require_verified_production_authority,
 )
-from .contracts import strict_json_file, validate_governance_contract
+from .contracts import validate_governance_contract
 from .errors import GovernanceError, GovernanceErrorCode
 from .event_log import build_event
 from .identity import governance_urn
@@ -228,109 +225,3 @@ class GovernanceWorkspace:
             result["amendment_request"] = amendment
         self.reconstruct()
         return result
-
-
-class GovernanceWorkspaceStore:
-    """Startup-frozen workspace file with atomic replacement and in-process lock."""
-
-    def __init__(
-        self,
-        path: Path,
-        current_authority: Callable[[], GovernanceAuthority],
-    ):
-        absolute = Path(path).absolute()
-        if absolute.name != "governance-workspace.json":
-            raise GovernanceError(GovernanceErrorCode.PATH_REJECTED)
-        for candidate in (absolute.parent, *absolute.parent.parents):
-            is_junction = getattr(candidate, "is_junction", lambda: False)
-            if candidate.is_symlink() or is_junction():
-                raise GovernanceError(GovernanceErrorCode.PATH_REJECTED)
-        self.path = absolute
-        self._parent = absolute.parent.resolve(strict=False)
-        self.current_authority = current_authority
-        import threading
-
-        self._lock = threading.RLock()
-
-    def initialize(self, authority: GovernanceAuthority) -> GovernanceWorkspace:
-        with self._lock:
-            authority = self._validate_authority(authority)
-            if self.path.exists():
-                raise GovernanceError(
-                    GovernanceErrorCode.REPLAY_DETECTED, "workspace already exists"
-                )
-            workspace = GovernanceWorkspace.initialize(
-                authority, lambda: self._validate_authority(self.current_authority())
-            )
-            self._persist(workspace.value)
-            return workspace
-
-    def load(self) -> GovernanceWorkspace:
-        with self._lock:
-            authority = self._validate_authority(self.current_authority())
-            self._assert_safe_path(for_write=False)
-            value = strict_json_file(self.path)
-            workspace = GovernanceWorkspace(value, lambda: authority)
-            workspace.reconstruct()
-            return workspace
-
-    def _validate_authority(
-        self, authority: GovernanceAuthority
-    ) -> GovernanceAuthority:
-        return _require_verified_production_authority(authority)
-
-    def mutate(self, operation: Callable[[GovernanceWorkspace], Any]) -> Any:
-        with self._lock:
-            workspace = self.load()
-            result = operation(workspace)
-            self._persist(workspace.value)
-            return result
-
-    def _persist(self, value: Mapping[str, Any]) -> None:
-        self.path.parent.mkdir(parents=True, exist_ok=True)
-        self._assert_safe_path(for_write=True)
-        parent = self._parent
-        data = canonical_json_bytes(value) + b"\n"
-        descriptor, temporary = tempfile.mkstemp(
-            prefix=".governance-", suffix=".tmp", dir=parent
-        )
-        try:
-            with os.fdopen(descriptor, "wb") as stream:
-                stream.write(data)
-                stream.flush()
-                os.fsync(stream.fileno())
-            Path(temporary).replace(self.path)
-            try:
-                directory_fd = os.open(parent, os.O_RDONLY)
-            except OSError:
-                directory_fd = None
-            if directory_fd is not None:
-                try:
-                    os.fsync(directory_fd)
-                except OSError:
-                    pass
-                finally:
-                    os.close(directory_fd)
-        finally:
-            try:
-                Path(temporary).unlink(missing_ok=True)
-            except OSError:
-                pass
-
-    def _assert_safe_path(self, *, for_write: bool) -> None:
-        try:
-            for candidate in (self.path.parent, *self.path.parent.parents):
-                is_junction = getattr(candidate, "is_junction", lambda: False)
-                if candidate.is_symlink() or is_junction():
-                    raise GovernanceError(GovernanceErrorCode.PATH_REJECTED)
-            if self.path.parent.resolve(strict=True) != self._parent:
-                raise GovernanceError(GovernanceErrorCode.PATH_REJECTED)
-            if self.path.is_symlink():
-                raise GovernanceError(GovernanceErrorCode.PATH_REJECTED)
-            if not for_write and self.path.resolve(strict=True) != self.path:
-                raise GovernanceError(GovernanceErrorCode.PATH_REJECTED)
-        except GovernanceError:
-            raise
-        except OSError as exc:
-            if not for_write:
-                raise GovernanceError(GovernanceErrorCode.PATH_REJECTED) from exc

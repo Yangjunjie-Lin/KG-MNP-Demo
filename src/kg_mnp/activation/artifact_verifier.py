@@ -219,26 +219,26 @@ def _exact(value: Any, fields: set[str] | frozenset[str], label: str) -> dict[st
 
 
 @contextmanager
-def _controlled_reconstruction() -> Iterator[tuple[dict[str, Any], dict[str, Any]]]:
-    """Rebuild controlled P0/P1 and replay the complete state machine afresh."""
+def _controlled_reconstruction(registry, pointer, registry_hash, head_hash) -> Iterator[tuple[dict[str, Any], dict[str, Any]]]:
+    """Rebuild P0/P1 authority and read recorded events, without a state store."""
+
+    from .history_reader import reconstruct_controlled_history
 
     try:
         from scripts.activation_controlled_fixture import (
             build_controlled_activation_fixture,
-            run_controlled_activation_workflow,
         )
     except ModuleNotFoundError:
         from activation_controlled_fixture import (  # type: ignore[import-not-found]
             build_controlled_activation_fixture,
-            run_controlled_activation_workflow,
         )
     with TemporaryDirectory(prefix="kg-mnp-phase06-artifact-verifier-") as directory:
         fixture = build_controlled_activation_fixture(Path(directory))
-        workflow = run_controlled_activation_workflow(
-            fixture=fixture,
-            state_directory=Path(directory) / "state",
-            verifier=fixture["offline_verifier"],
-        )
+        try:
+            workflow = reconstruct_controlled_history(registry, pointer, authority=fixture["authority"],
+                expected_registry_hash=registry_hash, expected_head_event_hash=head_hash)
+        except (ActivationError, KeyError, TypeError, ValueError) as exc:
+            raise Phase06ArtifactVerificationError("AUTHORITY_MISMATCH: controlled history reconstruction failed") from exc
         yield fixture, workflow
 
 
@@ -582,7 +582,9 @@ def verify_application_phase06_artifact(
         activation["production_activation_summary"], authority
     )
 
-    with _controlled_reconstruction() as (fixture, workflow):
+    controlled = activation["controlled_activation_summary"]
+    with _controlled_reconstruction(controlled.get("final_registry"), controlled.get("final_pointer"),
+                                    expected_registry_hash, expected_head_event_hash) as (fixture, workflow):
         controlled_expected = _controlled_summary_expected(fixture, workflow)
         controlled_supplied = activation["controlled_activation_summary"]
         if controlled_supplied != controlled_expected:
