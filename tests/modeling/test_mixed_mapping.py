@@ -120,3 +120,50 @@ def test_templates_are_not_regex_or_ambiguous_slot_programs(template):
 
 def test_nonmatching_prose_is_not_claimed_as_understood():
     assert match_template(template_slots('实体 {id} 的标签为 {label}。'), '没有身份信息的任意说明段落') is None
+
+
+def test_text_offsets_name_normalized_coordinates_and_retain_original_transform(prompt03_workspace, tmp_path):
+    path = tmp_path / 'unicode.txt'
+    path.write_text('实体 T001 的标签为 e\u0301。\n', encoding='utf-8')
+    dataset, _ = ingest(prompt03_workspace, [path])
+    inventory = input_inventory([dataset])
+    item = inventory['text_items'][0]
+    assert item['text'] == '实体 T001 的标签为 é。'
+    original = next(e for e in dataset['evidence_records'] if e['evidence_id'] in item['evidence_refs'])
+    assert original['observed_value'] == '实体 T001 的标签为 e\u0301。'
+    _, report = mixed_mapping_drafts(rules=profile(inventory), datasets=[dataset], namespace='urn:test:', question_ids=[],
+        baseline={'elements':[{'iri':MIN+'Entity','element_kind':'CLASS','element_id':'urn:class'},
+                              {'iri':MIN+'label','element_kind':'DATA_PROPERTY','element_id':'urn:label'}]})
+    span = next(s for s in report['text_spans'] if s['field'] == 'label')
+    assert span['quote'] == 'é'
+    assert span['end'] - span['start'] == 1
+    assert span['coordinate_basis'] == 'KG_IR_NORMALIZED_TEXT_UNICODE_CODEPOINTS'
+    assert span['transformation_refs'] == original['transformation_ids']
+
+
+def test_native_excel_types_and_sparse_cells_are_not_string_guesses(prompt03_workspace, tmp_path):
+    from datetime import datetime
+
+    from openpyxl import Workbook
+    book = Workbook()
+    book.active.append(['id', 'flag', 'date', 'time', 'count'])
+    book.active.append(['T001', True, datetime(2026, 9, 8), datetime(2026, 9, 8, 12, 30), 12.5])  # noqa: DTZ001 -- Excel explicitly stores timezone-naive dates.
+    book.active.append(['T002', None, None, None, None])
+    path = tmp_path/'types.xlsx'
+    book.save(path)
+    dataset, _ = ingest(prompt03_workspace, [path])
+    table = input_inventory([dataset])['tables'][0]
+    types = {'flag':'boolean', 'date':'date', 'time':'dateTime', 'count':'decimal'}
+    rules = {'profile':'evidence-record-mapping-v2', 'tables':[{'record_id':'typed', 'class_iri':MIN+'Entity',
+        'source_id':table['source_id'], 'locator':table['locator'], 'identity_space':'entities', 'id_field':'id',
+        'literals':{field:{'predicate_iri':'urn:'+field, 'datatype':datatype} for field, datatype in types.items()}}]}
+    baseline = {'elements':[{'iri':MIN+'Entity','element_kind':'CLASS','element_id':'urn:class'},
+                           *[{'iri':'urn:'+field,'element_kind':'DATA_PROPERTY','element_id':'urn:property:'+field} for field in types]]}
+    drafts, report = mixed_mapping_drafts(rules=rules, datasets=[dataset], namespace='urn:test:', baseline=baseline, question_ids=[])
+    assert not report['unmapped_item_ids']
+    assert len(report['identities']) == 2
+    literals = {d['body']['predicate_iri']:d['body']['literal']['lexical_value'] for d in drafts if d['body']['candidate_type']=='DATA_PROPERTY_ASSERTION'}
+    assert literals == {'urn:flag':'true', 'urn:date':'2026-09-08', 'urn:time':'2026-09-08T12:30:00', 'urn:count':'12.5'}
+    assert not [d for d in drafts if d['body']['candidate_type']=='DATA_PROPERTY_ASSERTION' and d['body']['subject_iri'].endswith('T002')]
+    with pytest.raises(ModelingControlError, match='MAPPING_DATATYPE_INVALID'):
+        typed_value('2026-09-08 12:30:00', 'date', source_kind='spreadsheet-cell')

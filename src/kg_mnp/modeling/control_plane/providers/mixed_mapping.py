@@ -29,10 +29,18 @@ def fail(code, message):
     raise ModelingControlError(f"{code}: {message}")
 
 
-def typed_value(value, datatype):
+def typed_value(value, datatype, *, source_kind=None):
     if value is None:
         return None
     lexical = value if datatype == "string" else value.strip()
+    # The frozen XLSX parser preserves native dates as their Python ISO-like
+    # spelling. Explicit typing may bridge that spelling, never evaluate a
+    # formula or truncate a non-midnight timestamp to a date.
+    if source_kind == "spreadsheet-cell":
+        if datatype == "date" and lexical.endswith(" 00:00:00"):
+            lexical = lexical[:-9]
+        elif datatype == "dateTime" and len(lexical) > 10 and lexical[10] == " ":
+            lexical = lexical[:10] + "T" + lexical[11:]
     try:
         if datatype == "integer":
             if not re.fullmatch(r"[+-]?[0-9]+", lexical):
@@ -48,7 +56,7 @@ def typed_value(value, datatype):
             if number == 0:
                 lexical = "0"
         elif datatype == "boolean":
-            lexical = {"true": "true", "false": "false", "1": "true", "0": "false"}[lexical]
+            lexical = {"true": "true", "false": "false", "1": "true", "0": "false"}[lexical.lower()]
         elif datatype == "date":
             if not re.fullmatch(r"[0-9]{4}-[0-9]{2}-[0-9]{2}", lexical):
                 raise ValueError()
@@ -176,12 +184,13 @@ def mixed_mapping_drafts(*, rules, datasets, namespace, baseline, question_ids, 
             fail("MAPPING_IDENTIFIER_REQUIRED", "explicit nonempty business identity required")
         return namespace + space + ":" + quote(value, safe="")
 
-    def add_record(definition, fields, origin):
+    def add_record(definition, fields, origin, *, sparse_table=False):
         required = {definition["id_field"], *definition["literals"], *(r["field"] for r in definition["references"])}
-        if not required <= fields.keys():
+        mandatory = {definition["id_field"], *(r["field"] for r in definition["references"])} if sparse_table else required
+        if not mandatory <= fields.keys():
             fail("MAPPING_FIELD_MISSING", "a declared identity, literal or reference field is absent")
         # Unmapped fields are deliberately not claimed as consumed.
-        selected = {key: fields[key] for key in required}
+        selected = {key: fields[key] for key in required if key in fields}
         iri = identity(definition["identity_space"], fields[definition["id_field"]][0])
         occurrences.append({"definition": definition, "fields": selected, "iri": iri,
                             "ref": "record-" + semantic_hash([definition["record_id"], origin])})
@@ -202,12 +211,15 @@ def mixed_mapping_drafts(*, rules, datasets, namespace, baseline, question_ids, 
         headers = {column: item["payload"]["value"]["normalized_lexical_value"] for (row, column), item in cells.items() if row == 1}
         if not headers or None in headers.values() or "" in headers.values() or len(set(headers.values())) != len(headers):
             fail("MAPPING_HEADER_INVALID", "table needs unique nonempty first-row headers")
+        required_headers = {definition["id_field"], *definition["literals"], *(r["field"] for r in definition["references"])}
+        if not required_headers <= set(headers.values()):
+            fail("MAPPING_FIELD_MISSING", "a declared table header is absent")
         rows = {}
         for (row, column), item in cells.items():
             if row > 1 and column in headers:
                 rows.setdefault(row, {})[headers[column]] = (item["payload"]["value"]["normalized_lexical_value"], item)
         for row, fields in sorted(rows.items()):
-            add_record(definition, fields, [definition["source_id"], locator, row])
+            add_record(definition, fields, [definition["source_id"], locator, row], sparse_table=True)
 
     def bind_spans(definition, values, origin):
         fields = {}
@@ -221,7 +233,9 @@ def mixed_mapping_drafts(*, rules, datasets, namespace, baseline, question_ids, 
             if span["field"] in fields:
                 fail("MAPPING_FIELD_AMBIGUOUS", "a record field cannot have multiple spans")
             fields[span["field"]] = (span["quote"], item)
-            spans.append({**span, "record_id": definition["record_id"], "evidence_refs": item["evidence_refs"]})
+            spans.append({**span, "record_id": definition["record_id"], "evidence_refs": item["evidence_refs"],
+                          "coordinate_basis": "KG_IR_NORMALIZED_TEXT_UNICODE_CODEPOINTS",
+                          "transformation_refs": item["transformation_refs"]})
         add_record(definition, fields, origin)
 
     for definition in rules["text_templates"]:
@@ -267,8 +281,12 @@ def mixed_mapping_drafts(*, rules, datasets, namespace, baseline, question_ids, 
         draft(occurrence, "-class", "ABOX", candidate_body(candidate_type="CLASS_ASSERTION", subject_iri=iri, object_iri=definition["class_iri"]),
               bindings, [ref], [element(definition["class_iri"], "CLASS")])
         for index, (field, mapping) in enumerate(sorted(definition["literals"].items())):
+            if field not in fields:
+                continue  # A sparse missing literal cell is OMIT, not evidence.
             suffix = str(index)
-            literal = typed_value(fields[field][0], mapping["datatype"])
+            source_cell = fields[field][1]
+            source_kind = evidence[source_cell["evidence_refs"][0]]["locator"]["locator_kind"]
+            literal = typed_value(fields[field][0], mapping["datatype"], source_kind=source_kind)
             property_id = element(mapping["predicate_iri"], "DATA_PROPERTY")
             draft(occurrence, "-mapping-" + suffix, "MAPPING", candidate_body(candidate_type="FIELD_TO_DATA_PROPERTY",
                 source_field=field, target_iri=mapping["predicate_iri"], conversion_policy="IDENTITY" if mapping["datatype"] == "string" else "CONTROLLED_LOOKUP", null_policy="OMIT"), [fields[field]], baseline_refs=[property_id])

@@ -1,5 +1,5 @@
 """Closed data-only mixed-source profile shared by service and offline mapper."""
-from typing import Literal
+from typing import Annotated, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -31,7 +31,7 @@ class RecordDefinition(ProfileDTO):
     identity_space: str = Field(pattern=r"^[a-z][a-z0-9-]{0,50}$")
     id_field: str = Field(min_length=1, max_length=100)
     identity_aliases: list[IdentityAlias] = Field(default_factory=list, max_length=1000)
-    literals: dict[str, TypedField] = Field(default_factory=dict, max_length=100)
+    literals: dict[Annotated[str, Field(min_length=1, max_length=100)], TypedField] = Field(default_factory=dict, max_length=100)
     references: list[IdentityReference] = Field(default_factory=list, max_length=100)
 
 

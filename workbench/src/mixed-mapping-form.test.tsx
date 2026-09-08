@@ -32,7 +32,7 @@ it('allows evidence span annotation without asking users to edit candidate JSON'
  fireEvent.click(screen.getByRole('button',{name:'添加原文记录'}));
  const panel=within(screen.getByRole('group',{name:'原文记录 1'}));
  fireEvent.change(panel.getByLabelText('标注原文条目'),{target:{value:'text'}});
- const text=panel.getByLabelText('原文（选中要绑定的文字）') as HTMLTextAreaElement;
+ const text=panel.getByLabelText('证据文本（选中要绑定的文字）') as HTMLTextAreaElement;
  text.setSelectionRange(3,7);
  fireEvent.select(text);
  fireEvent.change(panel.getByLabelText('标注字段名'),{target:{value:'id'}});
