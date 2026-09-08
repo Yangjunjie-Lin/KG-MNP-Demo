@@ -15,6 +15,7 @@ quality:
 contracts:
 	$(PYTHON) scripts/generate_contract_catalog.py --check
 	$(PYTHON) tools/generate_compiler_contracts.py --check
+	$(PYTHON) tools/check_domain_baselines.py --check
 
 backend:
 	$(PYTHON) tools/run_backend_tests.py

@@ -1859,6 +1859,103 @@
       "artifact_compatibility": "No artifact content affected",
       "decision": "REPLACE_AND_DELETE",
       "reason": "Heading-only README is neither test implementation nor coverage evidence"
+    },
+    {
+      "old_path": "scripts/generate_prompt02_pack_manifests.py",
+      "old_responsibility": "Historical one-time schema/catalog/manifest/golden migration writer",
+      "actual_callers": [],
+      "replacement_path": "tools/check_domain_baselines.py",
+      "replacement_behavior": "No obsolete Catalog schema/version rewrite or baseline regeneration. Current Catalog plus original 115 schema bytes/IDs and original MNP84/Minimal assets checked without redefining expectations from current data.",
+      "replacement_test_nodeids": [
+        "tests/compatibility/test_contract_versions.py",
+        "tests/compatibility/test_domain_baseline_audit.py",
+        "tests/contracts/test_catalog.py"
+      ],
+      "artifact_compatibility": "No generated schema or asset changed/deleted; original generation source remains in Git history",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Historical migration assumptions no longer match current Catalog; lifecycle --check reproduced obsolete retained-count assertion. Ongoing frozen-resource/lock checks replace obsolete writers.",
+      "evidence": "runtime_logs/p09/generator-retirement.xml (3 PASS) plus current Catalog and compiler-contract --check"
+    },
+    {
+      "old_path": "scripts/generate_prompt04_contracts.py",
+      "old_responsibility": "Historical one-time schema/catalog/manifest/golden migration writer",
+      "actual_callers": [],
+      "replacement_path": "scripts/generate_contract_catalog.py; tools/generate_compiler_contracts.py; tests/compatibility/test_contract_versions.py",
+      "replacement_behavior": "No obsolete Catalog schema/version rewrite or baseline regeneration. Current Catalog plus original 115 schema bytes/IDs and original MNP84/Minimal assets checked without redefining expectations from current data.",
+      "replacement_test_nodeids": [
+        "tests/compatibility/test_contract_versions.py",
+        "tests/compatibility/test_domain_baseline_audit.py",
+        "tests/contracts/test_catalog.py"
+      ],
+      "artifact_compatibility": "No generated schema or asset changed/deleted; original generation source remains in Git history",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Historical migration assumptions no longer match current Catalog; lifecycle --check reproduced obsolete retained-count assertion. Ongoing frozen-resource/lock checks replace obsolete writers.",
+      "evidence": "runtime_logs/p09/generator-retirement.xml (3 PASS) plus current Catalog and compiler-contract --check"
+    },
+    {
+      "old_path": "scripts/generate_prompt05_contracts.py",
+      "old_responsibility": "Historical one-time schema/catalog/manifest/golden migration writer",
+      "actual_callers": [],
+      "replacement_path": "scripts/generate_contract_catalog.py; tools/generate_compiler_contracts.py; tests/compatibility/test_contract_versions.py",
+      "replacement_behavior": "No obsolete Catalog schema/version rewrite or baseline regeneration. Current Catalog plus original 115 schema bytes/IDs and original MNP84/Minimal assets checked without redefining expectations from current data.",
+      "replacement_test_nodeids": [
+        "tests/compatibility/test_contract_versions.py",
+        "tests/compatibility/test_domain_baseline_audit.py",
+        "tests/contracts/test_catalog.py"
+      ],
+      "artifact_compatibility": "No generated schema or asset changed/deleted; original generation source remains in Git history",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Historical migration assumptions no longer match current Catalog; lifecycle --check reproduced obsolete retained-count assertion. Ongoing frozen-resource/lock checks replace obsolete writers.",
+      "evidence": "runtime_logs/p09/generator-retirement.xml (3 PASS) plus current Catalog and compiler-contract --check"
+    },
+    {
+      "old_path": "scripts/generate_prompt06_contracts.py",
+      "old_responsibility": "Historical one-time schema/catalog/manifest/golden migration writer",
+      "actual_callers": [
+        "docs/contracts/prompt-06-lifecycle-contracts.md (rewritten as docs/contracts/lifecycle.md)"
+      ],
+      "replacement_path": "scripts/generate_contract_catalog.py; tools/generate_compiler_contracts.py; tests/compatibility/test_contract_versions.py",
+      "replacement_behavior": "No obsolete Catalog schema/version rewrite or baseline regeneration. Current Catalog plus original 115 schema bytes/IDs and original MNP84/Minimal assets checked without redefining expectations from current data.",
+      "replacement_test_nodeids": [
+        "tests/compatibility/test_contract_versions.py",
+        "tests/compatibility/test_domain_baseline_audit.py",
+        "tests/contracts/test_catalog.py"
+      ],
+      "artifact_compatibility": "No generated schema or asset changed/deleted; original generation source remains in Git history",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Historical migration assumptions no longer match current Catalog; lifecycle --check reproduced obsolete retained-count assertion. Ongoing frozen-resource/lock checks replace obsolete writers.",
+      "evidence": "runtime_logs/p09/generator-retirement.xml (3 PASS) plus current Catalog and compiler-contract --check"
+    },
+    {
+      "old_path": "scripts/generate_mnp_prompt01_content_golden.py",
+      "old_responsibility": "Historical one-time schema/catalog/manifest/golden migration writer",
+      "actual_callers": [],
+      "replacement_path": "tools/check_domain_baselines.py",
+      "replacement_behavior": "No obsolete Catalog schema/version rewrite or baseline regeneration. Current Catalog plus original 115 schema bytes/IDs and original MNP84/Minimal assets checked without redefining expectations from current data.",
+      "replacement_test_nodeids": [
+        "tests/compatibility/test_contract_versions.py",
+        "tests/compatibility/test_domain_baseline_audit.py",
+        "tests/contracts/test_catalog.py"
+      ],
+      "artifact_compatibility": "No generated schema or asset changed/deleted; original generation source remains in Git history",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Historical migration assumptions no longer match current Catalog; lifecycle --check reproduced obsolete retained-count assertion. Ongoing frozen-resource/lock checks replace obsolete writers.",
+      "evidence": "runtime_logs/p09/generator-retirement.xml (3 PASS) plus current Catalog and compiler-contract --check"
+    },
+    {
+      "old_path": "docs/contracts/prompt-06-lifecycle-contracts.md",
+      "old_responsibility": "Old Catalog 1.3 migration commands and package0.6 claim",
+      "actual_callers": [
+        "documentation"
+      ],
+      "replacement_path": "docs/contracts/lifecycle.md",
+      "replacement_behavior": "Current contract authority/version rules and current read-only verification entrypoints",
+      "replacement_test_nodeids": [
+        "tests/refactor/test_product_docs.py::test_document_links_point_to_present_local_targets"
+      ],
+      "artifact_compatibility": "No contract changed",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Current product documentation must not instruct the retired Catalog downgrade writer"
     }
   ],
   "test_migration": [
