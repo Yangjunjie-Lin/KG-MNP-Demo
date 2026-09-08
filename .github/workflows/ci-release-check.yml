@@ -1,19 +1,28 @@
-name: Build artifacts
+name: Isolated distribution verification
 on: [pull_request, workflow_dispatch]
 permissions:
   contents: read
 jobs:
   distributions:
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, windows-latest]
+    runs-on: ${{ matrix.os }}
     timeout-minutes: 45
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - uses: ./.github/actions/setup-toolchain
-      - run: npm --prefix workbench run build
-      - run: python -m build --wheel --sdist --outdir runtime_logs/distributions
+      - run: python tools/verify_distribution.py --output runtime_logs/distributions
       - uses: actions/upload-artifact@v4
         with:
-          name: unverified-candidate-distributions
-          path: runtime_logs/distributions
+          name: distribution-evidence-${{ matrix.os }}
+          path: |
+            runtime_logs/distributions/artifacts/*
+            runtime_logs/distributions/rebuilt/*
+            runtime_logs/distributions/distribution-verification.json
+            runtime_logs/distributions/*/receipt.json
+            runtime_logs/distributions/*/command.log
+            runtime_logs/distributions/*-runtime/probe.json

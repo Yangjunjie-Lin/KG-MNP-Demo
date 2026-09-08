@@ -27,8 +27,7 @@ browser:
 	$(PYTHON) tools/run_browser_verification.py
 
 build:
-	npm --prefix workbench run build
-	$(PYTHON) -m build --wheel --sdist --outdir runtime_logs/distributions
+	$(PYTHON) tools/build_distribution.py
 
 verify-release-candidate:
 	$(PYTHON) tools/verify_candidate.py --include-browser
