@@ -1,4 +1,4 @@
-"""Assessment service retained for the legacy eligibility example.
+"""Read-only evaluation of frozen MNP eligibility examples.
 
 Reuses existing input_adapter, rdf_builder, validator, OWL-RL, evaluator, and
 trace_graph. Does not re-implement eligibility rules.
@@ -35,7 +35,7 @@ from kg_mnp.input_adapter import (
     NormalizedCaseInput,
     normalize_case_input,
 )
-from kg_mnp.loader import merge_reference_graph, project_root
+from kg_mnp.loader import merge_reference_graph
 from kg_mnp.rdf_builder import build_case_graph
 from kg_mnp.rule_engine import RuleConfigurationError
 from kg_mnp.trace_graph import TraceSubgraphIntegrityError, build_assessment_subgraph
@@ -53,96 +53,6 @@ def _validation_payload(label: str, result) -> dict[str, Any]:
         "conforms": bool(result.conforms),
         "detail": result.text if not result.conforms else "",
     }
-
-
-def _write_json(path: Path, payload: Any) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(
-        json.dumps(payload, ensure_ascii=False, indent=2, sort_keys=True) + "\n",
-        encoding="utf-8",
-    )
-
-
-def _artifact_rel_names() -> dict[str, str]:
-    return {
-        "normalized_input": "normalized_input.json",
-        "input_graph": "input_graph.ttl",
-        "input_validation": "input_validation.json",
-        "inference": "inference.json",
-        "evaluation": "evaluation.json",
-        "assessment_graph": "assessment_graph.ttl",
-        "assessment_validation": "assessment_validation.json",
-        "trace_subgraph": "trace_subgraph.json",
-        "assessment_response": "assessment_response.json",
-    }
-
-
-def write_assessment_artifacts(
-    execution: AssessmentExecution,
-    artifact_dir: Path | str,
-    *,
-    write_html: bool = False,
-) -> dict[str, str]:
-    """Write artifacts to ``artifact_dir``. Returns relative artifact names only."""
-    output_dir = Path(artifact_dir)
-    output_dir.mkdir(parents=True, exist_ok=True)
-    names = _artifact_rel_names()
-
-    if execution.normalized is not None:
-        _write_json(output_dir / names["normalized_input"], execution.normalized)
-
-    if execution.instance_graph is not None:
-        execution.instance_graph.serialize(
-            destination=output_dir / names["input_graph"], format="turtle"
-        )
-
-    validations = execution.response.get("validations") or {}
-    if validations.get("input_graph"):
-        _write_json(output_dir / names["input_validation"], validations["input_graph"])
-    elif validations.get("json_schema"):
-        _write_json(output_dir / names["input_validation"], validations["json_schema"])
-
-    if execution.response.get("inference"):
-        _write_json(output_dir / names["inference"], execution.response["inference"])
-
-    if execution.evaluation is not None:
-        _write_json(output_dir / names["evaluation"], execution.evaluation)
-
-    if execution.assessment_graph is not None:
-        execution.assessment_graph.serialize(
-            destination=output_dir / names["assessment_graph"], format="turtle"
-        )
-
-    if validations.get("assessment_graph"):
-        _write_json(
-            output_dir / names["assessment_validation"],
-            validations["assessment_graph"],
-        )
-
-    if execution.response.get("trace_subgraph"):
-        _write_json(
-            output_dir / names["trace_subgraph"],
-            execution.response["trace_subgraph"],
-        )
-
-    _write_json(output_dir / names["assessment_response"], execution.response)
-
-    if write_html and execution.normalized is not None and execution.evaluation is not None:
-        from kg_mnp.pipeline import _render_report
-
-        html = _render_report(
-            execution.normalized,
-            validations.get("input_graph") or empty_validation("Input Graph Validation"),
-            validations.get("assessment_graph")
-            or empty_validation("Assessment Graph Validation"),
-            execution.evaluation,
-            execution.response.get("trace_subgraph") or {"nodes": [], "edges": []},
-            execution.response.get("inference") or {},
-        )
-        (output_dir / "report.html").write_text(html, encoding="utf-8")
-        names = {**names, "report": "report.html"}
-
-    return {k: v for k, v in names.items()}
 
 
 @dataclass
@@ -365,20 +275,12 @@ def evaluate_normalized_case(
 
 
 class AssessmentService:
-    """Stable façade for dict/file assessment and what-if scenarios."""
-
-    def __init__(self, *, default_artifact_root: Path | None = None) -> None:
-        self.default_artifact_root = default_artifact_root or (
-            project_root() / "runtime_outputs"
-        )
+    """In-memory assessment reader; no current product publication authority."""
 
     def assess_dict(
         self,
         payload: dict[str, Any],
         *,
-        persist_artifacts: bool = False,
-        artifact_dir: Path | None = None,
-        write_html: bool = False,
         execution_id: str | None = None,
         raise_on_error: bool = False,
     ) -> dict[str, Any]:
@@ -421,14 +323,6 @@ class AssessmentService:
                 raise
             return exc.to_dict()
 
-        if persist_artifacts:
-            out = Path(artifact_dir) if artifact_dir else (
-                self.default_artifact_root / (execution.case_id or "unknown")
-            )
-            artifacts = write_assessment_artifacts(
-                execution, out, write_html=write_html
-            )
-            execution.response["artifacts"] = artifacts
 
         if raise_on_error and execution.error is not None:
             # Attach response for callers that want both.
@@ -449,9 +343,6 @@ class AssessmentService:
         self,
         input_path: Path,
         *,
-        persist_artifacts: bool = False,
-        artifact_dir: Path | None = None,
-        write_html: bool = False,
         execution_id: str | None = None,
         raise_on_error: bool = False,
     ) -> dict[str, Any]:
@@ -488,9 +379,6 @@ class AssessmentService:
 
         return self.assess_dict(
             raw,
-            persist_artifacts=persist_artifacts,
-            artifact_dir=artifact_dir,
-            write_html=write_html,
             execution_id=execution_id,
             raise_on_error=raise_on_error,
         )
@@ -499,9 +387,6 @@ class AssessmentService:
         self,
         baseline_payload: dict[str, Any],
         changes: dict[str, Any],
-        *,
-        persist_artifacts: bool = False,
-        artifact_dir: Path | None = None,
     ) -> dict[str, Any]:
         """Deep-merge ``changes`` into baseline and re-assess with full diffs."""
         from kg_mnp.application.comparison import build_what_if_diff
@@ -510,8 +395,6 @@ class AssessmentService:
         baseline = self.assess_dict(baseline_payload, raise_on_error=False)
         scenario = self.assess_dict(
             merged,
-            persist_artifacts=persist_artifacts,
-            artifact_dir=artifact_dir,
             raise_on_error=False,
         )
         diff = build_what_if_diff(baseline, scenario, changes=changes)
@@ -525,9 +408,6 @@ class AssessmentService:
         self,
         payload: dict[str, Any],
         *,
-        persist_artifacts: bool = False,
-        artifact_dir: Path | None = None,
-        write_html: bool = False,
         execution_id: str | None = None,
     ) -> AssessmentExecution:
         """Like ``assess_dict`` but returns the full ``AssessmentExecution``."""
@@ -545,12 +425,4 @@ class AssessmentService:
             execution_id=execution_id,
             process_payload=process_payload,
         )
-        if persist_artifacts:
-            out = Path(artifact_dir) if artifact_dir else (
-                self.default_artifact_root / (execution.case_id or "unknown")
-            )
-            artifacts = write_assessment_artifacts(
-                execution, out, write_html=write_html
-            )
-            execution.response["artifacts"] = artifacts
         return execution

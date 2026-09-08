@@ -26,6 +26,235 @@
   ],
   "entries": [
     {
+      "old_path": "src/kg_mnp/pipeline.py; scripts/showcase_demo.py",
+      "old_responsibility": "Standalone MNP assessment publication/HTML generator, not the ontology engineering product",
+      "actual_callers": [
+        "tests/test_pipeline.py",
+        "tests/test_showcase.py",
+        "tests/application/test_assessment_service.py",
+        "tests/test_rule_version_selection.py",
+        "tests/test_trace_graph.py"
+      ],
+      "replacement_path": "src/kg_mnp/services; workbench; tests/compatibility/test_mnp_assessment_reader.py; existing MNP rule/trace tests",
+      "replacement_behavior": "No root eligibility publishing command or standalone HTML app. Frozen MNP evidence and temporal rule evaluation retained directly without filesystem publication. Package/Release writes require the current authenticated workflow.",
+      "replacement_test_nodeids": [
+        "tests/compatibility/test_mnp_assessment_reader.py::test_old_eligibility_publishers_are_retired",
+        "tests/compatibility/test_mnp_assessment_reader.py::test_case03_rule_and_evidence_bindings_are_preserved",
+        "tests/compatibility/test_mnp_assessment_reader.py::test_dual_validation_and_trace_use_real_graph",
+        "tests/compatibility/test_mnp_assessment_reader.py::test_invalid_input_never_publishes",
+        "tests/compatibility/test_mnp_assessment_reader.py::test_repeatable_reader_leaves_source_and_workspace_unchanged"
+      ],
+      "artifact_compatibility": "MNP84/Minimal/frozen Schemas untouched; old MNP README contains historical commands and is intentionally not rewritten",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Already replaced root console workflow retired in source. No copy of either obsolete platform retained."
+    },
+    {
+      "old_path": "scripts/export_demo_results.py",
+      "old_responsibility": "Standalone MNP assessment publication/HTML generator, not the ontology engineering product",
+      "actual_callers": [
+        "tests/test_pipeline.py",
+        "tests/test_showcase.py",
+        "tests/application/test_assessment_service.py",
+        "tests/test_rule_version_selection.py",
+        "tests/test_trace_graph.py"
+      ],
+      "replacement_path": "src/kg_mnp/services; workbench; tests/compatibility/test_mnp_assessment_reader.py; existing MNP rule/trace tests",
+      "replacement_behavior": "No root eligibility publishing command or standalone HTML app. Frozen MNP evidence and temporal rule evaluation retained directly without filesystem publication. Package/Release writes require the current authenticated workflow.",
+      "replacement_test_nodeids": [
+        "tests/compatibility/test_mnp_assessment_reader.py::test_old_eligibility_publishers_are_retired",
+        "tests/compatibility/test_mnp_assessment_reader.py::test_case03_rule_and_evidence_bindings_are_preserved",
+        "tests/compatibility/test_mnp_assessment_reader.py::test_dual_validation_and_trace_use_real_graph",
+        "tests/compatibility/test_mnp_assessment_reader.py::test_invalid_input_never_publishes",
+        "tests/compatibility/test_mnp_assessment_reader.py::test_repeatable_reader_leaves_source_and_workspace_unchanged"
+      ],
+      "artifact_compatibility": "MNP84/Minimal/frozen Schemas untouched; old MNP README contains historical commands and is intentionally not rewritten",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Uncalled one-time writer targeting an obsolete docs demo JSON; original results remain in Git."
+    },
+    {
+      "old_path": "src/kg_mnp/application/assessment_service.py (write_assessment_artifacts, persistence options and default runtime root)",
+      "old_responsibility": "Standalone MNP assessment publication/HTML generator, not the ontology engineering product",
+      "actual_callers": [
+        "tests/test_pipeline.py",
+        "tests/test_showcase.py",
+        "tests/application/test_assessment_service.py",
+        "tests/test_rule_version_selection.py",
+        "tests/test_trace_graph.py"
+      ],
+      "replacement_path": "src/kg_mnp/services; workbench; tests/compatibility/test_mnp_assessment_reader.py; existing MNP rule/trace tests",
+      "replacement_behavior": "No root eligibility publishing command or standalone HTML app. Frozen MNP evidence and temporal rule evaluation retained directly without filesystem publication. Package/Release writes require the current authenticated workflow.",
+      "replacement_test_nodeids": [
+        "tests/compatibility/test_mnp_assessment_reader.py::test_old_eligibility_publishers_are_retired",
+        "tests/compatibility/test_mnp_assessment_reader.py::test_case03_rule_and_evidence_bindings_are_preserved",
+        "tests/compatibility/test_mnp_assessment_reader.py::test_dual_validation_and_trace_use_real_graph",
+        "tests/compatibility/test_mnp_assessment_reader.py::test_invalid_input_never_publishes",
+        "tests/compatibility/test_mnp_assessment_reader.py::test_repeatable_reader_leaves_source_and_workspace_unchanged"
+      ],
+      "artifact_compatibility": "MNP84/Minimal/frozen Schemas untouched; old MNP README contains historical commands and is intentionally not rewritten",
+      "decision": "MERGE",
+      "reason": "Only deterministic in-memory/file-input evaluation remains for frozen MNP behavior; all artifact and HTML publication branches removed."
+    },
+    {
+      "old_path": "src/kg_mnp/workbench/manifest.py::build_workbench_package",
+      "old_responsibility": "Legacy frontend overwrite/copy builder",
+      "actual_callers": [
+        "tests/workbench/test_workbench_package.py"
+      ],
+      "replacement_path": "workbench build; tools/build_distribution.py; src/kg_mnp/workbench/manifest.py::reconstruct_workbench_manifest",
+      "replacement_behavior": "One current frontend build. Historical manifest reconstruction is read-only and shared by validator, using the common link-safe closed-set reader.",
+      "replacement_test_nodeids": [
+        "tests/compatibility/test_readonly_reconstruction.py::test_old_workbench_has_no_writable_entrypoint",
+        "tests/workbench/test_workbench_package.py::test_package_validation_fails_on_bundle_or_manifest_tampering"
+      ],
+      "artifact_compatibility": "Original versioned manifest semantics preserved; no historical UI copied back",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Removed old directory clearing and bundle publisher, retained minimal format reader.",
+      "evidence": "workbench-writer-retirement-green-b.xml: 15 PASS; initial set/dict TypeError retained in first attempt."
+    },
+    {
+      "old_path": "src/kg_mnp/ingestion/transaction.py; src/kg_mnp/semantic_kernel/transaction.py; src/kg_mnp/modeling/control_plane/artifacts.py (duplicate staging publication paths)",
+      "old_responsibility": "Separate fixed staging/rename and failure cleanup implementations",
+      "actual_callers": [
+        "IngestionExecutor",
+        "SemanticCompiler",
+        "modeling control plane"
+      ],
+      "replacement_path": "src/kg_mnp/ingestion/transaction.py::commit_staged_directory; existing WorkspaceOperationLock; src/kg_mnp/services/execution.py",
+      "replacement_behavior": "Shared no-overwrite directory commit with bounded Windows sharing retry. Each operation owns unique staging; entering semantic transaction failure releases its lock; unlisted directory is not silently accepted as immutable reuse.",
+      "replacement_test_nodeids": [
+        "tests/workspace/test_transaction_staging.py",
+        "tests/workspace/test_artifact_commit.py",
+        "tests/compilation_transactions/test_transactions.py",
+        "tests/services/test_core_fencing.py"
+      ],
+      "artifact_compatibility": "Unreleased compiler0.5.1 snapshot changes, historical0.5.0 package not rewritten",
+      "decision": "MERGE",
+      "reason": "Reuses existing lock and service fencing; no third lock/CAS authority.",
+      "evidence": "current-staging-red.xml: 4 FAIL; current-staging-green.xml: 14 PASS; current-transactions.xml: 46 PASS"
+    },
+    {
+      "old_path": "src/kg_mnp/workbench/relay.py; tests/workbench/test_relay_security.py",
+      "old_responsibility": "Unauthenticated fixed Phase01 HTTP relay and its allowlists",
+      "actual_callers": [
+        "tests/workbench/test_relay_security.py; old HTTP factory already retired"
+      ],
+      "replacement_path": "src/kg_mnp/api/app.py; src/kg_mnp/services/requests.py",
+      "replacement_behavior": "Single same-origin authenticated API dispatch, closed query DTO and no forwarding endpoint. All 23 exact old negative-case nodes migrated.",
+      "replacement_test_nodeids": [
+        "tests/security/test_no_legacy_relay.py::test_absolute_encoded_and_non_allowlisted_targets_are_blocked[/%2568%2574%2574%2570%253A%252F%252Fevil.example]",
+        "tests/security/test_no_legacy_relay.py::test_absolute_encoded_and_non_allowlisted_targets_are_blocked[/%68%74%74%70%3A%2F%2Fevil.example]",
+        "tests/security/test_no_legacy_relay.py::test_absolute_encoded_and_non_allowlisted_targets_are_blocked[//evil.example/]",
+        "tests/security/test_no_legacy_relay.py::test_absolute_encoded_and_non_allowlisted_targets_are_blocked[/@evil.example]",
+        "tests/security/test_no_legacy_relay.py::test_absolute_encoded_and_non_allowlisted_targets_are_blocked[/api/v1/../../secret]",
+        "tests/security/test_no_legacy_relay.py::test_absolute_encoded_and_non_allowlisted_targets_are_blocked[/api/v1/entity?iri=http://evil.example]",
+        "tests/security/test_no_legacy_relay.py::test_absolute_encoded_and_non_allowlisted_targets_are_blocked[/repositories/attacker]",
+        "tests/security/test_no_legacy_relay.py::test_absolute_encoded_and_non_allowlisted_targets_are_blocked[\\\\\\\\evil.example\\\\share]",
+        "tests/security/test_no_legacy_relay.py::test_absolute_encoded_and_non_allowlisted_targets_are_blocked[http://evil.example/]",
+        "tests/security/test_no_legacy_relay.py::test_absolute_encoded_and_non_allowlisted_targets_are_blocked[https://evil.example/]",
+        "tests/security/test_no_legacy_relay.py::test_mutating_and_tunneling_methods_are_blocked[CONNECT]",
+        "tests/security/test_no_legacy_relay.py::test_mutating_and_tunneling_methods_are_blocked[DELETE]",
+        "tests/security/test_no_legacy_relay.py::test_mutating_and_tunneling_methods_are_blocked[OPTIONS]",
+        "tests/security/test_no_legacy_relay.py::test_mutating_and_tunneling_methods_are_blocked[PATCH]",
+        "tests/security/test_no_legacy_relay.py::test_mutating_and_tunneling_methods_are_blocked[POST]",
+        "tests/security/test_no_legacy_relay.py::test_mutating_and_tunneling_methods_are_blocked[PUT]",
+        "tests/security/test_no_legacy_relay.py::test_query_parameter_allowlist_is_exact",
+        "tests/security/test_no_legacy_relay.py::test_client_cannot_choose_any_upstream[http://0.0.0.0:8081]",
+        "tests/security/test_no_legacy_relay.py::test_client_cannot_choose_any_upstream[http://127.0.0.1:8081/api]",
+        "tests/security/test_no_legacy_relay.py::test_client_cannot_choose_any_upstream[http://evil.example:8081]",
+        "tests/security/test_no_legacy_relay.py::test_client_cannot_choose_any_upstream[http://localhost:8081]",
+        "tests/security/test_no_legacy_relay.py::test_client_cannot_choose_any_upstream[http://user@127.0.0.1:8081]",
+        "tests/security/test_no_legacy_relay.py::test_client_cannot_choose_any_upstream[https://127.0.0.1:8081]"
+      ],
+      "artifact_compatibility": "No historical data/schema/reader changed; relay was runtime-only",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "No active product/read-compatibility callers. Not retained as a second network service.",
+      "evidence": "runtime_logs/p09/relay-retirement-red.xml (23 PASS/1 expected retirement assertion FAIL); relay-retirement-green.xml (37 PASS)"
+    },
+    {
+      "old_path": "src/kg_mnp/compilation/artifacts.py; src/kg_mnp/compilation/compiler.py::compile_formal_semantics",
+      "old_responsibility": "Historical compiler output writer with forced recursive replacement and fixed staging directory",
+      "actual_callers": [
+        "tests/compilation/_helpers.py",
+        "scripts/amendment_controlled_fixture.py",
+        "scripts/graphdb_integration.py",
+        "historical publication/GraphDB/WebVOWL builders"
+      ],
+      "replacement_path": "src/kg_mnp/modeling/control_plane/artifacts.py; src/kg_mnp/ingestion/transaction.py; src/kg_mnp/services/execution.py",
+      "replacement_behavior": "Current product publishes through Workspace transactions and fenced service generations. Historical reconstruction only returns bytes; isolated fixture/probe materialization has no overwrite, cleanup, lock or authority.",
+      "replacement_test_nodeids": [
+        "tests/workspace/test_artifact_commit.py::test_transient_windows_commit_denial_is_retried",
+        "tests/workspace/test_artifact_commit.py::test_permanent_commit_denial_never_returns_success",
+        "tests/workspace/test_artifact_commit.py::test_retry_does_not_replace_concurrently_created_target",
+        "tests/workspace/test_artifact_commit.py::test_non_windows_permission_denial_is_not_retried",
+        "tests/workspace/test_artifact_commit.py::test_staging_failure_preserves_unowned_destination",
+        "tests/workspace/test_artifact_commit.py::test_preexisting_staging_directory_is_not_removed",
+        "tests/compatibility/test_readonly_reconstruction.py::test_old_compilation_has_no_writable_entrypoint"
+      ],
+      "artifact_compatibility": "Original schema, golden and package bytes unchanged; authority/tamper reconstruction remains required",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "One retired writer and its public convenience removed, not relocated. Narrow scripts/artifact_fixture.py only materializes fresh fixture bytes. Current failure cleanup no longer deletes unowned destinations or stale staging data.",
+      "evidence": "runtime_logs/p09/writer-retirement-red.xml (initial 10 FAIL); writer-retirement-green.xml (10 PASS); retirement-helpers.xml (10 PASS)"
+    },
+    {
+      "old_path": "src/kg_mnp/graphdb/package_builder.py (write branch and output_dir/force parameters)",
+      "old_responsibility": "Historical reconstruction plus a second mutable product build/export path",
+      "actual_callers": [
+        "tests/graphdb",
+        "scripts/amendment_controlled_fixture.py",
+        "scripts/graphdb_integration.py",
+        "scripts/webvowl_integration.py"
+      ],
+      "replacement_path": "src/kg_mnp/semantic_kernel/compiler.py; src/kg_mnp/semantic_kernel/packaging; scripts/artifact_fixture.py",
+      "replacement_behavior": "Current builds remain authority-gated. Historical reader reconstruction keeps exact bytes, validates original authorities, rejects arbitrary writer options and never publishes output.",
+      "replacement_test_nodeids": [
+        "tests/compatibility/test_readonly_reconstruction.py::test_historical_builders_accept_no_output_or_force",
+        "tests/graphdb/test_graphdb_package_reconstruction.py::test_package_rebuilds_and_validates_closed_set",
+        "tests/graphdb/test_graphdb_import_security.py::test_rehashed_manifest_attack_is_rejected_by_reconstruction"
+      ],
+      "artifact_compatibility": "Versioned historical schemas and artifact bytes preserved; only output conveniences retired",
+      "decision": "MERGE",
+      "reason": "Pure byte reconstruction remains a compatibility dependency; this increment does not claim the entire historical backend is retired."
+    },
+    {
+      "old_path": "src/kg_mnp/publication/package_builder.py (write branch and output_dir/force parameters)",
+      "old_responsibility": "Historical reconstruction plus a second mutable product build/export path",
+      "actual_callers": [
+        "tests/publication",
+        "scripts/amendment_controlled_fixture.py",
+        "scripts/graphdb_integration.py",
+        "scripts/webvowl_integration.py"
+      ],
+      "replacement_path": "src/kg_mnp/semantic_kernel/compiler.py; src/kg_mnp/semantic_kernel/packaging; scripts/artifact_fixture.py",
+      "replacement_behavior": "Current builds remain authority-gated. Historical reader reconstruction keeps exact bytes, validates original authorities, rejects arbitrary writer options and never publishes output.",
+      "replacement_test_nodeids": [
+        "tests/compatibility/test_readonly_reconstruction.py::test_historical_builders_accept_no_output_or_force",
+        "tests/publication/test_publication_stage08.py::test_publication_validator_rebuilds_closed_artifact_set",
+        "tests/publication/test_publication_stage08.py::test_tracked_publication_goldens_reconstruct"
+      ],
+      "artifact_compatibility": "Versioned historical schemas and artifact bytes preserved; only output conveniences retired",
+      "decision": "MERGE",
+      "reason": "Pure byte reconstruction remains a compatibility dependency; this increment does not claim the entire historical backend is retired."
+    },
+    {
+      "old_path": "src/kg_mnp/webvowl/package_builder.py (write branch and output_dir/force parameters)",
+      "old_responsibility": "Historical reconstruction plus a second mutable product build/export path",
+      "actual_callers": [
+        "tests/webvowl",
+        "scripts/amendment_controlled_fixture.py",
+        "scripts/graphdb_integration.py",
+        "scripts/webvowl_integration.py"
+      ],
+      "replacement_path": "src/kg_mnp/semantic_kernel/compiler.py; src/kg_mnp/semantic_kernel/packaging; scripts/artifact_fixture.py",
+      "replacement_behavior": "Current builds remain authority-gated. Historical reader reconstruction keeps exact bytes, validates original authorities, rejects arbitrary writer options and never publishes output.",
+      "replacement_test_nodeids": [
+        "tests/compatibility/test_readonly_reconstruction.py::test_historical_builders_accept_no_output_or_force",
+        "tests/webvowl/test_stage08_core.py::test_webvowl_package_validator_reconstructs_exact_bytes"
+      ],
+      "artifact_compatibility": "Versioned historical schemas and artifact bytes preserved; only output conveniences retired",
+      "decision": "MERGE",
+      "reason": "Pure byte reconstruction remains a compatibility dependency; this increment does not claim the entire historical backend is retired."
+    },
+    {
       "old_path": "tests/refactor/_historical_freeze.py",
       "old_responsibility": "Freeze live source path/count/hash",
       "actual_callers": [
@@ -2072,6 +2301,397 @@
     }
   ],
   "test_migration": [
+    {
+      "old_nodeid": "tests/test_pipeline.py::test_json_case03_blocked",
+      "new_nodeid": [
+        "tests/compatibility/test_mnp_assessment_reader.py::test_case03_rule_and_evidence_bindings_are_preserved",
+        "tests/compatibility/test_mnp_assessment_reader.py::test_dual_validation_and_trace_use_real_graph"
+      ],
+      "behavior": "MNP rule/evidence/trace closure, dual SHACL, deterministic input and version/time semantics, or retired standalone artifact presentation",
+      "decision": "REPLACE_OR_RETAIN_ASSURANCE",
+      "reason": "Direct in-memory MNP behavior tests retain semantic assertions; current fenced service owns formal files. Retired standalone HTML title/filename and CLI-wrapper requirements are not current product promises. No evaluator/rule/ontology/fixture/schema bytes relocated or rewritten.",
+      "evidence": "runtime_logs/p09/mnp-reader-green.xml; current-transactions.xml. Real MNP Browser/full fixed-revision acceptance remains separately mandatory."
+    },
+    {
+      "old_nodeid": "tests/test_pipeline.py::test_trace_contains_real_entities",
+      "new_nodeid": [
+        "tests/compatibility/test_mnp_assessment_reader.py::test_dual_validation_and_trace_use_real_graph"
+      ],
+      "behavior": "MNP rule/evidence/trace closure, dual SHACL, deterministic input and version/time semantics, or retired standalone artifact presentation",
+      "decision": "REPLACE_OR_RETAIN_ASSURANCE",
+      "reason": "Direct in-memory MNP behavior tests retain semantic assertions; current fenced service owns formal files. Retired standalone HTML title/filename and CLI-wrapper requirements are not current product promises. No evaluator/rule/ontology/fixture/schema bytes relocated or rewritten.",
+      "evidence": "runtime_logs/p09/mnp-reader-green.xml; current-transactions.xml. Real MNP Browser/full fixed-revision acceptance remains separately mandatory."
+    },
+    {
+      "old_nodeid": "tests/test_pipeline.py::test_output_files_complete",
+      "new_nodeid": [
+        "tests/services/test_source_workflow.py::test_real_tcp_source_ingestion_evidence_chain",
+        "tests/services/test_core_fencing.py::test_atomic_publication_and_restart_receipt_recovery"
+      ],
+      "behavior": "MNP rule/evidence/trace closure, dual SHACL, deterministic input and version/time semantics, or retired standalone artifact presentation",
+      "decision": "REPLACE_OR_RETAIN_ASSURANCE",
+      "reason": "Direct in-memory MNP behavior tests retain semantic assertions; current fenced service owns formal files. Retired standalone HTML title/filename and CLI-wrapper requirements are not current product promises. No evaluator/rule/ontology/fixture/schema bytes relocated or rewritten.",
+      "evidence": "runtime_logs/p09/mnp-reader-green.xml; current-transactions.xml. Real MNP Browser/full fixed-revision acceptance remains separately mandatory."
+    },
+    {
+      "old_nodeid": "tests/test_pipeline.py::test_repeatable_pipeline",
+      "new_nodeid": [
+        "tests/compatibility/test_mnp_assessment_reader.py::test_repeatable_reader_leaves_source_and_workspace_unchanged"
+      ],
+      "behavior": "MNP rule/evidence/trace closure, dual SHACL, deterministic input and version/time semantics, or retired standalone artifact presentation",
+      "decision": "REPLACE_OR_RETAIN_ASSURANCE",
+      "reason": "Direct in-memory MNP behavior tests retain semantic assertions; current fenced service owns formal files. Retired standalone HTML title/filename and CLI-wrapper requirements are not current product promises. No evaluator/rule/ontology/fixture/schema bytes relocated or rewritten.",
+      "evidence": "runtime_logs/p09/mnp-reader-green.xml; current-transactions.xml. Real MNP Browser/full fixed-revision acceptance remains separately mandatory."
+    },
+    {
+      "old_nodeid": "tests/test_pipeline.py::test_assessment_time_affects_contract",
+      "new_nodeid": [
+        "tests/compatibility/test_mnp_assessment_reader.py::test_assessment_time_is_not_ignored"
+      ],
+      "behavior": "MNP rule/evidence/trace closure, dual SHACL, deterministic input and version/time semantics, or retired standalone artifact presentation",
+      "decision": "REPLACE_OR_RETAIN_ASSURANCE",
+      "reason": "Direct in-memory MNP behavior tests retain semantic assertions; current fenced service owns formal files. Retired standalone HTML title/filename and CLI-wrapper requirements are not current product promises. No evaluator/rule/ontology/fixture/schema bytes relocated or rewritten.",
+      "evidence": "runtime_logs/p09/mnp-reader-green.xml; current-transactions.xml. Real MNP Browser/full fixed-revision acceptance remains separately mandatory."
+    },
+    {
+      "old_nodeid": "tests/test_pipeline.py::test_invalid_json_does_not_publish",
+      "new_nodeid": [
+        "tests/compatibility/test_mnp_assessment_reader.py::test_invalid_input_never_publishes"
+      ],
+      "behavior": "MNP rule/evidence/trace closure, dual SHACL, deterministic input and version/time semantics, or retired standalone artifact presentation",
+      "decision": "REPLACE_OR_RETAIN_ASSURANCE",
+      "reason": "Direct in-memory MNP behavior tests retain semantic assertions; current fenced service owns formal files. Retired standalone HTML title/filename and CLI-wrapper requirements are not current product promises. No evaluator/rule/ontology/fixture/schema bytes relocated or rewritten.",
+      "evidence": "runtime_logs/p09/mnp-reader-green.xml; current-transactions.xml. Real MNP Browser/full fixed-revision acceptance remains separately mandatory."
+    },
+    {
+      "old_nodeid": "tests/test_showcase.py::test_showcase_runs_rdf_offline",
+      "new_nodeid": [
+        "tests/compatibility/test_mnp_assessment_reader.py::test_case03_rule_and_evidence_bindings_are_preserved",
+        "tests/services/test_mnp_nonempty_workflow.py::test_mnp_mapping_record_is_nonempty_evidence_bound_and_conforms"
+      ],
+      "behavior": "MNP rule/evidence/trace closure, dual SHACL, deterministic input and version/time semantics, or retired standalone artifact presentation",
+      "decision": "REPLACE_OR_RETAIN_ASSURANCE",
+      "reason": "Direct in-memory MNP behavior tests retain semantic assertions; current fenced service owns formal files. Retired standalone HTML title/filename and CLI-wrapper requirements are not current product promises. No evaluator/rule/ontology/fixture/schema bytes relocated or rewritten.",
+      "evidence": "runtime_logs/p09/mnp-reader-green.xml; current-transactions.xml. Real MNP Browser/full fixed-revision acceptance remains separately mandatory."
+    },
+    {
+      "old_nodeid": "tests/test_showcase.py::test_showcase_writes_only_dual_validation_files",
+      "new_nodeid": [
+        "tests/compatibility/test_mnp_assessment_reader.py::test_dual_validation_and_trace_use_real_graph"
+      ],
+      "behavior": "MNP rule/evidence/trace closure, dual SHACL, deterministic input and version/time semantics, or retired standalone artifact presentation",
+      "decision": "REPLACE_OR_RETAIN_ASSURANCE",
+      "reason": "Direct in-memory MNP behavior tests retain semantic assertions; current fenced service owns formal files. Retired standalone HTML title/filename and CLI-wrapper requirements are not current product promises. No evaluator/rule/ontology/fixture/schema bytes relocated or rewritten.",
+      "evidence": "runtime_logs/p09/mnp-reader-green.xml; current-transactions.xml. Real MNP Browser/full fixed-revision acceptance remains separately mandatory."
+    },
+    {
+      "old_nodeid": "tests/test_showcase.py::test_case03_contract_block_and_trace",
+      "new_nodeid": [
+        "tests/test_rules.py::test_case_03_contract_block_full_trace",
+        "tests/test_trace_graph.py::test_case03_subgraph_complete",
+        "tests/test_trace_graph.py::test_no_fabricated_linear_edges"
+      ],
+      "behavior": "MNP rule/evidence/trace closure, dual SHACL, deterministic input and version/time semantics, or retired standalone artifact presentation",
+      "decision": "REPLACE_OR_RETAIN_ASSURANCE",
+      "reason": "Direct in-memory MNP behavior tests retain semantic assertions; current fenced service owns formal files. Retired standalone HTML title/filename and CLI-wrapper requirements are not current product promises. No evaluator/rule/ontology/fixture/schema bytes relocated or rewritten.",
+      "evidence": "runtime_logs/p09/mnp-reader-green.xml; current-transactions.xml. Real MNP Browser/full fixed-revision acceptance remains separately mandatory."
+    },
+    {
+      "old_nodeid": "tests/test_showcase.py::test_all_cases_summary",
+      "new_nodeid": [
+        "tests/test_rules.py::test_case_01_eligible",
+        "tests/test_rules.py::test_case_04_two_independent_blocks",
+        "tests/test_rules.py::test_case_05_manual_review_expired_evidence",
+        "tests/test_rules.py::test_case_06_updated_rule_blocks_port_interval",
+        "tests/test_trace_graph.py::test_case06_affected_assessments_deduped",
+        "tests/cases/test_case07_case09.py::test_case07_eligible_process_blocked",
+        "tests/cases/test_case07_case09.py::test_case08_termination_pending",
+        "tests/cases/test_case07_case09.py::test_case09_identity_conflict"
+      ],
+      "behavior": "MNP rule/evidence/trace closure, dual SHACL, deterministic input and version/time semantics, or retired standalone artifact presentation",
+      "decision": "REPLACE_OR_RETAIN_ASSURANCE",
+      "reason": "Direct in-memory MNP behavior tests retain semantic assertions; current fenced service owns formal files. Retired standalone HTML title/filename and CLI-wrapper requirements are not current product promises. No evaluator/rule/ontology/fixture/schema bytes relocated or rewritten.",
+      "evidence": "runtime_logs/p09/mnp-reader-green.xml; current-transactions.xml. Real MNP Browser/full fixed-revision acceptance remains separately mandatory."
+    },
+    {
+      "old_nodeid": "tests/test_showcase.py::test_html_generated",
+      "new_nodeid": [
+        "tests/workbench/test_current_client_boundaries.py::test_only_the_current_local_bundle_is_a_product_frontend",
+        "workbench/tests/minimal.e2e.ts (mnp scenario)"
+      ],
+      "behavior": "MNP rule/evidence/trace closure, dual SHACL, deterministic input and version/time semantics, or retired standalone artifact presentation",
+      "decision": "REPLACE_OR_RETAIN_ASSURANCE",
+      "reason": "Direct in-memory MNP behavior tests retain semantic assertions; current fenced service owns formal files. Retired standalone HTML title/filename and CLI-wrapper requirements are not current product promises. No evaluator/rule/ontology/fixture/schema bytes relocated or rewritten.",
+      "evidence": "runtime_logs/p09/mnp-reader-green.xml; current-transactions.xml. Real MNP Browser/full fixed-revision acceptance remains separately mandatory."
+    },
+    {
+      "old_nodeid": "tests/test_showcase.py::test_what_if_does_not_modify_ttl",
+      "new_nodeid": [
+        "tests/application/test_assessment_service.py::test_what_if_contract_expired_becomes_eligible"
+      ],
+      "behavior": "MNP rule/evidence/trace closure, dual SHACL, deterministic input and version/time semantics, or retired standalone artifact presentation",
+      "decision": "REPLACE_OR_RETAIN_ASSURANCE",
+      "reason": "Direct in-memory MNP behavior tests retain semantic assertions; current fenced service owns formal files. Retired standalone HTML title/filename and CLI-wrapper requirements are not current product promises. No evaluator/rule/ontology/fixture/schema bytes relocated or rewritten.",
+      "evidence": "runtime_logs/p09/mnp-reader-green.xml; current-transactions.xml. Real MNP Browser/full fixed-revision acceptance remains separately mandatory."
+    },
+    {
+      "old_nodeid": "tests/test_showcase.py::test_showcase_repeatable",
+      "new_nodeid": [
+        "tests/compatibility/test_mnp_assessment_reader.py::test_repeatable_reader_leaves_source_and_workspace_unchanged",
+        "tests/test_rules.py::test_deterministic_repeat"
+      ],
+      "behavior": "MNP rule/evidence/trace closure, dual SHACL, deterministic input and version/time semantics, or retired standalone artifact presentation",
+      "decision": "REPLACE_OR_RETAIN_ASSURANCE",
+      "reason": "Direct in-memory MNP behavior tests retain semantic assertions; current fenced service owns formal files. Retired standalone HTML title/filename and CLI-wrapper requirements are not current product promises. No evaluator/rule/ontology/fixture/schema bytes relocated or rewritten.",
+      "evidence": "runtime_logs/p09/mnp-reader-green.xml; current-transactions.xml. Real MNP Browser/full fixed-revision acceptance remains separately mandatory."
+    },
+    {
+      "old_nodeid": "tests/test_trace_graph.py::test_dual_shacl_in_showcase_pipeline",
+      "new_nodeid": [
+        "tests/test_trace_graph.py::test_dual_shacl_in_memory_assessment"
+      ],
+      "behavior": "MNP rule/evidence/trace closure, dual SHACL, deterministic input and version/time semantics, or retired standalone artifact presentation",
+      "decision": "REPLACE_OR_RETAIN_ASSURANCE",
+      "reason": "Direct in-memory MNP behavior tests retain semantic assertions; current fenced service owns formal files. Retired standalone HTML title/filename and CLI-wrapper requirements are not current product promises. No evaluator/rule/ontology/fixture/schema bytes relocated or rewritten.",
+      "evidence": "runtime_logs/p09/mnp-reader-green.xml; current-transactions.xml. Real MNP Browser/full fixed-revision acceptance remains separately mandatory."
+    },
+    {
+      "old_nodeid": "tests/application/test_assessment_service.py::test_cli_and_service_agree",
+      "new_nodeid": [
+        "tests/application/test_assessment_service.py::test_file_and_dictionary_readers_agree"
+      ],
+      "behavior": "MNP rule/evidence/trace closure, dual SHACL, deterministic input and version/time semantics, or retired standalone artifact presentation",
+      "decision": "REPLACE_OR_RETAIN_ASSURANCE",
+      "reason": "Direct in-memory MNP behavior tests retain semantic assertions; current fenced service owns formal files. Retired standalone HTML title/filename and CLI-wrapper requirements are not current product promises. No evaluator/rule/ontology/fixture/schema bytes relocated or rewritten.",
+      "evidence": "runtime_logs/p09/mnp-reader-green.xml; current-transactions.xml. Real MNP Browser/full fixed-revision acceptance remains separately mandatory."
+    },
+    {
+      "old_nodeid": "tests/application/test_assessment_service.py::test_assess_file_full_run",
+      "new_nodeid": [
+        "tests/application/test_assessment_service.py::test_assess_file_full_run",
+        "tests/services/test_source_workflow.py::test_real_tcp_source_ingestion_evidence_chain"
+      ],
+      "behavior": "MNP rule/evidence/trace closure, dual SHACL, deterministic input and version/time semantics, or retired standalone artifact presentation",
+      "decision": "REPLACE_OR_RETAIN_ASSURANCE",
+      "reason": "Direct in-memory MNP behavior tests retain semantic assertions; current fenced service owns formal files. Retired standalone HTML title/filename and CLI-wrapper requirements are not current product promises. No evaluator/rule/ontology/fixture/schema bytes relocated or rewritten.",
+      "evidence": "runtime_logs/p09/mnp-reader-green.xml; current-transactions.xml. Real MNP Browser/full fixed-revision acceptance remains separately mandatory."
+    },
+    {
+      "old_nodeid": "tests/workbench/test_relay_security.py::test_absolute_encoded_and_non_allowlisted_targets_are_blocked[/%2568%2574%2574%2570%253A%252F%252Fevil.example]",
+      "new_nodeid": "tests/security/test_no_legacy_relay.py::test_absolute_encoded_and_non_allowlisted_targets_are_blocked[/%2568%2574%2574%2570%253A%252F%252Fevil.example]",
+      "behavior": "Reject malicious target/address, tunnel/write method, unknown query parameters or caller-selected upstream",
+      "decision": "REPLACE",
+      "reason": "Same parameter case tested against current API/closed DTO; arbitrary HTTP upstream selection removed entirely. Reuses current authentication and has no proxy service.",
+      "evidence": "runtime_logs/p09/relay-retirement-green.xml (37 PASS; 23 migrated cases plus current boundary regressions)"
+    },
+    {
+      "old_nodeid": "tests/workbench/test_relay_security.py::test_absolute_encoded_and_non_allowlisted_targets_are_blocked[/%68%74%74%70%3A%2F%2Fevil.example]",
+      "new_nodeid": "tests/security/test_no_legacy_relay.py::test_absolute_encoded_and_non_allowlisted_targets_are_blocked[/%68%74%74%70%3A%2F%2Fevil.example]",
+      "behavior": "Reject malicious target/address, tunnel/write method, unknown query parameters or caller-selected upstream",
+      "decision": "REPLACE",
+      "reason": "Same parameter case tested against current API/closed DTO; arbitrary HTTP upstream selection removed entirely. Reuses current authentication and has no proxy service.",
+      "evidence": "runtime_logs/p09/relay-retirement-green.xml (37 PASS; 23 migrated cases plus current boundary regressions)"
+    },
+    {
+      "old_nodeid": "tests/workbench/test_relay_security.py::test_absolute_encoded_and_non_allowlisted_targets_are_blocked[//evil.example/]",
+      "new_nodeid": "tests/security/test_no_legacy_relay.py::test_absolute_encoded_and_non_allowlisted_targets_are_blocked[//evil.example/]",
+      "behavior": "Reject malicious target/address, tunnel/write method, unknown query parameters or caller-selected upstream",
+      "decision": "REPLACE",
+      "reason": "Same parameter case tested against current API/closed DTO; arbitrary HTTP upstream selection removed entirely. Reuses current authentication and has no proxy service.",
+      "evidence": "runtime_logs/p09/relay-retirement-green.xml (37 PASS; 23 migrated cases plus current boundary regressions)"
+    },
+    {
+      "old_nodeid": "tests/workbench/test_relay_security.py::test_absolute_encoded_and_non_allowlisted_targets_are_blocked[/@evil.example]",
+      "new_nodeid": "tests/security/test_no_legacy_relay.py::test_absolute_encoded_and_non_allowlisted_targets_are_blocked[/@evil.example]",
+      "behavior": "Reject malicious target/address, tunnel/write method, unknown query parameters or caller-selected upstream",
+      "decision": "REPLACE",
+      "reason": "Same parameter case tested against current API/closed DTO; arbitrary HTTP upstream selection removed entirely. Reuses current authentication and has no proxy service.",
+      "evidence": "runtime_logs/p09/relay-retirement-green.xml (37 PASS; 23 migrated cases plus current boundary regressions)"
+    },
+    {
+      "old_nodeid": "tests/workbench/test_relay_security.py::test_absolute_encoded_and_non_allowlisted_targets_are_blocked[/api/v1/../../secret]",
+      "new_nodeid": "tests/security/test_no_legacy_relay.py::test_absolute_encoded_and_non_allowlisted_targets_are_blocked[/api/v1/../../secret]",
+      "behavior": "Reject malicious target/address, tunnel/write method, unknown query parameters or caller-selected upstream",
+      "decision": "REPLACE",
+      "reason": "Same parameter case tested against current API/closed DTO; arbitrary HTTP upstream selection removed entirely. Reuses current authentication and has no proxy service.",
+      "evidence": "runtime_logs/p09/relay-retirement-green.xml (37 PASS; 23 migrated cases plus current boundary regressions)"
+    },
+    {
+      "old_nodeid": "tests/workbench/test_relay_security.py::test_absolute_encoded_and_non_allowlisted_targets_are_blocked[/api/v1/entity?iri=http://evil.example]",
+      "new_nodeid": "tests/security/test_no_legacy_relay.py::test_absolute_encoded_and_non_allowlisted_targets_are_blocked[/api/v1/entity?iri=http://evil.example]",
+      "behavior": "Reject malicious target/address, tunnel/write method, unknown query parameters or caller-selected upstream",
+      "decision": "REPLACE",
+      "reason": "Same parameter case tested against current API/closed DTO; arbitrary HTTP upstream selection removed entirely. Reuses current authentication and has no proxy service.",
+      "evidence": "runtime_logs/p09/relay-retirement-green.xml (37 PASS; 23 migrated cases plus current boundary regressions)"
+    },
+    {
+      "old_nodeid": "tests/workbench/test_relay_security.py::test_absolute_encoded_and_non_allowlisted_targets_are_blocked[/repositories/attacker]",
+      "new_nodeid": "tests/security/test_no_legacy_relay.py::test_absolute_encoded_and_non_allowlisted_targets_are_blocked[/repositories/attacker]",
+      "behavior": "Reject malicious target/address, tunnel/write method, unknown query parameters or caller-selected upstream",
+      "decision": "REPLACE",
+      "reason": "Same parameter case tested against current API/closed DTO; arbitrary HTTP upstream selection removed entirely. Reuses current authentication and has no proxy service.",
+      "evidence": "runtime_logs/p09/relay-retirement-green.xml (37 PASS; 23 migrated cases plus current boundary regressions)"
+    },
+    {
+      "old_nodeid": "tests/workbench/test_relay_security.py::test_absolute_encoded_and_non_allowlisted_targets_are_blocked[\\\\\\\\evil.example\\\\share]",
+      "new_nodeid": "tests/security/test_no_legacy_relay.py::test_absolute_encoded_and_non_allowlisted_targets_are_blocked[\\\\\\\\evil.example\\\\share]",
+      "behavior": "Reject malicious target/address, tunnel/write method, unknown query parameters or caller-selected upstream",
+      "decision": "REPLACE",
+      "reason": "Same parameter case tested against current API/closed DTO; arbitrary HTTP upstream selection removed entirely. Reuses current authentication and has no proxy service.",
+      "evidence": "runtime_logs/p09/relay-retirement-green.xml (37 PASS; 23 migrated cases plus current boundary regressions)"
+    },
+    {
+      "old_nodeid": "tests/workbench/test_relay_security.py::test_absolute_encoded_and_non_allowlisted_targets_are_blocked[http://evil.example/]",
+      "new_nodeid": "tests/security/test_no_legacy_relay.py::test_absolute_encoded_and_non_allowlisted_targets_are_blocked[http://evil.example/]",
+      "behavior": "Reject malicious target/address, tunnel/write method, unknown query parameters or caller-selected upstream",
+      "decision": "REPLACE",
+      "reason": "Same parameter case tested against current API/closed DTO; arbitrary HTTP upstream selection removed entirely. Reuses current authentication and has no proxy service.",
+      "evidence": "runtime_logs/p09/relay-retirement-green.xml (37 PASS; 23 migrated cases plus current boundary regressions)"
+    },
+    {
+      "old_nodeid": "tests/workbench/test_relay_security.py::test_absolute_encoded_and_non_allowlisted_targets_are_blocked[https://evil.example/]",
+      "new_nodeid": "tests/security/test_no_legacy_relay.py::test_absolute_encoded_and_non_allowlisted_targets_are_blocked[https://evil.example/]",
+      "behavior": "Reject malicious target/address, tunnel/write method, unknown query parameters or caller-selected upstream",
+      "decision": "REPLACE",
+      "reason": "Same parameter case tested against current API/closed DTO; arbitrary HTTP upstream selection removed entirely. Reuses current authentication and has no proxy service.",
+      "evidence": "runtime_logs/p09/relay-retirement-green.xml (37 PASS; 23 migrated cases plus current boundary regressions)"
+    },
+    {
+      "old_nodeid": "tests/workbench/test_relay_security.py::test_mutating_and_tunneling_methods_are_blocked[CONNECT]",
+      "new_nodeid": "tests/security/test_no_legacy_relay.py::test_mutating_and_tunneling_methods_are_blocked[CONNECT]",
+      "behavior": "Reject malicious target/address, tunnel/write method, unknown query parameters or caller-selected upstream",
+      "decision": "REPLACE",
+      "reason": "Same parameter case tested against current API/closed DTO; arbitrary HTTP upstream selection removed entirely. Reuses current authentication and has no proxy service.",
+      "evidence": "runtime_logs/p09/relay-retirement-green.xml (37 PASS; 23 migrated cases plus current boundary regressions)"
+    },
+    {
+      "old_nodeid": "tests/workbench/test_relay_security.py::test_mutating_and_tunneling_methods_are_blocked[DELETE]",
+      "new_nodeid": "tests/security/test_no_legacy_relay.py::test_mutating_and_tunneling_methods_are_blocked[DELETE]",
+      "behavior": "Reject malicious target/address, tunnel/write method, unknown query parameters or caller-selected upstream",
+      "decision": "REPLACE",
+      "reason": "Same parameter case tested against current API/closed DTO; arbitrary HTTP upstream selection removed entirely. Reuses current authentication and has no proxy service.",
+      "evidence": "runtime_logs/p09/relay-retirement-green.xml (37 PASS; 23 migrated cases plus current boundary regressions)"
+    },
+    {
+      "old_nodeid": "tests/workbench/test_relay_security.py::test_mutating_and_tunneling_methods_are_blocked[OPTIONS]",
+      "new_nodeid": "tests/security/test_no_legacy_relay.py::test_mutating_and_tunneling_methods_are_blocked[OPTIONS]",
+      "behavior": "Reject malicious target/address, tunnel/write method, unknown query parameters or caller-selected upstream",
+      "decision": "REPLACE",
+      "reason": "Same parameter case tested against current API/closed DTO; arbitrary HTTP upstream selection removed entirely. Reuses current authentication and has no proxy service.",
+      "evidence": "runtime_logs/p09/relay-retirement-green.xml (37 PASS; 23 migrated cases plus current boundary regressions)"
+    },
+    {
+      "old_nodeid": "tests/workbench/test_relay_security.py::test_mutating_and_tunneling_methods_are_blocked[PATCH]",
+      "new_nodeid": "tests/security/test_no_legacy_relay.py::test_mutating_and_tunneling_methods_are_blocked[PATCH]",
+      "behavior": "Reject malicious target/address, tunnel/write method, unknown query parameters or caller-selected upstream",
+      "decision": "REPLACE",
+      "reason": "Same parameter case tested against current API/closed DTO; arbitrary HTTP upstream selection removed entirely. Reuses current authentication and has no proxy service.",
+      "evidence": "runtime_logs/p09/relay-retirement-green.xml (37 PASS; 23 migrated cases plus current boundary regressions)"
+    },
+    {
+      "old_nodeid": "tests/workbench/test_relay_security.py::test_mutating_and_tunneling_methods_are_blocked[POST]",
+      "new_nodeid": "tests/security/test_no_legacy_relay.py::test_mutating_and_tunneling_methods_are_blocked[POST]",
+      "behavior": "Reject malicious target/address, tunnel/write method, unknown query parameters or caller-selected upstream",
+      "decision": "REPLACE",
+      "reason": "Same parameter case tested against current API/closed DTO; arbitrary HTTP upstream selection removed entirely. Reuses current authentication and has no proxy service.",
+      "evidence": "runtime_logs/p09/relay-retirement-green.xml (37 PASS; 23 migrated cases plus current boundary regressions)"
+    },
+    {
+      "old_nodeid": "tests/workbench/test_relay_security.py::test_mutating_and_tunneling_methods_are_blocked[PUT]",
+      "new_nodeid": "tests/security/test_no_legacy_relay.py::test_mutating_and_tunneling_methods_are_blocked[PUT]",
+      "behavior": "Reject malicious target/address, tunnel/write method, unknown query parameters or caller-selected upstream",
+      "decision": "REPLACE",
+      "reason": "Same parameter case tested against current API/closed DTO; arbitrary HTTP upstream selection removed entirely. Reuses current authentication and has no proxy service.",
+      "evidence": "runtime_logs/p09/relay-retirement-green.xml (37 PASS; 23 migrated cases plus current boundary regressions)"
+    },
+    {
+      "old_nodeid": "tests/workbench/test_relay_security.py::test_query_parameter_allowlist_is_exact",
+      "new_nodeid": "tests/security/test_no_legacy_relay.py::test_query_parameter_allowlist_is_exact",
+      "behavior": "Reject malicious target/address, tunnel/write method, unknown query parameters or caller-selected upstream",
+      "decision": "REPLACE",
+      "reason": "Same parameter case tested against current API/closed DTO; arbitrary HTTP upstream selection removed entirely. Reuses current authentication and has no proxy service.",
+      "evidence": "runtime_logs/p09/relay-retirement-green.xml (37 PASS; 23 migrated cases plus current boundary regressions)"
+    },
+    {
+      "old_nodeid": "tests/workbench/test_relay_security.py::test_upstream_is_frozen_to_explicit_ipv4_loopback[http://0.0.0.0:8081]",
+      "new_nodeid": "tests/security/test_no_legacy_relay.py::test_client_cannot_choose_any_upstream[http://0.0.0.0:8081]",
+      "behavior": "Reject malicious target/address, tunnel/write method, unknown query parameters or caller-selected upstream",
+      "decision": "REPLACE",
+      "reason": "Same parameter case tested against current API/closed DTO; arbitrary HTTP upstream selection removed entirely. Reuses current authentication and has no proxy service.",
+      "evidence": "runtime_logs/p09/relay-retirement-green.xml (37 PASS; 23 migrated cases plus current boundary regressions)"
+    },
+    {
+      "old_nodeid": "tests/workbench/test_relay_security.py::test_upstream_is_frozen_to_explicit_ipv4_loopback[http://127.0.0.1:8081/api]",
+      "new_nodeid": "tests/security/test_no_legacy_relay.py::test_client_cannot_choose_any_upstream[http://127.0.0.1:8081/api]",
+      "behavior": "Reject malicious target/address, tunnel/write method, unknown query parameters or caller-selected upstream",
+      "decision": "REPLACE",
+      "reason": "Same parameter case tested against current API/closed DTO; arbitrary HTTP upstream selection removed entirely. Reuses current authentication and has no proxy service.",
+      "evidence": "runtime_logs/p09/relay-retirement-green.xml (37 PASS; 23 migrated cases plus current boundary regressions)"
+    },
+    {
+      "old_nodeid": "tests/workbench/test_relay_security.py::test_upstream_is_frozen_to_explicit_ipv4_loopback[http://evil.example:8081]",
+      "new_nodeid": "tests/security/test_no_legacy_relay.py::test_client_cannot_choose_any_upstream[http://evil.example:8081]",
+      "behavior": "Reject malicious target/address, tunnel/write method, unknown query parameters or caller-selected upstream",
+      "decision": "REPLACE",
+      "reason": "Same parameter case tested against current API/closed DTO; arbitrary HTTP upstream selection removed entirely. Reuses current authentication and has no proxy service.",
+      "evidence": "runtime_logs/p09/relay-retirement-green.xml (37 PASS; 23 migrated cases plus current boundary regressions)"
+    },
+    {
+      "old_nodeid": "tests/workbench/test_relay_security.py::test_upstream_is_frozen_to_explicit_ipv4_loopback[http://localhost:8081]",
+      "new_nodeid": "tests/security/test_no_legacy_relay.py::test_client_cannot_choose_any_upstream[http://localhost:8081]",
+      "behavior": "Reject malicious target/address, tunnel/write method, unknown query parameters or caller-selected upstream",
+      "decision": "REPLACE",
+      "reason": "Same parameter case tested against current API/closed DTO; arbitrary HTTP upstream selection removed entirely. Reuses current authentication and has no proxy service.",
+      "evidence": "runtime_logs/p09/relay-retirement-green.xml (37 PASS; 23 migrated cases plus current boundary regressions)"
+    },
+    {
+      "old_nodeid": "tests/workbench/test_relay_security.py::test_upstream_is_frozen_to_explicit_ipv4_loopback[http://user@127.0.0.1:8081]",
+      "new_nodeid": "tests/security/test_no_legacy_relay.py::test_client_cannot_choose_any_upstream[http://user@127.0.0.1:8081]",
+      "behavior": "Reject malicious target/address, tunnel/write method, unknown query parameters or caller-selected upstream",
+      "decision": "REPLACE",
+      "reason": "Same parameter case tested against current API/closed DTO; arbitrary HTTP upstream selection removed entirely. Reuses current authentication and has no proxy service.",
+      "evidence": "runtime_logs/p09/relay-retirement-green.xml (37 PASS; 23 migrated cases plus current boundary regressions)"
+    },
+    {
+      "old_nodeid": "tests/workbench/test_relay_security.py::test_upstream_is_frozen_to_explicit_ipv4_loopback[https://127.0.0.1:8081]",
+      "new_nodeid": "tests/security/test_no_legacy_relay.py::test_client_cannot_choose_any_upstream[https://127.0.0.1:8081]",
+      "behavior": "Reject malicious target/address, tunnel/write method, unknown query parameters or caller-selected upstream",
+      "decision": "REPLACE",
+      "reason": "Same parameter case tested against current API/closed DTO; arbitrary HTTP upstream selection removed entirely. Reuses current authentication and has no proxy service.",
+      "evidence": "runtime_logs/p09/relay-retirement-green.xml (37 PASS; 23 migrated cases plus current boundary regressions)"
+    },
+    {
+      "old_nodeid": "tests/compilation/test_prompt08_atomic_commit.py::test_transient_windows_commit_denial_is_retried",
+      "behavior": "Windows transient retry, permanent permission denial and concurrent target preservation",
+      "new_nodeid": "tests/workspace/test_artifact_commit.py::test_transient_windows_commit_denial_is_retried",
+      "decision": "REPLACE",
+      "reason": "Same failure semantics now exercised through the current modeling artifact commit, not the retired legacy force writer. Additional failure/staging ownership tests strengthen non-deletion guarantees.",
+      "evidence": "runtime_logs/p09/writer-retirement-green.xml"
+    },
+    {
+      "old_nodeid": "tests/compilation/test_prompt08_atomic_commit.py::test_permanent_commit_denial_never_returns_success",
+      "behavior": "Windows transient retry, permanent permission denial and concurrent target preservation",
+      "new_nodeid": "tests/workspace/test_artifact_commit.py::test_permanent_commit_denial_never_returns_success",
+      "decision": "REPLACE",
+      "reason": "Same failure semantics now exercised through the current modeling artifact commit, not the retired legacy force writer. Additional failure/staging ownership tests strengthen non-deletion guarantees.",
+      "evidence": "runtime_logs/p09/writer-retirement-green.xml"
+    },
+    {
+      "old_nodeid": "tests/compilation/test_prompt08_atomic_commit.py::test_retry_does_not_replace_concurrently_created_target",
+      "behavior": "Windows transient retry, permanent permission denial and concurrent target preservation",
+      "new_nodeid": "tests/workspace/test_artifact_commit.py::test_retry_does_not_replace_concurrently_created_target",
+      "decision": "REPLACE",
+      "reason": "Same failure semantics now exercised through the current modeling artifact commit, not the retired legacy force writer. Additional failure/staging ownership tests strengthen non-deletion guarantees.",
+      "evidence": "runtime_logs/p09/writer-retirement-green.xml"
+    },
+    {
+      "old_nodeid": "tests/compilation/test_prompt08_atomic_commit.py::test_non_windows_permission_denial_is_not_retried",
+      "behavior": "Windows transient retry, permanent permission denial and concurrent target preservation",
+      "new_nodeid": "tests/workspace/test_artifact_commit.py::test_non_windows_permission_denial_is_not_retried",
+      "decision": "REPLACE",
+      "reason": "Same failure semantics now exercised through the current modeling artifact commit, not the retired legacy force writer. Additional failure/staging ownership tests strengthen non-deletion guarantees.",
+      "evidence": "runtime_logs/p09/writer-retirement-green.xml"
+    },
     {
       "old_nodeid": "tests/services/test_unified_service.py::test_durable_job_idempotency_and_fencing",
       "behavior": "Reject arbitrary server paths; idempotency and stale fencing",

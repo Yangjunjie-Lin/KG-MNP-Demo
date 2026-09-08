@@ -184,19 +184,17 @@ def test_repeatable_subgraph():
     assert a["nodes"] == b["nodes"]
 
 
-def test_dual_shacl_in_showcase_pipeline():
-    import importlib.util
+def test_dual_shacl_in_memory_assessment():
+    import json
+
+    from kg_mnp.application.assessment_service import AssessmentService
 
     root = Path(__file__).resolve().parents[1]
-    path = root / "scripts" / "showcase_demo.py"
-    spec = importlib.util.spec_from_file_location("showcase_demo", path)
-    mod = importlib.util.module_from_spec(spec)
-    assert spec and spec.loader
-    spec.loader.exec_module(mod)
-    primary = mod.evaluate_pipeline("CASE-03")
-    assert primary["input_validation"]["status"] == "PASSED"
-    assert primary["assessment_validation"]["status"] == "PASSED"
-    assert primary["evaluation"]["publishable"] is True
+    path = root / "domain_packs/mnp/fixtures/inputs/case03.json"
+    primary = AssessmentService().assess_execution(json.loads(path.read_bytes()))
+    assert primary.response["validations"]["input_graph"]["status"] == "PASSED"
+    assert primary.response["validations"]["assessment_graph"]["status"] == "PASSED"
+    assert primary.evaluation["publishable"] is True
 
 
 def test_assessment_missing_action_fails_result_validation():

@@ -101,14 +101,12 @@ def test_case06_hist_and_current_versions():
 def test_json_assessment_time_selects_version(tmp_path):
     import json
 
-    from kg_mnp.pipeline import run_pipeline
+    from kg_mnp.application.assessment_service import AssessmentService
 
     data = json.loads((ROOT / "domain_packs" / "mnp" / "fixtures" / "inputs" / "case03.json").read_text(encoding="utf-8"))
     data["assessment_time"] = "2026-05-15T00:00:00Z"
-    path = tmp_path / "early.json"
-    path.write_text(json.dumps(data), encoding="utf-8")
-    result = run_pipeline(path, tmp_path / "out", write_html=False)
-    port = next(r for r in result["evaluation"]["rules"] if r["rule_id"] == "MNP-ELIG-005")
+    result = AssessmentService().assess_execution(data)
+    port = next(r for r in result.evaluation["rules"] if r["rule_id"] == "MNP-ELIG-005")
     assert port["version"] == "1.0"
 
 
