@@ -24,6 +24,10 @@ P8 完整尝试为 1490 通过、7 失败、9 跳过；后续修复形成 1510 �
 
 ## 长期决策
 
+旧状态控制器已实际退役：GovernanceWorkspaceStore、ActivationStateStore、ActivationController 和旧解析/部署启动器不再存在。历史激活数据通过独立的只读事件重放校验，并用退役前保存的原始记录检验兼容；不会在读报告时新建旧数据库或执行控制器。GraphDB 使用当前已审核集成计划和真实显式/完整导出比对，旧自动容器/许可证写入流程已删除。旧 WebVOWL 页面、服务器与代理已删除，仅保留显式、离线、只读挂载的文件转换工具。
+
+早期 Stage01 曾删除旧 Neo4j/fullstack 平台，把携号转网资格评估降为领域示例；这不是永久禁止 Node、API 或数据库。当前中文工作台和持久化服务由后续明确需求建立，不能继续引用早期“Python-only”阶段说明作为现行架构。该次操作日志由固定 Git 历史保留。
+
 原阶段文档中的长期原则已归并到[当前架构](../architecture/toolchain.md)、[安全边界](../security/authority-boundaries.md)和[研究证据对照](../research/implementation-evidence.md)：观察/提案/确认/编译分离、Core 绑定身份与来源、离线精确依赖、不可变包、真实 Oracle、独立 Release/Pointer 与外部部署观测。
 
 有持续价值的 ADR 保留其历史背景，并标注被当前契约或入口迁移替代的条款。阶段报告和一次性失败计数不是永久产品文档；移除它们不改变原历史结果，也不移除法律授权、第三方声明或领域来源义务。

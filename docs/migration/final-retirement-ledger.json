@@ -1,5 +1,5 @@
 {
-  "status": "IN_PROGRESS_G1_G4_REQUIRED_REPLACEMENT_WORKFLOWS_PASSED",
+  "status": "CURRENT_RUNTIME_CONSOLIDATED_PENDING_FINAL_FIXED_REVISION_ACCEPTANCE",
   "source_commit": "9da17d126cb37166ff06084080770108da20afbe",
   "retired_product_files": [
     "web/workbench/index.html",
@@ -25,6 +25,20 @@
     }
   ],
   "entries": [
+    {
+      "old_path": "docs/migration/stage-01-repository-baseline.md",
+      "old_responsibility": "Historical cleanup process and superseded Python-only/legacy CLI instructions",
+      "actual_callers": [],
+      "replacement_path": "docs/migration/history-and-current-boundaries.md",
+      "replacement_behavior": "Durable decisions extracted; historical operation log preserved by fixed Git baseline, not current product instructions.",
+      "replacement_test_nodeids": [
+        "tests/refactor/test_product_docs.py",
+        "tests/compatibility/test_repository_history.py"
+      ],
+      "artifact_compatibility": "No domain/schema/source obligations changed",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Historical phase process is not the current architecture or operating guide."
+    },
     {
       "old_path": "src/kg_mnp/webvowl/runtime.py; scripts/webvowl_integration.py; scripts/webvowl_browser_smoke.py; scripts/workbench_browser_smoke.py; deploy/webvowl/docker-compose.integration.yml; deploy/webvowl/loopback-proxy.js; deploy/webvowl/webvowl-npm-shrinkwrap.json",
       "old_responsibility": "Second web frontend/server/proxy/container lifecycle and old Python Playwright validation runtimes",
