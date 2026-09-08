@@ -53,9 +53,33 @@ class ApplicationService:
 
     def runtime_check(self) -> dict[str, Any]:
         """Local CLI/authorized doctor only. Never use for public health."""
-        return {"status": "SERVICE_READY", "host": self.configuration.host, "port": self.configuration.port,
-                "operation_count": len(self.catalog), "workspace_root": str(self.root),
-                "workbench_backend_gate": "NOT_READY"}
+        import shutil
+
+        from kg_mnp.contracts.catalog import verify_catalog_lock
+        from kg_mnp.contracts.errors import ContractError
+        from kg_mnp.semantic_kernel.policy import load_compiler_policy
+        from kg_mnp.semantic_kernel.snapshot import build_compiler_snapshot
+
+        checks: dict[str, Any] = {}
+        try:
+            verify_catalog_lock()
+            checks["contracts"] = "LOCK_VERIFIED"
+        except (ContractError, OSError, ValueError):
+            checks["contracts"] = "INVALID"
+        try:
+            checks["domain_packs"] = discover(self.configuration.domain_packs_root)["domain_packs"]
+        except ServiceBoundaryError as exc:
+            checks["domain_packs"] = {"status": "BLOCKED", "code": exc.code}
+        static = Path(self.configuration.workbench_root) if self.configuration.workbench_root else Path(__file__).parents[1] / "workbench_static"
+        checks["workbench"] = "BUNDLE_PRESENT" if (static / "index.html").is_file() and (static / "assets").is_dir() else "BUNDLE_MISSING"
+        checks["java"] = "AVAILABLE" if shutil.which("java") else "MISSING"
+        try:
+            snapshot = build_compiler_snapshot(load_compiler_policy(), reasoner_jar=self.configuration.reasoner_jar)
+            checks["reasoner"] = snapshot["reasoner_bundle"]["availability"]
+        except (ContractError, OSError, ValueError):
+            checks["reasoner"] = "INVALID_OR_MISSING_BUNDLE"
+        return {"status": "INSPECTED", "checks": checks,
+            "meaning": "Local dependencies only; not semantic validation or release acceptance"}
 
     def operation_catalog(self) -> list[dict[str, Any]]:
         return [{**asdict(item), "required_permissions": list(item.required_permissions),
@@ -66,7 +90,7 @@ class ApplicationService:
         return {"capabilities": [{"operation_id": item.operation_id,
                                   "status": "BLOCKED_BY_POLICY" if not all(principal.can(p) for p in item.required_permissions)
                                   else "AVAILABLE" if item.operation_id in HANDLERS else "NOT_IMPLEMENTED"}
-                                 for item in self.catalog.values()], "workbench_backend_gate": "NOT_READY"}
+                                 for item in self.catalog.values()], "meaning": "Resource permission/handler availability; request preconditions still apply"}
 
     def authenticate(self, authorization: str) -> PrincipalReference:
         scheme, _, token = authorization.partition(" ")
