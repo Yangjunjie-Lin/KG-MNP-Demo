@@ -26,6 +26,25 @@
   ],
   "entries": [
     {
+      "old_path": "tools/consolidation_audit.py; scripts/build_ontology_release.py; scripts/stage03_term.py; scripts/stage03_term_catalog_part2.py; scripts/stage03_term_catalog_part3.py; scripts/stage03_term_catalog_part4.py; scripts/stage03_constants.py; scripts/migrate_ontology_iris.py; scripts/rewrite_case_semantics.py; scripts/normalize_domain_pack_text.py; scripts/generate_competency_questions.py; scripts/prompt03_cli_smoke.py",
+      "old_responsibility": "One-time requirement writer, source-asset migrations/catalog generation, and retired pre-service CLI smoke",
+      "actual_callers": ["Removed catalog parts called only by removed builder; checker was the sole remaining constants caller"],
+      "replacement_path": "scripts/check_ontology_release.py; src/kg_mnp/namespaces.py; tests/compatibility; tests/ontology_release; tests/services; tools/verify_candidate.py",
+      "replacement_behavior": "Current read-only asset/semantic checks, fixed-source history and original-operation mapping, authenticated source-to-evidence workflow and transport equivalence; requirement evidence is not regenerated from obsolete hard-coded limitations",
+      "replacement_test_nodeids": [
+        "tests/scripts/test_retired_asset_writers.py::test_one_time_writers_cannot_rewrite_frozen_assets_or_requirement_evidence",
+        "tests/scripts/test_retired_asset_writers.py::test_install_target_uses_only_declared_dependency_extras",
+        "tests/scripts/test_retired_asset_writers.py::test_readonly_ontology_check_uses_the_shared_current_namespace",
+        "tests/ontology_release/test_no_runtime_legacy_terms.py::test_no_unapproved_runtime_legacy_terms",
+        "tests/compatibility/test_domain_baseline_audit.py",
+        "tests/services/test_source_workflow.py",
+        "tests/services/test_unified_service.py"
+      ],
+      "artifact_compatibility": "No protected domain or Schema byte changed; deterministic sample generator and baseline reconstruction retained",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "No current runtime/CI callers; stage-specific source rewriting is not a second current product workflow. Only exact allowances for deleted script occurrences removed; no tests deleted."
+    },
+    {
       "old_path": "docs/migration/stage-01-repository-baseline.md",
       "old_responsibility": "Historical cleanup process and superseded Python-only/legacy CLI instructions",
       "actual_callers": [],

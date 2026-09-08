@@ -13,11 +13,8 @@ from rdflib.namespace import XSD
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "src"))
-sys.path.insert(0, str(ROOT / "scripts"))
-
-from stage03_constants import TERM_NS
-
 from kg_mnp.loader import load_ontology_graph, ontology_paths
+from kg_mnp.namespaces import BASE as TERM_NS
 
 RUNTIME_GLOBS = [
     "domain_packs/mnp/ontology/*.ttl",
@@ -39,9 +36,6 @@ def main() -> int:
         for path in ROOT.glob(pattern):
             text = path.read_text(encoding="utf-8")
             if "example.org" in text:
-                # allow comments in scripts that document migration? src should be clean
-                if path.name in {"migrate_ontology_iris.py", "stage03_constants.py"}:
-                    continue
                 errors.append(f"example.org found in runtime asset: {path.relative_to(ROOT)}")
 
     # Term uniqueness: each class/property defined in exactly one module file

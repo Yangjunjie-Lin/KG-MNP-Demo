@@ -48,6 +48,7 @@ def main():
         'compiler-contracts':[sys.executable,'tools/generate_compiler_contracts.py','--check'],
         'catalog':[sys.executable,'scripts/generate_contract_catalog.py','--check'],
         'domain-baselines':[sys.executable,'tools/check_domain_baselines.py','--check'],
+        'ingestion-example-determinism':[sys.executable,'scripts/generate_ingestion_examples.py','--check'],
         'frontend-lint':[npm,'--prefix','workbench','run','lint'],
         'frontend-types':[npm,'--prefix','workbench','run','typecheck'],
         'frontend-unit':[npm,'--prefix','workbench','test'],

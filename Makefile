@@ -3,7 +3,7 @@ PYTHON ?= python
 .PHONY: install quality contracts backend frontend browser build verify-release-candidate
 
 install:
-	$(PYTHON) -m pip install -c requirements-dev.lock -e ".[dev,webvowl]"
+	$(PYTHON) -m pip install -c requirements-dev.lock -e ".[dev]"
 	npm ci --prefix workbench
 
 quality:
