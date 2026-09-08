@@ -6,7 +6,7 @@
 
 - Source：9da17d126cb37166ff06084080770108da20afbe。
 - 目标分支：codex/toolchain-final-consolidation-p09。
-- 本检查点代码：aefe6509480ae28706dcc38712bf56d73ed0988b。
+- 本检查点代码：feba20fcbc569f52ce51a20af786ae5caf10fb03。
 - 最终 tested_commit：尚未建立。旧 3c0d0ad 全量通过仍在 final-verification.json 中作为历史检查点保留，不能认证后续代码。
 - 当前产品 0.9.0.dev0；编译器 0.5.1；快照/策略新增 1.1.0 契约；原 115 Schema 原字节和 ID 保留，当前 Catalog 117 项。
 
@@ -78,3 +78,13 @@ Python 依赖按已知公告作必要升级，并在独立环境验证；保留 
 5. 只有全部必需门通过，才考虑候选 Tag。
 
 GraphDB live 与外部业务执行器未配置，单列可选外部阻断；不能用来掩盖上述本地未完成项。没有 Live LLM/OCR/ASR、真实林业试点、外部 exactly-once 或生产安全认证声明。
+
+## 最新诊断检查点与修复
+
+95b4d50f1f66a27e15d245facec43061cc0f2d73 的完整后端集合为 1703 个唯一节点：1689 通过、5 失败、9 跳过，无缺项/额外节点。四项失败为旧 Forestry 版本/空包/Lock 冻结断言，另一项暴露解析流程接受伪造 confirmed 文件；均在之后的针对性修复中保留或增强断言，不把补测拼成新修订全绿。
+
+同检查点浏览器为 1 通过、4 失败：新增测试管理线程读取 stdin 阻塞了 Windows 验证子进程，后续 Source 任务排队。已复现并改用独立停止标记，真实 SHACL 子进程正反例的启动测试通过；未扩大业务等待时间。feba20f 的固定副本正在重新运行浏览器链路，包括真实 .kgop 下载与校验。
+
+Windows 与 Linux 各两套新环境的预构建 Wheel / Sdist 重建 Wheel 安装检查通过，但它们来自较早的脏树预检，不能认证最新交付包。Linux 安全/兼容子集为 184 通过、1 个旧 Forestry Lock 断言失败、0 跳过；首次运行缺少 pytest basetemp 父目录的 97 个 setup error 单独保留，新的 backend 入口已改为唯一且有明确父目录的运行目录。
+
+已进一步删除旧 HTTP/CLI 启动器、阶段报告和重复架构图、14 个空测试目录说明、旧 Catalog/Pack 迁移写入脚本；长期语义决策归并至当前架构和迁移摘要，原 53 操作改读固定 P8 Git 对象。原 Schema、领域资产、License 和有效历史包未随清理删除。剩余旧内部实现和最终固定修订全平台验收仍未完成。

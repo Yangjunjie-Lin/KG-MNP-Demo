@@ -2,9 +2,9 @@
   "decision": "NO_GO_REFACTOR_INCOMPLETE",
   "source_commit": "9da17d126cb37166ff06084080770108da20afbe",
   "branch": "codex/toolchain-final-consolidation-p09",
-  "implementation_checkpoint": "aefe6509480ae28706dcc38712bf56d73ed0988b",
+  "implementation_checkpoint": "feba20fcbc569f52ce51a20af786ae5caf10fb03",
   "tested_commit": null,
-  "final_fixed_revision_status": "NOT_RUN",
+  "final_fixed_revision_status": "NOT_RUN_AFTER_COMPLETE_CONSOLIDATION",
   "candidate_tag": null,
   "historical_fixed_checkpoint": {
     "backend": {
@@ -1067,5 +1067,94 @@
     "No external exactly-onceorproductionsecuritycertification",
     "Deprecation warnings retained; Windows skips are not LinuxPASS",
     "CI workflowconfigurationparsed,butnewremoteCIhasnotbeenexecuted"
-  ]
+  ],
+  "diagnostic_checkpoint_95": {
+    "tested_commit": "95b4d50f1f66a27e15d245facec43061cc0f2d73",
+    "tested_source_tree_digest": "a6f72846069178e414f3dd0cc3847357f54efc4d460f9889cc31177307a96825",
+    "backend": {
+      "status": "FAIL",
+      "collection_count": 1703,
+      "unique_executed_count": 1703,
+      "passed": 1689,
+      "failed": 5,
+      "errors": 0,
+      "skipped": 9,
+      "xfailed": 0,
+      "missing": [],
+      "extra": [],
+      "evidence": "runtime_logs/p09/fixed-95b4d50-559cf039/summary.json"
+    },
+    "failures": [
+      "Old Forestry version/zero-asset/lock assertions (four nodes)",
+      "Ingestion accepted an unrecognized file in confirmed authority directory (one node)"
+    ],
+    "browser": {
+      "status": "FAIL",
+      "passed": 1,
+      "failed": 4,
+      "evidence": "runtime_logs/p09/browser-runs/managed-beccddca65cb44c5bbdec7c2a188de25",
+      "cause": "Managed stdin reader blocked Windows multiprocessing startup; later source jobs queued behind it",
+      "shutdown": "Worker stopped, test credentials revoked/removed; no forged Package success"
+    },
+    "repairs": {
+      "commit": "7430719",
+      "evidence": [
+        "runtime_logs/p09/checkpoint-repairs.xml",
+        "runtime_logs/p09/confirmed-ingestion-repair2.xml",
+        "runtime_logs/p09/runner-parent-repair.xml"
+      ],
+      "meaning": "Targeted repair selections only; not a new full-revision PASS"
+    },
+    "linux": {
+      "checkout": "/var/tmp/kg-mnp-p95.aKXknQ",
+      "source_commit": "95b4d50f1f66a27e15d245facec43061cc0f2d73",
+      "python": "3.12.3",
+      "java": "Temurin 17.0.20.1+1",
+      "node": "24.18.0",
+      "npm": "11.16.0",
+      "first_subset": {
+        "passed": 87,
+        "failed": 1,
+        "errors": 97,
+        "cause": "Parent of explicit pytest basetemp absent in fresh checkout",
+        "evidence": "runtime_logs/p09/linux-capabilities-95/junit.xml"
+      },
+      "prepared_subset": {
+        "passed": 184,
+        "failed": 1,
+        "errors": 0,
+        "skipped": 0,
+        "cause": "Old Forestry lock freeze only",
+        "evidence": "runtime_logs/p09/linux-capabilities-95b/junit.xml"
+      },
+      "scope": "Subset, not all Linux backend tests"
+    }
+  },
+  "installation_preflight": {
+    "status": "PASS_INCREMENTAL_NOT_FINAL",
+    "compiler": "0.5.1",
+    "build_dirty": true,
+    "windows": "runtime_logs/p09/distribution-preflight-20260908/distribution-verification.json",
+    "linux": "/var/tmp/kg-mnp-p95.aKXknQ/runtime_logs/p09/linux-prebuilt-install/distribution-verification.json",
+    "checks": [
+      "Wheel/Sdist build",
+      "Wheel rebuilt from Sdist has identical package/resources",
+      "Two new non-editable venvs per OS",
+      "Isolated Contract/Policy/historical .kgop read",
+      "Bundled SPA/deep refresh/API 401+404",
+      "Independent Worker",
+      "Authorized Source download",
+      "Process restart/Job/idempotency",
+      "Port conflict does not kill original server",
+      "Unconfigured reasoner reported"
+    ],
+    "caveat": "Artifacts precede later readiness/export/ingestion/control-channel changes; must rebuild and rerun after final code freeze"
+  },
+  "current_browser_retest": {
+    "status": "RUNNING_NOT_ACCEPTANCE",
+    "source_commit": "feba20fcbc569f52ce51a20af786ae5caf10fb03",
+    "checkout": "runtime/p09-browser-feba20f-src",
+    "core_mocks": false,
+    "note": "Fixed isolated source; includes actual browser .kgop download/verification"
+  }
 }
