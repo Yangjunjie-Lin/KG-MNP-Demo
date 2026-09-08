@@ -2,13 +2,14 @@ import { lazy, Suspense, useEffect, useRef, useState, type FormEvent } from 'rea
 import { useQuery } from '@tanstack/react-query';
 import { Link, NavLink, Navigate, Outlet, Route, Routes, useNavigate, useOutletContext, useParams } from 'react-router-dom';
 import { api, ApiError, clearIdentity, post, queryClient, setCsrf, type Pack, type Principal, type Project, type ProjectState } from './api';
-import { Field, Id, Panel, Status, DataTable } from './components';
+import { Field, Panel, Status } from './components';
 import { Sources } from './sources';
 const Modeling = lazy(()=>import('./modeling').then(module=>({default:module.Modeling})));
 import { Releases } from './releases';
 import { Versions } from './versions';
 import { Integrations } from './integrations';
 import {Jobs} from './jobs';
+import {ProjectOverview as Overview} from './project-overview';
 
 export type WorkspaceContext = {state: ProjectState; principal: Principal; prefix: string; busy: boolean; submit: (path: string, body: unknown) => Promise<void>};
 export function useWorkspace() { return useOutletContext<WorkspaceContext>(); }
@@ -43,4 +44,3 @@ function Workspace({principal}: {principal: Principal}) {
   const navigation = [['overview','项目概览'],['sources','资料与证据'],['modeling','本体建模与审核'],['releases','验证与发布'],['versions','差异与环境'],['integrations','集成状态'],['jobs','任务中心']];
   return <div className={`workspace ${collapsed ? 'collapsed' : ''}`}><aside><div className="brand">KG-MNP</div><button aria-expanded={!collapsed} onClick={() => collapse(!collapsed)}>{collapsed ? '展开导航' : '收起导航'}</button><nav aria-label="工作台导航">{navigation.map(([path,label]) => <NavLink key={path} to={`${prefix}/${path}`}>{label}</NavLink>)}</nav><Link to="/">切换项目</Link></aside><div className="workspace-main"><header className="top"><strong>{state.data?.project.project_name || '项目工作台'}</strong><span>{principal.principal_id} · {principal.principal_type}</span><button onClick={logout}>退出</button></header><main><p className="notice">预发布版本 · 本地发布与环境选择不会自动部署到外部系统。请使用明确版本并逐项审核。</p>{message && <p role="status" className="notice">{message}</p>}{state.error ? <p role="alert" className="error">读取失败：{String(state.error)}<button onClick={() => state.refetch()}>重试读取</button></p> : state.data ? <Outlet context={{state: state.data, principal, prefix, busy, submit} satisfies WorkspaceContext} /> : <p role="status">正在读取项目状态…</p>}</main></div></div>;
 }
-function Overview() {const {state} = useWorkspace(); return <><h1>项目概览</h1><Panel title="项目与权威版本"><dl><dt>领域包</dt><dd>{state.project.domain_pack} · {state.project.domain_pack_version}</dd><dt>Workspace 状态</dt><dd><Status value={state.project.status}/></dd><dt>项目修订</dt><dd>{state.project.authority_revision}</dd><dt>项目 ID</dt><dd><Id value={state.project.project_id}/></dd></dl></Panel><Panel title="工作流程"><ol className="workflow"><li>上传资料并运行解析计划</li><li>核验证据、定义范围与能力问题</li><li>生成候选并逐项人工审核</li><li>确认、编译与实际语义验证</li><li>导入注册表、审核并发布初始版本</li></ol></Panel><Panel title="最新任务"><DataTable data={state.jobs.slice(0,10)} fields={[["operation_id","操作"],["status","状态"],["job_id","任务 ID"]]}/></Panel></>; }

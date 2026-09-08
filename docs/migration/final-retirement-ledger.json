@@ -26,6 +26,28 @@
   ],
   "entries": [
     {
+      "old_path": "src/kg_mnp/modeling/control_plane/mappings.py (column-only header index); src/kg_mnp/modeling/control_plane/providers/record_mapping.py (multi-sheet collapse)",
+      "old_responsibility": "Build KG-IR field observations and declarative record candidates",
+      "actual_callers": ["src/kg_mnp/services/modeling.py", "modeling control-plane fixture builders"],
+      "replacement_path": "src/kg_mnp/modeling/control_plane/mappings.py; src/kg_mnp/modeling/control_plane/providers/record_mapping.py",
+      "replacement_behavior": "One shared table identity binds Source and sheet from exact Evidence locators; headers cannot cross sources or sheets and conflicting coordinates fail closed. Closed record mapping profiles refuse an ambiguous multi-sheet Source instead of choosing its last table.",
+      "replacement_test_nodeids": ["tests/modeling_alignment/test_mapping_table_boundaries.py"],
+      "artifact_compatibility": "Original Schema/domain/old package bytes unchanged. New modeling candidates bind corrected observations; historical confirmed/package readers do not regenerate old artifacts.",
+      "decision": "MERGE",
+      "reason": "Actual two-CSV and XLSX ingestion reproduced incorrect field labels and last-writer-wins headers. This is an input binding correction, not a compiler contract change. Red and green receipts retained under runtime_logs/p09/table-scope-*.xml."
+    },
+    {
+      "old_path": "workbench/src/shell.tsx::Overview; workbench/src/candidate-explorer.tsx; workbench/src/object-browser.tsx; workbench/src/modeling.tsx",
+      "old_responsibility": "Basic latest-job overview, graph/table projection, class-only browser and unlinked field map table",
+      "actual_callers": ["workbench/src/shell.tsx", "workbench/src/releases.tsx"],
+      "replacement_path": "workbench/src/project-overview.tsx; workbench/src/candidate-explorer.tsx; workbench/src/object-browser.tsx; workbench/src/field-mapping-preview.tsx",
+      "replacement_behavior": "Actual artifact IDs and server-replayed pending reviews; bounded linked dependency tree; evidence-bound field samples/types/ambiguity/null policy; paginated term metadata and typed object properties/relations with stale-response fencing on version changes",
+      "replacement_test_nodeids": ["workbench/src/workflow-projections.test.tsx", "workbench/tests/rendering.spec.ts", "workbench/tests/minimal.e2e.ts"],
+      "artifact_compatibility": "No new authority/API engine, mock fallback, external navigation or inference of successful review. Existing authorized resource endpoints reused.",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Final requirement audit identified missing interface coverage. Basic inline Overview removed; new projections are actual data consumers. Synthetic component mocks remain separate from real E2E."
+    },
+    {
       "old_path": "workbench/src/candidate-explorer.tsx (hidden ReactFlow mount); workbench/src/styles.css (unbroken node labels)",
       "old_responsibility": "Bounded candidate graph and keyboard/table alternative",
       "actual_callers": ["workbench/src/modeling.tsx"],

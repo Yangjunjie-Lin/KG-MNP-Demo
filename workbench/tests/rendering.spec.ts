@@ -5,6 +5,11 @@ import os from 'node:os';
 test('first graph expansion fits visible nodes and wraps long labels',async({page},info)=>{
   await page.goto('/tests/graph-expansion.html');
   const toggle=page.getByText('概念与依赖图（布局拖动不修改语义）',{exact:true});
+  await page.getByText('候选依赖树（键盘联动）',{exact:true}).click();
+  await page.getByRole('button',{name:'树选择 Entity',exact:true}).focus();
+  await page.keyboard.press('Enter');
+  await expect(page.getByLabel('选择候选（键盘替代图选择）')).toHaveValue('synthetic-1');
+  await page.getByText('候选依赖树（键盘联动）',{exact:true}).click();
   await expect(page.locator('.react-flow')).toHaveCount(0);
   for(let opening=0;opening<2;opening++){
     await toggle.click();

@@ -89,10 +89,21 @@ for(const scenario of scenarios) test(`real browser ${scenario.id} source review
   } else await page.getByRole('button',{name:'运行离线候选 Provider',exact:true}).click();
   const proposal=await output('modeling.proposal');
   await screenshot('field-mapping');
+  await page.getByLabel('选择映射查看原始样本',{exact:true}).selectOption(prepared.mappings.mappings[0].field_mapping_id);
+  await expect(page.getByRole('link',{name:/^下载映射样本来源 /}).first()).toBeVisible({timeout:90000});
+  await page.getByRole('heading',{name:'映射原始样本',exact:true}).evaluate(e=>e.scrollIntoView({block:'start'}));
+  await page.screenshot({path:path.join(evidenceRoot,'field-sample.png')});
   await page.getByLabel('审核队列').selectOption(proposal.queue.review_queue_id);
   // The graph must fit the visible panel on first expansion, without a manual
   // Fit View workaround. Mounting inside closed details used hidden dimensions.
   if(scenario.id==='minimal'){
+    await page.getByText('候选依赖树（键盘联动）',{exact:true}).click();
+    await page.getByRole('button',{name:'树选择 Entity',exact:true}).click();
+    const selectedClass=proposal.proposal.tbox_candidates.find((item:{body:{candidate_type:string}})=>item.body.candidate_type==='CLASS');
+    await expect(page.getByLabel('选择候选（键盘替代图选择）',{exact:true})).toHaveValue(selectedClass.candidate_id);
+    await page.getByText('候选依赖树（键盘联动）',{exact:true}).evaluate(e=>e.scrollIntoView({block:'start'}));
+    await page.screenshot({path:path.join(evidenceRoot,'candidate-tree.png')});
+    await page.getByText('候选依赖树（键盘联动）',{exact:true}).click();
     await expect(page.locator('.react-flow')).toHaveCount(0);
     await page.getByText('概念与依赖图（布局拖动不修改语义）',{exact:true}).click();
     await expect(page.locator('.react-flow__node')).toHaveCount(6);
@@ -170,10 +181,35 @@ for(const scenario of scenarios) test(`real browser ${scenario.id} source review
   await page.getByRole('button',{name:'使用当前 Registry CAS 发布',exact:true}).click();
   const released=await output('release.publish');
   expect(released.release.release_status).toBe('RELEASED');
+  await page.getByRole('link',{name:'项目概览',exact:true}).click();
+  await expect(page.getByRole('link',{name:released.release.release_id,exact:true})).toBeVisible({timeout:20000});
+  await expect(page.getByRole('link',{name:built.package_id,exact:true})).toBeVisible();
+  await page.getByRole('heading',{name:'当前工件与审核状态',exact:true}).evaluate(e=>e.scrollIntoView({block:'start'}));
+  await page.screenshot({path:path.join(evidenceRoot,'overview-artifacts.png')});
+  await page.getByRole('link',{name:'验证与发布',exact:true}).click();
   await page.getByLabel('本体包版本',{exact:true}).last().selectOption(built.package_id);
   await page.getByLabel('实例所属 Class IRI').fill(scenario.classIri);
   await page.getByRole('button',{name:'查询实例',exact:true}).click();
   await expect(page.getByRole('table').filter({has:page.getByRole('columnheader',{name:'实例 IRI',exact:true})}).getByRole('row')).toHaveCount(scenario.count+1,{timeout:120000});
+  if(scenario.id==='forestry'){
+    await page.getByRole('button',{name:/^查看属性与关系 /}).first().click();
+    await expect(page.getByRole('region',{name:'对象属性与关系'}).getByText('https://example.invalid/forestry#locatedAt',{exact:true})).toBeVisible({timeout:120000});
+    await page.getByLabel('实例所属 Class IRI').fill('https://example.invalid/forestry#InspectionRecord');
+    const inspections=page.waitForResponse(response=>response.url().endsWith('/objects/query')&&response.request().method()==='POST',{timeout:120000});
+    await page.getByRole('button',{name:'查询实例',exact:true}).click();
+    const inspectionRows=await (await inspections).json();
+    expect(inspectionRows.rows).toHaveLength(6);
+    const properties=page.waitForResponse(response=>response.url().endsWith('/objects/query')&&response.request().method()==='POST',{timeout:120000});
+    await page.getByRole('button',{name:'查看属性与关系 '+inspectionRows.rows[0].iri,exact:true}).click();
+    const propertyRows=await (await properties).json();
+    const relation=propertyRows.rows.find((row:{predicate:string})=>row.predicate==='https://example.invalid/forestry#inspectedTree');
+    expect(relation.object.term_type).toBe('IRI');
+    await expect(page.getByRole('region',{name:'对象属性与关系'}).getByText('https://example.invalid/forestry#inspectedTree',{exact:true})).toBeVisible({timeout:120000});
+    await page.getByRole('heading',{name:'对象属性与关系',exact:true}).evaluate(e=>e.scrollIntoView({block:'start'}));
+    await page.screenshot({path:path.join(evidenceRoot,'inspection-tree-relation.png')});
+    await page.getByRole('button',{name:'浏览关联对象 '+relation.object.value,exact:true}).click();
+    await expect(page.getByRole('region',{name:'对象属性与关系'}).getByText('https://example.invalid/forestry#treeCode',{exact:true})).toBeVisible({timeout:120000});
+  }
   await page.getByRole('button',{name:/^追溯 /}).first().click();
   await expect(page.getByRole('link',{name:/^下载关联原始资料/}).first()).toBeVisible({timeout:90000});
   const downloadPromise=page.waitForEvent('download',{timeout:120000});
