@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import re
 from collections.abc import Mapping
-from pathlib import Path
 from typing import Any
 
 from .errors import ActivationError, ActivationErrorCode
@@ -28,7 +27,6 @@ _FORBIDDEN_KEYS = frozenset(
         "sparqlupdate",
     }
 )
-_PATH_ATTACK = re.compile(r"(?:^|[\\/])\.\.(?:[\\/]|$)|%2e|%252e", re.IGNORECASE)
 
 
 def _normalized_key(value: str) -> str:
@@ -75,31 +73,3 @@ def validate_operator_label(value: Any, *, field: str) -> str:
             f"{field} must be a non-empty operator-supplied label",
         )
     return value.strip()
-
-
-def freeze_state_directory(path: Path) -> Path:
-    """Freeze one startup-configured local directory and reject path indirection."""
-
-    supplied = Path(path)
-    text = str(supplied)
-    if _PATH_ATTACK.search(text):
-        raise ActivationError(ActivationErrorCode.PATH_REJECTED)
-    absolute = supplied.absolute()
-    try:
-        # Inspect the lexical path before resolution so a symlink/junction cannot
-        # disappear behind ``resolve()`` and become a trusted state root.
-        for candidate in (absolute, *absolute.parents):
-            is_junction = getattr(candidate, "is_junction", lambda: False)
-            if candidate.exists() and (candidate.is_symlink() or is_junction()):
-                raise ActivationError(ActivationErrorCode.PATH_REJECTED)
-        absolute.mkdir(parents=True, exist_ok=True)
-        resolved = absolute.resolve(strict=True)
-        for candidate in (absolute, *absolute.parents, resolved, *resolved.parents):
-            is_junction = getattr(candidate, "is_junction", lambda: False)
-            if candidate.is_symlink() or is_junction():
-                raise ActivationError(ActivationErrorCode.PATH_REJECTED)
-    except ActivationError:
-        raise
-    except OSError as exc:
-        raise ActivationError(ActivationErrorCode.PATH_REJECTED) from exc
-    return resolved

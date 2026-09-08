@@ -9,7 +9,7 @@ from typing import Any
 
 from ..compilation.rdf_canonical import parse_ntriples
 from ..modeling.canonical_json import canonical_json_bytes
-from ._io import json_bytes, read_json
+from ._io import read_json
 from .client import GraphDBClient
 from .contracts import validate_graphdb_contract
 from .query_suite import query_suite_hash
@@ -154,7 +154,7 @@ def assert_tbox_version_semantics(
         raise GraphDBVerificationError("TBox graph/ontology/version set mismatch")
 
 
-def verify_imported_repository(client: GraphDBClient, package_directory: Path, *, report_directory: Path | None = None) -> dict[str, Any]:
+def verify_imported_repository(client: GraphDBClient, package_directory: Path) -> dict[str, Any]:
     package_directory = Path(package_directory)
     manifest = read_json(package_directory / "graphdb-import-manifest.json")
     repository_id = manifest["repository_id"]
@@ -270,10 +270,6 @@ def verify_imported_repository(client: GraphDBClient, package_directory: Path, *
     if forbidden_rows:
         raise GraphDBVerificationError("forbidden rejected/deferred assertion leaked into business graph")
     exported = client.export_nquads(repository_id, include_inferred=False)
-    if report_directory:
-        diagnostic_export_directory = Path(report_directory) / "export"
-        diagnostic_export_directory.mkdir(parents=True, exist_ok=True)
-        (diagnostic_export_directory / "explicit-repository.nq").write_bytes(exported)
     export_hash = semantic_hash_nquads(exported)
     complete_export_hash = semantic_hash_nquads(
         client.export_nquads(repository_id, include_inferred=True)
@@ -289,14 +285,4 @@ def verify_imported_repository(client: GraphDBClient, package_directory: Path, *
     if graph_counts != expected_graph_counts:
         raise GraphDBVerificationError("named graph count mismatch")
     result = {"status": "IMPORT_VERIFIED", "repository_id": repository_id, "actual_quad_count": actual_count, "expected_quad_count": manifest["assembled_quad_count"], "expected_graph_counts": expected_counts, "actual_graph_counts": graph_counts, "default_graph_statement_count": default_graph_check["statement_count"], "default_graph_check": default_graph_check, "forbidden_assertion_count": int(manifest["forbidden_assertion_count"]), "violating_forbidden_assertion_count": len(forbidden_rows), "inferred_statement_count": 0, "import_semantic_hash": expected_hash, "export_semantic_hash": export_hash, "complete_export_semantic_hash": complete_export_hash, "query_results": query_results, "invariant_results": invariant_results}
-    if report_directory:
-        destination = Path(report_directory)
-        (destination / "verification").mkdir(parents=True, exist_ok=True)
-        (destination / "verification" / "query-results").mkdir(parents=True, exist_ok=True)
-        (destination / "export").mkdir(parents=True, exist_ok=True)
-        (destination / "verification" / "graph-counts.json").write_bytes(json_bytes({"expected": expected_counts, "actual": graph_counts}))
-        (destination / "verification" / "invariant-results.json").write_bytes(json_bytes(invariant_results))
-        (destination / "verification" / "default-graph-check.json").write_bytes(json_bytes(default_graph_check))
-        for query_id, query_result in query_results.items():
-            (destination / "verification" / "query-results" / f"{query_id}.json").write_bytes(json_bytes(query_result))
     return result

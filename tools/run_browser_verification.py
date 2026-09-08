@@ -81,12 +81,13 @@ def main() -> int:
     parser.add_argument("--smoke-only", action="store_true", help="verify startup/shutdown only, never claim Browser E2E")
     parser.add_argument("--startup-timeout", type=float, default=45)
     parser.add_argument("--probe-subprocess", action="store_true", help="include actual SHACL subprocess startup in smoke verification")
+    parser.add_argument("--selected-test", choices=("security.e2e.ts", "arbitrary-pack.e2e.ts"), help="bounded incremental check only, never full browser acceptance")
     args = parser.parse_args()
     if not 0 < args.startup_timeout <= 120:
         parser.error("startup timeout must be in (0, 120]")
     directory = ROOT / "runtime_logs/p09/browser-runs" / ("managed-" + uuid4().hex)
     directory.mkdir(parents=True, exist_ok=False)
-    receipt = {"mode": "STARTUP_SHUTDOWN_ONLY" if args.smoke_only else "REAL_BROWSER_E2E", "status": "FAIL"}
+    receipt = {"mode": "STARTUP_SHUTDOWN_ONLY" if args.smoke_only else "SELECTED_BROWSER_E2E" if args.selected_test else "REAL_BROWSER_E2E", "selected_test": args.selected_test, "status": "FAIL"}
     ready = None
     stop_file = directory / "stop-requested"
     try:
@@ -107,7 +108,10 @@ def main() -> int:
                 receipt["browser_exit_code"] = None
                 if not args.smoke_only:
                     npm = "npm.cmd" if os.name == "nt" else "npm"
-                    result = subprocess.run([npm, "--prefix", "workbench", "run", "test:e2e"], cwd=ROOT, env=environment, check=False)
+                    command = [npm, "--prefix", "workbench", "run", "test:e2e"]
+                    if args.selected_test:
+                        command.extend(["--", args.selected_test])
+                    result = subprocess.run(command, cwd=ROOT, env=environment, check=False)
                     receipt["browser_exit_code"] = result.returncode
                 receipt["status"] = "PASS" if receipt["browser_exit_code"] in {None, 0} else "FAIL"
             finally:

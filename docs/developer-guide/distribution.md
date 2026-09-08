@@ -9,7 +9,7 @@
 Node 仅用于前端构建和测试；安装 Wheel 后运行工作台不需要 Node。Java 与固定 ROBOT 用于真正的语义编译，不由核心运行时自动下载。
 
 ```text
-python -m pip install -c requirements-dev.lock -e ".[dev,webvowl]"
+python -m pip install -c requirements-dev.lock -e ".[dev]"
 npm ci --prefix workbench
 python tools/prepare_reasoner.py
 ```

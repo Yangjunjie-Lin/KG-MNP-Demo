@@ -7,6 +7,32 @@ test('real session negative boundaries and identity cache isolation',async({page
   const credentials=JSON.parse(fs.readFileSync(process.env.KG_MNP_BROWSER_CREDENTIAL!,'utf8'));
   if(!credentials.viewer_token)throw new Error('synthetic isolated viewer credential required');
   await page.goto('/');
+  // Actively prove CSP rejects HTTP(S)/WS(S) egress. Routing is a safety net:
+  // if CSP regresses, abort before any external network connection and fail.
+  const intercepted:string[]=[];
+  const origin=new URL(page.url()).origin;
+  await page.route('**/*',async route=>{
+    if(new URL(route.request().url()).origin!==origin){intercepted.push(route.request().url());await route.abort('blockedbyclient');}
+    else await route.continue();
+  });
+  await page.routeWebSocket('**/*',socket=>{intercepted.push(socket.url());socket.close();});
+  const networkProbe=await page.evaluate(async()=>{
+    const blocked:string[]=[];
+    const listener=(event:SecurityPolicyViolationEvent)=>{if(event.effectiveDirective==='connect-src')blocked.push(event.blockedURI);};
+    window.addEventListener('securitypolicyviolation',listener);
+    for(const url of ['http://external.invalid/probe','https://external.invalid/probe']){
+      await fetch(url).then(()=>{throw new Error('Unexpected external fetch success');},()=>undefined);
+    }
+    for(const url of ['ws://external.invalid/probe','wss://external.invalid/probe']){
+      await new Promise<void>(resolve=>{const socket=new WebSocket(url);socket.onerror=()=>resolve();socket.onclose=()=>resolve();setTimeout(()=>{socket.close();resolve();},1000);});
+    }
+    await new Promise(resolve=>setTimeout(resolve,50));
+    window.removeEventListener('securitypolicyviolation',listener);
+    return blocked;
+  });
+  expect(intercepted).toEqual([]);
+  expect(networkProbe.length).toBeGreaterThanOrEqual(4);
+  fs.writeFileSync(info.outputPath('network-boundary.json'),JSON.stringify({method:'Actual Chromium CSP, safety routes installed before probing',blocked:networkProbe,intercepted,status:'PASS'},null,2));
   await page.getByLabel('访问凭证').fill('synthetic-invalid-credential');
   await page.getByRole('button',{name:'登录',exact:true}).click();
   await expect(page.getByRole('alert')).toBeVisible();

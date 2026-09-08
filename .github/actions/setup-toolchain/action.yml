@@ -16,7 +16,7 @@ runs:
         distribution: temurin
         java-version: '17'
     - shell: bash
-      run: python -m pip install -c requirements-dev.lock -e '.[dev,webvowl]'
+      run: python -m pip install -c requirements-dev.lock -e '.[dev]'
     - shell: bash
       run: npm ci --prefix workbench
     - shell: bash

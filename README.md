@@ -51,7 +51,7 @@ Python 3.11+、构建前端用的 Node.js，以及语义编译所需的 Java 与
 从源码准备（先激活自行创建的虚拟环境）：
 
 ```text
-python -m pip install -c requirements-dev.lock -e ".[dev,webvowl]"
+python -m pip install -c requirements-dev.lock -e ".[dev]"
 npm ci --prefix workbench
 npm --prefix workbench run build
 ```

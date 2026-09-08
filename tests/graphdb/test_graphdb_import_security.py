@@ -3,7 +3,6 @@ import json
 import pytest
 
 from kg_mnp.compilation.policy import load_compiler_policy
-from kg_mnp.graphdb.importer import GraphDBImportError, import_package
 from kg_mnp.graphdb.package_builder import build_graphdb_import_package
 from kg_mnp.graphdb.package_validator import (
     GraphDBPackageValidationError,
@@ -12,61 +11,6 @@ from kg_mnp.graphdb.package_validator import (
 from scripts.artifact_fixture import materialize_fixture
 
 from ._helpers import authorities, compilation
-
-
-class _FakeGraphDB:
-    def __init__(self, repositories=None, count=0):
-        self.repositories = repositories or []
-        self.count = count
-        self.created = False
-        self.deleted = False
-        self.imported = False
-
-    def list_repositories(self):
-        return self.repositories
-
-    def create_repository(self, _config):
-        self.created = True
-        return 201
-
-    def inspect_repository(self, _repository_id):
-        return {"params": {"ruleset": {"value": "empty"}}}
-
-    def count_repository_statements(self, _repository_id):
-        return self.count
-
-    def import_nquads(self, _repository_id, _data):
-        self.imported = True
-        return 200
-
-    def delete_generated_repository(self, _repository_id):
-        self.deleted = True
-        return 204
-
-
-def _golden_package():
-    return compilation().parents[2] / "graphdb" / "expected" / "full-confirmation"
-
-
-def test_import_refuses_existing_repository_before_create():
-    import json
-
-    repository_id = json.loads(
-        (_golden_package() / "graphdb-import-manifest.json").read_text(encoding="utf-8")
-    )["repository_id"]
-    client = _FakeGraphDB(repositories=[repository_id])
-    with pytest.raises(GraphDBImportError, match="overwrite"):
-        import_package(client, _golden_package())
-    assert client.created is False
-
-
-def test_import_refuses_non_empty_fresh_repository_without_cleanup():
-    client = _FakeGraphDB(count=1)
-    with pytest.raises(GraphDBImportError, match="not empty"):
-        import_package(client, _golden_package())
-    assert client.created is True
-    assert client.imported is False
-    assert client.deleted is False
 
 
 def test_rehashed_manifest_attack_is_rejected_by_reconstruction(tmp_path):

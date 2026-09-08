@@ -46,9 +46,6 @@ ingestion-documents = [
   "Pillow>=10.0.0,<13.0.0",
   "defusedxml>=0.7.1,<1.0.0",
 ]
-webvowl = [
-  "playwright==1.49.1",
-]
 
 [project.scripts]
 kg-mnp = "kg_mnp.root_cli:main"

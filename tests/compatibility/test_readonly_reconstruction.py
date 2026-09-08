@@ -36,6 +36,10 @@ def test_historical_activation_has_no_state_controller_or_live_verifier():
         assert importlib.util.find_spec("kg_mnp.activation." + module) is None
 
 
+def test_old_graphdb_importer_is_retired():
+    assert importlib.util.find_spec("kg_mnp.graphdb.importer") is None
+
+
 @pytest.mark.parametrize("builder", [build_graphdb_import_package,
                                     build_end_to_end_publication_package,
                                     build_webvowl_visualization_package])

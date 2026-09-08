@@ -2,10 +2,8 @@ from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
 from datetime import UTC, datetime
-from pathlib import Path
 from typing import Any
 
-from ._io import json_bytes
 from .contracts import validate_graphdb_contract
 
 
@@ -102,10 +100,3 @@ def build_import_attestation(
         raise ValueError("verified attestation requires successful verification evidence")
     validate_graphdb_contract("import-attestation", attestation)
     return attestation
-
-
-def write_import_attestation(path: Path, attestation: Mapping[str, Any]) -> None:
-    validate_graphdb_contract("import-attestation", attestation)
-    destination = Path(path)
-    destination.parent.mkdir(parents=True, exist_ok=True)
-    destination.write_bytes(json_bytes(attestation))

@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import hashlib
 import re
 from collections.abc import Mapping
 from pathlib import Path
@@ -80,13 +79,9 @@ def load_webvowl_policy(path: Path = POLICY_PATH) -> dict[str, Any]:
         raise WebVOWLPolicyError("WebVOWL policy root must be an object")
     validate_webvowl_policy(value)
     repository_root = path.resolve().parents[2]
-    shrinkwrap = repository_root / WEBVOWL_NPM_SHRINKWRAP
-    try:
-        shrinkwrap_hash = hashlib.sha256(shrinkwrap.read_bytes()).hexdigest()
-    except OSError as exc:
-        raise WebVOWLPolicyError(f"cannot read WebVOWL npm shrinkwrap: {exc}") from exc
-    if shrinkwrap.is_symlink() or shrinkwrap_hash != WEBVOWL_NPM_SHRINKWRAP_SHA256:
-        raise WebVOWLPolicyError("WebVOWL npm shrinkwrap file hash mismatch")
+    # The browser server has been retired. Its frozen descriptor remains part
+    # of historical package identity (checked below), not an active dependency
+    # whose old npm tree must be distributed alongside the current workbench.
     from .contracts import validate_webvowl_contract
 
     validate_webvowl_contract("webvowl-runtime-policy", value, repository_root)

@@ -22,7 +22,6 @@ from kg_mnp.webvowl.policy import (
     load_webvowl_policy,
     validate_webvowl_policy,
 )
-from kg_mnp.webvowl.runtime import runtime_smoke
 from kg_mnp.webvowl.source import VisualizationSourceError, _safe_local
 from kg_mnp.webvowl.verifier import WebVOWLVerificationError, tbox_equivalence
 
@@ -55,22 +54,6 @@ def test_visualization_manifest_contract_recomputes_identity() -> None:
         validate_webvowl_contract("visualization-manifest", forged)
 
 
-@pytest.mark.parametrize(
-    "base_url",
-    (
-        "https://example.invalid",
-        "http://localhost:8080",
-        "http://127.0.0.1:8081",
-        "http://127.0.0.1:8080/remote",
-    ),
-)
-def test_runtime_smoke_rejects_non_loopback_targets_without_network(
-    base_url: str,
-) -> None:
-    result = runtime_smoke(base_url)
-    assert result["status"] == "FAILED"
-    assert result["errors"] == ["runtime smoke requires http://127.0.0.1:8080"]
-
 
 def test_policy_rejects_mutable_or_forged_upstream() -> None:
     policy = load_webvowl_policy()
@@ -97,22 +80,15 @@ def test_exact_source_and_runtime_have_no_mutable_fallback() -> None:
     dockerfile = Path("deploy/webvowl/Dockerfile.integration").read_text(
         encoding="utf-8"
     )
-    compose = Path("deploy/webvowl/docker-compose.integration.yml").read_text(
-        encoding="utf-8"
-    )
     dockerignore = Path(".dockerignore").read_text(encoding="utf-8")
     assert '"fetch", "--quiet", "origin", commit' in fetch
     assert '"checkout", "--quiet", "--detach", commit' in fetch
     assert '"--tags"' not in fetch
     assert "git clone" not in dockerfile
-    assert dockerfile.count("@${") >= 4
-    assert 'published: "8080"' in compose
-    assert "host_ip: 127.0.0.1" in compose
-    assert "no-new-privileges:true" in compose
-    assert "internal: true" in compose
-    assert "target: loopback-proxy" in compose
-    assert "fonts.googleapis.com" in dockerfile
-    assert "sed -i" in dockerfile
+    assert "FROM ${MAVEN_IMAGE}@${MAVEN_DIGEST}" in dockerfile
+    assert "owl2vowl-cli-builder" in dockerfile
+    assert "EXPOSE" not in dockerfile and "webvowl-runtime" not in dockerfile
+    assert not Path("deploy/webvowl/docker-compose.integration.yml").exists()
     assert dockerignore.startswith("**\n")
     assert "!runtime_" not in dockerignore and "!*.license" not in dockerignore
 

@@ -26,6 +26,93 @@
   ],
   "entries": [
     {
+      "old_path": "src/kg_mnp/webvowl/runtime.py; scripts/webvowl_integration.py; scripts/webvowl_browser_smoke.py; scripts/workbench_browser_smoke.py; deploy/webvowl/docker-compose.integration.yml; deploy/webvowl/loopback-proxy.js; deploy/webvowl/webvowl-npm-shrinkwrap.json",
+      "old_responsibility": "Second web frontend/server/proxy/container lifecycle and old Python Playwright validation runtimes",
+      "actual_callers": [
+        "legacy runtime/package tests; no current app or historical byte reconstruction caller of runtime launchers"
+      ],
+      "replacement_path": "workbench; tools/run_browser_verification.py; current API CSP/Origin/session boundary",
+      "replacement_behavior": "Old server/proxy/Node12 browser bundle/993-dependency shrinkwrap deleted. Current locked frontend and actual CSP HTTP/HTTPS/WS/WSS probes preserve security assurance; selected-test runner is explicitly labelled partial, never full acceptance.",
+      "replacement_test_nodeids": [
+        "tests/security/test_no_legacy_relay.py::test_client_cannot_choose_any_upstream[https://example.invalid]",
+        "tests/security/test_no_legacy_relay.py::test_client_cannot_choose_any_upstream[http://localhost:8080]",
+        "tests/security/test_no_legacy_relay.py::test_client_cannot_choose_any_upstream[http://127.0.0.1:8081]",
+        "tests/security/test_no_legacy_relay.py::test_client_cannot_choose_any_upstream[http://127.0.0.1:8080/remote]",
+        "tests/webvowl/test_stage08_boundaries.py::test_only_current_workbench_dependencies_and_converter_build_are_supported",
+        "workbench/tests/security.e2e.ts (actual CSP HTTP/HTTPS/WS/WSS negative probes)",
+        "tests/webvowl/test_stage08_boundaries.py::test_no_old_webvowl_server_or_forward_proxy_is_distributed",
+        "workbench/tests/security.e2e.ts (actual CSP HTTP/HTTPS/WS/WSS negative probes)",
+        "tests/webvowl/test_stage08_boundaries.py::test_current_browser_gate_actively_checks_all_network_protocols",
+        "workbench/tests/security.e2e.ts (actual CSP HTTP/HTTPS/WS/WSS negative probes)",
+        "tests/workbench/test_browser_smoke.py::test_only_current_locked_browser_harness_is_supported",
+        "workbench/tests/security.e2e.ts (actual CSP HTTP/HTTPS/WS/WSS negative probes)"
+      ],
+      "artifact_compatibility": "Historical WebVOWL policy/source/upstream metadata and all ontology/golden bytes unchanged. Old npm descriptor still validated as historical data, not executable dependency.",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "No current source runtime references old browser app. Keeping a second server for historical metadata was unnecessary.",
+      "evidence": "runtime_logs/p09/webvowl-retired.xml original19FAIL/3ERROR before policy dependency adjustment; webvowl-retired-b.xml64PASS; current-browser-boundaries.xml34PASS; browser-runs/managed-4c92217f19844650a2fbc9cc894b045c selected-security1PASS and normal shutdown"
+    },
+    {
+      "old_path": "deploy/webvowl/Dockerfile.integration; .dockerignore; pyproject.toml::webvowl; requirements-dev.lock",
+      "old_responsibility": "Old browser image build and Python Playwright1.49.1/pyee/greenlet dependency",
+      "actual_callers": [
+        "explicit OWL2VOWL conversion script; old frontend runtime removed"
+      ],
+      "replacement_path": "same Dockerfile retains only pinned standalone OWL2VOWL converter; workbench/package-lock.json owns browser dependencies",
+      "replacement_behavior": "Maven converter source and MIT notice retained, verified-file readonly mounts and --network none remain. No Tomcat/Node server image or port exposure; unused Python browser extra/dependencies removed; CI/install docs use .[dev].",
+      "replacement_test_nodeids": [
+        "tests/webvowl/test_stage08_core.py::test_exact_source_and_runtime_have_no_mutable_fallback",
+        "tests/webvowl/test_stage08_hardening.py::test_converter_mounts_only_verified_ontology_files",
+        "tests/webvowl/test_stage08_hardening.py::test_converter_rejects_unresolved_import_before_execution",
+        "tests/workbench/test_browser_smoke.py::test_only_current_locked_browser_harness_is_supported"
+      ],
+      "artifact_compatibility": "Does not change old policy YAML or original upstream SHAs/schema/JSON assets; offline optional converter is not an external deployment",
+      "decision": "MERGE",
+      "reason": "Keep required isolated format conversion, remove the obsolete full frontend platform and unused dependency installation."
+    },
+    {
+      "old_path": "deploy/graphdb/docker-compose.integration.yml; src/kg_mnp/graphdb/verifier.py::report_directory; src/kg_mnp/activation/security.py::freeze_state_directory",
+      "old_responsibility": "Uncalled historical server startup config, report writer and state directory creator",
+      "actual_callers": [],
+      "replacement_path": "current explicit GraphDB adapter; versioned read-only verifier; current Workspace confinement",
+      "replacement_behavior": "No hidden ambient license/container startup or old report/state writes. Historical verifier returns data only; current adapter owns deployment observations with actual exported-byte comparison.",
+      "replacement_test_nodeids": [
+        "tests/graphdb/test_graphdb_export_equality.py",
+        "tests/activation/test_reporting.py",
+        "tests/integrations/test_graphdb_package_transport.py"
+      ],
+      "artifact_compatibility": "Read semantics and protected data retained; no material user runtime directory removed",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "All runtime callers retired; removal finishes remaining uncalled filesystem write conveniences.",
+      "evidence": "runtime_logs/p09/final-readonly-paths.xml15PASS"
+    },
+    {
+      "old_path": "src/kg_mnp/graphdb/importer.py; scripts/graphdb_integration.py; src/kg_mnp/graphdb/attestation.py::write_import_attestation",
+      "old_responsibility": "Standalone old-format GraphDB importer, licensed Docker startup, artifact/report publisher",
+      "actual_callers": [
+        "old GraphDB live/import tests"
+      ],
+      "replacement_path": "src/kg_mnp/integrations/graphdb.py; retained generic wire client/config/RDF normalization helpers",
+      "replacement_behavior": "One approved integration path for current packages, no self-reported verification boolean, no automatic write retries or repository cleanup, full plan/project/effect/target/expiry bindings. Wire client blocks redirects and environment proxies.",
+      "replacement_test_nodeids": [
+        "tests/integrations/test_graphdb_package_transport.py::test_external_fault_never_claims_verified_or_deletes_a_repository[existing]",
+        "tests/integrations/test_graphdb_package_transport.py::test_external_fault_never_claims_verified_or_deletes_a_repository[nonempty]",
+        "tests/integrations/test_graphdb_package_transport.py::test_adapter_never_materializes_environment_license_or_cleans_user_files",
+        "tests/integrations/test_graphdb_package_transport.py::test_adapter_never_materializes_environment_license_or_cleans_user_files",
+        "tests/integrations/test_graphdb_package_transport.py::test_adapter_never_materializes_environment_license_or_cleans_user_files",
+        "tests/integrations/test_graphdb_package_transport.py::test_current_package_deployment_requires_actual_explicit_complete_and_default_exports",
+        "tests/integrations/test_graphdb_package_transport.py::test_external_fault_never_claims_verified_or_deletes_a_repository[default-graph]",
+        "tests/integrations/test_graphdb_package_transport.py::test_external_fault_never_claims_verified_or_deletes_a_repository[inferred]",
+        "tests/integrations/test_graphdb_package_transport.py::test_external_fault_never_claims_verified_or_deletes_a_repository[inference]",
+        "tests/integrations/test_graphdb_package_transport.py::test_unconfigured_transport_is_not_a_deployment",
+        "tests/graphdb/test_graphdb_redirect_boundary.py"
+      ],
+      "artifact_compatibility": "Historical assembly/manifest/attestation readers and old golden RDF byte checks retained; no original schema/domain assets changed",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Old phase runtime/publisher deleted; reusable protocol client is now used by the current integration adapter. Live GraphDB remains optional and unconfigured; no live success is claimed.",
+      "evidence": "graphdb-transport-red.xml11FAIL/3PASS; graphdb-protocol-boundary.xml19PASS; additional6PASS; redirect-red4FAIL then redirect-green4PASS"
+    },
+    {
       "old_path": "scripts/amendment_integration.py; src/kg_mnp/amendment/attestation.py",
       "old_responsibility": "Uncalled Phase05 live GraphDB orchestration and report publisher",
       "actual_callers": [
@@ -2486,6 +2573,148 @@
     }
   ],
   "test_migration": [
+    {
+      "old_nodeid": "tests/webvowl/test_stage08_core.py::test_runtime_smoke_rejects_non_loopback_targets_without_network[https://example.invalid]",
+      "new_nodeid": "tests/security/test_no_legacy_relay.py::test_client_cannot_choose_any_upstream[https://example.invalid]",
+      "behavior": "Reject caller-selected visualization upstream before network",
+      "decision": "REPLACE",
+      "reason": "Current closed API rejects upstream fields altogether; standalone old runtime removed. Valid package selector included so denial cannot be a missing-field false positive."
+    },
+    {
+      "old_nodeid": "tests/webvowl/test_stage08_core.py::test_runtime_smoke_rejects_non_loopback_targets_without_network[http://localhost:8080]",
+      "new_nodeid": "tests/security/test_no_legacy_relay.py::test_client_cannot_choose_any_upstream[http://localhost:8080]",
+      "behavior": "Reject caller-selected visualization upstream before network",
+      "decision": "REPLACE",
+      "reason": "Current closed API rejects upstream fields altogether; standalone old runtime removed. Valid package selector included so denial cannot be a missing-field false positive."
+    },
+    {
+      "old_nodeid": "tests/webvowl/test_stage08_core.py::test_runtime_smoke_rejects_non_loopback_targets_without_network[http://127.0.0.1:8081]",
+      "new_nodeid": "tests/security/test_no_legacy_relay.py::test_client_cannot_choose_any_upstream[http://127.0.0.1:8081]",
+      "behavior": "Reject caller-selected visualization upstream before network",
+      "decision": "REPLACE",
+      "reason": "Current closed API rejects upstream fields altogether; standalone old runtime removed. Valid package selector included so denial cannot be a missing-field false positive."
+    },
+    {
+      "old_nodeid": "tests/webvowl/test_stage08_core.py::test_runtime_smoke_rejects_non_loopback_targets_without_network[http://127.0.0.1:8080/remote]",
+      "new_nodeid": "tests/security/test_no_legacy_relay.py::test_client_cannot_choose_any_upstream[http://127.0.0.1:8080/remote]",
+      "behavior": "Reject caller-selected visualization upstream before network",
+      "decision": "REPLACE",
+      "reason": "Current closed API rejects upstream fields altogether; standalone old runtime removed. Valid package selector included so denial cannot be a missing-field false positive."
+    },
+    {
+      "old_nodeid": "tests/webvowl/test_stage08_boundaries.py::test_stage08_runtime_dependencies_are_content_locked",
+      "new_nodeid": [
+        "tests/webvowl/test_stage08_boundaries.py::test_only_current_workbench_dependencies_and_converter_build_are_supported",
+        "workbench/tests/security.e2e.ts (actual CSP HTTP/HTTPS/WS/WSS negative probes)"
+      ],
+      "behavior": "Locked browser dependencies, no unrestricted proxy/egress, inert source rendering",
+      "decision": "REPLACE",
+      "reason": "Current React workbench/Node Playwright is the only frontend. Real Chromium actively tested four network schemes with abort safety-net; no old iframe/server/browser bundle remains. Offline converter stays hash-bound and network-isolated."
+    },
+    {
+      "old_nodeid": "tests/webvowl/test_stage08_boundaries.py::test_loopback_relay_is_not_a_general_forward_proxy",
+      "new_nodeid": [
+        "tests/webvowl/test_stage08_boundaries.py::test_no_old_webvowl_server_or_forward_proxy_is_distributed",
+        "workbench/tests/security.e2e.ts (actual CSP HTTP/HTTPS/WS/WSS negative probes)"
+      ],
+      "behavior": "Locked browser dependencies, no unrestricted proxy/egress, inert source rendering",
+      "decision": "REPLACE",
+      "reason": "Current React workbench/Node Playwright is the only frontend. Real Chromium actively tested four network schemes with abort safety-net; no old iframe/server/browser bundle remains. Offline converter stays hash-bound and network-isolated."
+    },
+    {
+      "old_nodeid": "tests/webvowl/test_stage08_boundaries.py::test_browser_gate_freezes_runtime_and_actively_blocks_all_network_protocols",
+      "new_nodeid": [
+        "tests/webvowl/test_stage08_boundaries.py::test_current_browser_gate_actively_checks_all_network_protocols",
+        "workbench/tests/security.e2e.ts (actual CSP HTTP/HTTPS/WS/WSS negative probes)"
+      ],
+      "behavior": "Locked browser dependencies, no unrestricted proxy/egress, inert source rendering",
+      "decision": "REPLACE",
+      "reason": "Current React workbench/Node Playwright is the only frontend. Real Chromium actively tested four network schemes with abort safety-net; no old iframe/server/browser bundle remains. Offline converter stays hash-bound and network-isolated."
+    },
+    {
+      "old_nodeid": "tests/workbench/test_browser_smoke.py::test_real_browser_harness_is_frozen_to_existing_browser_identity",
+      "new_nodeid": [
+        "tests/workbench/test_browser_smoke.py::test_only_current_locked_browser_harness_is_supported",
+        "workbench/tests/security.e2e.ts (actual CSP HTTP/HTTPS/WS/WSS negative probes)"
+      ],
+      "behavior": "Locked browser dependencies, no unrestricted proxy/egress, inert source rendering",
+      "decision": "REPLACE",
+      "reason": "Current React workbench/Node Playwright is the only frontend. Real Chromium actively tested four network schemes with abort safety-net; no old iframe/server/browser bundle remains. Offline converter stays hash-bound and network-isolated."
+    },
+    {
+      "old_nodeid": "tests/graphdb/test_graphdb_import_security.py::test_import_refuses_existing_repository_before_create",
+      "new_nodeid": [
+        "tests/integrations/test_graphdb_package_transport.py::test_external_fault_never_claims_verified_or_deletes_a_repository[existing]"
+      ],
+      "behavior": "No existing-repository overwrite, inference/default-graph separation, credential safety and honest external availability",
+      "decision": "REPLACE",
+      "reason": "Current adapter consumes a freshly verified .kgop dataset and compares actual explicit/complete RDF plus physical default graph. No legacy container startup or ambient license materialization remains. User files are never auto-cleaned. Protocol tests are offline, not live deployment certification."
+    },
+    {
+      "old_nodeid": "tests/graphdb/test_graphdb_import_security.py::test_import_refuses_non_empty_fresh_repository_without_cleanup",
+      "new_nodeid": [
+        "tests/integrations/test_graphdb_package_transport.py::test_external_fault_never_claims_verified_or_deletes_a_repository[nonempty]"
+      ],
+      "behavior": "No existing-repository overwrite, inference/default-graph separation, credential safety and honest external availability",
+      "decision": "REPLACE",
+      "reason": "Current adapter consumes a freshly verified .kgop dataset and compares actual explicit/complete RDF plus physical default graph. No legacy container startup or ambient license materialization remains. User files are never auto-cleaned. Protocol tests are offline, not live deployment certification."
+    },
+    {
+      "old_nodeid": "tests/graphdb/test_graphdb_live_import.py::test_generated_license_is_deleted_when_package_validation_fails",
+      "new_nodeid": [
+        "tests/integrations/test_graphdb_package_transport.py::test_adapter_never_materializes_environment_license_or_cleans_user_files"
+      ],
+      "behavior": "No existing-repository overwrite, inference/default-graph separation, credential safety and honest external availability",
+      "decision": "REPLACE",
+      "reason": "Current adapter consumes a freshly verified .kgop dataset and compares actual explicit/complete RDF plus physical default graph. No legacy container startup or ambient license materialization remains. User files are never auto-cleaned. Protocol tests are offline, not live deployment certification."
+    },
+    {
+      "old_nodeid": "tests/graphdb/test_graphdb_live_import.py::test_license_b64_is_strict_and_requests_private_permissions",
+      "new_nodeid": [
+        "tests/integrations/test_graphdb_package_transport.py::test_adapter_never_materializes_environment_license_or_cleans_user_files"
+      ],
+      "behavior": "No existing-repository overwrite, inference/default-graph separation, credential safety and honest external availability",
+      "decision": "REPLACE",
+      "reason": "Current adapter consumes a freshly verified .kgop dataset and compares actual explicit/complete RDF plus physical default graph. No legacy container startup or ambient license materialization remains. User files are never auto-cleaned. Protocol tests are offline, not live deployment certification."
+    },
+    {
+      "old_nodeid": "tests/graphdb/test_graphdb_live_import.py::test_multiple_license_sources_fail_with_stable_ambiguous_reason",
+      "new_nodeid": [
+        "tests/integrations/test_graphdb_package_transport.py::test_adapter_never_materializes_environment_license_or_cleans_user_files"
+      ],
+      "behavior": "No existing-repository overwrite, inference/default-graph separation, credential safety and honest external availability",
+      "decision": "REPLACE",
+      "reason": "Current adapter consumes a freshly verified .kgop dataset and compares actual explicit/complete RDF plus physical default graph. No legacy container startup or ambient license materialization remains. User files are never auto-cleaned. Protocol tests are offline, not live deployment certification."
+    },
+    {
+      "old_nodeid": "tests/graphdb/test_graphdb_live_import.py::test_live_default_dataset_probe_separates_merged_view_from_physical_storage",
+      "new_nodeid": [
+        "tests/integrations/test_graphdb_package_transport.py::test_current_package_deployment_requires_actual_explicit_complete_and_default_exports",
+        "tests/integrations/test_graphdb_package_transport.py::test_external_fault_never_claims_verified_or_deletes_a_repository[default-graph]"
+      ],
+      "behavior": "No existing-repository overwrite, inference/default-graph separation, credential safety and honest external availability",
+      "decision": "REPLACE",
+      "reason": "Current adapter consumes a freshly verified .kgop dataset and compares actual explicit/complete RDF plus physical default graph. No legacy container startup or ambient license materialization remains. User files are never auto-cleaned. Protocol tests are offline, not live deployment certification."
+    },
+    {
+      "old_nodeid": "tests/graphdb/test_graphdb_live_import.py::test_live_inference_regression_requires_full_export_difference_and_fail_closed",
+      "new_nodeid": [
+        "tests/integrations/test_graphdb_package_transport.py::test_external_fault_never_claims_verified_or_deletes_a_repository[inferred]",
+        "tests/integrations/test_graphdb_package_transport.py::test_external_fault_never_claims_verified_or_deletes_a_repository[inference]"
+      ],
+      "behavior": "No existing-repository overwrite, inference/default-graph separation, credential safety and honest external availability",
+      "decision": "REPLACE",
+      "reason": "Current adapter consumes a freshly verified .kgop dataset and compares actual explicit/complete RDF plus physical default graph. No legacy container startup or ambient license materialization remains. User files are never auto-cleaned. Protocol tests are offline, not live deployment certification."
+    },
+    {
+      "old_nodeid": "tests/graphdb/test_graphdb_live_import.py::test_graphdb_live_import_is_fail_closed_without_external_license_or_verifies_with_one",
+      "new_nodeid": [
+        "tests/integrations/test_graphdb_package_transport.py::test_unconfigured_transport_is_not_a_deployment"
+      ],
+      "behavior": "No existing-repository overwrite, inference/default-graph separation, credential safety and honest external availability",
+      "decision": "REPLACE",
+      "reason": "Current adapter consumes a freshly verified .kgop dataset and compares actual explicit/complete RDF plus physical default graph. No legacy container startup or ambient license materialization remains. User files are never auto-cleaned. Protocol tests are offline, not live deployment certification."
+    },
     {
       "old_nodeid": "tests/amendment/test_review_boundary.py::test_licensed_entrypoint_supports_direct_script_execution",
       "new_nodeid": "tests/amendment/test_review_boundary.py::test_obsolete_licensed_publisher_is_retired",

@@ -60,11 +60,12 @@ def test_query_parameter_allowlist_is_exact(application):
 @pytest.mark.parametrize("upstream", [
     "https://127.0.0.1:8081", "http://localhost:8081", "http://0.0.0.0:8081",
     "http://127.0.0.1:8081/api", "http://evil.example:8081", "http://user@127.0.0.1:8081",
+    "https://example.invalid", "http://localhost:8080", "http://127.0.0.1:8081", "http://127.0.0.1:8080/remote",
 ])
 def test_client_cannot_choose_any_upstream(application, upstream):
     with TestClient(application) as client:
         response = client.post("/api/v1/projects/untrusted/objects/query",
-                               json={"instance_iri": "urn:test", "upstream": upstream})
+                               json={"package_id": "urn:kg-mnp:ontology-package:" + "a" * 64, "instance_iri": "urn:test", "upstream": upstream})
     assert response.status_code == 422
 
 

@@ -1,6 +1,5 @@
-"""Stage 07 deterministic GraphDB assembly and import verification."""
+"""GraphDB wire-format helpers and explicitly imported historical readers.
 
-from .package_builder import build_graphdb_import_package
-from .package_validator import validate_graphdb_import_package
-
-__all__ = ["build_graphdb_import_package", "validate_graphdb_import_package"]
+Current deployment planning/approval/observations belong to integrations.graphdb.
+Importing the wire transport must not eagerly load a historical build pipeline.
+"""

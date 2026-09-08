@@ -8,7 +8,7 @@ from dataclasses import dataclass
 from typing import Any
 from urllib.error import HTTPError, URLError
 from urllib.parse import quote, urlencode, urlsplit
-from urllib.request import Request, urlopen
+from urllib.request import HTTPRedirectHandler, ProxyHandler, Request, build_opener
 
 from rdflib import BNode, Graph
 
@@ -19,6 +19,16 @@ from .identifiers import validate_repository_id
 
 class GraphDBClientError(RuntimeError):
     pass
+
+
+class _RejectRedirect(HTTPRedirectHandler):
+    def redirect_request(self, req, fp, code, msg, headers, newurl):
+        raise GraphDBClientError("GraphDB redirect is forbidden")
+
+
+def urlopen(request, *, timeout):
+    # No environment proxy or redirect can change the approved origin.
+    return build_opener(ProxyHandler({}), _RejectRedirect()).open(request, timeout=timeout)
 
 
 @dataclass(frozen=True)
