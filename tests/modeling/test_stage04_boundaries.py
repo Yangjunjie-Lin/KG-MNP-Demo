@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import argparse
 import ast
 from pathlib import Path
 
@@ -26,24 +25,6 @@ def test_stage04_does_not_implement_compilers_or_auto_confirmation() -> None:
         if any(marker in text for marker in forbidden_definitions):
             matches.append(path.relative_to(ROOT).as_posix())
     assert matches == []
-
-
-def test_central_cli_preserves_stage04_commands_after_final_extensions() -> None:
-    from kg_mnp.modeling.cli import build_parser
-
-    parser = build_parser()
-    action = next(
-        item for item in parser._actions if isinstance(item, argparse._SubParsersAction)
-    )
-    command_names = set(action.choices)
-    assert "compile" in command_names
-    assert "graphdb" in command_names
-    assert {"webvowl", "publication"} <= command_names
-    assert "auto-confirm" not in command_names
-    # Stage 05 introduces explicit human review and confirmation builders.
-    assert "review" in command_names
-    assert "confirm" in command_names
-    assert "package" in command_names
 
 
 def test_no_unscoped_application_frontend_or_legacy_http_api_was_added() -> None:

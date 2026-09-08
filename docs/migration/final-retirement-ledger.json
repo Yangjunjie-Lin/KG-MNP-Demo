@@ -511,6 +511,120 @@
       ],
       "artifact_compatibility": "Controlled fixture authority rejection retained on store and loader",
       "reason": "Testing a duplicate fixture server does not establish security of current API"
+    },
+    {
+      "old_path": "src/kg_mnp/modeling/cli.py",
+      "old_responsibility": "Historical local command dispatcher or activation runtime factory",
+      "actual_callers": [
+        "historical modeling/review/compilation/graphdb CLI tests; removed root fallback"
+      ],
+      "replacement_path": "src/kg_mnp/root_cli.py; src/kg_mnp/services/resource_cli.py; src/kg_mnp/semantic_kernel/cli.py; src/kg_mnp/api/app.py",
+      "replacement_behavior": "One public Catalog and current SemanticCompiler; review/release/environment use authenticated service, not local caller labels or a parallel activation factory",
+      "replacement_test_nodeids": [
+        "tests/cli/test_root_dispatch.py::test_removed_servers_cannot_be_imported_as_alternate_product_entrypoints",
+        "tests/cli/test_authenticated_resources.py::test_cli_identity_and_bypass_flags_do_not_reach_transport"
+      ],
+      "artifact_compatibility": "No schema, golden artifacts or read validation functions changed. Exact rehash/illegal-finalize attacks verified before dispatcher deletion and retained directly.",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "G1-G4 required workflows passed; obsolete local mutation routes cannot remain a second product."
+    },
+    {
+      "old_path": "src/kg_mnp/graphdb/cli.py",
+      "old_responsibility": "Historical local command dispatcher or activation runtime factory",
+      "actual_callers": [
+        "src/kg_mnp/modeling/cli.py"
+      ],
+      "replacement_path": "src/kg_mnp/root_cli.py; src/kg_mnp/services/resource_cli.py; src/kg_mnp/semantic_kernel/cli.py; src/kg_mnp/api/app.py",
+      "replacement_behavior": "One public Catalog and current SemanticCompiler; review/release/environment use authenticated service, not local caller labels or a parallel activation factory",
+      "replacement_test_nodeids": [
+        "tests/cli/test_root_dispatch.py::test_removed_servers_cannot_be_imported_as_alternate_product_entrypoints",
+        "tests/cli/test_authenticated_resources.py::test_cli_identity_and_bypass_flags_do_not_reach_transport"
+      ],
+      "artifact_compatibility": "No schema, golden artifacts or read validation functions changed. Exact rehash/illegal-finalize attacks verified before dispatcher deletion and retained directly.",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "G1-G4 required workflows passed; obsolete local mutation routes cannot remain a second product."
+    },
+    {
+      "old_path": "src/kg_mnp/publication/cli.py",
+      "old_responsibility": "Historical local command dispatcher or activation runtime factory",
+      "actual_callers": [
+        "src/kg_mnp/modeling/cli.py"
+      ],
+      "replacement_path": "src/kg_mnp/root_cli.py; src/kg_mnp/services/resource_cli.py; src/kg_mnp/semantic_kernel/cli.py; src/kg_mnp/api/app.py",
+      "replacement_behavior": "One public Catalog and current SemanticCompiler; review/release/environment use authenticated service, not local caller labels or a parallel activation factory",
+      "replacement_test_nodeids": [
+        "tests/cli/test_root_dispatch.py::test_removed_servers_cannot_be_imported_as_alternate_product_entrypoints",
+        "tests/cli/test_authenticated_resources.py::test_cli_identity_and_bypass_flags_do_not_reach_transport"
+      ],
+      "artifact_compatibility": "No schema, golden artifacts or read validation functions changed. Exact rehash/illegal-finalize attacks verified before dispatcher deletion and retained directly.",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "G1-G4 required workflows passed; obsolete local mutation routes cannot remain a second product."
+    },
+    {
+      "old_path": "src/kg_mnp/webvowl/cli.py",
+      "old_responsibility": "Historical local command dispatcher or activation runtime factory",
+      "actual_callers": [
+        "src/kg_mnp/modeling/cli.py"
+      ],
+      "replacement_path": "src/kg_mnp/root_cli.py; src/kg_mnp/services/resource_cli.py; src/kg_mnp/semantic_kernel/cli.py; src/kg_mnp/api/app.py",
+      "replacement_behavior": "One public Catalog and current SemanticCompiler; review/release/environment use authenticated service, not local caller labels or a parallel activation factory",
+      "replacement_test_nodeids": [
+        "tests/cli/test_root_dispatch.py::test_removed_servers_cannot_be_imported_as_alternate_product_entrypoints",
+        "tests/cli/test_authenticated_resources.py::test_cli_identity_and_bypass_flags_do_not_reach_transport"
+      ],
+      "artifact_compatibility": "No schema, golden artifacts or read validation functions changed. Exact rehash/illegal-finalize attacks verified before dispatcher deletion and retained directly.",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "G1-G4 required workflows passed; obsolete local mutation routes cannot remain a second product."
+    },
+    {
+      "old_path": "src/kg_mnp/activation/cli.py",
+      "old_responsibility": "Historical local command dispatcher or activation runtime factory",
+      "actual_callers": [
+        "src/kg_mnp/activation/__init__.py",
+        "tests/activation/test_cli.py"
+      ],
+      "replacement_path": "src/kg_mnp/root_cli.py; src/kg_mnp/services/resource_cli.py; src/kg_mnp/semantic_kernel/cli.py; src/kg_mnp/api/app.py",
+      "replacement_behavior": "One public Catalog and current SemanticCompiler; review/release/environment use authenticated service, not local caller labels or a parallel activation factory",
+      "replacement_test_nodeids": [
+        "tests/cli/test_root_dispatch.py::test_removed_servers_cannot_be_imported_as_alternate_product_entrypoints",
+        "tests/cli/test_authenticated_resources.py::test_cli_identity_and_bypass_flags_do_not_reach_transport"
+      ],
+      "artifact_compatibility": "No schema, golden artifacts or read validation functions changed. Exact rehash/illegal-finalize attacks verified before dispatcher deletion and retained directly.",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "G1-G4 required workflows passed; obsolete local mutation routes cannot remain a second product."
+    },
+    {
+      "old_path": "src/kg_mnp/activation/runtime.py",
+      "old_responsibility": "Historical local command dispatcher or activation runtime factory",
+      "actual_callers": [
+        "src/kg_mnp/activation/__init__.py",
+        "tests/activation/test_cli.py"
+      ],
+      "replacement_path": "src/kg_mnp/root_cli.py; src/kg_mnp/services/resource_cli.py; src/kg_mnp/semantic_kernel/cli.py; src/kg_mnp/api/app.py",
+      "replacement_behavior": "One public Catalog and current SemanticCompiler; review/release/environment use authenticated service, not local caller labels or a parallel activation factory",
+      "replacement_test_nodeids": [
+        "tests/cli/test_root_dispatch.py::test_removed_servers_cannot_be_imported_as_alternate_product_entrypoints",
+        "tests/cli/test_authenticated_resources.py::test_cli_identity_and_bypass_flags_do_not_reach_transport"
+      ],
+      "artifact_compatibility": "No schema, golden artifacts or read validation functions changed. Exact rehash/illegal-finalize attacks verified before dispatcher deletion and retained directly.",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "G1-G4 required workflows passed; obsolete local mutation routes cannot remain a second product."
+    },
+    {
+      "old_path": "src/kg_mnp/amendment/cli.py",
+      "old_responsibility": "Historical local command dispatcher or activation runtime factory",
+      "actual_callers": [
+        "tests/activation/test_phase05_public_surface_freeze.py"
+      ],
+      "replacement_path": "src/kg_mnp/root_cli.py; src/kg_mnp/services/resource_cli.py; src/kg_mnp/semantic_kernel/cli.py; src/kg_mnp/api/app.py",
+      "replacement_behavior": "One public Catalog and current SemanticCompiler; review/release/environment use authenticated service, not local caller labels or a parallel activation factory",
+      "replacement_test_nodeids": [
+        "tests/cli/test_root_dispatch.py::test_removed_servers_cannot_be_imported_as_alternate_product_entrypoints",
+        "tests/cli/test_authenticated_resources.py::test_cli_identity_and_bypass_flags_do_not_reach_transport"
+      ],
+      "artifact_compatibility": "No schema, golden artifacts or read validation functions changed. Exact rehash/illegal-finalize attacks verified before dispatcher deletion and retained directly.",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "G1-G4 required workflows passed; obsolete local mutation routes cannot remain a second product."
     }
   ],
   "test_migration": [
@@ -939,6 +1053,227 @@
       ],
       "decision": "REPLACE_ASSERTION",
       "behavior": "Exact controlled-harness authority rejection now checked directly on store initialization; removed runtime has no alternate import"
+    },
+    {
+      "old_nodeid": "tests/activation/test_cli.py::test_main_serializes_activation_errors_canonically",
+      "behavior": "Obsolete error vocabulary retired; stable typed current CLI errors preserved.",
+      "new_nodeids": [
+        "tests/cli/test_compile_cli.py::test_compile_cli_has_stable_json_error_envelope_without_traceback",
+        "tests/cli/test_package_cli.py::test_package_archive_error_uses_exit_39_and_json_envelope"
+      ],
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Obsolete error vocabulary retired; stable typed current CLI errors preserved.",
+      "evidence": "runtime_logs/p09/cli-security-before-20260908.xml; runtime_logs/p09/cli-retired-20260908.xml (incremental subsets only)"
+    },
+    {
+      "old_nodeid": "tests/activation/test_cli.py::test_mutation_dispatch_fixes_kind_and_passes_only_scalar_inputs",
+      "behavior": "Caller labels no longer constitute human identity; actual service replays authenticated approvals and DTOs reject injected roles.",
+      "new_nodeids": [
+        "tests/cli/test_authenticated_resources.py::test_cli_identity_and_bypass_flags_do_not_reach_transport",
+        "tests/services/test_lifecycle_completion.py::test_environment_cannot_execute_with_invented_approval"
+      ],
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Caller labels no longer constitute human identity; actual service replays authenticated approvals and DTOs reject injected roles.",
+      "evidence": "runtime_logs/p09/cli-security-before-20260908.xml; runtime_logs/p09/cli-retired-20260908.xml (incremental subsets only)"
+    },
+    {
+      "old_nodeid": "tests/activation/test_cli.py::test_mutation_parsers_require_explicit_human_acknowledgements",
+      "behavior": "An acknowledgement CLI flag is not identity; service requires genuine HUMAN grants/quorum.",
+      "new_nodeids": [
+        "tests/services/test_prompt08_boundary.py::test_service_account_cannot_approve_scope_or_reviews",
+        "tests/services/test_release_policy.py::test_production_service_requires_two_authenticated_reviewers"
+      ],
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "An acknowledgement CLI flag is not identity; service requires genuine HUMAN grants/quorum.",
+      "evidence": "runtime_logs/p09/cli-security-before-20260908.xml; runtime_logs/p09/cli-retired-20260908.xml (incremental subsets only)"
+    },
+    {
+      "old_nodeid": "tests/activation/test_cli.py::test_parser_exposes_only_the_phase06_human_workflow",
+      "behavior": "Historical parser removed; no auto/force/identity override route remains.",
+      "new_nodeids": [
+        "tests/cli/test_root_dispatch.py::test_removed_servers_cannot_be_imported_as_alternate_product_entrypoints",
+        "tests/cli/test_authenticated_resources.py::test_cli_identity_and_bypass_flags_do_not_reach_transport"
+      ],
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Historical parser removed; no auto/force/identity override route remains.",
+      "evidence": "runtime_logs/p09/cli-security-before-20260908.xml; runtime_logs/p09/cli-retired-20260908.xml (incremental subsets only)"
+    },
+    {
+      "old_nodeid": "tests/activation/test_cli.py::test_root_cli_routes_activation_and_public_contract_first_tokens",
+      "behavior": "One current root dispatcher; obsolete activation route returns retirement.",
+      "new_nodeids": [
+        "tests/cli/test_root_dispatch.py::test_root_routes_current_authorities_and_preserves_arguments"
+      ],
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "One current root dispatcher; obsolete activation route returns retirement.",
+      "evidence": "runtime_logs/p09/cli-security-before-20260908.xml; runtime_logs/p09/cli-retired-20260908.xml (incremental subsets only)"
+    },
+    {
+      "old_nodeid": "tests/activation/test_cli.py::test_runtime_config_comes_only_from_startup_options",
+      "behavior": "Startup-local target IDs and explicit bounded service settings replace historical phase directories.",
+      "new_nodeids": [
+        "tests/security/test_http_wire_boundary.py::test_client_cannot_inject_paths_authority_or_roles",
+        "tests/integrations/test_service_integrations.py::test_adapter_registry_uses_target_ids_not_request_urls"
+      ],
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Startup-local target IDs and explicit bounded service settings replace historical phase directories.",
+      "evidence": "runtime_logs/p09/cli-security-before-20260908.xml; runtime_logs/p09/cli-retired-20260908.xml (incremental subsets only)"
+    },
+    {
+      "old_nodeid": "tests/activation/test_cli.py::test_trust_commands_require_external_registry_and_head_anchors[resolve-current]",
+      "behavior": "Registry tamper/CAS are still mandatory on current authority, not old option spelling.",
+      "new_nodeids": [
+        "tests/lifecycle/test_lifecycle_boundaries.py::test_registry_head_tamper_is_detected",
+        "tests/lifecycle/test_lifecycle_boundaries.py::test_environment_cas_rejects_stale_pointer"
+      ],
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Registry tamper/CAS are still mandatory on current authority, not old option spelling.",
+      "evidence": "runtime_logs/p09/cli-security-before-20260908.xml; runtime_logs/p09/cli-retired-20260908.xml (incremental subsets only)"
+    },
+    {
+      "old_nodeid": "tests/activation/test_cli.py::test_trust_commands_require_external_registry_and_head_anchors[verify]",
+      "behavior": "Registry tamper/CAS are still mandatory on current authority, not old option spelling.",
+      "new_nodeids": [
+        "tests/lifecycle/test_lifecycle_boundaries.py::test_registry_head_tamper_is_detected",
+        "tests/lifecycle/test_lifecycle_boundaries.py::test_environment_cas_rejects_stale_pointer"
+      ],
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Registry tamper/CAS are still mandatory on current authority, not old option spelling.",
+      "evidence": "runtime_logs/p09/cli-security-before-20260908.xml; runtime_logs/p09/cli-retired-20260908.xml (incremental subsets only)"
+    },
+    {
+      "old_nodeid": "tests/compilation/test_compilation_cli.py::test_compile_help_and_build_validate_inspect",
+      "behavior": "Single SemanticCompiler CLI; real confirmed input, build, validation and reproduction.",
+      "new_nodeids": [
+        "tests/cli/test_compile_cli.py::test_compile_input_plan_build_inspect_validate_reports_and_reproduce_cli"
+      ],
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Single SemanticCompiler CLI; real confirmed input, build, validation and reproduction.",
+      "evidence": "runtime_logs/p09/cli-security-before-20260908.xml; runtime_logs/p09/cli-retired-20260908.xml (incremental subsets only)"
+    },
+    {
+      "old_nodeid": "tests/compilation/test_stage06_boundaries.py::test_stage06_compiler_remains_separate_from_final_integrations",
+      "behavior": "Old parser extension shape retired; compiler and explicitly selected integrations remain separate.",
+      "new_nodeids": [
+        "tests/cli/test_root_dispatch.py::test_removed_servers_cannot_be_imported_as_alternate_product_entrypoints",
+        "tests/integrations/test_service_integrations.py::test_adapter_registry_uses_target_ids_not_request_urls"
+      ],
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Old parser extension shape retired; compiler and explicitly selected integrations remain separate.",
+      "evidence": "runtime_logs/p09/cli-security-before-20260908.xml; runtime_logs/p09/cli-retired-20260908.xml (incremental subsets only)"
+    },
+    {
+      "old_nodeid": "tests/graphdb/test_graphdb_cli.py::test_graphdb_cli_surface_remains_available_with_stage08_commands",
+      "behavior": "Legacy importer/publication CLI removed; governed integration API replaces it, live availability not claimed.",
+      "new_nodeids": [
+        "tests/cli/test_root_dispatch.py::test_removed_servers_cannot_be_imported_as_alternate_product_entrypoints",
+        "tests/integrations/test_service_integrations.py::test_adapter_registry_uses_target_ids_not_request_urls"
+      ],
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Legacy importer/publication CLI removed; governed integration API replaces it, live availability not claimed.",
+      "evidence": "runtime_logs/p09/cli-security-before-20260908.xml; runtime_logs/p09/cli-retired-20260908.xml (incremental subsets only)"
+    },
+    {
+      "old_nodeid": "tests/modeling/test_modeling_cli.py::test_central_cli_lists_closed_contract_catalog",
+      "behavior": "No duplicate 33-contract catalog CLI; sole public Catalog retains original 115 bytes/IDs.",
+      "new_nodeids": [
+        "tests/contracts/test_catalog.py::test_catalog_is_the_unique_closed_public_authority"
+      ],
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "No duplicate 33-contract catalog CLI; sole public Catalog retains original 115 bytes/IDs.",
+      "evidence": "runtime_logs/p09/cli-security-before-20260908.xml; runtime_logs/p09/cli-retired-20260908.xml (incremental subsets only)"
+    },
+    {
+      "old_nodeid": "tests/modeling/test_modeling_cli.py::test_cli_proposal_output_is_byte_stable_and_not_overwritten",
+      "behavior": "Original deterministic semantics and stronger current immutable transaction protection remain.",
+      "new_nodeids": [
+        "tests/modeling/test_determinism.py::test_same_inputs_generate_identical_bytes_and_identifiers",
+        "tests/modeling_control/test_limits_and_transactions.py::test_transaction_reuses_identical_bytes_and_rejects_mutation"
+      ],
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Original deterministic semantics and stronger current immutable transaction protection remain.",
+      "evidence": "runtime_logs/p09/cli-security-before-20260908.xml; runtime_logs/p09/cli-retired-20260908.xml (incremental subsets only)"
+    },
+    {
+      "old_nodeid": "tests/modeling/test_modeling_cli.py::test_cli_validates_input_and_dependencies",
+      "behavior": "Public contract validation and existing historical semantic/dependency tests remain; old CLI wording retired.",
+      "new_nodeids": [
+        "tests/contracts/test_catalog.py::test_catalog_lock_and_regeneration_are_deterministic_and_current",
+        "tests/modeling/test_contract_registry.py"
+      ],
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Public contract validation and existing historical semantic/dependency tests remain; old CLI wording retired.",
+      "evidence": "runtime_logs/p09/cli-security-before-20260908.xml; runtime_logs/p09/cli-retired-20260908.xml (incremental subsets only)"
+    },
+    {
+      "old_nodeid": "tests/review/test_confirmation_cli.py::test_confirm_build_and_package_validate",
+      "behavior": "Actual authenticated Review/Confirmed/Package flow and current verification/export replace local identity claims.",
+      "new_nodeids": [
+        "tests/cli/test_package_cli.py::test_package_list_inspect_verify_export_archive_and_contents_cli",
+        "tests/services/test_modeling_workflow.py::test_nonempty_review_confirmed_workflow"
+      ],
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Actual authenticated Review/Confirmed/Package flow and current verification/export replace local identity claims.",
+      "evidence": "runtime_logs/p09/cli-security-before-20260908.xml; runtime_logs/p09/cli-retired-20260908.xml (incremental subsets only)"
+    },
+    {
+      "old_nodeid": "tests/review/test_package_validation_cli_security.py::test_package_validate_cli_rejects_rehashed_ready_forgery",
+      "behavior": "Exact rehashed BLOCKED->READY forgery remains rejected by same historical validator, plus current confirmed-package rehash denial.",
+      "new_nodeids": [
+        "tests/review/test_package_reconstruction_validation.py::test_rehashed_ready_forgery_rejected",
+        "tests/security/test_confirmed_package_security.py::test_package_manifest_rehash_is_detected"
+      ],
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Exact rehashed BLOCKED->READY forgery remains rejected by same historical validator, plus current confirmed-package rehash denial.",
+      "evidence": "runtime_logs/p09/cli-security-before-20260908.xml; runtime_logs/p09/cli-retired-20260908.xml (incremental subsets only)"
+    },
+    {
+      "old_nodeid": "tests/review/test_review_cli.py::test_review_cli_init_status_record_finalize",
+      "behavior": "Authenticated per-item review/replay/finalization replaces caller-supplied identities.",
+      "new_nodeids": [
+        "tests/services/test_modeling_workflow.py::test_nonempty_review_confirmed_workflow",
+        "tests/modeling_review/test_review.py::test_action_delete_reorder_tamper_and_provider_self_review_fail"
+      ],
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Authenticated per-item review/replay/finalization replaces caller-supplied identities.",
+      "evidence": "runtime_logs/p09/cli-security-before-20260908.xml; runtime_logs/p09/cli-retired-20260908.xml (incremental subsets only)"
+    },
+    {
+      "old_nodeid": "tests/review/test_review_finalize_cli_security.py::test_review_finalize_cli_rejects_issue_confirm",
+      "behavior": "Exact invalid issue CONFIRM with recomputed action/log digests remains rejected by same validator; no output is produced by removed CLI.",
+      "new_nodeids": [
+        "tests/review/test_review_finalization_fail_closed.py::test_finalize_rejects_issue_confirm_with_valid_decision_id"
+      ],
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Exact invalid issue CONFIRM with recomputed action/log digests remains rejected by same validator; no output is produced by removed CLI.",
+      "evidence": "runtime_logs/p09/cli-security-before-20260908.xml; runtime_logs/p09/cli-retired-20260908.xml (incremental subsets only)"
+    },
+    {
+      "old_nodeid": "tests/modeling/test_stage04_boundaries.py::test_central_cli_preserves_stage04_commands_after_final_extensions",
+      "new_nodeids": [
+        "tests/cli/test_root_dispatch.py::test_removed_servers_cannot_be_imported_as_alternate_product_entrypoints",
+        "tests/cli/test_authenticated_resources.py::test_cli_identity_and_bypass_flags_do_not_reach_transport"
+      ],
+      "decision": "REPLACE_AND_DELETE",
+      "behavior": "Old parser shape assertions superseded; no-bypass behavior preserved on actual authenticated route, old module absent"
+    },
+    {
+      "old_nodeid": "tests/review/test_stage05_boundaries.py::test_cli_preserves_review_confirm_after_final_extensions",
+      "new_nodeids": [
+        "tests/cli/test_root_dispatch.py::test_removed_servers_cannot_be_imported_as_alternate_product_entrypoints",
+        "tests/cli/test_authenticated_resources.py::test_cli_identity_and_bypass_flags_do_not_reach_transport"
+      ],
+      "decision": "REPLACE_AND_DELETE",
+      "behavior": "Old parser shape assertions superseded; no-bypass behavior preserved on actual authenticated route, old module absent"
+    },
+    {
+      "old_nodeid": "tests/activation/test_phase05_public_surface_freeze.py::test_phase05_cli_has_no_activation_or_generic_reentry_command",
+      "new_nodeids": [
+        "tests/cli/test_root_dispatch.py::test_removed_servers_cannot_be_imported_as_alternate_product_entrypoints",
+        "tests/cli/test_authenticated_resources.py::test_cli_identity_and_bypass_flags_do_not_reach_transport"
+      ],
+      "decision": "REPLACE_AND_DELETE",
+      "behavior": "Old parser shape assertions superseded; no-bypass behavior preserved on actual authenticated route, old module absent"
     }
   ],
   "replacement_gate": {
@@ -997,5 +1332,32 @@
     "post_retirement": "runtime_logs/p09/http-retirement-20260908.xml",
     "post_retirement_passed": 111,
     "remaining": "Historical business builders/stores/verifiers and old modeling/compilation/activation CLI still require closure; not REFACTOR_COMPLETE"
+  },
+  "cli_retirement_checkpoint": {
+    "parent_commit": "5518681",
+    "removed_files": [
+      "src/kg_mnp/modeling/cli.py",
+      "src/kg_mnp/graphdb/cli.py",
+      "src/kg_mnp/publication/cli.py",
+      "src/kg_mnp/webvowl/cli.py",
+      "src/kg_mnp/activation/cli.py",
+      "src/kg_mnp/activation/runtime.py",
+      "src/kg_mnp/amendment/cli.py",
+      "tests/modeling/test_modeling_cli.py",
+      "tests/compilation/test_compilation_cli.py",
+      "tests/compilation/test_stage06_boundaries.py",
+      "tests/graphdb/test_graphdb_cli.py",
+      "tests/review/test_confirmation_cli.py",
+      "tests/review/test_review_cli.py",
+      "tests/review/test_package_validation_cli_security.py",
+      "tests/review/test_review_finalize_cli_security.py",
+      "tests/activation/test_cli.py"
+    ],
+    "pre_deletion_security": {
+      "passed": 15,
+      "evidence": "runtime_logs/p09/cli-security-before-20260908.xml"
+    },
+    "post_deletion_evidence": "runtime_logs/p09/cli-retired-20260908.xml",
+    "scope_limit": "Not a whole-backend retirement. Historical business builders/stores and legacy MNP evaluation pipeline still need further consolidation."
   }
 }

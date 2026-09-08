@@ -4,7 +4,6 @@ import inspect
 from pathlib import Path
 
 from kg_mnp import amendment
-from kg_mnp.amendment.cli import _parser
 from kg_mnp.amendment.republication import complete_reentry, prepare_reentry
 
 ROOT = Path(__file__).resolve().parents[2]
@@ -45,14 +44,6 @@ def test_generic_reentry_signatures_are_frozen() -> None:
         "base_repository_hash_before",
         "base_repository_hash_after",
     )
-
-
-def test_phase05_cli_has_no_activation_or_generic_reentry_command() -> None:
-    help_text = _parser().format_help().casefold()
-    assert "activation" not in help_text
-    assert "prepare_reentry" not in help_text
-    assert "complete_reentry" not in help_text
-    assert "auto" not in help_text
 
 
 def test_phase05_implementation_has_no_phase06_hook() -> None:

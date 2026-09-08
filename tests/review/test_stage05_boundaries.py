@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import argparse
 import ast
 from pathlib import Path
 
@@ -32,26 +31,6 @@ def test_stage05_forbids_compilers_auto_confirm_and_integrations():
         "src/kg_mnp/graphdb.py",
     ):
         assert not (ROOT / relative).exists()
-
-
-def test_cli_preserves_review_confirm_after_final_extensions():
-    from kg_mnp.modeling.cli import build_parser
-
-    parser = build_parser()
-    action = next(
-        item for item in parser._actions if isinstance(item, argparse._SubParsersAction)
-    )
-    names = set(action.choices)
-    assert {"review", "confirm", "package"} <= names
-    assert "compile" in names
-    assert "graphdb" in names
-    assert {"webvowl", "publication"} <= names
-    assert "auto-confirm" not in names
-    review = action.choices["review"]
-    review_action = next(
-        item for item in review._actions if isinstance(item, argparse._SubParsersAction)
-    )
-    assert not {"auto", "recommend"} & set(review_action.choices)
 
 
 def test_review_modules_avoid_clock_random_network_llm_imports():
