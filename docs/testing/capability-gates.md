@@ -10,9 +10,9 @@
 | ci-backend | Windows / Linux 分别运行完整 pytest collection 一次，包含安全和兼容测试 |
 | ci-workbench | 前端组件测试、构建、合成服务与真实浏览器 |
 | ci-security | Python / npm 已知依赖公告核查 |
-| ci-release-check | Wheel / Sdist 构建与工件归档，不自动发布 |
+| ci-release-check | Windows / Linux 新环境安装、Sdist 重建与实际 API/Worker 探针，不自动发布 |
 
-不再递归运行历史阶段 aggregate。同一平台完整后端 collection 包含安全和兼容能力，其他工作流不重复执行这些 pytest 节点。配置了 CI 不表示远端运行已通过。
+不再递归运行历史阶段 aggregate。同一平台完整后端 collection 包含安全和兼容能力，其他工作流不重复执行这些 pytest 节点。普通 backend/CI 入口为 tools/run_backend_tests.py，它创建唯一的证据与临时目录；不会假定干净 checkout 已有 runtime 目录，也不清除以前的基准目录。配置了 CI 不表示远端运行已通过。
 
 所有准备显式安装锁定依赖和固定摘要 ROBOT；核心执行不会联网下载。GraphDB live 与外部执行器需要另行授权，未配置不是本地功能失败的替代解释。
 
@@ -33,4 +33,6 @@
 
 `npm --prefix workbench run test:rendering` 需要指向仅供测试的 Vite 服务的 `KG_MNP_RENDERING_URL`。业务 E2E 则用 `python tools/run_browser_verification.py` 创建独立合成服务和真实 Worker；不替换业务 API。
 
-完整发行候选还需要独立干净环境安装和实际启动。Wheel/Sdist 构建成功不是运行、兼容或发行验收通过。
+完整发行候选还需要独立干净环境安装和实际启动。tools/verify_distribution.py 在当前平台执行两套独立安装，并可通过 --prebuilt 验证同一工件在另一平台的行为。Wheel/Sdist 构建成功不是运行、兼容或发行验收通过。
+
+浏览器管理使用独立本地停止标记，不使用持续读取标准输入的线程；后者会阻塞 Windows 验证子进程启动。--smoke-only --probe-subprocess 会运行真实 SHACL 子进程的正反例，不能仅凭 HTTP 健康页认定 Worker 的隔离验证可用。此合成测试启动器不是生产进程管理器；硬杀其父进程后的残留测试进程应按已知句柄与运行目录人工审计，不能按端口杀未知进程。

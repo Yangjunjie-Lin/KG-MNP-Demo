@@ -46,14 +46,13 @@ def test_no_auto_confirmation_or_compiler_implementation():
                 continue
             matches.append(f"{relative}: {marker}")
     assert matches == []
-    assert (src / "modeling" / "confirmation.py").is_file()
+    assert (src / "modeling" / "control_plane" / "confirmation.py").is_file()
 
 
-def test_stage_02_report_defers_example_org_migration():
-    report = (ROOT / "docs" / "migration" / "stage-02-semantic-governance.md").read_text(
+def test_current_architecture_keeps_open_and_closed_world_semantics_distinct():
+    report = (ROOT / "docs" / "architecture" / "toolchain.md").read_text(
         encoding="utf-8"
     )
-    assert "Existing TTL migration deferred to Stage 03" in report or (
-        "example.org" in report and "Stage 03" in report
-    )
     assert "Domain/Range" in report
+    assert "不是数据库列类型检查" in report
+    assert "SHACL violation 不等于 OWL inconsistency" in report

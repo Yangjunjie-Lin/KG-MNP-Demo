@@ -7,7 +7,7 @@
 ```mermaid
 flowchart TD
   workbench["中文工作台"] -->|"资源请求"| api["FastAPI"]
-  clients["服务 CLI 与 SDK"] -->|"相同请求契约"| api
+  clients["服务 CLI 与 HTTP SDK"] -->|"相同请求契约"| api
   api -->|"认证后的请求"| service["ApplicationService"]
   service -->|"重验身份与权限"| identity[("Token 与 Session")]
   service -->|"持久化任务"| jobs[("JobStore")]
@@ -93,3 +93,19 @@ flowchart TD
 当前编译器 0.5.1 与 API v1、领域包版本和工具链发行版本独立管理。编译器快照和策略使用新增 1.1.0 契约；原 1.0.0 契约仍逐字节保留用于读取旧包。策略约束、审核要求和原 Domain Pack 内容没有为通过示例而降低。
 
 快照记录真实工具链版本、编译器版本、实现文件摘要和依赖环境；源码或环境变化产生不同快照，旧编译计划不能被当作当前计划复用。0.5.0 的真实合成 Package 已冻结为只读兼容样本，其固定 SHA 由独立测试保护，不通过修改包后重算 Hash 来实现兼容。
+
+## 语义含义与工具职责
+
+当前业务资料入口是 Source → Evidence-bound KG-IR；历史 CleanedPartialData 不是当前通用接入契约。Schema 的 $id 是契约身份，不是领域术语、实例或命名图 IRI。已有契约不能原地扩宽含义；新增版本必须保留旧字节和显式读取边界。
+
+ModelingProposal 只包含待审核候选。只有明确人工审核闭合的 ConfirmedModelingPackage / Confirmed Modeling Package 才能进入正式编译。Provider 分数和一致意见只用于排序，不是校准后的真值概率，也不能用于自动批准。
+
+建模证据解释为什么引入类、属性、映射或约束；事实证据支持具体 ABox 断言。两者都不能仅凭 Hash 证明来源内容真实。显式、推断、候选、拒绝和仅供审核的数据应分开；推断事实不得伪造原始字段证据。缺失不等于否定，未知不等于不存在，不能为图连通而编造关系，也不能由单个字段名自动生成正式 TBox。
+
+OWL 的 Domain/Range 是推断公理，不是数据库列类型检查。SHACL 是针对实际执行约束的数据验证；SHACL violation 不等于 OWL inconsistency。默认实例填充不得绕过 Scope 和审核修改 TBox。
+
+Protégé、GraphDB 与 WebVOWL 不是独立的本体编辑权威。发现问题后必须更新候选与审核输入、重新确认和编译；不能把工具内编辑或布局直接覆盖正式产物。LLM 必须停留在提案边界，不能 auto-confirm 或自动修复后发布。
+
+Canonical NT/NQ 是语义摘要依据，TTL/TriG 是可读且需往返等价的视图。基线空节点的结构确定化使用本工具链的 RDF Canonical Profile，不声称获得 URDNA2015 认证。当前提交机制也不证明任意文件系统断电恢复或分布式 exactly-once。
+
+安装的 Python Plugin 是显式受信任代码，不是 OS 沙箱；发现阶段只读取元数据，不能自动导入第三方实现。源码外使用明确的本地 Domain Pack 根；不自动解析远程本体或下载模型。

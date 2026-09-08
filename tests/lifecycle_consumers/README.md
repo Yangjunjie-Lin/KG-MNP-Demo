@@ -1,1 +1,0 @@
-# Consumer manifest tests

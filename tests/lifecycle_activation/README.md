@@ -1,1 +1,0 @@
-# Activation lifecycle tests

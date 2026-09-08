@@ -28,27 +28,26 @@ def test_adr_accepted_and_lists_authority_chain():
 
 
 def test_confirmed_package_is_authoritative_proposal_is_not():
-    text = _read("docs/architecture/semantic-authority-chain.md")
+    text = _read("docs/architecture/toolchain.md")
     assert "ConfirmedModelingPackage" in text
-    assert "Yes" in text
     assert "ModelingProposal" in text
-    assert "candidates" in text.lower() or "No" in text
-    assert "formal compilation" in text.lower() or "Formal compilation" in text
+    assert "只包含待审核候选" in text
+    assert "明确人工审核闭合" in text and "正式编译" in text
 
 
 def test_tools_are_not_editing_authorities():
-    text = _read("docs/architecture/semantic-authority-chain.md")
+    text = _read("docs/architecture/toolchain.md")
     lowered = text.lower()
     assert "GraphDB" in text
     assert "WebVOWL" in text
     assert "prot" in lowered
-    assert "ontology editing authority" in lowered or "forbidden role" in text
-    assert "write-back" in lowered or "update authoritative inputs" in text
+    assert "不是独立的本体编辑权威" in text
+    assert "更新候选与审核输入、重新确认和编译" in text
 
 
 def test_llm_auto_confirm_forbidden():
     adr = _read("docs/adr/ADR-001-semantic-authority.md")
-    chain = _read("docs/architecture/semantic-authority-chain.md")
+    chain = _read("docs/architecture/toolchain.md")
     combined = (adr + "\n" + chain).lower()
     assert "llm" in combined
     assert "auto-confirm" in combined or "automatic confirmation" in combined

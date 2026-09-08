@@ -1,5 +1,7 @@
 # ADR-0002: Public Contract, Domain Pack, and Workspace Kernel
 
+> 长期权威与契约原则继续采用；下列历史输入格式、旧 CLI/平台共存及未来阶段实施条款已被当前契约和入口迁移部分替代。本文保留当时的决策背景，不代表当前功能状态。参见[迁移结论](../migration/history-and-current-boundaries.md)与[当前架构](../architecture/toolchain.md)。
+
 ## Context
 
 The retained implementation had strong local Modeling validation but a
@@ -82,4 +84,3 @@ added.
 The new modules and resources can be reverted as a branch without rewriting
 Prompt 1 or the historical tag. Once consumers publish v1 documents, changes
 must proceed by versioned migration rather than in-place mutation.
-

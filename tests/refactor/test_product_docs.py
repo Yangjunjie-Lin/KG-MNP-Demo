@@ -1,5 +1,7 @@
 """Current product documentation, not assertions freezing historical prose."""
+import re
 from pathlib import Path
+from urllib.parse import unquote
 
 ROOT = Path(__file__).resolve().parents[2]
 REQUIRED_DOCUMENTS = (
@@ -31,3 +33,17 @@ def test_current_product_documents_do_not_extend_retired_route():
             continue
         text=(ROOT/relative).read_text(encoding="utf-8")
         assert "Application Phase 07" not in text and "Stage 09" not in text
+
+
+def test_document_links_point_to_present_local_targets():
+    broken = []
+    for path in [ROOT / "README.md", *sorted((ROOT / "docs").rglob("*.md"))]:
+        source = re.sub(r"```[\s\S]*?```", "", path.read_text(encoding="utf-8"))
+        for raw in re.findall(r"\[[^\]]*\]\(([^)]+)\)", source):
+            target = raw.strip().strip("<>").split("#", 1)[0]
+            if not target or re.match(r"^[a-zA-Z][a-zA-Z0-9+.-]*:", target) or target.startswith("//"):
+                continue
+            resolved = (path.parent / unquote(target)).resolve()
+            if not resolved.is_relative_to(ROOT) or not resolved.exists():
+                broken.append(f"{path.relative_to(ROOT).as_posix()}: {raw}")
+    assert not broken, "\n".join(broken)

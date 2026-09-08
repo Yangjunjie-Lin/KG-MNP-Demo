@@ -296,7 +296,8 @@ def test_owner_open_validate_catalog_pack_inspect_and_empty_environment(service)
         service.execute(OperationRequest("domain-pack.inspect", parameters={"pack_id": "minimal", "pack_version": "9.9.9"}), alice)
     assert missing.value.status_code == 404
     catalog = service.execute(OperationRequest("operation.catalog"), alice).payload
-    baseline = json.loads((__import__("pathlib").Path(__file__).parents[2] / "docs/verification/prompt-08-service-coverage.json").read_bytes())
+    import subprocess
+    baseline = json.loads(subprocess.check_output(["git", "show", "9da17d126cb37166ff06084080770108da20afbe:docs/verification/prompt-08-service-coverage.json"], cwd=__import__("pathlib").Path(__file__).parents[2]))
     assert {row["operation_id"] for row in baseline["operations"]} <= {row["operation_id"] for row in catalog["operations"]}
     assert {row["operation_id"] for row in catalog["coverage"] if row["service_handler"]} == set(HANDLERS)
     environment = init_environment(get_project(service.root, project["project_id"]).registry_root, environment_name="test")

@@ -659,6 +659,1206 @@
       "artifact_compatibility": "MNP modules/source/license assertions preserved",
       "decision": "MOVE",
       "reason": "Removed historical heading/runtime expectations; retained durable architecture decisions"
+    },
+    {
+      "old_path": "docs/architecture/contract-and-workspace-kernel.md",
+      "old_responsibility": "Historical phase report or superseded architecture/product description",
+      "actual_callers": [
+        "Historical documentation references; no current runtime business caller"
+      ],
+      "replacement_path": "docs/architecture/toolchain.md; docs/migration/history-and-current-boundaries.md; docs/research/implementation-evidence.md; docs/verification/final-requirements.json",
+      "replacement_behavior": "Durable evidence/review/compiler/semantic/world assumptions extracted; original P7/P8 failure and mixed-revision qualification retained. Original 53 rows read from immutable P8, not dropped. Only four current Mermaid diagrams remain.",
+      "replacement_test_nodeids": [
+        "tests/refactor/test_product_docs.py",
+        "tests/governance/test_semantic_authority.py",
+        "tests/services/test_prompt08_boundary.py::test_owner_open_validate_catalog_pack_inspect_and_empty_environment"
+      ],
+      "artifact_compatibility": "No Schema, domain assets, license or package bytes removed. Originals remain in fixed Git history and baseline tags.",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Read and extract before removal; historical status/aggregate prose must not masquerade as current product documentation. No archive copy created."
+    },
+    {
+      "old_path": "docs/architecture/controlled-ontology-lifecycle-architecture.md",
+      "old_responsibility": "Historical phase report or superseded architecture/product description",
+      "actual_callers": [
+        "Historical documentation references; no current runtime business caller"
+      ],
+      "replacement_path": "docs/architecture/toolchain.md; docs/migration/history-and-current-boundaries.md; docs/research/implementation-evidence.md; docs/verification/final-requirements.json",
+      "replacement_behavior": "Durable evidence/review/compiler/semantic/world assumptions extracted; original P7/P8 failure and mixed-revision qualification retained. Original 53 rows read from immutable P8, not dropped. Only four current Mermaid diagrams remain.",
+      "replacement_test_nodeids": [
+        "tests/refactor/test_product_docs.py",
+        "tests/governance/test_semantic_authority.py",
+        "tests/services/test_prompt08_boundary.py::test_owner_open_validate_catalog_pack_inspect_and_empty_environment"
+      ],
+      "artifact_compatibility": "No Schema, domain assets, license or package bytes removed. Originals remain in fixed Git history and baseline tags.",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Read and extract before removal; historical status/aggregate prose must not masquerade as current product documentation. No archive copy created."
+    },
+    {
+      "old_path": "docs/architecture/deterministic-semantic-kernel-architecture.md",
+      "old_responsibility": "Historical phase report or superseded architecture/product description",
+      "actual_callers": [
+        "Historical documentation references; no current runtime business caller"
+      ],
+      "replacement_path": "docs/architecture/toolchain.md; docs/migration/history-and-current-boundaries.md; docs/research/implementation-evidence.md; docs/verification/final-requirements.json",
+      "replacement_behavior": "Durable evidence/review/compiler/semantic/world assumptions extracted; original P7/P8 failure and mixed-revision qualification retained. Original 53 rows read from immutable P8, not dropped. Only four current Mermaid diagrams remain.",
+      "replacement_test_nodeids": [
+        "tests/refactor/test_product_docs.py",
+        "tests/governance/test_semantic_authority.py",
+        "tests/services/test_prompt08_boundary.py::test_owner_open_validate_catalog_pack_inspect_and_empty_environment"
+      ],
+      "artifact_compatibility": "No Schema, domain assets, license or package bytes removed. Originals remain in fixed Git history and baseline tags.",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Read and extract before removal; historical status/aggregate prose must not masquerade as current product documentation. No archive copy created."
+    },
+    {
+      "old_path": "docs/architecture/evidence-grounded-modeling-architecture.md",
+      "old_responsibility": "Historical phase report or superseded architecture/product description",
+      "actual_callers": [
+        "Historical documentation references; no current runtime business caller"
+      ],
+      "replacement_path": "docs/architecture/toolchain.md; docs/migration/history-and-current-boundaries.md; docs/research/implementation-evidence.md; docs/verification/final-requirements.json",
+      "replacement_behavior": "Durable evidence/review/compiler/semantic/world assumptions extracted; original P7/P8 failure and mixed-revision qualification retained. Original 53 rows read from immutable P8, not dropped. Only four current Mermaid diagrams remain.",
+      "replacement_test_nodeids": [
+        "tests/refactor/test_product_docs.py",
+        "tests/governance/test_semantic_authority.py",
+        "tests/services/test_prompt08_boundary.py::test_owner_open_validate_catalog_pack_inspect_and_empty_environment"
+      ],
+      "artifact_compatibility": "No Schema, domain assets, license or package bytes removed. Originals remain in fixed Git history and baseline tags.",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Read and extract before removal; historical status/aggregate prose must not masquerade as current product documentation. No archive copy created."
+    },
+    {
+      "old_path": "docs/architecture/evidence-layers.md",
+      "old_responsibility": "Historical phase report or superseded architecture/product description",
+      "actual_callers": [
+        "Historical documentation references; no current runtime business caller"
+      ],
+      "replacement_path": "docs/architecture/toolchain.md; docs/migration/history-and-current-boundaries.md; docs/research/implementation-evidence.md; docs/verification/final-requirements.json",
+      "replacement_behavior": "Durable evidence/review/compiler/semantic/world assumptions extracted; original P7/P8 failure and mixed-revision qualification retained. Original 53 rows read from immutable P8, not dropped. Only four current Mermaid diagrams remain.",
+      "replacement_test_nodeids": [
+        "tests/refactor/test_product_docs.py",
+        "tests/governance/test_semantic_authority.py",
+        "tests/services/test_prompt08_boundary.py::test_owner_open_validate_catalog_pack_inspect_and_empty_environment"
+      ],
+      "artifact_compatibility": "No Schema, domain assets, license or package bytes removed. Originals remain in fixed Git history and baseline tags.",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Read and extract before removal; historical status/aggregate prose must not masquerade as current product documentation. No archive copy created."
+    },
+    {
+      "old_path": "docs/architecture/explicit-inferred-boundary.md",
+      "old_responsibility": "Historical phase report or superseded architecture/product description",
+      "actual_callers": [
+        "Historical documentation references; no current runtime business caller"
+      ],
+      "replacement_path": "docs/architecture/toolchain.md; docs/migration/history-and-current-boundaries.md; docs/research/implementation-evidence.md; docs/verification/final-requirements.json",
+      "replacement_behavior": "Durable evidence/review/compiler/semantic/world assumptions extracted; original P7/P8 failure and mixed-revision qualification retained. Original 53 rows read from immutable P8, not dropped. Only four current Mermaid diagrams remain.",
+      "replacement_test_nodeids": [
+        "tests/refactor/test_product_docs.py",
+        "tests/governance/test_semantic_authority.py",
+        "tests/services/test_prompt08_boundary.py::test_owner_open_validate_catalog_pack_inspect_and_empty_environment"
+      ],
+      "artifact_compatibility": "No Schema, domain assets, license or package bytes removed. Originals remain in fixed Git history and baseline tags.",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Read and extract before removal; historical status/aggregate prose must not masquerade as current product documentation. No archive copy created."
+    },
+    {
+      "old_path": "docs/architecture/ontology-toolchain-target-architecture.md",
+      "old_responsibility": "Historical phase report or superseded architecture/product description",
+      "actual_callers": [
+        "Historical documentation references; no current runtime business caller"
+      ],
+      "replacement_path": "docs/architecture/toolchain.md; docs/migration/history-and-current-boundaries.md; docs/research/implementation-evidence.md; docs/verification/final-requirements.json",
+      "replacement_behavior": "Durable evidence/review/compiler/semantic/world assumptions extracted; original P7/P8 failure and mixed-revision qualification retained. Original 53 rows read from immutable P8, not dropped. Only four current Mermaid diagrams remain.",
+      "replacement_test_nodeids": [
+        "tests/refactor/test_product_docs.py",
+        "tests/governance/test_semantic_authority.py",
+        "tests/services/test_prompt08_boundary.py::test_owner_open_validate_catalog_pack_inspect_and_empty_environment"
+      ],
+      "artifact_compatibility": "No Schema, domain assets, license or package bytes removed. Originals remain in fixed Git history and baseline tags.",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Read and extract before removal; historical status/aggregate prose must not masquerade as current product documentation. No archive copy created."
+    },
+    {
+      "old_path": "docs/architecture/operation-coverage.md",
+      "old_responsibility": "Historical phase report or superseded architecture/product description",
+      "actual_callers": [
+        "Historical documentation references; no current runtime business caller"
+      ],
+      "replacement_path": "docs/architecture/toolchain.md; docs/migration/history-and-current-boundaries.md; docs/research/implementation-evidence.md; docs/verification/final-requirements.json",
+      "replacement_behavior": "Durable evidence/review/compiler/semantic/world assumptions extracted; original P7/P8 failure and mixed-revision qualification retained. Original 53 rows read from immutable P8, not dropped. Only four current Mermaid diagrams remain.",
+      "replacement_test_nodeids": [
+        "tests/refactor/test_product_docs.py",
+        "tests/governance/test_semantic_authority.py",
+        "tests/services/test_prompt08_boundary.py::test_owner_open_validate_catalog_pack_inspect_and_empty_environment"
+      ],
+      "artifact_compatibility": "No Schema, domain assets, license or package bytes removed. Originals remain in fixed Git history and baseline tags.",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Read and extract before removal; historical status/aggregate prose must not masquerade as current product documentation. No archive copy created."
+    },
+    {
+      "old_path": "docs/architecture/owl-shacl-semantics.md",
+      "old_responsibility": "Historical phase report or superseded architecture/product description",
+      "actual_callers": [
+        "Historical documentation references; no current runtime business caller"
+      ],
+      "replacement_path": "docs/architecture/toolchain.md; docs/migration/history-and-current-boundaries.md; docs/research/implementation-evidence.md; docs/verification/final-requirements.json",
+      "replacement_behavior": "Durable evidence/review/compiler/semantic/world assumptions extracted; original P7/P8 failure and mixed-revision qualification retained. Original 53 rows read from immutable P8, not dropped. Only four current Mermaid diagrams remain.",
+      "replacement_test_nodeids": [
+        "tests/refactor/test_product_docs.py",
+        "tests/governance/test_semantic_authority.py",
+        "tests/services/test_prompt08_boundary.py::test_owner_open_validate_catalog_pack_inspect_and_empty_environment"
+      ],
+      "artifact_compatibility": "No Schema, domain assets, license or package bytes removed. Originals remain in fixed Git history and baseline tags.",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Read and extract before removal; historical status/aggregate prose must not masquerade as current product documentation. No archive copy created."
+    },
+    {
+      "old_path": "docs/architecture/plugin-driven-ingestion-architecture.md",
+      "old_responsibility": "Historical phase report or superseded architecture/product description",
+      "actual_callers": [
+        "Historical documentation references; no current runtime business caller"
+      ],
+      "replacement_path": "docs/architecture/toolchain.md; docs/migration/history-and-current-boundaries.md; docs/research/implementation-evidence.md; docs/verification/final-requirements.json",
+      "replacement_behavior": "Durable evidence/review/compiler/semantic/world assumptions extracted; original P7/P8 failure and mixed-revision qualification retained. Original 53 rows read from immutable P8, not dropped. Only four current Mermaid diagrams remain.",
+      "replacement_test_nodeids": [
+        "tests/refactor/test_product_docs.py",
+        "tests/governance/test_semantic_authority.py",
+        "tests/services/test_prompt08_boundary.py::test_owner_open_validate_catalog_pack_inspect_and_empty_environment"
+      ],
+      "artifact_compatibility": "No Schema, domain assets, license or package bytes removed. Originals remain in fixed Git history and baseline tags.",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Read and extract before removal; historical status/aggregate prose must not masquerade as current product documentation. No archive copy created."
+    },
+    {
+      "old_path": "docs/architecture/prompt-06-lifecycle.md",
+      "old_responsibility": "Historical phase report or superseded architecture/product description",
+      "actual_callers": [
+        "Historical documentation references; no current runtime business caller"
+      ],
+      "replacement_path": "docs/architecture/toolchain.md; docs/migration/history-and-current-boundaries.md; docs/research/implementation-evidence.md; docs/verification/final-requirements.json",
+      "replacement_behavior": "Durable evidence/review/compiler/semantic/world assumptions extracted; original P7/P8 failure and mixed-revision qualification retained. Original 53 rows read from immutable P8, not dropped. Only four current Mermaid diagrams remain.",
+      "replacement_test_nodeids": [
+        "tests/refactor/test_product_docs.py",
+        "tests/governance/test_semantic_authority.py",
+        "tests/services/test_prompt08_boundary.py::test_owner_open_validate_catalog_pack_inspect_and_empty_environment"
+      ],
+      "artifact_compatibility": "No Schema, domain assets, license or package bytes removed. Originals remain in fixed Git history and baseline tags.",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Read and extract before removal; historical status/aggregate prose must not masquerade as current product documentation. No archive copy created."
+    },
+    {
+      "old_path": "docs/architecture/prompt-07-unified-services.md",
+      "old_responsibility": "Historical phase report or superseded architecture/product description",
+      "actual_callers": [
+        "Historical documentation references; no current runtime business caller"
+      ],
+      "replacement_path": "docs/architecture/toolchain.md; docs/migration/history-and-current-boundaries.md; docs/research/implementation-evidence.md; docs/verification/final-requirements.json",
+      "replacement_behavior": "Durable evidence/review/compiler/semantic/world assumptions extracted; original P7/P8 failure and mixed-revision qualification retained. Original 53 rows read from immutable P8, not dropped. Only four current Mermaid diagrams remain.",
+      "replacement_test_nodeids": [
+        "tests/refactor/test_product_docs.py",
+        "tests/governance/test_semantic_authority.py",
+        "tests/services/test_prompt08_boundary.py::test_owner_open_validate_catalog_pack_inspect_and_empty_environment"
+      ],
+      "artifact_compatibility": "No Schema, domain assets, license or package bytes removed. Originals remain in fixed Git history and baseline tags.",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Read and extract before removal; historical status/aggregate prose must not masquerade as current product documentation. No archive copy created."
+    },
+    {
+      "old_path": "docs/architecture/semantic-authority-chain.md",
+      "old_responsibility": "Historical phase report or superseded architecture/product description",
+      "actual_callers": [
+        "tests/governance/test_semantic_authority.py (redirected to current architecture)"
+      ],
+      "replacement_path": "docs/architecture/toolchain.md; docs/migration/history-and-current-boundaries.md; docs/research/implementation-evidence.md; docs/verification/final-requirements.json",
+      "replacement_behavior": "Durable evidence/review/compiler/semantic/world assumptions extracted; original P7/P8 failure and mixed-revision qualification retained. Original 53 rows read from immutable P8, not dropped. Only four current Mermaid diagrams remain.",
+      "replacement_test_nodeids": [
+        "tests/refactor/test_product_docs.py",
+        "tests/governance/test_semantic_authority.py",
+        "tests/services/test_prompt08_boundary.py::test_owner_open_validate_catalog_pack_inspect_and_empty_environment"
+      ],
+      "artifact_compatibility": "No Schema, domain assets, license or package bytes removed. Originals remain in fixed Git history and baseline tags.",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Read and extract before removal; historical status/aggregate prose must not masquerade as current product documentation. No archive copy created."
+    },
+    {
+      "old_path": "docs/architecture/service-commit-boundary.md",
+      "old_responsibility": "Historical phase report or superseded architecture/product description",
+      "actual_callers": [
+        "Historical documentation references; no current runtime business caller"
+      ],
+      "replacement_path": "docs/architecture/toolchain.md; docs/migration/history-and-current-boundaries.md; docs/research/implementation-evidence.md; docs/verification/final-requirements.json",
+      "replacement_behavior": "Durable evidence/review/compiler/semantic/world assumptions extracted; original P7/P8 failure and mixed-revision qualification retained. Original 53 rows read from immutable P8, not dropped. Only four current Mermaid diagrams remain.",
+      "replacement_test_nodeids": [
+        "tests/refactor/test_product_docs.py",
+        "tests/governance/test_semantic_authority.py",
+        "tests/services/test_prompt08_boundary.py::test_owner_open_validate_catalog_pack_inspect_and_empty_environment"
+      ],
+      "artifact_compatibility": "No Schema, domain assets, license or package bytes removed. Originals remain in fixed Git history and baseline tags.",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Read and extract before removal; historical status/aggregate prose must not masquerade as current product documentation. No archive copy created."
+    },
+    {
+      "old_path": "docs/architecture/tbox-abox-boundary.md",
+      "old_responsibility": "Historical phase report or superseded architecture/product description",
+      "actual_callers": [
+        "Historical documentation references; no current runtime business caller"
+      ],
+      "replacement_path": "docs/architecture/toolchain.md; docs/migration/history-and-current-boundaries.md; docs/research/implementation-evidence.md; docs/verification/final-requirements.json",
+      "replacement_behavior": "Durable evidence/review/compiler/semantic/world assumptions extracted; original P7/P8 failure and mixed-revision qualification retained. Original 53 rows read from immutable P8, not dropped. Only four current Mermaid diagrams remain.",
+      "replacement_test_nodeids": [
+        "tests/refactor/test_product_docs.py",
+        "tests/governance/test_semantic_authority.py",
+        "tests/services/test_prompt08_boundary.py::test_owner_open_validate_catalog_pack_inspect_and_empty_environment"
+      ],
+      "artifact_compatibility": "No Schema, domain assets, license or package bytes removed. Originals remain in fixed Git history and baseline tags.",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Read and extract before removal; historical status/aggregate prose must not masquerade as current product documentation. No archive copy created."
+    },
+    {
+      "old_path": "docs/architecture/workbench-information-architecture.md",
+      "old_responsibility": "Historical phase report or superseded architecture/product description",
+      "actual_callers": [
+        "Historical documentation references; no current runtime business caller"
+      ],
+      "replacement_path": "docs/architecture/toolchain.md; docs/migration/history-and-current-boundaries.md; docs/research/implementation-evidence.md; docs/verification/final-requirements.json",
+      "replacement_behavior": "Durable evidence/review/compiler/semantic/world assumptions extracted; original P7/P8 failure and mixed-revision qualification retained. Original 53 rows read from immutable P8, not dropped. Only four current Mermaid diagrams remain.",
+      "replacement_test_nodeids": [
+        "tests/refactor/test_product_docs.py",
+        "tests/governance/test_semantic_authority.py",
+        "tests/services/test_prompt08_boundary.py::test_owner_open_validate_catalog_pack_inspect_and_empty_environment"
+      ],
+      "artifact_compatibility": "No Schema, domain assets, license or package bytes removed. Originals remain in fixed Git history and baseline tags.",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Read and extract before removal; historical status/aggregate prose must not masquerade as current product documentation. No archive copy created."
+    },
+    {
+      "old_path": "docs/product/current-capability-matrix.md",
+      "old_responsibility": "Historical phase report or superseded architecture/product description",
+      "actual_callers": [
+        "Historical documentation references; no current runtime business caller"
+      ],
+      "replacement_path": "docs/architecture/toolchain.md; docs/migration/history-and-current-boundaries.md; docs/research/implementation-evidence.md; docs/verification/final-requirements.json",
+      "replacement_behavior": "Durable evidence/review/compiler/semantic/world assumptions extracted; original P7/P8 failure and mixed-revision qualification retained. Original 53 rows read from immutable P8, not dropped. Only four current Mermaid diagrams remain.",
+      "replacement_test_nodeids": [
+        "tests/refactor/test_product_docs.py",
+        "tests/governance/test_semantic_authority.py",
+        "tests/services/test_prompt08_boundary.py::test_owner_open_validate_catalog_pack_inspect_and_empty_environment"
+      ],
+      "artifact_compatibility": "No Schema, domain assets, license or package bytes removed. Originals remain in fixed Git history and baseline tags.",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Read and extract before removal; historical status/aggregate prose must not masquerade as current product documentation. No archive copy created."
+    },
+    {
+      "old_path": "docs/product/product-charter.md",
+      "old_responsibility": "Historical phase report or superseded architecture/product description",
+      "actual_callers": [
+        "Historical documentation references; no current runtime business caller"
+      ],
+      "replacement_path": "docs/architecture/toolchain.md; docs/migration/history-and-current-boundaries.md; docs/research/implementation-evidence.md; docs/verification/final-requirements.json",
+      "replacement_behavior": "Durable evidence/review/compiler/semantic/world assumptions extracted; original P7/P8 failure and mixed-revision qualification retained. Original 53 rows read from immutable P8, not dropped. Only four current Mermaid diagrams remain.",
+      "replacement_test_nodeids": [
+        "tests/refactor/test_product_docs.py",
+        "tests/governance/test_semantic_authority.py",
+        "tests/services/test_prompt08_boundary.py::test_owner_open_validate_catalog_pack_inspect_and_empty_environment"
+      ],
+      "artifact_compatibility": "No Schema, domain assets, license or package bytes removed. Originals remain in fixed Git history and baseline tags.",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Read and extract before removal; historical status/aggregate prose must not masquerade as current product documentation. No archive copy created."
+    },
+    {
+      "old_path": "docs/product/prompt-06-release-lifecycle.md",
+      "old_responsibility": "Historical phase report or superseded architecture/product description",
+      "actual_callers": [
+        "Historical documentation references; no current runtime business caller"
+      ],
+      "replacement_path": "docs/architecture/toolchain.md; docs/migration/history-and-current-boundaries.md; docs/research/implementation-evidence.md; docs/verification/final-requirements.json",
+      "replacement_behavior": "Durable evidence/review/compiler/semantic/world assumptions extracted; original P7/P8 failure and mixed-revision qualification retained. Original 53 rows read from immutable P8, not dropped. Only four current Mermaid diagrams remain.",
+      "replacement_test_nodeids": [
+        "tests/refactor/test_product_docs.py",
+        "tests/governance/test_semantic_authority.py",
+        "tests/services/test_prompt08_boundary.py::test_owner_open_validate_catalog_pack_inspect_and_empty_environment"
+      ],
+      "artifact_compatibility": "No Schema, domain assets, license or package bytes removed. Originals remain in fixed Git history and baseline tags.",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Read and extract before removal; historical status/aggregate prose must not masquerade as current product documentation. No archive copy created."
+    },
+    {
+      "old_path": "docs/product/research-to-product-alignment.md",
+      "old_responsibility": "Historical phase report or superseded architecture/product description",
+      "actual_callers": [
+        "Historical documentation references; no current runtime business caller"
+      ],
+      "replacement_path": "docs/architecture/toolchain.md; docs/migration/history-and-current-boundaries.md; docs/research/implementation-evidence.md; docs/verification/final-requirements.json",
+      "replacement_behavior": "Durable evidence/review/compiler/semantic/world assumptions extracted; original P7/P8 failure and mixed-revision qualification retained. Original 53 rows read from immutable P8, not dropped. Only four current Mermaid diagrams remain.",
+      "replacement_test_nodeids": [
+        "tests/refactor/test_product_docs.py",
+        "tests/governance/test_semantic_authority.py",
+        "tests/services/test_prompt08_boundary.py::test_owner_open_validate_catalog_pack_inspect_and_empty_environment"
+      ],
+      "artifact_compatibility": "No Schema, domain assets, license or package bytes removed. Originals remain in fixed Git history and baseline tags.",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Read and extract before removal; historical status/aggregate prose must not masquerade as current product documentation. No archive copy created."
+    },
+    {
+      "old_path": "docs/refactor/deletion-manifest.md",
+      "old_responsibility": "Historical phase report or superseded architecture/product description",
+      "actual_callers": [
+        "Historical documentation references; no current runtime business caller"
+      ],
+      "replacement_path": "docs/architecture/toolchain.md; docs/migration/history-and-current-boundaries.md; docs/research/implementation-evidence.md; docs/verification/final-requirements.json",
+      "replacement_behavior": "Durable evidence/review/compiler/semantic/world assumptions extracted; original P7/P8 failure and mixed-revision qualification retained. Original 53 rows read from immutable P8, not dropped. Only four current Mermaid diagrams remain.",
+      "replacement_test_nodeids": [
+        "tests/refactor/test_product_docs.py",
+        "tests/governance/test_semantic_authority.py",
+        "tests/services/test_prompt08_boundary.py::test_owner_open_validate_catalog_pack_inspect_and_empty_environment"
+      ],
+      "artifact_compatibility": "No Schema, domain assets, license or package bytes removed. Originals remain in fixed Git history and baseline tags.",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Read and extract before removal; historical status/aggregate prose must not masquerade as current product documentation. No archive copy created."
+    },
+    {
+      "old_path": "docs/refactor/domain-coupling-inventory.md",
+      "old_responsibility": "Historical phase report or superseded architecture/product description",
+      "actual_callers": [
+        "Historical documentation references; no current runtime business caller"
+      ],
+      "replacement_path": "docs/architecture/toolchain.md; docs/migration/history-and-current-boundaries.md; docs/research/implementation-evidence.md; docs/verification/final-requirements.json",
+      "replacement_behavior": "Durable evidence/review/compiler/semantic/world assumptions extracted; original P7/P8 failure and mixed-revision qualification retained. Original 53 rows read from immutable P8, not dropped. Only four current Mermaid diagrams remain.",
+      "replacement_test_nodeids": [
+        "tests/refactor/test_product_docs.py",
+        "tests/governance/test_semantic_authority.py",
+        "tests/services/test_prompt08_boundary.py::test_owner_open_validate_catalog_pack_inspect_and_empty_environment"
+      ],
+      "artifact_compatibility": "No Schema, domain assets, license or package bytes removed. Originals remain in fixed Git history and baseline tags.",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Read and extract before removal; historical status/aggregate prose must not masquerade as current product documentation. No archive copy created."
+    },
+    {
+      "old_path": "docs/refactor/prompt-01-baseline-audit.md",
+      "old_responsibility": "Historical phase report or superseded architecture/product description",
+      "actual_callers": [
+        "Historical documentation references; no current runtime business caller"
+      ],
+      "replacement_path": "docs/architecture/toolchain.md; docs/migration/history-and-current-boundaries.md; docs/research/implementation-evidence.md; docs/verification/final-requirements.json",
+      "replacement_behavior": "Durable evidence/review/compiler/semantic/world assumptions extracted; original P7/P8 failure and mixed-revision qualification retained. Original 53 rows read from immutable P8, not dropped. Only four current Mermaid diagrams remain.",
+      "replacement_test_nodeids": [
+        "tests/refactor/test_product_docs.py",
+        "tests/governance/test_semantic_authority.py",
+        "tests/services/test_prompt08_boundary.py::test_owner_open_validate_catalog_pack_inspect_and_empty_environment"
+      ],
+      "artifact_compatibility": "No Schema, domain assets, license or package bytes removed. Originals remain in fixed Git history and baseline tags.",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Read and extract before removal; historical status/aggregate prose must not masquerade as current product documentation. No archive copy created."
+    },
+    {
+      "old_path": "docs/refactor/prompt-02-authorized-change-manifest.md",
+      "old_responsibility": "Historical phase report or superseded architecture/product description",
+      "actual_callers": [
+        "Historical documentation references; no current runtime business caller"
+      ],
+      "replacement_path": "docs/architecture/toolchain.md; docs/migration/history-and-current-boundaries.md; docs/research/implementation-evidence.md; docs/verification/final-requirements.json",
+      "replacement_behavior": "Durable evidence/review/compiler/semantic/world assumptions extracted; original P7/P8 failure and mixed-revision qualification retained. Original 53 rows read from immutable P8, not dropped. Only four current Mermaid diagrams remain.",
+      "replacement_test_nodeids": [
+        "tests/refactor/test_product_docs.py",
+        "tests/governance/test_semantic_authority.py",
+        "tests/services/test_prompt08_boundary.py::test_owner_open_validate_catalog_pack_inspect_and_empty_environment"
+      ],
+      "artifact_compatibility": "No Schema, domain assets, license or package bytes removed. Originals remain in fixed Git history and baseline tags.",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Read and extract before removal; historical status/aggregate prose must not masquerade as current product documentation. No archive copy created."
+    },
+    {
+      "old_path": "docs/refactor/prompt-02-compatibility-matrix.md",
+      "old_responsibility": "Historical phase report or superseded architecture/product description",
+      "actual_callers": [
+        "Historical documentation references; no current runtime business caller"
+      ],
+      "replacement_path": "docs/architecture/toolchain.md; docs/migration/history-and-current-boundaries.md; docs/research/implementation-evidence.md; docs/verification/final-requirements.json",
+      "replacement_behavior": "Durable evidence/review/compiler/semantic/world assumptions extracted; original P7/P8 failure and mixed-revision qualification retained. Original 53 rows read from immutable P8, not dropped. Only four current Mermaid diagrams remain.",
+      "replacement_test_nodeids": [
+        "tests/refactor/test_product_docs.py",
+        "tests/governance/test_semantic_authority.py",
+        "tests/services/test_prompt08_boundary.py::test_owner_open_validate_catalog_pack_inspect_and_empty_environment"
+      ],
+      "artifact_compatibility": "No Schema, domain assets, license or package bytes removed. Originals remain in fixed Git history and baseline tags.",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Read and extract before removal; historical status/aggregate prose must not masquerade as current product documentation. No archive copy created."
+    },
+    {
+      "old_path": "docs/refactor/prompt-02-contract-audit.md",
+      "old_responsibility": "Historical phase report or superseded architecture/product description",
+      "actual_callers": [
+        "Historical documentation references; no current runtime business caller"
+      ],
+      "replacement_path": "docs/architecture/toolchain.md; docs/migration/history-and-current-boundaries.md; docs/research/implementation-evidence.md; docs/verification/final-requirements.json",
+      "replacement_behavior": "Durable evidence/review/compiler/semantic/world assumptions extracted; original P7/P8 failure and mixed-revision qualification retained. Original 53 rows read from immutable P8, not dropped. Only four current Mermaid diagrams remain.",
+      "replacement_test_nodeids": [
+        "tests/refactor/test_product_docs.py",
+        "tests/governance/test_semantic_authority.py",
+        "tests/services/test_prompt08_boundary.py::test_owner_open_validate_catalog_pack_inspect_and_empty_environment"
+      ],
+      "artifact_compatibility": "No Schema, domain assets, license or package bytes removed. Originals remain in fixed Git history and baseline tags.",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Read and extract before removal; historical status/aggregate prose must not masquerade as current product documentation. No archive copy created."
+    },
+    {
+      "old_path": "docs/refactor/prompt-03-authorized-change-manifest.md",
+      "old_responsibility": "Historical phase report or superseded architecture/product description",
+      "actual_callers": [
+        "Historical documentation references; no current runtime business caller"
+      ],
+      "replacement_path": "docs/architecture/toolchain.md; docs/migration/history-and-current-boundaries.md; docs/research/implementation-evidence.md; docs/verification/final-requirements.json",
+      "replacement_behavior": "Durable evidence/review/compiler/semantic/world assumptions extracted; original P7/P8 failure and mixed-revision qualification retained. Original 53 rows read from immutable P8, not dropped. Only four current Mermaid diagrams remain.",
+      "replacement_test_nodeids": [
+        "tests/refactor/test_product_docs.py",
+        "tests/governance/test_semantic_authority.py",
+        "tests/services/test_prompt08_boundary.py::test_owner_open_validate_catalog_pack_inspect_and_empty_environment"
+      ],
+      "artifact_compatibility": "No Schema, domain assets, license or package bytes removed. Originals remain in fixed Git history and baseline tags.",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Read and extract before removal; historical status/aggregate prose must not masquerade as current product documentation. No archive copy created."
+    },
+    {
+      "old_path": "docs/refactor/prompt-03-claim-evidence-matrix.md",
+      "old_responsibility": "Historical phase report or superseded architecture/product description",
+      "actual_callers": [
+        "Historical documentation references; no current runtime business caller"
+      ],
+      "replacement_path": "docs/architecture/toolchain.md; docs/migration/history-and-current-boundaries.md; docs/research/implementation-evidence.md; docs/verification/final-requirements.json",
+      "replacement_behavior": "Durable evidence/review/compiler/semantic/world assumptions extracted; original P7/P8 failure and mixed-revision qualification retained. Original 53 rows read from immutable P8, not dropped. Only four current Mermaid diagrams remain.",
+      "replacement_test_nodeids": [
+        "tests/refactor/test_product_docs.py",
+        "tests/governance/test_semantic_authority.py",
+        "tests/services/test_prompt08_boundary.py::test_owner_open_validate_catalog_pack_inspect_and_empty_environment"
+      ],
+      "artifact_compatibility": "No Schema, domain assets, license or package bytes removed. Originals remain in fixed Git history and baseline tags.",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Read and extract before removal; historical status/aggregate prose must not masquerade as current product documentation. No archive copy created."
+    },
+    {
+      "old_path": "docs/refactor/prompt-03-compatibility-matrix.md",
+      "old_responsibility": "Historical phase report or superseded architecture/product description",
+      "actual_callers": [
+        "Historical documentation references; no current runtime business caller"
+      ],
+      "replacement_path": "docs/architecture/toolchain.md; docs/migration/history-and-current-boundaries.md; docs/research/implementation-evidence.md; docs/verification/final-requirements.json",
+      "replacement_behavior": "Durable evidence/review/compiler/semantic/world assumptions extracted; original P7/P8 failure and mixed-revision qualification retained. Original 53 rows read from immutable P8, not dropped. Only four current Mermaid diagrams remain.",
+      "replacement_test_nodeids": [
+        "tests/refactor/test_product_docs.py",
+        "tests/governance/test_semantic_authority.py",
+        "tests/services/test_prompt08_boundary.py::test_owner_open_validate_catalog_pack_inspect_and_empty_environment"
+      ],
+      "artifact_compatibility": "No Schema, domain assets, license or package bytes removed. Originals remain in fixed Git history and baseline tags.",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Read and extract before removal; historical status/aggregate prose must not masquerade as current product documentation. No archive copy created."
+    },
+    {
+      "old_path": "docs/refactor/prompt-03-ingestion-audit.md",
+      "old_responsibility": "Historical phase report or superseded architecture/product description",
+      "actual_callers": [
+        "Historical documentation references; no current runtime business caller"
+      ],
+      "replacement_path": "docs/architecture/toolchain.md; docs/migration/history-and-current-boundaries.md; docs/research/implementation-evidence.md; docs/verification/final-requirements.json",
+      "replacement_behavior": "Durable evidence/review/compiler/semantic/world assumptions extracted; original P7/P8 failure and mixed-revision qualification retained. Original 53 rows read from immutable P8, not dropped. Only four current Mermaid diagrams remain.",
+      "replacement_test_nodeids": [
+        "tests/refactor/test_product_docs.py",
+        "tests/governance/test_semantic_authority.py",
+        "tests/services/test_prompt08_boundary.py::test_owner_open_validate_catalog_pack_inspect_and_empty_environment"
+      ],
+      "artifact_compatibility": "No Schema, domain assets, license or package bytes removed. Originals remain in fixed Git history and baseline tags.",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Read and extract before removal; historical status/aggregate prose must not masquerade as current product documentation. No archive copy created."
+    },
+    {
+      "old_path": "docs/refactor/prompt-04-authorized-change-manifest.md",
+      "old_responsibility": "Historical phase report or superseded architecture/product description",
+      "actual_callers": [
+        "Historical documentation references; no current runtime business caller"
+      ],
+      "replacement_path": "docs/architecture/toolchain.md; docs/migration/history-and-current-boundaries.md; docs/research/implementation-evidence.md; docs/verification/final-requirements.json",
+      "replacement_behavior": "Durable evidence/review/compiler/semantic/world assumptions extracted; original P7/P8 failure and mixed-revision qualification retained. Original 53 rows read from immutable P8, not dropped. Only four current Mermaid diagrams remain.",
+      "replacement_test_nodeids": [
+        "tests/refactor/test_product_docs.py",
+        "tests/governance/test_semantic_authority.py",
+        "tests/services/test_prompt08_boundary.py::test_owner_open_validate_catalog_pack_inspect_and_empty_environment"
+      ],
+      "artifact_compatibility": "No Schema, domain assets, license or package bytes removed. Originals remain in fixed Git history and baseline tags.",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Read and extract before removal; historical status/aggregate prose must not masquerade as current product documentation. No archive copy created."
+    },
+    {
+      "old_path": "docs/refactor/prompt-04-claim-evidence-matrix.md",
+      "old_responsibility": "Historical phase report or superseded architecture/product description",
+      "actual_callers": [
+        "Historical documentation references; no current runtime business caller"
+      ],
+      "replacement_path": "docs/architecture/toolchain.md; docs/migration/history-and-current-boundaries.md; docs/research/implementation-evidence.md; docs/verification/final-requirements.json",
+      "replacement_behavior": "Durable evidence/review/compiler/semantic/world assumptions extracted; original P7/P8 failure and mixed-revision qualification retained. Original 53 rows read from immutable P8, not dropped. Only four current Mermaid diagrams remain.",
+      "replacement_test_nodeids": [
+        "tests/refactor/test_product_docs.py",
+        "tests/governance/test_semantic_authority.py",
+        "tests/services/test_prompt08_boundary.py::test_owner_open_validate_catalog_pack_inspect_and_empty_environment"
+      ],
+      "artifact_compatibility": "No Schema, domain assets, license or package bytes removed. Originals remain in fixed Git history and baseline tags.",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Read and extract before removal; historical status/aggregate prose must not masquerade as current product documentation. No archive copy created."
+    },
+    {
+      "old_path": "docs/refactor/prompt-04-compatibility-matrix.md",
+      "old_responsibility": "Historical phase report or superseded architecture/product description",
+      "actual_callers": [
+        "Historical documentation references; no current runtime business caller"
+      ],
+      "replacement_path": "docs/architecture/toolchain.md; docs/migration/history-and-current-boundaries.md; docs/research/implementation-evidence.md; docs/verification/final-requirements.json",
+      "replacement_behavior": "Durable evidence/review/compiler/semantic/world assumptions extracted; original P7/P8 failure and mixed-revision qualification retained. Original 53 rows read from immutable P8, not dropped. Only four current Mermaid diagrams remain.",
+      "replacement_test_nodeids": [
+        "tests/refactor/test_product_docs.py",
+        "tests/governance/test_semantic_authority.py",
+        "tests/services/test_prompt08_boundary.py::test_owner_open_validate_catalog_pack_inspect_and_empty_environment"
+      ],
+      "artifact_compatibility": "No Schema, domain assets, license or package bytes removed. Originals remain in fixed Git history and baseline tags.",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Read and extract before removal; historical status/aggregate prose must not masquerade as current product documentation. No archive copy created."
+    },
+    {
+      "old_path": "docs/refactor/prompt-04-legacy-modeling-gap-analysis.md",
+      "old_responsibility": "Historical phase report or superseded architecture/product description",
+      "actual_callers": [
+        "Historical documentation references; no current runtime business caller"
+      ],
+      "replacement_path": "docs/architecture/toolchain.md; docs/migration/history-and-current-boundaries.md; docs/research/implementation-evidence.md; docs/verification/final-requirements.json",
+      "replacement_behavior": "Durable evidence/review/compiler/semantic/world assumptions extracted; original P7/P8 failure and mixed-revision qualification retained. Original 53 rows read from immutable P8, not dropped. Only four current Mermaid diagrams remain.",
+      "replacement_test_nodeids": [
+        "tests/refactor/test_product_docs.py",
+        "tests/governance/test_semantic_authority.py",
+        "tests/services/test_prompt08_boundary.py::test_owner_open_validate_catalog_pack_inspect_and_empty_environment"
+      ],
+      "artifact_compatibility": "No Schema, domain assets, license or package bytes removed. Originals remain in fixed Git history and baseline tags.",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Read and extract before removal; historical status/aggregate prose must not masquerade as current product documentation. No archive copy created."
+    },
+    {
+      "old_path": "docs/refactor/prompt-04-modeling-audit.md",
+      "old_responsibility": "Historical phase report or superseded architecture/product description",
+      "actual_callers": [
+        "Historical documentation references; no current runtime business caller"
+      ],
+      "replacement_path": "docs/architecture/toolchain.md; docs/migration/history-and-current-boundaries.md; docs/research/implementation-evidence.md; docs/verification/final-requirements.json",
+      "replacement_behavior": "Durable evidence/review/compiler/semantic/world assumptions extracted; original P7/P8 failure and mixed-revision qualification retained. Original 53 rows read from immutable P8, not dropped. Only four current Mermaid diagrams remain.",
+      "replacement_test_nodeids": [
+        "tests/refactor/test_product_docs.py",
+        "tests/governance/test_semantic_authority.py",
+        "tests/services/test_prompt08_boundary.py::test_owner_open_validate_catalog_pack_inspect_and_empty_environment"
+      ],
+      "artifact_compatibility": "No Schema, domain assets, license or package bytes removed. Originals remain in fixed Git history and baseline tags.",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Read and extract before removal; historical status/aggregate prose must not masquerade as current product documentation. No archive copy created."
+    },
+    {
+      "old_path": "docs/refactor/prompt-05-authorized-change-manifest.md",
+      "old_responsibility": "Historical phase report or superseded architecture/product description",
+      "actual_callers": [
+        "Historical documentation references; no current runtime business caller"
+      ],
+      "replacement_path": "docs/architecture/toolchain.md; docs/migration/history-and-current-boundaries.md; docs/research/implementation-evidence.md; docs/verification/final-requirements.json",
+      "replacement_behavior": "Durable evidence/review/compiler/semantic/world assumptions extracted; original P7/P8 failure and mixed-revision qualification retained. Original 53 rows read from immutable P8, not dropped. Only four current Mermaid diagrams remain.",
+      "replacement_test_nodeids": [
+        "tests/refactor/test_product_docs.py",
+        "tests/governance/test_semantic_authority.py",
+        "tests/services/test_prompt08_boundary.py::test_owner_open_validate_catalog_pack_inspect_and_empty_environment"
+      ],
+      "artifact_compatibility": "No Schema, domain assets, license or package bytes removed. Originals remain in fixed Git history and baseline tags.",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Read and extract before removal; historical status/aggregate prose must not masquerade as current product documentation. No archive copy created."
+    },
+    {
+      "old_path": "docs/refactor/prompt-05-claim-evidence-matrix.md",
+      "old_responsibility": "Historical phase report or superseded architecture/product description",
+      "actual_callers": [
+        "Historical documentation references; no current runtime business caller"
+      ],
+      "replacement_path": "docs/architecture/toolchain.md; docs/migration/history-and-current-boundaries.md; docs/research/implementation-evidence.md; docs/verification/final-requirements.json",
+      "replacement_behavior": "Durable evidence/review/compiler/semantic/world assumptions extracted; original P7/P8 failure and mixed-revision qualification retained. Original 53 rows read from immutable P8, not dropped. Only four current Mermaid diagrams remain.",
+      "replacement_test_nodeids": [
+        "tests/refactor/test_product_docs.py",
+        "tests/governance/test_semantic_authority.py",
+        "tests/services/test_prompt08_boundary.py::test_owner_open_validate_catalog_pack_inspect_and_empty_environment"
+      ],
+      "artifact_compatibility": "No Schema, domain assets, license or package bytes removed. Originals remain in fixed Git history and baseline tags.",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Read and extract before removal; historical status/aggregate prose must not masquerade as current product documentation. No archive copy created."
+    },
+    {
+      "old_path": "docs/refactor/prompt-05-compatibility-matrix.md",
+      "old_responsibility": "Historical phase report or superseded architecture/product description",
+      "actual_callers": [
+        "Historical documentation references; no current runtime business caller"
+      ],
+      "replacement_path": "docs/architecture/toolchain.md; docs/migration/history-and-current-boundaries.md; docs/research/implementation-evidence.md; docs/verification/final-requirements.json",
+      "replacement_behavior": "Durable evidence/review/compiler/semantic/world assumptions extracted; original P7/P8 failure and mixed-revision qualification retained. Original 53 rows read from immutable P8, not dropped. Only four current Mermaid diagrams remain.",
+      "replacement_test_nodeids": [
+        "tests/refactor/test_product_docs.py",
+        "tests/governance/test_semantic_authority.py",
+        "tests/services/test_prompt08_boundary.py::test_owner_open_validate_catalog_pack_inspect_and_empty_environment"
+      ],
+      "artifact_compatibility": "No Schema, domain assets, license or package bytes removed. Originals remain in fixed Git history and baseline tags.",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Read and extract before removal; historical status/aggregate prose must not masquerade as current product documentation. No archive copy created."
+    },
+    {
+      "old_path": "docs/refactor/prompt-05-compilation-audit.md",
+      "old_responsibility": "Historical phase report or superseded architecture/product description",
+      "actual_callers": [
+        "Historical documentation references; no current runtime business caller"
+      ],
+      "replacement_path": "docs/architecture/toolchain.md; docs/migration/history-and-current-boundaries.md; docs/research/implementation-evidence.md; docs/verification/final-requirements.json",
+      "replacement_behavior": "Durable evidence/review/compiler/semantic/world assumptions extracted; original P7/P8 failure and mixed-revision qualification retained. Original 53 rows read from immutable P8, not dropped. Only four current Mermaid diagrams remain.",
+      "replacement_test_nodeids": [
+        "tests/refactor/test_product_docs.py",
+        "tests/governance/test_semantic_authority.py",
+        "tests/services/test_prompt08_boundary.py::test_owner_open_validate_catalog_pack_inspect_and_empty_environment"
+      ],
+      "artifact_compatibility": "No Schema, domain assets, license or package bytes removed. Originals remain in fixed Git history and baseline tags.",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Read and extract before removal; historical status/aggregate prose must not masquerade as current product documentation. No archive copy created."
+    },
+    {
+      "old_path": "docs/refactor/prompt-05-old-new-compiler-mapping.md",
+      "old_responsibility": "Historical phase report or superseded architecture/product description",
+      "actual_callers": [
+        "Historical documentation references; no current runtime business caller"
+      ],
+      "replacement_path": "docs/architecture/toolchain.md; docs/migration/history-and-current-boundaries.md; docs/research/implementation-evidence.md; docs/verification/final-requirements.json",
+      "replacement_behavior": "Durable evidence/review/compiler/semantic/world assumptions extracted; original P7/P8 failure and mixed-revision qualification retained. Original 53 rows read from immutable P8, not dropped. Only four current Mermaid diagrams remain.",
+      "replacement_test_nodeids": [
+        "tests/refactor/test_product_docs.py",
+        "tests/governance/test_semantic_authority.py",
+        "tests/services/test_prompt08_boundary.py::test_owner_open_validate_catalog_pack_inspect_and_empty_environment"
+      ],
+      "artifact_compatibility": "No Schema, domain assets, license or package bytes removed. Originals remain in fixed Git history and baseline tags.",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Read and extract before removal; historical status/aggregate prose must not masquerade as current product documentation. No archive copy created."
+    },
+    {
+      "old_path": "docs/refactor/prompt-06-completion-audit.md",
+      "old_responsibility": "Historical phase report or superseded architecture/product description",
+      "actual_callers": [
+        "Historical documentation references; no current runtime business caller"
+      ],
+      "replacement_path": "docs/architecture/toolchain.md; docs/migration/history-and-current-boundaries.md; docs/research/implementation-evidence.md; docs/verification/final-requirements.json",
+      "replacement_behavior": "Durable evidence/review/compiler/semantic/world assumptions extracted; original P7/P8 failure and mixed-revision qualification retained. Original 53 rows read from immutable P8, not dropped. Only four current Mermaid diagrams remain.",
+      "replacement_test_nodeids": [
+        "tests/refactor/test_product_docs.py",
+        "tests/governance/test_semantic_authority.py",
+        "tests/services/test_prompt08_boundary.py::test_owner_open_validate_catalog_pack_inspect_and_empty_environment"
+      ],
+      "artifact_compatibility": "No Schema, domain assets, license or package bytes removed. Originals remain in fixed Git history and baseline tags.",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Read and extract before removal; historical status/aggregate prose must not masquerade as current product documentation. No archive copy created."
+    },
+    {
+      "old_path": "docs/refactor/prompt-06-legacy-lifecycle-gap-analysis.md",
+      "old_responsibility": "Historical phase report or superseded architecture/product description",
+      "actual_callers": [
+        "Historical documentation references; no current runtime business caller"
+      ],
+      "replacement_path": "docs/architecture/toolchain.md; docs/migration/history-and-current-boundaries.md; docs/research/implementation-evidence.md; docs/verification/final-requirements.json",
+      "replacement_behavior": "Durable evidence/review/compiler/semantic/world assumptions extracted; original P7/P8 failure and mixed-revision qualification retained. Original 53 rows read from immutable P8, not dropped. Only four current Mermaid diagrams remain.",
+      "replacement_test_nodeids": [
+        "tests/refactor/test_product_docs.py",
+        "tests/governance/test_semantic_authority.py",
+        "tests/services/test_prompt08_boundary.py::test_owner_open_validate_catalog_pack_inspect_and_empty_environment"
+      ],
+      "artifact_compatibility": "No Schema, domain assets, license or package bytes removed. Originals remain in fixed Git history and baseline tags.",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Read and extract before removal; historical status/aggregate prose must not masquerade as current product documentation. No archive copy created."
+    },
+    {
+      "old_path": "docs/refactor/prompt-06-lifecycle-audit.md",
+      "old_responsibility": "Historical phase report or superseded architecture/product description",
+      "actual_callers": [
+        "Historical documentation references; no current runtime business caller"
+      ],
+      "replacement_path": "docs/architecture/toolchain.md; docs/migration/history-and-current-boundaries.md; docs/research/implementation-evidence.md; docs/verification/final-requirements.json",
+      "replacement_behavior": "Durable evidence/review/compiler/semantic/world assumptions extracted; original P7/P8 failure and mixed-revision qualification retained. Original 53 rows read from immutable P8, not dropped. Only four current Mermaid diagrams remain.",
+      "replacement_test_nodeids": [
+        "tests/refactor/test_product_docs.py",
+        "tests/governance/test_semantic_authority.py",
+        "tests/services/test_prompt08_boundary.py::test_owner_open_validate_catalog_pack_inspect_and_empty_environment"
+      ],
+      "artifact_compatibility": "No Schema, domain assets, license or package bytes removed. Originals remain in fixed Git history and baseline tags.",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Read and extract before removal; historical status/aggregate prose must not masquerade as current product documentation. No archive copy created."
+    },
+    {
+      "old_path": "docs/refactor/repository-migration-matrix.md",
+      "old_responsibility": "Historical phase report or superseded architecture/product description",
+      "actual_callers": [
+        "Historical documentation references; no current runtime business caller"
+      ],
+      "replacement_path": "docs/architecture/toolchain.md; docs/migration/history-and-current-boundaries.md; docs/research/implementation-evidence.md; docs/verification/final-requirements.json",
+      "replacement_behavior": "Durable evidence/review/compiler/semantic/world assumptions extracted; original P7/P8 failure and mixed-revision qualification retained. Original 53 rows read from immutable P8, not dropped. Only four current Mermaid diagrams remain.",
+      "replacement_test_nodeids": [
+        "tests/refactor/test_product_docs.py",
+        "tests/governance/test_semantic_authority.py",
+        "tests/services/test_prompt08_boundary.py::test_owner_open_validate_catalog_pack_inspect_and_empty_environment"
+      ],
+      "artifact_compatibility": "No Schema, domain assets, license or package bytes removed. Originals remain in fixed Git history and baseline tags.",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Read and extract before removal; historical status/aggregate prose must not masquerade as current product documentation. No archive copy created."
+    },
+    {
+      "old_path": "docs/verification/prompt-07-verification-summary.json",
+      "old_responsibility": "Historical phase report or superseded architecture/product description",
+      "actual_callers": [
+        "Historical documentation references; no current runtime business caller"
+      ],
+      "replacement_path": "docs/architecture/toolchain.md; docs/migration/history-and-current-boundaries.md; docs/research/implementation-evidence.md; docs/verification/final-requirements.json",
+      "replacement_behavior": "Durable evidence/review/compiler/semantic/world assumptions extracted; original P7/P8 failure and mixed-revision qualification retained. Original 53 rows read from immutable P8, not dropped. Only four current Mermaid diagrams remain.",
+      "replacement_test_nodeids": [
+        "tests/refactor/test_product_docs.py",
+        "tests/governance/test_semantic_authority.py",
+        "tests/services/test_prompt08_boundary.py::test_owner_open_validate_catalog_pack_inspect_and_empty_environment"
+      ],
+      "artifact_compatibility": "No Schema, domain assets, license or package bytes removed. Originals remain in fixed Git history and baseline tags.",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Read and extract before removal; historical status/aggregate prose must not masquerade as current product documentation. No archive copy created."
+    },
+    {
+      "old_path": "docs/verification/prompt-08-cross-domain-report.md",
+      "old_responsibility": "Historical phase report or superseded architecture/product description",
+      "actual_callers": [
+        "Historical documentation references; no current runtime business caller"
+      ],
+      "replacement_path": "docs/architecture/toolchain.md; docs/migration/history-and-current-boundaries.md; docs/research/implementation-evidence.md; docs/verification/final-requirements.json",
+      "replacement_behavior": "Durable evidence/review/compiler/semantic/world assumptions extracted; original P7/P8 failure and mixed-revision qualification retained. Original 53 rows read from immutable P8, not dropped. Only four current Mermaid diagrams remain.",
+      "replacement_test_nodeids": [
+        "tests/refactor/test_product_docs.py",
+        "tests/governance/test_semantic_authority.py",
+        "tests/services/test_prompt08_boundary.py::test_owner_open_validate_catalog_pack_inspect_and_empty_environment"
+      ],
+      "artifact_compatibility": "No Schema, domain assets, license or package bytes removed. Originals remain in fixed Git history and baseline tags.",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Read and extract before removal; historical status/aggregate prose must not masquerade as current product documentation. No archive copy created."
+    },
+    {
+      "old_path": "docs/verification/prompt-08-entry-audit.md",
+      "old_responsibility": "Historical phase report or superseded architecture/product description",
+      "actual_callers": [
+        "Historical documentation references; no current runtime business caller"
+      ],
+      "replacement_path": "docs/architecture/toolchain.md; docs/migration/history-and-current-boundaries.md; docs/research/implementation-evidence.md; docs/verification/final-requirements.json",
+      "replacement_behavior": "Durable evidence/review/compiler/semantic/world assumptions extracted; original P7/P8 failure and mixed-revision qualification retained. Original 53 rows read from immutable P8, not dropped. Only four current Mermaid diagrams remain.",
+      "replacement_test_nodeids": [
+        "tests/refactor/test_product_docs.py",
+        "tests/governance/test_semantic_authority.py",
+        "tests/services/test_prompt08_boundary.py::test_owner_open_validate_catalog_pack_inspect_and_empty_environment"
+      ],
+      "artifact_compatibility": "No Schema, domain assets, license or package bytes removed. Originals remain in fixed Git history and baseline tags.",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Read and extract before removal; historical status/aggregate prose must not masquerade as current product documentation. No archive copy created."
+    },
+    {
+      "old_path": "docs/verification/prompt-08-final-report.md",
+      "old_responsibility": "Historical phase report or superseded architecture/product description",
+      "actual_callers": [
+        "Historical documentation references; no current runtime business caller"
+      ],
+      "replacement_path": "docs/architecture/toolchain.md; docs/migration/history-and-current-boundaries.md; docs/research/implementation-evidence.md; docs/verification/final-requirements.json",
+      "replacement_behavior": "Durable evidence/review/compiler/semantic/world assumptions extracted; original P7/P8 failure and mixed-revision qualification retained. Original 53 rows read from immutable P8, not dropped. Only four current Mermaid diagrams remain.",
+      "replacement_test_nodeids": [
+        "tests/refactor/test_product_docs.py",
+        "tests/governance/test_semantic_authority.py",
+        "tests/services/test_prompt08_boundary.py::test_owner_open_validate_catalog_pack_inspect_and_empty_environment"
+      ],
+      "artifact_compatibility": "No Schema, domain assets, license or package bytes removed. Originals remain in fixed Git history and baseline tags.",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Read and extract before removal; historical status/aggregate prose must not masquerade as current product documentation. No archive copy created."
+    },
+    {
+      "old_path": "docs/verification/prompt-08-requirement-test-map.json",
+      "old_responsibility": "Historical phase report or superseded architecture/product description",
+      "actual_callers": [
+        "Historical documentation references; no current runtime business caller"
+      ],
+      "replacement_path": "docs/architecture/toolchain.md; docs/migration/history-and-current-boundaries.md; docs/research/implementation-evidence.md; docs/verification/final-requirements.json",
+      "replacement_behavior": "Durable evidence/review/compiler/semantic/world assumptions extracted; original P7/P8 failure and mixed-revision qualification retained. Original 53 rows read from immutable P8, not dropped. Only four current Mermaid diagrams remain.",
+      "replacement_test_nodeids": [
+        "tests/refactor/test_product_docs.py",
+        "tests/governance/test_semantic_authority.py",
+        "tests/services/test_prompt08_boundary.py::test_owner_open_validate_catalog_pack_inspect_and_empty_environment"
+      ],
+      "artifact_compatibility": "No Schema, domain assets, license or package bytes removed. Originals remain in fixed Git history and baseline tags.",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Read and extract before removal; historical status/aggregate prose must not masquerade as current product documentation. No archive copy created."
+    },
+    {
+      "old_path": "docs/verification/prompt-08-service-coverage.json",
+      "old_responsibility": "Historical phase report or superseded architecture/product description",
+      "actual_callers": [
+        "tools/consolidation_audit.py",
+        "tests/services/test_prompt08_boundary.py (now both read the fixed P8 Git object)"
+      ],
+      "replacement_path": "docs/architecture/toolchain.md; docs/migration/history-and-current-boundaries.md; docs/research/implementation-evidence.md; docs/verification/final-requirements.json",
+      "replacement_behavior": "Durable evidence/review/compiler/semantic/world assumptions extracted; original P7/P8 failure and mixed-revision qualification retained. Original 53 rows read from immutable P8, not dropped. Only four current Mermaid diagrams remain.",
+      "replacement_test_nodeids": [
+        "tests/refactor/test_product_docs.py",
+        "tests/governance/test_semantic_authority.py",
+        "tests/services/test_prompt08_boundary.py::test_owner_open_validate_catalog_pack_inspect_and_empty_environment"
+      ],
+      "artifact_compatibility": "No Schema, domain assets, license or package bytes removed. Originals remain in fixed Git history and baseline tags.",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Read and extract before removal; historical status/aggregate prose must not masquerade as current product documentation. No archive copy created."
+    },
+    {
+      "old_path": "docs/verification/prompt-08-verification-summary.json",
+      "old_responsibility": "Historical phase report or superseded architecture/product description",
+      "actual_callers": [
+        "Historical documentation references; no current runtime business caller"
+      ],
+      "replacement_path": "docs/architecture/toolchain.md; docs/migration/history-and-current-boundaries.md; docs/research/implementation-evidence.md; docs/verification/final-requirements.json",
+      "replacement_behavior": "Durable evidence/review/compiler/semantic/world assumptions extracted; original P7/P8 failure and mixed-revision qualification retained. Original 53 rows read from immutable P8, not dropped. Only four current Mermaid diagrams remain.",
+      "replacement_test_nodeids": [
+        "tests/refactor/test_product_docs.py",
+        "tests/governance/test_semantic_authority.py",
+        "tests/services/test_prompt08_boundary.py::test_owner_open_validate_catalog_pack_inspect_and_empty_environment"
+      ],
+      "artifact_compatibility": "No Schema, domain assets, license or package bytes removed. Originals remain in fixed Git history and baseline tags.",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Read and extract before removal; historical status/aggregate prose must not masquerade as current product documentation. No archive copy created."
+    },
+    {
+      "old_path": "docs/workbench/backend-remediation.md",
+      "old_responsibility": "Historical phase report or superseded architecture/product description",
+      "actual_callers": [
+        "Historical documentation references; no current runtime business caller"
+      ],
+      "replacement_path": "docs/architecture/toolchain.md; docs/migration/history-and-current-boundaries.md; docs/research/implementation-evidence.md; docs/verification/final-requirements.json",
+      "replacement_behavior": "Durable evidence/review/compiler/semantic/world assumptions extracted; original P7/P8 failure and mixed-revision qualification retained. Original 53 rows read from immutable P8, not dropped. Only four current Mermaid diagrams remain.",
+      "replacement_test_nodeids": [
+        "tests/refactor/test_product_docs.py",
+        "tests/governance/test_semantic_authority.py",
+        "tests/services/test_prompt08_boundary.py::test_owner_open_validate_catalog_pack_inspect_and_empty_environment"
+      ],
+      "artifact_compatibility": "No Schema, domain assets, license or package bytes removed. Originals remain in fixed Git history and baseline tags.",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Read and extract before removal; historical status/aggregate prose must not masquerade as current product documentation. No archive copy created."
+    },
+    {
+      "old_path": "docs/workbench/legacy-migration.md",
+      "old_responsibility": "Historical phase report or superseded architecture/product description",
+      "actual_callers": [
+        "Historical documentation references; no current runtime business caller"
+      ],
+      "replacement_path": "docs/architecture/toolchain.md; docs/migration/history-and-current-boundaries.md; docs/research/implementation-evidence.md; docs/verification/final-requirements.json",
+      "replacement_behavior": "Durable evidence/review/compiler/semantic/world assumptions extracted; original P7/P8 failure and mixed-revision qualification retained. Original 53 rows read from immutable P8, not dropped. Only four current Mermaid diagrams remain.",
+      "replacement_test_nodeids": [
+        "tests/refactor/test_product_docs.py",
+        "tests/governance/test_semantic_authority.py",
+        "tests/services/test_prompt08_boundary.py::test_owner_open_validate_catalog_pack_inspect_and_empty_environment"
+      ],
+      "artifact_compatibility": "No Schema, domain assets, license or package bytes removed. Originals remain in fixed Git history and baseline tags.",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Read and extract before removal; historical status/aggregate prose must not masquerade as current product documentation. No archive copy created."
+    },
+    {
+      "old_path": "docs/workbench/p9-handoff.md",
+      "old_responsibility": "Historical phase report or superseded architecture/product description",
+      "actual_callers": [
+        "Historical documentation references; no current runtime business caller"
+      ],
+      "replacement_path": "docs/architecture/toolchain.md; docs/migration/history-and-current-boundaries.md; docs/research/implementation-evidence.md; docs/verification/final-requirements.json",
+      "replacement_behavior": "Durable evidence/review/compiler/semantic/world assumptions extracted; original P7/P8 failure and mixed-revision qualification retained. Original 53 rows read from immutable P8, not dropped. Only four current Mermaid diagrams remain.",
+      "replacement_test_nodeids": [
+        "tests/refactor/test_product_docs.py",
+        "tests/governance/test_semantic_authority.py",
+        "tests/services/test_prompt08_boundary.py::test_owner_open_validate_catalog_pack_inspect_and_empty_environment"
+      ],
+      "artifact_compatibility": "No Schema, domain assets, license or package bytes removed. Originals remain in fixed Git history and baseline tags.",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Read and extract before removal; historical status/aggregate prose must not masquerade as current product documentation. No archive copy created."
+    },
+    {
+      "old_path": "docs/adr/ADR-0008.md",
+      "old_responsibility": "Historical phase report or superseded architecture/product description",
+      "actual_callers": [
+        "Historical documentation references; no current runtime business caller"
+      ],
+      "replacement_path": "docs/architecture/toolchain.md; docs/migration/history-and-current-boundaries.md; docs/research/implementation-evidence.md; docs/verification/final-requirements.json",
+      "replacement_behavior": "Durable evidence/review/compiler/semantic/world assumptions extracted; original P7/P8 failure and mixed-revision qualification retained. Original 53 rows read from immutable P8, not dropped. Only four current Mermaid diagrams remain.",
+      "replacement_test_nodeids": [
+        "tests/refactor/test_product_docs.py",
+        "tests/governance/test_semantic_authority.py",
+        "tests/services/test_prompt08_boundary.py::test_owner_open_validate_catalog_pack_inspect_and_empty_environment"
+      ],
+      "artifact_compatibility": "No Schema, domain assets, license or package bytes removed. Originals remain in fixed Git history and baseline tags.",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Read and extract before removal; historical status/aggregate prose must not masquerade as current product documentation. No archive copy created."
+    },
+    {
+      "old_path": "scripts/generate_prompt08_coverage.py",
+      "old_responsibility": "Historical incomplete gate, cumulative coverage generator or duplicate command recorder",
+      "actual_callers": [
+        "Historical documentation references; no current runtime business caller"
+      ],
+      "replacement_path": "tools/verify_release_candidate.py; tools/verify_candidate.py; tools/run_browser_verification.py",
+      "replacement_behavior": "Durable evidence/review/compiler/semantic/world assumptions extracted; original P7/P8 failure and mixed-revision qualification retained. Original 53 rows read from immutable P8, not dropped. Only four current Mermaid diagrams remain.",
+      "replacement_test_nodeids": [
+        "tests/refactor/test_product_docs.py",
+        "tests/governance/test_semantic_authority.py",
+        "tests/services/test_prompt08_boundary.py::test_owner_open_validate_catalog_pack_inspect_and_empty_environment"
+      ],
+      "artifact_compatibility": "No Schema, domain assets, license or package bytes removed. Originals remain in fixed Git history and baseline tags.",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Read and extract before removal; historical status/aggregate prose must not masquerade as current product documentation. No archive copy created."
+    },
+    {
+      "old_path": "scripts/verify_prompt08_backend.py",
+      "old_responsibility": "Historical incomplete gate, cumulative coverage generator or duplicate command recorder",
+      "actual_callers": [
+        "Historical documentation references; no current runtime business caller"
+      ],
+      "replacement_path": "tools/verify_release_candidate.py; tools/verify_candidate.py; tools/run_browser_verification.py",
+      "replacement_behavior": "Durable evidence/review/compiler/semantic/world assumptions extracted; original P7/P8 failure and mixed-revision qualification retained. Original 53 rows read from immutable P8, not dropped. Only four current Mermaid diagrams remain.",
+      "replacement_test_nodeids": [
+        "tests/refactor/test_product_docs.py",
+        "tests/governance/test_semantic_authority.py",
+        "tests/services/test_prompt08_boundary.py::test_owner_open_validate_catalog_pack_inspect_and_empty_environment"
+      ],
+      "artifact_compatibility": "No Schema, domain assets, license or package bytes removed. Originals remain in fixed Git history and baseline tags.",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Read and extract before removal; historical status/aggregate prose must not masquerade as current product documentation. No archive copy created."
+    },
+    {
+      "old_path": "scripts/run_prompt08_verification.py",
+      "old_responsibility": "Historical incomplete gate, cumulative coverage generator or duplicate command recorder",
+      "actual_callers": [
+        "Historical documentation references; no current runtime business caller"
+      ],
+      "replacement_path": "tools/verify_release_candidate.py; tools/verify_candidate.py; tools/run_browser_verification.py",
+      "replacement_behavior": "Durable evidence/review/compiler/semantic/world assumptions extracted; original P7/P8 failure and mixed-revision qualification retained. Original 53 rows read from immutable P8, not dropped. Only four current Mermaid diagrams remain.",
+      "replacement_test_nodeids": [
+        "tests/refactor/test_product_docs.py",
+        "tests/governance/test_semantic_authority.py",
+        "tests/services/test_prompt08_boundary.py::test_owner_open_validate_catalog_pack_inspect_and_empty_environment"
+      ],
+      "artifact_compatibility": "No Schema, domain assets, license or package bytes removed. Originals remain in fixed Git history and baseline tags.",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Read and extract before removal; historical status/aggregate prose must not masquerade as current product documentation. No archive copy created."
+    },
+    {
+      "old_path": "docs/migration/stage-02-semantic-governance.md",
+      "old_responsibility": "Historical phase report or superseded architecture/product description",
+      "actual_callers": [
+        "tests/governance/test_stage_boundaries.py (current semantic distinction retained)"
+      ],
+      "replacement_path": "docs/architecture/toolchain.md; docs/migration/history-and-current-boundaries.md; docs/research/implementation-evidence.md; docs/verification/final-requirements.json",
+      "replacement_behavior": "Durable evidence/review/compiler/semantic/world assumptions extracted; original P7/P8 failure and mixed-revision qualification retained. Original 53 rows read from immutable P8, not dropped. Only four current Mermaid diagrams remain.",
+      "replacement_test_nodeids": [
+        "tests/refactor/test_product_docs.py",
+        "tests/governance/test_semantic_authority.py",
+        "tests/services/test_prompt08_boundary.py::test_owner_open_validate_catalog_pack_inspect_and_empty_environment"
+      ],
+      "artifact_compatibility": "No Schema, domain assets, license or package bytes removed. Originals remain in fixed Git history and baseline tags.",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Read and extract before removal; historical status/aggregate prose must not masquerade as current product documentation. No archive copy created."
+    },
+    {
+      "old_path": "tests/dependency_impact/README.md",
+      "old_responsibility": "Empty test-directory heading or pointer to tests/lifecycle",
+      "actual_callers": [],
+      "replacement_path": "tests/lifecycle; tests/security; tests/services",
+      "replacement_behavior": "Keep actual capability tests; remove empty shell directories, with no assertion/nodeid removed",
+      "replacement_test_nodeids": [
+        "tests/lifecycle/test_lifecycle_boundaries.py",
+        "tests/services/test_lifecycle_completion.py"
+      ],
+      "artifact_compatibility": "No artifact content affected",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Heading-only README is neither test implementation nor coverage evidence"
+    },
+    {
+      "old_path": "tests/lifecycle_activation/README.md",
+      "old_responsibility": "Empty test-directory heading or pointer to tests/lifecycle",
+      "actual_callers": [],
+      "replacement_path": "tests/lifecycle; tests/security; tests/services",
+      "replacement_behavior": "Keep actual capability tests; remove empty shell directories, with no assertion/nodeid removed",
+      "replacement_test_nodeids": [
+        "tests/lifecycle/test_lifecycle_boundaries.py",
+        "tests/services/test_lifecycle_completion.py"
+      ],
+      "artifact_compatibility": "No artifact content affected",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Heading-only README is neither test implementation nor coverage evidence"
+    },
+    {
+      "old_path": "tests/lifecycle_changes/README.md",
+      "old_responsibility": "Empty test-directory heading or pointer to tests/lifecycle",
+      "actual_callers": [],
+      "replacement_path": "tests/lifecycle; tests/security; tests/services",
+      "replacement_behavior": "Keep actual capability tests; remove empty shell directories, with no assertion/nodeid removed",
+      "replacement_test_nodeids": [
+        "tests/lifecycle/test_lifecycle_boundaries.py",
+        "tests/services/test_lifecycle_completion.py"
+      ],
+      "artifact_compatibility": "No artifact content affected",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Heading-only README is neither test implementation nor coverage evidence"
+    },
+    {
+      "old_path": "tests/lifecycle_consumers/README.md",
+      "old_responsibility": "Empty test-directory heading or pointer to tests/lifecycle",
+      "actual_callers": [],
+      "replacement_path": "tests/lifecycle; tests/security; tests/services",
+      "replacement_behavior": "Keep actual capability tests; remove empty shell directories, with no assertion/nodeid removed",
+      "replacement_test_nodeids": [
+        "tests/lifecycle/test_lifecycle_boundaries.py",
+        "tests/services/test_lifecycle_completion.py"
+      ],
+      "artifact_compatibility": "No artifact content affected",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Heading-only README is neither test implementation nor coverage evidence"
+    },
+    {
+      "old_path": "tests/lifecycle_contracts/README.md",
+      "old_responsibility": "Empty test-directory heading or pointer to tests/lifecycle",
+      "actual_callers": [],
+      "replacement_path": "tests/lifecycle; tests/security; tests/services",
+      "replacement_behavior": "Keep actual capability tests; remove empty shell directories, with no assertion/nodeid removed",
+      "replacement_test_nodeids": [
+        "tests/lifecycle/test_lifecycle_boundaries.py",
+        "tests/services/test_lifecycle_completion.py"
+      ],
+      "artifact_compatibility": "No artifact content affected",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Heading-only README is neither test implementation nor coverage evidence"
+    },
+    {
+      "old_path": "tests/lifecycle_environment/README.md",
+      "old_responsibility": "Empty test-directory heading or pointer to tests/lifecycle",
+      "actual_callers": [],
+      "replacement_path": "tests/lifecycle; tests/security; tests/services",
+      "replacement_behavior": "Keep actual capability tests; remove empty shell directories, with no assertion/nodeid removed",
+      "replacement_test_nodeids": [
+        "tests/lifecycle/test_lifecycle_boundaries.py",
+        "tests/services/test_lifecycle_completion.py"
+      ],
+      "artifact_compatibility": "No artifact content affected",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Heading-only README is neither test implementation nor coverage evidence"
+    },
+    {
+      "old_path": "tests/lifecycle_feedback/README.md",
+      "old_responsibility": "Empty test-directory heading or pointer to tests/lifecycle",
+      "actual_callers": [],
+      "replacement_path": "tests/lifecycle; tests/security; tests/services",
+      "replacement_behavior": "Keep actual capability tests; remove empty shell directories, with no assertion/nodeid removed",
+      "replacement_test_nodeids": [
+        "tests/lifecycle/test_lifecycle_boundaries.py",
+        "tests/services/test_lifecycle_completion.py"
+      ],
+      "artifact_compatibility": "No artifact content affected",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Heading-only README is neither test implementation nor coverage evidence"
+    },
+    {
+      "old_path": "tests/lifecycle_registry/README.md",
+      "old_responsibility": "Empty test-directory heading or pointer to tests/lifecycle",
+      "actual_callers": [],
+      "replacement_path": "tests/lifecycle; tests/security; tests/services",
+      "replacement_behavior": "Keep actual capability tests; remove empty shell directories, with no assertion/nodeid removed",
+      "replacement_test_nodeids": [
+        "tests/lifecycle/test_lifecycle_boundaries.py",
+        "tests/services/test_lifecycle_completion.py"
+      ],
+      "artifact_compatibility": "No artifact content affected",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Heading-only README is neither test implementation nor coverage evidence"
+    },
+    {
+      "old_path": "tests/lifecycle_regression/README.md",
+      "old_responsibility": "Empty test-directory heading or pointer to tests/lifecycle",
+      "actual_callers": [],
+      "replacement_path": "tests/lifecycle; tests/security; tests/services",
+      "replacement_behavior": "Keep actual capability tests; remove empty shell directories, with no assertion/nodeid removed",
+      "replacement_test_nodeids": [
+        "tests/lifecycle/test_lifecycle_boundaries.py",
+        "tests/services/test_lifecycle_completion.py"
+      ],
+      "artifact_compatibility": "No artifact content affected",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Heading-only README is neither test implementation nor coverage evidence"
+    },
+    {
+      "old_path": "tests/lifecycle_release/README.md",
+      "old_responsibility": "Empty test-directory heading or pointer to tests/lifecycle",
+      "actual_callers": [],
+      "replacement_path": "tests/lifecycle; tests/security; tests/services",
+      "replacement_behavior": "Keep actual capability tests; remove empty shell directories, with no assertion/nodeid removed",
+      "replacement_test_nodeids": [
+        "tests/lifecycle/test_lifecycle_boundaries.py",
+        "tests/services/test_lifecycle_completion.py"
+      ],
+      "artifact_compatibility": "No artifact content affected",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Heading-only README is neither test implementation nor coverage evidence"
+    },
+    {
+      "old_path": "tests/lifecycle_rollback/README.md",
+      "old_responsibility": "Empty test-directory heading or pointer to tests/lifecycle",
+      "actual_callers": [],
+      "replacement_path": "tests/lifecycle; tests/security; tests/services",
+      "replacement_behavior": "Keep actual capability tests; remove empty shell directories, with no assertion/nodeid removed",
+      "replacement_test_nodeids": [
+        "tests/lifecycle/test_lifecycle_boundaries.py",
+        "tests/services/test_lifecycle_completion.py"
+      ],
+      "artifact_compatibility": "No artifact content affected",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Heading-only README is neither test implementation nor coverage evidence"
+    },
+    {
+      "old_path": "tests/lifecycle_transactions/README.md",
+      "old_responsibility": "Empty test-directory heading or pointer to tests/lifecycle",
+      "actual_callers": [],
+      "replacement_path": "tests/lifecycle; tests/security; tests/services",
+      "replacement_behavior": "Keep actual capability tests; remove empty shell directories, with no assertion/nodeid removed",
+      "replacement_test_nodeids": [
+        "tests/lifecycle/test_lifecycle_boundaries.py",
+        "tests/services/test_lifecycle_completion.py"
+      ],
+      "artifact_compatibility": "No artifact content affected",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Heading-only README is neither test implementation nor coverage evidence"
+    },
+    {
+      "old_path": "tests/semantic_diff/README.md",
+      "old_responsibility": "Empty test-directory heading or pointer to tests/lifecycle",
+      "actual_callers": [],
+      "replacement_path": "tests/lifecycle; tests/security; tests/services",
+      "replacement_behavior": "Keep actual capability tests; remove empty shell directories, with no assertion/nodeid removed",
+      "replacement_test_nodeids": [
+        "tests/lifecycle/test_lifecycle_boundaries.py",
+        "tests/services/test_lifecycle_completion.py"
+      ],
+      "artifact_compatibility": "No artifact content affected",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Heading-only README is neither test implementation nor coverage evidence"
+    },
+    {
+      "old_path": "tests/version_compatibility/README.md",
+      "old_responsibility": "Empty test-directory heading or pointer to tests/lifecycle",
+      "actual_callers": [],
+      "replacement_path": "tests/lifecycle; tests/security; tests/services",
+      "replacement_behavior": "Keep actual capability tests; remove empty shell directories, with no assertion/nodeid removed",
+      "replacement_test_nodeids": [
+        "tests/lifecycle/test_lifecycle_boundaries.py",
+        "tests/services/test_lifecycle_completion.py"
+      ],
+      "artifact_compatibility": "No artifact content affected",
+      "decision": "REPLACE_AND_DELETE",
+      "reason": "Heading-only README is neither test implementation nor coverage evidence"
     }
   ],
   "test_migration": [
@@ -1488,6 +2688,87 @@
       "decision": "MOVE",
       "behavior": "Current product registration/no-Neo4j/domain-source policy; HTTP pin checked against current exact lock",
       "reason": "Historical phase heading and hardcoded vulnerable FastAPI version are not compatibility requirements; substantive boundary assertions retained"
+    },
+    {
+      "old_nodeid": "tests/ingestion/test_planner_executor.py::test_concurrent_writer_lock_and_authority_directories_fail_closed",
+      "new_nodeids": [
+        "tests/ingestion/test_planner_executor.py::test_concurrent_writer_lock_and_authority_directories_fail_closed"
+      ],
+      "decision": "RETAIN_AND_FIX_IMPLEMENTATION",
+      "behavior": "Keep exact lock and forged confirmed-file rejection. Executor now reuses existing Workspace confirmed-authority validation before ingestion."
+    },
+    {
+      "old_nodeid": "tests/ingestion/test_evolving_workspace.py::test_ingestion_after_confirmation_keeps_formal_artifacts",
+      "new_nodeids": [
+        "tests/ingestion/test_evolving_workspace.py::test_ingestion_after_confirmation_keeps_formal_artifacts"
+      ],
+      "decision": "RETAIN_AND_STRENGTHEN",
+      "behavior": "Actual authenticated Source->Review->Compile->Release fixture replaces ad-hoc compiler input folder; subsequent ingestion must preserve all Confirmed/Package bytes."
+    },
+    {
+      "old_nodeid": "tests/domain_packs/test_validation_and_locking.py::test_repository_packs_are_formal_valid_and_locked[forestry-PLANNED-0.1.0]",
+      "new_nodeids": [
+        "tests/domain_packs/test_validation_and_locking.py::test_repository_packs_are_formal_valid_and_locked[forestry-EXPERIMENTAL-0.2.0]"
+      ],
+      "decision": "REPLACE_ASSERTION",
+      "behavior": "Explicitly authorized Forestry version transition; same formal/lock validation retained."
+    },
+    {
+      "old_nodeid": "tests/domain_packs/test_validation_and_locking.py::test_forestry_has_no_fabricated_semantic_claims",
+      "new_nodeids": [
+        "tests/domain_packs/test_validation_and_locking.py::test_forestry_has_no_fabricated_semantic_claims"
+      ],
+      "decision": "RETAIN_AND_STRENGTHEN",
+      "behavior": "Actual synthetic declaration, six trees/inspections, two sites, no private coordinates/field trial/expert signature/diagnosis replace obsolete zero-assets assertion."
+    },
+    {
+      "old_nodeid": "tests/domain_packs/test_registry_and_dependencies.py::test_registry_lists_and_resolves_exact_repository_versions",
+      "new_nodeids": [
+        "tests/domain_packs/test_registry_and_dependencies.py::test_registry_lists_and_resolves_exact_repository_versions"
+      ],
+      "decision": "REPLACE_ASSERTION",
+      "behavior": "Resolve exact 0.2.0; add explicit rejection of unavailable 0.1.0, never silently upgrade."
+    },
+    {
+      "old_nodeid": "tests/contracts/test_prompt04_preservation.py::test_plugin_api_1_0_manifests_and_pack_locks_are_byte_identical",
+      "new_nodeids": [
+        "tests/contracts/test_prompt04_preservation.py::test_plugin_api_1_0_manifests_and_pack_locks_are_byte_identical",
+        "tests/domain_packs/test_forestry_synthetic.py::test_forestry_experimental_pack_has_locked_synthetic_assets"
+      ],
+      "decision": "REPLACE_ASSERTION",
+      "behavior": "All original 13 plugin manifests and Minimal/MNP locks remain byte-frozen. Only authorized Forestry content/lock upgrade moves to its separate current/historical tests."
+    },
+    {
+      "old_nodeid": "tests/governance/test_stage_boundaries.py::test_stage_02_report_defers_example_org_migration",
+      "new_nodeids": [
+        "tests/governance/test_stage_boundaries.py::test_current_architecture_keeps_open_and_closed_world_semantics_distinct"
+      ],
+      "decision": "REPLACE_AND_DELETE",
+      "behavior": "Future-phase prose retired; OWL inference vs closed-world SHACL distinction retained."
+    },
+    {
+      "old_nodeid": "tests/governance/test_semantic_authority.py::test_confirmed_package_is_authoritative_proposal_is_not",
+      "new_nodeids": [
+        "tests/governance/test_semantic_authority.py::test_confirmed_package_is_authoritative_proposal_is_not"
+      ],
+      "decision": "RETAIN",
+      "behavior": "Same semantic authority/no-direct-tool-writeback/no-auto-approval assertions now inspect current Chinese product architecture instead of a deleted historical duplicate."
+    },
+    {
+      "old_nodeid": "tests/governance/test_semantic_authority.py::test_tools_are_not_editing_authorities",
+      "new_nodeids": [
+        "tests/governance/test_semantic_authority.py::test_tools_are_not_editing_authorities"
+      ],
+      "decision": "RETAIN",
+      "behavior": "Same semantic authority/no-direct-tool-writeback/no-auto-approval assertions now inspect current Chinese product architecture instead of a deleted historical duplicate."
+    },
+    {
+      "old_nodeid": "tests/governance/test_semantic_authority.py::test_llm_auto_confirm_forbidden",
+      "new_nodeids": [
+        "tests/governance/test_semantic_authority.py::test_llm_auto_confirm_forbidden"
+      ],
+      "decision": "RETAIN",
+      "behavior": "Same semantic authority/no-direct-tool-writeback/no-auto-approval assertions now inspect current Chinese product architecture instead of a deleted historical duplicate."
     }
   ],
   "replacement_gate": {
@@ -1581,5 +2862,112 @@
     "platform": "Windows 11 / Python 3.12.6",
     "result": "Wheel and Sdist-rebuilt Wheel have identical package/resource payload; each installed in a separate fresh environment; source-free API/Worker/download/replay probes passed",
     "limitations": "Later frontend export/readiness changes and strengthened direct-process shutdown probe are not part of this build; final clean fixed-revision rebuild still mandatory."
+  },
+  "diagnostic_checkpoint_95": {
+    "commit": "95b4d50f1f66a27e15d245facec43061cc0f2d73",
+    "backend": {
+      "unique": 1703,
+      "passed": 1689,
+      "failed": 5,
+      "skipped": 9,
+      "errors": 0,
+      "missing": [],
+      "extra": [],
+      "evidence": "runtime_logs/p09/fixed-95b4d50-559cf039/summary.json"
+    },
+    "browser": {
+      "passed": 1,
+      "failed": 4,
+      "evidence": "runtime_logs/p09/browser-runs/managed-beccddca65cb44c5bbdec7c2a188de25",
+      "cause": "Test stdin management blocked Windows multiprocessing spawn; reproduced and replaced with stop-file + real isolated SHACL smoke."
+    },
+    "repairs": [
+      "runtime_logs/p09/checkpoint-repairs.xml (29 PASS)",
+      "runtime_logs/p09/confirmed-ingestion-repair2.xml (2 PASS)",
+      "runtime_logs/p09/runner-parent-repair.xml (17 PASS)",
+      "runtime_logs/p09/doc-links-green.xml (12 PASS)"
+    ],
+    "scope": "Incremental repair selections are not a new complete fixed-revision PASS"
+  },
+  "documentation_retirement": {
+    "removed": [
+      "docs/architecture/contract-and-workspace-kernel.md",
+      "docs/architecture/controlled-ontology-lifecycle-architecture.md",
+      "docs/architecture/deterministic-semantic-kernel-architecture.md",
+      "docs/architecture/evidence-grounded-modeling-architecture.md",
+      "docs/architecture/evidence-layers.md",
+      "docs/architecture/explicit-inferred-boundary.md",
+      "docs/architecture/ontology-toolchain-target-architecture.md",
+      "docs/architecture/operation-coverage.md",
+      "docs/architecture/owl-shacl-semantics.md",
+      "docs/architecture/plugin-driven-ingestion-architecture.md",
+      "docs/architecture/prompt-06-lifecycle.md",
+      "docs/architecture/prompt-07-unified-services.md",
+      "docs/architecture/semantic-authority-chain.md",
+      "docs/architecture/service-commit-boundary.md",
+      "docs/architecture/tbox-abox-boundary.md",
+      "docs/architecture/workbench-information-architecture.md",
+      "docs/product/current-capability-matrix.md",
+      "docs/product/product-charter.md",
+      "docs/product/prompt-06-release-lifecycle.md",
+      "docs/product/research-to-product-alignment.md",
+      "docs/refactor/deletion-manifest.md",
+      "docs/refactor/domain-coupling-inventory.md",
+      "docs/refactor/prompt-01-baseline-audit.md",
+      "docs/refactor/prompt-02-authorized-change-manifest.md",
+      "docs/refactor/prompt-02-compatibility-matrix.md",
+      "docs/refactor/prompt-02-contract-audit.md",
+      "docs/refactor/prompt-03-authorized-change-manifest.md",
+      "docs/refactor/prompt-03-claim-evidence-matrix.md",
+      "docs/refactor/prompt-03-compatibility-matrix.md",
+      "docs/refactor/prompt-03-ingestion-audit.md",
+      "docs/refactor/prompt-04-authorized-change-manifest.md",
+      "docs/refactor/prompt-04-claim-evidence-matrix.md",
+      "docs/refactor/prompt-04-compatibility-matrix.md",
+      "docs/refactor/prompt-04-legacy-modeling-gap-analysis.md",
+      "docs/refactor/prompt-04-modeling-audit.md",
+      "docs/refactor/prompt-05-authorized-change-manifest.md",
+      "docs/refactor/prompt-05-claim-evidence-matrix.md",
+      "docs/refactor/prompt-05-compatibility-matrix.md",
+      "docs/refactor/prompt-05-compilation-audit.md",
+      "docs/refactor/prompt-05-old-new-compiler-mapping.md",
+      "docs/refactor/prompt-06-completion-audit.md",
+      "docs/refactor/prompt-06-legacy-lifecycle-gap-analysis.md",
+      "docs/refactor/prompt-06-lifecycle-audit.md",
+      "docs/refactor/repository-migration-matrix.md",
+      "docs/verification/prompt-07-verification-summary.json",
+      "docs/verification/prompt-08-cross-domain-report.md",
+      "docs/verification/prompt-08-entry-audit.md",
+      "docs/verification/prompt-08-final-report.md",
+      "docs/verification/prompt-08-requirement-test-map.json",
+      "docs/verification/prompt-08-service-coverage.json",
+      "docs/verification/prompt-08-verification-summary.json",
+      "docs/workbench/backend-remediation.md",
+      "docs/workbench/legacy-migration.md",
+      "docs/workbench/p9-handoff.md",
+      "docs/adr/ADR-0008.md",
+      "scripts/generate_prompt08_coverage.py",
+      "scripts/verify_prompt08_backend.py",
+      "scripts/run_prompt08_verification.py",
+      "docs/migration/stage-02-semantic-governance.md"
+    ],
+    "empty_test_shells": [
+      "tests/dependency_impact/README.md",
+      "tests/lifecycle_activation/README.md",
+      "tests/lifecycle_changes/README.md",
+      "tests/lifecycle_consumers/README.md",
+      "tests/lifecycle_contracts/README.md",
+      "tests/lifecycle_environment/README.md",
+      "tests/lifecycle_feedback/README.md",
+      "tests/lifecycle_registry/README.md",
+      "tests/lifecycle_regression/README.md",
+      "tests/lifecycle_release/README.md",
+      "tests/lifecycle_rollback/README.md",
+      "tests/lifecycle_transactions/README.md",
+      "tests/semantic_diff/README.md",
+      "tests/version_compatibility/README.md"
+    ],
+    "durable_decisions": "docs/migration/history-and-current-boundaries.md",
+    "compatibility": "Original failures retained in history/current summary; original 53 operations are immutable-Git baseline, not a mutable report file."
   }
 }
