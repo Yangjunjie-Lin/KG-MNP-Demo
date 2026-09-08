@@ -3,6 +3,14 @@
   "source_commit": "9da17d126cb37166ff06084080770108da20afbe",
   "branch": "codex/toolchain-final-consolidation-p09",
   "implementation_checkpoint": "dfcfa8ce3a0a9b4ed2f5017df2371eaf81cfff41",
+  "incremental_evidence_bundle": {
+    "path": "runtime_logs/p09/checkpoint-evidence-20260908.zip",
+    "sha256": "6c21f1d3318f55bddf83658daeedd402f25fdf54b2d39b575ef070ba9dc58a8a",
+    "size_bytes": 4286279,
+    "crc_verified": true,
+    "credential_scan": "No runtime bearer/session token pattern found in included text; runtime workspaces/token stores excluded",
+    "qualification": "Separate c77/a231/dfc incremental evidence, not final acceptance or a release-candidate distribution"
+  },
   "continuation_g5_checkpoint": {
     "kind": "INCREMENTAL_G5_NOT_FINAL_ACCEPTANCE",
     "implementation_commit": "a23102dc5891e26600abd262fd958110260f37a8",
@@ -498,6 +506,16 @@
         "runtime_logs/p09/projection-snapshot-green.xml (44 PASS)",
         "runtime_logs/p09/shared-snapshot-archive.xml (5 PASS)"
       ],
+      "linux_regression": {
+        "commit": "dfcfa8ce3a0a9b4ed2f5017df2371eaf81cfff41",
+        "passed": 15,
+        "failed": 0,
+        "skipped": 0,
+        "seconds": 13.95,
+        "evidence": "/var/tmp/kg-mnp-a231.BeqQqs/runtime_logs/p09/linux-snapshot-dfc/junit.xml",
+        "bundled_copy": "linux-dfc-snapshot.xml",
+        "scope": "Object/projection snapshots, archives, revocation, genuine historical package; not complete Linux suite or clean installation"
+      },
       "final_full_verification": "NOT_RUN"
     },
     "collection_only": {
