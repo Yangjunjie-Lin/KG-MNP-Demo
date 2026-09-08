@@ -17,7 +17,7 @@ contracts:
 	$(PYTHON) tools/generate_compiler_contracts.py --check
 
 backend:
-	$(PYTHON) -m pytest --basetemp=runtime/make-backend
+	$(PYTHON) tools/run_backend_tests.py
 
 frontend:
 	npm --prefix workbench test

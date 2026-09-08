@@ -17,9 +17,14 @@ jobs:
       - uses: ./.github/actions/setup-toolchain
       - run: npm --prefix workbench run build
       - name: Execute each collected backend test once
-        run: python -m pytest -q --basetemp=runtime/ci-backend --junitxml=runtime_logs/ci-backend.xml
+        run: python tools/run_backend_tests.py
       - uses: actions/upload-artifact@v4
         if: always()
         with:
           name: backend-${{ matrix.os }}
-          path: runtime_logs/ci-backend.xml
+          path: |
+            runtime_logs/backend-*/run/junit.xml
+            runtime_logs/backend-*/run/collection.json
+            runtime_logs/backend-*/run/reports.json
+            runtime_logs/backend-*/run/receipt.json
+            runtime_logs/backend-*/run/command.log
