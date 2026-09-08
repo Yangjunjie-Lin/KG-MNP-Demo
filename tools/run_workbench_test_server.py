@@ -5,6 +5,7 @@ import argparse
 import json
 import shutil
 import socket
+import sys
 import tempfile
 from pathlib import Path
 from threading import Event, Thread
@@ -22,6 +23,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("--port", type=int, default=0)
     parser.add_argument("--temporary-pack", action="store_true")
+    parser.add_argument("--managed", action="store_true", help="stop on an owned stdin command or EOF")
     args = parser.parse_args()
     root = Path(__file__).resolve().parents[1]
     runtime = root / "runtime"
@@ -50,23 +52,40 @@ def main():
         domain_packs_root=str(packs), workbench_root=str(root / "workbench/dist"),
         allow_insecure_loopback_session=True, review_profile="DEVELOPMENT_SINGLE_REVIEWER",
         reasoner_jar=str(root / "third_party/downloads/robot-1.9.7.jar")))
-    token, _ = service.tokens.create(principal_id="synthetic-browser-human", principal_type="HUMAN",
+    token, human = service.tokens.create(principal_id="synthetic-browser-human", principal_type="HUMAN",
                                     permissions={"*"}, project_ids=set(), created_by="explicit-synthetic-browser-test")
-    viewer_token, _ = service.tokens.create(principal_id="synthetic-isolated-viewer", principal_type="HUMAN",
+    viewer_token, viewer = service.tokens.create(principal_id="synthetic-isolated-viewer", principal_type="HUMAN",
         permissions={"project:read", "source:read", "package:read", "job:read"}, project_ids=set(), created_by="explicit-synthetic-browser-test")
     credentials = workspace / "browser-test-credential.json"
     atomic_write_json(credentials, {"token": token, "viewer_token": viewer_token})
     stop = Event()
     worker = Thread(target=JobWorker(service.jobs, service).run_forever, kwargs={"worker_id":"browser-test-worker", "stop":stop}, daemon=True)
+    server = uvicorn.Server(uvicorn.Config(create_app(service), access_log=False, log_level="warning"))
+    if args.managed:
+        def watch_owner():
+            # Owner death closes this pipe; no public shutdown route exists.
+            sys.stdin.readline()
+            stop.set()
+            server.should_exit = True
+        Thread(target=watch_owner, daemon=True).start()
     worker.start()
     print(json.dumps({"url":f"http://127.0.0.1:{port}", "credential_path":str(credentials), "workspace":str(workspace)}), flush=True)
     try:
-        uvicorn.Server(uvicorn.Config(create_app(service), access_log=False, log_level="warning")).run(sockets=[sock])
+        server.run(sockets=[sock])
     finally:
         stop.set()
+        # Revoke before waiting so in-flight work cannot publish afterwards.
+        service.tokens.revoke(human.token_id)
+        service.tokens.revoke(viewer.token_id)
         worker.join(35)
         sock.close()
         credentials.unlink(missing_ok=True)
+        atomic_write_json(workspace / "browser-server-shutdown.json", {
+            "credentials_removed": not credentials.exists(), "credentials_revoked": True,
+            "worker_stopped": not worker.is_alive(),
+        })
+        if worker.is_alive():
+            raise SystemExit("Synthetic Worker did not stop within shutdown deadline")
 
 
 if __name__ == "__main__":

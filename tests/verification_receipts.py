@@ -15,7 +15,8 @@ def pytest_collection_finish(session):
 
 def pytest_runtest_logreport(report):
     row = {"nodeid": report.nodeid, "when": report.when, "outcome": report.outcome,
-           "duration": report.duration, "skip_reason": str(report.longrepr) if report.skipped else None}
+           "duration": report.duration, "skip_reason": str(report.longrepr) if report.skipped else None,
+           "wasxfail": getattr(report, "wasxfail", None)}
     REPORTS.append(row)
     # Per-process append streams survive a killed/incomplete run, but do not
     # turn its partial node union into a completed regression claim.
