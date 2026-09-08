@@ -32,7 +32,7 @@ def pending(tmp_path):
     return service, principal, project["project_id"], result.job_id
 
 
-@pytest.mark.parametrize("fault", ["lease", "revoked", "cancel", "superseded", "write_failure", "identity"])
+@pytest.mark.parametrize("fault", ["lease", "revoked", "cancel", "superseded", "write_failure", "identity", "input_changed"])
 def test_computed_artifacts_cannot_publish_after_losing_authority(pending, monkeypatch, fault):
     service, principal, project_id, job_id = pending
     before = get_project(service.root, project_id)
@@ -51,6 +51,11 @@ def test_computed_artifacts_cannot_publish_after_losing_authority(pending, monke
             service.jobs.cancel(job_id)
         elif fault == "write_failure":
             raise OSError("simulated mid-computation failure")
+        elif fault == "input_changed":
+            # Original authority changes after private computation: no stale
+            # result may publish over this newer input, or silently repair it.
+            path = Path(before.root) / "project.yaml"
+            path.write_bytes(path.read_bytes() + b"\n# changed during computation\n")
         else:
             with sqlite3.connect(service.jobs.path) as conn:
                 if fault == "lease":
@@ -63,7 +68,11 @@ def test_computed_artifacts_cannot_publish_after_losing_authority(pending, monke
     result = JobWorker(service.jobs, service).run_once("old-worker")
     assert result.status != "SUCCEEDED"
     assert get_project(service.root, project_id) == before
-    assert execution.tree_digest(Path(before.root)) == digest
+    if fault == "input_changed":
+        assert execution.tree_digest(Path(before.root)) != digest
+        assert (Path(before.root) / "project.yaml").read_bytes().endswith(b"# changed during computation\n")
+    else:
+        assert execution.tree_digest(Path(before.root)) == digest
     assert job_id not in load_catalog(service.root).get("commits", {})
     assert not list((Path(before.root) / "sources").rglob("*.json"))
 

@@ -9,7 +9,7 @@ from typing import Any
 from kg_mnp.contracts.canonical import semantic_hash
 from kg_mnp.semantic_kernel.packaging.verifier import verify_package
 
-from .contracts import verify
+from .contracts import canonicalize, verify
 from .errors import LifecycleError
 from .guards import (
     file_sha256,
@@ -49,9 +49,50 @@ def _pointer(root: Path, environment_id: str) -> tuple[Path, dict[str, Any]]:
     if not path.is_file():
         raise LifecycleError("ENVIRONMENT_INVALID", "environment pointer not found")
     try:
-        return path, json.loads(path.read_bytes())
+        value = json.loads(path.read_bytes())
     except (OSError, json.JSONDecodeError) as exc:
         raise LifecycleError("LIFECYCLE_ARTIFACT_TAMPERED", "environment pointer is invalid") from exc
+    verify(value, contract="environment-pointer", registry_id=load_manifest(root)["registry_id"])
+    if value["environment_id"] != environment_id or value["pointer_hash"] != value["content_digest"]:
+        raise LifecycleError("LIFECYCLE_ARTIFACT_TAMPERED", "pointer identity or environment differs")
+    # Bind selection to the append-only history, not only attacker-recomputed
+    # self hashes. This does not repair state or silently select another target.
+    from .registry.replay import verify_registry
+
+    verify_registry(root)
+    events = [event for event in read_events(root) if event["event_type"] in {"ActivationApplied", "RollbackApplied"}
+              and event["payload"].get("target_environment_id") == environment_id]
+    receipts = [receipt for receipt in list_records(root, "records/activation-receipts") if receipt.get("environment_id") == environment_id]
+    if value["generation"] != len(events) or len(receipts) != len(events):
+        raise LifecycleError("LIFECYCLE_ARTIFACT_TAMPERED", "pointer generation lacks complete event/receipt history")
+    if not events:
+        if (value["selection_status"] != "NO_RELEASE_SELECTED" or value["previous_pointer_hash"] is not None
+                or any(value[key] is not None for key in ("active_release_id", "active_package_id", "active_package_version", "active_release_attestation_id"))):
+            raise LifecycleError("LIFECYCLE_ARTIFACT_TAMPERED", "bootstrap pointer cannot claim an active release")
+    else:
+        previous = None
+        for generation, event in enumerate(events, 1):
+            matches = [receipt for receipt in receipts if receipt.get("registry_event_id") == event["event_id"]]
+            if len(matches) != 1:
+                raise LifecycleError("LIFECYCLE_ARTIFACT_TAMPERED", "activation event receipt is not unique")
+            # Older valid writers stored this set-like list unsorted while its
+            # identity already used canonical ordering. Normalize only in memory.
+            receipt = verify(canonicalize(matches[0]), contract="activation-execution-receipt", registry_id=value["registry_id"])
+            if (receipt["old_generation"] != generation-1 or receipt["new_generation"] != generation
+                    or (previous is not None and receipt["old_pointer_hash"] != previous)
+                    or receipt["activation_proposal_id"] != event["payload"].get("subject_id")
+                    or {receipt["target_release_id"], receipt["target_package_id"], receipt["activation_review_decision_id"]} != set(event["payload"].get("related_ids", []))
+                    or receipt["execution_status"] != ("APPLIED" if event["event_type"] == "ActivationApplied" else "ROLLED_BACK")):
+                raise LifecycleError("LIFECYCLE_ARTIFACT_TAMPERED", "activation receipt does not replay the event chain")
+            previous = receipt["new_pointer_hash"]
+        release, package, attestation = _release_target(root, receipt["target_release_id"])
+        if (value["pointer_hash"] != receipt["new_pointer_hash"] or value["previous_pointer_hash"] != receipt["old_pointer_hash"]
+                or value["active_release_id"] != release["release_id"] or value["active_package_id"] != package["package_id"]
+                or value["active_package_version"] != package["package_version"]
+                or value["active_release_attestation_id"] != attestation["attestation_id"]
+                or value["selection_status"] != "CONTROL_PLANE_SELECTED"):
+            raise LifecycleError("LIFECYCLE_ARTIFACT_TAMPERED", "pointer differs from verified selected release")
+    return path, value
 
 
 def _environment(root: Path, environment_id: str) -> dict[str, Any]:

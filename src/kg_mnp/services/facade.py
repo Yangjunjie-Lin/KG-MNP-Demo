@@ -336,9 +336,11 @@ class ApplicationService:
                 raise ServiceBoundaryError("ARTIFACT_NOT_FOUND", "artifact was not found in project", status_code=404)
             return row
         if name == "environment.inspect":
-            rows = list_records(project.registry_root, "state")
-            row = next((row for row in rows if row.get("environment_id") == params["environment_id"] and row.get("manifest_kind") == "KG_MNP_ENVIRONMENT_POINTER"), None)
-            if row is None:
-                raise ServiceBoundaryError("ARTIFACT_NOT_FOUND", "environment pointer was not found", status_code=404)
-            return row
+            from kg_mnp.lifecycle.environment import _pointer
+            from kg_mnp.lifecycle.errors import LifecycleError
+
+            try:
+                return _pointer(project.registry_root, params["environment_id"])[1]
+            except LifecycleError as exc:
+                raise ServiceBoundaryError(exc.code, "environment state is absent, unverified or inconsistent", status_code=409) from exc
         raise ServiceBoundaryError("OPERATION_BLOCKED", "operation handler is not implemented", status_code=501)

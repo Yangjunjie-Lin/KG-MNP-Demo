@@ -24,8 +24,8 @@ def _head(root: Path) -> dict:
 
 
 def _approved_candidate(root: Path, package_id: str, variant: str):
-    candidate = create_release_candidate(root, candidate_package_id=package_id, release_candidate_kind="INITIAL", variant=variant)
-    review = record_review(root, candidate["release_candidate_id"], reviewer_id="release-manager", reviewer_roles=["RELEASE_MANAGER"], rationale=f"approved {variant}")
+    candidate = create_release_candidate(root, candidate_package_id=package_id, release_candidate_kind="INITIAL", required_acknowledgements=[f"reviewed {variant}"])
+    review = record_review(root, candidate["release_candidate_id"], reviewer_id="release-manager", reviewer_roles=["RELEASE_MANAGER"], rationale=f"approved {variant}", acknowledgement_refs=[f"reviewed {variant}"])
     release = publish_release(root, candidate, review, expected_registry_head_hash=_head(root)["head_hash"])
     attestation = attest_release(root, release)
     return release, attestation
