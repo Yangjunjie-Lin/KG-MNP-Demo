@@ -35,7 +35,7 @@ def validate_graphdb_import_package(
         raise GraphDBPackageValidationError("graphdb-import-manifest.json is missing")
     actual = read_json(actual_manifest_path)
     try:
-        expected = build_graphdb_import_package(compilation_directory, cleaned_partial_data, proposal, final_review_decision_log, confirmed_modeling_package, ontology_baseline, mapping_rules, terminology_profile, proposal_policy, review_policy, compiler_policy, output_dir=None, root=root)
+        expected = build_graphdb_import_package(compilation_directory, cleaned_partial_data, proposal, final_review_decision_log, confirmed_modeling_package, ontology_baseline, mapping_rules, terminology_profile, proposal_policy, review_policy, compiler_policy, root=root)
     except GraphDBPackageError as exc:
         raise GraphDBPackageValidationError(str(exc)) from exc
     expected_manifest = expected["manifest"]

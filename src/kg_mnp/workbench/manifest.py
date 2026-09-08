@@ -1,12 +1,12 @@
-"""Deterministic workbench package builder and validator."""
+"""Read-only manifest reconstruction for historical workbench artifacts."""
 
 from __future__ import annotations
 
 import hashlib
-import shutil
 from pathlib import Path
 from typing import Any
 
+from kg_mnp._path_security import closed_regular_files, validated_directory
 from kg_mnp.modeling.canonical_json import canonical_json_bytes
 from kg_mnp.modeling.dependencies import ROOT
 
@@ -16,7 +16,6 @@ from .errors import WorkbenchError, WorkbenchErrorCode
 from .policy import (
     ALLOWED_PHASE01_ROUTES,
     WORKBENCH_VERSION,
-    load_workbench_policy,
     workbench_policy_hash,
 )
 
@@ -60,74 +59,17 @@ def view_model_contract_hash(root: Path = ROOT) -> str:
     return _sha256(canonical_json_bytes(entries))
 
 
-def build_workbench_package(
-    output_directory: Path,
+def reconstruct_workbench_manifest(
+    source_directory: Path,
     binding: WorkbenchBinding,
-    *,
-    source_directory: Path = ROOT / "web" / "workbench",
 ) -> dict[str, Any]:
-    output = Path(output_directory)
-    source = Path(source_directory)
-    if output.exists() and (output.is_symlink() or not output.is_dir()):
+    source = validated_directory(source_directory, label="historical workbench source")
+    if not set(FRONTEND_FILES) <= set(closed_regular_files(source, label="historical workbench")):
         raise WorkbenchError(WorkbenchErrorCode.PACKAGE_INVALID)
-    output.mkdir(parents=True, exist_ok=True)
-    for child in sorted(output.rglob("*"), reverse=True):
-        if child.is_symlink():
-            raise WorkbenchError(WorkbenchErrorCode.PACKAGE_INVALID)
-        if child.is_file():
-            child.unlink()
-        elif child.is_dir():
-            child.rmdir()
-    for name in FRONTEND_FILES:
-        source_file = source / name
-        target = output / name
-        if source_file.is_symlink() or not source_file.is_file():
-            raise WorkbenchError(WorkbenchErrorCode.PACKAGE_INVALID)
-        target.parent.mkdir(parents=True, exist_ok=True)
-        shutil.copyfile(source_file, target)
-    policy = load_workbench_policy()
     manifest = {
         "contract_version": "1.0",
         "workbench_version": WORKBENCH_VERSION,
-        "frontend_build_hash": _frontend_hash(output),
-        "phase01_attestation_hash": binding.phase01_attestation_hash,
-        "publication_id": binding.publication_id,
-        "publication_semantic_hash": binding.publication_semantic_hash,
-        "repository_semantic_hash": binding.repository_semantic_hash,
-        "query_registry_hash": binding.query_registry_hash,
-        "runtime_policy_hash": workbench_policy_hash(policy),
-        "allowed_routes": list(ALLOWED_PHASE01_ROUTES),
-        "view_model_contract_hash": view_model_contract_hash(),
-        "semantic_authority": False,
-        "release_status": "WORKBENCH_PACKAGE_VALIDATED",
-        "status": "WORKBENCH_PACKAGE_VALIDATED",
-    }
-    validate_workbench_contract("manifest", manifest)
-    (output / "workbench-manifest.json").write_bytes(
-        canonical_json_bytes(manifest) + b"\n"
-    )
-    validate_workbench_package(output, binding)
-    return manifest
-
-
-def validate_workbench_package(
-    directory: Path,
-    binding: WorkbenchBinding,
-) -> dict[str, Any]:
-    root = Path(directory)
-    if root.is_symlink() or not root.is_dir():
-        raise WorkbenchError(WorkbenchErrorCode.PACKAGE_INVALID)
-    entries = [path for path in root.rglob("*") if path.is_file()]
-    names = {path.relative_to(root).as_posix() for path in entries}
-    if names != PACKAGE_FILES or any(path.is_symlink() for path in root.rglob("*")):
-        raise WorkbenchError(WorkbenchErrorCode.PACKAGE_INVALID)
-    try:
-        manifest = strict_json_file(root / "workbench-manifest.json")
-        validate_workbench_contract("manifest", manifest)
-    except Exception as exc:
-        raise WorkbenchError(WorkbenchErrorCode.PACKAGE_INVALID) from exc
-    expected = {
-        "frontend_build_hash": _frontend_hash(root),
+        "frontend_build_hash": _frontend_hash(source),
         "phase01_attestation_hash": binding.phase01_attestation_hash,
         "publication_id": binding.publication_id,
         "publication_semantic_hash": binding.publication_semantic_hash,
@@ -136,8 +78,28 @@ def validate_workbench_package(
         "runtime_policy_hash": workbench_policy_hash(),
         "allowed_routes": list(ALLOWED_PHASE01_ROUTES),
         "view_model_contract_hash": view_model_contract_hash(),
+        "semantic_authority": False,
+        "release_status": "WORKBENCH_PACKAGE_VALIDATED",
+        "status": "WORKBENCH_PACKAGE_VALIDATED",
     }
-    if any(manifest.get(key) != value for key, value in expected.items()):
+    validate_workbench_contract("manifest", manifest)
+    return manifest
+
+
+def validate_workbench_package(
+    directory: Path,
+    binding: WorkbenchBinding,
+) -> dict[str, Any]:
+    try:
+        root = validated_directory(directory, label="historical workbench package")
+        if set(closed_regular_files(root, label="historical workbench package")) != PACKAGE_FILES:
+            raise WorkbenchError(WorkbenchErrorCode.PACKAGE_INVALID)
+        manifest = strict_json_file(root / "workbench-manifest.json")
+        validate_workbench_contract("manifest", manifest)
+        expected = reconstruct_workbench_manifest(root, binding)
+    except Exception as exc:
+        raise WorkbenchError(WorkbenchErrorCode.PACKAGE_INVALID) from exc
+    if manifest != expected:
         raise WorkbenchError(WorkbenchErrorCode.PACKAGE_INVALID)
     for name in FRONTEND_FILES:
         lowered = (root / name).read_bytes().lower()

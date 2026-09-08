@@ -107,11 +107,8 @@ def build_end_to_end_publication_package(
     ontology_baseline: Mapping[str, Any] | None = None,
     visualization_package: Mapping[str, Any] | None = None,
     scenario: str = "full-confirmation",
-    output_dir: Path | None = None,
-    force: bool = False,
     root: Path = ROOT,
     graphdb_tbox_semantic_hash: str | None = None,
-    **_: Any,
 ) -> dict[str, Any]:
     try:
         root = validated_directory(Path(root), label="publication authority root")
@@ -369,10 +366,6 @@ def build_end_to_end_publication_package(
     }
     manifest = build_publication_manifest(lineage=lineage, artifact_bytes=files)
     files["publication-manifest.json"] = json_bytes(manifest)
-    if output_dir is not None:
-        from ..compilation.artifacts import write_artifact_set
-
-        write_artifact_set(Path(output_dir), files, force=force)
     return {
         "manifest": manifest,
         "files": files,

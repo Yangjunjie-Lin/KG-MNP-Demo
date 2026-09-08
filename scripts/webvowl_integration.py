@@ -280,13 +280,18 @@ def main() -> int:
         convert_with_owl2vowl_docker(source, image=converter_image),
         convert_with_owl2vowl_docker(source, image=converter_image),
     )
-    output = ROOT / "runtime_outputs/webvowl/live-package"
+    from uuid import uuid4
+
+    try:
+        from scripts.artifact_fixture import materialize_fixture
+    except ModuleNotFoundError:
+        from artifact_fixture import materialize_fixture
+    output = ROOT / "runtime_outputs/webvowl" / ("live-package-" + uuid4().hex)
     visualization = build_webvowl_visualization_package(
-        output_dir=output,
-        force=True,
         graphdb_tbox_semantic_hash=tbox["graphdb_tbox_semantic_hash"],
         raw_converter_runs=raw_runs,
     )
+    materialize_fixture(output, visualization["files"])
     project = (
         "kgmnp-webvowl-" + visualization["manifest"]["visualization_semantic_hash"][:12]
     )
@@ -334,12 +339,12 @@ def main() -> int:
         publication = build_end_to_end_publication_package(
             scenario="full-confirmation",
             visualization_package=visualization,
-            output_dir=ROOT / "runtime_outputs/publication/full-confirmation",
-            force=True,
         )
+        publication_output = ROOT / "runtime_outputs/publication" / ("full-confirmation-" + uuid4().hex)
+        materialize_fixture(publication_output, publication["files"])
         publication_validation = (
             validate_end_to_end_publication_package_against_authorities(
-                ROOT / "runtime_outputs/publication/full-confirmation",
+                publication_output,
                 scenario="full-confirmation",
                 graphdb_tbox_semantic_hash=tbox["graphdb_tbox_semantic_hash"],
             )

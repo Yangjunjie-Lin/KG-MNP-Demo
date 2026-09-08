@@ -416,10 +416,15 @@ def main() -> int:
     built = build_graphdb_import_package(compilation, *authorities, load_compiler_policy())
     digest = built["manifest"]["publication_semantic_hash"]
     project = "kgmnp-" + digest[:12]
-    package_dir = ROOT / "runtime_outputs" / "graphdb" / digest
+    from uuid import uuid4
+
+    package_dir = ROOT / "runtime_outputs" / "graphdb" / (digest + "-" + uuid4().hex)
     report_dir = ROOT / "runtime_reports" / "graphdb" / digest
-    from kg_mnp.compilation.artifacts import write_artifact_set
-    write_artifact_set(package_dir, built["files"], force=True)
+    try:
+        from scripts.artifact_fixture import materialize_fixture
+    except ModuleNotFoundError:
+        from artifact_fixture import materialize_fixture
+    materialize_fixture(package_dir, built["files"])
     override_file: Path | None = None
     generated_license_file: Path | None = None
     license_source_type = "UNKNOWN"
@@ -496,9 +501,9 @@ def main() -> int:
             load_compiler_policy(),
         )
         rejection_package_dir = (
-            ROOT / "runtime_outputs" / "graphdb" / rejection_built["manifest"]["publication_semantic_hash"]
+            ROOT / "runtime_outputs" / "graphdb" / (rejection_built["manifest"]["publication_semantic_hash"] + "-" + uuid4().hex)
         )
-        write_artifact_set(rejection_package_dir, rejection_built["files"], force=True)
+        materialize_fixture(rejection_package_dir, rejection_built["files"])
         validate_graphdb_import_package(
             rejection_package_dir,
             compilation_directory=rejection_compilation,

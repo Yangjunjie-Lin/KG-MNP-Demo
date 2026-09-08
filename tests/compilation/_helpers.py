@@ -3,10 +3,10 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
-from kg_mnp.compilation.artifacts import write_artifact_set
 from kg_mnp.compilation.compiler import build_artifact_set
 from kg_mnp.modeling.dependencies import load_modeling_dependencies
 from kg_mnp.modeling.review_policy import load_default_review_policy
+from scripts.artifact_fixture import materialize_fixture
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -35,5 +35,5 @@ def build(tmp_path: Path, scenario: str = "full-confirmation") -> tuple[Path, di
     values = authorities(scenario)
     files, manifest = build_artifact_set(*values)
     destination = tmp_path / scenario
-    write_artifact_set(destination, files)
+    materialize_fixture(destination, files)
     return destination, manifest, files

@@ -15,6 +15,7 @@ from kg_mnp.publication.package_builder import build_end_to_end_publication_pack
 from kg_mnp.publication.package_validator import (
     validate_end_to_end_publication_package_against_authorities,
 )
+from scripts.artifact_fixture import materialize_fixture
 
 SCENARIOS = (
     "full-confirmation",
@@ -71,7 +72,8 @@ def test_four_scenarios_preserve_one_tbox_projection() -> None:
 
 def test_publication_validator_rebuilds_closed_artifact_set(tmp_path: Path) -> None:
     out = tmp_path / "publication"
-    build_end_to_end_publication_package(scenario="full-confirmation", output_dir=out)
+    built = build_end_to_end_publication_package(scenario="full-confirmation")
+    materialize_fixture(out, built["files"])
     assert (
         validate_end_to_end_publication_package_against_authorities(
             out, scenario="full-confirmation"

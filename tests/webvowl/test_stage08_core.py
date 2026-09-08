@@ -255,7 +255,9 @@ def test_graphdb_tbox_must_be_compared_not_assumed() -> None:
 
 def test_webvowl_package_validator_reconstructs_exact_bytes(tmp_path: Path) -> None:
     out = tmp_path / "package"
-    build_webvowl_visualization_package(output_dir=out)
+    from scripts.artifact_fixture import materialize_fixture
+
+    materialize_fixture(out, build_webvowl_visualization_package()["files"])
     assert validate_webvowl_visualization_package(out)["valid"] is True
     path = out / "visualization" / "kg-mnp.webvowl.json"
     payload = json.loads(path.read_text(encoding="utf-8"))

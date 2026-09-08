@@ -9,6 +9,7 @@ from kg_mnp.graphdb.package_validator import (
     GraphDBPackageValidationError,
     validate_graphdb_import_package,
 )
+from scripts.artifact_fixture import materialize_fixture
 
 from ._helpers import authorities, compilation
 
@@ -71,7 +72,8 @@ def test_import_refuses_non_empty_fresh_repository_without_cleanup():
 def test_rehashed_manifest_attack_is_rejected_by_reconstruction(tmp_path):
     values = authorities()
     package = tmp_path / "package"
-    build_graphdb_import_package(compilation(), *values, load_compiler_policy(), output_dir=package)
+    built = build_graphdb_import_package(compilation(), *values, load_compiler_policy())
+    materialize_fixture(package, built["files"])
     path = package / "graphdb-import-manifest.json"
     manifest = json.loads(path.read_text(encoding="utf-8"))
     manifest["assembled_quad_count"] += 1

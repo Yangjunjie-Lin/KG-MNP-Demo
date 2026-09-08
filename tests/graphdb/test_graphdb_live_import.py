@@ -33,7 +33,6 @@ def test_generated_license_is_deleted_when_package_validation_fails(
     }
 
     import kg_mnp.compilation.policy as compilation_policy
-    from kg_mnp.compilation import artifacts
     from kg_mnp.graphdb import package_builder, package_validator
 
     monkeypatch.setattr(module, "ROOT", tmp_path)
@@ -43,7 +42,6 @@ def test_generated_license_is_deleted_when_package_validation_fails(
     monkeypatch.delenv("GRAPHDB_LICENSE_FILE", raising=False)
     monkeypatch.delenv("GRAPHDB_LICENSE_B64", raising=False)
     monkeypatch.setattr(package_builder, "build_graphdb_import_package", lambda *args: built)
-    monkeypatch.setattr(artifacts, "write_artifact_set", lambda *args, **kwargs: None)
     monkeypatch.setattr(compilation_policy, "load_compiler_policy", dict)
 
     def fail_validation(*args, **kwargs):

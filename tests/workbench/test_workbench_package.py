@@ -7,9 +7,11 @@ import pytest
 from kg_mnp.workbench.binding import WorkbenchBinding
 from kg_mnp.workbench.errors import WorkbenchError
 from kg_mnp.workbench.manifest import (
-    build_workbench_package,
+    FRONTEND_FILES,
+    reconstruct_workbench_manifest,
     validate_workbench_package,
 )
+from scripts.artifact_fixture import materialize_fixture
 
 from ._helpers import write_phase01_artifact
 
@@ -27,8 +29,8 @@ def historical_ui_bytes(tmp_path):
 
 def test_frontend_build_is_byte_deterministic_and_bound_to_phase01(tmp_path,historical_ui_bytes) -> None:
     binding = WorkbenchBinding.load(write_phase01_artifact(tmp_path / "phase01"))
-    first = build_workbench_package(tmp_path / "first", binding,source_directory=historical_ui_bytes)
-    second = build_workbench_package(tmp_path / "second", binding,source_directory=historical_ui_bytes)
+    first = reconstruct_workbench_manifest(historical_ui_bytes, binding)
+    second = reconstruct_workbench_manifest(historical_ui_bytes, binding)
     assert first == second
     assert first["frontend_build_hash"] == second["frontend_build_hash"]
     assert first["phase01_attestation_hash"] == binding.phase01_attestation_hash
@@ -39,12 +41,16 @@ def test_frontend_build_is_byte_deterministic_and_bound_to_phase01(tmp_path,hist
 def test_package_validation_fails_on_bundle_or_manifest_tampering(tmp_path,historical_ui_bytes) -> None:
     binding = WorkbenchBinding.load(write_phase01_artifact(tmp_path / "phase01"))
     package = tmp_path / "package"
-    build_workbench_package(package, binding,source_directory=historical_ui_bytes)
+    manifest = reconstruct_workbench_manifest(historical_ui_bytes, binding)
+    files = {name: (historical_ui_bytes / name).read_bytes() for name in FRONTEND_FILES}
+    files["workbench-manifest.json"] = json.dumps(manifest).encode()
+    materialize_fixture(package, files)
+    assert validate_workbench_package(package, binding) == manifest
     (package / "assets" / "app.js").write_text("tampered", encoding="utf-8")
     with pytest.raises(WorkbenchError, match="PACKAGE_INVALID"):
         validate_workbench_package(package, binding)
 
-    build_workbench_package(package, binding,source_directory=historical_ui_bytes)
+    (package / "assets/app.js").write_bytes(files["assets/app.js"])
     manifest_path = package / "workbench-manifest.json"
     manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
     manifest["query_registry_hash"] = "0" * 64

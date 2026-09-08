@@ -1,4 +1,4 @@
-"""Authority-gated deterministic Stage 06 compilation orchestrator."""
+"""Read-only reconstruction of historical formal compilation artifacts."""
 
 from __future__ import annotations
 
@@ -17,7 +17,6 @@ from ..modeling.dependencies import (
 from ..modeling.package_validation import load_term_type_index
 from ..modeling.semantic_validation import validate_confirmed_modeling_package_semantics
 from .abox_compiler import compile_abox
-from .artifacts import write_artifact_set
 from .contracts import validate_compilation_contract
 from .identifiers import graph_iri
 from .manifest import (
@@ -306,29 +305,3 @@ def build_artifact_set(
     validate_compilation_contract("owl-consistency-report", consistency)
     files["compilation-manifest.json"] = json_bytes(manifest)
     return files, manifest
-
-
-def compile_formal_semantics(
-    cleaned_partial_data: Mapping[str, Any],
-    proposal: Mapping[str, Any],
-    decision_log: Mapping[str, Any],
-    package: Mapping[str, Any],
-    ontology_baseline: Mapping[str, Any],
-    mapping_rules: Mapping[str, Any],
-    terminology_profile: Mapping[str, Any],
-    proposal_policy: Mapping[str, Any],
-    review_policy: Mapping[str, Any],
-    output_dir: Path,
-    compiler_policy: Mapping[str, Any] | None = None,
-    *,
-    force: bool = False,
-    authority_root: Path = ROOT,
-) -> dict[str, Any]:
-    files, manifest = build_artifact_set(
-        cleaned_partial_data, proposal, decision_log, package, ontology_baseline,
-        mapping_rules, terminology_profile, proposal_policy, review_policy,
-        compiler_policy,
-        authority_root=authority_root,
-    )
-    write_artifact_set(output_dir, files, force=force)
-    return manifest

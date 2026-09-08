@@ -5,7 +5,6 @@ from collections.abc import Mapping
 from pathlib import Path
 from typing import Any
 
-from ..compilation.artifacts import write_artifact_set
 from ..compilation.manifest import json_bytes
 from ..compilation.validator import validate_compilation_package_against_authorities
 from ..modeling.dependencies import ROOT, verify_ontology_baseline_manifest
@@ -30,10 +29,6 @@ class GraphDBPackageError(ValueError):
     pass
 
 
-def _write_closed(output_dir: Path, files: Mapping[str, bytes], *, force: bool) -> None:
-    write_artifact_set(output_dir, files, force=force)
-
-
 def build_graphdb_import_package(
     compilation_directory: Path,
     cleaned_partial_data: Mapping[str, Any],
@@ -47,8 +42,6 @@ def build_graphdb_import_package(
     review_policy: Mapping[str, Any],
     compiler_policy: Mapping[str, Any] | None = None,
     *,
-    output_dir: Path | None = None,
-    force: bool = False,
     root: Path = ROOT,
 ) -> dict[str, Any]:
     root = Path(root).resolve()
@@ -181,8 +174,6 @@ def build_graphdb_import_package(
     validate_graphdb_contract("import-plan", import_plan)
     files = {"graphdb-import-manifest.json": json_bytes(manifest)}
     files.update({path: data for path, (_, data, _) in artifacts.items()})
-    if output_dir is not None:
-        _write_closed(Path(output_dir), files, force=force)
     return {
         "manifest": manifest,
         "files": files,

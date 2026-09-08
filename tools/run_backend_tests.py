@@ -1,6 +1,7 @@
 """One complete development/CI collection with unique owned evidence/temp roots."""
 from __future__ import annotations
 
+import argparse
 import sys
 from pathlib import Path
 from uuid import uuid4
@@ -8,7 +9,8 @@ from uuid import uuid4
 ROOT = Path(__file__).resolve().parents[1]
 
 
-def main():
+def main(argv=None):
+    argparse.ArgumentParser(description=__doc__).parse_args(argv)
     sys.path.insert(0, str(Path(__file__).resolve().parent))
     from verify_release_candidate import run
 

@@ -12,7 +12,6 @@ from kg_mnp.compilation.abox_compiler import _literal
 from kg_mnp.compilation.compiler import (
     CompilationError,
     build_artifact_set,
-    compile_formal_semantics,
 )
 from kg_mnp.compilation.identifiers import artifact_id, compilation_id
 from kg_mnp.compilation.manifest import (
@@ -304,9 +303,8 @@ def test_stale_baseline_creates_no_compilation_artifacts(tmp_path, monkeypatch):
     monkeypatch.setattr("kg_mnp.compilation.compiler.validate_abox", should_not_run)
     monkeypatch.setattr("kg_mnp.compilation.compiler.check_owl_consistency", should_not_run)
     with pytest.raises(CompilationError, match="ontology baseline"):
-        compile_formal_semantics(
+        build_artifact_set(
             *authorities(),
-            output_dir=output,
             authority_root=root,
         )
     assert not output.exists()

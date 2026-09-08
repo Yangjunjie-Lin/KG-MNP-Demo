@@ -1,13 +1,15 @@
 from kg_mnp.compilation.policy import load_compiler_policy
 from kg_mnp.graphdb.package_builder import build_graphdb_import_package
 from kg_mnp.graphdb.package_validator import validate_graphdb_import_package
+from scripts.artifact_fixture import materialize_fixture
 
 from ._helpers import authorities, compilation
 
 
 def test_package_rebuilds_and_validates_closed_set(tmp_path):
     values = authorities()
-    result = build_graphdb_import_package(compilation(), *values, load_compiler_policy(), output_dir=tmp_path / "package")
+    result = build_graphdb_import_package(compilation(), *values, load_compiler_policy())
+    materialize_fixture(tmp_path / "package", result["files"])
     manifest = result["manifest"]
     assert manifest["repository_ruleset"] == "empty"
     assert manifest["assembled_quad_count"] == manifest["tbox_triple_count"] + manifest["stage06_quad_count"]

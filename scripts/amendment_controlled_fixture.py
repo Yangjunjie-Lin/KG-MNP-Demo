@@ -25,7 +25,6 @@ from kg_mnp.amendment.validator import (
     validate_new_repository_identity,
     validate_no_direct_mutation,
 )
-from kg_mnp.compilation.artifacts import write_artifact_set
 from kg_mnp.compilation.compiler import build_artifact_set
 from kg_mnp.compilation.policy import load_compiler_policy
 from kg_mnp.diagnostics.authority_binding import AuthorityBindings
@@ -49,6 +48,11 @@ from kg_mnp.modeling.semantic_validation import (
 from kg_mnp.publication.package_builder import (
     build_end_to_end_publication_package,
 )
+
+if __package__:
+    from scripts.artifact_fixture import materialize_fixture
+else:
+    from artifact_fixture import materialize_fixture
 
 FIXTURE_REVIEWER = "urn:kg-mnp:reviewer:phase05-controlled-human"
 
@@ -523,7 +527,7 @@ def _build_publication(
         dependencies["compiler_policy"],
     )
     compilation_dir = temporary_root / label / "compilation"
-    write_artifact_set(compilation_dir, compilation_files, force=False)
+    materialize_fixture(compilation_dir, compilation_files)
     graphdb = build_graphdb_import_package(
         compilation_dir,
         cleaned,
@@ -538,7 +542,7 @@ def _build_publication(
         dependencies["compiler_policy"],
     )
     graphdb_dir = temporary_root / label / "graphdb"
-    write_artifact_set(graphdb_dir, graphdb["files"], force=False)
+    materialize_fixture(graphdb_dir, graphdb["files"])
     publication = build_end_to_end_publication_package(
         cleaned_partial_data=cleaned,
         proposal=proposal,
@@ -552,7 +556,7 @@ def _build_publication(
         scenario="full-confirmation",
     )
     publication_dir = temporary_root / label / "publication"
-    write_artifact_set(publication_dir, publication["files"], force=False)
+    materialize_fixture(publication_dir, publication["files"])
     return {
         "proposal": proposal,
         "review_decision_log": log,

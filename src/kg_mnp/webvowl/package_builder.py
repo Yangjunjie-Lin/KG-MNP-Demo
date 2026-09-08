@@ -7,7 +7,6 @@ from pathlib import Path
 from typing import Any
 
 from .._path_security import UnsafePathError, safe_artifact_path, validated_directory
-from ..compilation.artifacts import write_artifact_set
 from ..compilation.manifest import json_bytes
 from ..modeling.dependencies import ROOT
 from .coverage import build_coverage_report, build_representation_loss
@@ -208,8 +207,6 @@ def _files(
 def build_webvowl_visualization_package(
     *,
     ontology_baseline: Mapping[str, Any] | None = None,
-    output_dir: Path | None = None,
-    force: bool = False,
     root: Path = ROOT,
     graphdb_tbox_semantic_hash: str | None = None,
     compilation_manifest: Mapping[str, Any] | None = None,
@@ -218,7 +215,6 @@ def build_webvowl_visualization_package(
         Mapping[str, Any] | bytes | str, Mapping[str, Any] | bytes | str
     ]
     | None = None,
-    **_: Any,
 ) -> dict[str, Any]:
     policy = load_webvowl_policy(root / "config/webvowl/webvowl-runtime-1.0.0.yaml")
     policy["_path"] = root / "config/webvowl/webvowl-runtime-1.0.0.yaml"
@@ -295,8 +291,6 @@ def build_webvowl_visualization_package(
         root=root,
     )
     files["source/ontology-baseline.json"] = json_bytes(source["baseline"])
-    if output_dir is not None:
-        write_artifact_set(Path(output_dir), files, force=force)
     return {
         "manifest": manifest,
         "files": files,
