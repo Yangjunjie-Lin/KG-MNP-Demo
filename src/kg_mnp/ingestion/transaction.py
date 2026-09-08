@@ -6,10 +6,37 @@ import json
 import os
 import secrets
 import shutil
+import tempfile
+import time
 from pathlib import Path
+
+from kg_mnp._path_security import _assert_components_are_local, _is_link_like
 
 from .errors import ArtifactTamperedError, WorkspaceOperationLockedError
 from .security import fsync_directory
+
+
+def commit_staged_directory(staging: Path, destination: Path) -> None:
+    """Publish a fresh directory while its caller holds the Workspace lock.
+
+    Only transient Windows sharing denials are retried. Never delete a target
+    that appeared concurrently, and never reinterpret a permanent denial as
+    success. This is a filesystem step, not a Job fencing/CAS authority.
+    """
+    for attempt in range(6):
+        _assert_components_are_local(staging, label="artifact staging")
+        _assert_components_are_local(destination, label="artifact destination")
+        if destination.exists():
+            raise FileExistsError("artifact destination already exists")
+        try:
+            staging.rename(destination)
+            return
+        except PermissionError as exc:
+            if (getattr(exc, "winerror", None) not in {5, 32, 33}
+                    or attempt == 5 or destination.exists()
+                    or _is_link_like(destination) or not staging.is_dir()):
+                raise
+            time.sleep(min(0.05 * (2 ** attempt), 0.2))
 
 
 class WorkspaceOperationLock:
@@ -68,12 +95,20 @@ class IngestionTransaction:
             "validation": self.workspace / "artifacts" / "validation" / "ingestion" / run_hash,
         }
         self._committed = False
+        self._owned_staging = False
 
     def __enter__(self):
-        if self.staging.exists():
+        parent = self.staging.parent
+        _assert_components_are_local(parent, label="ingestion staging root")
+        parent.mkdir(parents=True, exist_ok=True)
+        self.staging = Path(tempfile.mkdtemp(prefix=self.run_hash + "-", dir=parent))
+        self._owned_staging = True
+        try:
+            for name in self.mapping:
+                (self.staging / name).mkdir(exist_ok=False)
+        except BaseException:
             shutil.rmtree(self.staging)
-        for name in self.mapping:
-            (self.staging / name).mkdir(parents=True, exist_ok=False)
+            raise
         return self
 
     def directory(self, name: str) -> Path:
@@ -90,9 +125,9 @@ class IngestionTransaction:
             for name, destination in self.mapping.items():
                 destination.parent.mkdir(parents=True, exist_ok=True)
                 source = self.staging / name
-                source.replace(destination)
-                fsync_directory(destination.parent)
+                commit_staged_directory(source, destination)
                 moved.append((source, destination))
+                fsync_directory(destination.parent)
         except BaseException:
             for _source, destination in reversed(moved):
                 if destination.exists():
@@ -102,5 +137,5 @@ class IngestionTransaction:
         self._committed = True
 
     def __exit__(self, exc_type, exc, tb):
-        if not self._committed and self.staging.exists():
+        if self._owned_staging and not self._committed and self.staging.exists():
             shutil.rmtree(self.staging)

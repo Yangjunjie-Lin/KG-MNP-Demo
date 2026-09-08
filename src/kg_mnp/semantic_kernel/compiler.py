@@ -14,7 +14,7 @@ from rdflib import RDF, Graph, URIRef
 
 from kg_mnp.contracts.canonical import semantic_hash, stable_urn
 from kg_mnp.contracts.document_io import atomic_write_json, deterministic_json_bytes
-from kg_mnp.ingestion.transaction import WorkspaceOperationLock
+from kg_mnp.ingestion.transaction import WorkspaceOperationLock, commit_staged_directory
 
 from .abox import compile_abox
 from .artifact_resolver import WorkspaceArtifactResolver
@@ -442,7 +442,7 @@ class SemanticCompiler:
                 for name, data in files.items():
                     (staging / name).write_bytes(data)
                 destination.parent.mkdir(parents=True, exist_ok=True)
-                staging.replace(destination)
+                commit_staged_directory(staging, destination)
             except BaseException:
                 if staging.exists() and staging_root in staging.parents:
                     shutil.rmtree(staging)

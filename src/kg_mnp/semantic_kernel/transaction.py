@@ -3,9 +3,12 @@
 from __future__ import annotations
 
 import shutil
+import tempfile
 from pathlib import Path
 
-from kg_mnp.ingestion.transaction import WorkspaceOperationLock
+from kg_mnp._path_security import _assert_components_are_local
+from kg_mnp.ingestion.security import fsync_directory
+from kg_mnp.ingestion.transaction import WorkspaceOperationLock, commit_staged_directory
 
 from .errors import PackageError
 from .identifiers import package_storage_key
@@ -25,14 +28,26 @@ class SemanticCompilationTransaction:
             "package": self.workspace / "artifacts" / "packages" / package_storage_key(package_id),
         }
         self._committed = False
+        self._owned_staging = False
         self._lock = WorkspaceOperationLock(self.workspace, "semantic-compilation")
 
     def __enter__(self):
         self._lock.__enter__()
-        if self.staging.exists():
-            shutil.rmtree(self.staging)
-        for name in self.destinations:
-            (self.staging / name).mkdir(parents=True, exist_ok=False)
+        try:
+            parent = self.staging.parent
+            _assert_components_are_local(parent, label="compilation staging root")
+            parent.mkdir(parents=True, exist_ok=True)
+            self.staging = Path(tempfile.mkdtemp(prefix=package_storage_key(self.build_id) + "-", dir=parent))
+            self._owned_staging = True
+            for name in self.destinations:
+                (self.staging / name).mkdir(exist_ok=False)
+        except BaseException:
+            try:
+                if self._owned_staging and self.staging.exists():
+                    shutil.rmtree(self.staging)
+            finally:
+                self._lock.__exit__(None, None, None)
+            raise
         return self
 
     def directory(self, role: str) -> Path:
@@ -63,8 +78,9 @@ class SemanticCompilationTransaction:
             for role, destination in self.destinations.items():
                 destination.parent.mkdir(parents=True, exist_ok=True)
                 source = self.directory(role)
-                source.replace(destination)
+                commit_staged_directory(source, destination)
                 moved.append(destination)
+                fsync_directory(destination.parent)
             self.staging.rmdir()
             self._committed = True
         except BaseException:
@@ -74,6 +90,8 @@ class SemanticCompilationTransaction:
             raise
 
     def __exit__(self, exc_type, exc, tb):
-        if not self._committed and self.staging.exists():
-            shutil.rmtree(self.staging)
-        self._lock.__exit__(exc_type, exc, tb)
+        try:
+            if self._owned_staging and not self._committed and self.staging.exists():
+                shutil.rmtree(self.staging)
+        finally:
+            self._lock.__exit__(exc_type, exc, tb)

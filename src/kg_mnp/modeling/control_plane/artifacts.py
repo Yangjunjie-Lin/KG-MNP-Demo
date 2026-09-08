@@ -5,12 +5,18 @@ from __future__ import annotations
 import copy
 import json
 import shutil
+import tempfile
 from pathlib import Path
 from typing import Any
 
+from kg_mnp._path_security import (
+    _assert_components_are_local,
+    _is_link_like,
+    validated_directory,
+)
 from kg_mnp.contracts.canonical import bytes_sha256, semantic_hash, stable_urn
 from kg_mnp.contracts.document_io import deterministic_json_bytes
-from kg_mnp.ingestion.transaction import WorkspaceOperationLock
+from kg_mnp.ingestion.transaction import WorkspaceOperationLock, commit_staged_directory
 
 from .errors import ModelingControlError, StaleModelingArtifactError
 from .security import assert_safe_json, validate_safe_relative_path
@@ -72,8 +78,9 @@ def transactional_write_files(
     files: dict[str, bytes],
 ) -> Path:
     validate_safe_relative_path(relative_destination)
-    root = Path(workspace).resolve(strict=True)
-    destination = (root / relative_destination).resolve(strict=False)
+    root = validated_directory(Path(workspace), label="modeling workspace")
+    destination = root / relative_destination
+    _assert_components_are_local(destination, label="modeling artifact destination")
     if root not in destination.parents:
         raise ModelingControlError("artifact destination escapes workspace")
     relative_parts = destination.relative_to(root).parts
@@ -89,25 +96,25 @@ def transactional_write_files(
         if destination.exists():
             if not destination.is_dir() or destination.is_symlink():
                 raise ModelingControlError("existing artifact destination is not a safe directory")
-            actual = {item.name: item.read_bytes() for item in destination.iterdir() if item.is_file() and not item.is_symlink()}
+            entries = list(destination.iterdir())
+            if any(_is_link_like(item) or not item.is_file() for item in entries):
+                raise ModelingControlError("immutable artifact directory contains unlisted or unsafe entries")
+            actual = {item.name: item.read_bytes() for item in entries}
             if actual != files:
                 raise ModelingControlError("immutable artifact directory already exists with different bytes")
             return destination
         staging_root = root / "tmp" / "modeling" / operation
-        staging = staging_root / destination.name
-        if staging.exists():
-            shutil.rmtree(staging)
-        staging.mkdir(parents=True, exist_ok=False)
+        _assert_components_are_local(staging_root, label="modeling staging root")
+        staging_root.mkdir(parents=True, exist_ok=True)
+        staging = Path(tempfile.mkdtemp(prefix=destination.name + "-", dir=staging_root))
         try:
             for name, content in files.items():
                 (staging / name).write_bytes(content)
             destination.parent.mkdir(parents=True, exist_ok=True)
-            staging.replace(destination)
+            commit_staged_directory(staging, destination)
         except BaseException:
             if staging.exists():
                 shutil.rmtree(staging)
-            if destination.exists():
-                shutil.rmtree(destination)
             raise
     return destination
 
