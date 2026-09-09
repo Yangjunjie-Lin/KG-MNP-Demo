@@ -28,3 +28,4 @@ examples/graphdb/expected/** -text
 examples/publication/expected/** -text
 examples/publication/fixtures/owl2vowl-0.3.7-raw.json -text
 config/webvowl/webvowl-runtime-1.0.0.yaml -text
+config/graphdb/graphdb-runtime-1.0.0.yaml -text

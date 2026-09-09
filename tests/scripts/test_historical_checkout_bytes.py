@@ -11,6 +11,7 @@ FROZEN_PATHS = (
     "examples/publication/expected",
     "examples/publication/fixtures/owl2vowl-0.3.7-raw.json",
     "config/webvowl/webvowl-runtime-1.0.0.yaml",
+    "config/graphdb/graphdb-runtime-1.0.0.yaml",
 )
 
 
