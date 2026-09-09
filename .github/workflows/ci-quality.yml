@@ -1,5 +1,13 @@
 name: Quality and generated contracts
-on: [pull_request, workflow_dispatch]
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+  workflow_dispatch:
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 permissions:
   contents: read
 jobs:
@@ -15,6 +23,9 @@ jobs:
       - run: python tools/check_types.py
       - run: python tools/generate_compiler_contracts.py --check
       - run: python scripts/generate_contract_catalog.py --check
+      - run: python tools/check_domain_baselines.py --check
+      - run: python scripts/generate_ingestion_examples.py --check
+      - run: python scripts/check_repo_hygiene.py
       - run: npm --prefix workbench run lint
       - run: npm --prefix workbench run typecheck
       - run: git diff --exit-code

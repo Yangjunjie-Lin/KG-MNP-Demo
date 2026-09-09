@@ -1,5 +1,13 @@
 name: Real workbench workflows
-on: [pull_request, workflow_dispatch]
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+  workflow_dispatch:
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 permissions:
   contents: read
 jobs:
@@ -21,3 +29,17 @@ jobs:
         with:
           name: browser-evidence
           path: runtime_logs/p09/browser-runs
+  rendering:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/setup-toolchain
+      - working-directory: workbench
+        run: npx playwright install --with-deps chromium
+      - run: npm --prefix workbench run test:rendering
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: rendering-evidence
+          path: runtime_logs/p09/rendering

@@ -1,4 +1,5 @@
 {
+  "path_redaction": "Host-specific repository prefixes are replaced by <repository-root> in this published historical summary. Test outcomes, original receipt hashes, tested revisions and raw evidence remain unchanged; this is not CI certification of later commits.",
   "decision": "GO_RELEASE_CANDIDATE_WITH_OPTIONAL_EXTERNAL_BLOCKERS",
   "source_commit": "9da17d126cb37166ff06084080770108da20afbe",
   "tested_commit": "7075a4308de655ce1bf1e8073a005aeee152bf0f",
@@ -95,49 +96,49 @@
           {
             "nodeid": "tests/activation/test_artifact_verifier_phase06.py::test_artifact_directory_symlink_is_rejected",
             "phase": "call",
-            "reason": "('D:\\\\UoM_CS\\\\Research Evidence Portfolio\\\\CUHK-Shenzhen RA\\\\KG-MNP-Demo\\\\tests\\\\activation\\\\test_artifact_verifier_phase06.py', 529, 'Skipped: directory symlinks are unavailable to this test user')",
+            "reason": "('<repository-root>\\\\tests\\\\activation\\\\test_artifact_verifier_phase06.py', 529, 'Skipped: directory symlinks are unavailable to this test user')",
             "xfail": null
           },
           {
             "nodeid": "tests/activation/test_artifact_verifier_phase06.py::test_artifact_file_symlink_is_rejected",
             "phase": "call",
-            "reason": "('D:\\\\UoM_CS\\\\Research Evidence Portfolio\\\\CUHK-Shenzhen RA\\\\KG-MNP-Demo\\\\tests\\\\activation\\\\test_artifact_verifier_phase06.py', 546, 'Skipped: file symlinks are unavailable to this test user')",
+            "reason": "('<repository-root>\\\\tests\\\\activation\\\\test_artifact_verifier_phase06.py', 546, 'Skipped: file symlinks are unavailable to this test user')",
             "xfail": null
           },
           {
             "nodeid": "tests/security/test_domain_pack_security.py::test_symlink_escape_is_rejected_or_explicitly_skipped",
             "phase": "call",
-            "reason": "('D:\\\\UoM_CS\\\\Research Evidence Portfolio\\\\CUHK-Shenzhen RA\\\\KG-MNP-Demo\\\\tests\\\\security\\\\test_domain_pack_security.py', 35, \"Skipped: platform cannot create test symlink: [WinError 1314] 客户端没有所需的特权。: 'D:\\\\\\\\UoM_CS\\\\\\\\Research Evidence Portfolio\\\\\\\\CUHK-Shenzhen RA\\\\\\\\KG-MNP-Demo\\\\\\\\runtime_logs\\\\\\\\p09\\\\\\\\fixed-7075a43-accepted-windows-155c66ab\\\\\\\\parallel-temp\\\\\\\\test_symlink_escape_is_rejecte0\\\\\\\\outside.ttl' -> 'D:\\\\\\\\UoM_CS\\\\\\\\Research Evidence Portfolio\\\\\\\\CUHK-Shenzhen RA\\\\\\\\KG-MNP-Demo\\\\\\\\runtime_logs\\\\\\\\p09\\\\\\\\fixed-7075a43-accepted-windows-155c66ab\\\\\\\\parallel-temp\\\\\\\\test_symlink_escape_is_rejecte0\\\\\\\\minimal\\\\\\\\shadow.ttl'\")",
+            "reason": "('<repository-root>\\\\tests\\\\security\\\\test_domain_pack_security.py', 35, \"Skipped: platform cannot create test symlink: [WinError 1314] 客户端没有所需的特权。: '<repository-root>\\\\\\\\runtime_logs\\\\\\\\p09\\\\\\\\fixed-7075a43-accepted-windows-155c66ab\\\\\\\\parallel-temp\\\\\\\\test_symlink_escape_is_rejecte0\\\\\\\\outside.ttl' -> '<repository-root>\\\\\\\\runtime_logs\\\\\\\\p09\\\\\\\\fixed-7075a43-accepted-windows-155c66ab\\\\\\\\parallel-temp\\\\\\\\test_symlink_escape_is_rejecte0\\\\\\\\minimal\\\\\\\\shadow.ttl'\")",
             "xfail": null
           },
           {
             "nodeid": "tests/security/test_workspace_security.py::test_workspace_symlink_escape_is_rejected_or_explicitly_skipped",
             "phase": "call",
-            "reason": "('D:\\\\UoM_CS\\\\Research Evidence Portfolio\\\\CUHK-Shenzhen RA\\\\KG-MNP-Demo\\\\tests\\\\security\\\\test_workspace_security.py', 19, \"Skipped: platform cannot create test symlink: [WinError 1314] 客户端没有所需的特权。: 'D:\\\\\\\\UoM_CS\\\\\\\\Research Evidence Portfolio\\\\\\\\CUHK-Shenzhen RA\\\\\\\\KG-MNP-Demo\\\\\\\\runtime_logs\\\\\\\\p09\\\\\\\\fixed-7075a43-accepted-windows-155c66ab\\\\\\\\parallel-temp\\\\\\\\test_workspace_symlink_escape_0\\\\\\\\outside.txt' -> 'D:\\\\\\\\UoM_CS\\\\\\\\Research Evidence Portfolio\\\\\\\\CUHK-Shenzhen RA\\\\\\\\KG-MNP-Demo\\\\\\\\runtime_logs\\\\\\\\p09\\\\\\\\fixed-7075a43-accepted-windows-155c66ab\\\\\\\\parallel-temp\\\\\\\\test_workspace_symlink_escape_0\\\\\\\\workspace\\\\\\\\sources\\\\\\\\escape.txt'\")",
+            "reason": "('<repository-root>\\\\tests\\\\security\\\\test_workspace_security.py', 19, \"Skipped: platform cannot create test symlink: [WinError 1314] 客户端没有所需的特权。: '<repository-root>\\\\\\\\runtime_logs\\\\\\\\p09\\\\\\\\fixed-7075a43-accepted-windows-155c66ab\\\\\\\\parallel-temp\\\\\\\\test_workspace_symlink_escape_0\\\\\\\\outside.txt' -> '<repository-root>\\\\\\\\runtime_logs\\\\\\\\p09\\\\\\\\fixed-7075a43-accepted-windows-155c66ab\\\\\\\\parallel-temp\\\\\\\\test_workspace_symlink_escape_0\\\\\\\\workspace\\\\\\\\sources\\\\\\\\escape.txt'\")",
             "xfail": null
           },
           {
             "nodeid": "tests/security/test_source_security.py::test_source_store_rejects_symlinked_authority_directory",
             "phase": "call",
-            "reason": "('D:\\\\UoM_CS\\\\Research Evidence Portfolio\\\\CUHK-Shenzhen RA\\\\KG-MNP-Demo\\\\tests\\\\security\\\\test_source_security.py', 69, \"Skipped: directory symlink creation unavailable on this platform: [WinError 1314] 客户端没有所需的特权。: 'D:\\\\\\\\UoM_CS\\\\\\\\Research Evidence Portfolio\\\\\\\\CUHK-Shenzhen RA\\\\\\\\KG-MNP-Demo\\\\\\\\runtime_logs\\\\\\\\p09\\\\\\\\fixed-7075a43-accepted-windows-155c66ab\\\\\\\\parallel-temp\\\\\\\\test_source_store_rejects_syml0\\\\\\\\external' -> 'D:\\\\\\\\UoM_CS\\\\\\\\Research Evidence Portfolio\\\\\\\\CUHK-Shenzhen RA\\\\\\\\KG-MNP-Demo\\\\\\\\runtime_logs\\\\\\\\p09\\\\\\\\fixed-7075a43-accepted-windows-155c66ab\\\\\\\\parallel-temp\\\\\\\\test_source_store_rejects_syml0\\\\\\\\workspace\\\\\\\\sources\\\\\\\\blobs\\\\\\\\sha256'\")",
+            "reason": "('<repository-root>\\\\tests\\\\security\\\\test_source_security.py', 69, \"Skipped: directory symlink creation unavailable on this platform: [WinError 1314] 客户端没有所需的特权。: '<repository-root>\\\\\\\\runtime_logs\\\\\\\\p09\\\\\\\\fixed-7075a43-accepted-windows-155c66ab\\\\\\\\parallel-temp\\\\\\\\test_source_store_rejects_syml0\\\\\\\\external' -> '<repository-root>\\\\\\\\runtime_logs\\\\\\\\p09\\\\\\\\fixed-7075a43-accepted-windows-155c66ab\\\\\\\\parallel-temp\\\\\\\\test_source_store_rejects_syml0\\\\\\\\workspace\\\\\\\\sources\\\\\\\\blobs\\\\\\\\sha256'\")",
             "xfail": null
           },
           {
             "nodeid": "tests/sources/test_source_store.py::test_symlink_and_non_regular_source_are_rejected",
             "phase": "call",
-            "reason": "('D:\\\\UoM_CS\\\\Research Evidence Portfolio\\\\CUHK-Shenzhen RA\\\\KG-MNP-Demo\\\\tests\\\\sources\\\\test_source_store.py', 164, \"Skipped: symlink creation unavailable on this platform: [WinError 1314] 客户端没有所需的特权。: 'D:\\\\\\\\UoM_CS\\\\\\\\Research Evidence Portfolio\\\\\\\\CUHK-Shenzhen RA\\\\\\\\KG-MNP-Demo\\\\\\\\runtime_logs\\\\\\\\p09\\\\\\\\fixed-7075a43-accepted-windows-155c66ab\\\\\\\\parallel-temp\\\\\\\\test_symlink_and_non_regular_s0\\\\\\\\target.txt' -> 'D:\\\\\\\\UoM_CS\\\\\\\\Research Evidence Portfolio\\\\\\\\CUHK-Shenzhen RA\\\\\\\\KG-MNP-Demo\\\\\\\\runtime_logs\\\\\\\\p09\\\\\\\\fixed-7075a43-accepted-windows-155c66ab\\\\\\\\parallel-temp\\\\\\\\test_symlink_and_non_regular_s0\\\\\\\\link.txt'\")",
+            "reason": "('<repository-root>\\\\tests\\\\sources\\\\test_source_store.py', 164, \"Skipped: symlink creation unavailable on this platform: [WinError 1314] 客户端没有所需的特权。: '<repository-root>\\\\\\\\runtime_logs\\\\\\\\p09\\\\\\\\fixed-7075a43-accepted-windows-155c66ab\\\\\\\\parallel-temp\\\\\\\\test_symlink_and_non_regular_s0\\\\\\\\target.txt' -> '<repository-root>\\\\\\\\runtime_logs\\\\\\\\p09\\\\\\\\fixed-7075a43-accepted-windows-155c66ab\\\\\\\\parallel-temp\\\\\\\\test_symlink_and_non_regular_s0\\\\\\\\link.txt'\")",
             "xfail": null
           },
           {
             "nodeid": "tests/sources/test_source_store.py::test_fifo_is_rejected",
             "phase": "setup",
-            "reason": "('D:\\\\UoM_CS\\\\Research Evidence Portfolio\\\\CUHK-Shenzhen RA\\\\KG-MNP-Demo\\\\tests\\\\sources\\\\test_source_store.py', 169, 'Skipped: POSIX FIFO semantics are exercised by Ubuntu CI')",
+            "reason": "('<repository-root>\\\\tests\\\\sources\\\\test_source_store.py', 169, 'Skipped: POSIX FIFO semantics are exercised by Ubuntu CI')",
             "xfail": null
           },
           {
             "nodeid": "tests/security/test_domain_pack_security.py::test_executable_permission_is_rejected",
             "phase": "setup",
-            "reason": "('D:\\\\UoM_CS\\\\Research Evidence Portfolio\\\\CUHK-Shenzhen RA\\\\KG-MNP-Demo\\\\tests\\\\security\\\\test_domain_pack_security.py', 21, 'Skipped: POSIX execute permission bits are not exposed on Windows')",
+            "reason": "('<repository-root>\\\\tests\\\\security\\\\test_domain_pack_security.py', 21, 'Skipped: POSIX execute permission bits are not exposed on Windows')",
             "xfail": null
           }
         ],
@@ -148,12 +149,12 @@
       "commands": {
         "python-environment": {
           "command": [
-            "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime\\p09-final-rc1-venv\\Scripts\\python.exe",
+            "<repository-root>\\runtime\\p09-final-rc1-venv\\Scripts\\python.exe",
             "-m",
             "pip",
             "check"
           ],
-          "cwd": "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo",
+          "cwd": "<repository-root>",
           "exit_code": 0,
           "duration_seconds": 2.202999999979511,
           "files": {
@@ -162,10 +163,10 @@
         },
         "python-version": {
           "command": [
-            "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime\\p09-final-rc1-venv\\Scripts\\python.exe",
+            "<repository-root>\\runtime\\p09-final-rc1-venv\\Scripts\\python.exe",
             "--version"
           ],
-          "cwd": "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo",
+          "cwd": "<repository-root>",
           "exit_code": 0,
           "duration_seconds": 0.09299999999348074,
           "files": {
@@ -177,7 +178,7 @@
             "node",
             "--version"
           ],
-          "cwd": "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo",
+          "cwd": "<repository-root>",
           "exit_code": 0,
           "duration_seconds": 0.09399999998277053,
           "files": {
@@ -189,7 +190,7 @@
             "java",
             "-version"
           ],
-          "cwd": "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo",
+          "cwd": "<repository-root>",
           "exit_code": 0,
           "duration_seconds": 0.4220000000204891,
           "files": {
@@ -204,7 +205,7 @@
             "ci",
             "--no-fund"
           ],
-          "cwd": "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo",
+          "cwd": "<repository-root>",
           "exit_code": 0,
           "duration_seconds": 69.71900000004098,
           "files": {
@@ -213,13 +214,13 @@
         },
         "lint": {
           "command": [
-            "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime\\p09-final-rc1-venv\\Scripts\\python.exe",
+            "<repository-root>\\runtime\\p09-final-rc1-venv\\Scripts\\python.exe",
             "-m",
             "ruff",
             "check",
             "."
           ],
-          "cwd": "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo",
+          "cwd": "<repository-root>",
           "exit_code": 0,
           "duration_seconds": 0.4369999999762513,
           "files": {
@@ -228,10 +229,10 @@
         },
         "types": {
           "command": [
-            "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime\\p09-final-rc1-venv\\Scripts\\python.exe",
+            "<repository-root>\\runtime\\p09-final-rc1-venv\\Scripts\\python.exe",
             "tools/check_types.py"
           ],
-          "cwd": "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo",
+          "cwd": "<repository-root>",
           "exit_code": 0,
           "duration_seconds": 13.125,
           "files": {
@@ -240,11 +241,11 @@
         },
         "compiler-contracts": {
           "command": [
-            "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime\\p09-final-rc1-venv\\Scripts\\python.exe",
+            "<repository-root>\\runtime\\p09-final-rc1-venv\\Scripts\\python.exe",
             "tools/generate_compiler_contracts.py",
             "--check"
           ],
-          "cwd": "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo",
+          "cwd": "<repository-root>",
           "exit_code": 0,
           "duration_seconds": 0.8440000000409782,
           "files": {
@@ -253,11 +254,11 @@
         },
         "catalog": {
           "command": [
-            "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime\\p09-final-rc1-venv\\Scripts\\python.exe",
+            "<repository-root>\\runtime\\p09-final-rc1-venv\\Scripts\\python.exe",
             "scripts/generate_contract_catalog.py",
             "--check"
           ],
-          "cwd": "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo",
+          "cwd": "<repository-root>",
           "exit_code": 0,
           "duration_seconds": 3.905999999959022,
           "files": {
@@ -266,11 +267,11 @@
         },
         "domain-baselines": {
           "command": [
-            "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime\\p09-final-rc1-venv\\Scripts\\python.exe",
+            "<repository-root>\\runtime\\p09-final-rc1-venv\\Scripts\\python.exe",
             "tools/check_domain_baselines.py",
             "--check"
           ],
-          "cwd": "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo",
+          "cwd": "<repository-root>",
           "exit_code": 0,
           "duration_seconds": 26.375,
           "files": {
@@ -279,11 +280,11 @@
         },
         "ingestion-example-determinism": {
           "command": [
-            "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime\\p09-final-rc1-venv\\Scripts\\python.exe",
+            "<repository-root>\\runtime\\p09-final-rc1-venv\\Scripts\\python.exe",
             "scripts/generate_ingestion_examples.py",
             "--check"
           ],
-          "cwd": "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo",
+          "cwd": "<repository-root>",
           "exit_code": 0,
           "duration_seconds": 1.9839999999967404,
           "files": {
@@ -298,7 +299,7 @@
             "run",
             "lint"
           ],
-          "cwd": "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo",
+          "cwd": "<repository-root>",
           "exit_code": 0,
           "duration_seconds": 37.375,
           "files": {
@@ -313,7 +314,7 @@
             "run",
             "typecheck"
           ],
-          "cwd": "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo",
+          "cwd": "<repository-root>",
           "exit_code": 0,
           "duration_seconds": 15.39000000001397,
           "files": {
@@ -327,7 +328,7 @@
             "workbench",
             "test"
           ],
-          "cwd": "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo",
+          "cwd": "<repository-root>",
           "exit_code": 0,
           "duration_seconds": 62.35899999999674,
           "files": {
@@ -342,7 +343,7 @@
             "run",
             "build"
           ],
-          "cwd": "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo",
+          "cwd": "<repository-root>",
           "exit_code": 0,
           "duration_seconds": 9.405999999959022,
           "files": {
@@ -359,7 +360,7 @@
             "--",
             "--list"
           ],
-          "cwd": "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo",
+          "cwd": "<repository-root>",
           "exit_code": 0,
           "duration_seconds": 3.7189999999827705,
           "files": {
@@ -368,10 +369,10 @@
         },
         "repository-hygiene": {
           "command": [
-            "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime\\p09-final-rc1-venv\\Scripts\\python.exe",
+            "<repository-root>\\runtime\\p09-final-rc1-venv\\Scripts\\python.exe",
             "scripts/check_repo_hygiene.py"
           ],
-          "cwd": "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo",
+          "cwd": "<repository-root>",
           "exit_code": 0,
           "duration_seconds": 10.375,
           "files": {
@@ -380,13 +381,13 @@
         },
         "backend-serial": {
           "command": [
-            "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime\\p09-final-rc1-venv\\Scripts\\python.exe",
+            "<repository-root>\\runtime\\p09-final-rc1-venv\\Scripts\\python.exe",
             "tools/verify_release_candidate.py",
             "serial",
             "--run-dir",
-            "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime_logs\\p09\\fixed-7075a43-6d02068c"
+            "<repository-root>\\runtime_logs\\p09\\fixed-7075a43-6d02068c"
           ],
-          "cwd": "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo",
+          "cwd": "<repository-root>",
           "exit_code": 0,
           "duration_seconds": 5634.0470000000205,
           "files": {
@@ -395,16 +396,16 @@
         },
         "backend-parallel": {
           "command": [
-            "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime\\p09-final-rc1-venv\\Scripts\\python.exe",
+            "<repository-root>\\runtime\\p09-final-rc1-venv\\Scripts\\python.exe",
             "-m",
             "pytest",
-            "@D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime_logs\\p09\\fixed-7075a43-accepted-windows-155c66ab\\parallel.args",
-            "--basetemp=D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime_logs\\p09\\fixed-7075a43-accepted-windows-155c66ab\\parallel-temp",
+            "@<repository-root>\\runtime_logs\\p09\\fixed-7075a43-accepted-windows-155c66ab\\parallel.args",
+            "--basetemp=<repository-root>\\runtime_logs\\p09\\fixed-7075a43-accepted-windows-155c66ab\\parallel-temp",
             "-p",
             "tests.verification_receipts",
-            "--junitxml=D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime_logs\\p09\\fixed-7075a43-accepted-windows-155c66ab\\parallel\\junit.xml"
+            "--junitxml=<repository-root>\\runtime_logs\\p09\\fixed-7075a43-accepted-windows-155c66ab\\parallel\\junit.xml"
           ],
-          "cwd": "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo",
+          "cwd": "<repository-root>",
           "exit_code": 0,
           "duration_seconds": 4264.6720000000205,
           "files": {
@@ -446,7 +447,7 @@
               },
               "reason": {
                 "type": "pytest.skip",
-                "message": "platform cannot create test symlink: [WinError 1314] 客户端没有所需的特权。: 'D:\\\\UoM_CS\\\\Research Evidence Portfolio\\\\CUHK-Shenzhen RA\\\\KG-MNP-Demo\\\\runtime_logs\\\\p09\\\\fixed-7075a43-accepted-windows-155c66ab\\\\parallel-temp\\\\test_symlink_escape_is_rejecte0\\\\outside.ttl' -> 'D:\\\\UoM_CS\\\\Research Evidence Portfolio\\\\CUHK-Shenzhen RA\\\\KG-MNP-Demo\\\\runtime_logs\\\\p09\\\\fixed-7075a43-accepted-windows-155c66ab\\\\parallel-temp\\\\test_symlink_escape_is_rejecte0\\\\minimal\\\\shadow.ttl'"
+                "message": "platform cannot create test symlink: [WinError 1314] 客户端没有所需的特权。: '<repository-root>\\\\runtime_logs\\\\p09\\\\fixed-7075a43-accepted-windows-155c66ab\\\\parallel-temp\\\\test_symlink_escape_is_rejecte0\\\\outside.ttl' -> '<repository-root>\\\\runtime_logs\\\\p09\\\\fixed-7075a43-accepted-windows-155c66ab\\\\parallel-temp\\\\test_symlink_escape_is_rejecte0\\\\minimal\\\\shadow.ttl'"
               }
             },
             {
@@ -457,7 +458,7 @@
               },
               "reason": {
                 "type": "pytest.skip",
-                "message": "directory symlink creation unavailable on this platform: [WinError 1314] 客户端没有所需的特权。: 'D:\\\\UoM_CS\\\\Research Evidence Portfolio\\\\CUHK-Shenzhen RA\\\\KG-MNP-Demo\\\\runtime_logs\\\\p09\\\\fixed-7075a43-accepted-windows-155c66ab\\\\parallel-temp\\\\test_source_store_rejects_syml0\\\\external' -> 'D:\\\\UoM_CS\\\\Research Evidence Portfolio\\\\CUHK-Shenzhen RA\\\\KG-MNP-Demo\\\\runtime_logs\\\\p09\\\\fixed-7075a43-accepted-windows-155c66ab\\\\parallel-temp\\\\test_source_store_rejects_syml0\\\\workspace\\\\sources\\\\blobs\\\\sha256'"
+                "message": "directory symlink creation unavailable on this platform: [WinError 1314] 客户端没有所需的特权。: '<repository-root>\\\\runtime_logs\\\\p09\\\\fixed-7075a43-accepted-windows-155c66ab\\\\parallel-temp\\\\test_source_store_rejects_syml0\\\\external' -> '<repository-root>\\\\runtime_logs\\\\p09\\\\fixed-7075a43-accepted-windows-155c66ab\\\\parallel-temp\\\\test_source_store_rejects_syml0\\\\workspace\\\\sources\\\\blobs\\\\sha256'"
               }
             },
             {
@@ -468,7 +469,7 @@
               },
               "reason": {
                 "type": "pytest.skip",
-                "message": "platform cannot create test symlink: [WinError 1314] 客户端没有所需的特权。: 'D:\\\\UoM_CS\\\\Research Evidence Portfolio\\\\CUHK-Shenzhen RA\\\\KG-MNP-Demo\\\\runtime_logs\\\\p09\\\\fixed-7075a43-accepted-windows-155c66ab\\\\parallel-temp\\\\test_workspace_symlink_escape_0\\\\outside.txt' -> 'D:\\\\UoM_CS\\\\Research Evidence Portfolio\\\\CUHK-Shenzhen RA\\\\KG-MNP-Demo\\\\runtime_logs\\\\p09\\\\fixed-7075a43-accepted-windows-155c66ab\\\\parallel-temp\\\\test_workspace_symlink_escape_0\\\\workspace\\\\sources\\\\escape.txt'"
+                "message": "platform cannot create test symlink: [WinError 1314] 客户端没有所需的特权。: '<repository-root>\\\\runtime_logs\\\\p09\\\\fixed-7075a43-accepted-windows-155c66ab\\\\parallel-temp\\\\test_workspace_symlink_escape_0\\\\outside.txt' -> '<repository-root>\\\\runtime_logs\\\\p09\\\\fixed-7075a43-accepted-windows-155c66ab\\\\parallel-temp\\\\test_workspace_symlink_escape_0\\\\workspace\\\\sources\\\\escape.txt'"
               }
             },
             {
@@ -490,20 +491,20 @@
               },
               "reason": {
                 "type": "pytest.skip",
-                "message": "symlink creation unavailable on this platform: [WinError 1314] 客户端没有所需的特权。: 'D:\\\\UoM_CS\\\\Research Evidence Portfolio\\\\CUHK-Shenzhen RA\\\\KG-MNP-Demo\\\\runtime_logs\\\\p09\\\\fixed-7075a43-accepted-windows-155c66ab\\\\parallel-temp\\\\test_symlink_and_non_regular_s0\\\\target.txt' -> 'D:\\\\UoM_CS\\\\Research Evidence Portfolio\\\\CUHK-Shenzhen RA\\\\KG-MNP-Demo\\\\runtime_logs\\\\p09\\\\fixed-7075a43-accepted-windows-155c66ab\\\\parallel-temp\\\\test_symlink_and_non_regular_s0\\\\link.txt'"
+                "message": "symlink creation unavailable on this platform: [WinError 1314] 客户端没有所需的特权。: '<repository-root>\\\\runtime_logs\\\\p09\\\\fixed-7075a43-accepted-windows-155c66ab\\\\parallel-temp\\\\test_symlink_and_non_regular_s0\\\\target.txt' -> '<repository-root>\\\\runtime_logs\\\\p09\\\\fixed-7075a43-accepted-windows-155c66ab\\\\parallel-temp\\\\test_symlink_and_non_regular_s0\\\\link.txt'"
               }
             }
           ]
         },
         "backend-summarize": {
           "command": [
-            "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime\\p09-final-rc1-venv\\Scripts\\python.exe",
+            "<repository-root>\\runtime\\p09-final-rc1-venv\\Scripts\\python.exe",
             "tools/verify_release_candidate.py",
             "summarize",
             "--run-dir",
-            "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime_logs\\p09\\fixed-7075a43-accepted-windows-155c66ab"
+            "<repository-root>\\runtime_logs\\p09\\fixed-7075a43-accepted-windows-155c66ab"
           ],
-          "cwd": "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo",
+          "cwd": "<repository-root>",
           "exit_code": 0,
           "duration_seconds": 1.3910000000032596,
           "files": {
@@ -512,10 +513,10 @@
         },
         "browser": {
           "command": [
-            "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime\\p09-final-rc1-venv\\Scripts\\python.exe",
+            "<repository-root>\\runtime\\p09-final-rc1-venv\\Scripts\\python.exe",
             "tools/run_browser_verification.py"
           ],
-          "cwd": "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo",
+          "cwd": "<repository-root>",
           "exit_code": 0,
           "duration_seconds": 2619.2660000000033,
           "files": {
@@ -524,12 +525,12 @@
         },
         "distribution": {
           "command": [
-            "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime\\p09-final-rc1-venv\\Scripts\\python.exe",
+            "<repository-root>\\runtime\\p09-final-rc1-venv\\Scripts\\python.exe",
             "tools/verify_distribution.py",
             "--output",
-            "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime_logs\\p09\\fixed-7075a43-6d02068c\\distribution-evidence"
+            "<repository-root>\\runtime_logs\\p09\\fixed-7075a43-6d02068c\\distribution-evidence"
           ],
-          "cwd": "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo",
+          "cwd": "<repository-root>",
           "exit_code": 0,
           "duration_seconds": 189.26600000000326,
           "files": {
@@ -538,7 +539,7 @@
         }
       },
       "browser": {
-        "root": "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime_logs\\p09\\browser-runs\\managed-ae066ca8f6fc4c2fb3ae0a284d25b544",
+        "root": "<repository-root>\\runtime_logs\\p09\\browser-runs\\managed-ae066ca8f6fc4c2fb3ae0a284d25b544",
         "status": "PASS",
         "cases": [
           {
@@ -969,12 +970,12 @@
         "commands": {
           "build": {
             "command": [
-              "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime\\p09-final-rc1-venv\\Scripts\\python.exe",
-              "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\tools\\build_distribution.py",
+              "<repository-root>\\runtime\\p09-final-rc1-venv\\Scripts\\python.exe",
+              "<repository-root>\\tools\\build_distribution.py",
               "--output",
-              "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime_logs\\p09\\fixed-7075a43-6d02068c\\distribution-evidence\\artifacts"
+              "<repository-root>\\runtime_logs\\p09\\fixed-7075a43-6d02068c\\distribution-evidence\\artifacts"
             ],
-            "cwd": "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo",
+            "cwd": "<repository-root>",
             "exit_code": 0,
             "duration_seconds": 56.82799999997951,
             "files": {
@@ -983,15 +984,15 @@
           },
           "rebuild-sdist": {
             "command": [
-              "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime\\p09-final-rc1-venv\\Scripts\\python.exe",
+              "<repository-root>\\runtime\\p09-final-rc1-venv\\Scripts\\python.exe",
               "-m",
               "build",
               "--wheel",
               "--outdir",
-              "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime_logs\\p09\\fixed-7075a43-6d02068c\\distribution-evidence\\rebuilt",
-              "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime_logs\\p09\\fixed-7075a43-6d02068c\\distribution-evidence\\sdist-source\\kg_mnp_toolchain-0.9.0rc2"
+              "<repository-root>\\runtime_logs\\p09\\fixed-7075a43-6d02068c\\distribution-evidence\\rebuilt",
+              "<repository-root>\\runtime_logs\\p09\\fixed-7075a43-6d02068c\\distribution-evidence\\sdist-source\\kg_mnp_toolchain-0.9.0rc2"
             ],
-            "cwd": "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo",
+            "cwd": "<repository-root>",
             "exit_code": 0,
             "duration_seconds": 14.84399999998277,
             "files": {
@@ -1000,12 +1001,12 @@
           },
           "wheel-create-env": {
             "command": [
-              "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime\\p09-final-rc1-venv\\Scripts\\python.exe",
+              "<repository-root>\\runtime\\p09-final-rc1-venv\\Scripts\\python.exe",
               "-m",
               "venv",
-              "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime_logs\\p09\\fixed-7075a43-6d02068c\\distribution-evidence\\wheel-venv"
+              "<repository-root>\\runtime_logs\\p09\\fixed-7075a43-6d02068c\\distribution-evidence\\wheel-venv"
             ],
-            "cwd": "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo",
+            "cwd": "<repository-root>",
             "exit_code": 0,
             "duration_seconds": 8.90700000000652,
             "files": {
@@ -1014,17 +1015,17 @@
           },
           "wheel-install": {
             "command": [
-              "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime_logs\\p09\\fixed-7075a43-6d02068c\\distribution-evidence\\wheel-venv\\Scripts\\python.exe",
+              "<repository-root>\\runtime_logs\\p09\\fixed-7075a43-6d02068c\\distribution-evidence\\wheel-venv\\Scripts\\python.exe",
               "-I",
               "-m",
               "pip",
               "install",
               "--disable-pip-version-check",
               "-c",
-              "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\requirements-dev.lock",
-              "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime_logs\\p09\\fixed-7075a43-6d02068c\\distribution-evidence\\artifacts\\kg_mnp_toolchain-0.9.0rc2-py3-none-any.whl"
+              "<repository-root>\\requirements-dev.lock",
+              "<repository-root>\\runtime_logs\\p09\\fixed-7075a43-6d02068c\\distribution-evidence\\artifacts\\kg_mnp_toolchain-0.9.0rc2-py3-none-any.whl"
             ],
-            "cwd": "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo",
+            "cwd": "<repository-root>",
             "exit_code": 0,
             "duration_seconds": 23.96799999999348,
             "files": {
@@ -1033,13 +1034,13 @@
           },
           "wheel-pip-check": {
             "command": [
-              "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime_logs\\p09\\fixed-7075a43-6d02068c\\distribution-evidence\\wheel-venv\\Scripts\\python.exe",
+              "<repository-root>\\runtime_logs\\p09\\fixed-7075a43-6d02068c\\distribution-evidence\\wheel-venv\\Scripts\\python.exe",
               "-I",
               "-m",
               "pip",
               "check"
             ],
-            "cwd": "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo",
+            "cwd": "<repository-root>",
             "exit_code": 0,
             "duration_seconds": 1.327999999979511,
             "files": {
@@ -1048,17 +1049,17 @@
           },
           "wheel-probe": {
             "command": [
-              "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime_logs\\p09\\fixed-7075a43-6d02068c\\distribution-evidence\\wheel-venv\\Scripts\\python.exe",
+              "<repository-root>\\runtime_logs\\p09\\fixed-7075a43-6d02068c\\distribution-evidence\\wheel-venv\\Scripts\\python.exe",
               "-I",
-              "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\tools\\probe_installed_distribution.py",
+              "<repository-root>\\tools\\probe_installed_distribution.py",
               "--directory",
-              "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime_logs\\p09\\fixed-7075a43-6d02068c\\distribution-evidence\\wheel-runtime",
+              "<repository-root>\\runtime_logs\\p09\\fixed-7075a43-6d02068c\\distribution-evidence\\wheel-runtime",
               "--packs",
-              "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime_logs\\p09\\fixed-7075a43-6d02068c\\distribution-evidence\\examples\\domain_packs",
+              "<repository-root>\\runtime_logs\\p09\\fixed-7075a43-6d02068c\\distribution-evidence\\examples\\domain_packs",
               "--historical-package",
-              "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime_logs\\p09\\fixed-7075a43-6d02068c\\distribution-evidence\\historical-compiler-0.5.0.kgop"
+              "<repository-root>\\runtime_logs\\p09\\fixed-7075a43-6d02068c\\distribution-evidence\\historical-compiler-0.5.0.kgop"
             ],
-            "cwd": "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime_logs\\p09\\fixed-7075a43-6d02068c\\distribution-evidence",
+            "cwd": "<repository-root>\\runtime_logs\\p09\\fixed-7075a43-6d02068c\\distribution-evidence",
             "exit_code": 0,
             "duration_seconds": 26.10899999999674,
             "files": {
@@ -1067,12 +1068,12 @@
           },
           "rebuilt-wheel-create-env": {
             "command": [
-              "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime\\p09-final-rc1-venv\\Scripts\\python.exe",
+              "<repository-root>\\runtime\\p09-final-rc1-venv\\Scripts\\python.exe",
               "-m",
               "venv",
-              "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime_logs\\p09\\fixed-7075a43-6d02068c\\distribution-evidence\\rebuilt-wheel-venv"
+              "<repository-root>\\runtime_logs\\p09\\fixed-7075a43-6d02068c\\distribution-evidence\\rebuilt-wheel-venv"
             ],
-            "cwd": "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo",
+            "cwd": "<repository-root>",
             "exit_code": 0,
             "duration_seconds": 7.467999999993481,
             "files": {
@@ -1081,17 +1082,17 @@
           },
           "rebuilt-wheel-install": {
             "command": [
-              "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime_logs\\p09\\fixed-7075a43-6d02068c\\distribution-evidence\\rebuilt-wheel-venv\\Scripts\\python.exe",
+              "<repository-root>\\runtime_logs\\p09\\fixed-7075a43-6d02068c\\distribution-evidence\\rebuilt-wheel-venv\\Scripts\\python.exe",
               "-I",
               "-m",
               "pip",
               "install",
               "--disable-pip-version-check",
               "-c",
-              "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\requirements-dev.lock",
-              "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime_logs\\p09\\fixed-7075a43-6d02068c\\distribution-evidence\\rebuilt\\kg_mnp_toolchain-0.9.0rc2-py3-none-any.whl"
+              "<repository-root>\\requirements-dev.lock",
+              "<repository-root>\\runtime_logs\\p09\\fixed-7075a43-6d02068c\\distribution-evidence\\rebuilt\\kg_mnp_toolchain-0.9.0rc2-py3-none-any.whl"
             ],
-            "cwd": "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo",
+            "cwd": "<repository-root>",
             "exit_code": 0,
             "duration_seconds": 20.54700000002049,
             "files": {
@@ -1100,13 +1101,13 @@
           },
           "rebuilt-wheel-pip-check": {
             "command": [
-              "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime_logs\\p09\\fixed-7075a43-6d02068c\\distribution-evidence\\rebuilt-wheel-venv\\Scripts\\python.exe",
+              "<repository-root>\\runtime_logs\\p09\\fixed-7075a43-6d02068c\\distribution-evidence\\rebuilt-wheel-venv\\Scripts\\python.exe",
               "-I",
               "-m",
               "pip",
               "check"
             ],
-            "cwd": "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo",
+            "cwd": "<repository-root>",
             "exit_code": 0,
             "duration_seconds": 0.9529999999795109,
             "files": {
@@ -1115,17 +1116,17 @@
           },
           "rebuilt-wheel-probe": {
             "command": [
-              "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime_logs\\p09\\fixed-7075a43-6d02068c\\distribution-evidence\\rebuilt-wheel-venv\\Scripts\\python.exe",
+              "<repository-root>\\runtime_logs\\p09\\fixed-7075a43-6d02068c\\distribution-evidence\\rebuilt-wheel-venv\\Scripts\\python.exe",
               "-I",
-              "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\tools\\probe_installed_distribution.py",
+              "<repository-root>\\tools\\probe_installed_distribution.py",
               "--directory",
-              "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime_logs\\p09\\fixed-7075a43-6d02068c\\distribution-evidence\\rebuilt-wheel-runtime",
+              "<repository-root>\\runtime_logs\\p09\\fixed-7075a43-6d02068c\\distribution-evidence\\rebuilt-wheel-runtime",
               "--packs",
-              "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime_logs\\p09\\fixed-7075a43-6d02068c\\distribution-evidence\\examples\\domain_packs",
+              "<repository-root>\\runtime_logs\\p09\\fixed-7075a43-6d02068c\\distribution-evidence\\examples\\domain_packs",
               "--historical-package",
-              "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime_logs\\p09\\fixed-7075a43-6d02068c\\distribution-evidence\\historical-compiler-0.5.0.kgop"
+              "<repository-root>\\runtime_logs\\p09\\fixed-7075a43-6d02068c\\distribution-evidence\\historical-compiler-0.5.0.kgop"
             ],
-            "cwd": "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime_logs\\p09\\fixed-7075a43-6d02068c\\distribution-evidence",
+            "cwd": "<repository-root>\\runtime_logs\\p09\\fixed-7075a43-6d02068c\\distribution-evidence",
             "exit_code": 0,
             "duration_seconds": 26.92200000002049,
             "files": {
@@ -1175,23 +1176,23 @@
       },
       "partition_origins": {
         "tested_commit": "7075a4308de655ce1bf1e8073a005aeee152bf0f",
-        "original_run": "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime_logs\\p09\\fixed-7075a43-6d02068c",
-        "accepted_run": "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime_logs\\p09\\fixed-7075a43-accepted-windows-155c66ab",
+        "original_run": "<repository-root>\\runtime_logs\\p09\\fixed-7075a43-6d02068c",
+        "accepted_run": "<repository-root>\\runtime_logs\\p09\\fixed-7075a43-accepted-windows-155c66ab",
         "serial": {
-          "origin": "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime_logs\\p09\\fixed-7075a43-6d02068c\\serial",
+          "origin": "<repository-root>\\runtime_logs\\p09\\fixed-7075a43-6d02068c\\serial",
           "receipt_sha256": "98ae2ba28a8b5a831011c3c29d32b8d513dd90db347b2818f66301e65bfa4fc1",
           "method": "Whole completed serial partition at the same frozen source, not partial individual tests"
         },
         "parallel": {
-          "origin": "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime_logs\\p09\\fixed-7075a43-accepted-windows-155c66ab\\parallel",
+          "origin": "<repository-root>\\runtime_logs\\p09\\fixed-7075a43-accepted-windows-155c66ab\\parallel",
           "method": "Whole1301-node cohort rerun sequentially with lighter resource contention; no changed tests, deadlines or assertions"
         },
-        "non_pytest_origin": "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime_logs\\p09\\fixed-7075a43-6d02068c",
-        "original_failure_retained": "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime_logs\\p09\\fixed-7075a43-6d02068c\\parallel",
+        "non_pytest_origin": "<repository-root>\\runtime_logs\\p09\\fixed-7075a43-6d02068c",
+        "original_failure_retained": "<repository-root>\\runtime_logs\\p09\\fixed-7075a43-6d02068c\\parallel",
         "uniqueness_rule": "Accepted disjoint serial507 + parallel1301 must equal fresh collection1808 exactly; previous attempts never increase coverage"
       },
       "browser_retry": null,
-      "run_directory": "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime_logs\\p09\\fixed-7075a43-accepted-windows-155c66ab"
+      "run_directory": "<repository-root>\\runtime_logs\\p09\\fixed-7075a43-accepted-windows-155c66ab"
     },
     "linux": {
       "environment": "Linux-6.18.33.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
@@ -2363,15 +2364,15 @@
       "commands": {
         "rebuild-sdist": {
           "command": [
-            "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime\\p09-final-rc1-venv\\Scripts\\python.exe",
+            "<repository-root>\\runtime\\p09-final-rc1-venv\\Scripts\\python.exe",
             "-m",
             "build",
             "--wheel",
             "--outdir",
-            "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime_logs\\p09\\same-bytes-7075a43\\rebuilt",
-            "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime_logs\\p09\\same-bytes-7075a43\\sdist-source\\kg_mnp_toolchain-0.9.0rc2"
+            "<repository-root>\\runtime_logs\\p09\\same-bytes-7075a43\\rebuilt",
+            "<repository-root>\\runtime_logs\\p09\\same-bytes-7075a43\\sdist-source\\kg_mnp_toolchain-0.9.0rc2"
           ],
-          "cwd": "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo",
+          "cwd": "<repository-root>",
           "exit_code": 0,
           "duration_seconds": 52.81300000002375,
           "files": {
@@ -2380,12 +2381,12 @@
         },
         "wheel-create-env": {
           "command": [
-            "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime\\p09-final-rc1-venv\\Scripts\\python.exe",
+            "<repository-root>\\runtime\\p09-final-rc1-venv\\Scripts\\python.exe",
             "-m",
             "venv",
-            "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime_logs\\p09\\same-bytes-7075a43\\wheel-venv"
+            "<repository-root>\\runtime_logs\\p09\\same-bytes-7075a43\\wheel-venv"
           ],
-          "cwd": "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo",
+          "cwd": "<repository-root>",
           "exit_code": 0,
           "duration_seconds": 24.06300000002375,
           "files": {
@@ -2394,17 +2395,17 @@
         },
         "wheel-install": {
           "command": [
-            "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime_logs\\p09\\same-bytes-7075a43\\wheel-venv\\Scripts\\python.exe",
+            "<repository-root>\\runtime_logs\\p09\\same-bytes-7075a43\\wheel-venv\\Scripts\\python.exe",
             "-I",
             "-m",
             "pip",
             "install",
             "--disable-pip-version-check",
             "-c",
-            "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\requirements-dev.lock",
-            "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime_logs\\p09\\delivery-7075a43\\kg_mnp_toolchain-0.9.0rc2-py3-none-any.whl"
+            "<repository-root>\\requirements-dev.lock",
+            "<repository-root>\\runtime_logs\\p09\\delivery-7075a43\\kg_mnp_toolchain-0.9.0rc2-py3-none-any.whl"
           ],
-          "cwd": "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo",
+          "cwd": "<repository-root>",
           "exit_code": 0,
           "duration_seconds": 65.51600000000326,
           "files": {
@@ -2413,13 +2414,13 @@
         },
         "wheel-pip-check": {
           "command": [
-            "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime_logs\\p09\\same-bytes-7075a43\\wheel-venv\\Scripts\\python.exe",
+            "<repository-root>\\runtime_logs\\p09\\same-bytes-7075a43\\wheel-venv\\Scripts\\python.exe",
             "-I",
             "-m",
             "pip",
             "check"
           ],
-          "cwd": "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo",
+          "cwd": "<repository-root>",
           "exit_code": 0,
           "duration_seconds": 4.828000000037719,
           "files": {
@@ -2428,17 +2429,17 @@
         },
         "wheel-probe": {
           "command": [
-            "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime_logs\\p09\\same-bytes-7075a43\\wheel-venv\\Scripts\\python.exe",
+            "<repository-root>\\runtime_logs\\p09\\same-bytes-7075a43\\wheel-venv\\Scripts\\python.exe",
             "-I",
-            "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\tools\\probe_installed_distribution.py",
+            "<repository-root>\\tools\\probe_installed_distribution.py",
             "--directory",
-            "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime_logs\\p09\\same-bytes-7075a43\\wheel-runtime",
+            "<repository-root>\\runtime_logs\\p09\\same-bytes-7075a43\\wheel-runtime",
             "--packs",
-            "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime_logs\\p09\\same-bytes-7075a43\\examples\\domain_packs",
+            "<repository-root>\\runtime_logs\\p09\\same-bytes-7075a43\\examples\\domain_packs",
             "--historical-package",
-            "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime_logs\\p09\\same-bytes-7075a43\\historical-compiler-0.5.0.kgop"
+            "<repository-root>\\runtime_logs\\p09\\same-bytes-7075a43\\historical-compiler-0.5.0.kgop"
           ],
-          "cwd": "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime_logs\\p09\\same-bytes-7075a43",
+          "cwd": "<repository-root>\\runtime_logs\\p09\\same-bytes-7075a43",
           "exit_code": 0,
           "duration_seconds": 98.15700000000652,
           "files": {
@@ -2447,12 +2448,12 @@
         },
         "rebuilt-wheel-create-env": {
           "command": [
-            "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime\\p09-final-rc1-venv\\Scripts\\python.exe",
+            "<repository-root>\\runtime\\p09-final-rc1-venv\\Scripts\\python.exe",
             "-m",
             "venv",
-            "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime_logs\\p09\\same-bytes-7075a43\\rebuilt-wheel-venv"
+            "<repository-root>\\runtime_logs\\p09\\same-bytes-7075a43\\rebuilt-wheel-venv"
           ],
-          "cwd": "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo",
+          "cwd": "<repository-root>",
           "exit_code": 0,
           "duration_seconds": 24.31300000002375,
           "files": {
@@ -2461,17 +2462,17 @@
         },
         "rebuilt-wheel-install": {
           "command": [
-            "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime_logs\\p09\\same-bytes-7075a43\\rebuilt-wheel-venv\\Scripts\\python.exe",
+            "<repository-root>\\runtime_logs\\p09\\same-bytes-7075a43\\rebuilt-wheel-venv\\Scripts\\python.exe",
             "-I",
             "-m",
             "pip",
             "install",
             "--disable-pip-version-check",
             "-c",
-            "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\requirements-dev.lock",
-            "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime_logs\\p09\\same-bytes-7075a43\\rebuilt\\kg_mnp_toolchain-0.9.0rc2-py3-none-any.whl"
+            "<repository-root>\\requirements-dev.lock",
+            "<repository-root>\\runtime_logs\\p09\\same-bytes-7075a43\\rebuilt\\kg_mnp_toolchain-0.9.0rc2-py3-none-any.whl"
           ],
-          "cwd": "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo",
+          "cwd": "<repository-root>",
           "exit_code": 0,
           "duration_seconds": 69.25,
           "files": {
@@ -2480,13 +2481,13 @@
         },
         "rebuilt-wheel-pip-check": {
           "command": [
-            "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime_logs\\p09\\same-bytes-7075a43\\rebuilt-wheel-venv\\Scripts\\python.exe",
+            "<repository-root>\\runtime_logs\\p09\\same-bytes-7075a43\\rebuilt-wheel-venv\\Scripts\\python.exe",
             "-I",
             "-m",
             "pip",
             "check"
           ],
-          "cwd": "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo",
+          "cwd": "<repository-root>",
           "exit_code": 0,
           "duration_seconds": 2.3910000000032596,
           "files": {
@@ -2495,17 +2496,17 @@
         },
         "rebuilt-wheel-probe": {
           "command": [
-            "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime_logs\\p09\\same-bytes-7075a43\\rebuilt-wheel-venv\\Scripts\\python.exe",
+            "<repository-root>\\runtime_logs\\p09\\same-bytes-7075a43\\rebuilt-wheel-venv\\Scripts\\python.exe",
             "-I",
-            "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\tools\\probe_installed_distribution.py",
+            "<repository-root>\\tools\\probe_installed_distribution.py",
             "--directory",
-            "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime_logs\\p09\\same-bytes-7075a43\\rebuilt-wheel-runtime",
+            "<repository-root>\\runtime_logs\\p09\\same-bytes-7075a43\\rebuilt-wheel-runtime",
             "--packs",
-            "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime_logs\\p09\\same-bytes-7075a43\\examples\\domain_packs",
+            "<repository-root>\\runtime_logs\\p09\\same-bytes-7075a43\\examples\\domain_packs",
             "--historical-package",
-            "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime_logs\\p09\\same-bytes-7075a43\\historical-compiler-0.5.0.kgop"
+            "<repository-root>\\runtime_logs\\p09\\same-bytes-7075a43\\historical-compiler-0.5.0.kgop"
           ],
-          "cwd": "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime_logs\\p09\\same-bytes-7075a43",
+          "cwd": "<repository-root>\\runtime_logs\\p09\\same-bytes-7075a43",
           "exit_code": 0,
           "duration_seconds": 92.43699999997625,
           "files": {
@@ -2550,7 +2551,7 @@
     },
     "directory": "runtime_logs/p09/delivery-7075a43",
     "evidence_bundle": {
-      "path": "D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime_logs\\p09\\p09-0.9.0rc2-evidence.zip",
+      "path": "<repository-root>\\runtime_logs\\p09\\p09-0.9.0rc2-evidence.zip",
       "sha256": "bde0b93aa7d7491adba16ec6999df64219b70a253e640e509233b2d3d392ab92",
       "bytes": 20476300,
       "entries": 799,

@@ -18,6 +18,8 @@ runs:
     - shell: bash
       run: python -m pip install -c requirements-dev.lock -e '.[dev]'
     - shell: bash
+      run: python -m pip check
+    - shell: bash
       run: npm ci --prefix workbench
     - shell: bash
       run: python tools/prepare_reasoner.py

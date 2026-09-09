@@ -1,5 +1,13 @@
 name: Isolated distribution verification
-on: [pull_request, workflow_dispatch]
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+  workflow_dispatch:
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 permissions:
   contents: read
 jobs:
@@ -17,6 +25,7 @@ jobs:
       - uses: ./.github/actions/setup-toolchain
       - run: python tools/verify_distribution.py --output runtime_logs/distributions
       - uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: distribution-evidence-${{ matrix.os }}
           path: |
