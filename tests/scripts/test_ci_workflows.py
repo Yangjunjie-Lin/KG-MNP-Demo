@@ -1,4 +1,5 @@
 """Keep all capability gates active on both long-lived branches."""
+import subprocess
 from pathlib import Path
 
 import pytest
@@ -59,3 +60,17 @@ def test_real_business_workflows_and_component_rendering_are_separate_gates():
     commands = {name: {step["run"] for step in job["steps"] if "run" in step} for name, job in jobs.items()}
     assert "python tools/run_browser_verification.py" in commands["workbench"]
     assert "npm --prefix workbench run test:rendering" in commands["rendering"]
+
+
+def test_python_script_git_modes_match_shebangs_even_on_windows():
+    entries = subprocess.check_output(["git", "ls-files", "--stage", "-z", "--", "*.py"], cwd=ROOT, text=True)
+    mismatches = []
+    for entry in entries.split("\0"):
+        if not entry:
+            continue
+        metadata, path = entry.split("\t", 1)
+        executable = metadata.split()[0] == "100755"
+        shebang = (ROOT / path).read_bytes().startswith(b"#!")
+        if executable != shebang:
+            mismatches.append(path)
+    assert not mismatches, f"Git executable modes disagree with Python shebangs: {mismatches}"
