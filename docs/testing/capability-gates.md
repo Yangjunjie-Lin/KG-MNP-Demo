@@ -18,6 +18,8 @@
 
 所有准备显式安装锁定依赖和固定摘要 ROBOT；核心执行不会联网下载。GraphDB live 与外部执行器需要另行授权，未配置不是本地功能失败的替代解释。
 
+历史 Compilation / GraphDB / Publication 的 expected 工件、已审计 OWL2VOWL 原始输入及原样装入包内的 WebVOWL 策略绑定精确字节；`.gitattributes` 对这些固定集合禁用文本换行转换。Windows 的 `core.autocrlf=true` 不能改变其 Git blob 字节，回归测试同时核对转换后的字节和实际工作区字节；不能通过重写历史工件、重算哈希或放宽验证解决 checkout 漂移。
+
 ## 固定修订验收
 
 1. 完成实现、迁移、文档与构建配置，提交 CODE_FREEZE，工作树干净。

@@ -21,3 +21,10 @@ domain_packs/**/*.tsv text eol=lf
 domain_packs/**/*.txt text eol=lf
 config/modeling/* text eol=lf
 examples/modeling/**/*.json text eol=lf
+# Historical package manifests bind exact Git blob bytes, not normalized text.
+# Disable checkout conversion for their closed artifact sets and audited input.
+examples/compilation/expected/** -text
+examples/graphdb/expected/** -text
+examples/publication/expected/** -text
+examples/publication/fixtures/owl2vowl-0.3.7-raw.json -text
+config/webvowl/webvowl-runtime-1.0.0.yaml -text
