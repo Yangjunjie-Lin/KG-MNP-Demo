@@ -1,18 +1,65 @@
 {
   "mixed_source_followup": {
     "version": "0.9.0rc2",
-    "status": "IMPLEMENTED_INCREMENTAL_VERIFIED_FINAL_PENDING",
-    "historical_rows_below_apply_to": "b63ba379327af4eb102d4a852498509cef9a3bf8",
+    "status": "IMPLEMENTED_AND_VERIFIED",
+    "baseline_requirement_history_from": "b63ba379327af4eb102d4a852498509cef9a3bf8",
     "requirements": [
-      {"id": "mixed.table-boundaries", "implementation": "src/kg_mnp/modeling/control_plane/mappings.py", "tests": "tests/modeling_alignment/test_mixed_source_identity.py", "result": "Word table, Excel sheet, CSV Source and JSON record identities do not collapse by row/document root"},
-      {"id": "mixed.text-evidence", "implementation": "src/kg_mnp/modeling/control_plane/providers/mixed_mapping.py", "tests": "tests/modeling/test_mixed_mapping.py", "result": "Bounded literal templates and exact Unicode spans; no unsupported NLP claim"},
-      {"id": "mixed.identity-and-types", "implementation": "src/kg_mnp/modeling/control_plane/providers/record_profile.py", "tests": "tests/modeling/test_mixed_mapping.py", "result": "Explicit shared identities/aliases, typed literals, canonical target references; conflicts and unknown targets blocked"},
-      {"id": "mixed.proposal-binding-and-coverage", "implementation": "src/kg_mnp/services/modeling.py", "tests": "tests/services/test_mixed_source_workflow.py", "result": "Rules digest is bound to candidate provenance; coverage recomputed before confirmation; sidecar tamper and unmapped input blocked"},
-      {"id": "mixed.input-to-output", "implementation": "src/kg_mnp/services/modeling.py", "tests": "tests/services/test_mixed_source_workflow.py", "result": "Real three-format mixed input, deduplicated objects, all-source trace, actual reasoner/SHACL/CQ and .kgop export"},
-      {"id": "mixed.workbench", "implementation": "workbench/src/mixed-mapping-form.tsx", "tests": "workbench/tests/minimal.e2e.ts (mixed)", "result": "Real form-driven upload, table/text/identity configuration, per-item review, compilation, download and release"}
+      {
+        "id": "mixed.table-boundaries",
+        "implementation": "src/kg_mnp/modeling/control_plane/mappings.py",
+        "tests": "tests/modeling_alignment/test_mixed_source_identity.py",
+        "result": "Word table, Excel sheet, CSV Source and JSON record identities do not collapse by row/document root"
+      },
+      {
+        "id": "mixed.text-evidence",
+        "implementation": "src/kg_mnp/modeling/control_plane/providers/mixed_mapping.py",
+        "tests": "tests/modeling/test_mixed_mapping.py",
+        "result": "Bounded literal templates and exact Unicode spans; no unsupported NLP claim"
+      },
+      {
+        "id": "mixed.identity-and-types",
+        "implementation": "src/kg_mnp/modeling/control_plane/providers/record_profile.py",
+        "tests": "tests/modeling/test_mixed_mapping.py",
+        "result": "Explicit shared identities/aliases, typed literals, canonical target references; conflicts and unknown targets blocked"
+      },
+      {
+        "id": "mixed.proposal-binding-and-coverage",
+        "implementation": "src/kg_mnp/services/modeling.py",
+        "tests": "tests/services/test_mixed_source_workflow.py",
+        "result": "Rules digest is bound to candidate provenance; coverage recomputed before confirmation; sidecar tamper and unmapped input blocked"
+      },
+      {
+        "id": "mixed.input-to-output",
+        "implementation": "src/kg_mnp/services/modeling.py",
+        "tests": "tests/services/test_mixed_source_workflow.py",
+        "result": "Real three-format mixed input, deduplicated objects, all-source trace, actual reasoner/SHACL/CQ and .kgop export"
+      },
+      {
+        "id": "mixed.workbench",
+        "implementation": "workbench/src/mixed-mapping-form.tsx",
+        "tests": "workbench/tests/minimal.e2e.ts (mixed)",
+        "result": "Real form-driven upload, table/text/identity configuration, per-item review, compilation, download and release"
+      }
     ],
-    "unchanged_authorities": ["Original 115 schemas", "Current 117-entry catalog", "Minimal assets", "MNP 84 original assets", "Frozen Forestry v1 record mapping", "Compiler 0.5.1 semantic implementation", "RC1 tag"],
-    "limitations": ["No live LLM/OCR/ASR/Vision", "No inferred semantic correctness or automatic approval", "First-row unique table headers required", "V2 explicit identity applies to the selected verified batch and namespace; no implicit global entity resolution", "Coverage is item-level, not proof that every sentence is understood"]
+    "unchanged_authorities": [
+      "Original 115 schemas",
+      "Current 117-entry catalog",
+      "Minimal assets",
+      "MNP 84 original assets",
+      "Frozen Forestry v1 record mapping",
+      "Compiler 0.5.1 semantic implementation",
+      "RC1 tag"
+    ],
+    "limitations": [
+      "No live LLM/OCR/ASR/Vision",
+      "No inferred semantic correctness or automatic approval",
+      "First-row unique table headers required",
+      "V2 explicit identity applies to the selected verified batch and namespace; no implicit global entity resolution",
+      "Coverage is item-level, not proof that every sentence is understood"
+    ],
+    "tested_commit": "7075a4308de655ce1bf1e8073a005aeee152bf0f",
+    "accepted_evidence": "docs/verification/final-verification.json",
+    "normalized_coordinate_and_native_excel_tests": "tests/modeling/test_mixed_mapping.py"
   },
   "historical_audit": {
     "ancestor_heads": [
@@ -62,8 +109,9 @@
       "final_revision_verified": true,
       "request_contract": "ProjectCreateRequest",
       "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
-      "verification_ref": "docs/verification/final-verification.json"
+      "tested_commit": "7075a4308de655ce1bf1e8073a005aeee152bf0f",
+      "verification_ref": "docs/verification/final-verification.json",
+      "previous_tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8"
     },
     {
       "api": "POST /api/v1/operations/project.open (typed compatibility operation)",
@@ -95,8 +143,9 @@
       "final_revision_verified": true,
       "request_contract": "ProjectOpenRequest",
       "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
-      "verification_ref": "docs/verification/final-verification.json"
+      "tested_commit": "7075a4308de655ce1bf1e8073a005aeee152bf0f",
+      "verification_ref": "docs/verification/final-verification.json",
+      "previous_tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8"
     },
     {
       "api": "POST /api/v1/operations/project.list (typed compatibility operation)",
@@ -128,8 +177,9 @@
       "final_revision_verified": true,
       "request_contract": "EmptyRequest",
       "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
-      "verification_ref": "docs/verification/final-verification.json"
+      "tested_commit": "7075a4308de655ce1bf1e8073a005aeee152bf0f",
+      "verification_ref": "docs/verification/final-verification.json",
+      "previous_tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8"
     },
     {
       "api": "POST /api/v1/operations/project.validate (typed compatibility operation)",
@@ -161,8 +211,9 @@
       "final_revision_verified": true,
       "request_contract": "EmptyRequest",
       "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
-      "verification_ref": "docs/verification/final-verification.json"
+      "tested_commit": "7075a4308de655ce1bf1e8073a005aeee152bf0f",
+      "verification_ref": "docs/verification/final-verification.json",
+      "previous_tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8"
     },
     {
       "api": "POST /api/v1/operations/project.lock (typed compatibility operation)",
@@ -194,8 +245,9 @@
       "final_revision_verified": true,
       "request_contract": "EmptyRequest",
       "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
-      "verification_ref": "docs/verification/final-verification.json"
+      "tested_commit": "7075a4308de655ce1bf1e8073a005aeee152bf0f",
+      "verification_ref": "docs/verification/final-verification.json",
+      "previous_tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8"
     },
     {
       "api": "POST /api/v1/operations/domain-pack.discover (typed compatibility operation)",
@@ -227,8 +279,9 @@
       "final_revision_verified": true,
       "request_contract": "EmptyRequest",
       "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
-      "verification_ref": "docs/verification/final-verification.json"
+      "tested_commit": "7075a4308de655ce1bf1e8073a005aeee152bf0f",
+      "verification_ref": "docs/verification/final-verification.json",
+      "previous_tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8"
     },
     {
       "api": "POST /api/v1/operations/domain-pack.inspect (typed compatibility operation)",
@@ -260,8 +313,9 @@
       "final_revision_verified": true,
       "request_contract": "PackInspectRequest",
       "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
-      "verification_ref": "docs/verification/final-verification.json"
+      "tested_commit": "7075a4308de655ce1bf1e8073a005aeee152bf0f",
+      "verification_ref": "docs/verification/final-verification.json",
+      "previous_tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8"
     },
     {
       "api": "POST /api/v1/operations/source.register (typed compatibility operation)",
@@ -293,8 +347,9 @@
       "final_revision_verified": true,
       "request_contract": "SourceRegisterRequest",
       "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
-      "verification_ref": "docs/verification/final-verification.json"
+      "tested_commit": "7075a4308de655ce1bf1e8073a005aeee152bf0f",
+      "verification_ref": "docs/verification/final-verification.json",
+      "previous_tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8"
     },
     {
       "api": "GET /api/v1/projects/{project_id}/sources/{source_id}",
@@ -326,8 +381,9 @@
       "final_revision_verified": true,
       "request_contract": "SourceRequest",
       "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
-      "verification_ref": "docs/verification/final-verification.json"
+      "tested_commit": "7075a4308de655ce1bf1e8073a005aeee152bf0f",
+      "verification_ref": "docs/verification/final-verification.json",
+      "previous_tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8"
     },
     {
       "api": "POST /api/v1/projects/{project_id}/ingestion/plans",
@@ -359,8 +415,9 @@
       "final_revision_verified": true,
       "request_contract": "IngestionPlanRequest",
       "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
-      "verification_ref": "docs/verification/final-verification.json"
+      "tested_commit": "7075a4308de655ce1bf1e8073a005aeee152bf0f",
+      "verification_ref": "docs/verification/final-verification.json",
+      "previous_tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8"
     },
     {
       "api": "POST /api/v1/projects/{project_id}/ingestion/runs",
@@ -392,8 +449,9 @@
       "final_revision_verified": true,
       "request_contract": "IngestionRunRequest",
       "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
-      "verification_ref": "docs/verification/final-verification.json"
+      "tested_commit": "7075a4308de655ce1bf1e8073a005aeee152bf0f",
+      "verification_ref": "docs/verification/final-verification.json",
+      "previous_tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8"
     },
     {
       "api": "GET /api/v1/projects/{project_id}/ingestion/runs/{run_id}",
@@ -425,8 +483,9 @@
       "final_revision_verified": true,
       "request_contract": "IngestionInspectRequest",
       "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
-      "verification_ref": "docs/verification/final-verification.json"
+      "tested_commit": "7075a4308de655ce1bf1e8073a005aeee152bf0f",
+      "verification_ref": "docs/verification/final-verification.json",
+      "previous_tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8"
     },
     {
       "api": "POST /api/v1/operations/ingestion.trace (typed compatibility operation)",
@@ -458,8 +517,9 @@
       "final_revision_verified": true,
       "request_contract": "IngestionInspectRequest",
       "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
-      "verification_ref": "docs/verification/final-verification.json"
+      "tested_commit": "7075a4308de655ce1bf1e8073a005aeee152bf0f",
+      "verification_ref": "docs/verification/final-verification.json",
+      "previous_tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8"
     },
     {
       "api": "POST /api/v1/projects/{project_id}/modeling/scopes",
@@ -467,7 +527,9 @@
       "blocker": null,
       "cli": "kg-mnp service call --operation modeling.scope --request <typed-request.json> (revocable KG_MNP_TOKEN; project/key as required)",
       "commits": [
-        "b63ba379327af4eb102d4a852498509cef9a3bf8"
+        "b63ba379327af4eb102d4a852498509cef9a3bf8",
+        "352f1bd42631546b417ec2804383dbb84f232b87",
+        "7075a4308de655ce1bf1e8073a005aeee152bf0f"
       ],
       "core_required": true,
       "execution_mode": "JOB",
@@ -483,7 +545,8 @@
         "tests/services/test_modeling_workflow.py::test_nonempty_review_confirmed_workflow",
         "tests/services/test_modeling_workflow.py",
         "tests/services/test_scope_revision.py",
-        "tests/services/test_review_revisions.py"
+        "tests/services/test_review_revisions.py",
+        "tests/services/test_mixed_source_workflow.py"
       ],
       "requirement_id": "modeling.scope",
       "sdk": "LocalClient.execute / HTTPClient.execute(OperationRequest)",
@@ -493,8 +556,9 @@
       "final_revision_verified": true,
       "request_contract": "ScopeRequest",
       "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
-      "verification_ref": "docs/verification/final-verification.json"
+      "tested_commit": "7075a4308de655ce1bf1e8073a005aeee152bf0f",
+      "verification_ref": "docs/verification/final-verification.json",
+      "previous_tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8"
     },
     {
       "api": "POST /api/v1/projects/{project_id}/modeling/scope-approvals",
@@ -502,7 +566,9 @@
       "blocker": null,
       "cli": "kg-mnp service call --operation modeling.scope.approve --request <typed-request.json> (revocable KG_MNP_TOKEN; project/key as required)",
       "commits": [
-        "b63ba379327af4eb102d4a852498509cef9a3bf8"
+        "b63ba379327af4eb102d4a852498509cef9a3bf8",
+        "352f1bd42631546b417ec2804383dbb84f232b87",
+        "7075a4308de655ce1bf1e8073a005aeee152bf0f"
       ],
       "core_required": true,
       "execution_mode": "JOB",
@@ -518,7 +584,8 @@
         "tests/services/test_modeling_workflow.py::test_nonempty_review_confirmed_workflow",
         "tests/services/test_modeling_workflow.py",
         "tests/services/test_scope_revision.py",
-        "tests/services/test_review_revisions.py"
+        "tests/services/test_review_revisions.py",
+        "tests/services/test_mixed_source_workflow.py"
       ],
       "requirement_id": "modeling.scope.approve",
       "sdk": "LocalClient.execute / HTTPClient.execute(OperationRequest)",
@@ -528,8 +595,9 @@
       "final_revision_verified": true,
       "request_contract": "ScopeApprovalRequest",
       "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
-      "verification_ref": "docs/verification/final-verification.json"
+      "tested_commit": "7075a4308de655ce1bf1e8073a005aeee152bf0f",
+      "verification_ref": "docs/verification/final-verification.json",
+      "previous_tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8"
     },
     {
       "api": "POST /api/v1/projects/{project_id}/modeling/proposals (canonical alias)",
@@ -537,7 +605,9 @@
       "blocker": null,
       "cli": "kg-mnp service call --operation modeling.candidate --request <typed-request.json> (revocable KG_MNP_TOKEN; project/key as required)",
       "commits": [
-        "b63ba379327af4eb102d4a852498509cef9a3bf8"
+        "b63ba379327af4eb102d4a852498509cef9a3bf8",
+        "352f1bd42631546b417ec2804383dbb84f232b87",
+        "7075a4308de655ce1bf1e8073a005aeee152bf0f"
       ],
       "core_required": true,
       "execution_mode": "JOB",
@@ -553,7 +623,8 @@
         "tests/services/test_modeling_workflow.py::test_nonempty_review_confirmed_workflow",
         "tests/services/test_modeling_workflow.py",
         "tests/services/test_scope_revision.py",
-        "tests/services/test_review_revisions.py"
+        "tests/services/test_review_revisions.py",
+        "tests/services/test_mixed_source_workflow.py"
       ],
       "requirement_id": "modeling.candidate",
       "sdk": "LocalClient.execute / HTTPClient.execute(OperationRequest)",
@@ -564,8 +635,9 @@
       "request_contract": "ProposalRequest",
       "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
       "equivalence": "Explicit existing implementation delegation; no separate engine. GUI uses canonical preparation/proposal/validation flow; reproduction remains a typed SDK/CLI advanced operation.",
-      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
-      "verification_ref": "docs/verification/final-verification.json"
+      "tested_commit": "7075a4308de655ce1bf1e8073a005aeee152bf0f",
+      "verification_ref": "docs/verification/final-verification.json",
+      "previous_tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8"
     },
     {
       "api": "POST /api/v1/projects/{project_id}/modeling/preparations (canonical alias)",
@@ -573,7 +645,9 @@
       "blocker": null,
       "cli": "kg-mnp service call --operation modeling.cq --request <typed-request.json> (revocable KG_MNP_TOKEN; project/key as required)",
       "commits": [
-        "b63ba379327af4eb102d4a852498509cef9a3bf8"
+        "b63ba379327af4eb102d4a852498509cef9a3bf8",
+        "352f1bd42631546b417ec2804383dbb84f232b87",
+        "7075a4308de655ce1bf1e8073a005aeee152bf0f"
       ],
       "core_required": true,
       "execution_mode": "JOB",
@@ -589,7 +663,8 @@
         "tests/services/test_modeling_workflow.py::test_nonempty_review_confirmed_workflow",
         "tests/services/test_modeling_workflow.py",
         "tests/services/test_scope_revision.py",
-        "tests/services/test_review_revisions.py"
+        "tests/services/test_review_revisions.py",
+        "tests/services/test_mixed_source_workflow.py"
       ],
       "requirement_id": "modeling.cq",
       "sdk": "LocalClient.execute / HTTPClient.execute(OperationRequest)",
@@ -600,8 +675,9 @@
       "request_contract": "ModelingPrepareRequest",
       "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
       "equivalence": "Explicit existing implementation delegation; no separate engine. GUI uses canonical preparation/proposal/validation flow; reproduction remains a typed SDK/CLI advanced operation.",
-      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
-      "verification_ref": "docs/verification/final-verification.json"
+      "tested_commit": "7075a4308de655ce1bf1e8073a005aeee152bf0f",
+      "verification_ref": "docs/verification/final-verification.json",
+      "previous_tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8"
     },
     {
       "api": "POST /api/v1/projects/{project_id}/modeling/preparations (canonical alias)",
@@ -609,7 +685,9 @@
       "blocker": null,
       "cli": "kg-mnp service call --operation modeling.baseline --request <typed-request.json> (revocable KG_MNP_TOKEN; project/key as required)",
       "commits": [
-        "b63ba379327af4eb102d4a852498509cef9a3bf8"
+        "b63ba379327af4eb102d4a852498509cef9a3bf8",
+        "352f1bd42631546b417ec2804383dbb84f232b87",
+        "7075a4308de655ce1bf1e8073a005aeee152bf0f"
       ],
       "core_required": true,
       "execution_mode": "JOB",
@@ -625,7 +703,8 @@
         "tests/services/test_modeling_workflow.py::test_nonempty_review_confirmed_workflow",
         "tests/services/test_modeling_workflow.py",
         "tests/services/test_scope_revision.py",
-        "tests/services/test_review_revisions.py"
+        "tests/services/test_review_revisions.py",
+        "tests/services/test_mixed_source_workflow.py"
       ],
       "requirement_id": "modeling.baseline",
       "sdk": "LocalClient.execute / HTTPClient.execute(OperationRequest)",
@@ -636,8 +715,9 @@
       "request_contract": "ModelingPrepareRequest",
       "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
       "equivalence": "Explicit existing implementation delegation; no separate engine. GUI uses canonical preparation/proposal/validation flow; reproduction remains a typed SDK/CLI advanced operation.",
-      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
-      "verification_ref": "docs/verification/final-verification.json"
+      "tested_commit": "7075a4308de655ce1bf1e8073a005aeee152bf0f",
+      "verification_ref": "docs/verification/final-verification.json",
+      "previous_tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8"
     },
     {
       "api": "POST /api/v1/projects/{project_id}/modeling/preparations (canonical alias)",
@@ -645,7 +725,9 @@
       "blocker": null,
       "cli": "kg-mnp service call --operation modeling.alignment --request <typed-request.json> (revocable KG_MNP_TOKEN; project/key as required)",
       "commits": [
-        "b63ba379327af4eb102d4a852498509cef9a3bf8"
+        "b63ba379327af4eb102d4a852498509cef9a3bf8",
+        "352f1bd42631546b417ec2804383dbb84f232b87",
+        "7075a4308de655ce1bf1e8073a005aeee152bf0f"
       ],
       "core_required": true,
       "execution_mode": "JOB",
@@ -661,7 +743,8 @@
         "tests/services/test_modeling_workflow.py::test_nonempty_review_confirmed_workflow",
         "tests/services/test_modeling_workflow.py",
         "tests/services/test_scope_revision.py",
-        "tests/services/test_review_revisions.py"
+        "tests/services/test_review_revisions.py",
+        "tests/services/test_mixed_source_workflow.py"
       ],
       "requirement_id": "modeling.alignment",
       "sdk": "LocalClient.execute / HTTPClient.execute(OperationRequest)",
@@ -672,8 +755,9 @@
       "request_contract": "ModelingPrepareRequest",
       "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
       "equivalence": "Explicit existing implementation delegation; no separate engine. GUI uses canonical preparation/proposal/validation flow; reproduction remains a typed SDK/CLI advanced operation.",
-      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
-      "verification_ref": "docs/verification/final-verification.json"
+      "tested_commit": "7075a4308de655ce1bf1e8073a005aeee152bf0f",
+      "verification_ref": "docs/verification/final-verification.json",
+      "previous_tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8"
     },
     {
       "api": "POST /api/v1/projects/{project_id}/modeling/proposals",
@@ -681,7 +765,9 @@
       "blocker": null,
       "cli": "kg-mnp service call --operation modeling.proposal --request <typed-request.json> (revocable KG_MNP_TOKEN; project/key as required)",
       "commits": [
-        "b63ba379327af4eb102d4a852498509cef9a3bf8"
+        "b63ba379327af4eb102d4a852498509cef9a3bf8",
+        "352f1bd42631546b417ec2804383dbb84f232b87",
+        "7075a4308de655ce1bf1e8073a005aeee152bf0f"
       ],
       "core_required": true,
       "execution_mode": "JOB",
@@ -697,7 +783,8 @@
         "tests/services/test_modeling_workflow.py::test_nonempty_review_confirmed_workflow",
         "tests/services/test_modeling_workflow.py",
         "tests/services/test_scope_revision.py",
-        "tests/services/test_review_revisions.py"
+        "tests/services/test_review_revisions.py",
+        "tests/services/test_mixed_source_workflow.py"
       ],
       "requirement_id": "modeling.proposal",
       "sdk": "LocalClient.execute / HTTPClient.execute(OperationRequest)",
@@ -707,8 +794,9 @@
       "final_revision_verified": true,
       "request_contract": "ProposalRequest",
       "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
-      "verification_ref": "docs/verification/final-verification.json"
+      "tested_commit": "7075a4308de655ce1bf1e8073a005aeee152bf0f",
+      "verification_ref": "docs/verification/final-verification.json",
+      "previous_tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8"
     },
     {
       "api": "POST /api/v1/projects/{project_id}/reviews/actions",
@@ -716,7 +804,9 @@
       "blocker": null,
       "cli": "kg-mnp service call --operation review.action --request <typed-request.json> (revocable KG_MNP_TOKEN; project/key as required)",
       "commits": [
-        "b63ba379327af4eb102d4a852498509cef9a3bf8"
+        "b63ba379327af4eb102d4a852498509cef9a3bf8",
+        "352f1bd42631546b417ec2804383dbb84f232b87",
+        "7075a4308de655ce1bf1e8073a005aeee152bf0f"
       ],
       "core_required": true,
       "execution_mode": "JOB",
@@ -732,7 +822,8 @@
         "tests/services/test_modeling_workflow.py::test_nonempty_review_confirmed_workflow",
         "tests/services/test_modeling_workflow.py",
         "tests/services/test_scope_revision.py",
-        "tests/services/test_review_revisions.py"
+        "tests/services/test_review_revisions.py",
+        "tests/services/test_mixed_source_workflow.py"
       ],
       "requirement_id": "review.action",
       "sdk": "LocalClient.execute / HTTPClient.execute(OperationRequest)",
@@ -742,8 +833,9 @@
       "final_revision_verified": true,
       "request_contract": "ReviewActionRequest",
       "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
-      "verification_ref": "docs/verification/final-verification.json"
+      "tested_commit": "7075a4308de655ce1bf1e8073a005aeee152bf0f",
+      "verification_ref": "docs/verification/final-verification.json",
+      "previous_tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8"
     },
     {
       "api": "GET /api/v1/projects/{project_id}/reviews/{review_id}",
@@ -751,7 +843,9 @@
       "blocker": null,
       "cli": "kg-mnp service call --operation review.replay --request <typed-request.json> (revocable KG_MNP_TOKEN; project/key as required)",
       "commits": [
-        "b63ba379327af4eb102d4a852498509cef9a3bf8"
+        "b63ba379327af4eb102d4a852498509cef9a3bf8",
+        "352f1bd42631546b417ec2804383dbb84f232b87",
+        "7075a4308de655ce1bf1e8073a005aeee152bf0f"
       ],
       "core_required": true,
       "execution_mode": "INLINE",
@@ -766,7 +860,8 @@
       "positive_tests": [
         "tests/services/test_modeling_workflow.py",
         "tests/services/test_scope_revision.py",
-        "tests/services/test_review_revisions.py"
+        "tests/services/test_review_revisions.py",
+        "tests/services/test_mixed_source_workflow.py"
       ],
       "requirement_id": "review.replay",
       "sdk": "LocalClient.execute / HTTPClient.execute(OperationRequest)",
@@ -777,8 +872,9 @@
       "final_revision_verified": true,
       "request_contract": "ReviewRequest",
       "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
-      "verification_ref": "docs/verification/final-verification.json"
+      "tested_commit": "7075a4308de655ce1bf1e8073a005aeee152bf0f",
+      "verification_ref": "docs/verification/final-verification.json",
+      "previous_tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8"
     },
     {
       "api": "POST /api/v1/projects/{project_id}/reviews/finalizations",
@@ -786,7 +882,9 @@
       "blocker": null,
       "cli": "kg-mnp service call --operation review.finalize --request <typed-request.json> (revocable KG_MNP_TOKEN; project/key as required)",
       "commits": [
-        "b63ba379327af4eb102d4a852498509cef9a3bf8"
+        "b63ba379327af4eb102d4a852498509cef9a3bf8",
+        "352f1bd42631546b417ec2804383dbb84f232b87",
+        "7075a4308de655ce1bf1e8073a005aeee152bf0f"
       ],
       "core_required": true,
       "execution_mode": "JOB",
@@ -802,7 +900,8 @@
         "tests/services/test_modeling_workflow.py::test_nonempty_review_confirmed_workflow",
         "tests/services/test_modeling_workflow.py",
         "tests/services/test_scope_revision.py",
-        "tests/services/test_review_revisions.py"
+        "tests/services/test_review_revisions.py",
+        "tests/services/test_mixed_source_workflow.py"
       ],
       "requirement_id": "review.finalize",
       "sdk": "LocalClient.execute / HTTPClient.execute(OperationRequest)",
@@ -812,8 +911,9 @@
       "final_revision_verified": true,
       "request_contract": "ReviewRequest",
       "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
-      "verification_ref": "docs/verification/final-verification.json"
+      "tested_commit": "7075a4308de655ce1bf1e8073a005aeee152bf0f",
+      "verification_ref": "docs/verification/final-verification.json",
+      "previous_tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8"
     },
     {
       "api": "POST /api/v1/projects/{project_id}/compilations/plans",
@@ -846,8 +946,9 @@
       "final_revision_verified": true,
       "request_contract": "CompilePlanRequest",
       "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
-      "verification_ref": "docs/verification/final-verification.json"
+      "tested_commit": "7075a4308de655ce1bf1e8073a005aeee152bf0f",
+      "verification_ref": "docs/verification/final-verification.json",
+      "previous_tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8"
     },
     {
       "api": "POST /api/v1/projects/{project_id}/compilations/builds",
@@ -880,8 +981,9 @@
       "final_revision_verified": true,
       "request_contract": "CompileBuildRequest",
       "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
-      "verification_ref": "docs/verification/final-verification.json"
+      "tested_commit": "7075a4308de655ce1bf1e8073a005aeee152bf0f",
+      "verification_ref": "docs/verification/final-verification.json",
+      "previous_tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8"
     },
     {
       "api": "POST /api/v1/operations/compile.validate (typed compatibility operation)",
@@ -914,8 +1016,9 @@
       "request_contract": "PackageRequest",
       "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
       "equivalence": "Explicit existing implementation delegation; no separate engine. GUI uses canonical preparation/proposal/validation flow; reproduction remains a typed SDK/CLI advanced operation.",
-      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
-      "verification_ref": "docs/verification/final-verification.json"
+      "tested_commit": "7075a4308de655ce1bf1e8073a005aeee152bf0f",
+      "verification_ref": "docs/verification/final-verification.json",
+      "previous_tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8"
     },
     {
       "api": "POST /api/v1/operations/compile.reproduce (typed compatibility operation)",
@@ -948,8 +1051,9 @@
       "request_contract": "CompileBuildRequest",
       "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
       "equivalence": "Explicit existing implementation delegation; no separate engine. GUI uses canonical preparation/proposal/validation flow; reproduction remains a typed SDK/CLI advanced operation.",
-      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
-      "verification_ref": "docs/verification/final-verification.json"
+      "tested_commit": "7075a4308de655ce1bf1e8073a005aeee152bf0f",
+      "verification_ref": "docs/verification/final-verification.json",
+      "previous_tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8"
     },
     {
       "api": "POST /api/v1/operations/package.inspect (typed compatibility operation)",
@@ -981,8 +1085,9 @@
       "final_revision_verified": true,
       "request_contract": "PackageRequest",
       "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
-      "verification_ref": "docs/verification/final-verification.json"
+      "tested_commit": "7075a4308de655ce1bf1e8073a005aeee152bf0f",
+      "verification_ref": "docs/verification/final-verification.json",
+      "previous_tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8"
     },
     {
       "api": "POST /api/v1/operations/package.verify (typed compatibility operation)",
@@ -1015,8 +1120,9 @@
       "final_revision_verified": true,
       "request_contract": "PackageRequest",
       "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
-      "verification_ref": "docs/verification/final-verification.json"
+      "tested_commit": "7075a4308de655ce1bf1e8073a005aeee152bf0f",
+      "verification_ref": "docs/verification/final-verification.json",
+      "previous_tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8"
     },
     {
       "api": "POST /api/v1/operations/package.export (typed compatibility operation)",
@@ -1049,8 +1155,9 @@
       "final_revision_verified": true,
       "request_contract": "PackageRequest",
       "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
-      "verification_ref": "docs/verification/final-verification.json"
+      "tested_commit": "7075a4308de655ce1bf1e8073a005aeee152bf0f",
+      "verification_ref": "docs/verification/final-verification.json",
+      "previous_tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8"
     },
     {
       "api": "POST /api/v1/projects/{project_id}/lifecycle/imports",
@@ -1083,8 +1190,9 @@
       "final_revision_verified": true,
       "request_contract": "PackageRequest",
       "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
-      "verification_ref": "docs/verification/final-verification.json"
+      "tested_commit": "7075a4308de655ce1bf1e8073a005aeee152bf0f",
+      "verification_ref": "docs/verification/final-verification.json",
+      "previous_tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8"
     },
     {
       "api": "POST /api/v1/operations/registry.verify (typed compatibility operation)",
@@ -1117,8 +1225,9 @@
       "final_revision_verified": true,
       "request_contract": "EmptyRequest",
       "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
-      "verification_ref": "docs/verification/final-verification.json"
+      "tested_commit": "7075a4308de655ce1bf1e8073a005aeee152bf0f",
+      "verification_ref": "docs/verification/final-verification.json",
+      "previous_tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8"
     },
     {
       "api": "POST /api/v1/projects/{project_id}/lifecycle/diffs",
@@ -1149,8 +1258,9 @@
       "final_revision_verified": true,
       "request_contract": "DiffRequest",
       "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
-      "verification_ref": "docs/verification/final-verification.json"
+      "tested_commit": "7075a4308de655ce1bf1e8073a005aeee152bf0f",
+      "verification_ref": "docs/verification/final-verification.json",
+      "previous_tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8"
     },
     {
       "api": "POST /api/v1/projects/{project_id}/lifecycle/impacts",
@@ -1181,8 +1291,9 @@
       "final_revision_verified": true,
       "request_contract": "DiffReferenceRequest",
       "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
-      "verification_ref": "docs/verification/final-verification.json"
+      "tested_commit": "7075a4308de655ce1bf1e8073a005aeee152bf0f",
+      "verification_ref": "docs/verification/final-verification.json",
+      "previous_tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8"
     },
     {
       "api": "POST /api/v1/projects/{project_id}/lifecycle/regressions",
@@ -1213,8 +1324,9 @@
       "final_revision_verified": true,
       "request_contract": "RegressionRequest",
       "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
-      "verification_ref": "docs/verification/final-verification.json"
+      "tested_commit": "7075a4308de655ce1bf1e8073a005aeee152bf0f",
+      "verification_ref": "docs/verification/final-verification.json",
+      "previous_tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8"
     },
     {
       "api": "POST /api/v1/projects/{project_id}/lifecycle/evaluations",
@@ -1245,8 +1357,9 @@
       "final_revision_verified": true,
       "request_contract": "ChangeEvaluationRequest",
       "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
-      "verification_ref": "docs/verification/final-verification.json"
+      "tested_commit": "7075a4308de655ce1bf1e8073a005aeee152bf0f",
+      "verification_ref": "docs/verification/final-verification.json",
+      "previous_tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8"
     },
     {
       "api": "POST /api/v1/projects/{project_id}/lifecycle/release-reviews",
@@ -1279,8 +1392,9 @@
       "final_revision_verified": true,
       "request_contract": "ReleaseReviewRequest",
       "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
-      "verification_ref": "docs/verification/final-verification.json"
+      "tested_commit": "7075a4308de655ce1bf1e8073a005aeee152bf0f",
+      "verification_ref": "docs/verification/final-verification.json",
+      "previous_tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8"
     },
     {
       "api": "POST /api/v1/projects/{project_id}/lifecycle/releases",
@@ -1313,8 +1427,9 @@
       "final_revision_verified": true,
       "request_contract": "ReleasePublishRequest",
       "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
-      "verification_ref": "docs/verification/final-verification.json"
+      "tested_commit": "7075a4308de655ce1bf1e8073a005aeee152bf0f",
+      "verification_ref": "docs/verification/final-verification.json",
+      "previous_tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8"
     },
     {
       "api": "POST /api/v1/operations/release.inspect (typed compatibility operation)",
@@ -1347,8 +1462,9 @@
       "final_revision_verified": true,
       "request_contract": "ReleaseRequest",
       "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
-      "verification_ref": "docs/verification/final-verification.json"
+      "tested_commit": "7075a4308de655ce1bf1e8073a005aeee152bf0f",
+      "verification_ref": "docs/verification/final-verification.json",
+      "previous_tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8"
     },
     {
       "api": "POST /api/v1/projects/{project_id}/lifecycle/activations",
@@ -1379,8 +1495,9 @@
       "final_revision_verified": true,
       "request_contract": "EnvironmentExecutionRequest",
       "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
-      "verification_ref": "docs/verification/final-verification.json"
+      "tested_commit": "7075a4308de655ce1bf1e8073a005aeee152bf0f",
+      "verification_ref": "docs/verification/final-verification.json",
+      "previous_tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8"
     },
     {
       "api": "POST /api/v1/projects/{project_id}/lifecycle/rollbacks",
@@ -1411,8 +1528,9 @@
       "final_revision_verified": true,
       "request_contract": "EnvironmentExecutionRequest",
       "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
-      "verification_ref": "docs/verification/final-verification.json"
+      "tested_commit": "7075a4308de655ce1bf1e8073a005aeee152bf0f",
+      "verification_ref": "docs/verification/final-verification.json",
+      "previous_tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8"
     },
     {
       "api": "GET /api/v1/projects/{project_id}/environment-pointer",
@@ -1445,8 +1563,9 @@
       "final_revision_verified": true,
       "request_contract": "EnvironmentRequest",
       "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
-      "verification_ref": "docs/verification/final-verification.json"
+      "tested_commit": "7075a4308de655ce1bf1e8073a005aeee152bf0f",
+      "verification_ref": "docs/verification/final-verification.json",
+      "previous_tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8"
     },
     {
       "api": "GET /api/v1/projects/{project_id}/metadata",
@@ -1479,8 +1598,9 @@
       "final_revision_verified": true,
       "request_contract": "MetadataRequest",
       "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
-      "verification_ref": "docs/verification/final-verification.json"
+      "tested_commit": "7075a4308de655ce1bf1e8073a005aeee152bf0f",
+      "verification_ref": "docs/verification/final-verification.json",
+      "previous_tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8"
     },
     {
       "api": "POST /api/v1/projects/{project_id}/objects/query",
@@ -1513,8 +1633,9 @@
       "final_revision_verified": true,
       "request_contract": "ObjectRequest",
       "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
-      "verification_ref": "docs/verification/final-verification.json"
+      "tested_commit": "7075a4308de655ce1bf1e8073a005aeee152bf0f",
+      "verification_ref": "docs/verification/final-verification.json",
+      "previous_tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8"
     },
     {
       "api": "POST /api/v1/operations/visualization.export (typed compatibility operation)",
@@ -1545,8 +1666,9 @@
       "final_revision_verified": true,
       "request_contract": "PackageRequest",
       "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
-      "verification_ref": "docs/verification/final-verification.json"
+      "tested_commit": "7075a4308de655ce1bf1e8073a005aeee152bf0f",
+      "verification_ref": "docs/verification/final-verification.json",
+      "previous_tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8"
     },
     {
       "api": "POST /api/v1/projects/{project_id}/integrations/plans",
@@ -1577,8 +1699,9 @@
       "final_revision_verified": true,
       "request_contract": "IntegrationPlanRequest",
       "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
-      "verification_ref": "docs/verification/final-verification.json"
+      "tested_commit": "7075a4308de655ce1bf1e8073a005aeee152bf0f",
+      "verification_ref": "docs/verification/final-verification.json",
+      "previous_tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8"
     },
     {
       "api": "POST /api/v1/projects/{project_id}/integrations/reviews",
@@ -1609,8 +1732,9 @@
       "final_revision_verified": true,
       "request_contract": "IntegrationReviewRequest",
       "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
-      "verification_ref": "docs/verification/final-verification.json"
+      "tested_commit": "7075a4308de655ce1bf1e8073a005aeee152bf0f",
+      "verification_ref": "docs/verification/final-verification.json",
+      "previous_tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8"
     },
     {
       "api": "POST /api/v1/projects/{project_id}/integrations/executions",
@@ -1644,8 +1768,9 @@
       "final_revision_verified": true,
       "request_contract": "IntegrationExecuteRequest",
       "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
-      "verification_ref": "docs/verification/final-verification.json"
+      "tested_commit": "7075a4308de655ce1bf1e8073a005aeee152bf0f",
+      "verification_ref": "docs/verification/final-verification.json",
+      "previous_tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8"
     },
     {
       "api": "POST /api/v1/projects/{project_id}/integrations/observations",
@@ -1679,8 +1804,9 @@
       "final_revision_verified": true,
       "request_contract": "IntegrationExecuteRequest",
       "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
-      "verification_ref": "docs/verification/final-verification.json"
+      "tested_commit": "7075a4308de655ce1bf1e8073a005aeee152bf0f",
+      "verification_ref": "docs/verification/final-verification.json",
+      "previous_tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8"
     },
     {
       "api": "POST /api/v1/projects/{project_id}/integrations/workflow-requests",
@@ -1714,8 +1840,9 @@
       "final_revision_verified": true,
       "request_contract": "WorkflowRequest",
       "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
-      "verification_ref": "docs/verification/final-verification.json"
+      "tested_commit": "7075a4308de655ce1bf1e8073a005aeee152bf0f",
+      "verification_ref": "docs/verification/final-verification.json",
+      "previous_tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8"
     },
     {
       "api": "POST /api/v1/operations/job.get (typed compatibility operation)",
@@ -1748,8 +1875,9 @@
       "final_revision_verified": true,
       "request_contract": "JobRequest",
       "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
-      "verification_ref": "docs/verification/final-verification.json"
+      "tested_commit": "7075a4308de655ce1bf1e8073a005aeee152bf0f",
+      "verification_ref": "docs/verification/final-verification.json",
+      "previous_tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8"
     },
     {
       "api": "POST /api/v1/operations/job.events (typed compatibility operation)",
@@ -1782,8 +1910,9 @@
       "final_revision_verified": true,
       "request_contract": "JobRequest",
       "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
-      "verification_ref": "docs/verification/final-verification.json"
+      "tested_commit": "7075a4308de655ce1bf1e8073a005aeee152bf0f",
+      "verification_ref": "docs/verification/final-verification.json",
+      "previous_tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8"
     },
     {
       "api": "POST /api/v1/operations/operation.catalog (typed compatibility operation)",
@@ -1815,8 +1944,9 @@
       "final_revision_verified": true,
       "request_contract": "EmptyRequest",
       "previous_checkpoint_status": "IMPLEMENTED_NOT_FINAL_REVISION_VERIFIED",
-      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
-      "verification_ref": "docs/verification/final-verification.json"
+      "tested_commit": "7075a4308de655ce1bf1e8073a005aeee152bf0f",
+      "verification_ref": "docs/verification/final-verification.json",
+      "previous_tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8"
     },
     {
       "api": null,
@@ -1844,8 +1974,9 @@
       "final_revision_verified": true,
       "previous_checkpoint_status": "VERIFIED",
       "evidence_scope": "Positive and negative assertions coexist in named capability files; final execution receipts bind exact collected nodes. Browser/manual/capacity/distribution are separate non-pytest evidence.",
-      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
-      "verification_ref": "docs/verification/final-verification.json"
+      "tested_commit": "7075a4308de655ce1bf1e8073a005aeee152bf0f",
+      "verification_ref": "docs/verification/final-verification.json",
+      "previous_tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8"
     },
     {
       "api": null,
@@ -1873,8 +2004,9 @@
       "final_revision_verified": true,
       "previous_checkpoint_status": "VERIFIED_LOCAL_JSON_CSV_CHAIN",
       "evidence_scope": "Positive and negative assertions coexist in named capability files; final execution receipts bind exact collected nodes. Browser/manual/capacity/distribution are separate non-pytest evidence.",
-      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
-      "verification_ref": "docs/verification/final-verification.json"
+      "tested_commit": "7075a4308de655ce1bf1e8073a005aeee152bf0f",
+      "verification_ref": "docs/verification/final-verification.json",
+      "previous_tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8"
     },
     {
       "api": null,
@@ -1902,8 +2034,9 @@
       "final_revision_verified": true,
       "previous_checkpoint_status": "VERIFIED_LOCAL_JSON_CSV_CHAIN",
       "evidence_scope": "Positive and negative assertions coexist in named capability files; final execution receipts bind exact collected nodes. Browser/manual/capacity/distribution are separate non-pytest evidence.",
-      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
-      "verification_ref": "docs/verification/final-verification.json"
+      "tested_commit": "7075a4308de655ce1bf1e8073a005aeee152bf0f",
+      "verification_ref": "docs/verification/final-verification.json",
+      "previous_tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8"
     },
     {
       "api": null,
@@ -1937,8 +2070,9 @@
       "final_revision_verified": true,
       "previous_checkpoint_status": "PARTIAL_VERIFIED",
       "evidence_scope": "Positive and negative assertions coexist in named capability files; final execution receipts bind exact collected nodes. Browser/manual/capacity/distribution are separate non-pytest evidence.",
-      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
-      "verification_ref": "docs/verification/final-verification.json"
+      "tested_commit": "7075a4308de655ce1bf1e8073a005aeee152bf0f",
+      "verification_ref": "docs/verification/final-verification.json",
+      "previous_tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8"
     },
     {
       "api": null,
@@ -1968,8 +2102,9 @@
       "final_revision_verified": true,
       "previous_checkpoint_status": "OPEN",
       "evidence_scope": "Positive and negative assertions coexist in named capability files; final execution receipts bind exact collected nodes. Browser/manual/capacity/distribution are separate non-pytest evidence.",
-      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
-      "verification_ref": "docs/verification/final-verification.json"
+      "tested_commit": "7075a4308de655ce1bf1e8073a005aeee152bf0f",
+      "verification_ref": "docs/verification/final-verification.json",
+      "previous_tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8"
     },
     {
       "api": null,
@@ -2001,8 +2136,9 @@
       "final_revision_verified": true,
       "previous_checkpoint_status": "OPEN",
       "evidence_scope": "Positive and negative assertions coexist in named capability files; final execution receipts bind exact collected nodes. Browser/manual/capacity/distribution are separate non-pytest evidence.",
-      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
-      "verification_ref": "docs/verification/final-verification.json"
+      "tested_commit": "7075a4308de655ce1bf1e8073a005aeee152bf0f",
+      "verification_ref": "docs/verification/final-verification.json",
+      "previous_tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8"
     },
     {
       "api": null,
@@ -2032,8 +2168,9 @@
       "final_revision_verified": true,
       "previous_checkpoint_status": "OPEN",
       "evidence_scope": "Positive and negative assertions coexist in named capability files; final execution receipts bind exact collected nodes. Browser/manual/capacity/distribution are separate non-pytest evidence.",
-      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
-      "verification_ref": "docs/verification/final-verification.json"
+      "tested_commit": "7075a4308de655ce1bf1e8073a005aeee152bf0f",
+      "verification_ref": "docs/verification/final-verification.json",
+      "previous_tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8"
     },
     {
       "api": null,
@@ -2063,8 +2200,9 @@
       "final_revision_verified": true,
       "previous_checkpoint_status": "OPEN",
       "evidence_scope": "Positive and negative assertions coexist in named capability files; final execution receipts bind exact collected nodes. Browser/manual/capacity/distribution are separate non-pytest evidence.",
-      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
-      "verification_ref": "docs/verification/final-verification.json"
+      "tested_commit": "7075a4308de655ce1bf1e8073a005aeee152bf0f",
+      "verification_ref": "docs/verification/final-verification.json",
+      "previous_tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8"
     },
     {
       "api": null,
@@ -2094,8 +2232,9 @@
       "final_revision_verified": true,
       "previous_checkpoint_status": "OPEN",
       "evidence_scope": "Positive and negative assertions coexist in named capability files; final execution receipts bind exact collected nodes. Browser/manual/capacity/distribution are separate non-pytest evidence.",
-      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
-      "verification_ref": "docs/verification/final-verification.json"
+      "tested_commit": "7075a4308de655ce1bf1e8073a005aeee152bf0f",
+      "verification_ref": "docs/verification/final-verification.json",
+      "previous_tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8"
     },
     {
       "api": null,
@@ -2125,8 +2264,9 @@
       "final_revision_verified": true,
       "previous_checkpoint_status": "PARTIAL_VERIFIED",
       "evidence_scope": "Positive and negative assertions coexist in named capability files; final execution receipts bind exact collected nodes. Browser/manual/capacity/distribution are separate non-pytest evidence.",
-      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
-      "verification_ref": "docs/verification/final-verification.json"
+      "tested_commit": "7075a4308de655ce1bf1e8073a005aeee152bf0f",
+      "verification_ref": "docs/verification/final-verification.json",
+      "previous_tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8"
     },
     {
       "api": null,
@@ -2160,8 +2300,9 @@
       "final_revision_verified": true,
       "previous_checkpoint_status": "PARTIAL",
       "evidence_scope": "Positive and negative assertions coexist in named capability files; final execution receipts bind exact collected nodes. Browser/manual/capacity/distribution are separate non-pytest evidence.",
-      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
-      "verification_ref": "docs/verification/final-verification.json"
+      "tested_commit": "7075a4308de655ce1bf1e8073a005aeee152bf0f",
+      "verification_ref": "docs/verification/final-verification.json",
+      "previous_tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8"
     },
     {
       "api": null,
@@ -2195,8 +2336,9 @@
       "final_revision_verified": true,
       "previous_checkpoint_status": "OPEN",
       "evidence_scope": "Positive and negative assertions coexist in named capability files; final execution receipts bind exact collected nodes. Browser/manual/capacity/distribution are separate non-pytest evidence.",
-      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
-      "verification_ref": "docs/verification/final-verification.json"
+      "tested_commit": "7075a4308de655ce1bf1e8073a005aeee152bf0f",
+      "verification_ref": "docs/verification/final-verification.json",
+      "previous_tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8"
     },
     {
       "api": null,
@@ -2226,8 +2368,9 @@
       "final_revision_verified": true,
       "previous_checkpoint_status": "OPEN",
       "evidence_scope": "Positive and negative assertions coexist in named capability files; final execution receipts bind exact collected nodes. Browser/manual/capacity/distribution are separate non-pytest evidence.",
-      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
-      "verification_ref": "docs/verification/final-verification.json"
+      "tested_commit": "7075a4308de655ce1bf1e8073a005aeee152bf0f",
+      "verification_ref": "docs/verification/final-verification.json",
+      "previous_tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8"
     },
     {
       "api": null,
@@ -2261,8 +2404,9 @@
       "final_revision_verified": true,
       "previous_checkpoint_status": "OPEN",
       "evidence_scope": "Positive and negative assertions coexist in named capability files; final execution receipts bind exact collected nodes. Browser/manual/capacity/distribution are separate non-pytest evidence.",
-      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
-      "verification_ref": "docs/verification/final-verification.json"
+      "tested_commit": "7075a4308de655ce1bf1e8073a005aeee152bf0f",
+      "verification_ref": "docs/verification/final-verification.json",
+      "previous_tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8"
     },
     {
       "api": null,
@@ -2294,8 +2438,9 @@
       "final_revision_verified": true,
       "previous_checkpoint_status": "OPEN",
       "evidence_scope": "Positive and negative assertions coexist in named capability files; final execution receipts bind exact collected nodes. Browser/manual/capacity/distribution are separate non-pytest evidence.",
-      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
-      "verification_ref": "docs/verification/final-verification.json"
+      "tested_commit": "7075a4308de655ce1bf1e8073a005aeee152bf0f",
+      "verification_ref": "docs/verification/final-verification.json",
+      "previous_tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8"
     },
     {
       "api": null,
@@ -2325,8 +2470,9 @@
       "final_revision_verified": true,
       "previous_checkpoint_status": "OPEN",
       "evidence_scope": "Positive and negative assertions coexist in named capability files; final execution receipts bind exact collected nodes. Browser/manual/capacity/distribution are separate non-pytest evidence.",
-      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
-      "verification_ref": "docs/verification/final-verification.json"
+      "tested_commit": "7075a4308de655ce1bf1e8073a005aeee152bf0f",
+      "verification_ref": "docs/verification/final-verification.json",
+      "previous_tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8"
     },
     {
       "api": null,
@@ -2357,8 +2503,9 @@
       "final_revision_verified": true,
       "previous_checkpoint_status": "OPEN",
       "evidence_scope": "Positive and negative assertions coexist in named capability files; final execution receipts bind exact collected nodes. Browser/manual/capacity/distribution are separate non-pytest evidence.",
-      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
-      "verification_ref": "docs/verification/final-verification.json"
+      "tested_commit": "7075a4308de655ce1bf1e8073a005aeee152bf0f",
+      "verification_ref": "docs/verification/final-verification.json",
+      "previous_tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8"
     },
     {
       "api": null,
@@ -2389,8 +2536,9 @@
       "final_revision_verified": true,
       "previous_checkpoint_status": "OPEN",
       "evidence_scope": "Positive and negative assertions coexist in named capability files; final execution receipts bind exact collected nodes. Browser/manual/capacity/distribution are separate non-pytest evidence.",
-      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
-      "verification_ref": "docs/verification/final-verification.json"
+      "tested_commit": "7075a4308de655ce1bf1e8073a005aeee152bf0f",
+      "verification_ref": "docs/verification/final-verification.json",
+      "previous_tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8"
     },
     {
       "api": null,
@@ -2419,8 +2567,9 @@
       "final_revision_verified": true,
       "previous_checkpoint_status": "OPEN",
       "evidence_scope": "Positive and negative assertions coexist in named capability files; final execution receipts bind exact collected nodes. Browser/manual/capacity/distribution are separate non-pytest evidence.",
-      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
-      "verification_ref": "docs/verification/final-verification.json"
+      "tested_commit": "7075a4308de655ce1bf1e8073a005aeee152bf0f",
+      "verification_ref": "docs/verification/final-verification.json",
+      "previous_tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8"
     },
     {
       "api": null,
@@ -2449,8 +2598,9 @@
       "final_revision_verified": true,
       "previous_checkpoint_status": "PARTIAL_VERIFIED",
       "evidence_scope": "Positive and negative assertions coexist in named capability files; final execution receipts bind exact collected nodes. Browser/manual/capacity/distribution are separate non-pytest evidence.",
-      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
-      "verification_ref": "docs/verification/final-verification.json"
+      "tested_commit": "7075a4308de655ce1bf1e8073a005aeee152bf0f",
+      "verification_ref": "docs/verification/final-verification.json",
+      "previous_tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8"
     },
     {
       "api": null,
@@ -2478,8 +2628,9 @@
       "final_revision_verified": true,
       "previous_checkpoint_status": "OPEN",
       "evidence_scope": "Positive and negative assertions coexist in named capability files; final execution receipts bind exact collected nodes. Browser/manual/capacity/distribution are separate non-pytest evidence.",
-      "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
-      "verification_ref": "docs/verification/final-verification.json"
+      "tested_commit": "7075a4308de655ce1bf1e8073a005aeee152bf0f",
+      "verification_ref": "docs/verification/final-verification.json",
+      "previous_tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8"
     }
   ],
   "source_commit": "9da17d126cb37166ff06084080770108da20afbe",
@@ -2573,6 +2724,7 @@
       "request_contract": "EnvironmentReviewRequest"
     }
   ],
-  "tested_commit": "b63ba379327af4eb102d4a852498509cef9a3bf8",
-  "evidence_scope": "Complete same-commit Windows/Linux and browser receipts; explicit canonical mappings, not count-based coverage or a claim that every compatibility alias has a separate GUI button"
+  "tested_commit": "7075a4308de655ce1bf1e8073a005aeee152bf0f",
+  "evidence_scope": "Complete accepted same7075 Windows/Linux1808node union and all6Browser each; whole-partition/suite retries identified explicitly; no cross-revision or per-test pass stitching",
+  "previous_verification_git_reference": "80fede0c63a9b99d1ec291545cbd3565cf1ef177:docs/verification/final-requirements.json"
 }

@@ -1,4 +1,15 @@
 {
+  "rc2_revalidation": {
+    "tested_commit": "7075a4308de655ce1bf1e8073a005aeee152bf0f",
+    "previous_ledger_git_reference": "80fede0c63a9b99d1ec291545cbd3565cf1ef177:docs/migration/final-retirement-ledger.json",
+    "status": "REFACTOR_COMPLETE_VERIFIED",
+    "new_product_files_retired": [],
+    "new_runtime_or_ui_authority": false,
+    "historical_entries_preserved": true,
+    "protected_inputs": "Actual git diff confirms no changes to contracts/minimal/mnp/semantic_kernel relative to tested RC1; baseline validator confirms MNP84",
+    "new_tests": "36 additional nodes, no original node removed; entire current collection1808 accepted on both platforms",
+    "shared_core": "V2 extends existing provider/service/review/compiler path; no new catalog or duplicate workbench"
+  },
   "status": "REFACTOR_COMPLETE_VERIFIED",
   "source_commit": "9da17d126cb37166ff06084080770108da20afbe",
   "retired_product_files": [
