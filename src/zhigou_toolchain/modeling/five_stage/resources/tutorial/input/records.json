@@ -1,0 +1,41 @@
+{
+  "dataset_id": "TUTORIAL-HR-001",
+  "synthetic": true,
+  "employees": [
+    {
+      "record_id": "ER-01",
+      "employee_id": "E-001",
+      "employee_name": "林晓",
+      "department_id": "D-01",
+      "source_ref": "SRC-EMP"
+    },
+    {
+      "record_id": "ER-02",
+      "employee_id": "E-002",
+      "employee_name": "陈雨",
+      "department_id": "D-02",
+      "source_ref": "SRC-EMP"
+    },
+    {
+      "record_id": "ER-03",
+      "employee_id": "E-003",
+      "employee_name": "周宁",
+      "department_id": "D-01",
+      "source_ref": "SRC-EMP"
+    }
+  ],
+  "departments": [
+    {
+      "record_id": "DR-01",
+      "department_id": "D-01",
+      "department_name": "研发部",
+      "source_ref": "SRC-DEP"
+    },
+    {
+      "record_id": "DR-02",
+      "department_id": "D-02",
+      "department_name": "运维部",
+      "source_ref": "SRC-DEP"
+    }
+  ]
+}

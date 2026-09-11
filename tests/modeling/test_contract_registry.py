@@ -7,7 +7,6 @@ import shutil
 from pathlib import Path
 
 import pytest
-
 from kg_mnp.modeling.contracts import (
     CONTRACT_SPECS,
     DRAFT_2020_12,
@@ -21,7 +20,7 @@ from kg_mnp.modeling.registry import (
 )
 
 ROOT = Path(__file__).resolve().parents[2]
-SCHEMA_DIR = ROOT / "src" / "kg_mnp" / "contracts" / "schemas" / "modeling"
+SCHEMA_DIR = ROOT / "src" / "zhigou_toolchain" / "contracts" / "schemas" / "modeling"
 PROMPT03_MODELING_CONTRACTS = {
     "cleaned-partial-data",
     "common",

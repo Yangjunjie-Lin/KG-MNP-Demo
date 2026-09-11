@@ -9,6 +9,11 @@ This file summarizes licenses of third-party software referenced or depended upo
 | OWL-RL | W3C Software Notice / BSD-style | Runtime dependency |
 | PyYAML | MIT | Runtime dependency |
 | jsonschema | MIT | Runtime dependency (JSON input validation) |
+| pandas | BSD-3-Clause | Optional modeling-analysis field statistics |
+| NetworkX | BSD-3-Clause | Optional modeling-analysis task dependency checks |
+| FlagEmbedding | MIT | Optional BGE embedding/reranking adapters; no weights redistributed |
+| FAISS | MIT | Optional normalized dense-vector retrieval |
+| Transformers / Tokenizers | Apache-2.0 | Optional local-only Fast Tokenizer loading |
 | pypdf | BSD-3-Clause | Optional PDF text extraction dependency |
 | openpyxl | MIT | Optional read-only XLSX parsing dependency |
 | python-docx | MIT | Optional DOCX paragraph/table parsing dependency |
@@ -25,3 +30,9 @@ The ingestion document dependencies are installed only through the bounded
 redistributed in the wheel. Full texts for runtime PyPI packages should be
 obtained from installed distribution metadata (`pip show` / package `LICENSE`
 files). CTO OWL files are intentionally **not** redistributed here.
+
+Model licenses depend on the explicitly selected model ID and revision. Qwen,
+BGE-M3 and BGE-reranker names in the method registry are not grants to redistribute
+weights. Review the selected model card/license during explicit preparation.
+The five-stage teaching materials are user-supplied synthetic references, not
+third-party employee records or live model/review evidence.

@@ -1,0 +1,24 @@
+{
+  "step_id": "2.4",
+  "mode": "TUTORIAL_REFERENCE",
+  "actual_execution_status": "NOT_RUN",
+  "input_refs": [
+    "2.3 ranked_candidates.json",
+    "B1 规则与目标"
+  ],
+  "illustrative_output": {
+    "reuse": [
+      "Employee",
+      "Department",
+      "belongsToDepartment"
+    ],
+    "create": [
+      "https://example.org/ontology/employeeId",
+      "https://example.org/ontology/employeeName",
+      "https://example.org/ontology/departmentId",
+      "https://example.org/ontology/departmentName"
+    ],
+    "unresolved": [],
+    "state": "DRAFT"
+  }
+}

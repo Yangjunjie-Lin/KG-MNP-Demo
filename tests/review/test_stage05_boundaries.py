@@ -19,7 +19,7 @@ def test_stage05_forbids_compilers_auto_confirm_and_integrations():
         "def llm_reviewer",
     )
     matches = []
-    for path in (ROOT / "src" / "kg_mnp" / "modeling").rglob("*.py"):
+    for path in (ROOT / "src" / "zhigou_toolchain" / "modeling").rglob("*.py"):
         text = path.read_text(encoding="utf-8")
         if any(marker in text for marker in forbidden):
             matches.append(path.relative_to(ROOT).as_posix())
@@ -28,16 +28,16 @@ def test_stage05_forbids_compilers_auto_confirm_and_integrations():
         "graphdb-local",
         "webvowl",
         "frontend",
-        "src/kg_mnp/graphdb.py",
+        "src/zhigou_toolchain/graphdb.py",
     ):
         assert not (ROOT / relative).exists()
 
 
 def test_review_modules_avoid_clock_random_network_llm_imports():
     for relative in (
-        "src/kg_mnp/modeling/review_log.py",
-        "src/kg_mnp/modeling/confirmation.py",
-        "src/kg_mnp/modeling/review_identifiers.py",
+        "src/zhigou_toolchain/modeling/review_log.py",
+        "src/zhigou_toolchain/modeling/confirmation.py",
+        "src/zhigou_toolchain/modeling/review_identifiers.py",
     ):
         tree = ast.parse((ROOT / relative).read_text(encoding="utf-8"))
         imports: set[str] = set()

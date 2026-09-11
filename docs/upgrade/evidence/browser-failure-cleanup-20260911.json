@@ -1,0 +1,13 @@
+{
+  "run": "runtime_logs/p09/browser-runs/managed-85646f9020fe44c5a2409e7b3b741428",
+  "original_status": "FAIL",
+  "browser_results": {"passed": 7, "failed": 1, "skipped": 2},
+  "failure": "The console test used a five-second default project-heading wait; the project was actually created and recorded as VALID after that wait.",
+  "application_source_changed": false,
+  "test_fix": "Use the same bounded 60-second real readiness wait already used by the security workflow; no semantic/review/permission gate changed.",
+  "targeted_recheck": "runtime_logs/p09/browser-runs/managed-935e18279b0b4a098781e9635c42a2be/managed-receipt.json",
+  "targeted_recheck_status": "PASS_WITH_CLEAN_SHUTDOWN",
+  "original_run_shutdown": "REQUIRED_FORCED_OWNED_SERVER_STOP",
+  "manual_cleanup": {"exact_synthetic_credentials_revoked": 2, "credential_file_removed": true, "user_data_removed": false},
+  "qualification": "Cleanup and a targeted recheck do not relabel the original full browser run as PASS."
+}

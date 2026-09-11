@@ -1,0 +1,134 @@
+{
+  "mode": "TUTORIAL_REFERENCE",
+  "actual_review_status": "NOT_REVIEWED",
+  "illustrated_action": "ACCEPT",
+  "note": "无真实人工审批，不可用于正式构建。",
+  "illustrative_items": [
+    {
+      "review_id": "DEMO-REVIEW-001",
+      "candidate_id": "F-001",
+      "candidate_version": 1,
+      "actual_status": "NOT_REVIEWED",
+      "illustrated_decision": "ACCEPT"
+    },
+    {
+      "review_id": "DEMO-REVIEW-002",
+      "candidate_id": "F-002",
+      "candidate_version": 1,
+      "actual_status": "NOT_REVIEWED",
+      "illustrated_decision": "ACCEPT"
+    },
+    {
+      "review_id": "DEMO-REVIEW-003",
+      "candidate_id": "F-003",
+      "candidate_version": 1,
+      "actual_status": "NOT_REVIEWED",
+      "illustrated_decision": "ACCEPT"
+    },
+    {
+      "review_id": "DEMO-REVIEW-004",
+      "candidate_id": "F-004",
+      "candidate_version": 1,
+      "actual_status": "NOT_REVIEWED",
+      "illustrated_decision": "ACCEPT"
+    },
+    {
+      "review_id": "DEMO-REVIEW-005",
+      "candidate_id": "F-005",
+      "candidate_version": 1,
+      "actual_status": "NOT_REVIEWED",
+      "illustrated_decision": "ACCEPT"
+    },
+    {
+      "review_id": "DEMO-REVIEW-006",
+      "candidate_id": "F-006",
+      "candidate_version": 1,
+      "actual_status": "NOT_REVIEWED",
+      "illustrated_decision": "ACCEPT"
+    },
+    {
+      "review_id": "DEMO-REVIEW-007",
+      "candidate_id": "F-007",
+      "candidate_version": 1,
+      "actual_status": "NOT_REVIEWED",
+      "illustrated_decision": "ACCEPT"
+    },
+    {
+      "review_id": "DEMO-REVIEW-008",
+      "candidate_id": "F-008",
+      "candidate_version": 1,
+      "actual_status": "NOT_REVIEWED",
+      "illustrated_decision": "ACCEPT"
+    },
+    {
+      "review_id": "DEMO-REVIEW-009",
+      "candidate_id": "F-009",
+      "candidate_version": 1,
+      "actual_status": "NOT_REVIEWED",
+      "illustrated_decision": "ACCEPT"
+    },
+    {
+      "review_id": "DEMO-REVIEW-010",
+      "candidate_id": "F-010",
+      "candidate_version": 1,
+      "actual_status": "NOT_REVIEWED",
+      "illustrated_decision": "ACCEPT"
+    },
+    {
+      "review_id": "DEMO-REVIEW-011",
+      "candidate_id": "F-011",
+      "candidate_version": 1,
+      "actual_status": "NOT_REVIEWED",
+      "illustrated_decision": "ACCEPT"
+    },
+    {
+      "review_id": "DEMO-REVIEW-012",
+      "candidate_id": "F-012",
+      "candidate_version": 1,
+      "actual_status": "NOT_REVIEWED",
+      "illustrated_decision": "ACCEPT"
+    },
+    {
+      "review_id": "DEMO-REVIEW-013",
+      "candidate_id": "F-013",
+      "candidate_version": 1,
+      "actual_status": "NOT_REVIEWED",
+      "illustrated_decision": "ACCEPT"
+    },
+    {
+      "review_id": "DEMO-REVIEW-014",
+      "candidate_id": "F-014",
+      "candidate_version": 1,
+      "actual_status": "NOT_REVIEWED",
+      "illustrated_decision": "ACCEPT"
+    },
+    {
+      "review_id": "DEMO-REVIEW-015",
+      "candidate_id": "F-015",
+      "candidate_version": 1,
+      "actual_status": "NOT_REVIEWED",
+      "illustrated_decision": "ACCEPT"
+    },
+    {
+      "review_id": "DEMO-REVIEW-016",
+      "candidate_id": "F-016",
+      "candidate_version": 1,
+      "actual_status": "NOT_REVIEWED",
+      "illustrated_decision": "ACCEPT"
+    },
+    {
+      "review_id": "DEMO-REVIEW-017",
+      "candidate_id": "F-017",
+      "candidate_version": 1,
+      "actual_status": "NOT_REVIEWED",
+      "illustrated_decision": "ACCEPT"
+    },
+    {
+      "review_id": "DEMO-REVIEW-018",
+      "candidate_id": "F-018",
+      "candidate_version": 1,
+      "actual_status": "NOT_REVIEWED",
+      "illustrated_decision": "ACCEPT"
+    }
+  ]
+}

@@ -1,0 +1,8 @@
+@prefix ex: <https://example.org/ontology/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+ex:Employee a owl:Class ; rdfs:label "员工"@zh .
+ex:Department a owl:Class ; rdfs:label "部门"@zh .
+ex:belongsToDepartment a owl:ObjectProperty ;
+    rdfs:label "所属部门"@zh ;
+    rdfs:domain ex:Employee ; rdfs:range ex:Department .

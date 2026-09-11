@@ -1,0 +1,20 @@
+{
+  "step_id": "4.1",
+  "mode": "TUTORIAL_REFERENCE",
+  "actual_execution_status": "NOT_RUN",
+  "input_refs": [
+    "B3 对象、事实、证据包",
+    "B2 结构约束"
+  ],
+  "illustrative_output": {
+    "objects": 5,
+    "facts": 18,
+    "evidence_supports": 21,
+    "missing_dependencies": [],
+    "build_plan": [
+      "declare_identifiers",
+      "write_properties_and_relations"
+    ],
+    "actual_execution": "NOT_RUN"
+  }
+}

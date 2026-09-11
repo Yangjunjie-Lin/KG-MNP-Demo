@@ -1,0 +1,19 @@
+{
+  "reference_checks": [
+    {
+      "file": "研究内容.pptx",
+      "sha256": "ce69690090d0e4bdb7a7ec54e94fe0226b6d15a22b1579c12da8651768f71115",
+      "expected_sha256": "ce69690090d0e4bdb7a7ec54e94fe0226b6d15a22b1579c12da8651768f71115",
+      "matches": true
+    },
+    {
+      "file": "知构工具链_本体建模操作台.html",
+      "sha256": "b8bec8e9ff553f5cf8ee0397b37bd4ba4ba961058e9cbe06107383f2dca19932",
+      "expected_sha256": "b8bec8e9ff553f5cf8ee0397b37bd4ba4ba961058e9cbe06107383f2dca19932",
+      "matches": true
+    }
+  ],
+  "prompt_sha256": "ea6a20d01e276078c54bad8fd08899a2b3e433ff9ea748b534fb576662564264",
+  "expected_prompt_sha256": "ea6a20d01e276078c54bad8fd08899a2b3e433ff9ea748b534fb576662564264",
+  "scope": "Source document integrity only, not execution evidence"
+}

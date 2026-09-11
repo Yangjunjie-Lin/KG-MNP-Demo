@@ -1,0 +1,123 @@
+{
+  "$defs": {
+    "RDFTerm": {
+      "additionalProperties": false,
+      "properties": {
+        "kind": {
+          "enum": [
+            "IRI",
+            "LITERAL"
+          ],
+          "title": "Kind",
+          "type": "string"
+        },
+        "value": {
+          "maxLength": 10000,
+          "title": "Value",
+          "type": "string"
+        },
+        "datatype": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Datatype"
+        },
+        "language": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Language"
+        }
+      },
+      "required": [
+        "kind",
+        "value"
+      ],
+      "title": "RDFTerm",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {
+      "const": "1.0.0",
+      "default": "1.0.0",
+      "title": "Schema Version",
+      "type": "string"
+    },
+    "query_type": {
+      "enum": [
+        "ASK",
+        "SELECT"
+      ],
+      "title": "Query Type",
+      "type": "string"
+    },
+    "comparison": {
+      "enum": [
+        "BOOLEAN",
+        "MULTISET",
+        "SET",
+        "ORDERED"
+      ],
+      "title": "Comparison",
+      "type": "string"
+    },
+    "variables": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 100,
+      "title": "Variables",
+      "type": "array"
+    },
+    "rows": {
+      "items": {
+        "additionalProperties": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/RDFTerm"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "type": "object"
+      },
+      "maxItems": 10000,
+      "title": "Rows",
+      "type": "array"
+    },
+    "boolean": {
+      "anyOf": [
+        {
+          "type": "boolean"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "title": "Boolean"
+    }
+  },
+  "required": [
+    "query_type",
+    "comparison"
+  ],
+  "title": "ExactAnswer",
+  "type": "object"
+}

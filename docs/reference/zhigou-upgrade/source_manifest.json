@@ -1,0 +1,28 @@
+{
+  "artifact": "知构工具链全链路实施 Prompt 交付包",
+  "scope": "本次仅生成实施指令，未修改项目或远端仓库，未运行项目测试。",
+  "prompt": {
+    "file": "知构工具链_全链路重构与独立验证总Prompt.md",
+    "sha256": "ea6a20d01e276078c54bad8fd08899a2b3e433ff9ea748b534fb576662564264"
+  },
+  "references": [
+    {
+      "file": "研究内容.pptx",
+      "bytes": 139995,
+      "sha256": "ce69690090d0e4bdb7a7ec54e94fe0226b6d15a22b1579c12da8651768f71115",
+      "role": "研究组织与指标"
+    },
+    {
+      "file": "知构工具链_本体建模操作台.html",
+      "bytes": 93490,
+      "sha256": "b8bec8e9ff553f5cf8ee0397b37bd4ba4ba961058e9cbe06107383f2dca19932",
+      "role": "五大流程工作台的视觉与交互参考；不是正式后台实现"
+    }
+  ],
+  "instruction_qa": {
+    "required_topics": "PRESENT",
+    "five_ontology_stages": "PRESENT",
+    "md_txt_identical": true,
+    "project_tests": "NOT_RUN"
+  }
+}

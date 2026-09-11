@@ -1,0 +1,32 @@
+import {test,expect} from '@playwright/test';
+import fs from 'node:fs';
+import path from 'node:path';
+
+test('completed MNP package has bounded real browser object and evidence readback',async({page},info)=>{
+  test.skip(process.env.ZHIGOU_SAVED_EVIDENCE!=='1','Explicitly selected completed synthetic workspace required.');
+  test.setTimeout(600000);
+  const workspace=process.env.ZHIGOU_SAVED_WORKSPACE;if(!workspace)throw new Error('Workspace not provided');
+  const catalog=JSON.parse(fs.readFileSync(path.join(workspace,'service-projects.json'),'utf8'));
+  const project=Object.values(catalog.projects).find((p:unknown)=>(p as {domain_pack:string}).domain_pack==='mnp') as {project_id:string}|undefined;
+  if(!project)throw new Error('Synthetic MNP project missing');
+  const prefix='/projects/'+encodeURIComponent(project.project_id);
+  const credentials=JSON.parse(fs.readFileSync(process.env.KG_MNP_BROWSER_CREDENTIAL!,'utf8'));
+  await page.goto(prefix+'/releases');await page.getByLabel('访问凭证').fill(credentials.token);await page.getByRole('button',{name:'登录',exact:true}).click();
+  await expect(page.getByRole('heading',{name:'本体服务与版本管理',exact:true})).toBeVisible();
+  const before=await (await page.request.get('/api/v1'+prefix+'/state',{timeout:120000})).json();
+  const built=before.results.filter((r:{operation:string})=>r.operation==='compile.build').at(-1).result;
+  const release=before.results.filter((r:{operation:string})=>r.operation==='release.publish').at(-1).result.release;
+  await page.getByLabel('本体包版本',{exact:true}).selectOption(built.package_id);
+  await page.getByLabel('或选择固定 Release').selectOption(release.release_id);
+  await page.getByLabel('实例所属 Class IRI').fill('https://yangjunjie-lin.github.io/KG-MNP-Demo/ontology/terms#MappingRecord');
+  const started=performance.now();await page.getByRole('button',{name:'查询实例',exact:true}).click();
+  await expect(page.getByRole('table').filter({has:page.getByRole('columnheader',{name:'实例 IRI',exact:true})}).getByRole('row')).toHaveCount(2,{timeout:120000});
+  const querySeconds=(performance.now()-started)/1000;
+  await page.getByRole('button',{name:/^追溯 /}).first().click();
+  await expect(page.getByRole('link',{name:/^下载关联原始资料/}).first()).toBeVisible({timeout:120000});
+  await page.getByRole('heading',{name:'固定 Package 对象浏览',exact:true}).scrollIntoViewIfNeeded();
+  await page.screenshot({path:info.outputPath('mnp-object-evidence.png'),fullPage:true});
+  const after=await (await page.request.get('/api/v1'+prefix+'/state',{timeout:120000})).json();
+  expect(after.project.authority_revision).toBe(before.project.authority_revision);
+  fs.writeFileSync(info.outputPath('mnp-readback.json'),JSON.stringify({package_id:built.package_id,release_id:release.release_id,query_seconds:querySeconds,expected_objects:1,core_api_mocked:false,authority_unchanged:true}));
+});

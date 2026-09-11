@@ -40,24 +40,25 @@ def test_wheel_contains_catalog_and_schemas_and_loads_outside_source_tree(
         str(wheel_dir),
         cwd=ROOT,
     )
-    wheels = tuple(wheel_dir.glob("kg_mnp_toolchain-*.whl"))
+    wheels = tuple(wheel_dir.glob("zhigou_toolchain-*.whl"))
     assert len(wheels) == 1
 
     with zipfile.ZipFile(wheels[0]) as archive:
         names = set(archive.namelist())
     expected = {
-        "kg_mnp/contracts/catalog.json",
-        "kg_mnp/contracts/catalog.lock.json",
-        *(f"kg_mnp/contracts/{spec.resource_path}" for spec in ContractCatalog.load().specs),
+        "zhigou_toolchain/contracts/catalog.json",
+        "zhigou_toolchain/contracts/catalog.lock.json",
+        *(f"zhigou_toolchain/contracts/{spec.resource_path}" for spec in ContractCatalog.load().specs),
     }
     assert expected <= names
-    assert "kg_mnp/ingestion/executor.py" in names
-    assert "kg_mnp/plugins/registry.py" in names
-    assert "kg_mnp/plugins/builtin/manifests/plain-text-parser.json" in names
-    assert "kg_mnp/modeling/control_plane/service.py" in names
-    assert "kg_mnp/plugins/builtin/manifests/baseline-reuse-provider.json" in names
-    assert "kg_mnp/semantic_kernel/resources/toolchain-compiler-policy-1.0.0.yaml" in names
-    assert "kg_mnp/semantic_kernel/resources/toolchain-provenance-vocabulary.ttl" in names
+    assert {name for name in names if name.startswith("kg_mnp/")} == {"kg_mnp/__init__.py", "kg_mnp/__main__.py", "kg_mnp/root_cli.py"}
+    assert "zhigou_toolchain/ingestion/executor.py" in names
+    assert "zhigou_toolchain/plugins/registry.py" in names
+    assert "zhigou_toolchain/plugins/builtin/manifests/plain-text-parser.json" in names
+    assert "zhigou_toolchain/modeling/control_plane/service.py" in names
+    assert "zhigou_toolchain/plugins/builtin/manifests/baseline-reuse-provider.json" in names
+    assert "zhigou_toolchain/semantic_kernel/resources/toolchain-compiler-policy-1.0.0.yaml" in names
+    assert "zhigou_toolchain/semantic_kernel/resources/toolchain-provenance-vocabulary.ttl" in names
     assert not any(name.startswith(("runtime_reports/", "runtime_outputs/")) for name in names)
     assert not any(name.startswith("domain_packs/") for name in names)
     assert not any("graphdb.license" in name.casefold() for name in names)

@@ -1,0 +1,21 @@
+{
+  "status": "ACTUAL_DOWNLOADED_PACKAGE_COUNTS",
+  "packages": [
+    {
+      "file": "docs/upgrade/evidence/hr-delivery.kgop",
+      "sha256": "3b63ebfc034f8fea4d367a186f0e54455769607acc2cc4c622c1b46112ad4ae4",
+      "bytes": 177991,
+      "objects": 5,
+      "abox_triples": 23,
+      "business_triples": 18
+    },
+    {
+      "file": "docs/upgrade/evidence/forestry-delivery.kgop",
+      "sha256": "86f907bd1e7e1dde09ef5edecb35eaabb846634f3d480dc50a53fbd00df42460",
+      "bytes": 249678,
+      "objects": 8,
+      "abox_triples": 38,
+      "business_triples": 30
+    }
+  ]
+}

@@ -1,0 +1,128 @@
+{
+  "step_id": "4.4",
+  "mode": "TUTORIAL_REFERENCE",
+  "actual_execution_status": "NOT_RUN",
+  "input_refs": [
+    "4.2 验证报告",
+    "B3 候选与证据"
+  ],
+  "illustrative_output": {
+    "mode": "TUTORIAL_REFERENCE",
+    "illustrative_decisions": [
+      {
+        "fact_id": "F-001",
+        "candidate_version": 1,
+        "illustrated_decision": "ACCEPT",
+        "actual_status": "NOT_REVIEWED"
+      },
+      {
+        "fact_id": "F-002",
+        "candidate_version": 1,
+        "illustrated_decision": "ACCEPT",
+        "actual_status": "NOT_REVIEWED"
+      },
+      {
+        "fact_id": "F-003",
+        "candidate_version": 1,
+        "illustrated_decision": "ACCEPT",
+        "actual_status": "NOT_REVIEWED"
+      },
+      {
+        "fact_id": "F-004",
+        "candidate_version": 1,
+        "illustrated_decision": "ACCEPT",
+        "actual_status": "NOT_REVIEWED"
+      },
+      {
+        "fact_id": "F-005",
+        "candidate_version": 1,
+        "illustrated_decision": "ACCEPT",
+        "actual_status": "NOT_REVIEWED"
+      },
+      {
+        "fact_id": "F-006",
+        "candidate_version": 1,
+        "illustrated_decision": "ACCEPT",
+        "actual_status": "NOT_REVIEWED"
+      },
+      {
+        "fact_id": "F-007",
+        "candidate_version": 1,
+        "illustrated_decision": "ACCEPT",
+        "actual_status": "NOT_REVIEWED"
+      },
+      {
+        "fact_id": "F-008",
+        "candidate_version": 1,
+        "illustrated_decision": "ACCEPT",
+        "actual_status": "NOT_REVIEWED"
+      },
+      {
+        "fact_id": "F-009",
+        "candidate_version": 1,
+        "illustrated_decision": "ACCEPT",
+        "actual_status": "NOT_REVIEWED"
+      },
+      {
+        "fact_id": "F-010",
+        "candidate_version": 1,
+        "illustrated_decision": "ACCEPT",
+        "actual_status": "NOT_REVIEWED"
+      },
+      {
+        "fact_id": "F-011",
+        "candidate_version": 1,
+        "illustrated_decision": "ACCEPT",
+        "actual_status": "NOT_REVIEWED"
+      },
+      {
+        "fact_id": "F-012",
+        "candidate_version": 1,
+        "illustrated_decision": "ACCEPT",
+        "actual_status": "NOT_REVIEWED"
+      },
+      {
+        "fact_id": "F-013",
+        "candidate_version": 1,
+        "illustrated_decision": "ACCEPT",
+        "actual_status": "NOT_REVIEWED"
+      },
+      {
+        "fact_id": "F-014",
+        "candidate_version": 1,
+        "illustrated_decision": "ACCEPT",
+        "actual_status": "NOT_REVIEWED"
+      },
+      {
+        "fact_id": "F-015",
+        "candidate_version": 1,
+        "illustrated_decision": "ACCEPT",
+        "actual_status": "NOT_REVIEWED"
+      },
+      {
+        "fact_id": "F-016",
+        "candidate_version": 1,
+        "illustrated_decision": "ACCEPT",
+        "actual_status": "NOT_REVIEWED"
+      },
+      {
+        "fact_id": "F-017",
+        "candidate_version": 1,
+        "illustrated_decision": "ACCEPT",
+        "actual_status": "NOT_REVIEWED"
+      },
+      {
+        "fact_id": "F-018",
+        "candidate_version": 1,
+        "illustrated_decision": "ACCEPT",
+        "actual_status": "NOT_REVIEWED"
+      }
+    ],
+    "focus": [
+      "关系方向",
+      "当前快照",
+      "身份范围",
+      "证据是否支持"
+    ]
+  }
+}

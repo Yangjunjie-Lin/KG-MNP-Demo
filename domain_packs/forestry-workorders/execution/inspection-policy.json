@@ -1,0 +1,11 @@
+{
+  "schema_version": "1.0.0",
+  "policy_id": "synthetic-followup-v1",
+  "action": "create_work_order",
+  "class_iri": "https://example.invalid/forestry#InspectionRecord",
+  "state_predicate": "https://example.invalid/forestry#inspectionNote",
+  "object_predicate": "https://example.invalid/forestry#inspectedTree",
+  "states": {"需要复查": "CREATE", "无需复查": "SKIP", "尚未完成检查，状态待核实": "VERIFY"},
+  "synthetic": true,
+  "meaning": "Engineering fixture; not a forestry diagnosis rule"
+}

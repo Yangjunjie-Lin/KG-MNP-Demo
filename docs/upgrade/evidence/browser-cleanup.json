@@ -1,0 +1,9 @@
+{
+  "scope": "owned synthetic browser run only",
+  "revoked": [
+    "synthetic-browser-human",
+    "synthetic-isolated-viewer"
+  ],
+  "credential_file_removed": true,
+  "forced_shutdown_reported": true
+}

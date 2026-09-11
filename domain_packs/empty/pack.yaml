@@ -1,0 +1,19 @@
+manifest_kind: KG_MNP_DOMAIN_PACK
+schema_version: 1.0.0
+pack_id: empty
+pack_version: 0.1.0
+display_name: 无业务基线的新建本体
+description: Empty business vocabulary for explicit evidence-bound human-authored construction; no inferred classes or rules.
+lifecycle: EXPERIMENTAL
+compatibility: {contract_major: 1, minimum_toolchain_version: 0.2.0}
+license: {expression: Apache-2.0, notice_files: []}
+capabilities: [fixtures, ontology, queries, shacl]
+namespaces: {ontology: 'urn:zhigou:empty:ontology', terms: 'urn:new:'}
+assets:
+  - {asset_id: empty-input, kind: fixture, path: fixtures/entity.csv, media_type: text/csv, required: true, description: One synthetic record for a new ontology}
+  - {asset_id: empty-ontology, kind: ontology-root, path: ontology/empty.ttl, media_type: text/turtle, required: true, description: Administrative ontology header only; zero business terms, ontology_iri: 'urn:zhigou:empty:ontology', version_iri: 'urn:zhigou:empty:ontology:0.1.0'}
+  - {asset_id: empty-query-values, kind: query, path: queries/values.rq, media_type: application/sparql-query, required: true, description: Independent literal-value query; expected answers are supplied before construction}
+  - {asset_id: empty-shapes, kind: shacl-shapes, path: shapes/empty.ttl, media_type: text/turtle, required: true, description: No pre-existing business constraints, profile: default}
+entrypoints: {ontology: empty-ontology, shacl: empty-shapes, queries: empty-query-values, fixtures: empty-input}
+dependencies: []
+extensions: {}

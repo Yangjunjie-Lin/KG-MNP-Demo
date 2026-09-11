@@ -1,0 +1,43 @@
+{
+  "mode": "SELECTED_BROWSER_E2E",
+  "selected_test": "five-stage.e2e.ts",
+  "status": "PASS",
+  "startup_seconds": 7.922000000020489,
+  "browser_exit_code": 0,
+  "server_exit_code": 0,
+  "shutdown": {
+    "credentials_removed": true,
+    "credentials_revoked": true,
+    "worker_stopped": true
+  },
+  "artifacts": {
+    "junit.xml": "e23ade57634ffce1bec74326d4a44f4ee88346f5be2083621b752ac5d01ef01a",
+    "server.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stop-requested": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "output/.last-run.json": "91d1c43004802cd49950d78eb11c8fa7d05da8ffffe219a8b13b2f561bc00903",
+    "output/five-stage.e2e.ts-five-sta-3d462-ocking-and-responsive-views/screenshots/data-journey-390-accessibility.json": "29700ded703ff06a8bdbf90faf4e43ddaccf53e154b889b4234e65db3ceed62f",
+    "output/five-stage.e2e.ts-five-sta-3d462-ocking-and-responsive-views/screenshots/data-journey-390.png": "1fbd5b6b4cdd94f615a6a3b86789f567f9a932a09d682f63cb8ad97d9dfcd242",
+    "output/five-stage.e2e.ts-five-sta-3d462-ocking-and-responsive-views/screenshots/evidence-drawer-accessibility.json": "f2403ee4e86ce176785283ed0e016abe4eaad02872b0b6983ca91fb53faa13ad",
+    "output/five-stage.e2e.ts-five-sta-3d462-ocking-and-responsive-views/screenshots/evidence-drawer.png": "e10608e116e763f6ff54bdced7778dd25ed00dac1717f303b001d4cf65c91f04",
+    "output/five-stage.e2e.ts-five-sta-3d462-ocking-and-responsive-views/screenshots/provider-blocked-accessibility.json": "ded6d734aa2a747292e89196ec20ab8bfd0fb16ec43fea66181fe743273e474f",
+    "output/five-stage.e2e.ts-five-sta-3d462-ocking-and-responsive-views/screenshots/provider-blocked.png": "27857c92d7a3318faca04bbb5d3a88cac107e18cb4da9e13b6a977b9eff3b268",
+    "output/five-stage.e2e.ts-five-sta-3d462-ocking-and-responsive-views/screenshots/real-profile-output-accessibility.json": "374e9cfc8263b2d07fd1b35378a70efa6aff61df33ff4fa3995545beafd3a3eb",
+    "output/five-stage.e2e.ts-five-sta-3d462-ocking-and-responsive-views/screenshots/real-profile-output.png": "31c329c07b53fe6d056987f58933cd5bc6e5df69cc7cb9a9db2067de31976192",
+    "output/five-stage.e2e.ts-five-sta-3d462-ocking-and-responsive-views/screenshots/stage-output-accessibility.json": "78e5f2a54f95d685bfa400995244e3d13edd135b149c7fcb71ae0f5390f38fa6",
+    "output/five-stage.e2e.ts-five-sta-3d462-ocking-and-responsive-views/screenshots/stage-output.png": "d48976b6832ec520c30421814834ec9829b0ce848260a976da07c7bf192558d5",
+    "output/five-stage.e2e.ts-five-sta-3d462-ocking-and-responsive-views/screenshots/tutorial-1024-accessibility.json": "8071df30dea2cfaee3ebc254fce69eb2815d843f8a0857781e3612eb4129406a",
+    "output/five-stage.e2e.ts-five-sta-3d462-ocking-and-responsive-views/screenshots/tutorial-1024.png": "45639088107c84b197574b9f524ca9706b53836ca405c131c7d45465784053b2",
+    "output/five-stage.e2e.ts-five-sta-3d462-ocking-and-responsive-views/screenshots/tutorial-1280-accessibility.json": "28382dd09009cfe5e454ec57a19ee0419628cdd5d8532e8ec4030af70a52a630",
+    "output/five-stage.e2e.ts-five-sta-3d462-ocking-and-responsive-views/screenshots/tutorial-1280.png": "763f78d445955ea07fc076236cfc06f954a845da0a356f3b30f25a188d0998f1",
+    "output/five-stage.e2e.ts-five-sta-3d462-ocking-and-responsive-views/screenshots/tutorial-1440-accessibility.json": "ed47f9bc7ba4f7efa4ddddd711f3b0d4986b4abff3a27b4dcade72b6e6418ebd",
+    "output/five-stage.e2e.ts-five-sta-3d462-ocking-and-responsive-views/screenshots/tutorial-1440.png": "d48976b6832ec520c30421814834ec9829b0ce848260a976da07c7bf192558d5",
+    "output/five-stage.e2e.ts-five-sta-3d462-ocking-and-responsive-views/screenshots/tutorial-390-accessibility.json": "5aa6f471237c0bbd43e1f9f358332cee939eeaefbb57f37dbe4f52cad205b891",
+    "output/five-stage.e2e.ts-five-sta-3d462-ocking-and-responsive-views/screenshots/tutorial-390.png": "c29090b2f7b48dbc60a6674678117e1c9b1abce6bbe7252237dacff8ec9b078f",
+    "output/five-stage.e2e.ts-five-sta-3d462-ocking-and-responsive-views/screenshots/tutorial-768-accessibility.json": "2dd2af83834942b831c320a08bd4d1f91738febe6b46ee87323ebcaec64f89dc",
+    "output/five-stage.e2e.ts-five-sta-3d462-ocking-and-responsive-views/screenshots/tutorial-768.png": "e4531616eabff80cf28078fabf1edd09d996928782178d6109f3df245386a915",
+    "output/five-stage.e2e.ts-five-sta-3d462-ocking-and-responsive-views/screenshots/tutorial-accessibility.json": "cb4ef9262bbffe6618a7bc52a1f47c36ef782b742ab6a68e43ffb9024e3192c7",
+    "output/five-stage.e2e.ts-five-sta-3d462-ocking-and-responsive-views/screenshots/tutorial.png": "23301a80f8e390e6a141ef37ae3e9745f298e040ecc88be69a9054a021c7e335",
+    "output/five-stage.e2e.ts-five-sta-3d462-ocking-and-responsive-views/screenshots/workbench-empty-accessibility.json": "3ede3574070261e4eafa07f76a83afe9699b40573db3655785ede5692faec97c",
+    "output/five-stage.e2e.ts-five-sta-3d462-ocking-and-responsive-views/screenshots/workbench-empty.png": "852beccce0a1384aa0a6fd1bdd2d0ac2f8fbc62eb637def711470b6bc15a1eb8"
+  }
+}

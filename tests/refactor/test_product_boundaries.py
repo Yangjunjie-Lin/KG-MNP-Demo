@@ -37,7 +37,8 @@ def _load_pyproject() -> dict:
 
 def test_kg_mnp_console_entry_uses_the_application_aware_root_dispatcher():
     scripts = _load_pyproject()["scripts"]
-    assert scripts.get("kg-mnp") == "kg_mnp.root_cli:main"
+    assert scripts.get("kg-mnp") == "kg_mnp:legacy_main"
+    assert scripts.get("zhigou-toolchain") == "zhigou_toolchain.root_cli:main"
 
 
 def test_domain_specific_eligibility_console_entry_is_not_public():
@@ -78,17 +79,17 @@ def test_no_neo4j_and_current_http_dependency_is_exactly_locked():
     fastapi = next(pin for pin in project["project"]["dependencies"] if pin.startswith("fastapi=="))
     assert fastapi in locked
     assert '"uvicorn==0.30.6"' in text
-    assert (ROOT / "src/kg_mnp/api/app.py").is_file()
+    assert (ROOT / "src/zhigou_toolchain/api/app.py").is_file()
 
 
 def test_service_api_is_explicit_and_neo4j_packages_absent():
     # The original Stage 01 closure predated the Prompt 07 service boundary.
     # Keep its storage/Neo4j prohibition while allowing the explicit API layer
     # introduced by the unified service architecture.
-    assert (ROOT / "src" / "kg_mnp" / "api" / "app.py").is_file()
-    assert not (ROOT / "src" / "kg_mnp" / "storage").exists()
-    assert not (ROOT / "src" / "kg_mnp" / "neo4j_pipeline.py").exists()
-    assert not (ROOT / "src" / "kg_mnp" / "neo4j_store.py").exists()
+    assert (ROOT / "src" / "zhigou_toolchain" / "api" / "app.py").is_file()
+    assert not (ROOT / "src" / "zhigou_toolchain" / "storage").exists()
+    assert not (ROOT / "src" / "zhigou_toolchain" / "neo4j_pipeline.py").exists()
+    assert not (ROOT / "src" / "zhigou_toolchain" / "neo4j_store.py").exists()
 
 
 def test_readme_does_not_treat_eligibility_as_central_task():

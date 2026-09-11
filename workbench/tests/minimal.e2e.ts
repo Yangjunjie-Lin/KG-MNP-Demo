@@ -2,6 +2,7 @@ import { test, expect } from '@playwright/test';
 import fs from 'node:fs';
 import path from 'node:path';
 import {versionFlow} from './version-flow';
+import {readProjectState} from './browser-session';
 import {mixedInputs,mixedMapping} from './mixed-flow';
 import AxeBuilder from '@axe-core/playwright';
 import os from 'node:os';
@@ -26,15 +27,15 @@ for(const scenario of scenarios) test(`real browser ${scenario.id} source review
   await expect(page.getByRole('heading',{name:'选择项目',exact:true})).toBeVisible();
   const name='合成本体验收-'+Date.now();
   await page.getByLabel('项目名称').fill(name);
-  await page.getByLabel('领域包与版本').selectOption(`${scenario.id==='mixed'?'minimal':scenario.id}@${scenario.version}`);
+  await page.getByLabel('领域包与版本').selectOption(`${scenario.id==='mixed'?'minimal':scenario.id}@${scenario.version}`,{timeout:120000});
   await page.getByRole('button',{name:'创建项目',exact:true}).click();
   await expect(page.getByRole('heading',{name:'项目概览',exact:true})).toBeVisible({timeout:60000});
   const projectPath=new URL(page.url()).pathname.split('/').slice(0,3).join('/');
-  async function state(){const response=await page.request.get('/api/v1'+projectPath+'/state');if(!response.ok())throw new Error(`Project state HTTP ${response.status()}: ${await response.text()}`);return response.json();}
-  async function output(operation:string,key?:string){await expect.poll(async()=>{const s=await state();const failed=s.jobs.find((j:{status:string;operation_id:string})=>j.status==='FAILED'&&j.operation_id===operation);if(failed)throw new Error(JSON.stringify(failed));return s.results.filter((r:{operation:string})=>r.operation===operation).length;},{timeout:/^(compile|registry|release|change|environment)\./.test(operation)?600000:120000}).toBeGreaterThan(0);const s=await state();const result=s.results.filter((r:{operation:string})=>r.operation===operation).at(-1).result;return key?result[key]:result;}
+  async function state(){return readProjectState(page,projectPath);}
+  async function output(operation:string,key?:string){await expect.poll(async()=>{const s=await state();const failed=s.jobs.find((j:{status:string;operation_id:string})=>j.status==='FAILED'&&j.operation_id===operation);if(failed)throw new Error(JSON.stringify(failed));return s.results.filter((r:{operation:string})=>r.operation===operation).length;},{timeout:/^(compile|package|registry|release|change|environment)\./.test(operation)?600000:120000}).toBeGreaterThan(0);const s=await state();const result=s.results.filter((r:{operation:string})=>r.operation===operation).at(-1).result;return key?result[key]:result;}
   async function screenshot(name:string){const targets:Record<string,string>={'source-evidence':'证据定位与转换记录','scope-cq':'范围确认与能力问题','field-mapping':'术语与字段映射候选','review':'候选审核','compilation':'正式验证结果','release-objects':'固定 Package 对象浏览','version-diff':'语义版本对比','environment-rollback':'环境与指定历史回滚','graphdb-blocked':'GraphDB 可用性与审核计划'};if(name==='review')await page.getByTestId('review-head').evaluate(e=>e.scrollIntoView({block:'start'}));else if(targets[name])await page.getByRole('heading',{name:targets[name],exact:true}).evaluate(e=>e.scrollIntoView({block:'start'}));else await page.evaluate(()=>window.scrollTo(0,0));const scan=await new AxeBuilder({page}).withTags(['wcag2a','wcag2aa','wcag21aa']).analyze();fs.writeFileSync(path.join(evidenceRoot,name+'-accessibility.json'),JSON.stringify(scan,null,2));expect(scan.violations).toEqual([]);await page.screenshot({path:path.join(evidenceRoot,name+'.png'),fullPage:false});}
   await screenshot('project-overview');
-  await page.getByRole('link',{name:'资料与证据',exact:true}).click();
+  await page.getByRole('link',{name:'数据接入与规则化',exact:true}).click();
   const inputs=scenario.id==='mixed'?mixedInputs():scenario.files.length?scenario.files.map(name=>({name,mimeType:'text/csv',buffer:fs.readFileSync(path.resolve('../domain_packs',scenario.id,'fixtures',name))})):scenario.id==='mnp'?[{name:'mapping.csv',mimeType:'text/csv',buffer:Buffer.from(['mappingCode,sourceApi,sourceFieldPath,targetTerm,mappingReviewStatus','SYN-M01,Synthetic source,sample.field,Subscriber,SYNTHETIC_TEST',''].join(String.fromCharCode(10)))}]:[{name:'synthetic.csv',mimeType:'text/csv',buffer:Buffer.from(['entity,label','synthetic,Synthetic entity',''].join(String.fromCharCode(10)))}];
   for(let index=0;index<inputs.length;index++){
     await page.getByLabel('资料文件').setInputFiles(inputs[index]);
@@ -58,7 +59,8 @@ for(const scenario of scenarios) test(`real browser ${scenario.id} source review
   await page.getByLabel('解析运行').selectOption(run.run_id);
   await expect(page.getByRole('heading',{name:'证据定位与转换记录',exact:true})).toBeVisible();
   await screenshot('source-evidence');
-  await page.getByRole('link',{name:'本体建模与审核',exact:true}).click();
+  await page.getByRole('link',{name:'本体建模',exact:true}).click();
+  await page.goto(projectPath+'/modeling?step=1.3');
   await page.getByLabel('已验证的解析运行').selectOption(run.run_id);
   await page.getByLabel('目标对象（逗号分隔）').fill(scenario.concepts);
   await page.getByLabel('范围说明').fill(`Synthetic ${scenario.id} browser acceptance`);
@@ -66,7 +68,8 @@ for(const scenario of scenarios) test(`real browser ${scenario.id} source review
   await page.getByLabel('排除范围（每行一项）').fill('production deployment');
   await page.getByRole('button',{name:'保存范围草案',exact:true}).click();
   const scope=await output('modeling.scope','scope');
-  await page.getByLabel('范围版本').selectOption(scope.scope_id);
+  await page.goto(projectPath+'/modeling?step=1.4&scope='+encodeURIComponent(scope.scope_id));
+  await page.getByLabel('范围版本',{exact:true}).selectOption(scope.scope_id);
   await page.getByLabel('范围批准理由').fill('Explicit synthetic human scope approval');
   await page.getByRole('button',{name:'以当前身份批准范围',exact:true}).click();
   await output('modeling.scope.approve');
@@ -76,6 +79,7 @@ for(const scenario of scenarios) test(`real browser ${scenario.id} source review
   await page.getByRole('button',{name:'保存 CQ 并准备基线、术语与映射',exact:true}).click();
   const prepared=await output('modeling.prepare');
   await screenshot('scope-cq');
+  await page.goto(projectPath+'/modeling?step='+(['mnp','mixed'].includes(scenario.id)?'3.1':'2.1')+'&scope='+encodeURIComponent(scope.scope_id));
   if(scenario.id==='mnp'){
     await page.getByLabel('记录表标识').fill('mappings');
     await page.getByLabel('映射资料文件').selectOption('mapping.csv');
@@ -91,6 +95,7 @@ for(const scenario of scenarios) test(`real browser ${scenario.id} source review
   } else if(scenario.id==='mixed')await mixedMapping(page,prepared,scenario.classIri);
   else await page.getByRole('button',{name:'运行离线候选 Provider',exact:true}).click();
   const proposal=await output('modeling.proposal');
+  if(scenario.id==='mixed')await page.goto(projectPath+'/modeling?step=3.1&scope='+encodeURIComponent(scope.scope_id)+'&review='+encodeURIComponent(proposal.queue.review_queue_id));
   if(scenario.id==='mixed'){
     expect(proposal.extraction.unmapped_item_ids).toEqual([]);
     expect(proposal.extraction.identities).toHaveLength(2);
@@ -102,11 +107,13 @@ for(const scenario of scenarios) test(`real browser ${scenario.id} source review
     await page.keyboard.press('Tab');
     await expect(page.getByRole('button',{name:'添加原文记录',exact:true})).toBeFocused();
   }
+  await page.goto(projectPath+'/modeling?step=2.1&scope='+encodeURIComponent(scope.scope_id));
   await screenshot('field-mapping');
   await page.getByLabel('选择映射查看原始样本',{exact:true}).selectOption(prepared.mappings.mappings[0].field_mapping_id);
   await expect(page.getByRole('link',{name:/^下载映射样本来源 /}).first()).toBeVisible({timeout:90000});
   await page.getByRole('heading',{name:'映射原始样本',exact:true}).evaluate(e=>e.scrollIntoView({block:'start'}));
   await page.screenshot({path:path.join(evidenceRoot,'field-sample.png')});
+  await page.goto(projectPath+'/modeling?step=4.4&scope='+encodeURIComponent(scope.scope_id)+'&review='+encodeURIComponent(proposal.queue.review_queue_id));
   await page.getByLabel('审核队列').selectOption(proposal.queue.review_queue_id);
   if(scenario.id==='mixed'){
     await page.getByRole('heading',{name:'来源覆盖与身份核对',exact:true}).evaluate(e=>e.scrollIntoView({block:'start'}));
@@ -141,6 +148,10 @@ for(const scenario of scenarios) test(`real browser ${scenario.id} source review
   const items=proposal.queue.items.filter((i:{candidate_id?:string})=>i.candidate_id);
   for(let index=0;index<items.length;index++){
     const actions=await state();const count=actions.results.filter((r:{operation:string})=>r.operation==='review.action').length;
+    // A real 401 recovery reloads the page and deliberately does not replay
+    // transient form input. Restore the rationale for this NEW decision only,
+    // after observing the committed state; never repeat an earlier approval.
+    await page.getByLabel('本次审核理由').fill(`Explicit human decision for synthetic candidate ${index}`);
     await page.getByRole('button',{name:'接受此项',exact:true}).nth(index).click();
     await expect.poll(async()=>{const s=await state();const failed=s.jobs.find((j:{operation_id:string;status:string})=>j.operation_id==='review.action'&&j.status==='FAILED');if(failed)throw new Error(JSON.stringify(failed));return s.results.filter((r:{operation:string})=>r.operation==='review.action').length;},{timeout:120000}).toBe(count+1);
     // Wait for the actual action table, not a fixed delay or a forged head.
@@ -161,7 +172,8 @@ for(const scenario of scenarios) test(`real browser ${scenario.id} source review
     await expect(page.getByRole('heading',{name:'选择项目',exact:true})).toBeVisible();
     await page.goto(projectPath+'/modeling');
   }
-  await page.getByRole('link',{name:'验证与发布',exact:true}).click();
+  await page.getByRole('link',{name:'本体服务与版本管理',exact:true}).click();
+  await page.goto(projectPath+'/modeling?stage=5');
   await page.getByLabel('确认包',{exact:true}).selectOption(confirmed.package_id);
   await page.getByLabel('本体包名称').fill(`synthetic-browser-${scenario.id}`);
   await page.getByLabel('本体包版本',{exact:true}).first().fill(scenario.version);
@@ -176,6 +188,9 @@ for(const scenario of scenarios) test(`real browser ${scenario.id} source review
   await page.getByRole('button',{name:'执行真实编译与验证',exact:true}).click();
   const built=await output('compile.build');
   expect(built.reports['competency-question-test-report.json'].required_passed).toBe(true);
+  await page.getByRole('button',{name:'准备安全下载（后台任务）',exact:true}).click();
+  await output('package.export');
+  await expect(page.getByRole('link',{name:'下载已验证本体包（.kgop）',exact:true})).toBeVisible({timeout:120000});
   const archiveDownloadPromise=page.waitForEvent('download',{timeout:120000});
   await page.getByRole('link',{name:'下载已验证本体包（.kgop）',exact:true}).click();
   const packageDownload=await archiveDownloadPromise;
@@ -189,6 +204,7 @@ for(const scenario of scenarios) test(`real browser ${scenario.id} source review
   expect(packageVerification.result.status).toBe('VALID');
   fs.writeFileSync(path.join(evidenceRoot,'downloaded-package-verification.json'),JSON.stringify(packageVerification,null,2));
   await screenshot('compilation');
+  await page.goto(projectPath+'/releases');
   await page.getByRole('button',{name:'验证并导入本地 Registry',exact:true}).click();
   await output('registry.import');
   await page.getByRole('button',{name:'创建初始 Release Candidate',exact:true}).click();
@@ -199,12 +215,12 @@ for(const scenario of scenarios) test(`real browser ${scenario.id} source review
   await page.getByRole('button',{name:'使用当前 Registry CAS 发布',exact:true}).click();
   const released=await output('release.publish');
   expect(released.release.release_status).toBe('RELEASED');
-  await page.getByRole('link',{name:'项目概览',exact:true}).click();
+  await page.getByRole('link',{name:'项目',exact:true}).click();
   await expect(page.getByRole('link',{name:released.release.release_id,exact:true})).toBeVisible({timeout:20000});
   await expect(page.getByRole('link',{name:built.package_id,exact:true})).toBeVisible();
   await page.getByRole('heading',{name:'当前工件与审核状态',exact:true}).evaluate(e=>e.scrollIntoView({block:'start'}));
   await page.screenshot({path:path.join(evidenceRoot,'overview-artifacts.png')});
-  await page.getByRole('link',{name:'验证与发布',exact:true}).click();
+  await page.getByRole('link',{name:'本体服务与版本管理',exact:true}).click();
   await page.getByLabel('本体包版本',{exact:true}).last().selectOption(built.package_id);
   await page.getByLabel('实例所属 Class IRI').fill(scenario.classIri);
   await page.getByRole('button',{name:'查询实例',exact:true}).click();
@@ -240,7 +256,7 @@ for(const scenario of scenarios) test(`real browser ${scenario.id} source review
   fs.copyFileSync(downloadedPath!,path.join(evidenceRoot,'traced-source.bin'));
   await screenshot('release-objects');
   if(scenario.id==='minimal'){
-    await page.getByRole('link',{name:'集成状态',exact:true}).click();
+    await page.goto(new URL(page.url()).pathname.split('/').slice(0,3).join('/')+'/integrations');
     await page.getByLabel('已发布版本',{exact:true}).selectOption(released.release.release_id);
     await page.getByRole('button',{name:'生成受版本约束的集成计划',exact:true}).click();
     await output('integration.plan');
@@ -257,8 +273,9 @@ for(const scenario of scenarios) test(`real browser ${scenario.id} source review
     expect(enqueued.status).toBe('REQUEST_ENQUEUED');
     expect(enqueued.last_verification_status).toBe('NOT_EXECUTED');
     await screenshot('graphdb-blocked');
-    await page.getByRole('link',{name:'验证与发布',exact:true}).click();
-    // Restore the explicit confirmed package selection after changing routes.
+    await page.getByRole('link',{name:'本体服务与版本管理',exact:true}).click();
+    // Compilation belongs to stage five, not the service/version page.
+    await page.goto(projectPath+'/modeling?stage=5');
     await page.getByLabel('确认包',{exact:true}).selectOption(confirmed.package_id);
     await page.getByLabel('本体包名称',{exact:true}).fill('synthetic-browser-minimal');
     await page.getByLabel('Ontology IRI',{exact:true}).fill('urn:synthetic:browser:minimal');
@@ -268,10 +285,10 @@ for(const scenario of scenarios) test(`real browser ${scenario.id} source review
     const versionIds=await versionFlow(page,projectPath,built.package_id,released.release.release_id,screenshot);
     fs.writeFileSync(path.join(evidenceRoot,'version-ids.json'),JSON.stringify(versionIds,null,2));
     await screenshot('environment-rollback');
-    await page.getByRole('link',{name:'验证与发布',exact:true}).click();
+    await page.getByRole('link',{name:'本体服务与版本管理',exact:true}).click();
   }
   await page.reload();
-  await expect(page.getByRole('heading',{name:'验证与发布',exact:true})).toBeVisible({timeout:20000});
+  await expect(page.getByRole('heading',{name:'本体服务与版本管理',exact:true})).toBeVisible({timeout:20000});
   const localStorageKeys=await page.evaluate(()=>Object.keys(localStorage));
   expect(localStorageKeys).toEqual([]);
   const final=await state();

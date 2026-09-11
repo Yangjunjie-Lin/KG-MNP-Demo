@@ -1,0 +1,18 @@
+{
+  "status": "VALID_EXPORTED_ARCHIVE_REOPENED",
+  "source_tree_sha256": "9bcc36e522b4e3bae5715faa070deecadbf07948c4df2fdc22810170332cf9c0",
+  "model_scenario": "runtime_reports/live-assistance-c3b9a6c864c845d1a6730a7699b9e417/verification.json",
+  "source_unchanged_during_live_scenario": true,
+  "model": "gpt-5.3-codex-spark",
+  "data_origin": "SYNTHETIC_FAULT_INJECTION",
+  "before": "FaultInjectedValue",
+  "after": "Alpha",
+  "authority": "MODEL_PROPOSED_THEN_SERVER_VALIDATED_AND_SEPARATELY_HUMAN_REVIEWED_IN_TEST",
+  "archive": "live-repaired-delivery.kgop",
+  "package_id": "urn:kg-mnp:ontology-package:7e2107cd595cbbd294bc6b9889cf4c2d556ef14efa88f1495fca6193a5e70f30",
+  "archive_sha256": "33e31a88772268827a7f5fe0a34f68db7372a5a1d556aca4f3f40350c9d5c612",
+  "size_bytes": 68110,
+  "entry_count": 48,
+  "uncompressed_size": 346877,
+  "research_accuracy_claim": false
+}

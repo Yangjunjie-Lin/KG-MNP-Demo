@@ -1,0 +1,20 @@
+{
+  "data_origin": "SYNTHETIC_ENGINEERING_FIXTURES",
+  "not_research_benchmark": true,
+  "visual": {
+    "positive.png": "Tree GT-001\nInspection I-001\nDamage: YES",
+    "negative.png": "Tree GT-002\nInspection I-002\nDamage: NO",
+    "chinese.png": "巡检记录\n树木 GT-003\n损伤：未知\n状态：待复查"
+  },
+  "speech": "Tree one has damage. Tree two has no damage. Tree three needs inspection.",
+  "retrieval": [
+    {
+      "query": "tree damage inspection",
+      "expected_iri": "urn:test:Inspection"
+    },
+    {
+      "query": "employee salary payment",
+      "expected_iri": "urn:test:Payroll"
+    }
+  ]
+}

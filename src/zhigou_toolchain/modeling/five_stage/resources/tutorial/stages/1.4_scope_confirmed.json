@@ -1,0 +1,57 @@
+{
+  "step_id": "1.4",
+  "mode": "TUTORIAL_REFERENCE",
+  "actual_execution_status": "NOT_RUN",
+  "input_refs": [
+    "1.3 scope_draft.json",
+    "B0 规则与独立预期"
+  ],
+  "illustrative_output": {
+    "scope_version": "1.0",
+    "identity_scope": "HR-DEMO",
+    "time_scope": "current_snapshot",
+    "objects": [
+      "Employee",
+      "Department"
+    ],
+    "rules": [
+      {
+        "id": "RULE-IDENTITY",
+        "description": "身份范围 HR-DEMO 内，类型＋业务编号唯一，编号保持字符串。",
+        "confirmed_for_tutorial": true
+      },
+      {
+        "id": "RULE-CURRENT-DEPT",
+        "description": "仅表示当前快照；每位员工恰好归属一个已登记的部门。",
+        "confirmed_for_tutorial": true
+      },
+      {
+        "id": "RULE-STRING",
+        "description": "员工编号、员工姓名、部门编号与部门名称均为单个非空字符串。",
+        "confirmed_for_tutorial": true
+      }
+    ],
+    "acceptance_baseline": {
+      "CQ-01": {
+        "expected_rows": [
+          [
+            "E-001",
+            "D-01"
+          ],
+          [
+            "E-002",
+            "D-02"
+          ],
+          [
+            "E-003",
+            "D-01"
+          ]
+        ],
+        "comparison": "UNORDERED_EXACT_ROWS",
+        "frozen_before_modeling": true
+      }
+    },
+    "illustrated_review": "APPROVED",
+    "actual_review": "NOT_REVIEWED"
+  }
+}

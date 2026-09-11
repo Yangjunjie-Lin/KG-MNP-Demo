@@ -13,12 +13,12 @@ from pathlib import Path
 
 import httpx
 
-import kg_mnp
-from kg_mnp.contracts import ContractCatalog
-from kg_mnp.semantic_kernel.packaging.archive import verify_kgop
-from kg_mnp.semantic_kernel.policy import load_compiler_policy
-from kg_mnp.services.facade import ApplicationService
-from kg_mnp.services.models import ServiceConfiguration
+import zhigou_toolchain
+from zhigou_toolchain.contracts import ContractCatalog
+from zhigou_toolchain.semantic_kernel.packaging.archive import verify_kgop
+from zhigou_toolchain.semantic_kernel.policy import load_compiler_policy
+from zhigou_toolchain.services.facade import ApplicationService
+from zhigou_toolchain.services.models import ServiceConfiguration
 
 
 def main():
@@ -32,7 +32,7 @@ def main():
     directory = args.directory.resolve()
     directory.mkdir(parents=True, exist_ok=False)
     # An editable install/host site-package inheritance cannot satisfy this gate.
-    assert Path(kg_mnp.__file__).resolve().is_relative_to(Path(sys.prefix).resolve())
+    assert Path(zhigou_toolchain.__file__).resolve().is_relative_to(Path(sys.prefix).resolve())
     assert sys.prefix != sys.base_prefix
     assert not any(Path(p).name == "src" for p in sys.path)
     assert len(ContractCatalog.load().specs) >= 117
@@ -59,7 +59,7 @@ def main():
     server = None
 
     def start(log):
-        process = subprocess.Popen([python, "-I", "-m", "kg_mnp", "service", "serve", "--workspace", str(workspace)],
+        process = subprocess.Popen([python, "-I", "-m", "zhigou_toolchain", "service", "serve", "--workspace", str(workspace)],
             cwd=directory, env=env, stdout=log, stderr=subprocess.STDOUT, creationflags=flags)
         commands.append({"command": "installed service serve", "pid": process.pid})
         deadline = time.monotonic() + 25
@@ -90,7 +90,7 @@ def main():
                 assert stopped_socket.connect_ex(("127.0.0.1", port)) != 0, "API remained reachable after owned process shutdown"
 
     def worker():
-        result = subprocess.run([python, "-I", "-m", "kg_mnp", "service", "worker", "--workspace", str(workspace), "--once"],
+        result = subprocess.run([python, "-I", "-m", "zhigou_toolchain", "service", "worker", "--workspace", str(workspace), "--once"],
             cwd=directory, env=env, capture_output=True, text=True, encoding="utf-8", timeout=90, check=False, creationflags=flags)
         assert result.returncode == 0, "Installed Worker returned failure"
         observed = json.loads(result.stdout)
@@ -110,7 +110,7 @@ def main():
                 assert http.get("/projects/synthetic/modeling").content == index.content
                 assert http.get("/service-projects.json").content == index.content
                 # An occupied port must fail without affecting the original server.
-                conflict = subprocess.run([python, "-I", "-m", "kg_mnp", "service", "serve", "--workspace", str(workspace)],
+                conflict = subprocess.run([python, "-I", "-m", "zhigou_toolchain", "service", "serve", "--workspace", str(workspace)],
                     cwd=directory, env=env, stdout=log, stderr=subprocess.STDOUT, timeout=30, check=False, creationflags=flags)
                 assert conflict.returncode != 0 and server.poll() is None
                 login = http.post("/api/v1/session", headers={"Authorization": f"Bearer {token}", "Origin": url})
@@ -142,10 +142,12 @@ def main():
                 doctor = http.get("/api/v1/doctor")
                 assert doctor.status_code == 200
                 # Missing Reasoner is deliberately not filled by a host file or download.
-                from kg_mnp.semantic_kernel.snapshot import build_compiler_snapshot
+                from zhigou_toolchain.semantic_kernel.snapshot import (
+                    build_compiler_snapshot,
+                )
                 snapshot = build_compiler_snapshot(load_compiler_policy())
                 assert snapshot["reasoner_bundle"]["availability"] == "UNAVAILABLE"
-        result = {"status": "PASS", "installed_version": kg_mnp.__version__, "compiler_version": "0.5.1",
+        result = {"status": "PASS", "installed_version": zhigou_toolchain.__version__, "compiler_version": "0.5.1",
             "historical_package": historical, "project_id": project_id, "job_id": job_id, "source_id": source_id,
             "source_sha256": hashlib.sha256(payload).hexdigest(), "commands": commands,
             "checks": ["installed-contract-policy", "bundled-spa-deep-refresh", "api-401-404", "opaque-session", "port-conflict-no-kill",

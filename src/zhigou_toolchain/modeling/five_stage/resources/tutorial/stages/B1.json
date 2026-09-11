@@ -1,0 +1,47 @@
+{
+  "bundle_id": "B1",
+  "schema_version": "1.0",
+  "mode": "TUTORIAL_REFERENCE",
+  "parent_bundle_refs": [
+    "B0"
+  ],
+  "retained_input_ref": "B0",
+  "new_artifacts": [
+    "input_check.json",
+    "data_profile.json",
+    "scope_draft.json",
+    "scope_confirmed.json"
+  ],
+  "step_refs": [
+    "1.1",
+    "1.2",
+    "1.3",
+    "1.4"
+  ],
+  "next_stage": 2,
+  "artifact_refs": [
+    {
+      "step_id": "1.1",
+      "path": "stages/1.1_input_check.json",
+      "sha256": "bb16b27458aea06a6df1bc083cf3e1bb54a2d472848cd882c6cf5353591a5dc5"
+    },
+    {
+      "step_id": "1.2",
+      "path": "stages/1.2_data_profile.json",
+      "sha256": "66f5212a6cbc78b0cfe233c6afbb8338e247fb074087881b4d5fc628f99a2d36"
+    },
+    {
+      "step_id": "1.3",
+      "path": "stages/1.3_scope_draft.json",
+      "sha256": "8e48e8a26065b96a2ab6deb68dceacd758931f62ecb2b44ff7897d7f1638b3fc"
+    },
+    {
+      "step_id": "1.4",
+      "path": "stages/1.4_scope_confirmed.json",
+      "sha256": "81d0bc3fac2a45811a9d5918c875c0464ba72b579cd32d0ed9cd12fb385e8566"
+    }
+  ],
+  "parent_bundle_sha256": {
+    "B0": "8143ab11eb3072d850363c7e269787534f2f64f6ba3660484e0b35458795484d"
+  }
+}

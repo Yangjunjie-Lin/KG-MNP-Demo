@@ -1,0 +1,38 @@
+{
+  "mapping_id": "MAP-HR-01",
+  "version": "1.0",
+  "identity_scope": "HR-DEMO",
+  "empty_key_policy": "REJECT",
+  "unknown_reference_policy": "UNRESOLVED",
+  "tables": [
+    {
+      "source_collection": "employees",
+      "class_iri": "https://example.org/ontology/Employee",
+      "id_field": "employee_id",
+      "iri_prefix": "https://example.org/data/hr/Employee/",
+      "literals": {
+        "employee_id": "https://example.org/ontology/employeeId",
+        "employee_name": "https://example.org/ontology/employeeName"
+      },
+      "references": {
+        "department_id": {
+          "predicate": "https://example.org/ontology/belongsToDepartment",
+          "target_collection": "departments",
+          "key": "department_id",
+          "iri_prefix": "https://example.org/data/hr/Department/"
+        }
+      }
+    },
+    {
+      "source_collection": "departments",
+      "class_iri": "https://example.org/ontology/Department",
+      "id_field": "department_id",
+      "iri_prefix": "https://example.org/data/hr/Department/",
+      "literals": {
+        "department_id": "https://example.org/ontology/departmentId",
+        "department_name": "https://example.org/ontology/departmentName"
+      },
+      "references": {}
+    }
+  ]
+}

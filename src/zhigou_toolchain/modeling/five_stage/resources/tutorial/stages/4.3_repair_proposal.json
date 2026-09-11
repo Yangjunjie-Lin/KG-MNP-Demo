@@ -1,0 +1,23 @@
+{
+  "step_id": "4.3",
+  "mode": "TUTORIAL_REFERENCE",
+  "actual_execution_status": "NOT_RUN",
+  "input_refs": [
+    "4.1 / 4.2 错误报告（条件分支）",
+    "B3 相关证据"
+  ],
+  "illustrative_output": {
+    "normal_path": "NOT_APPLICABLE",
+    "error_example": {
+      "candidate": "E-003 belongsToDepartment D-99",
+      "problem": "未登记部门",
+      "evidence": "员工 E-003 归属部门 D-01。",
+      "proposed_change": "仅修订候选目标 D-99 → D-01，保留原始错误陈述",
+      "return_to": [
+        "4.1",
+        "4.2"
+      ],
+      "approval": "PENDING_REVIEW"
+    }
+  }
+}

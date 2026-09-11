@@ -1,0 +1,14 @@
+{
+  "data_origin": "SYNTHETIC_PROBE",
+  "requested_mode": "LIVE",
+  "research_metrics": "NOT_EVALUATED",
+  "status": "BLOCKED",
+  "reason_type": "ToolBlocked",
+  "reason": "Fixed Qwen endpoint/model/revision unavailable or structured-output capability failed; no synthetic fallback",
+  "optional_libraries": {
+    "FlagEmbedding": "NOT_INSTALLED",
+    "faiss": "NOT_INSTALLED",
+    "transformers": "INSTALLED_NOT_MODEL_EXECUTION_PROOF"
+  },
+  "duration_seconds": 0.010918199994193856
+}

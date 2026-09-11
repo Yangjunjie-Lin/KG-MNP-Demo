@@ -1,0 +1,8 @@
+{
+  "report_id": "QUALITY-DEMO-01",
+  "synthetic": true,
+  "issues": [],
+  "scope": "5 条记录及 3 条文本陈述",
+  "upstream_status": "TUTORIAL_SUPPLIED",
+  "note": "教程提供的上游质量结果；不是当前仓库执行报告。"
+}

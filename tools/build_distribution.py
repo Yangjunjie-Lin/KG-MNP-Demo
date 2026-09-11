@@ -28,10 +28,10 @@ def main():
     subprocess.run([sys.executable, "-m", "build", "--wheel", "--sdist", "--outdir", str(output)], cwd=ROOT, check=True)
     # Companion examples are version-controlled assets only, never a Runtime
     # Workspace. Their bytes/locks are unchanged and not a second core default.
-    names = subprocess.check_output(["git", "ls-files", "-z", "domain_packs", "examples/ingestion"], cwd=ROOT).decode().split("\0")
+    names = subprocess.check_output(["git", "ls-files", "--cached", "--others", "--exclude-standard", "-z", "domain_packs", "examples/ingestion"], cwd=ROOT).decode().split("\0")
     example_files = {}
     with zipfile.ZipFile(output / "toolchain-examples.zip", "w", compression=zipfile.ZIP_DEFLATED) as archive:
-        for name in sorted(filter(None, names)):
+        for name in sorted(set(filter(None, names))):
             path = ROOT / name
             if path.is_symlink() or not path.resolve().is_relative_to(ROOT):
                 raise ValueError("linked example asset is forbidden")

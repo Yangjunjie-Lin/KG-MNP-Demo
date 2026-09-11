@@ -1,0 +1,5 @@
+PREFIX ex: <https://example.org/ontology/>
+SELECT ?employeeId ?departmentId WHERE {
+  ?employee a ex:Employee ; ex:employeeId ?employeeId ; ex:belongsToDepartment ?department .
+  ?department ex:departmentId ?departmentId .
+} ORDER BY ?employeeId

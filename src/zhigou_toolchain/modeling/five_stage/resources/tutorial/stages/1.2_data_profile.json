@@ -1,0 +1,20 @@
+{
+  "step_id": "1.2",
+  "mode": "TUTORIAL_REFERENCE",
+  "actual_execution_status": "NOT_RUN",
+  "input_refs": [
+    "1.1 input_check.json",
+    "B0 records / text"
+  ],
+  "illustrative_output": {
+    "employee_count": 3,
+    "department_count": 2,
+    "employee_id_type": "string",
+    "employee_id_unique_in_batch": 3,
+    "department_ids": [
+      "D-01",
+      "D-02"
+    ],
+    "text_char_count": 59
+  }
+}

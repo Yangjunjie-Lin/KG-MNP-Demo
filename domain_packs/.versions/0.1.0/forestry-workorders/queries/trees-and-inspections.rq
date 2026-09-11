@@ -1,0 +1,5 @@
+PREFIX f: <https://example.invalid/forestry#>
+SELECT ?treeCode ?inspectionCode WHERE {
+ ?tree a f:TreeRecord ; f:treeCode ?treeCode ; f:locatedAt ?site .
+ ?inspection a f:InspectionRecord ; f:inspectionCode ?inspectionCode ; f:inspectedTree ?tree .
+} ORDER BY ?treeCode ?inspectionCode

@@ -1,0 +1,22 @@
+{
+  "status": "VERIFIED",
+  "commit": "f79d56e714c194bca5c7c825ebdf38fb8df026d0",
+  "branch": "codex/zhigou-full-chain",
+  "uncommitted": true,
+  "full_backend_source_sha256": "9bcc36e522b4e3bae5715faa070deecadbf07948c4df2fdc22810170332cf9c0",
+  "final_browser_source_sha256": "3648e9ea6a1f3513c2ea69a312c32ef3dd79eecc591bdde686a14668f570db3b",
+  "final_source_sha256_after_browser": "3648e9ea6a1f3513c2ea69a312c32ef3dd79eecc591bdde686a14668f570db3b",
+  "changes_after_backend": [
+    "tools/run_browser_verification.py",
+    "tools/run_workbench_test_server.py",
+    "workbench/tests/minimal.e2e.ts",
+    "workbench/tests/zhigou-console.e2e.ts"
+  ],
+  "application_library_and_workbench_src_changes_after_backend": [],
+  "affected_checks_reexecuted": [
+    "tests/scripts/test_browser_runner.py: 7 PASS",
+    "actual browser 401 recovery: PASS, no approval replay",
+    "full fresh browser suite: 8 PASS, 2 conditional readers separately PASS"
+  ],
+  "qualification": "Backend/library code and backend test sources remained identical. Later modifications were confined to verification/demo lifecycle and browser-test readiness/recovery; their affected checks were rerun. Historical failing runs were not relabeled."
+}

@@ -1,0 +1,9 @@
+{
+  "status": "INTERRUPTED_FOR_SECURITY_HARDENING",
+  "evidence": "runtime_reports/zhigou-verification-6921f0da7eaa4da2821e064bdb4f4d59",
+  "source_digest": "82f80c740fbd3cd0886e5c0a0ba260eb0f3ccd35fde571fc0fa86daee1d5780a",
+  "reason": "Final review added an explicit source:read gate before LIVE proposal source transmission and sanitized malformed provider-envelope handling.",
+  "backend": "INCOMPLETE_NOT_CERTIFIED",
+  "browser": "NOT_RUN",
+  "process_scope": "Only this verification driver and its observed descendants were stopped."
+}

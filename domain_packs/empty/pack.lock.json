@@ -1,0 +1,42 @@
+{
+  "assets": [
+    {
+      "asset_id": "empty-input",
+      "media_type": "text/csv",
+      "path": "fixtures/entity.csv",
+      "sha256": "43f4e9212a09c75947dd408d64fba0112f095ac718cc52a6ccfca8b75cf98155",
+      "size_bytes": 19
+    },
+    {
+      "asset_id": "empty-ontology",
+      "media_type": "text/turtle",
+      "path": "ontology/empty.ttl",
+      "sha256": "92304c4290f01e79c4e4ecb6884c57b950ecad71366d735b705d7e7f6b511e2c",
+      "size_bytes": 144
+    },
+    {
+      "asset_id": "empty-query-values",
+      "media_type": "application/sparql-query",
+      "path": "queries/values.rq",
+      "sha256": "77b91b998f0b4aa166f03c6569cc4a795ca60543c2621388a50b16ef34c622af",
+      "size_bytes": 102
+    },
+    {
+      "asset_id": "empty-shapes",
+      "media_type": "text/turtle",
+      "path": "shapes/empty.ttl",
+      "sha256": "ce9d8ba6f5619031470380a2ed93116c3cc98a6e5a4b8e3aca19c9757de87eaf",
+      "size_bytes": 120
+    }
+  ],
+  "canonicalization_profile": "KG-MNP Canonical JSON v1",
+  "content_digest": "99f188e0f3d5b8f39bba8aa3cde2ddf2cdcb8344aadd60e68e5af2d63b3ef8d1",
+  "dependencies": [],
+  "lock_id": "urn:kg-mnp:domain-pack-lock:6e4a650a289056ea5291b1c2a2509759bbe353830670bd80da4eca4f2750454a",
+  "manifest_file_sha256": "ce8c8c257824b09424ddfe6c78bc36c25258b61da8e73991a42114c241b4965d",
+  "manifest_kind": "KG_MNP_DOMAIN_PACK_LOCK",
+  "manifest_semantic_sha256": "a18d961168def51248decac0cd161a804a32525c576b36dcbd5ca489303b0155",
+  "pack_id": "empty",
+  "pack_version": "0.1.0",
+  "schema_version": "1.0.0"
+}

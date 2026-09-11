@@ -1,0 +1,34 @@
+{
+  "annotation_source": null,
+  "checks": [
+    {
+      "name": "committed_output_integrity",
+      "required": true,
+      "status": "PASS"
+    },
+    {
+      "name": "business_receipt_readback",
+      "required": true,
+      "status": "PASS"
+    }
+  ],
+  "comparison_method": "Module contract and immutable artifact checks only",
+  "data_digest": "cfd2b3ebb5c0e2cffba14e15ba2b40211cedbc3c19fc36a62ed466ecff90e7e2",
+  "duration_seconds": 1.5802913999941666,
+  "environment": "LOCAL",
+  "gold_standard": null,
+  "job_id": "job_202831b98e8b41f4aa986c5078a752bb",
+  "mode": "DETERMINISTIC",
+  "module": "framework",
+  "project_id": "urn:kg-mnp:project:d605abf48023b5efbd342de92ae2b59fcabc1f480bc0e03e84261ccd9c33b1e9",
+  "research_qualification": "No independent labeled holdout, comparable timing baseline or real expert review; no research target attainment claim",
+  "research_status": "INSUFFICIENT_EVIDENCE",
+  "research_targets": {
+    "target": "Typical forestry tasks and complete prototype; no universal numeric threshold"
+  },
+  "sample_size": 3,
+  "sample_unit": "BUSINESS_OBJECTS",
+  "schema_version": "1.0.0",
+  "source_data_origin": "NOT_INFERRED_FROM_EXECUTION_MODE",
+  "status": "PASS"
+}

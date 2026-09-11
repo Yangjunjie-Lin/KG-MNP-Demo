@@ -4,7 +4,6 @@ import asyncio
 
 import httpx
 import pytest
-
 from kg_mnp.api.app import create_app
 from kg_mnp.api.openapi import build_openapi
 from kg_mnp.jobs.store import JobStore
@@ -102,4 +101,4 @@ def test_openapi_and_real_asgi_http_auth_path(tmp_path):
 
 def test_service_cli_help_is_explicit(capsys):
     assert service_cli_main(["--help"]) == 0
-    assert "kg-mnp service" in capsys.readouterr().out
+    assert "zhigou-toolchain service" in capsys.readouterr().out
