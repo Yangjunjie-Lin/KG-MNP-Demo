@@ -1,0 +1,40 @@
+{
+  "annotation_source": null,
+  "checks": [
+    {
+      "name": "committed_output_integrity",
+      "required": true,
+      "status": "PASS"
+    },
+    {
+      "name": "preserve_object_decisions",
+      "required": true,
+      "status": "PASS"
+    },
+    {
+      "name": "configuration_changed",
+      "required": true,
+      "status": "PASS"
+    }
+  ],
+  "comparison_method": "Module contract and immutable artifact checks only",
+  "data_digest": "8fe874181075beda0a70cec4de9a4b49ab64c690cc1a7b628cd4872ec8cfb642",
+  "duration_seconds": 1.9772301999983029,
+  "environment": "LOCAL",
+  "gold_standard": null,
+  "job_id": "job_afa42c0ad876444a84141b1dc928dfd2",
+  "mode": "DETERMINISTIC",
+  "module": "evolution",
+  "project_id": "urn:kg-mnp:project:d605abf48023b5efbd342de92ae2b59fcabc1f480bc0e03e84261ccd9c33b1e9",
+  "research_qualification": "No independent labeled holdout, comparable timing baseline or real expert review; no research target attainment claim",
+  "research_status": "INSUFFICIENT_EVIDENCE",
+  "research_targets": {
+    "anomaly_identification_accuracy": 0.8,
+    "task_completion_improvement_percentage_points": 10
+  },
+  "sample_size": 3,
+  "sample_unit": "REGRESSION_DECISIONS",
+  "schema_version": "1.0.0",
+  "source_data_origin": "NOT_INFERRED_FROM_EXECUTION_MODE",
+  "status": "PASS"
+}

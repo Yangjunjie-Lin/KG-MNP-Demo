@@ -1,0 +1,54 @@
+{
+  "bundle_id": "B2",
+  "schema_version": "1.0",
+  "mode": "TUTORIAL_REFERENCE",
+  "parent_bundle_refs": [
+    "B1"
+  ],
+  "retained_input_ref": "B0",
+  "new_artifacts": [
+    "baseline_snapshot.json",
+    "term_candidates.json",
+    "ranked_candidates.json",
+    "reuse_decisions.json",
+    "structure_candidates.json"
+  ],
+  "step_refs": [
+    "2.1",
+    "2.2",
+    "2.3",
+    "2.4",
+    "2.5"
+  ],
+  "next_stage": 3,
+  "artifact_refs": [
+    {
+      "step_id": "2.1",
+      "path": "stages/2.1_baseline_snapshot.json",
+      "sha256": "7f83ee111a204d1f133b6c8e6ff2c3e513e05d91d83b942dc200ae71f1b16816"
+    },
+    {
+      "step_id": "2.2",
+      "path": "stages/2.2_term_candidates.json",
+      "sha256": "9697b80f878261c0a08fd012464eb99b6ed6a1ced793e4f2ef697facc7f260b8"
+    },
+    {
+      "step_id": "2.3",
+      "path": "stages/2.3_ranked_candidates.json",
+      "sha256": "753afceb3de8b3f70c7d0e017492cc89ca8f95f3c7a3ca0aa4bc91768697dd52"
+    },
+    {
+      "step_id": "2.4",
+      "path": "stages/2.4_reuse_decisions.json",
+      "sha256": "496192930031e64f4595d9f3083975546b81ab2ac8a731ce17e7029e9fd44096"
+    },
+    {
+      "step_id": "2.5",
+      "path": "stages/2.5_structure_candidates.json",
+      "sha256": "57ccaae0916c7a61c19183b56de5b6a13e57fcdefee42f85952deebb41250d87"
+    }
+  ],
+  "parent_bundle_sha256": {
+    "B1": "18f6c342fc9c871877665c819f1f3b3cf9b4c26a18df5698d184de68a2f5d1d3"
+  }
+}

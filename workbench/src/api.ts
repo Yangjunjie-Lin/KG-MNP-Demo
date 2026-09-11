@@ -1,12 +1,15 @@
 import { QueryClient } from '@tanstack/react-query';
 export const queryClient = new QueryClient({defaultOptions: {queries: {retry: false, staleTime: 0}, mutations: {retry: false}}});
 let csrf = '';
-export function setCsrf(value: string) { csrf = value; }
+let expired = false;
+export const requestKeys = new Map<string, string>();
+export function setCsrf(value: string) { csrf = value; expired = false; }
 export function clearIdentity() { csrf = ''; queryClient.cancelQueries(); queryClient.clear(); }
 export class ApiError extends Error { constructor(public code: string, public status: number) { super(`${code}（HTTP ${status}）`); } }
 export async function api<T>(path: string, init: RequestInit = {}): Promise<T> {
+  if (expired && !['GET','HEAD'].includes(init.method || 'GET') && path !== '/session') throw new ApiError('SESSION_REAUTH_REQUIRED', 401);
   const response = await fetch(`/api/v1${path}`, {...init, credentials: 'same-origin', headers: {'X-CSRF-Token': csrf, ...init.headers}});
-  if (!response.ok) { const data = await response.json().catch(() => ({})); throw new ApiError(data.error?.code || 'REQUEST_FAILED', response.status); }
+  if (!response.ok) { const data = await response.json().catch(() => ({})); if(response.status===401 && (path!=='/session'||init.method!=='POST')) {expired=true; csrf=''; window.dispatchEvent(new Event('zhigou-session-expired'));} throw new ApiError(data.error?.code || 'REQUEST_FAILED', response.status); }
   return response.json();
 }
 export function post<T>(path: string, body: unknown, key: string = crypto.randomUUID()): Promise<T> {
@@ -20,8 +23,14 @@ export type Pack = {pack_id: string; pack_version: string; display_name: string;
 export type Document = {[key: string]: unknown};
 export type Result = {job_id: string; operation: string; revision: number; result: Document};
 export type Job = {job_id: string; operation_id: string; status: string; attempt: number; error: {code: string} | null};
-export type ProjectState = {project: Project; results: Result[]; jobs: Job[]; registry_head: string};
+export type ProjectState = {project: Project; results: Result[]; jobs: Job[]; registry_head: string; modeling_flow?: Document; modeling_session?: Document};
 export function object(value: unknown): Document { return value !== null && typeof value === 'object' && !Array.isArray(value) ? value as Document : {}; }
 export function rows(value: unknown): Document[] { return Array.isArray(value) ? value.map(object) : []; }
 export function str(value: unknown) { return typeof value === 'string' ? value : value === null || value === undefined ? '' : JSON.stringify(value); }
-export function outputs(state: ProjectState, operation: string, key: string): Document[] { return state.results.filter(r => r.operation === operation).map(r => object(r.result[key])); }
+export function outputs(state: ProjectState, operation: string, key: string): Document[] { return state.results.flatMap(r => {
+  if(r.operation==='source.sample.load') {
+    if(operation==='source.register'&&key==='source')return rows(r.result.sources);
+    if(['source.batch','source.register','ingestion.plan','ingestion.run'].includes(operation)&&r.result[key])return [object(r.result[key])];
+  }
+  return r.operation===operation||(operation==='ingestion.run'&&key==='run'&&r.operation==='modeling.tutorial.seed')?[object(r.result[key])]:[];
+}); }

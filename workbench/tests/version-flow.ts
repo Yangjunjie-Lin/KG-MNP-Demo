@@ -1,23 +1,36 @@
 import {expect,type Page} from '@playwright/test';
+import {readProjectState} from './browser-session';
 
 // All business mutations go through the rendered forms. HTTP is observation
 // only; there are no routed mocks, fabricated records or automatic approvals.
 export async function versionFlow(page:Page,projectPath:string,initialPackage:string,initialRelease:string,capture?:(name:string)=>Promise<void>){
-  async function state(){const r=await page.request.get('/api/v1'+projectPath+'/state');if(!r.ok())throw new Error(`State HTTP ${r.status()}: ${await r.text()}`);return r.json();}
+  async function state(){return readProjectState(page,projectPath);}
   async function count(operation:string){return (await state()).results.filter((r:{operation:string})=>r.operation===operation).length;}
   async function changed(operation:string,before:number){
     await expect.poll(async()=>{const s=await state();const failed=s.jobs.find((j:{operation_id:string;status:string})=>j.operation_id===operation&&['FAILED','RECOVERY_REQUIRED'].includes(j.status));if(failed)throw new Error(JSON.stringify(failed));return count(operation);},{timeout:600000}).toBe(before+1);
     return (await state()).results.filter((r:{operation:string})=>r.operation===operation).at(-1).result;
   }
+  const initial=await state();
+  const previous=initial.results.filter((r:{operation:string})=>r.operation==='compile.plan').at(-1).result.plan;
+  const question=initial.results.find((r:{operation:string})=>r.operation==='modeling.prepare').result.questions.questions[0];
+  await page.goto(projectPath+'/modeling?stage=5');
+  await page.getByLabel('确认包',{exact:true}).selectOption(previous.confirmed_package_id);
+  await page.getByLabel('本体包名称').fill(previous.package_identity.package_name);
+  await page.getByLabel('Ontology IRI',{exact:true}).fill(previous.ontology_identity.ontology_iri);
+  await page.getByLabel('能力问题',{exact:true}).selectOption(question.question_id);
+  await page.getByLabel('锁定领域包中的查询 Asset ID').fill('minimal-query-list-entities');
+  await page.getByLabel('必须返回的变量（逗号分隔）').fill('entity,label');
+  await page.getByLabel('最少结果行数（非空 Oracle）').fill('1');
   await page.getByLabel('本体包版本',{exact:true}).first().fill('0.1.1');
   await page.getByLabel('Version IRI',{exact:true}).fill('urn:synthetic:browser:minimal:0.1.1');
   await page.getByRole('button',{name:'生成编译计划',exact:true}).click();
   const planned=await changed('compile.plan',1);
   await page.getByTestId('compilation-plan-'+planned.plan.plan_id).getByRole('button',{name:'执行真实编译与验证',exact:true}).click();
   const built=await changed('compile.build',1);
+  await page.goto(projectPath+'/releases');
   await page.getByTestId('package-build-'+built.package_id).getByRole('button',{name:'验证并导入本地 Registry',exact:true}).click();
   await changed('registry.import',1);
-  await page.getByRole('link',{name:'差异与环境',exact:true}).click();
+  await page.goto(new URL(page.url()).pathname.split('/').slice(0,3).join('/')+'/versions');
   await page.getByLabel('Base Package',{exact:true}).selectOption(initialPackage);
   await page.getByLabel('Candidate Package',{exact:true}).selectOption(built.package_id);
   await page.getByRole('button',{name:'运行语义 Diff 与版本检查',exact:true}).click();
@@ -34,7 +47,7 @@ export async function versionFlow(page:Page,projectPath:string,initialPackage:st
   await changed('change.evaluate',0);
   await page.getByRole('button',{name:'提交后续 Release Candidate',exact:true}).click();
   const successorCandidate=await changed('release.candidate',1);
-  await page.getByRole('link',{name:'验证与发布',exact:true}).click();
+  await page.getByRole('link',{name:'本体服务与版本管理',exact:true}).click();
   const successorPanel=page.getByTestId('release-candidate-'+successorCandidate.release_candidate_id);
   await successorPanel.getByLabel('Release 审核理由',{exact:true}).fill('Independent explicit successor approval');
   await successorPanel.getByRole('button',{name:'以当前身份批准该 Release',exact:true}).click();
@@ -42,7 +55,7 @@ export async function versionFlow(page:Page,projectPath:string,initialPackage:st
   expect(successorReview.release_candidate_id).toBe(successorCandidate.release_candidate_id);
   await successorPanel.getByRole('button',{name:'使用当前 Registry CAS 发布',exact:true}).click();
   const successor=await changed('release.publish',1);
-  await page.getByRole('link',{name:'差异与环境',exact:true}).click();
+  await page.goto(new URL(page.url()).pathname.split('/').slice(0,3).join('/')+'/versions');
   await page.getByLabel('新环境名称',{exact:true}).fill('synthetic-browser-development');
   await page.getByRole('button',{name:'创建本地环境',exact:true}).click();
   const env=await changed('environment.create',0);

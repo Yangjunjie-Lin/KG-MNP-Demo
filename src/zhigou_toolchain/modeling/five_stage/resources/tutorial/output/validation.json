@@ -1,0 +1,31 @@
+{
+  "mode": "TUTORIAL_REFERENCE",
+  "checks": [
+    {
+      "name": "输入／引用完整性",
+      "status": "NOT_RUN",
+      "expected": "PASS"
+    },
+    {
+      "name": "SHACL 数据约束",
+      "status": "NOT_RUN",
+      "expected": "PASS"
+    },
+    {
+      "name": "OWL DL Profile",
+      "status": "NOT_RUN",
+      "expected": "PASS"
+    },
+    {
+      "name": "HermiT 一致性",
+      "status": "NOT_RUN",
+      "expected": "PASS"
+    },
+    {
+      "name": "审核覆盖与来源",
+      "status": "NOT_RUN",
+      "expected": "PASS"
+    }
+  ],
+  "note": "预期结果用于教学；NOT_RUN 不得计为通过。"
+}

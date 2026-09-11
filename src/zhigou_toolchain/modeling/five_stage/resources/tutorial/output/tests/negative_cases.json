@@ -1,0 +1,20 @@
+{
+  "cases": [
+    {
+      "id": "NEG-UNKNOWN-DEPARTMENT",
+      "mutation": "E-003 department_id=D-99",
+      "expected": "身份解析／引用检查阻断；未登记部门不得发布"
+    },
+    {
+      "id": "NEG-MISSING-RELATION",
+      "mutation": "删除 E-001 的 belongsToDepartment",
+      "expected": "EmployeeShape sh:minCount 失败"
+    },
+    {
+      "id": "NEG-WRONG-ANSWER",
+      "mutation": "E-001 归属 D-02",
+      "expected": "CQ-01 精确答案断言失败"
+    }
+  ],
+  "execution_status": "NOT_RUN"
+}

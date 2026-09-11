@@ -3,8 +3,9 @@ from __future__ import annotations
 import inspect
 from pathlib import Path
 
-from kg_mnp import amendment
 from kg_mnp.amendment.republication import complete_reentry, prepare_reentry
+
+from kg_mnp import amendment
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -49,6 +50,6 @@ def test_generic_reentry_signatures_are_frozen() -> None:
 def test_phase05_implementation_has_no_phase06_hook() -> None:
     sources = "\n".join(
         path.read_text(encoding="utf-8")
-        for path in sorted((ROOT / "src/kg_mnp/amendment").glob("*.py"))
+        for path in sorted((ROOT / "src/zhigou_toolchain/amendment").glob("*.py"))
     ).casefold()
-    assert "kg_mnp.activation" not in sources
+    assert "zhigou_toolchain.activation" not in sources

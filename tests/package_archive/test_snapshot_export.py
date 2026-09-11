@@ -4,7 +4,6 @@ import zipfile
 from pathlib import Path
 
 import pytest
-
 from kg_mnp.semantic_kernel.errors import PackageError
 from kg_mnp.semantic_kernel.packaging import archive
 
@@ -42,4 +41,49 @@ def test_tampering_before_capture_and_wrong_requested_identity_are_rejected(tmp_
         archive.archive_bytes(source, expected_package_id="urn:wrong")
     (source / "data/abox.nt").write_bytes(b"tampered before snapshot")
     with pytest.raises(PackageError):
+        archive.archive_bytes(source)
+
+
+def test_snapshot_read_allocations_are_bounded_by_file_size(tmp_path, monkeypatch):
+    source = package(tmp_path)
+    original = Path.open
+    reads = []
+    class Reader:
+        def __init__(self, path, stream):
+            self.path, self.stream = path, stream
+        def __enter__(self):
+            self.stream.__enter__()
+            return self
+        def __exit__(self, *args):
+            return self.stream.__exit__(*args)
+        def read(self, size):
+            assert size <= self.path.stat().st_size + 1
+            reads.append(size)
+            return self.stream.read(size)
+    def opened(path, *args, **kwargs):
+        stream = original(path, *args, **kwargs)
+        return Reader(path, stream) if path.is_relative_to(source) and args and args[0] == "rb" else stream
+    monkeypatch.setattr(Path, "open", opened)
+    assert archive.archive_bytes(source) == FIXTURE.read_bytes()
+    assert reads
+
+
+def test_snapshot_rejects_a_file_growing_during_capture(tmp_path, monkeypatch):
+    source = package(tmp_path)
+    original = Path.open
+    class GrowingReader:
+        def __init__(self, stream):
+            self.stream = stream
+        def __enter__(self):
+            self.stream.__enter__()
+            return self
+        def __exit__(self, *args):
+            return self.stream.__exit__(*args)
+        def read(self, size):
+            return self.stream.read(size) + b"x"
+    def opened(path, *args, **kwargs):
+        stream = original(path, *args, **kwargs)
+        return GrowingReader(stream) if path == source / "ontology-package.json" and args and args[0] == "rb" else stream
+    monkeypatch.setattr(Path, "open", opened)
+    with pytest.raises(PackageError, match="changed while capturing"):
         archive.archive_bytes(source)

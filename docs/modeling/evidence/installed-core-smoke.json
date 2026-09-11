@@ -1,0 +1,14 @@
+{
+  "command": [
+    "{REPO_ROOT}/runtime_logs\\five-stage-install-1f3c383c54c74bf9a6bb8136aee00130\\venv\\Scripts\\python.exe",
+    "-I",
+    "-c",
+    "import importlib.util,json\nfrom importlib.resources import files\nfrom kg_mnp.api.app import create_app\nfrom kg_mnp.modeling.five_stage.registry import registry,tutorial\nfrom kg_mnp.modeling.five_stage.contracts import artifact\nr=registry(); t=tutorial()\nassert len(r[\"methods\"])==25\nassert t[\"execution_source\"]==\"TUTORIAL_FIXTURE\"\nassert files(\"kg_mnp\").joinpath(\"workbench_static/index.html\").is_file()\nassert importlib.util.find_spec(\"pandas\") is None\na=artifact({\"value\":\"001\"},project_id=\"p\",session_id=\"s\",step_id=\"1.1\",produced_by=\"a\")\nb=artifact({\"value\":\"001\"},project_id=\"p\",session_id=\"s\",step_id=\"1.1\",produced_by=\"b\")\nassert a[\"ref\"][\"artifact_id\"]!=b[\"ref\"][\"artifact_id\"]\nprint(json.dumps({\"installed_core_import\":True,\"methods\":25,\"tutorial_files\":len(t[\"files\"]),\"pandas_required_for_core_import\":False,\"producer_identity_isolated\":True}))\n"
+  ],
+  "cwd": "{REPO_ROOT}/",
+  "duration_seconds": 6.48499999998603,
+  "exit_code": 0,
+  "files": {
+    "command.log": "146fd0a223771fafc3d5fe7ae1d3ea496e3f1c2bf9048cebd0f85ae6c586dd67"
+  }
+}

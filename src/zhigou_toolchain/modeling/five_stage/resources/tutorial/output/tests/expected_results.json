@@ -1,0 +1,20 @@
+{
+  "CQ-01": {
+    "expected_rows": [
+      [
+        "E-001",
+        "D-01"
+      ],
+      [
+        "E-002",
+        "D-02"
+      ],
+      [
+        "E-003",
+        "D-01"
+      ]
+    ],
+    "comparison": "UNORDERED_EXACT_ROWS",
+    "frozen_before_modeling": true
+  }
+}

@@ -137,11 +137,11 @@ for path in sorted(root.rglob("*")):
 
 if not errors:
     try:
-        from kg_mnp.publication.contracts import (
+        from zhigou_toolchain.publication.contracts import (
             validate_publication_attestation_evidence,
             validate_publication_contract,
         )
-        from kg_mnp.webvowl.contracts import validate_webvowl_contract
+        from zhigou_toolchain.webvowl.contracts import validate_webvowl_contract
 
         validate_publication_contract(
             "end-to-end-publication-manifest",

@@ -23,7 +23,7 @@ RUNTIME_GLOBS = [
     "domain_packs/mnp/fixtures/data/*.ttl",
     "domain_packs/mnp/queries/*.rq",
     "domain_packs/mnp/mappings/*.yaml",
-    "src/kg_mnp/*.py",
+    "src/zhigou_toolchain/*.py",
 ]
 
 

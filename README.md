@@ -1,157 +1,152 @@
-# KG-MNP Ontology Toolchain
+# 知构工具链 · ZhiGou Toolchain
 
-可插拔、可验证、可追溯的通用本体工程工具链。它把资料转成 Evidence-bound KG-IR，经候选建模、明确人工审核和确定性语义编译，产出可验证的本体包，并管理本地版本发布与环境选择。
+可组合、可验证、可追溯的本体工程工具链（Ontology Toolchain）。以独立领域包提供业务语义，
+将资料接入、五步本体建模、服务与版本管理、任务执行和反馈演进连接到同一个授权服务和 Worker。
 
-当前源码版本为 0.9.0rc2（候选准备，非自动批准发行），发行资格以[固定修订验收摘要](docs/verification/final-verification.json)中明确记录的受测修订为准。历史测试通过记录只适用于其记录的修订，不能认证后续代码。
+当前源码版本 0.9.0rc2；本地增量不等于正式发行资格。受测源码与真实结果见
+[升级索引](docs/upgrade/research-module-map.md)、[实施边界](docs/upgrade/modeling-five-stage.md)及
+[验证记录](docs/upgrade/verification.json)。历史 PASS 只适用于原修订。
 
-本分支包含新增的[TXT / Word / Excel 混合资料建模](docs/user-guide/mixed-source-modeling.md)：明确表格选择、业务主键与别名、证据文本模板/片段标注、类型转换和漏映射阻断。旧 RC1 验收不覆盖这些新修改；其发行资格以新的固定修订验收为准。这里的去重是证据支持的明确身份规则，不是对任意文档的全自动语义理解保证。
+原模型与多模态的追加实测、固定输入及模型能力差异见
+[原模型与多模态验收](docs/upgrade/original-models-multimodal.md)。
 
-## 实际能力
+## Windows 本地启动
 
-- 项目隔离、精确版本的 Domain Pack、完整 Workspace / Project Lock。
-- 实际字节受限的上传，Source / Batch、持久化解析任务、KG-IR、Evidence 定位和授权原文下载。
-- Scope / CQ、基线、术语、声明式记录与字段映射、离线或 Recorded Provider 候选。
-- 逐项人工审核、拒绝、修订重验、审核头冲突检测、确认包；客户端不能声明审核身份或角色。
-- 固定 ROBOT / HermiT、OWL、SHACL、明确 Query / Oracle、Provenance、确定性 Package 与 .kgop。
-- 本地 Registry、语义 Diff、Impact、实际回归、消费者契约、初始和后续 Release、审核后的 CAS 环境选择及指定历史回滚。
-- 一个中文 React 工作台、同一 ApplicationService、资源 API、Python SDK 和服务 CLI。
-- HttpOnly 短期会话、CSRF / Origin、权限撤销、项目隔离、幂等、核心提交 fencing 和显式任务恢复。
-- 固定 Package / Release 的元数据、隔离只读对象查询、分页、Typed Literal 和来源追溯。
-
-Provider 只生成候选；服务账户不能批准。发布默认采用多角色策略，至少两位独立审核人。显式单人开发策略仅限 loopback，不代表生产审核完成。
-
-## 主流程与状态
-
-资料 → Source / KG-IR / Evidence → Scope / CQ / Baseline → Proposal → 人工 Review → Confirmed Package → 编译与验证 → Ontology Package → Registry → Release。
-
-后续版本执行 Diff / Impact / Regression；环境选择与回滚有独立提案、审核和 CAS。
-Release Attestation 绑定实际文件摘要，不接受客户端提供的伪造成功状态。
-
-| 对象 | 状态含义 |
-| --- | --- |
-| Package：VALIDATED_UNPUBLISHED | 包内必需验证通过，但不等于发布 |
-| Registry：IMPORTED_VERIFIED | 本地登记并校验 |
-| Release：RELEASED | 当前发布候选经过人工审核 |
-| Environment：CONTROL_PLANE_SELECTED | 本地控制面选定版本 |
-| External Deployment | 必须单独观测，不能由 Pointer 或 Outbox 推断 |
-
-## 领域包
-
-- Minimal 0.1.0：小型真实流程和否定案例。
-- MNP 1.0.0：独立领域包，保持原 84 个资产和约束；验证使用非空、有证据的合成 MappingRecord。
-- Forestry 0.2.0 EXPERIMENTAL：树木档案与巡查示例，6 条 TreeRecord、6 条 InspectionRecord、2 个 Site，全部为合成数据。
-- 任意名称的临时第四包用于检查前端不依赖固定 Pack ID。
-
-旧 Forestry 0.1.0 不会被静默替换为 0.2.0；请求不可用的精确版本会失败。领域包是数据、约束和映射，不允许通过包执行 Python / Shell。
-
-## 安装要求
-
-Python 3.11+、构建前端用的 Node.js，以及语义编译所需的 Java 与固定 ROBOT 1.9.7。当前实测环境为 Python 3.12、Node 24、Chromium 153。安装 Wheel 后运行工作台不需要 Node。
-
-依赖和 JAR 只在显式准备阶段安装，核心运行不会自动联网下载。ROBOT 的准确摘要见 `kg_mnp.semantic_kernel.snapshot.ROBOT_SHA256`。
-
-从源码准备（先激活自行创建的虚拟环境）：
-
-```text
-python -m pip install -c requirements-dev.lock -e ".[dev]"
-npm ci --prefix workbench
-npm --prefix workbench run build
-```
-
-PowerShell 可使用 `python -m venv .venv`、`.\.venv\Scripts\Activate.ps1`；POSIX 使用 `python -m venv .venv`、`source .venv/bin/activate`。不依赖宿主机偶然安装的测试库。
-
-## 本地启动
-
-Web 与 Worker 使用同一配置和运行目录。在两个终端分别设置相同环境变量。以下 PowerShell 示例只用于合成开发，不连接生产服务：
+在项目根目录运行。现有环境可以直接使用；首次安装按锁文件准备依赖：
 
 ```powershell
-$env:KG_MNP_DOMAIN_PACKS_ROOT = (Resolve-Path domain_packs).Path
-$env:KG_MNP_WORKBENCH_ROOT = (Resolve-Path workbench/dist).Path
-$env:KG_MNP_REASONER_JAR = (Resolve-Path third_party/downloads/robot-1.9.7.jar).Path
-$env:KG_MNP_ALLOW_INSECURE_LOOPBACK_SESSION = 'true'
-$env:KG_MNP_REVIEW_PROFILE = 'DEVELOPMENT_SINGLE_REVIEWER'
-kg-mnp service token create --workspace runtime/local --principal-id local-human --created-by local-admin --permissions '*'
-kg-mnp service serve --workspace runtime/local
+$env:PYTHONUTF8 = "1"
+python -m pip install -c requirements-dev.lock -e ".[dev,modeling-analysis]"
+npm --prefix workbench ci
+npm --prefix workbench run build
+python tools/prepare_reasoner.py
+python tools/start_zhigou_demo.py --port 8765
 ```
 
-另一终端执行：
+本地入口：[http://127.0.0.1:8765](http://127.0.0.1:8765)。默认使用已构建的前端，
+API 与 Worker 在同一**隔离合成工作区**启动。端口被占用会报错，不会杀其他进程；
+也可省略 --port，使用启动信息返回的可用端口。
 
-```text
-kg-mnp service worker --workspace runtime/local
+启动只打印 URL、工作区与临时凭证文件路径，不打印密钥。读取该本地文件的 token 并在登录页输入；
+不要把凭证复制到日志、Git、截图或远端。Ctrl+C 只停止此次启动的服务器/Worker并撤销临时身份。
+此方便入口的全权限身份仅用于合成演示，不应用于生产或真实用户数据。
+
+首次登录创建 hr@0.1.0 或 forestry-workorders@0.1.1 项目，在“数据接入与规则化”加载
+当前领域包的合成批次，也可上传自己的授权测试文件。加载仅进行真实规则化，不自动批准或发布。
+详细操作见 [walkthrough](docs/upgrade/walkthrough.md)。
+
+## 独立服务方式
+
+与原服务方式兼容；需管理员明确签发最小权限身份。两个终端使用相同 workspace/config：
+
+```powershell
+$env:ZHIGOU_SERVICE_HOST = "127.0.0.1"
+$env:ZHIGOU_SERVICE_PORT = "8765"
+$env:ZHIGOU_ALLOW_INSECURE_LOOPBACK_SESSION = "true"
+$env:ZHIGOU_DOMAIN_PACKS_ROOT = (Resolve-Path domain_packs).Path
+$env:ZHIGOU_WORKBENCH_ROOT = (Resolve-Path workbench/dist).Path
+$env:ZHIGOU_REASONER_JAR = (Resolve-Path third_party/downloads/robot-1.9.7.jar).Path
+python -m zhigou_toolchain service serve --workspace runtime/zhigou-local
+# 另一终端，使用相同环境设置：
+python -m zhigou_toolchain service worker --workspace runtime/zhigou-local
 ```
 
-浏览器入口：[本地工作台](http://127.0.0.1:8765/)。没有默认账户、匿名管理员注册或“选择角色即认证”。凭证只在本地签发时显示；不要记录到日志、URL、截图、Git 或浏览器存储。非 loopback 服务需要 TLS 和 Origin 配置；生产会话使用 Secure Cookie。
+HTTP 明文例外严格限 loopback。非本地部署使用 TLS、明确 Origin 和生产多角色审核。
+示例只读身份签发命令（输出包含秘密，只在安全终端执行）：
 
-POSIX 对应环境设置：
-
-```sh
-export KG_MNP_DOMAIN_PACKS_ROOT="$PWD/domain_packs"
-export KG_MNP_WORKBENCH_ROOT="$PWD/workbench/dist"
-export KG_MNP_REASONER_JAR="$PWD/third_party/downloads/robot-1.9.7.jar"
-export KG_MNP_ALLOW_INSECURE_LOOPBACK_SESSION=true
-export KG_MNP_REVIEW_PROFILE=DEVELOPMENT_SINGLE_REVIEWER
-kg-mnp service serve --workspace runtime/local
+```powershell
+python -m zhigou_toolchain service token create --workspace runtime/zhigou-local --principal-id local-reader --created-by local-admin --permissions project:read,source:read,package:read
 ```
 
-仅用 Ctrl+C 停止自己启动的服务；端口冲突不意味着可以终止未知进程。
+不要为了通过测试关闭鉴权、延长为永久会话或给真实用户全权限。
+本轮验证环境为 Windows；Linux/外部部署若无对应运行证据应视为未测。
 
-## CLI 与 SDK
+## 五个主模块
 
-服务 CLI 从 `KG_MNP_TOKEN` 环境变量读取凭证，不把凭证放进命令参数或 URL。
+| 模块 | 实际职责 |
+| --- | --- |
+| 数据接入与规则化 | Source/Batch/Plan/KG-IR、类型化来源、质量与处理轨迹；独立评测 |
+| 本体建模 | 输入核验与范围确认；本体复用与结构设计；数据映射与事实构建；联合校验与人工审核；语义编译与交付验收 |
+| 本体服务与版本管理 | 原 Registry/Release、固定版本 OMS/对象读取/证据、环境选择与回滚 |
+| 任务规划与业务执行 | 声明式领域策略通过 OMS/对象服务生成固定版本计划，只执行登记动作并重读真实工单 |
+| 反馈评估与演进 | 实际执行反馈、隔离回归、人工审核、执行配置更新和回滚；本体变更仍走原版本流程 |
 
-```text
-kg-mnp service upload --url http://127.0.0.1:8765 --project-id <PROJECT_ID> --file sample.csv --media-type text/csv --idempotency-key upload-1
-kg-mnp service call --url http://127.0.0.1:8765 --project-id <PROJECT_ID> --operation ingestion.plan --request plan-request.json --idempotency-key plan-1
-```
+新版严格建模会话冻结输入、规则、配置和独立答案，后端传播 STALE，拒绝旧审核与旧计划。
+五步页面不再显示 25 个小步骤或独立案例教程；旧教程 URL 重定向到建模入口。
+技术详情、来源和历史收据仍可追溯；原方法台账作为历史文件保留。
 
-`plan-request.json` 为 `{"batch_id":"<SOURCE_BATCH_ID>"}`。202 只表示已接收；通过 `job.get` 读取真实任务结果。网页关闭不等于取消；取消请求不等于结果已撤销。
+## 测试与证据
 
-```python
-import os
-from kg_mnp.sdk.http import HTTPClient
-from kg_mnp.services.models import OperationRequest
-
-client = HTTPClient("http://127.0.0.1:8765", os.environ["KG_MNP_TOKEN"])
-try:
-    result = client.execute(OperationRequest("project.list"))
-    print(result.payload)
-finally:
-    client.close()
-```
-
-恢复先核验正式提交回执。只有未提交、租约已过期的本地任务可以显式重试；活动租约、取消意图、失效原凭证和未知外部副作用不会被绕过：
-
-```text
-kg-mnp service recover --url http://127.0.0.1:8765 --job-id <JOB_ID> --expected-attempt 1
-kg-mnp service recover --url http://127.0.0.1:8765 --job-id <JOB_ID> --expected-attempt 1 --retry-local
-```
-
-## 质量与验收
-
-```text
+```powershell
 python -m ruff check .
 python tools/check_types.py
-python -m pytest
+python tools/evaluate_research.py --suite safety
+python tools/evaluate_research.py --suite ontology
+python tools/evaluate_research.py --suite framework
+python tools/evaluate_research.py --suite ingestion
+python tools/evaluate_research.py --suite evolution
+python tools/run_backend_tests.py
 npm --prefix workbench run lint
 npm --prefix workbench run typecheck
 npm --prefix workbench test
-npm --prefix workbench run build
+python tools/run_browser_verification.py --selected-test zhigou-console.e2e.ts
 ```
 
-静态类型门覆盖服务、API、SDK、任务和集成应用边界；语义工件另由版本化 JSON Schema 和行为测试验证。真实浏览器测试使用显式合成服务与凭证，不 Mock 核心 API。容量测试复用同一套正式组件，其结果不冒充业务流程或生产性能。
+独立测试与完整回归分别记账。实际浏览器测试启动真实 API 和 Worker，不 Mock 核心服务。
+合成 HR/古树工单仅证明工程链；不证明研究目标达成、实际专家准确率或外部上线。
+数值目标、运行方式与适配边界见 [模块契约](docs/upgrade/module-contracts.md)。
 
-最终验收必须先固定干净的代码修订，再导出完整唯一 collection，执行所有分区、浏览器、Linux、兼容、安装和打包检查。以验证摘要和退役台账中的 tested_commit 判断证据适用范围，不以版本号推断验收状态。
+较长 Windows 工作目录中的嵌套 Git 测试需为本次验证进程启用长路径。
+以下设置保留已有进程级 Git 配置，不修改全局 Git 配置：
 
-## 限制与研究边界
+```powershell
+$zgGitConfigIndex = 0
+if ($env:GIT_CONFIG_COUNT) { $zgGitConfigIndex = [int]$env:GIT_CONFIG_COUNT }
+[Environment]::SetEnvironmentVariable("GIT_CONFIG_KEY_$zgGitConfigIndex", "core.longpaths", "Process")
+[Environment]::SetEnvironmentVariable("GIT_CONFIG_VALUE_$zgGitConfigIndex", "true", "Process")
+$env:GIT_CONFIG_COUNT = [string]($zgGitConfigIndex + 1)
+python tools/verify_zhigou_upgrade.py --backend-only --workers 4
+```
 
-当前是预发布候选。旧可写平台和独立网页运行入口已退役，历史解析与必要转换工具保留；发行资格仍须由完整同修订验收记录确认，不由版本号或已配置的门禁推断。
+该入口记录源码前后摘要、完整测试收集与执行节点、真实退出码；不因局部复测通过抹去原失败。
 
-Recorded Provider 不是 Live LLM；Image / WAV 默认只有元数据，不提供虚构 OCR / ASR。GraphDB live 和外部业务执行器未配置时明确阻断，不模拟部署或执行成功。本地包和环境 Pointer 可独立使用。
+## 模型配置与限制
 
-当前本地提交使用复制工作区和原子权威切换，校验成本随项目增大；不承诺分布式高可用或外部 exactly-once。合成流程中有些完整校验和下载需数十秒，界面等待与真实后台状态分开处理。
+可选服务端配置：ZHIGOU_QWEN_ENDPOINT、ZHIGOU_QWEN_MODEL、ZHIGOU_QWEN_REVISION，
+以及必要时的 ZHIGOU_QWEN_API_KEY。模型目录/修订必须明确，不在运行时偷偷下载。
+若未配置 Qwen，可使用已有 OPENAI_BASE_URL、OPENAI_TEXT_MODEL、OPENAI_API_KEY 和 OPENAI_RESPONSE_FORMAT。
+兼容网关的 json_object 输出仍经过本地 Schema、引用、逐字引文与原语义门检查；不是服务端严格 Schema 证明。
+部分 Qwen 配置存在时不静默回退；未配置/无效调用明确失败，不用关键词规则冒充模型推理。
+第二/三阶段可显式运行两轮建模和文本抽取，第四阶段可请求白名单修复与自动重验；
+LIVE 提案同时要求 model:propose 和 source:read。新候选仍必须重新人工审核，不能直接发布。
 
-Hash / Lock 证明完整性，不证明原始资料真实；OWL 一致不代表业务知识正确；SHACL 和 CQ 只覆盖实际执行的约束与 Oracle。合成 Forestry 不是实地试点。工程机制实现不自动证明学术新颖性或生产安全认证。
+```powershell
+python tools/probe_upgrade_models.py
+python tools/verify_live_assistance.py --pack hr
+python tools/verify_live_assistance.py --pack forestry-workorders
+python tools/verify_live_assistance.py --pack repair
+```
 
-## License
+以上验证只使用独立合成数据，记录真实调用及失败，不向生成/修复流程提供冻结的标准答案。
+若额度耗尽且用户已授权，可在确认网关开放后为新的服务进程切换 OPENAI_TEXT_MODEL；
+模型变更记录在新请求收据中，不把替代模型标为原模型。本任务已确认网关列出 gpt-reserve，
+但模型列表本身不证明具体账号的计费路由或模型权重修订。
 
-项目使用 Apache-2.0。第三方依赖和工具的授权、来源与义务见 [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)；不将开源依赖描述为完全自主知识产权。
+DETERMINISTIC、RECORDED、LIVE 分开记录。BGE-M3/FAISS/reranker、完整两轮复用、
+无基线新建、模型补丁和音视频/OCR 的实际完成范围见 [五步能力与边界](docs/upgrade/modeling-five-stage.md)。
+未完成正式标注/专家测试时，研究指标为 INSUFFICIENT_EVIDENCE，不能用工程全绿替代。
+
+## 兼容和迁移
+
+Provider 只生成候选；Recorded Provider 不是 Live LLM。EXPERIMENTAL 领域包只提供实验资产。
+Ontology Package 的 VALIDATED_UNPUBLISHED 表示验证后未发布，CONTROL_PLANE_SELECTED
+只表示本地控制面版本选择，不证明外部部署。Attestation 绑定受测输入与执行证据，
+CAS 保护并发提交；两者都不能代替真实专家审核或研究指标验收。
+
+唯一实现是 zhigou_toolchain；旧 kg_mnp 导入及 kg-mnp CLI 保留薄兼容入口。
+ZHIGOU_ 与 KG_MNP_ 环境变量冲突会明确报错，不回显秘密。
+稳定 IRI/URN、manifest_kind、旧包摘要、签名、.kgop 和合法 MNP 领域内容不因更名改写。
+详见 [迁移报告](docs/upgrade/migration-report.md)和 [旧名保留清单](docs/upgrade/legacy-name-allowlist.md)。
+
+当前远端仍为原仓库，未更名、未推送、未合并、未发布。
+本地品牌/代码迁移与 GitHub 原地更名是两个独立状态，不把目标链接当作现存仓库。

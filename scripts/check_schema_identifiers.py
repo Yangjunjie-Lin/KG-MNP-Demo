@@ -17,7 +17,7 @@ ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_NAMESPACE_CONFIG = ROOT / "config" / "namespaces.yaml"
 SCHEMA_SCAN_ROOTS = (
     "schemas",
-    "src/kg_mnp/contracts/schemas",
+    "src/zhigou_toolchain/contracts/schemas",
     "examples",
     "domain_packs/mnp/fixtures/eligibility-use-case",
 )
@@ -169,7 +169,7 @@ def _validate_identifier(
                 f"schemas.legacy {namespaces.legacy!r}"
             )
     elif relative_path.startswith(
-        ("schemas/modeling/", "src/kg_mnp/contracts/schemas/modeling/")
+        ("schemas/modeling/", "src/zhigou_toolchain/contracts/schemas/modeling/")
     ) and not identifier.startswith(namespaces.modeling):
         errors.append(
             f"{relative_path}: modeling contract $id must be below "

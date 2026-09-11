@@ -1,0 +1,23 @@
+{
+  "step_id": "1.3",
+  "mode": "TUTORIAL_REFERENCE",
+  "actual_execution_status": "NOT_RUN",
+  "input_refs": [
+    "1.2 data_profile.json",
+    "B0 goal_and_rules.json"
+  ],
+  "illustrative_output": {
+    "object_types": [
+      "Employee",
+      "Department"
+    ],
+    "goal": "查询员工所属部门并返回来源依据",
+    "excluded": [
+      "薪酬",
+      "绩效评价",
+      "历史部门变更"
+    ],
+    "state": "DRAFT",
+    "provider_mode": "TUTORIAL_FIXTURE"
+  }
+}

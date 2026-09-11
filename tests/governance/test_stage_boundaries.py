@@ -8,8 +8,8 @@ ROOT = Path(__file__).resolve().parents[2]
 
 def test_graphdb_and_webvowl_integrations_absent():
     markers = [
-        ROOT / "src" / "kg_mnp" / "graphdb.py",
-        ROOT / "src" / "kg_mnp" / "webvowl.py",
+        ROOT / "src" / "zhigou_toolchain" / "graphdb.py",
+        ROOT / "src" / "zhigou_toolchain" / "webvowl.py",
         ROOT / "graphdb-local",
         ROOT / "webvowl",
     ]
@@ -20,7 +20,7 @@ def test_graphdb_and_webvowl_integrations_absent():
 def test_no_auto_confirmation_or_compiler_implementation():
     """Auto-confirm remains forbidden; Prompt 5 compilers stay in their authority boundary."""
 
-    src = ROOT / "src" / "kg_mnp"
+    src = ROOT / "src" / "zhigou_toolchain"
     matches = []
     forbidden = (
         "def auto_confirm",
@@ -41,7 +41,7 @@ def test_no_auto_confirmation_or_compiler_implementation():
             if marker not in text:
                 continue
             if marker in compiler_markers and relative.startswith(
-                "src/kg_mnp/semantic_kernel/"
+                "src/zhigou_toolchain/semantic_kernel/"
             ):
                 continue
             matches.append(f"{relative}: {marker}")

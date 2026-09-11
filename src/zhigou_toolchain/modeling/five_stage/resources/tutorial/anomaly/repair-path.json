@@ -1,0 +1,52 @@
+{
+  "schema_version": "1.0.0",
+  "execution_source": "TUTORIAL_FIXTURE",
+  "actual_execution_status": "NOT_RUN",
+  "actual_review": "PENDING",
+  "original_input_ref": "anomaly/records-v2.json",
+  "immutable_source_value": {
+    "record_id": "ER-03",
+    "field": "department_id",
+    "value": "D-99"
+  },
+  "checks": [
+    {
+      "step": "3.5",
+      "status": "EXPECTED_FAIL",
+      "path": "/employees/2/department_id",
+      "actual": "D-99",
+      "expected": "registered department",
+      "evidence_ref": "EV-ER-03"
+    },
+    {
+      "step": "4.2",
+      "status": "NOT_RUN",
+      "reason": "separate OWL/SHACL gates must execute"
+    }
+  ],
+  "proposal": {
+    "candidate_version": 2,
+    "source_record_modified": false,
+    "patch": [
+      {
+        "op": "replace",
+        "path": "/object/value",
+        "from": "https://example.org/data/hr/Department/D-99",
+        "value": "https://example.org/data/hr/Department/D-01"
+      }
+    ],
+    "evidence_refs": [
+      "EV-TXT-03"
+    ],
+    "quote": "员工 E-003 归属部门 D-01。",
+    "rationale": "文本支持 D-01；表格 D-99 保留为被争议来源。补丁仍需人工确认，不是原记录的更正。",
+    "disposition": "CONFLICT_PENDING_HUMAN_REVIEW"
+  },
+  "revalidation_required": [
+    "4.1",
+    "4.2"
+  ],
+  "old_approval": "INVALID_FOR_NEW_CANDIDATE",
+  "approval": "NOT_GRANTED",
+  "without_sufficient_evidence": "UNRESOLVED"
+}

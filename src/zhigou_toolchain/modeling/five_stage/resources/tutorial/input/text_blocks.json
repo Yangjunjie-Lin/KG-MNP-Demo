@@ -1,0 +1,8 @@
+{
+  "text_id": "TXT-01",
+  "text_version": "v1",
+  "text": "员工 E-001 归属部门 D-01。\n员工 E-002 归属部门 D-02。\n员工 E-003 归属部门 D-01。",
+  "source_ref": "SRC-TXT",
+  "position_unit": "Unicode code point",
+  "sha256": "732ff74cdc3225801e4941c8a919cf74f99c4ba33b353287520121de081cb0cb"
+}

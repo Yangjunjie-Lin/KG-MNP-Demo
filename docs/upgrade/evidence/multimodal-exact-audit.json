@@ -1,0 +1,109 @@
+{
+  "normalization": "Unicode casefold; remove punctuation and whitespace; preserve letters, numbers and underscores",
+  "gold_origin": "Frozen fixture gold.json and source images, never predicted text",
+  "cases": 7,
+  "observations": 11,
+  "results": [
+    {
+      "source": "positive.png",
+      "ordinal": 0,
+      "method": "OCR_FULL_IMAGE",
+      "receipt_hash": "fe2aa9cfe97db0fc91e60469ec260f32efb6fb1415fd94a62a921ccc166b7944",
+      "exact_match": true,
+      "visual_reference_mse": null
+    },
+    {
+      "source": "negative.png",
+      "ordinal": 0,
+      "method": "OCR_FULL_IMAGE",
+      "receipt_hash": "bc930388ec5999332dbbbb779e94ea7a8aedb361442ba82a333b5aaf4e050aa6",
+      "exact_match": true,
+      "visual_reference_mse": null
+    },
+    {
+      "source": "chinese.png",
+      "ordinal": 0,
+      "method": "OCR_FULL_IMAGE",
+      "receipt_hash": "2536ca2005165351332386cd9fd6a1566066194c12b2bc36b1e51ee7f3029202",
+      "exact_match": true,
+      "visual_reference_mse": null
+    },
+    {
+      "source": "scanned.pdf",
+      "ordinal": 0,
+      "method": "OCR_RENDERED_PDF_PAGE",
+      "receipt_hash": "9f0a6258145887f5e192d6f558f35384a4e91953cf04176d0dfd460e13a3bb2b",
+      "exact_match": true,
+      "visual_reference_mse": null
+    },
+    {
+      "source": "text.pdf",
+      "ordinal": 0,
+      "method": "PDF_EMBEDDED_TEXT",
+      "receipt_hash": "9eb5149bbcde13e3402b40a8a4d253d7f1a0e7a4bbdf8ddb38f5b736c4888863",
+      "exact_match": true,
+      "visual_reference_mse": null
+    },
+    {
+      "source": "speech.wav",
+      "ordinal": 0,
+      "method": "ASR",
+      "receipt_hash": "833b8d65c6f97deb41a59afcded2cece351031382c2e442abb717838fdcb8ff7",
+      "exact_match": true,
+      "visual_reference_mse": null
+    },
+    {
+      "source": "inspection.mp4",
+      "ordinal": 0,
+      "method": "OCR_SAMPLED_VIDEO_FRAME",
+      "receipt_hash": "c8d911a491254ca6bec5e86d37669500aaa473c1a2db7cef726078944a81d776",
+      "exact_match": true,
+      "visual_reference_mse": {
+        "positive.png": 0.3042786419391632,
+        "negative.png": 235.83453369140625
+      }
+    },
+    {
+      "source": "inspection.mp4",
+      "ordinal": 1,
+      "method": "OCR_SAMPLED_VIDEO_FRAME",
+      "receipt_hash": "c8d911a491254ca6bec5e86d37669500aaa473c1a2db7cef726078944a81d776",
+      "exact_match": true,
+      "visual_reference_mse": {
+        "positive.png": 0.0946536436676979,
+        "negative.png": 236.0435791015625
+      }
+    },
+    {
+      "source": "inspection.mp4",
+      "ordinal": 2,
+      "method": "OCR_SAMPLED_VIDEO_FRAME",
+      "receipt_hash": "c8d911a491254ca6bec5e86d37669500aaa473c1a2db7cef726078944a81d776",
+      "exact_match": true,
+      "visual_reference_mse": {
+        "positive.png": 0.0947265625,
+        "negative.png": 236.04367065429688
+      }
+    },
+    {
+      "source": "inspection.mp4",
+      "ordinal": 3,
+      "method": "OCR_SAMPLED_VIDEO_FRAME",
+      "receipt_hash": "c8d911a491254ca6bec5e86d37669500aaa473c1a2db7cef726078944a81d776",
+      "exact_match": true,
+      "visual_reference_mse": {
+        "positive.png": 235.62144470214844,
+        "negative.png": 0.10659375041723251
+      }
+    },
+    {
+      "source": "inspection.mp4",
+      "ordinal": 4,
+      "method": "ASR_VIDEO_AUDIO_TRACK",
+      "receipt_hash": "c8d911a491254ca6bec5e86d37669500aaa473c1a2db7cef726078944a81d776",
+      "exact_match": true,
+      "visual_reference_mse": null
+    }
+  ],
+  "passed": true
+}

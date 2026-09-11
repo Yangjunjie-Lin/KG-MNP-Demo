@@ -1,0 +1,551 @@
+{
+  "schema_version": "1.0.0",
+  "status": "INCOMPLETE_NOT_FULL_UPGRADE",
+  "actual_tested_commit": "f79d56e714c194bca5c7c825ebdf38fb8df026d0",
+  "working_tree_dirty": true,
+  "tested_revision_meaning": "HEAD plus uncommitted delta; HEAD alone does not identify tested modifications.",
+  "tested_source_digest": "e2fd04eabd3958799008e162fc62e2f297146b205db62a7108fb8ba81dbc7468",
+  "source_fingerprint_profile": "tools/verify_five_stage.py: SHA256(JSON sorted file path -> exact byte SHA256); tracked and untracked, excluding evidence and this report",
+  "incremental_evidence": "docs/modeling/evidence/incremental-verification.json",
+  "baseline": {
+    "branch": "main",
+    "head": "f79d56e714c194bca5c7c825ebdf38fb8df026d0",
+    "initial_dirty": false,
+    "backend_selected_passed": 32,
+    "frontend_passed": 27,
+    "history_inherited": false
+  },
+  "method_counts": {
+    "EXISTING": 2,
+    "ADAPTED": 10,
+    "NEW": 3,
+    "BLOCKED": 10,
+    "NOT_APPLICABLE": 0
+  },
+  "methods": [
+    {
+      "method_id": "1.1",
+      "implementation_status": "ADAPTED",
+      "coverage": "services/sources.verified_run + KG-IR/evidence Schema；modeling.profile",
+      "gap": "新画像操作真实核验既有 KG-IR 与质量标记；六类原始独立输入的完整 Pydantic 合并契约未完成",
+      "implementation": "services/modeling_five_stage.py；five_stage/profiling.py",
+      "input": "ModelingProfileRequest(run_id)；KGIRDataset 1.0",
+      "tests": "新增单元/服务 21 项及五阶段 E2E；真实确定性运行"
+    },
+    {
+      "method_id": "1.2",
+      "implementation_status": "NEW",
+      "coverage": "原 input_inventory 仅目录；新增 pandas profile_data",
+      "gap": "精确字段编码说明/章节路径来自上游 Evidence；不推断必填唯一性",
+      "implementation": "five_stage/profiling.py；services/modeling_five_stage.py",
+      "input": "已验证 dataset + 1.1 报告同一 ArtifactRef",
+      "tests": "真实 pandas 2.2.3，字段、空值、样例测试与沙盒 E2E"
+    },
+    {
+      "method_id": "1.3",
+      "implementation_status": "BLOCKED",
+      "coverage": "原 modeling.scope 是人工表单；新增 modeling.scope.draft 请求 Qwen/vLLM",
+      "gap": "端点未配置；草稿 Schema 尚缺身份字段与对象—验收目标引用；没有冒充完整实现",
+      "implementation": "five_stage/tools.py QwenClient；services/modeling_five_stage.py",
+      "input": "ModelingScopeDraftRequest + 固定结构 Schema",
+      "tests": "MockTransport 契约正负测试；模型缺失真实 E2E；LIVE NOT_RUN"
+    },
+    {
+      "method_id": "1.4",
+      "implementation_status": "BLOCKED",
+      "coverage": "modeling.scope.approve/prepare；scope_approval.verify_scope_approval",
+      "gap": "旧范围审批可运行；身份政策/规则和独立精确答案在阶段一不可变冻结未完成",
+      "implementation": "services/modeling.py；workbench/src/modeling.tsx",
+      "input": "ScopeApprovalRequest；ModelingPrepareRequest",
+      "tests": "原范围/审批/兼容路径 32 项基线通过；独立基线冻结 NOT_RUN"
+    },
+    {
+      "method_id": "2.1",
+      "implementation_status": "ADAPTED",
+      "coverage": "build_baseline_snapshot；semantic_kernel/baseline.load_baseline_closure",
+      "gap": "完整锁定 RDF 图沿用；ROBOT 卡片可读视图与无基线服务路径未完成",
+      "implementation": "modeling/control_plane/baseline.py；semantic_kernel/baseline.py",
+      "input": "ProjectLock 与领域包本地精确依赖",
+      "tests": "旧内核/兼容包测试通过；无基线全流程 NOT_RUN"
+    },
+    {
+      "method_id": "2.2",
+      "implementation_status": "BLOCKED",
+      "coverage": "原 align_terms 为确定性规则；新增 vector_recall/merge_recall",
+      "gap": "BGE-M3/FAISS 适配可调用但未接项目 Provider 快照/服务；未装 FlagEmbedding/FAISS 或模型",
+      "implementation": "five_stage/tools.py",
+      "input": "cards + ModelLock + Top-k；NFC/casefold 与 L2",
+      "tests": "精确/别名/向量来源合并去重单元通过；真实 BGE/FAISS NOT_RUN"
+    },
+    {
+      "method_id": "2.3",
+      "implementation_status": "BLOCKED",
+      "coverage": "原 alignment 非重排；新增 rerank",
+      "gap": "FlagReranker 成对评分适配未接服务；完整方向/定义兼容性尚需扩充",
+      "implementation": "five_stage/tools.py",
+      "input": "候选卡片 + 固定 reranker ModelLock",
+      "tests": "评分边界已编码；真实 reranker NOT_RUN"
+    },
+    {
+      "method_id": "2.4",
+      "implementation_status": "BLOCKED",
+      "coverage": "四个原 Provider 的 proposal 边界可复用；两轮语义 RAG 未确认有现成实现",
+      "gap": "未实现两轮判断/补全与缺口授权；不得用原 baseline provider 充当 Qwen",
+      "implementation": "five_stage/tools.py validate_references（仅防护 helper）",
+      "input": "未来版本化两轮请求；当前不接受隐式 CREATE",
+      "tests": "虚构 IRI/未确认 CREATE 拒绝单元通过；两轮生成 NOT_RUN"
+    },
+    {
+      "method_id": "2.5",
+      "implementation_status": "ADAPTED",
+      "coverage": "normalize_candidate_drafts；typed candidate bodies；compile_shacl",
+      "gap": "原候选表示存在；已批准规则到数量约束的强引用/结构编辑 UI 不完整",
+      "implementation": "modeling/control_plane/candidates.py；semantic_kernel/shacl.py",
+      "input": "既有 OntologyCandidateSet/Proposal schema",
+      "tests": "既有结构/编译测试可复用；新增完整规则映射 NOT_RUN"
+    },
+    {
+      "method_id": "3.1",
+      "implementation_status": "ADAPTED",
+      "coverage": "RecordMappingForm/MixedMappingForm；record_mapping_drafts/mixed_mapping_drafts",
+      "gap": "已迁入3.1；声明式批量映射可运行，独立样例试运行收据未新增",
+      "implementation": "workbench/src/modeling.tsx；modeling/control_plane/providers/mixed_mapping.py",
+      "input": "原 evidence-record-mapping-v1/v2 保留",
+      "tests": "混合资料基线通过；本轮旧浏览器增量结果见验证清单"
+    },
+    {
+      "method_id": "3.2",
+      "implementation_status": "BLOCKED",
+      "coverage": "现有规范化 Evidence 保留位置；新增 text_chunks Fast Tokenizer helper",
+      "gap": "本地 Fast Tokenizer 适配未接项目操作，tokenizer snapshot 未准备",
+      "implementation": "five_stage/tools.py text_chunks",
+      "input": "冻结 text/text_id/version；ModelLock；码点半开区间",
+      "tests": "原文码点/UTF-16/NFC 差异单元；真实 tokenizer NOT_RUN"
+    },
+    {
+      "method_id": "3.3",
+      "implementation_status": "BLOCKED",
+      "coverage": "原 Recorded/文本模板是明确离线输入，不是在线抽取",
+      "gap": "Qwen 受约束抽取服务未实现；不得把模板结果计作 AI 运行",
+      "implementation": "services/modeling.py 原提案链；five_stage/tools.py 通用边界",
+      "input": "原 MixedRecordMapping/Recorded contract；在线抽取 DTO 待补",
+      "tests": "现有混合提案可测；实时抽取 NOT_RUN"
+    },
+    {
+      "method_id": "3.4",
+      "implementation_status": "ADAPTED",
+      "coverage": "mixed_mapping 原逐字片段绑定；新增 bind_quote 全匹配消歧",
+      "gap": "helper 尚未接在线抽取；原字符到原文件映射沿用既有 Evidence",
+      "implementation": "five_stage/tools.py bind_quote；providers/mixed_mapping.py",
+      "input": "冻结 chunk/text_hash/version/quote/start",
+      "tests": "重复引文、原文不匹配、版本变更拒绝；三句精确位置测试通过"
+    },
+    {
+      "method_id": "3.5",
+      "implementation_status": "ADAPTED",
+      "coverage": "mixed_mapping 身份空间/别名/目标引用检查；source/extraction report",
+      "gap": "既有显式身份解析可运行；没有换成 pandas.merge，也不宣称 pandas 方法实测",
+      "implementation": "providers/mixed_mapping.py；workbench/src/mixed-mapping-form.tsx",
+      "input": "MixedRecordMapping V2 与 verified KG-IR/Evidence",
+      "tests": "重复/未知引用旧测试；新 HR 五对象及 D99 否定测试"
+    },
+    {
+      "method_id": "3.6",
+      "implementation_status": "EXISTING",
+      "coverage": "normalize_candidate_drafts 合并规范候选并保留各 provider/证据；conflicts",
+      "gap": "UI 已定位到3.6并可读参考事实；完整 HR 生产候选链未形成",
+      "implementation": "control_plane/candidates.py；control_plane/conflicts.py；modeling-components.tsx",
+      "input": "既有 Proposal/CandidateSet；IRI/Literal 区分",
+      "tests": "18精确事实、21支持、3条双源关系和异值不覆盖参考测试"
+    },
+    {
+      "method_id": "4.1",
+      "implementation_status": "NEW",
+      "coverage": "原 prevalidate + 引用校验；新增 modeling.semantic.check integrity",
+      "gap": "显式构建任务依赖 NetworkX 检查已接服务；还未约束全部下游 finalize",
+      "implementation": "five_stage/semantic_check.py integrity；services/modeling_semantic.py",
+      "input": "SemanticCheckRequest(review_id,candidate_ids)",
+      "tests": "新真实服务测试：选中完整候选闭包、无自动审批"
+    },
+    {
+      "method_id": "4.2",
+      "implementation_status": "NEW",
+      "coverage": "原正式 compile TBox/ABox/SHACL 和 ROBOT/HermiT；新增临时联合检查",
+      "gap": "共享函数真实执行；检查结果未成为旧确认/正式交付的必需门",
+      "implementation": "five_stage/semantic_check.py check_graphs；services/modeling_semantic.py",
+      "input": "明确拟采纳候选；锁定 baseline；已有编译函数",
+      "tests": "真实服务测试通过：DL、HermiT、pySHACL、非零目标覆盖"
+    },
+    {
+      "method_id": "4.3",
+      "implementation_status": "BLOCKED",
+      "coverage": "旧 rebuild_candidate_revision/MODIFY_AND_ACCEPT；教材修复示意",
+      "gap": "新 Qwen白名单补丁→4.1/4.2→独立重审尚未实现，旧修改即接受不能替代",
+      "implementation": "control_plane/review/actions.py（旧）；tutorial/anomaly（参考）",
+      "input": "新补丁版本契约待补；不得改原 Source",
+      "tests": "D99原记录/补丁/证据/返回检查参考断言；异常服务 E2E NOT_RUN"
+    },
+    {
+      "method_id": "4.4",
+      "implementation_status": "ADAPTED",
+      "coverage": "review.action/replay；审核头CAS、服务器角色、候选版本；复用 CandidateExplorer",
+      "gap": "新增补证按钮/方法导航；完整临时检查和补丁再审门尚未接入",
+      "implementation": "services/modeling.py _review；workbench/src/modeling.tsx",
+      "input": "ReviewActionRequest/ReviewQueue/Action chain 原契约",
+      "tests": "原服务角色/并发/修订测试；新增无自动审批服务与教程 E2E"
+    },
+    {
+      "method_id": "4.5",
+      "implementation_status": "BLOCKED",
+      "coverage": "review.finalize + build_confirmed_package 既有依赖审核闭包",
+      "gap": "新版阶段一独立答案与4.2验证强绑定未进入冻结必需门，不能标全方法完成",
+      "implementation": "services/modeling.py _review；control_plane/confirmation.py",
+      "input": "原 ConfirmedModelingPackage 保持",
+      "tests": "旧真实非空确认包基线通过；五阶段完整B4 NOT_RUN"
+    },
+    {
+      "method_id": "5.1",
+      "implementation_status": "ADAPTED",
+      "coverage": "compile.plan/build；SemanticCompiler deterministic compile_*",
+      "gap": "阶段五复用编译UI并隐藏发布按钮；没有新的完整HR B4作为生产编译输入",
+      "implementation": "workbench/src/releases.tsx deliveryOnly；services/compilation.py",
+      "input": "既有 ConfirmedPackage + 编译快照/plan",
+      "tests": "基线真实ROBOT编译/兼容通过；新增参考用同一ABox函数得到23=18+5"
+    },
+    {
+      "method_id": "5.2",
+      "implementation_status": "EXISTING",
+      "coverage": "compile_mapping_plan/compile_statement_provenance/compile_evidence_lineage",
+      "gap": "保留既有正式文件名；HR正式溯源包未构建，仅参考21支持已测",
+      "implementation": "semantic_kernel/mapping.py；provenance.py；evidence_lineage.py",
+      "input": "批准映射/事实/Source/Evidence/Review的既有契约",
+      "tests": "原编译/溯源闭包测试；新增合成来源关联精确断言"
+    },
+    {
+      "method_id": "5.3",
+      "implementation_status": "BLOCKED",
+      "coverage": "原 verifier 比较语义图摘要/字节与往返；新增参考磁盘图同构测试",
+      "gap": "新增零target强门只在临时图；最终磁盘重跑全部分项与独立收据未完成",
+      "implementation": "semantic_kernel/packaging/verifier.py；five_stage/semantic_check.py；新测试",
+      "input": "正式包文件字节/manifest/graph roles",
+      "tests": "参考真实磁盘isomorphic通过；最终新增严格门 NOT_RUN"
+    },
+    {
+      "method_id": "5.4",
+      "implementation_status": "ADAPTED",
+      "coverage": "原 CQ BOOLEAN_EQUALS/RESULT_SEMANTIC_HASH；新增 compile.plan.exact V2",
+      "gap": "ASK/SELECT MULTISET类型精确断言已接；SET/ORDERED、阶段一答案冻结未完成",
+      "implementation": "five_stage/exact_answers.py；services/compilation.py；modeling-exact-form.tsx",
+      "input": "CompileExactPlanRequest 2.0 + ExactAnswer 1.0；旧Oracle不改",
+      "tests": "类型/行数/多重性/错误答案单元；HR三答案及负例实际查询"
+    },
+    {
+      "method_id": "5.5",
+      "implementation_status": "ADAPTED",
+      "coverage": "export_kgop/package verifier/manifest+lock；PackageDownload",
+      "gap": "沿用正式包，不生成第二份manifest；HR完整正式交付/下游验收未运行",
+      "implementation": "semantic_kernel/packaging；workbench/src/releases.tsx",
+      "input": "既有 OntologyPackage/.kgop；不等同Release",
+      "tests": "旧包验证/下载基线；新教程下载E2E；无HR正式发布"
+    }
+  ],
+  "quality_commands": [
+    {
+      "command": "python -m ruff check .",
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    {
+      "command": "python tools/check_types.py",
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    {
+      "command": "npm --prefix workbench run lint",
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    {
+      "command": "npm --prefix workbench run typecheck",
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    {
+      "command": "npm --prefix workbench test",
+      "exit_code": 0,
+      "status": "PASS",
+      "passed": 34
+    },
+    {
+      "command": "npm --prefix workbench run build",
+      "exit_code": 0,
+      "status": "PASS"
+    },
+    {
+      "command": "python tools/verify_five_stage.py",
+      "exit_code": 0,
+      "status": "PASS",
+      "backend_selected": 46,
+      "source_unchanged_during_run": true
+    }
+  ],
+  "full_backend": {
+    "command": "python tools/run_backend_tests.py",
+    "evidence": "runtime_logs/backend-47ebae8b471a421b87765dbbf7411a73",
+    "status": "INTERRUPTED_SUPERSEDED_SOURCE_NOT_FULL_PASS",
+    "exit_code": 4294967295,
+    "current_collection_count": 1856,
+    "observed_node_count": 1524,
+    "complete_node_count": 1523,
+    "passed_calls": 1514,
+    "failed_nodes": [
+      "tests/scripts/test_browser_runner.py::test_owned_api_worker_startup_and_shutdown_remove_and_revoke_credentials",
+      "tests/services/test_five_stage_service.py::test_new_sandbox_runs_real_ingestion_profiles_and_has_no_approvals",
+      "tests/services/test_five_stage_service.py::test_selected_candidates_run_shared_compiler_checks_without_approval"
+    ],
+    "not_observed_count": 332,
+    "ledger": "docs/modeling/evidence/backend-incomplete-ledger.json",
+    "qualification": "Source was edited during this run. It was stopped; selected reruns are not combined into full certification."
+  },
+  "browser": {
+    "selected_new": {
+      "command": "python tools/run_browser_verification.py --selected-test five-stage.e2e.ts",
+      "exit_code": 0,
+      "passed": 1,
+      "evidence": "runtime_logs/p09/browser-runs/managed-5826fe7bf7da41f49c358c243ea7b0dd"
+    },
+    "selected_mixed": {
+      "command": "python tools/run_browser_verification.py --selected-test mixed",
+      "exit_code": 0,
+      "passed": 1,
+      "evidence": "runtime_logs/p09/browser-runs/managed-d913f971156944bfb9fdf1ce667c5ee4"
+    },
+    "full": {
+      "command": "python tools/run_browser_verification.py",
+      "status": "FAIL",
+      "expected_tests": 7,
+      "evidence": "runtime_logs/p09/browser-runs/managed-fc5fffebb62a434d9b8583f615f326a4",
+      "passed": 6,
+      "failed": 1,
+      "exit_code": 1,
+      "failure": "MNP instance table did not appear before 120s; metadata/query remained pending. Managed shutdown did not produce complete cleanup receipt."
+    },
+    "viewports": [
+      1440,
+      1280,
+      1024,
+      768,
+      390
+    ],
+    "accessibility": "Selected-new captures passed axe wcag2a/aa/21aa. Manual visual review of desktop, phone and drawer performed; not universal accessibility certification.",
+    "mnp_rechecks": [
+      {
+        "evidence": "runtime_logs/p09/browser-runs/managed-c1b5b6033746400d93e4cf2cda86409a",
+        "status": "FAIL",
+        "reason": "Displayed review head lagged a committed action for >15s."
+      },
+      {
+        "evidence": "runtime_logs/p09/browser-runs/managed-af534fa6334a46efac0a8796e78167f2",
+        "status": "FAIL",
+        "reason": "Synchronous archive download did not start within 120s; real compilation succeeded."
+      },
+      {
+        "status": "FAIL",
+        "evidence": "runtime_logs/p09/browser-runs/managed-42b42eb3bf2a472887933b607a30ffc3",
+        "exit_code": 1,
+        "passed_stages": [
+          "per-item synthetic review",
+          "review.finalize",
+          "compile.plan",
+          "compile.build",
+          "package.export",
+          "hash-bound archive download",
+          "independent CLI verify-archive",
+          "registry.import"
+        ],
+        "failure": "AUTH_REQUIRED / HTTP 401 after the 30-minute browser session expired while waiting for downstream release.candidate.",
+        "authentication_policy_weakened": false,
+        "worker_shutdown": {
+          "server_exit_code": 1,
+          "credentials_removed": true,
+          "credentials_revoked": true,
+          "worker_stopped": false
+        }
+      }
+    ],
+    "runner_smoke": {
+      "status": "PASS_ON_RECHECK",
+      "tests": 7,
+      "evidence": "docs/modeling/evidence/browser-runner-recheck.xml",
+      "limits_unchanged": true,
+      "prior_failure": "45s readiness deadline exceeded during overlapping heavy test runs; actual SHACL probes and cleanup completed but were too late."
+    }
+  },
+  "execution_sources": {
+    "LIVE": {
+      "status": "NOT_RUN",
+      "models": [
+        "Qwen/vLLM",
+        "BGE-M3",
+        "FAISS with BGE embeddings",
+        "BGE-reranker-v2-m3",
+        "Fast Tokenizer with locked model snapshot"
+      ]
+    },
+    "DETERMINISTIC": {
+      "status": "EXECUTED",
+      "operations": [
+        "source/ingestion sandbox",
+        "modeling.profile 1.1/1.2",
+        "modeling.semantic.check 4.1/4.2",
+        "legacy mixed modeling/review/compile/export in synthetic E2E"
+      ],
+      "tools": [
+        "pandas 2.2.3",
+        "NetworkX 3.6.1",
+        "RDFLib 7.6.0",
+        "pySHACL 0.28.1 RDFS/meta-shacl",
+        "ROBOT 1.9.7 OWL DL",
+        "HermiT 1.4.5.456"
+      ]
+    },
+    "RECORDED_MODEL_OUTPUT": {
+      "status": "NOT_RUN_BY_NEW_WORKFLOW",
+      "meaning": "Existing provider preserved; fixtures not re-labelled as recordings"
+    },
+    "TUTORIAL_FIXTURE": {
+      "status": "READ_AND_TESTED_AS_REFERENCE_ONLY",
+      "production_approval": false,
+      "artifact_count_step_files": 25
+    }
+  },
+  "tutorial": {
+    "actual_business_graph_triples": 18,
+    "required_system_named_individual_triples": 5,
+    "objects": 5,
+    "support_links": 21,
+    "exact_query_rows": [
+      [
+        "E-001",
+        "D-01"
+      ],
+      [
+        "E-002",
+        "D-02"
+      ],
+      [
+        "E-003",
+        "D-01"
+      ]
+    ],
+    "B0_to_B5": "Reference bundles have original file SHA256 inheritance; all actual tutorial step execution labels remain NOT_RUN.",
+    "production_B4": "NOT_CREATED",
+    "production_HR_kgop": "NOT_CREATED",
+    "anomaly_service_repair_cycle": "NOT_IMPLEMENTED",
+    "negative_tests": [
+      "missing relation",
+      "unknown department",
+      "wrong direction",
+      "wrong exact answer",
+      "zero explicit SHACL targets",
+      "missing/ambiguous quote"
+    ]
+  },
+  "artifacts": {
+    "real_input": "docs/modeling/evidence/real-input-profile.json",
+    "real_semantic_check": "docs/modeling/evidence/real-candidate-semantic-check.json",
+    "screenshots": [
+      "docs/modeling/evidence/workbench.png",
+      "docs/modeling/evidence/tutorial.png",
+      "docs/modeling/evidence/stage-output.png",
+      "docs/modeling/evidence/evidence-drawer.png",
+      "docs/modeling/evidence/tutorial-mobile.png",
+      "docs/modeling/evidence/compiled-export.png"
+    ],
+    "legacy_synthetic_package": "docs/modeling/evidence/legacy-mixed-synthetic.kgop",
+    "legacy_package_verification": "docs/modeling/evidence/legacy-mixed-package-verification.json",
+    "package_meaning": "Actual 50-file legacy mixed synthetic .kgop; not the employee-department five-stage production package.",
+    "current_collection": "docs/modeling/evidence/current-backend-collection.json",
+    "mnp_delivery": "docs/modeling/evidence/legacy-mnp-synthetic.kgop",
+    "mnp_delivery_verification": "docs/modeling/evidence/legacy-mnp-package-verification.json",
+    "mnp_delivery_meaning": "Actual MNP synthetic legacy package, not HR tutorial B5; export and CLI archive verification passed."
+  },
+  "packaging": {
+    "nonisolated_build": {
+      "exit_code": 1,
+      "reason": "Host setuptools 81.0.0/wheel 0.47.0 differs from required 83.0.0/0.46.2",
+      "evidence": "runtime_logs/five-stage-wheel-02b2514c653144e4b47f6cf647155daf"
+    },
+    "isolated_build": {
+      "exit_code": 0,
+      "evidence": "runtime_logs/five-stage-wheel-1e6e6f97d1114af5aeedbebd5afac29c",
+      "wheel_sha256": "ec2f142f303a0678482776271a5d53c1bb8f82ac10cf0cba59a8a55f56310c0a",
+      "packaged_resources": 58,
+      "tutorial_step_files": 25,
+      "qualification": "Wheel/SDist built after export transport implementation and before the final one-line download-hash wrapping style. Not a release-certified artifact."
+    },
+    "clean_core_install": {
+      "status": "PASS_SMOKE_ONLY",
+      "evidence": "runtime_logs/five-stage-install-1f3c383c54c74bf9a6bb8136aee00130",
+      "exit_codes": {
+        "venv": 0,
+        "install_core": 0,
+        "isolated_import": 0,
+        "install_final_wheel": 0,
+        "final_core_smoke": 0
+      },
+      "results": {
+        "methods": 25,
+        "tutorial_files": 53,
+        "workbench_static": true,
+        "pandas_installed": false,
+        "producer_identity_isolated": true
+      },
+      "qualification": "Earlier isolated core import/resource smoke; not a clean install of the final export transport revision."
+    },
+    "linux": "NOT_RUN"
+  },
+  "resolved_failures": [
+    "Imported JSON EOF newline changed tutorial file hashes; restored exact attachment formatting, hash chain passes.",
+    "Scrollable table in evidence dialog lacked keyboard focus; shared DataTable now focusable, axe passes.",
+    "Legacy E2E ambiguous scope label after added workspace scope selector; exact labelled control selected, original flow passes.",
+    "New status test initially expected old success after failed retry; corrected to assert current FAILED with historical receipt retained.",
+    "Producer was absent from artifact reference identity; added producer binding and exact no-collision test. Latest 45-test incremental lane passed on unchanged source.",
+    "New execution receipts/directories now bind actual job IDs; same-input new tasks retain immutable output refs and get distinct StepRun identities, tested.",
+    "Model-returned gap_confirmed=true cannot authorize CREATE; unavailable trusted gap registry means CREATE stays rejected.",
+    "Review head display uses related server commit/replay observations and blocks divergent heads; 3 component tests passed. Server CAS unchanged.",
+    "package.export snapshot download checks generation, project, bytes and current permissions; cross-project, tamper and mid-read revocation tests passed. MNP verified export/download passed; downstream session-expiry E2E failure remains."
+  ],
+  "remaining_blockers": [
+    "Six-input Pydantic authority and quality routing into downstream prepare not complete.",
+    "Single ModelingSession immutable B0-B5 orchestration and STALE/approval/cache propagation not integrated.",
+    "Stage 1 independent exact answers and rules not frozen into approved authority.",
+    "BGE retrieval/reranking and Fast Tokenizer helpers not connected to project provider operation snapshots.",
+    "Qwen two-round reuse/completion, constrained extraction and local patch services not implemented.",
+    "No-baseline actual service branch not implemented.",
+    "New semantic checks not required by legacy finalize or final delivery.",
+    "Patch -> 4.1/4.2 -> independent reapproval cycle not implemented.",
+    "Final disk revalidation/zero-target gate and per-step formal receipts incomplete.",
+    "Complete HR production .kgop and normal/anomaly five-stage production E2E not run.",
+    "Full same-revision release/installation/Linux acceptance not established.",
+    "Full browser run has a real MNP failure; later targeted fixes/rechecks do not turn the full run into PASS.",
+    "Full current collection is 1856; no complete unchanged-source backend run has passed.",
+    "Latest MNP E2E reached verified delivery and Registry import but failed at session expiry before downstream Release completion; no full browser PASS."
+  ],
+  "delivery": {
+    "location": "LOCAL_WORKING_TREE",
+    "git_commit_created": false,
+    "pushed": false,
+    "user_business_ontology_published": false,
+    "synthetic_test_releases_only": true,
+    "test_processes_finished": true,
+    "synthetic_workspace_jobs_may_require_recovery": true
+  },
+  "cleanup": {
+    "revoked_synthetic_credentials": 6,
+    "removed_ephemeral_credential_files": 3,
+    "test_artifacts_retained": true,
+    "unrelated_processes_stopped": false,
+    "own_superseded_pytest_stopped": true
+  }
+}

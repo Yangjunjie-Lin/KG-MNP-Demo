@@ -1,0 +1,15 @@
+@prefix ex: <https://example.org/ontology/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+<https://example.org/hr/ontology> a owl:Ontology ; owl:versionIRI <https://example.org/hr/0.1.0/ontology> .
+ex:Employee a owl:Class ; rdfs:label "员工"@zh .
+ex:Department a owl:Class ; rdfs:label "部门"@zh .
+ex:belongsToDepartment a owl:ObjectProperty ;
+    rdfs:label "所属部门"@zh ;
+    rdfs:domain ex:Employee ; rdfs:range ex:Department .
+
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+ex:employeeId a owl:DatatypeProperty ; rdfs:label "员工编号"@zh ; rdfs:domain ex:Employee ; rdfs:range xsd:string .
+ex:employeeName a owl:DatatypeProperty ; rdfs:label "员工姓名"@zh ; rdfs:domain ex:Employee ; rdfs:range xsd:string .
+ex:departmentId a owl:DatatypeProperty ; rdfs:label "部门编号"@zh ; rdfs:domain ex:Department ; rdfs:range xsd:string .
+ex:departmentName a owl:DatatypeProperty ; rdfs:label "部门名称"@zh ; rdfs:domain ex:Department ; rdfs:range xsd:string .

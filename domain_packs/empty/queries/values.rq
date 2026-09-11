@@ -1,0 +1,1 @@
+SELECT ?entity ?value WHERE { ?entity ?property ?value . FILTER(isLiteral(?value)) } ORDER BY ?entity

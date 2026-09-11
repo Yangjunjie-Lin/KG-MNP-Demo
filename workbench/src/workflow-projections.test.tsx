@@ -97,6 +97,8 @@ it('ignores a late object result after the selected package changes',async()=>{
 it('fetches the next bounded metadata page instead of hiding terms after the first hundred',async()=>{
   metadata();mount(<ObjectBrowser packages={[{package_id:'p1'}]} releases={[]}/>);
   fireEvent.change(screen.getByLabelText('本体包版本'),{target:{value:'p1'}});
+  expect(api).not.toHaveBeenCalled();
+  fireEvent.click(screen.getByRole('button',{name:'读取锁定术语与定义'}));
   fireEvent.click(await screen.findByRole('button',{name:'下一批术语'}));
   await waitFor(()=>expect(api).toHaveBeenCalledWith('/projects/project-1/metadata?package_id=p1&offset=100&limit=100',expect.any(Object)));
 });

@@ -1,0 +1,28 @@
+{
+  "mode": "SELECTED_BROWSER_E2E",
+  "selected_test": "saved-evidence.e2e.ts",
+  "status": "PASS",
+  "startup_seconds": 3.077999999994063,
+  "browser_exit_code": 0,
+  "server_exit_code": 0,
+  "shutdown": {
+    "credentials_removed": true,
+    "credentials_revoked": true,
+    "worker_stopped": true
+  },
+  "artifacts": {
+    "junit.xml": "30792d25e1a50e6db2dd9ccc35ee019074f50b087dbecf48947859514ca0ff37",
+    "server.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stop-requested": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "output/.last-run.json": "91d1c43004802cd49950d78eb11c8fa7d05da8ffffe219a8b13b2f561bc00903",
+    "output/saved-evidence.e2e.ts-read-54a41--evidence-without-mutations/completed-stage-state.json": "6f370172a9e49eb4d8c49c632235bb016feb3eee6a0be0bca7bdfeacf6f39b08",
+    "output/saved-evidence.e2e.ts-read-54a41--evidence-without-mutations/screenshots/completed-stage-1.png": "b5e45060de37be0555ee473a970d6f58f6f9d8b7cfa99005dc1ad6bfb58441ba",
+    "output/saved-evidence.e2e.ts-read-54a41--evidence-without-mutations/screenshots/completed-stage-2.png": "180f0c9bde76df6f63af96fdbe8f17a7385ca99e9a37c4e96a872003d1e197c9",
+    "output/saved-evidence.e2e.ts-read-54a41--evidence-without-mutations/screenshots/completed-stage-3.png": "366201987cf65c420b0b14d2533bc5f737a1c554f52021c5cd8786c683908892",
+    "output/saved-evidence.e2e.ts-read-54a41--evidence-without-mutations/screenshots/completed-stage-4.png": "a0cecdc5d924a40d91c9aa5dde41355d907fa2a3f1621d183e7ad65d2b5e6cf3",
+    "output/saved-evidence.e2e.ts-read-54a41--evidence-without-mutations/screenshots/completed-stage-5.png": "a89d3c96b98c85e38e6df053b11162c41412f421e83ea617cf5300cf0b8f95f6",
+    "output/saved-evidence.e2e.ts-read-54a41--evidence-without-mutations/screenshots/evolution.png": "f4601db15064601ca095ca0025c830483d91b39fa1f164dbc072182a4a489334",
+    "output/saved-evidence.e2e.ts-read-54a41--evidence-without-mutations/screenshots/execution.png": "1ec6979e2f2b47392621fbb4943239e51017374177bcd54ac57f36f7c140da9a",
+    "output/saved-evidence.e2e.ts-read-54a41--evidence-without-mutations/screenshots/releases.png": "f3330e05bf2d6796fb75ffd788e8e8f0417e27dd31b442c7f10eba34ecb7e7ff"
+  }
+}

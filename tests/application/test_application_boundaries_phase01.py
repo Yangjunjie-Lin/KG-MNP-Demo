@@ -8,4 +8,4 @@ def test_phase01_has_no_stage09_agent_llm_or_graph_rag_runtime_dependency():
     for dependency in ("openai", "langchain", "llamaindex", "chromadb", "pinecone", "qdrant"):
         assert dependency not in pyproject
     assert not (ROOT / "ontology/stage-09").exists()
-    assert not (ROOT / "src/kg_mnp/agent").exists()
+    assert not (ROOT / "src/zhigou_toolchain/agent").exists()

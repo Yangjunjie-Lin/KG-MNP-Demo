@@ -1,0 +1,16 @@
+{
+  "step_id": "1.1",
+  "mode": "TUTORIAL_REFERENCE",
+  "actual_execution_status": "NOT_RUN",
+  "input_refs": [
+    "B0 · 六类输入"
+  ],
+  "illustrative_output": {
+    "usable_records": 5,
+    "text_statements": 3,
+    "source_refs": 3,
+    "isolated_records": 0,
+    "missing_refs": [],
+    "mode": "TUTORIAL_REFERENCE"
+  }
+}

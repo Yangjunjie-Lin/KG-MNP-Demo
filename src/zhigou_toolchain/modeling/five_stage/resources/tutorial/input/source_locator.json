@@ -1,0 +1,34 @@
+[
+  {
+    "source_id": "SRC-EMP",
+    "file": "records.json",
+    "version": "v1",
+    "locator": {
+      "kind": "json_pointer",
+      "pointer": "/employees"
+    },
+    "sha256": "ae480deb3f5781285f770a1c16b71182fe87a7897ffe87ead17bf8d57758f976"
+  },
+  {
+    "source_id": "SRC-DEP",
+    "file": "records.json",
+    "version": "v1",
+    "locator": {
+      "kind": "json_pointer",
+      "pointer": "/departments"
+    },
+    "sha256": "ae480deb3f5781285f770a1c16b71182fe87a7897ffe87ead17bf8d57758f976"
+  },
+  {
+    "source_id": "SRC-TXT",
+    "file": "staff_note.txt",
+    "version": "v1",
+    "locator": {
+      "kind": "text_range",
+      "start": 0,
+      "end": 59,
+      "unit": "Unicode code point"
+    },
+    "sha256": "732ff74cdc3225801e4941c8a919cf74f99c4ba33b353287520121de081cb0cb"
+  }
+]

@@ -1,0 +1,63 @@
+{
+  "assets": [
+    {
+      "asset_id": "hr-departments",
+      "media_type": "text/csv",
+      "path": "fixtures/departments.csv",
+      "sha256": "89c76375af1cc40ba1bb7d82cd3277b2a92dabcf60701426467f330fc692f1ea",
+      "size_bytes": 60
+    },
+    {
+      "asset_id": "hr-employees",
+      "media_type": "text/csv",
+      "path": "fixtures/employees.csv",
+      "sha256": "ad3fb9c4186771255a17d7fd157ddc2728482778e0afa77ff926ab0f961ab706",
+      "size_bytes": 94
+    },
+    {
+      "asset_id": "hr-notes",
+      "media_type": "text/plain",
+      "path": "fixtures/staff_note.txt",
+      "sha256": "732ff74cdc3225801e4941c8a919cf74f99c4ba33b353287520121de081cb0cb",
+      "size_bytes": 101
+    },
+    {
+      "asset_id": "hr-ontology",
+      "media_type": "text/turtle",
+      "path": "ontology/hr.ttl",
+      "sha256": "6b582289eb6a5911adca1aec023c09a52d138b9b3ba3b629d406f06a923215b0",
+      "size_bytes": 1044
+    },
+    {
+      "asset_id": "hr-query-employees",
+      "media_type": "application/sparql-query",
+      "path": "queries/employees.rq",
+      "sha256": "d67a3083dd5c7f58f3ea8e297730fe437a8dbd0e21c3b9c2b99a176bf022e53e",
+      "size_bytes": 246
+    },
+    {
+      "asset_id": "hr-shapes",
+      "media_type": "text/turtle",
+      "path": "shapes/hr.ttl",
+      "sha256": "f9ab603c36394dd9e07d62d1cac32132cd29a6a2dd9552ca78e870c9b57b22f4",
+      "size_bytes": 846
+    },
+    {
+      "asset_id": "hr-terminology",
+      "media_type": "application/yaml",
+      "path": "terminology/terms.yaml",
+      "sha256": "383c41c02a3003cee1955cb6f90ee1efa327af121c4dcebf1c7b1bafae578a0a",
+      "size_bytes": 237
+    }
+  ],
+  "canonicalization_profile": "KG-MNP Canonical JSON v1",
+  "content_digest": "57b24b32b2e1f7379a60ab6410f2e17366d68a178cbc09c44fec72a222ff6c43",
+  "dependencies": [],
+  "lock_id": "urn:kg-mnp:domain-pack-lock:2e99164d1ee63c9fbf7f32ee40a9e083e3b3750b754975a0fccdddf18a13ace6",
+  "manifest_file_sha256": "02758d3d68925673dee2ec2a2cc678cb0a8af6f1f0a341dec9e8961f6039a11e",
+  "manifest_kind": "KG_MNP_DOMAIN_PACK_LOCK",
+  "manifest_semantic_sha256": "40796d05379a8ef9e93f1a75301c3ccaf9b27a5ca6c878bd191553c2e637ea29",
+  "pack_id": "hr",
+  "pack_version": "0.1.0",
+  "schema_version": "1.0.0"
+}

@@ -1,0 +1,47 @@
+{
+  "step_id": "3.2",
+  "mode": "TUTORIAL_REFERENCE",
+  "actual_execution_status": "NOT_RUN",
+  "input_refs": [
+    "B2 允许项",
+    "B0 text_blocks.json"
+  ],
+  "illustrative_output": {
+    "chunks": [
+      {
+        "chunk_id": "CH-01",
+        "text_id": "TXT-01",
+        "text_version": "v1",
+        "text": "员工 E-001 归属部门 D-01。",
+        "start": 0,
+        "end": 19,
+        "position_unit": "Unicode code point",
+        "token_count": null,
+        "tokenizer_status": "NOT_RUN"
+      },
+      {
+        "chunk_id": "CH-02",
+        "text_id": "TXT-01",
+        "text_version": "v1",
+        "text": "员工 E-002 归属部门 D-02。",
+        "start": 20,
+        "end": 39,
+        "position_unit": "Unicode code point",
+        "token_count": null,
+        "tokenizer_status": "NOT_RUN"
+      },
+      {
+        "chunk_id": "CH-03",
+        "text_id": "TXT-01",
+        "text_version": "v1",
+        "text": "员工 E-003 归属部门 D-01。",
+        "start": 40,
+        "end": 59,
+        "position_unit": "Unicode code point",
+        "token_count": null,
+        "tokenizer_status": "NOT_RUN"
+      }
+    ],
+    "tokenizer_status": "NOT_RUN"
+  }
+}

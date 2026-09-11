@@ -1,0 +1,50 @@
+{
+  "step_id": "3.4",
+  "mode": "TUTORIAL_REFERENCE",
+  "actual_execution_status": "NOT_RUN",
+  "input_refs": [
+    "3.3 text_facts.json",
+    "3.2 冻结文本位置"
+  ],
+  "illustrative_output": {
+    "text_evidence": [
+      {
+        "evidence_id": "EV-TXT-01",
+        "source_id": "SRC-TXT",
+        "text_id": "TXT-01",
+        "text_version": "v1",
+        "chunk_id": "CH-01",
+        "quote": "员工 E-001 归属部门 D-01。",
+        "start": 0,
+        "end": 19,
+        "position_unit": "Unicode code point",
+        "quote_exists": true
+      },
+      {
+        "evidence_id": "EV-TXT-02",
+        "source_id": "SRC-TXT",
+        "text_id": "TXT-01",
+        "text_version": "v1",
+        "chunk_id": "CH-02",
+        "quote": "员工 E-002 归属部门 D-02。",
+        "start": 20,
+        "end": 39,
+        "position_unit": "Unicode code point",
+        "quote_exists": true
+      },
+      {
+        "evidence_id": "EV-TXT-03",
+        "source_id": "SRC-TXT",
+        "text_id": "TXT-01",
+        "text_version": "v1",
+        "chunk_id": "CH-03",
+        "quote": "员工 E-003 归属部门 D-01。",
+        "start": 40,
+        "end": 59,
+        "position_unit": "Unicode code point",
+        "quote_exists": true
+      }
+    ],
+    "ambiguous": []
+  }
+}

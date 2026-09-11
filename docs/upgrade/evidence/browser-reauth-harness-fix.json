@@ -1,0 +1,13 @@
+{
+  "failed_run": "runtime_logs/p09/browser-runs/managed-6593fe12ab6a4530bc1cd99e669138ef",
+  "failure": "A long synthetic review exceeded the short browser session lifetime. The existing readProjectState helper reauthenticated through the UI, correctly clearing transient form state. The test then attempted a new approval without a new rationale, so its disabled-button wait timed out.",
+  "fix": "Fill a rationale for each new test decision after observing the real committed state. Do not replay any previously submitted approval.",
+  "changed_file": "workbench/tests/minimal.e2e.ts",
+  "application_or_authentication_policy_changed": false,
+  "session_lifetime_extended": false,
+  "actual_401_recovery_check": "runtime_reports/live-repair-visual-final-20260911-r6/reauth-recovery.json",
+  "recovery_check_status": "PASS",
+  "project_revision_unchanged": true,
+  "approval_submitted_in_recovery_probe": false,
+  "probe_credential_revoked_and_removed": true
+}

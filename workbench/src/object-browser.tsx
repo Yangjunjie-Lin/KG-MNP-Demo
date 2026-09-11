@@ -10,13 +10,14 @@ export function ObjectBrowser({packages,releases}:{packages:Document[];releases:
   const {state,prefix}=useWorkspace();
   const [packageId,setPackage]=useState(''),[releaseId,setRelease]=useState(''),[classIri,setClass]=useState('');
   const [metadataOffset,setMetadataOffset]=useState(0);
+  const [metadataOpen,setMetadataOpen]=useState(false);
   const [result,setResult]=useState<ObjectPage|null>(null),[details,setDetails]=useState<(ObjectPage&{iri:string})|null>(null);
   const [trace,setTrace]=useState<Document[]>([]),[traceChecked,setTraceChecked]=useState(false),[error,setError]=useState(''),[busy,setBusy]=useState(false);
   const readRevision=useRef(0);
   function clearReads(){readRevision.current++;setResult(null);setDetails(null);setTrace([]);setTraceChecked(false);setError('');setBusy(false);}
-  function selectPackage(id:string){clearReads();setPackage(id);setMetadataOffset(0);}
+  function selectPackage(id:string){clearReads();setPackage(id);setMetadataOffset(0);setMetadataOpen(false);}
   const metadata=useQuery({queryKey:['metadata',state.project.project_id,packageId,releaseId,metadataOffset],
-    queryFn:({signal})=>api<MetadataPage>(prefix+'/metadata?package_id='+encodeURIComponent(packageId)+'&offset='+metadataOffset+'&limit=100'+(releaseId?'&release_id='+encodeURIComponent(releaseId):''),{signal}),enabled:!!packageId});
+    queryFn:({signal})=>api<MetadataPage>(prefix+'/metadata?package_id='+encodeURIComponent(packageId)+'&offset='+metadataOffset+'&limit=100'+(releaseId?'&release_id='+encodeURIComponent(releaseId):''),{signal}),enabled:!!packageId&&metadataOpen});
   async function query(offset=0,instanceIri?:string){
     const revision=++readRevision.current;
     setBusy(true);setError('');setTrace([]);setTraceChecked(false);
@@ -45,13 +46,14 @@ export function ObjectBrowser({packages,releases}:{packages:Document[];releases:
       <option value="">使用上方 Package</option>{releases.map(r=><option key={str(r.release_id)} value={str(r.release_id)}>{str(r.package_version)} · {str(r.release_id)}</option>)}
     </select></Field>
     {packageId&&<p>固定 Package：<Id value={packageId}/> {releaseId&&<>；Release：<Id value={releaseId}/></>}</p>}
-    {metadata.error?<p className="error" role="alert">元数据读取失败：{String(metadata.error)}</p>:metadata.isFetching?<p role="status">正在读取固定版本元数据…</p>:metadata.data&&<>
+    {!!packageId&&!metadataOpen&&<p><button onClick={()=>setMetadataOpen(true)}>读取锁定术语与定义</button><span className="muted"> 按需独立复验当前包并读取元数据；实例查询仍执行其自身校验。</span></p>}
+    {metadataOpen&&(metadata.error?<p className="error" role="alert">元数据读取失败：{String(metadata.error)}</p>:metadata.isFetching?<p role="status">正在读取固定版本元数据…</p>:metadata.data&&<>
       <p>所选视图状态：{metadata.data.view}；语义摘要：<Id value={metadata.data.semantic_digest??'未提供'}/></p>
       <DataTable data={metadata.data.rows} fields={[["iri","术语 IRI"],["kind","类型"],["labels","标签"],["definitions","定义"],["domain","定义域"],["range","值域"]]}/>
       <div className="pager"><button disabled={metadataOffset===0} onClick={()=>setMetadataOffset(Math.max(0,metadataOffset-100))}>上一批术语</button>
         <span>术语 {metadata.data.rows.length?metadata.data.page.offset+1:0}–{metadata.data.page.offset+metadata.data.rows.length} / {metadata.data.page.total}</span>
         <button disabled={metadataOffset+100>=metadata.data.page.total} onClick={()=>setMetadataOffset(metadataOffset+100)}>下一批术语</button></div>
-    </>}
+    </>)}
     <form onSubmit={event=>{event.preventDefault();query();}}>
       <Field label="实例所属 Class IRI"><input required value={classIri} onChange={event=>{setClass(event.target.value);clearReads();}}/></Field>
       <button disabled={!packageId||busy}>查询实例</button>

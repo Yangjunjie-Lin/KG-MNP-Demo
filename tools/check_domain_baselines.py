@@ -7,7 +7,7 @@ import json
 import subprocess
 from pathlib import Path
 
-from kg_mnp.domain_packs.registry import DomainPackRegistry
+from zhigou_toolchain.domain_packs.registry import DomainPackRegistry
 
 ROOT = Path(__file__).resolve().parents[1]
 MNP_SOURCE = "a7114eef25f2f2a262cd69793a8d3e2b444836fc"

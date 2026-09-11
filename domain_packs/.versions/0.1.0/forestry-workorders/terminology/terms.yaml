@@ -1,0 +1,11 @@
+terms:
+  - {lexical_form: TreeRecord, language: en, iri: 'https://example.invalid/forestry#TreeRecord'}
+  - {lexical_form: InspectionRecord, language: en, iri: 'https://example.invalid/forestry#InspectionRecord'}
+  - {lexical_form: Site, language: en, iri: 'https://example.invalid/forestry#Site'}
+  - {lexical_form: treeCode, language: en, iri: 'https://example.invalid/forestry#treeCode'}
+  - {lexical_form: label, language: en, iri: 'https://example.invalid/forestry#label'}
+  - {lexical_form: siteCode, language: en, iri: 'https://example.invalid/forestry#siteCode'}
+  - {lexical_form: inspectionCode, language: en, iri: 'https://example.invalid/forestry#inspectionCode'}
+  - {lexical_form: inspectionNote, language: en, iri: 'https://example.invalid/forestry#inspectionNote'}
+  - {lexical_form: locatedAt, language: en, iri: 'https://example.invalid/forestry#locatedAt'}
+  - {lexical_form: inspectedTree, language: en, iri: 'https://example.invalid/forestry#inspectedTree'}

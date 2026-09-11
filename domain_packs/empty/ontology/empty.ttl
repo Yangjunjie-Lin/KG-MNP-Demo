@@ -1,0 +1,2 @@
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+<urn:zhigou:empty:ontology> a owl:Ontology ; owl:versionIRI <urn:zhigou:empty:ontology:0.1.0> .

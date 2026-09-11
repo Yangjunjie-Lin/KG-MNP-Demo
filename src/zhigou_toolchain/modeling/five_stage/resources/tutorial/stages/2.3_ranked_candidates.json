@@ -1,0 +1,19 @@
+{
+  "step_id": "2.3",
+  "mode": "TUTORIAL_REFERENCE",
+  "actual_execution_status": "NOT_RUN",
+  "input_refs": [
+    "2.2 term_candidates.json",
+    "2.1 原始定义"
+  ],
+  "illustrative_output": {
+    "preferred": "https://example.org/ontology/belongsToDepartment",
+    "target_class": "https://example.org/ontology/Department",
+    "checks": [
+      "property_kind",
+      "object_iri",
+      "Employee_to_Department"
+    ],
+    "reranker_status": "NOT_RUN"
+  }
+}

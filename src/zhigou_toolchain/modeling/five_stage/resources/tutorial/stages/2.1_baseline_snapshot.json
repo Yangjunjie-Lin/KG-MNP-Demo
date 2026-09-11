@@ -1,0 +1,19 @@
+{
+  "step_id": "2.1",
+  "mode": "TUTORIAL_REFERENCE",
+  "actual_execution_status": "NOT_RUN",
+  "input_refs": [
+    "B1 范围确认包",
+    "B0 baseline.ttl"
+  ],
+  "illustrative_output": {
+    "baseline_sha256": "c69d7f7c19192a6d495c34f08d85d52b81372beea0af8d7cacd6c84b2baab74c",
+    "imports": [],
+    "terms": [
+      "Employee",
+      "Department",
+      "belongsToDepartment"
+    ],
+    "original_graph_preserved": true
+  }
+}

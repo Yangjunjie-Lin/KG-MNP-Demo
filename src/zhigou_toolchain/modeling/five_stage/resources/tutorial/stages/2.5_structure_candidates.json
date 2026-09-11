@@ -1,0 +1,82 @@
+{
+  "step_id": "2.5",
+  "mode": "TUTORIAL_REFERENCE",
+  "actual_execution_status": "NOT_RUN",
+  "input_refs": [
+    "2.4 reuse_decisions.json",
+    "B1 已确认规则"
+  ],
+  "illustrative_output": {
+    "classes": [
+      "Employee",
+      "Department"
+    ],
+    "object_properties": [
+      {
+        "iri": "https://example.org/ontology/belongsToDepartment",
+        "domain": "Employee",
+        "range": "Department",
+        "decision": "REUSE"
+      }
+    ],
+    "data_properties": [
+      {
+        "iri": "https://example.org/ontology/employeeId",
+        "kind": "DatatypeProperty",
+        "domain": "Employee",
+        "range": "xsd:string",
+        "label": "员工编号"
+      },
+      {
+        "iri": "https://example.org/ontology/employeeName",
+        "kind": "DatatypeProperty",
+        "domain": "Employee",
+        "range": "xsd:string",
+        "label": "员工姓名"
+      },
+      {
+        "iri": "https://example.org/ontology/departmentId",
+        "kind": "DatatypeProperty",
+        "domain": "Department",
+        "range": "xsd:string",
+        "label": "部门编号"
+      },
+      {
+        "iri": "https://example.org/ontology/departmentName",
+        "kind": "DatatypeProperty",
+        "domain": "Department",
+        "range": "xsd:string",
+        "label": "部门名称"
+      }
+    ],
+    "shacl_candidates": [
+      {
+        "target": "Employee",
+        "path": "belongsToDepartment",
+        "class": "Department",
+        "minCount": 1,
+        "maxCount": 1,
+        "rule_ref": "RULE-CURRENT-DEPT"
+      },
+      {
+        "targets": [
+          "Employee",
+          "Department"
+        ],
+        "string_fields": [
+          "employeeId",
+          "employeeName",
+          "departmentId",
+          "departmentName"
+        ],
+        "datatype": "xsd:string",
+        "minCount": 1,
+        "maxCount": 1,
+        "rule_ref": "RULE-STRING"
+      }
+    ],
+    "new_terms_count": 4,
+    "reused_terms_count": 3,
+    "state": "DRAFT"
+  }
+}
