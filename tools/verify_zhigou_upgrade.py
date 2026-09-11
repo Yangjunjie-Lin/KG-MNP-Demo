@@ -28,7 +28,7 @@ def main():
     before = fingerprint()
     print(json.dumps({"evidence": str(output), "source_digest": before["digest"]}), flush=True)
     npm = "npm.cmd" if os.name == "nt" else "npm"
-    commands = [("ruff", [sys.executable, "-m", "ruff", "check", "."]),
+    commands = [("ruff", [sys.executable, "-m", "ruff", "check", ".", "--no-cache"]),
                 ("types", [sys.executable, "tools/check_types.py"]),
                 ("frontend-lint", [npm, "--prefix", "workbench", "run", "lint"]),
                 ("frontend-tests", [npm, "--prefix", "workbench", "test"]),

@@ -4,6 +4,7 @@ import shutil
 from pathlib import Path
 
 import pytest
+
 from kg_mnp.domain_packs.locking import generate_pack_lock
 from kg_mnp.domain_packs.registry import DomainPackRegistry, DomainPackRegistryError
 from kg_mnp.domain_packs.resolver import resolve_dependency_closure
