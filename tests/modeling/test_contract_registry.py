@@ -7,6 +7,7 @@ import shutil
 from pathlib import Path
 
 import pytest
+
 from kg_mnp.modeling.contracts import (
     CONTRACT_SPECS,
     DRAFT_2020_12,

@@ -29,7 +29,6 @@ def session():
 def test_old_and_new_imports_are_same_authority():
     from kg_mnp.contracts.canonical import semantic_hash as old_hash
     from kg_mnp.services.facade import ApplicationService as old
-
     from zhigou_toolchain.services.facade import ApplicationService as new
     assert old is new
     assert old_hash is semantic_hash

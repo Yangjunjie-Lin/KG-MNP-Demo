@@ -6,6 +6,7 @@ from pathlib import Path
 
 import pytest
 from jsonschema import ValidationError
+
 from kg_mnp.contracts import get_contract_schema, validate_contract
 from kg_mnp.contracts.canonical import file_sha256, stable_urn
 from kg_mnp.contracts.catalog import ContractCatalog

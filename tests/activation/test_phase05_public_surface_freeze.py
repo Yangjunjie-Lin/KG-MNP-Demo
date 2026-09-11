@@ -3,9 +3,8 @@ from __future__ import annotations
 import inspect
 from pathlib import Path
 
-from kg_mnp.amendment.republication import complete_reentry, prepare_reentry
-
 from kg_mnp import amendment
+from kg_mnp.amendment.republication import complete_reentry, prepare_reentry
 
 ROOT = Path(__file__).resolve().parents[2]
 

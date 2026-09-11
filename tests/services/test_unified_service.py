@@ -4,6 +4,7 @@ import asyncio
 
 import httpx
 import pytest
+
 from kg_mnp.api.app import create_app
 from kg_mnp.api.openapi import build_openapi
 from kg_mnp.jobs.store import JobStore

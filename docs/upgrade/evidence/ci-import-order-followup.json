@@ -1,0 +1,49 @@
+{
+  "status": "PASS",
+  "validated_feature_commit": "51f7a7e9a1c5c91f8479b9c8b406cb2865c3dc53",
+  "application_and_frontend_sources_unchanged": true,
+  "dependency_and_package_metadata_unchanged": true,
+  "change": "Explicit Ruff first-party compatibility namespaces; import grouping only",
+  "files": [
+    {
+      "path": "scripts/run_reasoner.py",
+      "same_import_set_and_non_import_ast": true
+    },
+    {
+      "path": "tests/activation/test_phase05_public_surface_freeze.py",
+      "same_import_set_and_non_import_ast": true
+    },
+    {
+      "path": "tests/contracts/test_registry_and_artifacts.py",
+      "same_import_set_and_non_import_ast": true
+    },
+    {
+      "path": "tests/domain_packs/test_registry_and_dependencies.py",
+      "same_import_set_and_non_import_ast": true
+    },
+    {
+      "path": "tests/modeling/test_contract_registry.py",
+      "same_import_set_and_non_import_ast": true
+    },
+    {
+      "path": "tests/package_archive/test_snapshot_export.py",
+      "same_import_set_and_non_import_ast": true
+    },
+    {
+      "path": "tests/services/test_five_stage_service.py",
+      "same_import_set_and_non_import_ast": true
+    },
+    {
+      "path": "tests/services/test_unified_service.py",
+      "same_import_set_and_non_import_ast": true
+    },
+    {
+      "path": "tests/upgrade/test_guards.py",
+      "same_import_set_and_non_import_ast": true
+    },
+    {
+      "path": "tests/webvowl/test_stage08_boundaries.py",
+      "same_import_set_and_non_import_ast": true
+    }
+  ]
+}
