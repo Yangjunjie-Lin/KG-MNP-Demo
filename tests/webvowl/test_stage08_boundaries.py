@@ -8,6 +8,7 @@ from functools import lru_cache
 from pathlib import Path
 
 import pytest
+
 from kg_mnp.compilation.manifest import json_bytes
 from kg_mnp.publication.package_builder import (
     build_end_to_end_publication_package,

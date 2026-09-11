@@ -19,7 +19,7 @@ jobs:
         with:
           fetch-depth: 0
       - uses: ./.github/actions/setup-toolchain
-      - run: python -m ruff check .
+      - run: python -m ruff check . --no-cache
       - run: python tools/check_types.py
       - run: python tools/generate_compiler_contracts.py --check
       - run: python scripts/generate_contract_catalog.py --check

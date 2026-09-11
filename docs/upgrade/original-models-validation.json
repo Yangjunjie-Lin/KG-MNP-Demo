@@ -4,6 +4,19 @@
   "data_origin": "SYNTHETIC_ENGINEERING_FIXTURES",
   "tested_code_tree_sha256": "f8158afc0dc52441461cf759ed427de4d557f2939339eaabbfdc4e7cc90a9252",
   "source_unchanged_during_final_model_and_backend_runs": true,
+  "ci_follow_up": {
+    "reason": "Fresh CI exposed import classification hidden by a stale local Ruff auto-discovery cache after namespace migration.",
+    "changes": "Explicit first-party alias namespaces; normalize ten import blocks; require no-cache lint in final verification and CI.",
+    "application_and_frontend_sources_unchanged": true,
+    "model_logic_business_rules_and_dependencies_unchanged": true,
+    "import_ast_audit": "evidence/ci-import-order-followup.json",
+    "focused_regression_passed": 59,
+    "focused_regression_failed": 0,
+    "focused_receipt": "runtime_reports/original-models-ci-import-recheck.xml",
+    "workflow_command_recheck": {"passed": 6, "failed": 0, "receipt": "runtime_reports/original-models-ci-workflow-command-recheck.xml"},
+    "fresh_lint_types_generated_contracts_baselines_examples_hygiene_and_frontend_checks": "PASS",
+    "original_failed_quality_run": "https://github.com/Yangjunjie-Lin/KG-MNP-Demo/actions/runs/34615596393"
+  },
   "git_attributes_sha256": "5141fcf6df50fd903cc382abf45e90fd5c48b1d65f2b11f36af681e29c64bd39",
   "accepted_model_profile": {
     "text": "Qwen/Qwen3-30B-A3B-Instruct-2507",

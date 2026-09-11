@@ -44,7 +44,7 @@ def test_backend_and_isolated_installs_cover_both_platforms(name, job):
 def test_quality_includes_every_generated_input_and_hygiene_gate():
     commands = {step["run"] for step in workflow("ci-quality")["jobs"]["quality"]["steps"] if "run" in step}
     assert {
-        "python -m ruff check .", "python tools/check_types.py",
+        "python -m ruff check . --no-cache", "python tools/check_types.py",
         "python tools/generate_compiler_contracts.py --check",
         "python scripts/generate_contract_catalog.py --check",
         "python tools/check_domain_baselines.py --check",

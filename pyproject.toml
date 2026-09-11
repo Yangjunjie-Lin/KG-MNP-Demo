@@ -103,3 +103,8 @@ version = {attr = "zhigou_toolchain.__version__"}
 testpaths = ["tests"]
 pythonpath = ["src"]
 addopts = "-q -p no:deepeval -p no:asyncio"
+
+[tool.ruff.lint.isort]
+# Legacy deep imports resolve through the alias shim, not physical subpackages.
+# Explicit classification also avoids stale auto-discovery cache after migration.
+known-first-party = ["kg_mnp", "zhigou_toolchain"]

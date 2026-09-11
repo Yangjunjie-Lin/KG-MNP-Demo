@@ -6,6 +6,7 @@ from pathlib import Path
 
 import pytest
 from fastapi.testclient import TestClient
+
 from kg_mnp.api.app import create_app
 from kg_mnp.contracts.canonical import semantic_hash
 from kg_mnp.jobs.worker import JobWorker
@@ -13,7 +14,6 @@ from kg_mnp.services.errors import ServiceBoundaryError
 from kg_mnp.services.facade import ApplicationService
 from kg_mnp.services.models import OperationRequest, ServiceConfiguration
 from kg_mnp.services.projects import load_catalog
-
 from tests.services.test_modeling_workflow import (
     call,
     modeling_case,  # noqa: F401

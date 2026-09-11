@@ -26,9 +26,10 @@ from pathlib import Path
 from typing import Any
 
 import yaml
-from kg_mnp.paths import domain_pack_path
 from rdflib import OWL, RDF, RDFS, Graph, URIRef
 from rdflib.compare import to_canonical_graph
+
+from kg_mnp.paths import domain_pack_path
 
 ROOT = Path(__file__).resolve().parents[1]
 DOWNLOAD_DIR = ROOT / "third_party" / "downloads"
