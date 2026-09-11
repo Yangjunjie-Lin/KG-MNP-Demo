@@ -1,0 +1,18 @@
+{
+  "status": "LIVE_ADVISORY_EXECUTED",
+  "operation": "modeling.scope.draft",
+  "source_tree_sha256": "9bcc36e522b4e3bae5715faa070deecadbf07948c4df2fdc22810170332cf9c0",
+  "workspace": "runtime_reports/live-assistance-c3b9a6c864c845d1a6730a7699b9e417/workspace",
+  "execution_source": "LIVE",
+  "approval": "NOT_GRANTED",
+  "model_id": "gpt-5.3-codex-spark",
+  "revision_attestation": "PROVIDER_ALIAS_NOT_WEIGHT_ATTESTED",
+  "request_id": "resp_0d181710899c0a46016aa37aeeaf1087d2938bba178bcbfea9",
+  "input_hash": "81ccca8a10060c96debdc87458f8a4ca7d3ef94c0c91e7f24cfa020447ca09a2",
+  "prompt_hash": "46cb0431dcf166155b5bb7eeda294bea4c5cc6024625544d7b1d93596f11a923",
+  "duration_seconds": 4.714358299999731,
+  "unresolved_items": 4,
+  "effect": "Advisory only; does not replace the approved scope or grant review authority",
+  "data_origin": "SYNTHETIC",
+  "independent_acceptance_answers_sent": false
+}

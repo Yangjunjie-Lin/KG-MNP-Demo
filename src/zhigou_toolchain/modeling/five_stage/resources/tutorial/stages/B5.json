@@ -1,0 +1,54 @@
+{
+  "bundle_id": "B5",
+  "schema_version": "1.0",
+  "mode": "TUTORIAL_REFERENCE",
+  "parent_bundle_refs": [
+    "B4"
+  ],
+  "retained_input_ref": "B0",
+  "new_artifacts": [
+    "compiled_files.json",
+    "provenance_bundle.json",
+    "artifact_recheck.json",
+    "query_results.json",
+    "delivery_manifest.json"
+  ],
+  "step_refs": [
+    "5.1",
+    "5.2",
+    "5.3",
+    "5.4",
+    "5.5"
+  ],
+  "next_stage": null,
+  "artifact_refs": [
+    {
+      "step_id": "5.1",
+      "path": "stages/5.1_compiled_files.json",
+      "sha256": "08a6aae3db063b2cae9403d28d7605bc1055033ab469083b1e072ace7f36af5b"
+    },
+    {
+      "step_id": "5.2",
+      "path": "stages/5.2_provenance_bundle.json",
+      "sha256": "4a3afa681875a5447e8444c45e8a09ab60efd6eb58b4a1d740cd9e5c3b707ab4"
+    },
+    {
+      "step_id": "5.3",
+      "path": "stages/5.3_artifact_recheck.json",
+      "sha256": "70dac3fc21caa56c090cd127dc6f1f19409743279ac83fd51891ac17c67b42ae"
+    },
+    {
+      "step_id": "5.4",
+      "path": "stages/5.4_query_results.json",
+      "sha256": "696bedd5a6ed867f80ea8dd943ff4e1bcf5d614a747a5ad544ad257fb099db5c"
+    },
+    {
+      "step_id": "5.5",
+      "path": "stages/5.5_delivery_manifest.json",
+      "sha256": "1a652ef869515d845d6d54c530aff8c998874c7d44e8f1cdaa970c25c423b3b9"
+    }
+  ],
+  "parent_bundle_sha256": {
+    "B4": "111370ec6bb79c34cdfb6b2c9f148bd9b059d78bdba7d8a49ebd32b3f7a688c1"
+  }
+}

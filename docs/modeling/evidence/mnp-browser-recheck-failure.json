@@ -1,0 +1,26 @@
+{
+  "mode": "SELECTED_BROWSER_E2E",
+  "selected_test": "mnp",
+  "status": "FAIL",
+  "startup_seconds": 28.01600000000326,
+  "browser_exit_code": 1,
+  "error_type": "RuntimeError",
+  "artifacts": {
+    "junit.xml": "b5210cb7e5dfb66933f869cb3c91cbd402c576bb8a8d8b91a7b7695014a64740",
+    "server.log": "c51c2e6384828447f047c907f82286bcefe43cdad0fd782c6d772abb1d7f0a0d",
+    "stop-requested": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "output/.last-run.json": "985390caa176c7032b662e63c5cea48ff98a48bf4e06e64da6c2e27499193ab4",
+    "output/minimal.e2e.ts-real-browse-d5fae--fixed-reasoner-and-release/error-context.md": "f07c241fd039a52cf351911c1225af0fae41dc500538a9dcf49f952f1e033b86",
+    "output/minimal.e2e.ts-real-browse-d5fae--fixed-reasoner-and-release/screenshots/field-mapping-accessibility.json": "7f48d79b0c3ffc4e9316ecdf5a23e834f5d6f442528d6e75e6201e140116c530",
+    "output/minimal.e2e.ts-real-browse-d5fae--fixed-reasoner-and-release/screenshots/field-mapping.png": "c737c453ac27261789e7f15d007fcf69b13cb63b90036cd79fcd3f0a164c7f3a",
+    "output/minimal.e2e.ts-real-browse-d5fae--fixed-reasoner-and-release/screenshots/field-sample.png": "f8a6dbf99dac5b0b4dd9c5af659c1d2cd64f1dd2af0e941b75784cd7a8ccd5e7",
+    "output/minimal.e2e.ts-real-browse-d5fae--fixed-reasoner-and-release/screenshots/project-overview-accessibility.json": "f0ebff0b6aea41958f25165ae16687f0ba862a31942b252fcb723d3d710d4eb0",
+    "output/minimal.e2e.ts-real-browse-d5fae--fixed-reasoner-and-release/screenshots/project-overview.png": "06d8415c81898a35652d4d15229cccdfd9caaa1f17e86cf0247e35c72e185b58",
+    "output/minimal.e2e.ts-real-browse-d5fae--fixed-reasoner-and-release/screenshots/scope-cq-accessibility.json": "050bd17299cc1a8582885215dff4a4b1c5a55b25a4b4d98ebb82eedd0789c8ad",
+    "output/minimal.e2e.ts-real-browse-d5fae--fixed-reasoner-and-release/screenshots/scope-cq.png": "a2c083d4db1f890b6f79d38a939c71afc561dd4d00ae981efb1805aad86b063f",
+    "output/minimal.e2e.ts-real-browse-d5fae--fixed-reasoner-and-release/screenshots/source-evidence-accessibility.json": "deb1abee8c16d7f4902b9fa294d6e06381d0bc577f7adf2482525ba5e56ac685",
+    "output/minimal.e2e.ts-real-browse-d5fae--fixed-reasoner-and-release/screenshots/source-evidence.png": "77452d35330bb4151bc39ea884b7103ee6aa1789a4e676d6477d6aa580cc4058",
+    "output/minimal.e2e.ts-real-browse-d5fae--fixed-reasoner-and-release/screenshots/upload-ingestion-accessibility.json": "dab3009293185bf3bd591c9a5d5f19f235cd5ed49103096f9b66f7f5ef62db13",
+    "output/minimal.e2e.ts-real-browse-d5fae--fixed-reasoner-and-release/screenshots/upload-ingestion.png": "d0ca98c1170758df70e29820004ac3be4e1bf165d6aac900a09002d7aa909ccf"
+  }
+}

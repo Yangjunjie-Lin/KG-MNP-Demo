@@ -1,0 +1,21 @@
+{
+  "mode": "SELECTED_BROWSER_E2E",
+  "selected_test": "mnp-readback.e2e.ts",
+  "status": "PASS",
+  "startup_seconds": 2.827999999994063,
+  "browser_exit_code": 0,
+  "server_exit_code": 0,
+  "shutdown": {
+    "credentials_removed": true,
+    "credentials_revoked": true,
+    "worker_stopped": true
+  },
+  "artifacts": {
+    "junit.xml": "90e19cf664b3f7ee24d0ed117e53e9e82b33d947365342b259508bfec0d2b900",
+    "server.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stop-requested": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "output/.last-run.json": "91d1c43004802cd49950d78eb11c8fa7d05da8ffffe219a8b13b2f561bc00903",
+    "output/mnp-readback.e2e.ts-comple-ffcc7-bject-and-evidence-readback/mnp-object-evidence.png": "ca4c76d2bb5e7213a6163fe42ac8e2ba2697424cc5f3cb135fbaced51df5401f",
+    "output/mnp-readback.e2e.ts-comple-ffcc7-bject-and-evidence-readback/mnp-readback.json": "1f14d4559ea26e7e85df4f15b1a3da871e7a6a0609509bfb04f5e259ca6f69bd"
+  }
+}

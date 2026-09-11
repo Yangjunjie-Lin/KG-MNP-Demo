@@ -1,0 +1,4 @@
+inspectionCode,treeCode,inspectionNote
+I-001,GT-001,需要复查
+I-002,GT-002,无需复查
+I-003,GT-003,尚未完成检查，状态待核实

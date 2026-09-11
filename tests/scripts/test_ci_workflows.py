@@ -70,7 +70,10 @@ def test_python_script_git_modes_match_shebangs_even_on_windows():
             continue
         metadata, path = entry.split("\t", 1)
         executable = metadata.split()[0] == "100755"
-        shebang = (ROOT / path).read_bytes().startswith(b"#!")
+        # Compare the index mode to that same indexed blob. A pending rename
+        # may remove its old worktree path without changing the Git index.
+        blob = metadata.split()[1]
+        shebang = subprocess.check_output(["git", "cat-file", "blob", blob], cwd=ROOT).startswith(b"#!")
         if executable != shebang:
             mismatches.append(path)
     assert not mismatches, f"Git executable modes disagree with Python shebangs: {mismatches}"

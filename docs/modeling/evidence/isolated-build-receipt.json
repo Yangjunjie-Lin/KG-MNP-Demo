@@ -1,0 +1,17 @@
+{
+  "command": [
+    "python",
+    "-m",
+    "build",
+    "--wheel",
+    "--sdist",
+    "--outdir",
+    "runtime_logs\\five-stage-wheel-1e6e6f97d1114af5aeedbebd5afac29c\\artifacts"
+  ],
+  "cwd": "{REPO_ROOT}/",
+  "duration_seconds": 85.67099999997299,
+  "exit_code": 0,
+  "files": {
+    "command.log": "db8ab135bc3b0fe38bbd2235532c75a86fb545c82634a881b8d088aef3eb0cb0"
+  }
+}

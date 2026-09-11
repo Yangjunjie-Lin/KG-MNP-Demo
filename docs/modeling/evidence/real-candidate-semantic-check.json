@@ -1,0 +1,626 @@
+{
+  "five_stage": {
+    "artifacts": [
+      {
+        "content": [
+          {
+            "baseline_element_refs": [
+              "urn:kg-mnp:baseline-element:6bb5b519409df8243bec25d1003e9a1d38feb58a38135b3e4013b8d059385e6a"
+            ],
+            "body": {
+              "candidate_type": "DATA_PROPERTY",
+              "conversion_policy": "NONE",
+              "integer_value": null,
+              "label": null,
+              "literal": null,
+              "null_policy": "NONE",
+              "object_iri": null,
+              "predicate_iri": null,
+              "source_field": null,
+              "subject_iri": null,
+              "target_iri": "https://yangjunjie-lin.github.io/KG-MNP-Demo/domain-packs/minimal/terms#label",
+              "values": []
+            },
+            "candidate_action": "REUSE_EXISTING",
+            "candidate_id": "urn:kg-mnp:ontology-candidate:a351ff72efe7d3ba55520b3c1c993bd876a6b17e39c1c2b96eda8e1b1670b0f8",
+            "candidate_kind": "TBOX",
+            "competency_question_refs": [],
+            "dependency_candidate_refs": [],
+            "domain_asset_refs": [
+              "minimal-ontology"
+            ],
+            "evidence_refs": [
+              "urn:kg-mnp:evidence:abec25aa7e4f56a20cf760fbbda78e866e86c38a845b60462625ebb82a441824"
+            ],
+            "issues": [],
+            "kg_ir_item_refs": [],
+            "model_invocation_refs": [],
+            "provider_rationales": [
+              {
+                "provider_snapshot_id": "urn:kg-mnp:plugin-snapshot:920ccd71bb5b1d3aada0ea72d8efcc1ed09469a170e24393e8588b08c6d06214",
+                "rationale": "reuse a locked baseline element suggested by reviewed lexical alignment"
+              }
+            ],
+            "provider_snapshot_refs": [
+              "urn:kg-mnp:plugin-snapshot:920ccd71bb5b1d3aada0ea72d8efcc1ed09469a170e24393e8588b08c6d06214"
+            ],
+            "publication_scope": "TBOX",
+            "rationale": "reuse a locked baseline element suggested by reviewed lexical alignment",
+            "review_required": true,
+            "score_basis": "deterministic lexical ranking; not semantic correctness probability",
+            "score_basis_points": 9500,
+            "semantic_signature": "f8e1a979b95c33ceca17d782cd7a091cafaa6a1591d46bfb52cef19fb0de6cb3",
+            "support_status": "SUPPORTED"
+          },
+          {
+            "baseline_element_refs": [
+              "urn:kg-mnp:baseline-element:8d1daabde3cc71b45764fee3ac7908a9f28b17639f9b44681a9696a55475a720"
+            ],
+            "body": {
+              "candidate_type": "CLASS",
+              "conversion_policy": "NONE",
+              "integer_value": null,
+              "label": "Entity",
+              "literal": null,
+              "null_policy": "NONE",
+              "object_iri": null,
+              "predicate_iri": null,
+              "source_field": null,
+              "subject_iri": null,
+              "target_iri": "https://yangjunjie-lin.github.io/KG-MNP-Demo/domain-packs/minimal/terms#Entity",
+              "values": []
+            },
+            "candidate_action": "REUSE_EXISTING",
+            "candidate_id": "urn:kg-mnp:ontology-candidate:f13fc6c26be3bcbc62cd8d2afc152ed22c481e495ae0daf6be9651312db14da5",
+            "candidate_kind": "TBOX",
+            "competency_question_refs": [],
+            "dependency_candidate_refs": [],
+            "domain_asset_refs": [
+              "minimal-ontology"
+            ],
+            "evidence_refs": [
+              "urn:kg-mnp:evidence:8138a84db7adf6767ad5e9c917bea2d4755e62bd2a1eddadd83a8a3c3c554858"
+            ],
+            "issues": [],
+            "kg_ir_item_refs": [],
+            "model_invocation_refs": [],
+            "provider_rationales": [
+              {
+                "provider_snapshot_id": "urn:kg-mnp:plugin-snapshot:920ccd71bb5b1d3aada0ea72d8efcc1ed09469a170e24393e8588b08c6d06214",
+                "rationale": "reuse a locked baseline element suggested by reviewed lexical alignment"
+              }
+            ],
+            "provider_snapshot_refs": [
+              "urn:kg-mnp:plugin-snapshot:920ccd71bb5b1d3aada0ea72d8efcc1ed09469a170e24393e8588b08c6d06214"
+            ],
+            "publication_scope": "TBOX",
+            "rationale": "reuse a locked baseline element suggested by reviewed lexical alignment",
+            "review_required": true,
+            "score_basis": "deterministic lexical ranking; not semantic correctness probability",
+            "score_basis_points": 10000,
+            "semantic_signature": "f75a55416398d6118d6ea28f573a3ad90accd903c83eca0cd1aeadcf06c606fc",
+            "support_status": "SUPPORTED"
+          },
+          {
+            "baseline_element_refs": [
+              "urn:kg-mnp:baseline-element:8d1daabde3cc71b45764fee3ac7908a9f28b17639f9b44681a9696a55475a720"
+            ],
+            "body": {
+              "candidate_type": "CLASS_ASSERTION",
+              "conversion_policy": "NONE",
+              "integer_value": null,
+              "label": null,
+              "literal": null,
+              "null_policy": "NONE",
+              "object_iri": "https://yangjunjie-lin.github.io/KG-MNP-Demo/domain-packs/minimal/terms#Entity",
+              "predicate_iri": null,
+              "source_field": null,
+              "subject_iri": "urn:synthetic:example:entity-f7fd2bcd060a3eebcf312f21cc97030ff528acb3f7313847c03c496c638f2f83",
+              "target_iri": null,
+              "values": []
+            },
+            "candidate_action": "ASSERT",
+            "candidate_id": "urn:kg-mnp:ontology-candidate:c4c99f5763ff265fcc4f02525f81264823c50c3f1ee2920cfc356ead1c33047f",
+            "candidate_kind": "ABOX",
+            "competency_question_refs": [
+              "urn:kg-mnp:competency-question:35aa47d5abd495d1aaf0aba7d81b97554c81b7ff4190ba745d16aa188015baab"
+            ],
+            "dependency_candidate_refs": [
+              "urn:kg-mnp:ontology-candidate:eda8ded7b39d303fdc11708d8a5a6ad5e4bca9f1ecf9d6b7190db67e4326f1dd"
+            ],
+            "domain_asset_refs": [],
+            "evidence_refs": [
+              "urn:kg-mnp:evidence:6bb91cbad9d79953615c96abd9c660d5323e53639a32b9e6d1f252da09fdad0c"
+            ],
+            "issues": [],
+            "kg_ir_item_refs": [
+              "urn:kg-mnp:kg-ir-item:7cd447d5c8a77c1db4d766ff19bd6c80119c475c1e7a6bb550b12f29a53a699a"
+            ],
+            "model_invocation_refs": [],
+            "provider_rationales": [
+              {
+                "provider_snapshot_id": "urn:kg-mnp:plugin-snapshot:b75f952a78625f5e37f53106ec907371a6333b7fc3274bdfb3aeff2a466b2e61",
+                "rationale": "baseline class assertion proposal for an evidence-bound individual"
+              }
+            ],
+            "provider_snapshot_refs": [
+              "urn:kg-mnp:plugin-snapshot:b75f952a78625f5e37f53106ec907371a6333b7fc3274bdfb3aeff2a466b2e61"
+            ],
+            "publication_scope": "ABOX",
+            "rationale": "baseline class assertion proposal for an evidence-bound individual",
+            "review_required": true,
+            "score_basis": "deterministic provider ranking; not semantic correctness probability",
+            "score_basis_points": 0,
+            "semantic_signature": "6208d8b066d8161344b05726fa07e9a2e28eb6d2abbb27db00be3281e403df63",
+            "support_status": "SUPPORTED"
+          },
+          {
+            "baseline_element_refs": [
+              "urn:kg-mnp:baseline-element:6bb5b519409df8243bec25d1003e9a1d38feb58a38135b3e4013b8d059385e6a"
+            ],
+            "body": {
+              "candidate_type": "DATA_PROPERTY_ASSERTION",
+              "conversion_policy": "NONE",
+              "integer_value": null,
+              "label": null,
+              "literal": {
+                "datatype_iri": null,
+                "language": null,
+                "lexical_value": "Synthetic entity"
+              },
+              "null_policy": "NONE",
+              "object_iri": null,
+              "predicate_iri": "https://yangjunjie-lin.github.io/KG-MNP-Demo/domain-packs/minimal/terms#label",
+              "source_field": null,
+              "subject_iri": "urn:synthetic:example:entity-f7fd2bcd060a3eebcf312f21cc97030ff528acb3f7313847c03c496c638f2f83",
+              "target_iri": null,
+              "values": []
+            },
+            "candidate_action": "ASSERT",
+            "candidate_id": "urn:kg-mnp:ontology-candidate:d84eec73c7eaed60f0719c77178ff350eee3b08a7324dc2acee346d644f7b38e",
+            "candidate_kind": "ABOX",
+            "competency_question_refs": [
+              "urn:kg-mnp:competency-question:35aa47d5abd495d1aaf0aba7d81b97554c81b7ff4190ba745d16aa188015baab"
+            ],
+            "dependency_candidate_refs": [
+              "urn:kg-mnp:ontology-candidate:cc0bcd544e0685382a0e7b49c1dc055feba5e8ce7c8ad14ed4ca4edb0bf37e11",
+              "urn:kg-mnp:ontology-candidate:eda8ded7b39d303fdc11708d8a5a6ad5e4bca9f1ecf9d6b7190db67e4326f1dd"
+            ],
+            "domain_asset_refs": [],
+            "evidence_refs": [
+              "urn:kg-mnp:evidence:6bb91cbad9d79953615c96abd9c660d5323e53639a32b9e6d1f252da09fdad0c"
+            ],
+            "issues": [],
+            "kg_ir_item_refs": [
+              "urn:kg-mnp:kg-ir-item:7cd447d5c8a77c1db4d766ff19bd6c80119c475c1e7a6bb550b12f29a53a699a"
+            ],
+            "model_invocation_refs": [],
+            "provider_rationales": [
+              {
+                "provider_snapshot_id": "urn:kg-mnp:plugin-snapshot:b75f952a78625f5e37f53106ec907371a6333b7fc3274bdfb3aeff2a466b2e61",
+                "rationale": "evidence-bound ABox assertion draft with a deterministic proposed subject IRI"
+              }
+            ],
+            "provider_snapshot_refs": [
+              "urn:kg-mnp:plugin-snapshot:b75f952a78625f5e37f53106ec907371a6333b7fc3274bdfb3aeff2a466b2e61"
+            ],
+            "publication_scope": "ABOX",
+            "rationale": "evidence-bound ABox assertion draft with a deterministic proposed subject IRI",
+            "review_required": true,
+            "score_basis": "deterministic provider ranking; not semantic correctness probability",
+            "score_basis_points": 0,
+            "semantic_signature": "e5131ce959ab7e259628f69b4c5993aede7c2d24845d672d79d8f4d16430aa4f",
+            "support_status": "SUPPORTED"
+          },
+          {
+            "baseline_element_refs": [],
+            "body": {
+              "candidate_type": "INDIVIDUAL",
+              "conversion_policy": "NONE",
+              "integer_value": null,
+              "label": null,
+              "literal": null,
+              "null_policy": "NONE",
+              "object_iri": null,
+              "predicate_iri": null,
+              "source_field": null,
+              "subject_iri": "urn:synthetic:example:entity-f7fd2bcd060a3eebcf312f21cc97030ff528acb3f7313847c03c496c638f2f83",
+              "target_iri": null,
+              "values": []
+            },
+            "candidate_action": "ASSERT",
+            "candidate_id": "urn:kg-mnp:ontology-candidate:eda8ded7b39d303fdc11708d8a5a6ad5e4bca9f1ecf9d6b7190db67e4326f1dd",
+            "candidate_kind": "ABOX",
+            "competency_question_refs": [
+              "urn:kg-mnp:competency-question:35aa47d5abd495d1aaf0aba7d81b97554c81b7ff4190ba745d16aa188015baab"
+            ],
+            "dependency_candidate_refs": [],
+            "domain_asset_refs": [],
+            "evidence_refs": [
+              "urn:kg-mnp:evidence:6bb91cbad9d79953615c96abd9c660d5323e53639a32b9e6d1f252da09fdad0c"
+            ],
+            "issues": [],
+            "kg_ir_item_refs": [
+              "urn:kg-mnp:kg-ir-item:7cd447d5c8a77c1db4d766ff19bd6c80119c475c1e7a6bb550b12f29a53a699a"
+            ],
+            "model_invocation_refs": [],
+            "provider_rationales": [
+              {
+                "provider_snapshot_id": "urn:kg-mnp:plugin-snapshot:b75f952a78625f5e37f53106ec907371a6333b7fc3274bdfb3aeff2a466b2e61",
+                "rationale": "deterministic evidence-bound individual IRI proposal"
+              }
+            ],
+            "provider_snapshot_refs": [
+              "urn:kg-mnp:plugin-snapshot:b75f952a78625f5e37f53106ec907371a6333b7fc3274bdfb3aeff2a466b2e61"
+            ],
+            "publication_scope": "ABOX",
+            "rationale": "deterministic evidence-bound individual IRI proposal",
+            "review_required": true,
+            "score_basis": "deterministic provider ranking; not semantic correctness probability",
+            "score_basis_points": 0,
+            "semantic_signature": "9050ade0cd5150726966d1fd8f10255b5d03a69df2ac99ce7f04e0418a4e6e02",
+            "support_status": "SUPPORTED"
+          },
+          {
+            "baseline_element_refs": [
+              "urn:kg-mnp:baseline-element:6bb5b519409df8243bec25d1003e9a1d38feb58a38135b3e4013b8d059385e6a"
+            ],
+            "body": {
+              "candidate_type": "FIELD_TO_DATA_PROPERTY",
+              "conversion_policy": "IDENTITY",
+              "integer_value": null,
+              "label": null,
+              "literal": null,
+              "null_policy": "OMIT",
+              "object_iri": null,
+              "predicate_iri": null,
+              "source_field": "label",
+              "subject_iri": null,
+              "target_iri": "https://yangjunjie-lin.github.io/KG-MNP-Demo/domain-packs/minimal/terms#label",
+              "values": []
+            },
+            "candidate_action": "ALIGN_TO_EXISTING",
+            "candidate_id": "urn:kg-mnp:ontology-candidate:cc0bcd544e0685382a0e7b49c1dc055feba5e8ce7c8ad14ed4ca4edb0bf37e11",
+            "candidate_kind": "MAPPING",
+            "competency_question_refs": [
+              "urn:kg-mnp:competency-question:35aa47d5abd495d1aaf0aba7d81b97554c81b7ff4190ba745d16aa188015baab"
+            ],
+            "dependency_candidate_refs": [],
+            "domain_asset_refs": [],
+            "evidence_refs": [
+              "urn:kg-mnp:evidence:6bb91cbad9d79953615c96abd9c660d5323e53639a32b9e6d1f252da09fdad0c"
+            ],
+            "issues": [],
+            "kg_ir_item_refs": [
+              "urn:kg-mnp:kg-ir-item:7cd447d5c8a77c1db4d766ff19bd6c80119c475c1e7a6bb550b12f29a53a699a"
+            ],
+            "model_invocation_refs": [],
+            "provider_rationales": [
+              {
+                "provider_snapshot_id": "urn:kg-mnp:plugin-snapshot:b75f952a78625f5e37f53106ec907371a6333b7fc3274bdfb3aeff2a466b2e61",
+                "rationale": "controlled KG-IR field-to-property mapping candidate"
+              }
+            ],
+            "provider_snapshot_refs": [
+              "urn:kg-mnp:plugin-snapshot:b75f952a78625f5e37f53106ec907371a6333b7fc3274bdfb3aeff2a466b2e61"
+            ],
+            "publication_scope": "MAPPING",
+            "rationale": "controlled KG-IR field-to-property mapping candidate",
+            "review_required": true,
+            "score_basis": "deterministic provider ranking; not semantic correctness probability",
+            "score_basis_points": 0,
+            "semantic_signature": "de6b12bb9ae1ad52ed3397aeb0ed2a0b49b6a5fb80a2b92da2cc841051160e37",
+            "support_status": "SUPPORTED"
+          }
+        ],
+        "ref": {
+          "artifact_id": "urn:kg-mnp:stage-artifact:b012c58821bd03ff821e8786d948af8ef3de50b9b5aaa15ad787567171aa0da8",
+          "artifact_version": "393f4a350f5492dda74d5f6092e58a13006488954140879e4551dec2443e4926",
+          "content_hash": "393f4a350f5492dda74d5f6092e58a13006488954140879e4551dec2443e4926",
+          "data_kind": "MODELING_CANDIDATE",
+          "hash_profile": "KG-MNP Canonical JSON v1",
+          "media_type": "application/json",
+          "produced_by": "modeling.semantic.check",
+          "project_id": "urn:kg-mnp:project:aaf8fd6f8921e979341079d2239734a4a1e0f3349dee9560a1dc64ef80eabb76",
+          "record_count": 6,
+          "schema_version": "1.0.0",
+          "session_id": "urn:kg-mnp:modeling-session:a3cd460faf1822eb9ccd6311c8956a4b474a6160197c10ec663991e9146d942c",
+          "stage_id": 3,
+          "step_id": "3.6",
+          "storage_ref": "urn:kg-mnp:stage-artifact:b012c58821bd03ff821e8786d948af8ef3de50b9b5aaa15ad787567171aa0da8"
+        }
+      },
+      {
+        "content": {
+          "build_order": [
+            "urn:kg-mnp:ontology-candidate:a351ff72efe7d3ba55520b3c1c993bd876a6b17e39c1c2b96eda8e1b1670b0f8",
+            "urn:kg-mnp:ontology-candidate:cc0bcd544e0685382a0e7b49c1dc055feba5e8ce7c8ad14ed4ca4edb0bf37e11",
+            "urn:kg-mnp:ontology-candidate:eda8ded7b39d303fdc11708d8a5a6ad5e4bca9f1ecf9d6b7190db67e4326f1dd",
+            "urn:kg-mnp:ontology-candidate:c4c99f5763ff265fcc4f02525f81264823c50c3f1ee2920cfc356ead1c33047f",
+            "urn:kg-mnp:ontology-candidate:d84eec73c7eaed60f0719c77178ff350eee3b08a7324dc2acee346d644f7b38e",
+            "urn:kg-mnp:ontology-candidate:f13fc6c26be3bcbc62cd8d2afc152ed22c481e495ae0daf6be9651312db14da5"
+          ],
+          "candidate_hashes": {
+            "urn:kg-mnp:ontology-candidate:a351ff72efe7d3ba55520b3c1c993bd876a6b17e39c1c2b96eda8e1b1670b0f8": "c6a05d130316d791cbe55e4347f089f2674b610a558ba283f77d927d3b4c3ea8",
+            "urn:kg-mnp:ontology-candidate:c4c99f5763ff265fcc4f02525f81264823c50c3f1ee2920cfc356ead1c33047f": "eb9dd744dc4416fdc29881f19f9ddf966d3143c80cf08fc3ae21ce2992780009",
+            "urn:kg-mnp:ontology-candidate:cc0bcd544e0685382a0e7b49c1dc055feba5e8ce7c8ad14ed4ca4edb0bf37e11": "990a724309aef20445a5e32416cf7e503d0a88e8fe4176465205bff3472be3bc",
+            "urn:kg-mnp:ontology-candidate:d84eec73c7eaed60f0719c77178ff350eee3b08a7324dc2acee346d644f7b38e": "e1c47d778e2685c6d79c37b0d7dd6b3b1a01be8fd7ad6a86d7247c7cf5ac6d01",
+            "urn:kg-mnp:ontology-candidate:eda8ded7b39d303fdc11708d8a5a6ad5e4bca9f1ecf9d6b7190db67e4326f1dd": "acb1f522363b73b10f96ef22048dd34db749711dcd52a84b719841a87963d713",
+            "urn:kg-mnp:ontology-candidate:f13fc6c26be3bcbc62cd8d2afc152ed22c481e495ae0daf6be9651312db14da5": "f3175997c71ce4496aef4b2a2a7f49ff2a4cbf7e20d6616902fbb61f4df60656"
+          },
+          "meaning": "Only explicit construction dependencies are edges; business relation cycles are not task cycles.",
+          "missing": [],
+          "status": "PASS",
+          "task_dependencies_acyclic": true
+        },
+        "ref": {
+          "artifact_id": "urn:kg-mnp:stage-artifact:bde26d1e7aa434b1ba5eb1b10ba014b27ce31ee5dddd38bf4ee67c10d96fb3c7",
+          "artifact_version": "32e5e72dcd6003b92550f6394b0627f38c8fda7a6e58e27409f7c20dda6c8f6f",
+          "content_hash": "32e5e72dcd6003b92550f6394b0627f38c8fda7a6e58e27409f7c20dda6c8f6f",
+          "data_kind": "REPORT",
+          "hash_profile": "KG-MNP Canonical JSON v1",
+          "media_type": "application/json",
+          "produced_by": "modeling.semantic.check",
+          "project_id": "urn:kg-mnp:project:aaf8fd6f8921e979341079d2239734a4a1e0f3349dee9560a1dc64ef80eabb76",
+          "record_count": 1,
+          "schema_version": "1.0.0",
+          "session_id": "urn:kg-mnp:modeling-session:a3cd460faf1822eb9ccd6311c8956a4b474a6160197c10ec663991e9146d942c",
+          "stage_id": 4,
+          "step_id": "4.1",
+          "storage_ref": "urn:kg-mnp:stage-artifact:bde26d1e7aa434b1ba5eb1b10ba014b27ce31ee5dddd38bf4ee67c10d96fb3c7"
+        }
+      },
+      {
+        "content": {
+          "approval": "NOT_GRANTED",
+          "checks": {
+            "explicit_target_coverage": {
+              "schema_version": "1.0.0",
+              "scope": "Explicit targetClass/type coverage; not inferred focus count. Empty/unsupported target selection cannot pass.",
+              "status": "PASS",
+              "target_count": 1,
+              "targets": [
+                {
+                  "count": 1,
+                  "explicit_focus_nodes": [
+                    "urn:synthetic:example:entity-f7fd2bcd060a3eebcf312f21cc97030ff528acb3f7313847c03c496c638f2f83"
+                  ],
+                  "shape": "https://yangjunjie-lin.github.io/KG-MNP-Demo/domain-packs/minimal/terms#EntityShape",
+                  "status": "PASS",
+                  "target_class": "https://yangjunjie-lin.github.io/KG-MNP-Demo/domain-packs/minimal/terms#Entity"
+                }
+              ]
+            },
+            "hermit": {
+              "abox_semantic_digest": "dee52a9d0728c0b93a185a8c746c5e68187abd1561032e42722f1a43eeae8696",
+              "baseline_semantic_digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "consistent": true,
+              "content_digest": "826bbdd90be67304b31cb82605b1ac2d73f20bd25da3c092ae769d962ef97cc8",
+              "exit_code": 0,
+              "input_semantic_digest": "7a8700e6f2b33b280b26b873ce48148d4196ebd33a24e8111451acb14edc95bd",
+              "java_runtime_major_version": 23,
+              "manifest_kind": "KG_MNP_SEMANTIC_OWL_CONSISTENCY_REPORT",
+              "ontology_profile": "OWL_2_DL_STRICT",
+              "reasoner": "HermiT",
+              "reasoner_version": "1.4.5.456",
+              "reasoning_scope": "LOCAL_BASELINE_TBOX_ABOX_CLOSURE",
+              "report_id": "urn:kg-mnp:semantic-owl-consistency-report:078543defd164912e9419af7a0bff675f2e547b970729677c57048df6d99fb11",
+              "robot_jar_sha256": "91890c2e83d0f092dd08731376f154b36610544cfbe8685337a1bf7244ccaa2d",
+              "robot_version": "1.9.7",
+              "sanitized_diagnostics_hash": "01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b",
+              "schema_version": "1.0.0",
+              "status": "CONSISTENT",
+              "tbox_semantic_digest": "3a3ef16bd599013195e28ca05559191206fdcec1cdefcf387b0f0b36441c5377",
+              "timeout": false
+            },
+            "owl_profile": {
+              "baseline_digest": "3a3ef16bd599013195e28ca05559191206fdcec1cdefcf387b0f0b36441c5377",
+              "content_digest": "b43f8b0442117f2668091f405cef5c488bc4405662b9fc2e3f2972a13ac60804",
+              "delta_digest": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+              "detected_constructs": [],
+              "input_graph_digest": "7a8700e6f2b33b280b26b873ce48148d4196ebd33a24e8111451acb14edc95bd",
+              "manifest_kind": "KG_MNP_OWL_PROFILE_REPORT",
+              "profile_violations": [],
+              "report_id": "urn:kg-mnp:owl-profile-report:b756bfbb3eeba953db08044f8e9a7c97f4c5b4cabe03c5736fced5cf1622e86f",
+              "requested_profile": "OWL_2_DL_STRICT",
+              "schema_version": "1.0.0",
+              "status": "PASSED",
+              "unsupported_constructs": [],
+              "validator_identity": "ROBOT validate-profile",
+              "validator_version": "1.9.7"
+            },
+            "shacl": {
+              "conforms": true,
+              "content_digest": "af794874f7369bab9bfce74954ada1251399e8d7978b6f82a5abb38bf7734b1c",
+              "data_graph_digest": "dee52a9d0728c0b93a185a8c746c5e68187abd1561032e42722f1a43eeae8696",
+              "execution_limits": [
+                {
+                  "name": "max_shacl_results",
+                  "value": 100000
+                },
+                {
+                  "name": "max_shacl_seconds",
+                  "value": 120
+                }
+              ],
+              "inference_profile": "RDFS",
+              "info_count": 0,
+              "manifest_kind": "KG_MNP_SEMANTIC_SHACL_VALIDATION_REPORT",
+              "meta_shacl_status": "PASSED",
+              "ontology_graph_digest": "3a3ef16bd599013195e28ca05559191206fdcec1cdefcf387b0f0b36441c5377",
+              "pyshacl_version": "0.28.1",
+              "report_id": "urn:kg-mnp:semantic-shacl-validation-report:a33604fb92cf9449272940b9d51cc3145e6bce7e40fffa9d7c008f67a157cc76",
+              "results": [],
+              "schema_version": "1.0.0",
+              "shape_graph_digest": "127ffd6c97cc25b338fdfd04a1db2a09121952e8e847e2e92204bc163d5e6426",
+              "status": "CONFORMS",
+              "violation_count": 0,
+              "warning_count": 0
+            }
+          },
+          "formal_delivery": "NOT_CREATED",
+          "graph_compilers": [
+            "semantic_kernel.tbox.compile_tbox",
+            "semantic_kernel.abox.compile_abox",
+            "semantic_kernel.shacl.compile_shacl"
+          ],
+          "graphs": {
+            "instances": "@prefix ns1: <https://yangjunjie-lin.github.io/KG-MNP-Demo/domain-packs/minimal/terms#> .\n@prefix owl: <http://www.w3.org/2002/07/owl#> .\n\n<urn:synthetic:example:entity-f7fd2bcd060a3eebcf312f21cc97030ff528acb3f7313847c03c496c638f2f83> a owl:NamedIndividual,\n        ns1:Entity ;\n    ns1:label \"Synthetic entity\" .\n\n",
+            "ontology": "@prefix owl: <http://www.w3.org/2002/07/owl#> .\n@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .\n\n<https://yangjunjie-lin.github.io/KG-MNP-Demo/domain-packs/minimal/ontology> a owl:Ontology ;\n    rdfs:label \"Minimal contract-test ontology\"@en ;\n    owl:versionIRI <https://yangjunjie-lin.github.io/KG-MNP-Demo/domain-packs/minimal/0.1.0/ontology> .\n\n<https://yangjunjie-lin.github.io/KG-MNP-Demo/domain-packs/minimal/terms#label> a owl:DatatypeProperty ;\n    rdfs:domain <https://yangjunjie-lin.github.io/KG-MNP-Demo/domain-packs/minimal/terms#Entity> ;\n    rdfs:range rdfs:Literal .\n\n<https://yangjunjie-lin.github.io/KG-MNP-Demo/domain-packs/minimal/terms#Entity> a owl:Class ;\n    rdfs:label \"Entity\"@en .\n\n",
+            "shapes": "@prefix sh: <http://www.w3.org/ns/shacl#> .\n@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .\n\n<https://yangjunjie-lin.github.io/KG-MNP-Demo/domain-packs/minimal/terms#EntityShape> a sh:NodeShape ;\n    sh:property <urn:kg-mnp:baseline-skolem:6fa67bf7171db4b98e10697f1d2f1facb1b36280927309d13be9b28560aa55bf> ;\n    sh:targetClass <https://yangjunjie-lin.github.io/KG-MNP-Demo/domain-packs/minimal/terms#Entity> .\n\n<urn:kg-mnp:baseline-skolem:6fa67bf7171db4b98e10697f1d2f1facb1b36280927309d13be9b28560aa55bf> sh:minCount 1 ;\n    sh:path <https://yangjunjie-lin.github.io/KG-MNP-Demo/domain-packs/minimal/terms#label> .\n\n"
+          },
+          "schema_version": "1.0.0",
+          "status": "PASS"
+        },
+        "ref": {
+          "artifact_id": "urn:kg-mnp:stage-artifact:27b6fac8e53cf63466aadee419c498b1b3309dec968df9534646854bd193b4b2",
+          "artifact_version": "08d5c386c766289055125e8160106bf41e0f5016a4185f20f48b0194e5f0c8c3",
+          "content_hash": "08d5c386c766289055125e8160106bf41e0f5016a4185f20f48b0194e5f0c8c3",
+          "data_kind": "REPORT",
+          "hash_profile": "KG-MNP Canonical JSON v1",
+          "media_type": "application/json",
+          "produced_by": "modeling.semantic.check",
+          "project_id": "urn:kg-mnp:project:aaf8fd6f8921e979341079d2239734a4a1e0f3349dee9560a1dc64ef80eabb76",
+          "record_count": 1,
+          "schema_version": "1.0.0",
+          "session_id": "urn:kg-mnp:modeling-session:a3cd460faf1822eb9ccd6311c8956a4b474a6160197c10ec663991e9146d942c",
+          "stage_id": 4,
+          "step_id": "4.2",
+          "storage_ref": "urn:kg-mnp:stage-artifact:27b6fac8e53cf63466aadee419c498b1b3309dec968df9534646854bd193b4b2"
+        }
+      }
+    ],
+    "authority": "OBSERVATION_ONLY",
+    "schema_version": "1.0.0",
+    "session_id": "urn:kg-mnp:modeling-session:a3cd460faf1822eb9ccd6311c8956a4b474a6160197c10ec663991e9146d942c",
+    "step_runs": [
+      {
+        "configuration_hash": "b362a299bf7b07d6cbd7ec835a293cbf7ffc36da73ac7027168c16c6b655b2e5",
+        "created_at": "2026-09-09T23:36:49.992616+00:00",
+        "execution_kind": "DETERMINISTIC",
+        "input_artifact_refs": [
+          {
+            "artifact_id": "urn:kg-mnp:stage-artifact:b012c58821bd03ff821e8786d948af8ef3de50b9b5aaa15ad787567171aa0da8",
+            "artifact_version": "393f4a350f5492dda74d5f6092e58a13006488954140879e4551dec2443e4926",
+            "content_hash": "393f4a350f5492dda74d5f6092e58a13006488954140879e4551dec2443e4926",
+            "data_kind": "MODELING_CANDIDATE",
+            "hash_profile": "KG-MNP Canonical JSON v1",
+            "media_type": "application/json",
+            "produced_by": "modeling.semantic.check",
+            "project_id": "urn:kg-mnp:project:aaf8fd6f8921e979341079d2239734a4a1e0f3349dee9560a1dc64ef80eabb76",
+            "record_count": 6,
+            "schema_version": "1.0.0",
+            "session_id": "urn:kg-mnp:modeling-session:a3cd460faf1822eb9ccd6311c8956a4b474a6160197c10ec663991e9146d942c",
+            "stage_id": 3,
+            "step_id": "3.6",
+            "storage_ref": "urn:kg-mnp:stage-artifact:b012c58821bd03ff821e8786d948af8ef3de50b9b5aaa15ad787567171aa0da8"
+          }
+        ],
+        "job_id": "job_719e3d73e4c446d6b3ef2812234793fd",
+        "model_revision": null,
+        "output_artifact_refs": [
+          {
+            "artifact_id": "urn:kg-mnp:stage-artifact:bde26d1e7aa434b1ba5eb1b10ba014b27ce31ee5dddd38bf4ee67c10d96fb3c7",
+            "artifact_version": "32e5e72dcd6003b92550f6394b0627f38c8fda7a6e58e27409f7c20dda6c8f6f",
+            "content_hash": "32e5e72dcd6003b92550f6394b0627f38c8fda7a6e58e27409f7c20dda6c8f6f",
+            "data_kind": "REPORT",
+            "hash_profile": "KG-MNP Canonical JSON v1",
+            "media_type": "application/json",
+            "produced_by": "modeling.semantic.check",
+            "project_id": "urn:kg-mnp:project:aaf8fd6f8921e979341079d2239734a4a1e0f3349dee9560a1dc64ef80eabb76",
+            "record_count": 1,
+            "schema_version": "1.0.0",
+            "session_id": "urn:kg-mnp:modeling-session:a3cd460faf1822eb9ccd6311c8956a4b474a6160197c10ec663991e9146d942c",
+            "stage_id": 4,
+            "step_id": "4.1",
+            "storage_ref": "urn:kg-mnp:stage-artifact:bde26d1e7aa434b1ba5eb1b10ba014b27ce31ee5dddd38bf4ee67c10d96fb3c7"
+          }
+        ],
+        "review_refs": [],
+        "review_status": "PENDING",
+        "run_id": "urn:kg-mnp:step-run:e97d1c14675cd9d12e8b978ec15caa35a19b474144374b82d306631ae42ac3ee",
+        "schema_version": "1.0.0",
+        "scope": "Explicit selected candidate construction dependencies and evidence closure.",
+        "status": "SUCCEEDED",
+        "step_id": "4.1",
+        "tool_versions": {
+          "networkx": "3.6.1"
+        },
+        "validation_refs": [],
+        "validation_status": "PASS"
+      },
+      {
+        "configuration_hash": "d89460b2ba1b5ce46828d8617cc04a830a6cd40d6f0a79c7152d3da5bf6bdc34",
+        "created_at": "2026-09-09T23:37:03.596245+00:00",
+        "execution_kind": "DETERMINISTIC",
+        "input_artifact_refs": [
+          {
+            "artifact_id": "urn:kg-mnp:stage-artifact:b012c58821bd03ff821e8786d948af8ef3de50b9b5aaa15ad787567171aa0da8",
+            "artifact_version": "393f4a350f5492dda74d5f6092e58a13006488954140879e4551dec2443e4926",
+            "content_hash": "393f4a350f5492dda74d5f6092e58a13006488954140879e4551dec2443e4926",
+            "data_kind": "MODELING_CANDIDATE",
+            "hash_profile": "KG-MNP Canonical JSON v1",
+            "media_type": "application/json",
+            "produced_by": "modeling.semantic.check",
+            "project_id": "urn:kg-mnp:project:aaf8fd6f8921e979341079d2239734a4a1e0f3349dee9560a1dc64ef80eabb76",
+            "record_count": 6,
+            "schema_version": "1.0.0",
+            "session_id": "urn:kg-mnp:modeling-session:a3cd460faf1822eb9ccd6311c8956a4b474a6160197c10ec663991e9146d942c",
+            "stage_id": 3,
+            "step_id": "3.6",
+            "storage_ref": "urn:kg-mnp:stage-artifact:b012c58821bd03ff821e8786d948af8ef3de50b9b5aaa15ad787567171aa0da8"
+          },
+          {
+            "artifact_id": "urn:kg-mnp:stage-artifact:bde26d1e7aa434b1ba5eb1b10ba014b27ce31ee5dddd38bf4ee67c10d96fb3c7",
+            "artifact_version": "32e5e72dcd6003b92550f6394b0627f38c8fda7a6e58e27409f7c20dda6c8f6f",
+            "content_hash": "32e5e72dcd6003b92550f6394b0627f38c8fda7a6e58e27409f7c20dda6c8f6f",
+            "data_kind": "REPORT",
+            "hash_profile": "KG-MNP Canonical JSON v1",
+            "media_type": "application/json",
+            "produced_by": "modeling.semantic.check",
+            "project_id": "urn:kg-mnp:project:aaf8fd6f8921e979341079d2239734a4a1e0f3349dee9560a1dc64ef80eabb76",
+            "record_count": 1,
+            "schema_version": "1.0.0",
+            "session_id": "urn:kg-mnp:modeling-session:a3cd460faf1822eb9ccd6311c8956a4b474a6160197c10ec663991e9146d942c",
+            "stage_id": 4,
+            "step_id": "4.1",
+            "storage_ref": "urn:kg-mnp:stage-artifact:bde26d1e7aa434b1ba5eb1b10ba014b27ce31ee5dddd38bf4ee67c10d96fb3c7"
+          }
+        ],
+        "job_id": "job_719e3d73e4c446d6b3ef2812234793fd",
+        "model_revision": null,
+        "output_artifact_refs": [
+          {
+            "artifact_id": "urn:kg-mnp:stage-artifact:27b6fac8e53cf63466aadee419c498b1b3309dec968df9534646854bd193b4b2",
+            "artifact_version": "08d5c386c766289055125e8160106bf41e0f5016a4185f20f48b0194e5f0c8c3",
+            "content_hash": "08d5c386c766289055125e8160106bf41e0f5016a4185f20f48b0194e5f0c8c3",
+            "data_kind": "REPORT",
+            "hash_profile": "KG-MNP Canonical JSON v1",
+            "media_type": "application/json",
+            "produced_by": "modeling.semantic.check",
+            "project_id": "urn:kg-mnp:project:aaf8fd6f8921e979341079d2239734a4a1e0f3349dee9560a1dc64ef80eabb76",
+            "record_count": 1,
+            "schema_version": "1.0.0",
+            "session_id": "urn:kg-mnp:modeling-session:a3cd460faf1822eb9ccd6311c8956a4b474a6160197c10ec663991e9146d942c",
+            "stage_id": 4,
+            "step_id": "4.2",
+            "storage_ref": "urn:kg-mnp:stage-artifact:27b6fac8e53cf63466aadee419c498b1b3309dec968df9534646854bd193b4b2"
+          }
+        ],
+        "review_refs": [],
+        "review_status": "PENDING",
+        "run_id": "urn:kg-mnp:step-run:87b164a5e29f6b132afae639d73a5d849c83d034ebde27b7049dd439b463b764",
+        "schema_version": "1.0.0",
+        "scope": "Selected candidate graphs compiled using the same production TBox/ABox/SHACL functions; no approval or final artifact issued.",
+        "status": "SUCCEEDED",
+        "step_id": "4.2",
+        "tool_versions": {
+          "pyshacl": "0.28.1",
+          "rdflib": "7.6.0"
+        },
+        "validation_refs": [],
+        "validation_status": "PASS"
+      }
+    ]
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "annotation_source": null,
+  "checks": [
+    {
+      "name": "committed_output_integrity",
+      "required": true,
+      "status": "PASS"
+    },
+    {
+      "name": "independent_disk_package_verification",
+      "required": true,
+      "status": "PASS"
+    }
+  ],
+  "comparison_method": "Module contract and immutable artifact checks only",
+  "data_digest": "ec06f12767b56a22c7489bd3d43d2e340a9e15ad24070901bf1c0d17175df67a",
+  "duration_seconds": 49.58096069999738,
+  "environment": "LOCAL",
+  "gold_standard": null,
+  "job_id": "job_991f73f9a7554e178c9aada3b54626f7",
+  "mode": "DETERMINISTIC",
+  "module": "ontology",
+  "project_id": "urn:kg-mnp:project:d605abf48023b5efbd342de92ae2b59fcabc1f480bc0e03e84261ccd9c33b1e9",
+  "research_qualification": "No independent labeled holdout, comparable timing baseline or real expert review; no research target attainment claim",
+  "research_status": "INSUFFICIENT_EVIDENCE",
+  "research_targets": {
+    "expert_reviewed_published_accuracy": 0.9,
+    "object_property_relation_accuracy": 0.8,
+    "source_trace_completeness": 0.9
+  },
+  "sample_size": 56,
+  "sample_unit": "PACKAGE_FILES",
+  "schema_version": "1.0.0",
+  "source_data_origin": "NOT_INFERRED_FROM_EXECUTION_MODE",
+  "status": "PASS"
+}

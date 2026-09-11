@@ -1,0 +1,43 @@
+{
+  "step_id": "5.4",
+  "mode": "TUTORIAL_REFERENCE",
+  "actual_execution_status": "NOT_RUN",
+  "input_refs": [
+    "5.3 实际实例图",
+    "B1 独立预期答案"
+  ],
+  "illustrative_output": {
+    "query": "PREFIX ex: <https://example.org/ontology/>\nSELECT ?employeeId ?departmentId WHERE {\n ?employee a ex:Employee ; ex:employeeId ?employeeId ; ex:belongsToDepartment ?department .\n ?department a ex:Department ; ex:departmentId ?departmentId .\n}\nORDER BY ?employeeId\n",
+    "expected": [
+      [
+        "E-001",
+        "D-01"
+      ],
+      [
+        "E-002",
+        "D-02"
+      ],
+      [
+        "E-003",
+        "D-01"
+      ]
+    ],
+    "actual": [
+      [
+        "E-001",
+        "D-01"
+      ],
+      [
+        "E-002",
+        "D-02"
+      ],
+      [
+        "E-003",
+        "D-01"
+      ]
+    ],
+    "local_fixture_query": "PASS",
+    "negative_cases_execution": "NOT_RUN",
+    "scope": "本次生成的教程实例图"
+  }
+}

@@ -1,0 +1,915 @@
+{
+  "schema_version": "1.0.0",
+  "source_ref": "reference/methods.source.json",
+  "execution_sources": [
+    "LIVE",
+    "DETERMINISTIC",
+    "RECORDED_MODEL_OUTPUT",
+    "TUTORIAL_FIXTURE"
+  ],
+  "stages": [
+    {
+      "id": 1,
+      "title": "输入核验与范围确认",
+      "short": "范围确认",
+      "core": "以输入契约核验数据，以确认后的范围和预期结果限定建模。",
+      "summary": "核验可用数据，确认对象范围、业务规则与验收基线。"
+    },
+    {
+      "id": 2,
+      "title": "本体复用与结构设计",
+      "short": "结构设计",
+      "core": "联合召回与重排筛选术语，先复用已有定义，再补齐缺失结构。",
+      "summary": "复用已有本体，补齐并规范类、属性、关系和约束。"
+    },
+    {
+      "id": 3,
+      "title": "数据映射与事实构建",
+      "short": "事实构建",
+      "core": "记录按规则映射，文本经抽取回查；两路统一身份、保留证据。",
+      "summary": "将记录与文本转为身份统一、证据可追溯的事实候选。"
+    },
+    {
+      "id": 4,
+      "title": "联合校验与人工审核",
+      "short": "校验审核",
+      "core": "共享编译器生成临时图，分项校验、局部修复，再由专家确认。",
+      "summary": "校验候选并修正问题，经人工审核形成确认建模包。"
+    },
+    {
+      "id": 5,
+      "title": "语义编译与交付验收",
+      "short": "编译交付",
+      "core": "确定性编译已确认内容，复验最终文件、测试查询，再交付下游。",
+      "summary": "编译语义文件，完成复验与查询测试并打包交付。"
+    }
+  ],
+  "methods": [
+    {
+      "method_id": "1.1",
+      "stage": 1,
+      "title": "核验输入与质量",
+      "full_name": "输入契约检查与质量分流",
+      "roles": [
+        "program"
+      ],
+      "source_definition": "先核验结构与来源，再按质量政策分流数据。",
+      "source_implementation": [
+        {
+          "name": "Pydantic",
+          "use": "检查输入契约",
+          "how": "分别定义记录、文本、来源与质量模型；用 model_validate() 校验，编号采用严格字符串类型，避免丢失前导零。"
+        },
+        {
+          "name": "引用索引",
+          "use": "检查来源完整性",
+          "how": "建立 source_id 与 evidence_id 索引，核对引用、文件版本和内容摘要，登记缺失项。"
+        },
+        {
+          "name": "分流规则",
+          "use": "隔离不合格输入",
+          "how": "按问题类型与影响范围标记可用、待补充或隔离；保留原值与处理理由，不按总分整体放行。"
+        }
+      ],
+      "required_output": "输入检查报告、可用数据清单、待处理项。",
+      "guard": "必要依据缺失的记录不进入建模。",
+      "tutorial_file": "tutorial/stages/1.1_input_check.json",
+      "tutorial_inputs": [
+        "B0 · 六类输入"
+      ]
+    },
+    {
+      "method_id": "1.2",
+      "stage": 1,
+      "title": "生成字段与文本画像",
+      "full_name": "字段与文本画像",
+      "roles": [
+        "program"
+      ],
+      "source_definition": "统计当前数据特征，为后续建模提供精简上下文。",
+      "source_implementation": [
+        {
+          "name": "pandas",
+          "use": "描述字段分布",
+          "how": "统计类型、isna().sum()、nunique() 与代表值；按输入契约另行处理空字符串，保留字段说明和编码信息。"
+        },
+        {
+          "name": "文本清单统计",
+          "use": "描述文本范围",
+          "how": "登记章节路径、长度、来源覆盖和质量问题；注明批次与样本量，本步不全面抽取事实。"
+        }
+      ],
+      "required_output": "字段画像、文本画像。",
+      "guard": "样本无缺失或无重复，不自动转化为必填或全域唯一规则。",
+      "tutorial_file": "tutorial/stages/1.2_data_profile.json",
+      "tutorial_inputs": [
+        "1.1 input_check.json",
+        "B0 records / text"
+      ]
+    },
+    {
+      "method_id": "1.3",
+      "stage": 1,
+      "title": "草拟范围与验收目标",
+      "full_name": "能力问题与范围草拟",
+      "roles": [
+        "ai",
+        "program"
+      ],
+      "source_definition": "将业务要求整理为对象候选、查询目标和排除项。",
+      "source_implementation": [
+        {
+          "name": "结构化 Prompt",
+          "use": "限定草拟任务",
+          "how": "合并业务目标、字段画像、已知规则与正反例；每个对象候选关联验收目标，歧义写入 unresolved。"
+        },
+        {
+          "name": "Qwen · vLLM",
+          "use": "生成结构化草案",
+          "how": "通过聊天接口提交 messages 和 structured_outputs.json；固定实际模型及修订版本，服务端应用聊天模板。"
+        },
+        {
+          "name": "JSON Schema",
+          "use": "限定返回结构",
+          "how": "要求对象、身份字段、目标和排除项字段；返回后再校验引用，截断或无效响应进入重试或人工处理。"
+        }
+      ],
+      "required_output": "范围草案、对象候选、验收目标。",
+      "guard": "结构化输出约束格式，不批准业务内容。",
+      "tutorial_file": "tutorial/stages/1.3_scope_draft.json",
+      "tutorial_inputs": [
+        "1.2 data_profile.json",
+        "B0 goal_and_rules.json"
+      ]
+    },
+    {
+      "method_id": "1.4",
+      "stage": 1,
+      "title": "确认范围与验收基线",
+      "full_name": "范围与验收基线确认",
+      "roles": [
+        "review",
+        "program"
+      ],
+      "source_definition": "确认对象、身份与时间范围，冻结独立验收依据。",
+      "source_implementation": [
+        {
+          "name": "人工确认",
+          "use": "确定业务边界",
+          "how": "确认对象类别、编号唯一性范围、规则和排除项；明确部门归属表示当前快照还是历史关系。"
+        },
+        {
+          "name": "版本化配置",
+          "use": "固定范围和预期",
+          "how": "保存 scope_version、rule_version 与审批记录；提前登记人工确认的测试样例和预期答案，范围变化形成新版本。"
+        }
+      ],
+      "required_output": "已确认范围、身份政策、验收基线。",
+      "guard": "不从最终生成的本体反向生成标准答案。",
+      "tutorial_file": "tutorial/stages/1.4_scope_confirmed.json",
+      "tutorial_inputs": [
+        "1.3 scope_draft.json",
+        "B0 规则与独立预期"
+      ]
+    },
+    {
+      "method_id": "2.1",
+      "stage": 2,
+      "title": "解析基线与语义索引",
+      "full_name": "基线解析与语义索引构建",
+      "roles": [
+        "program"
+      ],
+      "source_definition": "保留原始语义图，另建便于检索的术语与公理索引。",
+      "source_implementation": [
+        {
+          "name": "RDFLib",
+          "use": "读取完整 RDF 图",
+          "how": "用 Graph.parse(..., format=\"turtle\") 解析 TTL；保存 IRI、标签、定义、父类及公理，保留匿名限制和 RDF 列表。"
+        },
+        {
+          "name": "依赖加载程序",
+          "use": "锁定外部定义",
+          "how": "读取 owl:imports，按允许来源与本地映射加载；登记版本、摘要及已访问项，缺失依赖单独标记。"
+        },
+        {
+          "name": "ROBOT",
+          "use": "补充可读视图",
+          "how": "导出选定术语字段或 Manchester 表达；卡片引用原图和版本，不用摘要反向替代完整 OWL 定义。"
+        }
+      ],
+      "required_output": "基线快照、依赖锁定表、术语与公理索引。",
+      "guard": "无基线时转入新建路径；混合 TTL 不只保留 OWL 导出视图。",
+      "tutorial_file": "tutorial/stages/2.1_baseline_snapshot.json",
+      "tutorial_inputs": [
+        "B1 范围确认包",
+        "B0 baseline.ttl"
+      ]
+    },
+    {
+      "method_id": "2.2",
+      "stage": 2,
+      "title": "联合召回术语",
+      "full_name": "术语候选联合召回",
+      "roles": [
+        "ai",
+        "program"
+      ],
+      "source_definition": "合并精确匹配与向量检索，获得可回查的术语候选。",
+      "source_implementation": [
+        {
+          "name": "名称与别名索引",
+          "use": "保留精确匹配",
+          "how": "先查 IRI、标签和登记别名；查询说明同时包含字段定义、样例、所属记录类型和业务目标。"
+        },
+        {
+          "name": "BGE-M3",
+          "use": "编码字段与术语",
+          "how": "使用 BGEM3FlagModel.encode() 取得 dense_vecs；查询与术语使用同一模型、文本策略和归一化设置。"
+        },
+        {
+          "name": "FAISS · IndexFlatIP",
+          "use": "检索相近候选",
+          "how": "确认两侧向量完成 L2 归一化，再按内积取 Top-k；与精确候选按 IRI 合并，保留分数及召回来源。"
+        }
+      ],
+      "required_output": "合并去重后的候选术语集合。",
+      "guard": "Top-k 用标注样例调整；召回分数不直接决定映射。",
+      "tutorial_file": "tutorial/stages/2.2_term_candidates.json",
+      "tutorial_inputs": [
+        "2.1 baseline_snapshot.json",
+        "B1 字段画像"
+      ]
+    },
+    {
+      "method_id": "2.3",
+      "stage": 2,
+      "title": "重排与兼容性检查",
+      "full_name": "候选重排与兼容性检查",
+      "roles": [
+        "ai",
+        "program"
+      ],
+      "source_definition": "比较候选的语义细节，并排查类型与方向冲突。",
+      "source_implementation": [
+        {
+          "name": "BGE-reranker-v2-m3",
+          "use": "联合比较文本对",
+          "how": "用 FlagReranker.compute_score() 为“字段与业务说明—候选术语卡片”成对打分，再排序。"
+        },
+        {
+          "name": "兼容性检查",
+          "use": "排除明显不适用项",
+          "how": "检查类与属性类别、值类型及关系方向，保存冲突理由；将入选候选的相关定义、公理和约束一起提供给下一步。"
+        }
+      ],
+      "required_output": "重排候选、适用性说明、相关语义上下文。",
+      "guard": "重排分数不是经过校准的正确概率。",
+      "tutorial_file": "tutorial/stages/2.3_ranked_candidates.json",
+      "tutorial_inputs": [
+        "2.2 term_candidates.json",
+        "2.1 原始定义"
+      ]
+    },
+    {
+      "method_id": "2.4",
+      "stage": 2,
+      "title": "判断复用与补全",
+      "full_name": "复用判断与结构补全",
+      "roles": [
+        "ai",
+        "program"
+      ],
+      "source_definition": "先决定复用或待确认，仅为已确认缺口补充结构。",
+      "source_implementation": [
+        {
+          "name": "RAG 上下文",
+          "use": "提供相关语义依据",
+          "how": "组装范围、候选定义、相关公理和规则文本；未召回术语时补查别名、父类与属性，不把漏召回当作不存在。"
+        },
+        {
+          "name": "Qwen 两轮生成",
+          "use": "分离判断与新增",
+          "how": "第一轮输出 REUSE / CREATE / UNRESOLVED；第二轮只生成允许新增的类、属性与定义，并保留依据引用。"
+        },
+        {
+          "name": "IRI 引用检查",
+          "use": "防止虚构复用",
+          "how": "核对返回的已有 IRI；无法确认的结果转人工，子类关系与完全等价分别审查。"
+        }
+      ],
+      "required_output": "复用决定、结构补全草案、未解决项。",
+      "guard": "名称相似不构成 owl:equivalentClass 的充分依据。",
+      "tutorial_file": "tutorial/stages/2.4_reuse_decisions.json",
+      "tutorial_inputs": [
+        "2.3 ranked_candidates.json",
+        "B1 规则与目标"
+      ]
+    },
+    {
+      "method_id": "2.5",
+      "stage": 2,
+      "title": "规范结构与约束",
+      "full_name": "结构与约束候选规范化",
+      "roles": [
+        "program"
+      ],
+      "source_definition": "将语义定义与数据要求分别整理为类型化候选。",
+      "source_implementation": [
+        {
+          "name": "Pydantic",
+          "use": "统一候选表示",
+          "how": "分别定义类、数据属性、对象属性、OWL 公理和 SHACL 候选；记录候选版本、依赖与依据。"
+        },
+        {
+          "name": "IRI 分配规则",
+          "use": "管理语义标识",
+          "how": "检查命名空间和冲突；外部术语保留原 IRI，本地术语按约定分配稳定标识。"
+        },
+        {
+          "name": "SHACL 模板",
+          "use": "表达明确的数据要求",
+          "how": "将批准规则映射为 minCount、maxCount、datatype 或 class 等约束，并登记目标对象与检查范围。"
+        }
+      ],
+      "required_output": "类型化结构候选、OWL 公理候选、SHACL 候选。",
+      "guard": "domain/range 不等于必填检查；数量限制必须引用已确认规则。",
+      "tutorial_file": "tutorial/stages/2.5_structure_candidates.json",
+      "tutorial_inputs": [
+        "2.4 reuse_decisions.json",
+        "B1 已确认规则"
+      ]
+    },
+    {
+      "method_id": "3.1",
+      "stage": 3,
+      "title": "配置映射并试运行",
+      "full_name": "声明式映射配置与试运行",
+      "roles": [
+        "program"
+      ],
+      "source_definition": "把源字段转换为对象、属性或引用，再批量执行已验证的映射。",
+      "source_implementation": [
+        {
+          "name": "Mapping Plan",
+          "use": "声明转换规则",
+          "how": "记录源集合、源字段、目标属性、对象键、引用查找、空值策略和异常策略；姓名生成字面值，部门编号解析为对象引用。"
+        },
+        {
+          "name": "转换函数注册表",
+          "use": "控制值转换",
+          "how": "仅允许调用登记的日期、数值和代码映射函数；保存转换版本，不运行模型临时生成的任意表达式。"
+        },
+        {
+          "name": "批量处理程序",
+          "use": "验证并执行映射",
+          "how": "先用样例试运行，再处理本批记录；每项结果绑定源记录与字段，失败项进入报告，不逐行调用模型。"
+        }
+      ],
+      "required_output": "可执行映射计划、结构化事实草案、运行报告。",
+      "guard": "空值、转换失败和未知目标必须显式处理。",
+      "tutorial_file": "tutorial/stages/3.1_mapping_plan.json",
+      "tutorial_inputs": [
+        "B2 结构候选包",
+        "B0 records.json"
+      ]
+    },
+    {
+      "method_id": "3.2",
+      "stage": 3,
+      "title": "分块并保留位置",
+      "full_name": "文本分块与位置保留",
+      "roles": [
+        "program"
+      ],
+      "source_definition": "沿句段边界分块，同时保留文本版本与字符位置。",
+      "source_implementation": [
+        {
+          "name": "句段分块程序",
+          "use": "保持文本连贯",
+          "how": "优先按章节、段落和句子切分；超长段落再用带重叠的 token 窗口，预留任务说明和模型输出空间。"
+        },
+        {
+          "name": "Fast Tokenizer",
+          "use": "计算长度和偏移",
+          "how": "使用模型配套分词器及 return_offsets_mapping=True；保存 text_id、chunk_id 与全文区间，正文使用原字符串切片。"
+        },
+        {
+          "name": "上游位置映射",
+          "use": "返回原始来源",
+          "how": "从片段偏移映射到规则化全文，再返回原文位置；固定文本版本，不用 token 解码结果替代原文。"
+        }
+      ],
+      "required_output": "带字符范围、来源和版本的文本片段。",
+      "guard": "offset_mapping 不是 PDF 页码或版面坐标。",
+      "tutorial_file": "tutorial/stages/3.2_text_chunks.json",
+      "tutorial_inputs": [
+        "B2 允许项",
+        "B0 text_blocks.json"
+      ]
+    },
+    {
+      "method_id": "3.3",
+      "stage": 3,
+      "title": "抽取对象与事实",
+      "full_name": "受约束的对象与事实抽取",
+      "roles": [
+        "ai",
+        "program"
+      ],
+      "source_definition": "仅从当前文本抽取允许的类型、属性与关系线索。",
+      "source_implementation": [
+        {
+          "name": "本体允许项清单",
+          "use": "限定抽取范围",
+          "how": "向模型提供相关类、属性 IRI、字段定义和少量样例；新增概念需求进入 unresolved，不在抽取中扩展本体。"
+        },
+        {
+          "name": "Qwen · JSON Schema",
+          "use": "生成抽取草案",
+          "how": "提交片段与抽取任务；要求对象提及、关系、原始值、逐字引文和片段编号，并保留否定、条件与时间信息。"
+        },
+        {
+          "name": "受控标准化",
+          "use": "保留原始表达",
+          "how": "原始值和标准化值分开保存；数值与日期转换引用登记规则，禁止无依据补全。"
+        }
+      ],
+      "required_output": "对象提及、属性与关系草案、原文引文。",
+      "guard": "两对象共同出现不代表存在关系；否定和历史陈述不能直接当作当前事实。",
+      "tutorial_file": "tutorial/stages/3.3_text_facts.json",
+      "tutorial_inputs": [
+        "3.2 text_chunks.json",
+        "B2 类与属性允许项"
+      ]
+    },
+    {
+      "method_id": "3.4",
+      "stage": 3,
+      "title": "校对原文并绑定证据",
+      "full_name": "原文校对与证据绑定",
+      "roles": [
+        "program"
+      ],
+      "source_definition": "在冻结文本中定位引文，绑定可回查的来源依据。",
+      "source_implementation": [
+        {
+          "name": "字面匹配程序",
+          "use": "定位原文引文",
+          "how": "限定在指定 chunk 中，用 re.finditer(re.escape(quote), text) 找全部匹配；结合位置和上下文消除重复引文歧义。"
+        },
+        {
+          "name": "位置映射程序",
+          "use": "计算来源位置",
+          "how": "由片段局部位置得到全文位置，再关联原始文件定位；保存文本版本、引文与摘要。"
+        },
+        {
+          "name": "证据登记表",
+          "use": "连接事实与依据",
+          "how": "建立 Evidence，登记匹配结果和歧义；只确认引文确实存在，不代替关系含义审核。"
+        }
+      ],
+      "required_output": "Evidence 记录、来源定位、歧义清单。",
+      "guard": "匹配不到或多处无法区分时不绑定唯一依据。",
+      "tutorial_file": "tutorial/stages/3.4_evidence_records.json",
+      "tutorial_inputs": [
+        "3.3 text_facts.json",
+        "3.2 冻结文本位置"
+      ]
+    },
+    {
+      "method_id": "3.5",
+      "stage": 3,
+      "title": "统一身份与解析引用",
+      "full_name": "对象身份统一与关系引用解析",
+      "roles": [
+        "program"
+      ],
+      "source_definition": "按确认的业务身份定位对象，再解析关系目标。",
+      "source_implementation": [
+        {
+          "name": "身份索引",
+          "use": "区分对象身份",
+          "how": "使用“身份范围 + 对象类型 + 业务编号”建键；不同系统间的编号对应依赖已审核对照表。"
+        },
+        {
+          "name": "pandas.merge",
+          "use": "检查多对一关联",
+          "how": "先排除空键，再使用左连接、validate=\"many_to_one\" 与 indicator=True；检查目标唯一性和未匹配行。"
+        },
+        {
+          "name": "冲突登记",
+          "use": "保留身份异常",
+          "how": "未知目标、重复身份和跨源不一致进入待处理清单；名称相似只作查找线索，不自动合并。"
+        }
+      ],
+      "required_output": "统一身份表、明确对象引用、身份冲突报告。",
+      "guard": "空键必须在关联前处理，避免空值彼此匹配。",
+      "tutorial_file": "tutorial/stages/3.5_identity_index.json",
+      "tutorial_inputs": [
+        "3.1 记录事实",
+        "3.4 文本证据",
+        "B1 身份规则"
+      ]
+    },
+    {
+      "method_id": "3.6",
+      "stage": 3,
+      "title": "汇总事实与登记冲突",
+      "full_name": "事实汇总、去重与冲突登记",
+      "roles": [
+        "program"
+      ],
+      "source_definition": "合并两路候选与多源支持，同时保留不兼容陈述。",
+      "source_implementation": [
+        {
+          "name": "事实规范化",
+          "use": "统一事实表示",
+          "how": "整理主语、谓词和对象；明确区分 IRI 与字面值，保留数据类型、语言和必要时间上下文。"
+        },
+        {
+          "name": "事实索引",
+          "use": "合并同一事实",
+          "how": "按规范化三元组及适用上下文建立事实键；相同事实合并展示，但保留每条来源陈述和转换记录。"
+        },
+        {
+          "name": "冲突规则",
+          "use": "登记不兼容值",
+          "how": "对相同对象与适用范围检测矛盾值；无已批准的来源优先规则时，保留各候选及证据，不采用最后写入覆盖。"
+        }
+      ],
+      "required_output": "对象与事实候选包、多源证据集合、冲突清单。",
+      "guard": "去重不能丢失证据，合并不能掩盖冲突。",
+      "tutorial_file": "tutorial/stages/3.6_fact_candidates.json",
+      "tutorial_inputs": [
+        "3.5 identity_index.json",
+        "3.1 记录草案",
+        "3.4 文本草案与证据"
+      ]
+    },
+    {
+      "method_id": "4.1",
+      "stage": 4,
+      "title": "检查候选与依赖",
+      "full_name": "候选完整性与依赖检查",
+      "roles": [
+        "program"
+      ],
+      "source_definition": "核对候选结构、有效引用与可执行构建顺序。",
+      "source_implementation": [
+        {
+          "name": "Pydantic · 引用索引",
+          "use": "检查候选完整性",
+          "how": "验证字段、值类型、候选版本及证据引用；检查当前规则与基线依赖，不接受已拒绝且无替代项的引用。"
+        },
+        {
+          "name": "NetworkX",
+          "use": "检查任务依赖",
+          "how": "用有向图表示实际构建任务并拓扑排序；语义中的相互引用与任务依赖分开，必要时先声明对象、再填充关系。"
+        }
+      ],
+      "required_output": "完整性报告、缺失依赖、构建计划。",
+      "guard": "对象关系成环不自动构成构建错误。",
+      "tutorial_file": "tutorial/stages/4.1_candidate_integrity.json",
+      "tutorial_inputs": [
+        "B3 对象、事实、证据包",
+        "B2 结构约束"
+      ]
+    },
+    {
+      "method_id": "4.2",
+      "stage": 4,
+      "title": "联合验证约束与逻辑",
+      "full_name": "数据约束与逻辑联合验证",
+      "roles": [
+        "program"
+      ],
+      "source_definition": "用同一编译器临时构图，分别执行数据和 OWL 检查。",
+      "source_implementation": [
+        {
+          "name": "共享编译器 · RDFLib",
+          "use": "构造临时验证图",
+          "how": "只组合拟采纳候选及锁定依赖，不混入互斥备选方案；采用正式交付时相同的图转换逻辑。"
+        },
+        {
+          "name": "pySHACL",
+          "use": "验证数据要求",
+          "how": "分别传入 data_graph、shacl_graph 与 ont_graph；显式设置推理模式，可启用 meta_shacl；保存 conforms 和结果图。"
+        },
+        {
+          "name": "ROBOT · HermiT",
+          "use": "检查 OWL 逻辑",
+          "how": "先用 validate-profile --profile DL 核对支持范围，再以 reason --reasoner hermit 检查不一致及不可满足类；SHACL 与来源元数据不混入该输入。"
+        }
+      ],
+      "required_output": "数据约束、OWL 范围和逻辑验证报告。",
+      "guard": "缺依赖、超时、不支持或工具错误不记作通过。",
+      "tutorial_file": "tutorial/stages/4.2_validation_report.json",
+      "tutorial_inputs": [
+        "4.1 candidate_integrity.json",
+        "B3 拟采纳候选"
+      ]
+    },
+    {
+      "method_id": "4.3",
+      "stage": 4,
+      "title": "局部修复与重验",
+      "full_name": "局部修复与影响范围重验",
+      "roles": [
+        "ai",
+        "program"
+      ],
+      "source_definition": "只修改明确错误，并重新生成受影响的候选。",
+      "source_implementation": [
+        {
+          "name": "确定性修复函数",
+          "use": "处理明确格式错误",
+          "how": "优先使用已登记转换函数修正无歧义问题，记录原值、规则和新值。"
+        },
+        {
+          "name": "Qwen 局部补丁",
+          "use": "提出语义修复",
+          "how": "提供错误路径、当前值、期望、原证据及不可变规则；只允许返回白名单字段的修改草案。"
+        },
+        {
+          "name": "影响范围分析",
+          "use": "触发依赖重验",
+          "how": "形成新候选版本；映射、身份或结构变化后，重建受影响事实并返回 4.1、4.2，超过修复轮数转人工。"
+        }
+      ],
+      "required_output": "局部修复草案、新候选版本、重验报告。",
+      "guard": "不得删除硬规则或伪造证据；修复后不能直接批准。",
+      "tutorial_file": "tutorial/stages/4.3_repair_proposal.json",
+      "tutorial_inputs": [
+        "4.1 / 4.2 错误报告（条件分支）",
+        "B3 相关证据"
+      ]
+    },
+    {
+      "method_id": "4.4",
+      "stage": 4,
+      "title": "审核语义与证据",
+      "full_name": "业务语义与证据审核",
+      "roles": [
+        "review",
+        "program"
+      ],
+      "source_definition": "专家对照原文和定义，确认机器检查之外的业务含义。",
+      "source_implementation": [
+        {
+          "name": "审核界面",
+          "use": "集中展示证据",
+          "how": "并列显示候选、基线定义、关系方向、引文位置、冲突和检查结果，重点核对否定、时间与概念范围。"
+        },
+        {
+          "name": "决策记录",
+          "use": "绑定具体候选版本",
+          "how": "记录接受、拒绝、修改或补证决定，以及审核人、理由、candidate_version 和 content_hash。"
+        },
+        {
+          "name": "重审机制",
+          "use": "阻止过期审批",
+          "how": "修改后的候选重新校验；上游依赖变化时重新评估下游批准，不沿用旧内容的审核结果。"
+        }
+      ],
+      "required_output": "逐项审核决定、修改要求、已批准候选。",
+      "guard": "程序通过不等于语义已确认。",
+      "tutorial_file": "tutorial/stages/4.4_review_decisions.json",
+      "tutorial_inputs": [
+        "4.2 验证报告",
+        "B3 候选与证据"
+      ]
+    },
+    {
+      "method_id": "4.5",
+      "stage": 4,
+      "title": "冻结确认建模包",
+      "full_name": "确认建模包冻结",
+      "roles": [
+        "program"
+      ],
+      "source_definition": "冻结已采纳内容，并核对整体依赖和处理记录。",
+      "source_implementation": [
+        {
+          "name": "依赖闭包检查",
+          "use": "确认采纳集合完整",
+          "how": "收集批准的范围、结构、约束、映射与事实；排除未解决、拒绝或过期依赖，再核对组合后的必要约束。"
+        },
+        {
+          "name": "冻结与核账程序",
+          "use": "保存可构建快照",
+          "how": "记录输入、基线与审批版本及内容摘要；汇总已处理、待处理和排除记录，避免静默丢失失败数据。"
+        }
+      ],
+      "required_output": "确认建模包；满足条件后标记 APPROVED_FOR_BUILD。",
+      "guard": "可构建不等于已交付或已发布。",
+      "tutorial_file": "tutorial/stages/4.5_confirmed_package.json",
+      "tutorial_inputs": [
+        "4.4 候选版本绑定审核",
+        "4.2 复验结果",
+        "B1—B3 全部依赖"
+      ]
+    },
+    {
+      "method_id": "5.1",
+      "stage": 5,
+      "title": "编译语义文件",
+      "full_name": "确定性语义编译",
+      "roles": [
+        "program"
+      ],
+      "source_definition": "将冻结的确认内容转换为正式语义文件。",
+      "source_implementation": [
+        {
+          "name": "共享编译器",
+          "use": "固定语义转换",
+          "how": "仅读取批准的中间表示和锁定依赖；与临时校验共用转换逻辑，不在编译时请求模型补充内容。"
+        },
+        {
+          "name": "RDFLib",
+          "use": "构造并序列化三元组",
+          "how": "以 URIRef 表示稳定标识，以带类型或语言的 Literal 表示值；用 Graph.add() 构图，复杂公理按模板处理列表与空白节点。"
+        },
+        {
+          "name": "分图输出",
+          "use": "分离交付职责",
+          "how": "分别写出 ontology.ttl、instances.ttl 和 shapes.ttl；引用锁定基线，不从摘要重建原公理，推理内容另行标识。"
+        }
+      ],
+      "required_output": "本体结构、对象实例、SHACL 文件及基线依赖。",
+      "guard": "正式语义文件由批准内容编译，不让模型自由写入。",
+      "tutorial_file": "tutorial/stages/5.1_compiled_files.json",
+      "tutorial_inputs": [
+        "B4 确认建模包（教程示意）"
+      ]
+    },
+    {
+      "method_id": "5.2",
+      "stage": 5,
+      "title": "保存映射与溯源",
+      "full_name": "映射与溯源文件生成",
+      "roles": [
+        "program"
+      ],
+      "source_definition": "保存事实的生成路径和全部支持证据。",
+      "source_implementation": [
+        {
+          "name": "JSON 序列化",
+          "use": "保留可复用映射",
+          "how": "将批准的 Mapping Plan、转换函数版本、字段契约和身份策略写入 mapping.json。"
+        },
+        {
+          "name": "事实登记表",
+          "use": "连接事实与依据",
+          "how": "保存三元组及对象类型，关联原始陈述、证据、映射、候选版本与审核；相同事实允许多份独立证据。"
+        },
+        {
+          "name": "PROV-O · 可选",
+          "use": "提供 RDF 溯源视图",
+          "how": "按需表达来源实体、生成活动和责任主体；页码、单元格与字符区间仍以明确定位结构保存。"
+        }
+      ],
+      "required_output": "mapping.json、provenance.jsonl；按需附 RDF 溯源。",
+      "guard": "查询结果可回查原始依据，不因三元组去重丢失支持来源。",
+      "tutorial_file": "tutorial/stages/5.2_provenance_bundle.json",
+      "tutorial_inputs": [
+        "5.1 语义文件",
+        "B4 映射与来源审核引用"
+      ]
+    },
+    {
+      "method_id": "5.3",
+      "stage": 5,
+      "title": "复验最终工件",
+      "full_name": "最终工件一致性复验",
+      "roles": [
+        "program"
+      ],
+      "source_definition": "重新读取已写出的文件，检查往返一致性与实际覆盖。",
+      "source_implementation": [
+        {
+          "name": "RDFLib · 图同构",
+          "use": "比较实际交付图",
+          "how": "从磁盘重读文件和锁定依赖，用 isomorphic() 等方法检查图内容；不以文本相同或三元组数量相同代替图比较。"
+        },
+        {
+          "name": "联合验证流程",
+          "use": "复验约束与逻辑",
+          "how": "对最终文件重跑规定检查；同时核对事实登记、来源引用、对象数量和审核覆盖。"
+        },
+        {
+          "name": "验证覆盖核对",
+          "use": "防止空范围通过",
+          "how": "检查 SHACL 目标对象及被检数量，发现类型遗漏或零对象命中时登记异常。"
+        }
+      ],
+      "required_output": "基于最终文件的复验报告。",
+      "guard": "内存候选通过不代替工件复验；关键检查失败阻止交付通过。",
+      "tutorial_file": "tutorial/stages/5.3_artifact_recheck.json",
+      "tutorial_inputs": [
+        "5.1 磁盘语义文件",
+        "5.2 映射溯源"
+      ]
+    },
+    {
+      "method_id": "5.4",
+      "stage": 5,
+      "title": "验证查询与异常用例",
+      "full_name": "能力问题与异常用例测试",
+      "roles": [
+        "program"
+      ],
+      "source_definition": "将验收目标转为查询断言，并验证错误能被发现。",
+      "source_implementation": [
+        {
+          "name": "SPARQL · RDFLib",
+          "use": "执行目标查询",
+          "how": "每个目标绑定 .rq 与独立预期结果；用 Graph.query() 执行，动态参数通过 initBindings 传入。"
+        },
+        {
+          "name": "测试断言",
+          "use": "比较明确答案",
+          "how": "ASK 比较布尔值；SELECT 按约定比较集合、多重集合或有序行，同时核对 IRI、类型与数量。"
+        },
+        {
+          "name": "异常用例",
+          "use": "检验约束有效性",
+          "how": "构造缺关系、未知部门或错误方向等用例，确认对应检查器或断言失败；固定显式事实或特定推理图的查询模式。"
+        }
+      ],
+      "required_output": "目标查询测试、异常测试、回归报告。",
+      "guard": "查询不报错不等于正确；运行过推理器不代表查询图自动含推理结果。",
+      "tutorial_file": "tutorial/stages/5.4_query_results.json",
+      "tutorial_inputs": [
+        "5.3 实际实例图",
+        "B1 独立预期答案"
+      ]
+    },
+    {
+      "method_id": "5.5",
+      "stage": 5,
+      "title": "打包与下游验收",
+      "full_name": "交付清单生成与下游验收",
+      "roles": [
+        "program"
+      ],
+      "source_definition": "登记文件、版本和验证状态，按加载契约交给下游。",
+      "source_implementation": [
+        {
+          "name": "交付清单",
+          "use": "组织完整工件",
+          "how": "汇总语义文件、基线、映射、来源、审核与测试；记录包版本、工具模型版本、推理配置和加载约定。"
+        },
+        {
+          "name": "SHA-256",
+          "use": "核对文件一致性",
+          "how": "文件写完后计算摘要并写入 manifest.json；清单不循环记录自身摘要，摘要不等于数字签名。"
+        },
+        {
+          "name": "加载验收",
+          "use": "检查可用交付",
+          "how": "按清单核对文件与依赖并执行基本查询；真实通过后交给下游决定正式发布、上线和版本切换。"
+        }
+      ],
+      "required_output": "本体交付包、manifest.json、交付验收报告。",
+      "guard": "本模块完成文件交付，不直接承担发布上线。",
+      "tutorial_file": "tutorial/stages/5.5_delivery_manifest.json",
+      "tutorial_inputs": [
+        "5.1—5.4 工件与检查记录",
+        "B4 原始审批记录"
+      ]
+    }
+  ],
+  "branches": {
+    "no_baseline": [
+      "2.1",
+      "2.4",
+      "2.5"
+    ],
+    "records": [
+      "3.1",
+      "3.5",
+      "3.6"
+    ],
+    "text": [
+      "3.2",
+      "3.3",
+      "3.4",
+      "3.5",
+      "3.6"
+    ],
+    "review": [
+      "4.1",
+      "4.2",
+      "4.4",
+      "4.5"
+    ],
+    "repair": [
+      "4.3",
+      "4.1",
+      "4.2",
+      "4.4",
+      "4.5"
+    ]
+  }
+}

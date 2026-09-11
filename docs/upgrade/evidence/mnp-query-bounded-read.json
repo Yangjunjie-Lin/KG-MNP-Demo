@@ -1,0 +1,7 @@
+{
+  "rows": 1,
+  "seconds": 46.26507750000019,
+  "package_id": "urn:kg-mnp:ontology-package:afd393dc4eebd42909ac4c0ad8775478429016a8130ce711ed81c16c61147d7b",
+  "validation": "fresh full package validation retained",
+  "comparison_limit": "Earlier run used cProfile and different concurrent load; not research timing evidence"
+}

@@ -49,7 +49,7 @@ def wheel_payload(wheel: Path) -> dict:
                 raise ValueError("runtime or sensitive material in Wheel")
             # RECORD necessarily changes with metadata; compare actual installed
             # package/resource payload rather than ZIP timestamps/compression.
-            if name.startswith("kg_mnp/"):
+            if name.startswith(("zhigou_toolchain/", "kg_mnp/")):
                 result[name] = hashlib.sha256(archive.read(name)).hexdigest()
         return result
 
@@ -92,7 +92,7 @@ def main():
         rebuilt_wheel, = rebuilt.glob("*.whl")
         payload = wheel_payload(wheel)
         assert payload == wheel_payload(rebuilt_wheel), "Wheel rebuilt from Sdist has different package bytes"
-        assert {name.removeprefix("kg_mnp/workbench_static/"): digest for name, digest in payload.items() if name.startswith("kg_mnp/workbench_static/")} == manifest["workbench_files"]
+        assert {name.removeprefix("zhigou_toolchain/workbench_static/"): digest for name, digest in payload.items() if name.startswith("zhigou_toolchain/workbench_static/")} == manifest["workbench_files"]
         examples = directory / "examples"
         examples.mkdir()
         with zipfile.ZipFile(built / "toolchain-examples.zip") as archive:

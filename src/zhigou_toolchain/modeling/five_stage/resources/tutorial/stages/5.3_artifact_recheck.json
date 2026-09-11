@@ -1,0 +1,67 @@
+{
+  "step_id": "5.3",
+  "mode": "TUTORIAL_REFERENCE",
+  "actual_execution_status": "NOT_RUN",
+  "input_refs": [
+    "5.1 磁盘语义文件",
+    "5.2 映射溯源"
+  ],
+  "illustrative_output": {
+    "scope": "本次生成的合成教程工件；不覆盖 GitHub 仓库或后台流程",
+    "rdflib_version": "7.5.0",
+    "rdf_checks": {
+      "ontology.ttl": {
+        "parse": "PASS",
+        "triples": 24,
+        "roundtrip_isomorphic": true
+      },
+      "instances.ttl": {
+        "parse": "PASS",
+        "triples": 18,
+        "roundtrip_isomorphic": true
+      },
+      "shapes.ttl": {
+        "parse": "PASS",
+        "triples": 33,
+        "roundtrip_isomorphic": true
+      }
+    },
+    "query": {
+      "comparison": "UNORDERED_EXACT_ROWS",
+      "expected": [
+        [
+          "E-001",
+          "D-01"
+        ],
+        [
+          "E-002",
+          "D-02"
+        ],
+        [
+          "E-003",
+          "D-01"
+        ]
+      ],
+      "actual": [
+        [
+          "E-001",
+          "D-01"
+        ],
+        [
+          "E-002",
+          "D-02"
+        ],
+        [
+          "E-003",
+          "D-01"
+        ]
+      ],
+      "status": "PASS"
+    },
+    "SHACL": "NOT_RUN",
+    "HermiT": "NOT_RUN",
+    "live_models": "NOT_RUN",
+    "actual_review": "NOT_REVIEWED",
+    "release": "NOT_RELEASED"
+  }
+}

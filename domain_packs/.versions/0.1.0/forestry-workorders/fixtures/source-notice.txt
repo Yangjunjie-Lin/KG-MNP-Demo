@@ -1,0 +1,4 @@
+All records in this Domain Pack are synthetic test data.
+No private coordinates, real department decisions, expert signatures, legal age thresholds,
+disease diagnosis, risk prediction, OCR or ASR output are asserted.
+Use only for experimental ontology engineering and verification.

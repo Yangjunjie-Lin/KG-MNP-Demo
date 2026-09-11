@@ -1,4 +1,10 @@
+.gitattributes text eol=lf
 *.sh text eol=lf
+src/zhigou_toolchain/modeling/five_stage/resources/** -text whitespace=-blank-at-eof
+docs/upgrade/evidence/model-inputs/** -text
+docs/upgrade/evidence/model-inputs/*.json whitespace=cr-at-eol
+docs/upgrade/evidence/model-inputs/*.pdf binary
+docs/reference/zhigou-upgrade/** -text
 tests/compatibility/fixtures/activation-1.0/*.json text eol=lf
 schemas/modeling/*.json text eol=lf
 src/kg_mnp/contracts/*.json text eol=lf
@@ -9,6 +15,13 @@ src/kg_mnp/semantic_kernel/resources/toolchain-compiler-policy-1.1.0.yaml text e
 src/kg_mnp/contracts/schemas/modeling/review_action.schema.json text eol=crlf
 src/kg_mnp/contracts/schemas/modeling/review_common.schema.json text eol=crlf
 src/kg_mnp/contracts/schemas/modeling/review_policy.schema.json text eol=crlf
+# The migrated package retains exactly the same public contract bytes.
+src/zhigou_toolchain/contracts/*.json text eol=lf
+src/zhigou_toolchain/contracts/schemas/**/*.json text eol=lf
+src/zhigou_toolchain/semantic_kernel/resources/toolchain-compiler-policy-1.1.0.yaml text eol=lf
+src/zhigou_toolchain/contracts/schemas/modeling/review_action.schema.json text eol=crlf
+src/zhigou_toolchain/contracts/schemas/modeling/review_common.schema.json text eol=crlf
+src/zhigou_toolchain/contracts/schemas/modeling/review_policy.schema.json text eol=crlf
 domain_packs/**/*.json text eol=lf
 domain_packs/**/*.md text eol=lf
 domain_packs/**/*.rq text eol=lf

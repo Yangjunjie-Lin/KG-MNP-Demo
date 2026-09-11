@@ -12,7 +12,7 @@ ROOT = Path(__file__).resolve().parents[2]
 def test_domain_pack_list_inspect_validate_lock_and_json_smokes(capsys) -> None:
     packs = str(ROOT / "domain_packs")
     assert root_cli.main(["domain-pack", "list", "--domain-packs-root", packs, "--json"]) == 0
-    assert [item["pack_id"] for item in json.loads(capsys.readouterr().out)["result"]] == ["forestry", "minimal", "mnp"]
+    assert [item["pack_id"] for item in json.loads(capsys.readouterr().out)["result"]] == ["empty", "forestry", "forestry-workorders", "forestry-workorders", "hr", "minimal", "mnp"]
     for pack in ("minimal", "mnp", "forestry"):
         path = str(ROOT / "domain_packs" / pack)
         assert root_cli.main(["domain-pack", "inspect", path, "--json"]) == 0

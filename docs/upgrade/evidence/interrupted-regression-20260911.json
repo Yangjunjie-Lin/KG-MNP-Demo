@@ -1,0 +1,10 @@
+{
+  "status": "INTERRUPTED_FOR_IMPLEMENTATION_FIX",
+  "evidence": "runtime_reports/zhigou-verification-5cc8ee9343e845259a458fd4effb90d8",
+  "source_digest": "ac2408e699fdda11a1d0e681df18cc0fe1d9c24280cec4be11d0e17cdc5ac59d",
+  "reason": "LIVE repair revealed that pending human-review workflow notices were sent as model-repair defects. Separate these inputs while retaining all actual data defects and the later server-side human review gate.",
+  "completed_checks": ["ruff", "types", "frontend-lint", "frontend-tests", "frontend-build"],
+  "backend": "INCOMPLETE_NOT_CERTIFIED",
+  "browser": "NOT_RUN",
+  "process_scope": "Only the explicitly identified verification driver and its observed descendant processes were stopped. Other LIVE scenario processes remained running."
+}

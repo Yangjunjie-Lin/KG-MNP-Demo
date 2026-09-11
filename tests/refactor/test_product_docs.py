@@ -16,7 +16,7 @@ def test_product_foundation_documents_exist():
 
 def test_readme_states_current_identity_and_capability_limits():
     text=(ROOT/"README.md").read_text(encoding="utf-8")
-    for required in ("KG-MNP Ontology Toolchain", "EXPERIMENTAL", "Provider 只生成候选", "VALIDATED_UNPUBLISHED", "CONTROL_PLANE_SELECTED", "Recorded Provider 不是 Live LLM"):
+    for required in ("ZhiGou Toolchain", "EXPERIMENTAL", "Provider 只生成候选", "VALIDATED_UNPUBLISHED", "CONTROL_PLANE_SELECTED", "Recorded Provider 不是 Live LLM"):
         assert required in text
     for obsolete in ("planning scaffold only", "What is not implemented yet", "Stage 09", "Phase 07"):
         assert obsolete not in text

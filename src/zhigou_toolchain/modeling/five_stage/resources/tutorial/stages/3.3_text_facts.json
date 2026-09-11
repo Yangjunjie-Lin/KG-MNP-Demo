@@ -1,0 +1,47 @@
+{
+  "step_id": "3.3",
+  "mode": "TUTORIAL_REFERENCE",
+  "actual_execution_status": "NOT_RUN",
+  "input_refs": [
+    "3.2 text_chunks.json",
+    "B2 类与属性允许项"
+  ],
+  "illustrative_output": {
+    "extractions": [
+      {
+        "subject": "https://example.org/data/hr/Employee/E-001",
+        "predicate": "https://example.org/ontology/belongsToDepartment",
+        "object": "https://example.org/data/hr/Department/D-01",
+        "quote": "员工 E-001 归属部门 D-01。",
+        "chunk_id": "CH-01",
+        "polarity": "positive",
+        "time_scope": "current_snapshot",
+        "provider_mode": "TUTORIAL_FIXTURE",
+        "model_execution": "NOT_RUN"
+      },
+      {
+        "subject": "https://example.org/data/hr/Employee/E-002",
+        "predicate": "https://example.org/ontology/belongsToDepartment",
+        "object": "https://example.org/data/hr/Department/D-02",
+        "quote": "员工 E-002 归属部门 D-02。",
+        "chunk_id": "CH-02",
+        "polarity": "positive",
+        "time_scope": "current_snapshot",
+        "provider_mode": "TUTORIAL_FIXTURE",
+        "model_execution": "NOT_RUN"
+      },
+      {
+        "subject": "https://example.org/data/hr/Employee/E-003",
+        "predicate": "https://example.org/ontology/belongsToDepartment",
+        "object": "https://example.org/data/hr/Department/D-01",
+        "quote": "员工 E-003 归属部门 D-01。",
+        "chunk_id": "CH-03",
+        "polarity": "positive",
+        "time_scope": "current_snapshot",
+        "provider_mode": "TUTORIAL_FIXTURE",
+        "model_execution": "NOT_RUN"
+      }
+    ],
+    "model_execution": "NOT_RUN"
+  }
+}

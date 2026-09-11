@@ -1,0 +1,76 @@
+manifest_kind: KG_MNP_DOMAIN_PACK
+schema_version: 1.0.0
+pack_id: hr
+pack_version: 0.1.0
+display_name: 员工与部门（合成工程数据）
+description: Evidence-bound HR regression; no real employees or expert accuracy claim.
+lifecycle: EXPERIMENTAL
+compatibility:
+  contract_major: 1
+  minimum_toolchain_version: 0.2.0
+license:
+  expression: Apache-2.0
+  notice_files: []
+capabilities:
+- fixtures
+- ontology
+- queries
+- shacl
+- terminology
+namespaces:
+  ontology: https://example.org/hr/ontology
+  terms: https://example.org/ontology/
+assets:
+- asset_id: hr-departments
+  kind: fixture
+  path: fixtures/departments.csv
+  media_type: text/csv
+  required: true
+  description: Two synthetic departments
+- asset_id: hr-employees
+  kind: fixture
+  path: fixtures/employees.csv
+  media_type: text/csv
+  required: true
+  description: Three synthetic employee records
+- asset_id: hr-notes
+  kind: fixture
+  path: fixtures/staff_note.txt
+  media_type: text/plain
+  required: true
+  description: Frozen source prose
+- asset_id: hr-ontology
+  kind: ontology-root
+  path: ontology/hr.ttl
+  media_type: text/turtle
+  required: true
+  description: HR vocabulary
+  ontology_iri: https://example.org/hr/ontology
+  version_iri: https://example.org/hr/0.1.0/ontology
+- asset_id: hr-query-employees
+  kind: query
+  path: queries/employees.rq
+  media_type: application/sparql-query
+  required: true
+  description: Exact independent employee-department retrieval
+- asset_id: hr-shapes
+  kind: shacl-shapes
+  path: shapes/hr.ttl
+  media_type: text/turtle
+  required: true
+  description: Confirmed HR identifier and relation rules
+  profile: default
+- asset_id: hr-terminology
+  kind: terminology
+  path: terminology/terms.yaml
+  media_type: application/yaml
+  required: true
+  description: HR terminology
+entrypoints:
+  ontology: hr-ontology
+  shacl: hr-shapes
+  terminology: hr-terminology
+  queries: hr-query-employees
+  fixtures: hr-employees
+dependencies: []
+extensions: {}

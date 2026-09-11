@@ -1,0 +1,10 @@
+import {useState} from 'react';
+import {outputs} from './api';
+import {Field, Panel, SelectDocument} from './components';
+import {useWorkspace} from './shell';
+
+export function ExactCompilationForm() {
+  const {state,submit,busy,principal}=useWorkspace(), [confirmed,setConfirmed]=useState(''), [error,setError]=useState('');
+  const allowed=principal.permissions.includes('*')||principal.permissions.includes('compile:run');
+  return <Panel title="独立精确答案 · V2 编译计划"><p>预先登记明确答案，按 RDF 类型、重复行及行数精确比较。支持 ASK 布尔／SELECT MULTISET、SET 和 ORDERED 比较；ORDERED 查询必须包含顶层 ORDER BY。旧最少行数 Oracle 保持兼容。</p><SelectDocument label="精确验收的确认包" items={outputs(state,'review.finalize','confirmed_package')} idKey="package_id" value={confirmed} onChange={setConfirmed}/><form onSubmit={e=>{e.preventDefault();setError('');const f=new FormData(e.currentTarget);try{const oracles=JSON.parse(String(f.get('oracles')));submit('/compilations/exact-plans',{schema_version:'2.0.0',confirmed_package_id:confirmed,package_name:f.get('name'),package_version:f.get('version'),ontology_iri:f.get('ontology'),version_iri:f.get('versionIri'),oracles});}catch{setError('答案配置不是有效的 JSON。');}}}><div className="form-grid"><Field label="精确验收包名称"><input name="name" required pattern="[a-z][a-z0-9-]*"/></Field><Field label="精确验收包版本"><input name="version" required placeholder="0.1.0"/></Field><Field label="精确验收 Ontology IRI"><input name="ontology" required/></Field><Field label="精确验收 Version IRI"><input name="versionIri" required/></Field></div><Field label="独立预期配置 JSON"><textarea name="oracles" className="code-input" required rows={9} placeholder={'[{"question_id":"...","query_asset_id":"...","expected":{"schema_version":"1.0.0","query_type":"SELECT","comparison":"MULTISET","variables":["id"],"rows":[{"id":{"kind":"LITERAL","value":"001","datatype":"http://www.w3.org/2001/XMLSchema#string"}}]}}]'}/></Field><p className="muted">每个确认 CQ 必须绑定锁定查询。答案不会从编译图自动填入；配置会随编译计划结果保存在服务端提交记录。</p><button disabled={busy||!confirmed||!allowed}>保存精确答案并生成编译计划</button>{(!confirmed||!allowed)&&<p className="notice">{!allowed?'需要 compile:run 权限。':'需要先选择人工确认包。'}</p>}{error&&<p role="alert">{error}</p>}</form></Panel>;
+}

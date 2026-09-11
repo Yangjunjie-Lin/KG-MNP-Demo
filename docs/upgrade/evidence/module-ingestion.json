@@ -1,0 +1,35 @@
+{
+  "annotation_source": null,
+  "checks": [
+    {
+      "name": "committed_output_integrity",
+      "required": true,
+      "status": "PASS"
+    },
+    {
+      "name": "evidence_bound_nonempty_input",
+      "required": true,
+      "status": "PASS"
+    }
+  ],
+  "comparison_method": "Module contract and immutable artifact checks only",
+  "data_digest": "29211820ce89cc0e29604cc7a8b83b9eb3eec35ce5039d41bcba46cdab910add",
+  "duration_seconds": 1.6294924999965588,
+  "environment": "LOCAL",
+  "gold_standard": null,
+  "job_id": "job_ea90df2870374fd29c4680d1eb3275e7",
+  "mode": "DETERMINISTIC",
+  "module": "ingestion",
+  "project_id": "urn:kg-mnp:project:d605abf48023b5efbd342de92ae2b59fcabc1f480bc0e03e84261ccd9c33b1e9",
+  "research_qualification": "No independent labeled holdout, comparable timing baseline or real expert review; no research target attainment claim",
+  "research_status": "INSUFFICIENT_EVIDENCE",
+  "research_targets": {
+    "project_name_applicant_accuracy": 0.85,
+    "unit_processing_time_reduction": 0.1
+  },
+  "sample_size": 33,
+  "sample_unit": "KG_IR_ITEMS",
+  "schema_version": "1.0.0",
+  "source_data_origin": "NOT_INFERRED_FROM_EXECUTION_MODE",
+  "status": "PASS"
+}

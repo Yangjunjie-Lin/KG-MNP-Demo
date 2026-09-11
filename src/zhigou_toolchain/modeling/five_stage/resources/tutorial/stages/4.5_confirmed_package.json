@@ -1,0 +1,24 @@
+{
+  "step_id": "4.5",
+  "mode": "TUTORIAL_REFERENCE",
+  "actual_execution_status": "NOT_RUN",
+  "input_refs": [
+    "4.4 候选版本绑定审核",
+    "4.2 复验结果",
+    "B1—B3 全部依赖"
+  ],
+  "illustrative_output": {
+    "package_id": "CONFIRMED-HR-DEMO",
+    "mode": "TUTORIAL_REFERENCE",
+    "illustrated_state": "APPROVED_FOR_BUILD",
+    "actual_approval": "NOT_REVIEWED",
+    "approved_fact_count_example": 18,
+    "excluded_records": [],
+    "input_bundle_refs": [
+      "B1",
+      "B2",
+      "B3"
+    ],
+    "not_for_production": true
+  }
+}

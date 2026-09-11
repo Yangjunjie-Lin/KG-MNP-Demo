@@ -1,0 +1,16 @@
+{
+  "step_id": "5.1",
+  "mode": "TUTORIAL_REFERENCE",
+  "actual_execution_status": "NOT_RUN",
+  "input_refs": [
+    "B4 确认建模包（教程示意）"
+  ],
+  "illustrative_output": {
+    "files": {
+      "ontology.ttl": "@prefix ex: <https://example.org/ontology/> .\n@prefix owl: <http://www.w3.org/2002/07/owl#> .\n@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .\nex:Employee a owl:Class ; rdfs:label \"员工\"@zh .\nex:Department a owl:Class ; rdfs:label \"部门\"@zh .\nex:belongsToDepartment a owl:ObjectProperty ;\n    rdfs:label \"所属部门\"@zh ;\n    rdfs:domain ex:Employee ; rdfs:range ex:Department .\n\n@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .\nex:employeeId a owl:DatatypeProperty ; rdfs:label \"员工编号\"@zh ; rdfs:domain ex:Employee ; rdfs:range xsd:string .\nex:employeeName a owl:DatatypeProperty ; rdfs:label \"员工姓名\"@zh ; rdfs:domain ex:Employee ; rdfs:range xsd:string .\nex:departmentId a owl:DatatypeProperty ; rdfs:label \"部门编号\"@zh ; rdfs:domain ex:Department ; rdfs:range xsd:string .\nex:departmentName a owl:DatatypeProperty ; rdfs:label \"部门名称\"@zh ; rdfs:domain ex:Department ; rdfs:range xsd:string .\n",
+      "instances.ttl": "@prefix dept: <https://example.org/data/hr/Department/> .\n@prefix emp: <https://example.org/data/hr/Employee/> .\n@prefix ex: <https://example.org/ontology/> .\n@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .\n\nemp:E-001 a ex:Employee ;\n    ex:belongsToDepartment dept:D-01 ;\n    ex:employeeId \"E-001\"^^xsd:string ;\n    ex:employeeName \"林晓\"^^xsd:string .\n\nemp:E-002 a ex:Employee ;\n    ex:belongsToDepartment dept:D-02 ;\n    ex:employeeId \"E-002\"^^xsd:string ;\n    ex:employeeName \"陈雨\"^^xsd:string .\n\nemp:E-003 a ex:Employee ;\n    ex:belongsToDepartment dept:D-01 ;\n    ex:employeeId \"E-003\"^^xsd:string ;\n    ex:employeeName \"周宁\"^^xsd:string .\n\ndept:D-02 a ex:Department ;\n    ex:departmentId \"D-02\"^^xsd:string ;\n    ex:departmentName \"运维部\"^^xsd:string .\n\ndept:D-01 a ex:Department ;\n    ex:departmentId \"D-01\"^^xsd:string ;\n    ex:departmentName \"研发部\"^^xsd:string .\n\n",
+      "shapes.ttl": "@prefix ex: <https://example.org/ontology/> .\n@prefix sh: <http://www.w3.org/ns/shacl#> .\n@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .\nex:EmployeeShape a sh:NodeShape ; sh:targetClass ex:Employee ;\n sh:property [ sh:path ex:employeeId ; sh:datatype xsd:string ; sh:minLength 1 ; sh:minCount 1 ; sh:maxCount 1 ] ;\n sh:property [ sh:path ex:employeeName ; sh:datatype xsd:string ; sh:minLength 1 ; sh:minCount 1 ; sh:maxCount 1 ] ;\n sh:property [ sh:path ex:belongsToDepartment ; sh:class ex:Department ; sh:minCount 1 ; sh:maxCount 1 ] .\nex:DepartmentShape a sh:NodeShape ; sh:targetClass ex:Department ;\n sh:property [ sh:path ex:departmentId ; sh:datatype xsd:string ; sh:minLength 1 ; sh:minCount 1 ; sh:maxCount 1 ] ;\n sh:property [ sh:path ex:departmentName ; sh:datatype xsd:string ; sh:minLength 1 ; sh:minCount 1 ; sh:maxCount 1 ] .\n"
+    },
+    "mode": "TUTORIAL_GENERATED_FILES"
+  }
+}

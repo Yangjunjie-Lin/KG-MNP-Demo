@@ -1,0 +1,61 @@
+{
+  "bundle_id": "B3",
+  "schema_version": "1.0",
+  "mode": "TUTORIAL_REFERENCE",
+  "parent_bundle_refs": [
+    "B2"
+  ],
+  "retained_input_ref": "B0",
+  "new_artifacts": [
+    "mapping_plan.json",
+    "text_chunks.json",
+    "text_facts.json",
+    "evidence_records.json",
+    "identity_index.json",
+    "fact_candidates.json"
+  ],
+  "step_refs": [
+    "3.1",
+    "3.2",
+    "3.3",
+    "3.4",
+    "3.5",
+    "3.6"
+  ],
+  "next_stage": 4,
+  "artifact_refs": [
+    {
+      "step_id": "3.1",
+      "path": "stages/3.1_mapping_plan.json",
+      "sha256": "d0fcab5086d24dd5ee42c4b0d9731fc5ed7a63e34cf59b5c95763f9e0f8a8432"
+    },
+    {
+      "step_id": "3.2",
+      "path": "stages/3.2_text_chunks.json",
+      "sha256": "f6f88f9c01f0e5f548251c1101d9920e1b84641974d8a1594b2df97337aaf174"
+    },
+    {
+      "step_id": "3.3",
+      "path": "stages/3.3_text_facts.json",
+      "sha256": "a7a3a88647d54e3f5e484edbcc81de5bac3aaeda1a6f47e547e1b8c347b4a054"
+    },
+    {
+      "step_id": "3.4",
+      "path": "stages/3.4_evidence_records.json",
+      "sha256": "12d1cf24629ff3e51a390844dcbfb78d0d55f1e72d727b563a3914555b3ea365"
+    },
+    {
+      "step_id": "3.5",
+      "path": "stages/3.5_identity_index.json",
+      "sha256": "b91749c231634319999dfeb10007c663febf3e03ec9dfad5d51ff6c6e7b6080b"
+    },
+    {
+      "step_id": "3.6",
+      "path": "stages/3.6_fact_candidates.json",
+      "sha256": "db1e1efea051fff5412b010d8b6fe9ef5e8f1c5b55e4bafac49c2b36591ca637"
+    }
+  ],
+  "parent_bundle_sha256": {
+    "B2": "5c9a5b7a35fccccc5fbdf4dff89d2034d157df1fb4381859e55ed70ed19615be"
+  }
+}

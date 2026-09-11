@@ -1,0 +1,38 @@
+{
+  "files": {
+    "chinese.png": {
+      "sha256": "4808ed669b7a14c861a4a258d5d871bdc7f531f3b3d421567ccd8d03691d7c06",
+      "bytes": 23131
+    },
+    "gold.json": {
+      "sha256": "49c72009b256267906f256b9d45aa08c9ba4d2e76b9d7fee5a914a2b4db042e2",
+      "bytes": 646
+    },
+    "inspection.mp4": {
+      "sha256": "2d98b15d348698ec2bcde07ba93d922804f1c4f6a7353b2c812b76943275050c",
+      "bytes": 67797
+    },
+    "negative.png": {
+      "sha256": "e1c77f613454fa597b9b015d532a71f7f5cf21f4285019603c272be7beba7e1a",
+      "bytes": 15523
+    },
+    "positive.png": {
+      "sha256": "0ddca9b90e397cdb41b322f92ed619c05ef91518316c2b18bae5abe5ad9d2836",
+      "bytes": 14748
+    },
+    "scanned.pdf": {
+      "sha256": "17e2ed8b6a08f89541fa31114aebb9ee6489e9aef5b312c4212d39dfae7ce0cd",
+      "bytes": 15917
+    },
+    "speech.wav": {
+      "sha256": "f59a760aa5da29b43add1214cc8bec6ee2c04e9c4a2c5f4c706b5ada4056d1c1",
+      "bytes": 337320
+    },
+    "text.pdf": {
+      "sha256": "2e5b11eb4bcbac1ab5eedc7254bf74c215af9d7e536721fd6c365ccdade8ef13",
+      "bytes": 1458
+    }
+  },
+  "gold_frozen_before_inference": true,
+  "files_hash": "8f5969c5e83717fc074a2b7da5d6a0a7cc5ce613416ddb7074bcfc3bb8699d9f"
+}

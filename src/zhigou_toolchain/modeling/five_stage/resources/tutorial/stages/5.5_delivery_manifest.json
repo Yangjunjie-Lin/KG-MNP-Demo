@@ -1,0 +1,79 @@
+{
+  "step_id": "5.5",
+  "mode": "TUTORIAL_REFERENCE",
+  "actual_execution_status": "NOT_RUN",
+  "input_refs": [
+    "5.1—5.4 工件与检查记录",
+    "B4 原始审批记录"
+  ],
+  "illustrative_output": {
+    "package_id": "TUTORIAL-HR-REFERENCE",
+    "package_version": "0.1.0",
+    "mode": "REFERENCE_ONLY",
+    "not_for_production": true,
+    "validation_status": "NOT_FULLY_VALIDATED",
+    "release_status": "NOT_RELEASED",
+    "files": [
+      {
+        "path": "evidence.json",
+        "sha256": "69dbb37f704845655015748872d477a7978aef902754616ee89bebf4ddbb514f",
+        "bytes": 1925
+      },
+      {
+        "path": "instances.ttl",
+        "sha256": "4e69d5b69af1bc3d1dc4e8e0820b23e608bab3693180bbcc63ad8c3f4b5310c6",
+        "bytes": 894
+      },
+      {
+        "path": "local_fixture_checks.json",
+        "sha256": "8bde29b788bb5bf8279318304fe11edee338821d3823796282473ab18f4513fa",
+        "bytes": 1023
+      },
+      {
+        "path": "mapping.json",
+        "sha256": "48fa457b657acf703b9aec71554466d06becb4086cfcc20360426fd02a18c314",
+        "bytes": 1245
+      },
+      {
+        "path": "ontology.ttl",
+        "sha256": "334ef8d029cf1e1c25f9ea71af40a2f01ba78e583e2d3fde24a219ff4faa517f",
+        "bytes": 936
+      },
+      {
+        "path": "provenance.jsonl",
+        "sha256": "cfd062e50593520940ff42bef5b18671d085ed843b4b2f18ae0a71a5a0192ed9",
+        "bytes": 7412
+      },
+      {
+        "path": "queries/employee_departments.rq",
+        "sha256": "89dc5304589557193f99f9d51bcb379f08bb7492d4701efee4bef7f20ba4f834",
+        "bytes": 262
+      },
+      {
+        "path": "review.json",
+        "sha256": "5e9b94c91a81a5c6375fda3cbf0d6af314b01e760c5303e9d4e302bd85f5347a",
+        "bytes": 3625
+      },
+      {
+        "path": "shapes.ttl",
+        "sha256": "f9ab603c36394dd9e07d62d1cac32132cd29a6a2dd9552ca78e870c9b57b22f4",
+        "bytes": 846
+      },
+      {
+        "path": "tests/expected_results.json",
+        "sha256": "eb270b634154aaedc8dd93d5f00691920d0be585da749b70090f57f97d219d5b",
+        "bytes": 273
+      },
+      {
+        "path": "tests/negative_cases.json",
+        "sha256": "51bfdccf765926712b292c9f977fbe71186cedca152302eece84f126212fe63c",
+        "bytes": 528
+      },
+      {
+        "path": "validation.json",
+        "sha256": "4e46ecbb457076b299751b65bb02f11b2bc89f98df5050c779a8b8e5e0f1a8a1",
+        "bytes": 630
+      }
+    ]
+  }
+}

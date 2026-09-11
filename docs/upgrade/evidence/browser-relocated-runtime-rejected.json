@@ -1,0 +1,20 @@
+{
+  "mode": "SELECTED_BROWSER_E2E",
+  "selected_test": "saved-evidence.e2e.ts",
+  "status": "FAIL",
+  "startup_seconds": 3.3910000000032596,
+  "browser_exit_code": 1,
+  "server_exit_code": 0,
+  "shutdown": {
+    "credentials_removed": true,
+    "credentials_revoked": true,
+    "worker_stopped": true
+  },
+  "artifacts": {
+    "junit.xml": "eab3c71042787bc27822722b360ec6fbee8af3292f8db61de54d36085d67ded6",
+    "server.log": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "stop-requested": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "output/.last-run.json": "904f3788628d7c9aff57ad90076b2b34d662106d494f0943c44a96f1d26df935",
+    "output/saved-evidence.e2e.ts-read-54a41--evidence-without-mutations/error-context.md": "fdea16ba5576529b1b25303c3ccd72516c22efcd5aa68d6134723f0ab519ca9b"
+  }
+}

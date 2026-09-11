@@ -1,0 +1,26 @@
+{
+  "step_id": "2.2",
+  "mode": "TUTORIAL_REFERENCE",
+  "actual_execution_status": "NOT_RUN",
+  "input_refs": [
+    "2.1 baseline_snapshot.json",
+    "B1 字段画像"
+  ],
+  "illustrative_output": {
+    "query": "员工所属部门编号",
+    "candidates": [
+      {
+        "iri": "https://example.org/ontology/belongsToDepartment",
+        "retrieval_source": "TUTORIAL_EXACT_OR_ALIAS",
+        "dense_score": null
+      },
+      {
+        "iri": "https://example.org/ontology/Department",
+        "retrieval_source": "TUTORIAL_CONTEXT",
+        "dense_score": null
+      }
+    ],
+    "BGE_M3": "NOT_RUN",
+    "FAISS": "NOT_RUN"
+  }
+}

@@ -1,0 +1,71 @@
+{
+  "step_id": "5.2",
+  "mode": "TUTORIAL_REFERENCE",
+  "actual_execution_status": "NOT_RUN",
+  "input_refs": [
+    "5.1 语义文件",
+    "B4 映射与来源审核引用"
+  ],
+  "illustrative_output": {
+    "mapping_file": "mapping.json",
+    "provenance_file": "provenance.jsonl",
+    "facts": 18,
+    "evidence_supports": 21,
+    "mapping": {
+      "mapping_id": "MAP-HR-01",
+      "version": "1.0",
+      "identity_scope": "HR-DEMO",
+      "empty_key_policy": "REJECT",
+      "unknown_reference_policy": "UNRESOLVED",
+      "tables": [
+        {
+          "source_collection": "employees",
+          "class_iri": "https://example.org/ontology/Employee",
+          "id_field": "employee_id",
+          "iri_prefix": "https://example.org/data/hr/Employee/",
+          "literals": {
+            "employee_id": "https://example.org/ontology/employeeId",
+            "employee_name": "https://example.org/ontology/employeeName"
+          },
+          "references": {
+            "department_id": {
+              "predicate": "https://example.org/ontology/belongsToDepartment",
+              "target_collection": "departments",
+              "key": "department_id",
+              "iri_prefix": "https://example.org/data/hr/Department/"
+            }
+          }
+        },
+        {
+          "source_collection": "departments",
+          "class_iri": "https://example.org/ontology/Department",
+          "id_field": "department_id",
+          "iri_prefix": "https://example.org/data/hr/Department/",
+          "literals": {
+            "department_id": "https://example.org/ontology/departmentId",
+            "department_name": "https://example.org/ontology/departmentName"
+          },
+          "references": {}
+        }
+      ]
+    },
+    "fact_example": {
+      "fact_id": "F-004",
+      "subject": "https://example.org/data/hr/Employee/E-001",
+      "predicate": "https://example.org/ontology/belongsToDepartment",
+      "object": {
+        "kind": "iri",
+        "value": "https://example.org/data/hr/Department/D-01"
+      },
+      "evidence_refs": [
+        "EV-ER-01",
+        "EV-TXT-01"
+      ],
+      "mapping_ref": "MAP-HR-01",
+      "source_field": "department_id",
+      "context": "current_snapshot",
+      "candidate_version": 1,
+      "review_ref": "DEMO-REVIEW-004"
+    }
+  }
+}

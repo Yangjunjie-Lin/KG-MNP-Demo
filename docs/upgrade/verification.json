@@ -1,0 +1,447 @@
+{
+  "schema_version": "1.0.0",
+  "historical_scope": "Prior substitute-API upgrade verification; see original-models-validation.json for the subsequent real-model acceptance and merge gates.",
+  "superseded_by": "original-models-validation.json",
+  "status": "LOCAL_ENGINEERING_UPGRADE_VERIFIED_WITH_EXPLICIT_LIMITATIONS",
+  "tested_source": {
+    "baseline_commit": "f79d56e714c194bca5c7c825ebdf38fb8df026d0",
+    "branch": "codex/zhigou-full-chain",
+    "uncommitted": true,
+    "backend_and_application_tree_sha256": "9bcc36e522b4e3bae5715faa070deecadbf07948c4df2fdc22810170332cf9c0",
+    "current_tree_sha256": "3648e9ea6a1f3513c2ea69a312c32ef3dd79eecc591bdde686a14668f570db3b",
+    "production_source_changed_since_full_backend": false,
+    "only_subsequent_change": "Four verification/demo harness files; application libraries and workbench/src are byte-identical to the full backend snapshot.",
+    "source_manifest": "runtime_reports/zhigou-verification-95317d17c77c407881fcc82f277a92ab/verification.json",
+    "subsequent_changed_paths": [
+      "workbench/tests/zhigou-console.e2e.ts",
+      "workbench/tests/minimal.e2e.ts",
+      "tools/run_browser_verification.py",
+      "tools/run_workbench_test_server.py"
+    ],
+    "affected_harness_rechecks": {
+      "runner_unit_and_real_lifecycle": {
+        "passed": 7,
+        "evidence": "runtime_reports/browser-runner-recheck-20260911.xml"
+      },
+      "actual_401_form_recovery": {
+        "status": "PASS",
+        "evidence": "runtime_reports/live-repair-visual-final-20260911-r6/reauth-recovery.json"
+      }
+    },
+    "final_source_unchanged_during_full_browser": true,
+    "final_source_verification": "evidence/final-source-comparison.json"
+  },
+  "backend": {
+    "status": "FULL_COLLECTION_EXECUTED_WITH_ONE_TIMEOUT_AND_SAME_SOURCE_ISOLATED_RECHECK_PASS",
+    "collected": 1919,
+    "executed": 1919,
+    "first_run": {
+      "passed": 1910,
+      "failed": 1,
+      "skipped": 8,
+      "errors": 0,
+      "workers": 8
+    },
+    "failure": {
+      "nodeid": "tests/compatibility/test_historical_activation_records.py::test_original_persisted_activation_records_replay_without_state_store",
+      "reason": "OWL consistency TIMEOUT during authoritative reconstruction",
+      "evidence": "runtime_reports/zhigou-verification-95317d17c77c407881fcc82f277a92ab/backend.xml"
+    },
+    "isolated_recheck": {
+      "passed": 1,
+      "failed": 0,
+      "source_unchanged": true,
+      "reasoner_timeout_unchanged": true,
+      "duration_seconds": 218.69,
+      "evidence": "runtime_reports/compatibility-recheck-20260911/results.xml"
+    },
+    "coverage_rollup": {
+      "passed": 1911,
+      "failed": 0,
+      "skipped": 8,
+      "qualification": "Same production/backend test sources. Rollup does not relabel the original eight-worker run as PASS."
+    },
+    "skip_summary": {
+      "windows_symlink_privilege_unavailable": 6,
+      "posix_fifo_not_available": 1,
+      "posix_executable_bits_not_available": 1
+    },
+    "git_longpaths": "PROCESS_ONLY"
+  },
+  "frontend": {
+    "lint": "PASS",
+    "typecheck": "PASS",
+    "unit_tests": {
+      "passed": 39,
+      "files": 8
+    },
+    "production_build": "PASS",
+    "post_harness_change_lint_and_types": "PASS"
+  },
+  "browser": {
+    "status": "FULL_FRESH_BROWSER_PASS_WITH_EXPLICIT_CONDITIONAL_CASES_VERIFIED_SEPARATELY",
+    "first_current_full": {
+      "passed": 7,
+      "failed": 1,
+      "skipped": 2,
+      "status": "FAIL",
+      "evidence": "runtime_logs/p09/browser-runs/managed-85646f9020fe44c5a2409e7b3b741428/managed-receipt.json",
+      "qualification": "Mixed, minimal, forestry, MNP and security passed. Console creation readiness exceeded the default five-second test wait. Shutdown required owned-process termination."
+    },
+    "console_recheck": {
+      "status": "PASS",
+      "evidence": "runtime_logs/p09/browser-runs/managed-935e18279b0b4a098781e9635c42a2be/managed-receipt.json",
+      "clean_shutdown": true
+    },
+    "actual_live_repair_visual": {
+      "status": "PASS",
+      "read_only": true,
+      "viewport": "1366x768",
+      "source_tree_sha256": "9bcc36e522b4e3bae5715faa070deecadbf07948c4df2fdc22810170332cf9c0",
+      "evidence": "runtime_reports/live-repair-visual-final-20260911-r2/visual-receipt.json",
+      "credential_cleanup": "REVOKED_AND_REMOVED"
+    },
+    "copy_attempt": {
+      "status": "CORRECTLY_REJECTED_PATH_BOUND_CATALOG",
+      "evidence": "runtime_logs/p09/browser-runs/managed-39bab5a469eb4762aa5cfcaf67b07b5b/managed-receipt.json",
+      "qualification": "Raw workspace copying is not the package export/import workflow."
+    },
+    "completed_hr_readback": {
+      "status": "PASS",
+      "evidence": "runtime_logs/p09/browser-runs/managed-7bed469c40b84941a751e9e3c291fb09/managed-receipt.json",
+      "five_completed_stage_screenshots": true,
+      "authority_and_results_unchanged": true,
+      "clean_shutdown": true
+    },
+    "final_rerun_log": "runtime_reports/browser-final-confirmation-20260911.log",
+    "second_full": {
+      "status": "FAIL",
+      "passed": 7,
+      "failed": 1,
+      "skipped": 2,
+      "evidence": "runtime_logs/p09/browser-runs/managed-6593fe12ab6a4530bc1cd99e669138ef/managed-receipt.json",
+      "failure": "Test forgot to refill a transient review rationale after actual 401 reauthentication",
+      "fix": "evidence/browser-reauth-harness-fix.json"
+    },
+    "forestry_functional_recheck": {
+      "functional_assertions": "PASS",
+      "shutdown": "OLD_HARNESS_FORCED_STOP",
+      "evidence": "runtime_logs/p09/browser-runs/managed-8324338253f54b6c8b79c78a531db951/managed-receipt.json"
+    },
+    "completed_forestry_readback": {
+      "status": "PASS",
+      "clean_shutdown": true,
+      "evidence": "runtime_logs/p09/browser-runs/managed-68f1e8bd9a5d4f5bbae86b813b6c203b/managed-receipt.json"
+    },
+    "completed_mnp_readback": {
+      "status": "PASS",
+      "clean_shutdown": true,
+      "query_seconds": 60.1681648,
+      "unchanged_query_wait_seconds": 120,
+      "evidence": "runtime_logs/p09/browser-runs/managed-01a4fc23222545f38752db8d90ff3b50/managed-receipt.json"
+    },
+    "final_full": {
+      "status": "PASS",
+      "passed": 8,
+      "failed": 0,
+      "skipped": 2,
+      "errors": 0,
+      "duration_minutes": 45.1,
+      "source_tree_sha256": "3648e9ea6a1f3513c2ea69a312c32ef3dd79eecc591bdde686a14668f570db3b",
+      "evidence": "runtime_logs/p09/browser-runs/managed-c673298e69db468f8e549cf750d6995a/managed-receipt.json",
+      "junit": "runtime_logs/p09/browser-runs/managed-c673298e69db468f8e549cf750d6995a/junit.xml",
+      "skipped_case_scope": "Saved-workspace-only readers; both have actual separate PASS receipts in completed_hr_readback/completed_forestry_readback/completed_mnp_readback.",
+      "shutdown": {
+        "credentials_removed": true,
+        "credentials_revoked": true,
+        "worker_stopped": true,
+        "server_exit_code": 0
+      }
+    }
+  },
+  "modules": {
+    "status": "FOUR_ENGINEERING_CONTRACT_CHECKS_PASS",
+    "ingestion": {
+      "sample_size": 33,
+      "sample_unit": "KG_IR_ITEMS",
+      "report": "evidence/module-ingestion.json"
+    },
+    "ontology": {
+      "sample_size": 56,
+      "sample_unit": "PACKAGE_FILES",
+      "report": "evidence/module-ontology.json"
+    },
+    "framework": {
+      "sample_size": 3,
+      "sample_unit": "BUSINESS_OBJECTS",
+      "report": "evidence/module-framework.json"
+    },
+    "evolution": {
+      "sample_size": 3,
+      "sample_unit": "REGRESSION_DECISIONS",
+      "report": "evidence/module-evolution.json"
+    }
+  },
+  "scenarios": {
+    "hr": {
+      "status": "FORMAL_PACKAGE_DOWNLOAD_VERIFY_IMPORT_AND_QUERY_PASS",
+      "objects": 5,
+      "business_triples": 18,
+      "system_named_individual_triples": 5,
+      "source_support_links": 24,
+      "raw_evidence_links": 40,
+      "reference_support_links": 21,
+      "support_difference": "Three additional correct text supports for Employee type facts retained; not discarded to force 21.",
+      "package": "evidence/hr-delivery.kgop"
+    },
+    "forestry": {
+      "status": "LOCAL_PERSISTENT_EXECUTION_FEEDBACK_AND_ROLLBACK_PASS",
+      "domain_pack": "forestry-workorders@0.1.1",
+      "objects": 8,
+      "business_triples": 30,
+      "system_named_individual_triples": 8,
+      "expected": {
+        "GT_001": "one order",
+        "GT_002": "no order",
+        "GT_003": "pending verification"
+      },
+      "update": "Next plan/execution adopts high priority; existing order remains immutable and idempotent",
+      "rollback": "Next plan returns to normal priority",
+      "package": "evidence/forestry-delivery.kgop"
+    },
+    "no_business_baseline": {
+      "status": "PASS",
+      "method": "Explicit human-authored closed CandidateDrafts with real source evidence, shared semantic checks/review/compiler; not LIVE generation",
+      "suite": "tests/upgrade/test_no_baseline.py"
+    }
+  },
+  "performance_fix": {
+    "change": "Per-file snapshot read bounded to observed file size + 1 instead of remaining 1 GiB archive budget",
+    "fresh_package_validation_retained": true,
+    "growth_and_tamper_tests": "PASS",
+    "mnp_independent_read_seconds": 46.2650775,
+    "qualification": "Profiling and later timing had different instrumentation/concurrent load; not a research speed-improvement claim."
+  },
+  "execution_modes": {
+    "deterministic": "EXECUTED",
+    "human_authored": "EXPLICIT_DRAFTS_AND_SYNTHETIC_TEST_REVIEWS",
+    "recorded": "NETWORK_TEST_DOUBLES_AND_RECORDED_BYTE_TRANSPORT_NOT_COUNTED_AS_LIVE",
+    "live": "ACTUALLY_EXECUTED_WITH_RECEIPTS",
+    "data_origin": "SYNTHETIC_ENGINEERING_SCENARIOS",
+    "environment": "LOCAL_WINDOWS"
+  },
+  "research": {
+    "status": "INSUFFICIENT_EVIDENCE",
+    "real_expert_approval": false,
+    "independent_labeled_holdout": false,
+    "comparable_timing_baseline": false,
+    "numeric_targets_not_replaced": true,
+    "synthetic_api_simulation_is_not_research_attainment": true
+  },
+  "migration": {
+    "primary_package": "zhigou_toolchain",
+    "distribution_and_cli": "zhigou-toolchain",
+    "legacy_namespace": "THREE_THIN_FILES_ONE_IMPLEMENTATION",
+    "stable_iris_urns_schemas_and_history_preserved": true,
+    "environment_conflicts": "FAIL_CLOSED_WITHOUT_SECRET_ECHO",
+    "remote_rename": "NOT_EXECUTED_REQUIRES_USER_DIRECTION",
+    "origin_unchanged": true,
+    "pushed": false,
+    "committed": false
+  },
+  "packaging": {
+    "wheel_and_sdist": "BUILT_AND_VERIFIED",
+    "final_directory": "runtime_reports/zhigou-model-api-distribution-final-20260911",
+    "python_payload_matches_application_source": true,
+    "wheel_sha256": "33862c5977ab10d641815d1dcc8f4bb0df61dc2969312bdda47e00f3608f5796",
+    "sdist_sha256": "bc1f1ca6c6b1a43f969cf414bc69906d4822439b7b2749510466b0c6e7c9b822",
+    "two_fresh_noneditable_installs": "PASS",
+    "sdist_rebuilt_wheel_payload_equality": "PASS",
+    "historical_package_compatibility": "PASS",
+    "separate_server_worker_and_restart": "PASS",
+    "legacy_files_in_wheel": 3,
+    "evidence": "runtime_reports/zhigou-distribution-verification-final-20260911/distribution-verification.json",
+    "linux": "NOT_RUN"
+  },
+  "cleanup": {
+    "starting_increment_backup": "runtime_reports/upgrade-recovery-20260910T115541Z",
+    "unused_tutorial_component": "REMOVED_RECOVERABLE_FROM_BACKUP",
+    "historical_python_tutorial_and_evidence": "PRESERVED",
+    "failed_full_browser_ephemeral_credentials": "REVOKED_AND_FILE_REMOVED",
+    "cleanup_report": "runtime_reports/upgrade-browser-cleanup.json",
+    "user_data_deleted": false,
+    "unrelated_processes_stopped": false,
+    "current_failed_browser": "evidence/browser-failure-cleanup-20260911.json",
+    "live_visual_credentials": "REVOKED_AND_REMOVED",
+    "additional_failed_browser_credentials": {
+      "workspaces": [
+        "runtime/p09-browser-l08x6h1a",
+        "runtime/p09-browser-c285b7sc"
+      ],
+      "credentials_revoked": 4,
+      "credential_files_removed": 2,
+      "user_data_deleted": false
+    },
+    "final_browser_credentials": "REVOKED_AND_REMOVED",
+    "final_owned_servers_and_workers": "STOPPED",
+    "active_browser_test_credential_files_found": 0
+  },
+  "remaining_requirements": [
+    "Physical BGE/FAISS/reranker/tokenizer model snapshots and true OCR/ASR/video inference require their actual dependencies/data; API substitutes are not labeled as those methods.",
+    "Arbitrary natural-language rule-to-SHACL equivalence and general autonomous task understanding are not established; explicit domain policy/mapping and human review remain required.",
+    "Independent real experts, labeled holdout data, cross-modal accuracy and comparable timing research evaluations are not established.",
+    "Eight symlink/POSIX-specific tests require an appropriate environment.",
+    "External GraphDB/government integrations, remote GitHub rename and production deployment were not executed."
+  ],
+  "formal_release_qualified": false,
+  "history": [
+    {
+      "kind": "PREVIOUS_UPGRADE_BASELINE",
+      "source_tree_sha256": "ca29dbb8ba3c0e63f3d8d7233945b1eb07eeb3bf6b272b23cc27c99d8d3ec1b3",
+      "evidence": "runtime_reports/zhigou-verification-15bb29b7d1e34eb69147a1a1d5a70895/verification.json",
+      "backend": {
+        "command": "python tools/verify_zhigou_upgrade.py --backend-only --workers 4",
+        "status": "PASS_WITH_EXPLICIT_PLATFORM_SKIPS",
+        "collected": 1888,
+        "executed": 1888,
+        "passed": 1880,
+        "failed": 0,
+        "errors": 0,
+        "skipped": 8,
+        "missing": [],
+        "extra": [],
+        "git_longpaths": "PROCESS_ONLY",
+        "evidence": "runtime_reports/zhigou-verification-15bb29b7d1e34eb69147a1a1d5a70895/backend.xml",
+        "skip_summary": {
+          "windows_symlink_privilege_unavailable": 6,
+          "posix_fifo_not_available": 1,
+          "posix_executable_bits_not_available": 1
+        }
+      },
+      "browser": {
+        "full_run": {
+          "status": "FAIL_BEFORE_TARGETED_FIXES",
+          "passed": 5,
+          "failed": 3,
+          "skipped": 1,
+          "evidence": "runtime_logs/p09/browser-runs/managed-2709697545d641b29d4d117a13b2c287/managed-receipt.json",
+          "failures": [
+            "minimal: compiler form queried on retired page placement",
+            "MNP: exact object query exceeded 120-second browser wait",
+            "five-stage: domain pack discovery not ready before 20-second selection wait"
+          ]
+        },
+        "latest_rechecks": [
+          {
+            "name": "minimal full file/review/compile/release/version/rollback workflow",
+            "status": "PASS",
+            "evidence": "runtime_logs/p09/browser-runs/managed-f2ff3d7492624fd6b088c29f87ed5654/managed-receipt.json"
+          },
+          {
+            "name": "MNP fixed-version object and source readback",
+            "status": "PASS",
+            "query_seconds": 100.8291999,
+            "unchanged_object_wait_seconds": 120,
+            "full_fresh_MNP_rerun": false,
+            "evidence": "runtime_logs/p09/browser-runs/managed-d6c9e33f8892464bb21c7a3920951b8b/managed-receipt.json"
+          },
+          {
+            "name": "five-stage real ingestion and 1440x900 / 1366x768 / narrow responsive console",
+            "status": "PASS",
+            "evidence": "runtime_logs/p09/browser-runs/managed-284386622e734ac182d4b5cfcdcc9c4d/managed-receipt.json"
+          },
+          {
+            "name": "CSP, Origin, CSRF, inert uploaded script, keyboard and project isolation",
+            "status": "PASS",
+            "evidence": "runtime_logs/p09/browser-runs/managed-b3fc36d9fca64f4190c42ff397925d34/managed-receipt.json"
+          },
+          {
+            "name": "read actual completed HR five stages without mutation",
+            "status": "PASS",
+            "evidence": "runtime_logs/p09/browser-runs/managed-3c00a21df82a496099f36d8df713471f/managed-receipt.json"
+          },
+          {
+            "name": "read actual completed forestry stages without mutation",
+            "status": "PASS",
+            "evidence": "runtime_logs/p09/browser-runs/managed-2f4e3009255a4ae4bf8541994d15ca9c/managed-receipt.json"
+          }
+        ],
+        "qualification": "Individual fixes/rechecks do not relabel the earlier full browser run as PASS. No new all-scenario single-snapshot full browser certification is claimed."
+      }
+    },
+    {
+      "kind": "INTERRUPTED_DEVELOPMENT_REGRESSIONS",
+      "evidence": [
+        "evidence/interrupted-regression-20260911.json",
+        "evidence/interrupted-security-review-20260911.json"
+      ]
+    }
+  ],
+  "model_api": {
+    "status": "LIVE_ENGINEERING_SCENARIOS_EXECUTED_WITH_RETAINED_DEVELOPMENT_FAILURES",
+    "provider": "EXISTING_OPENAI_COMPATIBLE_GATEWAY",
+    "model": "gpt-5.3-codex-spark",
+    "revision_attestation": "PROVIDER_ALIAS_NOT_WEIGHT_ATTESTED",
+    "data_origin": "SYNTHETIC",
+    "final_source_repair": {
+      "status": "PASS",
+      "evidence": "runtime_reports/live-assistance-c3b9a6c864c845d1a6730a7699b9e417/verification.json",
+      "source_unchanged": true,
+      "chain": [
+        "FAULT_INJECTION",
+        "LIVE_PATCH",
+        "QUOTE_BINDING",
+        "NEW_PROPOSAL_VERSION",
+        "AUTOMATIC_SEMANTIC_CHECKS",
+        "FRESH_HUMAN_TEST_REVIEWS",
+        "EXACT_QUERY_COMPILATION",
+        "ARCHIVE_EXPORT_AND_REOPEN_VERIFY"
+      ],
+      "archive": "evidence/live-repaired-delivery.kgop",
+      "archive_validation": "evidence/live-repair-export.json"
+    },
+    "final_source_scope": {
+      "status": "LIVE_ADVISORY_EXECUTED_NOT_APPROVED",
+      "evidence": "evidence/live-scope-probe.json"
+    },
+    "development_hr": {
+      "status": "PASS",
+      "live_calls": 5,
+      "evidence": "runtime_reports/live-assistance-c62b6e4178d6470eb49215cf41d7bea5/verification.json",
+      "same_whole_source_snapshot": false
+    },
+    "development_forestry": {
+      "status": "PASS",
+      "live_calls": 2,
+      "evidence": "runtime_reports/live-assistance-2c7b63fb94d84b239d37c8aca4ffffaa/verification.json",
+      "same_whole_source_snapshot": false
+    },
+    "methods": {
+      "retrieval": "EXACT_PLUS_LLM_RANKING_SUBSTITUTE",
+      "rounds": "REUSE_THEN_COMPLETION",
+      "chunking": "UNICODE_WINDOW_SUBSTITUTE",
+      "facts": "SOURCE_QUOTED_KNOWN_IDENTITIES_AND_PREDICATES",
+      "repair": "WHITELISTED_ABOX_VALUE_OR_RELATION_REPLACEMENT",
+      "bge_faiss_reranker": "PROJECT_WIRED_NOT_PHYSICAL_MODEL_EXECUTED",
+      "local_tokenizer": "PROJECT_WIRED_NOT_PHYSICAL_MODEL_EXECUTED"
+    },
+    "safeguards": [
+      "NO_GOLD_ANSWERS_IN_GENERATION_OR_REPAIR_CONTEXT",
+      "SOURCE_READ_PERMISSION_BEFORE_TRANSMISSION",
+      "LOCAL_SCHEMA_AND_REFERENCE_VALIDATION",
+      "UNAPPROVED_IRI_REJECTION",
+      "NO_RULE_OR_ANSWER_PATCHES",
+      "CURRENT_PARENT_AND_SEMANTIC_RECEIPT_BINDING",
+      "UNRESOLVED_CONTENT_BLOCKS_FREEZE",
+      "NO_MODEL_APPROVAL"
+    ],
+    "reserve": {
+      "user_authorized_if_spark_exhausted": true,
+      "model_list_entry_verified": "gpt-reserve",
+      "used_for_this_verification": false,
+      "usage_reset_redeemed": false,
+      "credits_purchased": false
+    },
+    "application_implementation_unchanged_after_live_validation": true
+  }
+}

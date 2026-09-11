@@ -7,10 +7,10 @@ from pathlib import Path
 
 import yaml
 
-from kg_mnp.contracts.canonical import semantic_hash, stable_urn
+from zhigou_toolchain.contracts.canonical import semantic_hash, stable_urn
 
 ROOT=Path(__file__).resolve().parents[1]
-CONTRACTS=ROOT/'src/kg_mnp/contracts'
+CONTRACTS=ROOT/'src/zhigou_toolchain/contracts'
 
 
 def outputs():
@@ -28,7 +28,7 @@ def outputs():
         else:
             value['properties']['toolchain_version']={'type':'string','minLength':1,'maxLength':128}
         files[CONTRACTS/f'schemas/compilation/semantic_compiler_{name}_v1_1.schema.json']=(json.dumps(value,ensure_ascii=False,sort_keys=True,indent=2)+'\n').encode()
-    policy_dir=ROOT/'src/kg_mnp/semantic_kernel/resources'
+    policy_dir=ROOT/'src/zhigou_toolchain/semantic_kernel/resources'
     policy=yaml.safe_load((policy_dir/'toolchain-compiler-policy-1.0.0.yaml').read_bytes())
     policy.update(schema_version='1.1.0',policy_version='1.1.0',compiler_version='0.5.1')
     policy['content_digest']=semantic_hash({k:v for k,v in policy.items() if k not in {'policy_id','content_digest'}})

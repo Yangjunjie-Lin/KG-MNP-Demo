@@ -1,10 +1,10 @@
 {
   "include": [
-    "src/kg_mnp/services",
-    "src/kg_mnp/jobs",
-    "src/kg_mnp/api",
-    "src/kg_mnp/sdk",
-    "src/kg_mnp/integrations"
+    "src/zhigou_toolchain/services",
+    "src/zhigou_toolchain/jobs",
+    "src/zhigou_toolchain/api",
+    "src/zhigou_toolchain/sdk",
+    "src/zhigou_toolchain/integrations"
   ],
   "extraPaths": ["src"],
   "typeCheckingMode": "basic",

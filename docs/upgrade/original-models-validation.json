@@ -1,0 +1,96 @@
+{
+  "schema_version": "1.0.0",
+  "status": "ENGINEERING_ACCEPTANCE_COMPLETE_MERGE_READY",
+  "data_origin": "SYNTHETIC_ENGINEERING_FIXTURES",
+  "tested_code_tree_sha256": "f8158afc0dc52441461cf759ed427de4d557f2939339eaabbfdc4e7cc90a9252",
+  "source_unchanged_during_final_model_and_backend_runs": true,
+  "git_attributes_sha256": "5141fcf6df50fd903cc382abf45e90fd5c48b1d65f2b11f36af681e29c64bd39",
+  "accepted_model_profile": {
+    "text": "Qwen/Qwen3-30B-A3B-Instruct-2507",
+    "embedding": "BAAI/bge-m3@5617a9f61b028005a4858fdac845db406aefb181",
+    "reranker": "BAAI/bge-reranker-v2-m3@953dc6f6f85a1b2dbfca4c34a2796e7dde08d41e",
+    "tokenizer": "Qwen/Qwen2.5-7B-Instruct@a09a35458c702b33eeacc393d103063234e8bc28",
+    "vision": "Qwen/Qwen2-VL-2B-Instruct@895c3a49bc3fa70a340399125c650a463535e71c",
+    "asr": "Qwen/Qwen3-ASR-1.7B",
+    "retrieval_index": "FAISS IndexFlatIP",
+    "embedding_dimensions": 1024,
+    "local_weights_verified_by_sha256": true,
+    "hosted_weights_or_vllm_backend_attested": false,
+    "local_model_runtime": "Transformers 4.51.3 / Torch 2.6.0+cpu"
+  },
+  "model_scenarios": {
+    "hr": {"status": "PASS", "live_calls": 5, "receipt": "runtime_reports/live-assistance-a58ff383f7744c0aba52dbee8b0a231f/verification.json"},
+    "forestry_workorders_feedback_rollback": {"status": "PASS", "live_calls": 2, "receipt": "runtime_reports/live-assistance-a584e0bb6c204d2889f4b4fb6c3bdb97/verification.json"},
+    "new_ontology_repair_recheck_review_exact_compilation": {"status": "PASS", "live_calls": 1, "receipt": "runtime_reports/live-assistance-d32bfc3c91a54a0989f7af960751dcf9/verification.json"},
+    "local_bge_faiss_reranker_tokenizer": {"status": "PASS", "receipt": "runtime_reports/original-multimodal-20260911/original-24030ca760bf44809493a8b6af205f75.json"}
+  },
+  "multimodal": {
+    "status": "PASS",
+    "files": 7,
+    "observations": 11,
+    "vision_inferences": 8,
+    "asr_inferences": 2,
+    "text_pdf_parser_executions": 1,
+    "gold_frozen_before_inference": true,
+    "all_observations_independently_exact_matched": true,
+    "raw_receipt": "runtime_reports/original-multimodal-20260911/multimodal-734f4089016048bbb895df5bdfea954e.json",
+    "exact_audit": "evidence/multimodal-exact-audit.json",
+    "frozen_inputs": "evidence/model-inputs/fixture-lock.json"
+  },
+  "backend": {
+    "status": "PASS_WITH_EXPLICIT_PLATFORM_AND_OPTIONAL_DEPENDENCY_SKIPS",
+    "collected": 1932,
+    "executed": 1932,
+    "passed": 1923,
+    "failed": 0,
+    "skipped": 9,
+    "missing_nodes": 0,
+    "extra_nodes": 0,
+    "workers": 6,
+    "receipt": "runtime_reports/zhigou-verification-38174e55c4d443bab6ebb689a7d41dae/verification.json",
+    "optional_model_environment_recheck": {"passed": 13, "failed": 0, "skipped": 0, "receipt": "runtime_reports/original-multimodal-20260911/optional-model-environment-tests.xml"},
+    "unique_coverage_rollup": {"passed": 1924, "platform_skipped": 8, "qualification": "The PDF-renderer case skipped in the base environment passed separately in the model environment; this does not rewrite the base run."}
+  },
+  "frontend": {
+    "lint": "PASS",
+    "typescript": "PASS",
+    "unit_tests_passed": 39,
+    "unit_receipt": "runtime_reports/original-models-frontend-20260911/unit/receipt.json",
+    "production_build": "PASS"
+  },
+  "distribution": {
+    "status": "PASS",
+    "fresh_installations": 2,
+    "wheel_sdist_payloads_equal": true,
+    "receipt": "runtime_reports/original-models-distribution-20260911/distribution-verification.json"
+  },
+  "fresh_git_checkout_rehearsal": {
+    "catalog_and_imports": "PASS",
+    "unique_schema_identifiers": 169,
+    "contract_and_identity_tests_passed": 7,
+    "qualification": "Independent temporary Git index checkout; historical CRLF contracts and frozen fixture bytes have explicit attributes. Documentation may be added after this rehearsal."
+  },
+  "browser": {
+    "status": "COMPLETE_WITH_RETAINED_INITIAL_FAILURE_AND_SAME_CODE_RECHECK",
+    "first_run": {"passed": 7, "failed": 1, "conditional_skipped": 2, "receipt": "evidence/browser-current-full.json"},
+    "mixed_isolated_recheck": {"status": "PASS", "receipt": "evidence/browser-mixed-recheck.json"},
+    "completed_stage_readback": {"status": "PASS", "receipt": "evidence/browser-completed-stage-readback.json"},
+    "mnp_object_and_evidence_readback": {"status": "PASS", "receipt": "evidence/browser-mnp-readback-current.json"},
+    "unique_covered_passed": 10,
+    "server_worker_and_credentials_cleaned": true,
+    "qualification": "The original full run remains FAIL for its mixed-workflow HTTP 503. Its one failed case passed independently without changing code, semantic checks, session policy or timeouts. Both conditional cases passed separately.",
+    "additional_negative_fixture": "evidence/browser-relocated-runtime-rejected.json",
+    "additional_negative_qualification": "A copied runtime was rejected with PROJECT_CATALOG_INVALID because its authority roots still referenced the original location. The existing-workspace reader then passed on the original completed backend fixture; no authority pointers were rewritten."
+  },
+  "retained_attempts": "evidence/original-model-runs.json",
+  "provider_smoke_probes": "evidence/original-service-probes.json",
+  "limitations": [
+    "Qwen2.5 7B/72B runs have mixed outcomes. Qwen3 results are never labelled as Qwen2.5 results.",
+    "SenseVoiceSmall did not meet the frozen English transcript; the accepted ASR profile uses Qwen3-ASR.",
+    "Hosted API model IDs do not attest exact provider weights or a vLLM deployment.",
+    "Multimodal output is an unapproved independent observation receipt, not automatic formal ontology ingestion.",
+    "Video testing covers bounded constant-frame-rate samples, not variable-rate or exhaustive video understanding.",
+    "Synthetic engineering tests do not establish expert-labelled research accuracy or production deployment readiness."
+  ],
+  "merge_policy": "All required local gates are satisfied. Merge the validated upgrade to develop, then main. No force push or release tag; the Git history records the actual merge commits."
+}

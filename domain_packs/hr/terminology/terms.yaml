@@ -1,0 +1,4 @@
+terms:
+  - {label: Employee, iri: 'https://example.org/ontology/Employee'}
+  - {label: Department, iri: 'https://example.org/ontology/Department'}
+  - {label: belongsToDepartment, iri: 'https://example.org/ontology/belongsToDepartment'}

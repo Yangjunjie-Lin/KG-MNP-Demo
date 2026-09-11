@@ -1,0 +1,9 @@
+questions:
+  - question: Which synthetic trees have inspection records and a declared site?
+    purpose: Verify nonempty tree-inspection-site relations and evidence trace.
+    required_concepts: [TreeRecord, InspectionRecord, Site]
+    expected_answer_shape: ENTITY_LIST
+    query_asset_id: forestry-query-tree-inspections
+    oracle:
+      minimum_rows: 6
+      required_bindings: [tree, treeCode, inspection, inspectionCode, site]

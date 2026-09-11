@@ -1,0 +1,46 @@
+{
+  "step_id": "3.5",
+  "mode": "TUTORIAL_REFERENCE",
+  "actual_execution_status": "NOT_RUN",
+  "input_refs": [
+    "3.1 记录事实",
+    "3.4 文本证据",
+    "B1 身份规则"
+  ],
+  "illustrative_output": {
+    "identities": [
+      {
+        "type": "Employee",
+        "business_id": "E-001",
+        "iri": "https://example.org/data/hr/Employee/E-001",
+        "identity_scope": "HR-DEMO"
+      },
+      {
+        "type": "Employee",
+        "business_id": "E-002",
+        "iri": "https://example.org/data/hr/Employee/E-002",
+        "identity_scope": "HR-DEMO"
+      },
+      {
+        "type": "Employee",
+        "business_id": "E-003",
+        "iri": "https://example.org/data/hr/Employee/E-003",
+        "identity_scope": "HR-DEMO"
+      },
+      {
+        "type": "Department",
+        "business_id": "D-01",
+        "iri": "https://example.org/data/hr/Department/D-01",
+        "identity_scope": "HR-DEMO"
+      },
+      {
+        "type": "Department",
+        "business_id": "D-02",
+        "iri": "https://example.org/data/hr/Department/D-02",
+        "identity_scope": "HR-DEMO"
+      }
+    ],
+    "unresolved": [],
+    "null_keys": 0
+  }
+}

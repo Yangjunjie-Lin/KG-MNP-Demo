@@ -1,0 +1,88 @@
+[
+  {
+    "evidence_id": "EV-ER-01",
+    "source_id": "SRC-EMP",
+    "locator": {
+      "kind": "json_pointer",
+      "pointer": "/employees/0"
+    },
+    "source_version": "v1",
+    "record_id": "ER-01"
+  },
+  {
+    "evidence_id": "EV-ER-02",
+    "source_id": "SRC-EMP",
+    "locator": {
+      "kind": "json_pointer",
+      "pointer": "/employees/1"
+    },
+    "source_version": "v1",
+    "record_id": "ER-02"
+  },
+  {
+    "evidence_id": "EV-ER-03",
+    "source_id": "SRC-EMP",
+    "locator": {
+      "kind": "json_pointer",
+      "pointer": "/employees/2"
+    },
+    "source_version": "v1",
+    "record_id": "ER-03"
+  },
+  {
+    "evidence_id": "EV-DR-01",
+    "source_id": "SRC-DEP",
+    "locator": {
+      "kind": "json_pointer",
+      "pointer": "/departments/0"
+    },
+    "source_version": "v1",
+    "record_id": "DR-01"
+  },
+  {
+    "evidence_id": "EV-DR-02",
+    "source_id": "SRC-DEP",
+    "locator": {
+      "kind": "json_pointer",
+      "pointer": "/departments/1"
+    },
+    "source_version": "v1",
+    "record_id": "DR-02"
+  },
+  {
+    "evidence_id": "EV-TXT-01",
+    "source_id": "SRC-TXT",
+    "text_id": "TXT-01",
+    "text_version": "v1",
+    "chunk_id": "CH-01",
+    "quote": "员工 E-001 归属部门 D-01。",
+    "start": 0,
+    "end": 19,
+    "position_unit": "Unicode code point",
+    "quote_exists": true
+  },
+  {
+    "evidence_id": "EV-TXT-02",
+    "source_id": "SRC-TXT",
+    "text_id": "TXT-01",
+    "text_version": "v1",
+    "chunk_id": "CH-02",
+    "quote": "员工 E-002 归属部门 D-02。",
+    "start": 20,
+    "end": 39,
+    "position_unit": "Unicode code point",
+    "quote_exists": true
+  },
+  {
+    "evidence_id": "EV-TXT-03",
+    "source_id": "SRC-TXT",
+    "text_id": "TXT-01",
+    "text_version": "v1",
+    "chunk_id": "CH-03",
+    "quote": "员工 E-003 归属部门 D-01。",
+    "start": 40,
+    "end": 59,
+    "position_unit": "Unicode code point",
+    "quote_exists": true
+  }
+]

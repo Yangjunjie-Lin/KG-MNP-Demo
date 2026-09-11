@@ -1,6 +1,4 @@
-"""Run the existing root CLI through ``python -m kg_mnp``."""
-
-from .root_cli import main
+from . import legacy_main
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    raise SystemExit(legacy_main())

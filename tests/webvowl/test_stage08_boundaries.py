@@ -8,7 +8,6 @@ from functools import lru_cache
 from pathlib import Path
 
 import pytest
-
 from kg_mnp.compilation.manifest import json_bytes
 from kg_mnp.publication.package_builder import (
     build_end_to_end_publication_package,
@@ -232,7 +231,7 @@ def test_stage08_ci_cleanup_and_publication_boundary_are_closed() -> None:
     assert 'docker compose' not in workflow and '|| true' not in workflow
 
     readme = (ROOT / "README.md").read_text(encoding="utf-8")
-    assert "# KG-MNP Ontology Toolchain" in readme
+    assert "# 知构工具链 · ZhiGou Toolchain" in readme
     assert 'Ontology Package' in readme
     assert 'CAS' in readme and 'Attestation' in readme
     assert 'Provider 只生成候选' in readme
@@ -242,8 +241,8 @@ def test_stage08_ci_cleanup_and_publication_boundary_are_closed() -> None:
     stage08_sources = "\n".join(
         path.read_text(encoding="utf-8")
         for directory in (
-            ROOT / "src/kg_mnp/webvowl",
-            ROOT / "src/kg_mnp/publication",
+            ROOT / "src/zhigou_toolchain/webvowl",
+            ROOT / "src/zhigou_toolchain/publication",
         )
         for path in directory.glob("*.py")
     ).casefold()

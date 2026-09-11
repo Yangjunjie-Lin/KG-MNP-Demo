@@ -1,0 +1,14 @@
+@prefix f: <https://example.invalid/forestry#> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+f:TreeShape a sh:NodeShape ; sh:targetClass f:TreeRecord ;
+ sh:property [ sh:path f:treeCode ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; sh:minLength 1 ] ;
+ sh:property [ sh:path f:label ; sh:datatype xsd:string ; sh:minCount 1 ; sh:minLength 1 ] ;
+ sh:property [ sh:path f:locatedAt ; sh:class f:Site ; sh:minCount 1 ; sh:maxCount 1 ] .
+f:SiteShape a sh:NodeShape ; sh:targetClass f:Site ;
+ sh:property [ sh:path f:siteCode ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; sh:minLength 1 ] ;
+ sh:property [ sh:path f:label ; sh:datatype xsd:string ; sh:minCount 1 ] .
+f:InspectionShape a sh:NodeShape ; sh:targetClass f:InspectionRecord ;
+ sh:property [ sh:path f:inspectionCode ; sh:datatype xsd:string ; sh:minCount 1 ; sh:maxCount 1 ; sh:minLength 1 ] ;
+ sh:property [ sh:path f:inspectionNote ; sh:datatype xsd:string ; sh:minCount 1 ] ;
+ sh:property [ sh:path f:inspectedTree ; sh:class f:TreeRecord ; sh:minCount 1 ; sh:maxCount 1 ] .

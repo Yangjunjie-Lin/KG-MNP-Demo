@@ -10,7 +10,7 @@ test('arbitrary pack identifier uses the same real project UI',async({page})=>{
  await page.getByRole('button',{name:'创建项目',exact:true}).click();
  await expect(page.getByRole('heading',{name:'项目概览',exact:true})).toBeVisible({timeout:60000});
  await expect(page.getByText('arbitrary-validation-pack · 0.1.0',{exact:true})).toBeVisible();
- await page.getByRole('link',{name:'资料与证据',exact:true}).click();
+ await page.getByRole('link',{name:'数据接入与规则化',exact:true}).click();
  await expect(page.getByLabel('资料文件')).toBeVisible();
  await page.getByRole('button',{name:'退出',exact:true}).click();
 });

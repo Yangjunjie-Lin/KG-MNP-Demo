@@ -29,8 +29,9 @@ def _git_paths(prefix: str) -> list[str]:
 
 
 def _filtered_worktree_blob(path: str) -> str:
+    current_path = path.replace("src/kg_mnp/", "src/zhigou_toolchain/")
     return subprocess.run(
-        ["git", "hash-object", f"--path={path}", path],
+        ["git", "hash-object", f"--path={path}", current_path],
         cwd=ROOT,
         check=True,
         capture_output=True,

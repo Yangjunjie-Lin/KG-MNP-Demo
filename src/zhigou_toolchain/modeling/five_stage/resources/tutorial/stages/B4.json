@@ -1,0 +1,54 @@
+{
+  "bundle_id": "B4",
+  "schema_version": "1.0",
+  "mode": "TUTORIAL_REFERENCE",
+  "parent_bundle_refs": [
+    "B3"
+  ],
+  "retained_input_ref": "B0",
+  "new_artifacts": [
+    "candidate_integrity.json",
+    "validation_report.json",
+    "repair_proposal.json",
+    "review_decisions.json",
+    "confirmed_package.json"
+  ],
+  "step_refs": [
+    "4.1",
+    "4.2",
+    "4.3",
+    "4.4",
+    "4.5"
+  ],
+  "next_stage": 5,
+  "artifact_refs": [
+    {
+      "step_id": "4.1",
+      "path": "stages/4.1_candidate_integrity.json",
+      "sha256": "ed0a23d19a5d862c28673b354f7145a0a0aead1eb2de9856a82d140dfb7a878c"
+    },
+    {
+      "step_id": "4.2",
+      "path": "stages/4.2_validation_report.json",
+      "sha256": "c6597003cd064a2298b5fa6d9feca21e9cb5227f21d0498ef1642b61e5cb078a"
+    },
+    {
+      "step_id": "4.3",
+      "path": "stages/4.3_repair_proposal.json",
+      "sha256": "fcd3242a5ad3ad6adeb63a15369ef2eb69ed857741da5d4418db4675e1690342"
+    },
+    {
+      "step_id": "4.4",
+      "path": "stages/4.4_review_decisions.json",
+      "sha256": "db6e8d9d0cf471e2b7c82ba557a9705d6a23f75da734da919afdb36401adca72"
+    },
+    {
+      "step_id": "4.5",
+      "path": "stages/4.5_confirmed_package.json",
+      "sha256": "a765fba7519b94968acc147c7d7db755848409810c5a4cecdb7b6ed287ee8ffa"
+    }
+  ],
+  "parent_bundle_sha256": {
+    "B3": "3b0569d8fe53f546555e3d7cb88f201f36cb9a31ee253636ff7033878f78d176"
+  }
+}

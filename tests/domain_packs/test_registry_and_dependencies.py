@@ -4,7 +4,6 @@ import shutil
 from pathlib import Path
 
 import pytest
-
 from kg_mnp.domain_packs.locking import generate_pack_lock
 from kg_mnp.domain_packs.registry import DomainPackRegistry, DomainPackRegistryError
 from kg_mnp.domain_packs.resolver import resolve_dependency_closure
@@ -28,7 +27,11 @@ def _pack(root: Path, pack_id: str, dependencies: list[dict[str, object]]) -> Pa
 def test_registry_lists_and_resolves_exact_repository_versions() -> None:
     registry = DomainPackRegistry(ROOT / "domain_packs")
     assert [(item[0], item[1]) for item in registry.list()] == [
+        ("empty", "0.1.0"),
         ("forestry", "0.2.0"),
+        ("forestry-workorders", "0.1.0"),
+        ("forestry-workorders", "0.1.1"),
+        ("hr", "0.1.0"),
         ("minimal", "0.1.0"),
         ("mnp", "1.0.0"),
     ]

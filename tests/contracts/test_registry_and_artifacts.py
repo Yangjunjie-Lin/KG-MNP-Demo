@@ -6,7 +6,6 @@ from pathlib import Path
 
 import pytest
 from jsonschema import ValidationError
-
 from kg_mnp.contracts import get_contract_schema, validate_contract
 from kg_mnp.contracts.canonical import file_sha256, stable_urn
 from kg_mnp.contracts.catalog import ContractCatalog
@@ -99,7 +98,7 @@ def test_modeling_compatibility_api_returns_identical_schema_and_behavior() -> N
 
 def test_custom_registry_fails_for_missing_ref_cycle_and_invalid_schema(tmp_path: Path) -> None:
     specs = ContractCatalog.load().filtered(scope="modeling")
-    source = Path(__file__).resolve().parents[2] / "src" / "kg_mnp" / "contracts" / "schemas" / "modeling"
+    source = Path(__file__).resolve().parents[2] / "src" / "zhigou_toolchain" / "contracts" / "schemas" / "modeling"
     for mode, expected in (("missing", "unresolvable"), ("cycle", "cyclic"), ("invalid", "invalid Draft")):
         target = tmp_path / mode
         shutil.copytree(source, target)

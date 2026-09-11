@@ -1,0 +1,28 @@
+@prefix dept: <https://example.org/data/hr/Department/> .
+@prefix emp: <https://example.org/data/hr/Employee/> .
+@prefix ex: <https://example.org/ontology/> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+emp:E-001 a ex:Employee ;
+    ex:belongsToDepartment dept:D-01 ;
+    ex:employeeId "E-001"^^xsd:string ;
+    ex:employeeName "林晓"^^xsd:string .
+
+emp:E-002 a ex:Employee ;
+    ex:belongsToDepartment dept:D-02 ;
+    ex:employeeId "E-002"^^xsd:string ;
+    ex:employeeName "陈雨"^^xsd:string .
+
+emp:E-003 a ex:Employee ;
+    ex:belongsToDepartment dept:D-01 ;
+    ex:employeeId "E-003"^^xsd:string ;
+    ex:employeeName "周宁"^^xsd:string .
+
+dept:D-02 a ex:Department ;
+    ex:departmentId "D-02"^^xsd:string ;
+    ex:departmentName "运维部"^^xsd:string .
+
+dept:D-01 a ex:Department ;
+    ex:departmentId "D-01"^^xsd:string ;
+    ex:departmentName "研发部"^^xsd:string .
+

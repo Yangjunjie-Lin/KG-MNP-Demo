@@ -60,7 +60,7 @@ test('real session negative boundaries and identity cache isolation',async({page
   expect(noCsrf.status()).toBe(403);
   const crossOrigin=await page.request.post('/api/v1'+projectPath+'/sources',{headers:{Origin:'https://example.invalid','X-Filename':'unsafe.txt','Content-Type':'text/plain'},data:'synthetic'});
   expect(crossOrigin.status()).toBe(403);
-  await page.getByRole('link',{name:'资料与证据',exact:true}).click();
+  await page.getByRole('link',{name:'数据接入与规则化',exact:true}).click();
   await page.getByLabel('资料文件').setInputFiles({name:'inert.txt',mimeType:'text/plain',buffer:Buffer.from('<script>window.__unsafeExecuted=true</script> synthetic inert source')});
   await page.getByRole('button',{name:'上传并登记 Source',exact:true}).click();
   await expect.poll(async()=>{
@@ -73,9 +73,9 @@ test('real session negative boundaries and identity cache isolation',async({page
   expect(scan.violations).toEqual([]);
   // Keyboard-driven navigation checks are recorded separately from axe scan.
   await page.keyboard.press('Tab');
-  await page.getByRole('link',{name:'任务中心',exact:true}).focus();
-  await expect(page.getByRole('link',{name:'任务中心',exact:true})).toBeFocused();
-  const focusVisible=await page.getByRole('link',{name:'任务中心',exact:true}).evaluate(element=>{const style=getComputedStyle(element);return style.outlineStyle!=='none'&&parseFloat(style.outlineWidth)>=2;});
+  await page.getByRole('link',{name:'运行记录',exact:true}).focus();
+  await expect(page.getByRole('link',{name:'运行记录',exact:true})).toBeFocused();
+  const focusVisible=await page.getByRole('link',{name:'运行记录',exact:true}).evaluate(element=>{const style=getComputedStyle(element);return style.outlineStyle!=='none'&&parseFloat(style.outlineWidth)>=2;});
   expect(focusVisible).toBe(true);
   await page.screenshot({path:info.outputPath('keyboard-focus.png')});
   await page.keyboard.press('Enter');

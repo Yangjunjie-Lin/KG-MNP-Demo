@@ -26,10 +26,9 @@ from pathlib import Path
 from typing import Any
 
 import yaml
+from kg_mnp.paths import domain_pack_path
 from rdflib import OWL, RDF, RDFS, Graph, URIRef
 from rdflib.compare import to_canonical_graph
-
-from kg_mnp.paths import domain_pack_path
 
 ROOT = Path(__file__).resolve().parents[1]
 DOWNLOAD_DIR = ROOT / "third_party" / "downloads"
@@ -678,11 +677,12 @@ def _finish_runtime_record(
     *,
     started: float,
     report_path: Path,
+    root: Path,
 ) -> int:
     report["execution_time_seconds"] = round(time.perf_counter() - started, 6)
     write_json(report_path, report)
     print(f"Reasoner status: {report['status']}")
-    print(f"Runtime report: {_relative_artifact(report_path)}")
+    print(f"Runtime report: {_relative_artifact(report_path, root)}")
     if report["status"] == STATUS_PASS:
         return 0
     return 2 if report["status"] == STATUS_NOT_RUN else 1
@@ -737,7 +737,7 @@ def run_reasoner(
             "warnings": [f"reasoner input preparation failed: {exc}"],
             "execution_time_seconds": 0.0,
         }
-        return _finish_runtime_record(report, started=started, report_path=report_path)
+        return _finish_runtime_record(report, started=started, report_path=report_path, root=root)
 
     try:
         jar = ensure_robot(download_dir=active_download)
@@ -752,7 +752,7 @@ def run_reasoner(
         report["warnings"] = [f"ROBOT unavailable: {exc}"]
         write_unsatisfiable_report(unsat_path, [])
         _write_equivalence_report(equivalence_path, check=STATUS_NOT_RUN)
-        return _finish_runtime_record(report, started=started, report_path=report_path)
+        return _finish_runtime_record(report, started=started, report_path=report_path, root=root)
 
     report["java_version"] = java_version()
     command = [
@@ -788,7 +788,7 @@ def run_reasoner(
         report["warnings"] = [f"Java execution failed before the reasoner ran: {exc}"]
         write_unsatisfiable_report(unsat_path, [])
         _write_equivalence_report(equivalence_path, check=STATUS_NOT_RUN)
-        return _finish_runtime_record(report, started=started, report_path=report_path)
+        return _finish_runtime_record(report, started=started, report_path=report_path, root=root)
 
     report["exit_code"] = process.returncode
     combined_output = "\n".join(
@@ -818,7 +818,7 @@ def run_reasoner(
         report["warnings"] = [combined_output[-2000:]] if combined_output else []
         write_unsatisfiable_report(unsat_path, logged_unsatisfiable)
         _write_equivalence_report(equivalence_path, check=STATUS_NOT_RUN)
-        return _finish_runtime_record(report, started=started, report_path=report_path)
+        return _finish_runtime_record(report, started=started, report_path=report_path, root=root)
 
     if not reasoned_path.is_file() or reasoned_path.stat().st_size == 0:
         report["status"], report["consistency"] = classify_reasoner_status(
@@ -830,7 +830,7 @@ def run_reasoner(
         report["warnings"] = ["ROBOT did not create a reasoned ontology"]
         write_unsatisfiable_report(unsat_path, [])
         _write_equivalence_report(equivalence_path, check=STATUS_NOT_RUN)
-        return _finish_runtime_record(report, started=started, report_path=report_path)
+        return _finish_runtime_record(report, started=started, report_path=report_path, root=root)
 
     try:
         reasoned = Graph()
@@ -869,7 +869,7 @@ def run_reasoner(
             write_unsatisfiable_report(unsat_path, [])
         if not equivalence_path.is_file():
             _write_equivalence_report(equivalence_path, check=STATUS_NOT_RUN)
-        return _finish_runtime_record(report, started=started, report_path=report_path)
+        return _finish_runtime_record(report, started=started, report_path=report_path, root=root)
 
     status, consistency = classify_reasoner_status(
         executed=True,
@@ -897,7 +897,7 @@ def run_reasoner(
             "warnings": [],
         }
     )
-    return _finish_runtime_record(report, started=started, report_path=report_path)
+    return _finish_runtime_record(report, started=started, report_path=report_path, root=root)
 
 
 def _expected_artifact_paths(root: Path, runtime_dir: Path) -> dict[str, Path]:

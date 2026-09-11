@@ -21,18 +21,19 @@ def test_distribution_metadata_and_console_surface() -> None:
     project = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))[
         "project"
     ]
-    assert project["name"] == "kg-mnp-toolchain"
+    assert project["name"] == "zhigou-toolchain"
     assert "version" in project["dynamic"]
     metadata = tomllib.loads((ROOT / "pyproject.toml").read_text(encoding="utf-8"))
-    assert metadata["tool"]["setuptools"]["dynamic"]["version"]["attr"] == "kg_mnp.__version__"
-    assert project["scripts"] == {"kg-mnp": "kg_mnp.root_cli:main"}
+    assert metadata["tool"]["setuptools"]["dynamic"]["version"]["attr"] == "zhigou_toolchain.__version__"
+    expected_scripts = {"zhigou-toolchain": "zhigou_toolchain.root_cli:main", "kg-mnp": "kg_mnp:legacy_main"}
+    assert project["scripts"] == expected_scripts
 
-    distribution = importlib.metadata.distribution("kg-mnp-toolchain")
+    distribution = importlib.metadata.distribution("zhigou-toolchain")
     assert distribution.version == kg_mnp.__version__
     console_scripts = {
         entry.name: entry.value
         for entry in distribution.entry_points
         if entry.group == "console_scripts"
     }
-    assert console_scripts == {"kg-mnp": "kg_mnp.root_cli:main"}
+    assert console_scripts == expected_scripts
     assert "kg-mnp-eligibility" not in console_scripts
