@@ -29,7 +29,14 @@ def check():
     registry = DomainPackRegistry(ROOT / "domain_packs")
     for name, (version, digest) in EXPECTED.items():
         assert registry.resolve(name, version).lock.content_digest == digest, name
-    return {"status": "PRESERVED", "mnp_original_assets": 84, "read_only": True}
+    # Discovery alone does not verify locks. Include every advertised version,
+    # not only the two historical anchors, so new/archived packs fail early.
+    verified = []
+    for pack_id, version, _path in registry.list():
+        registry.resolve(pack_id, version)
+        verified.append(f"{pack_id}@{version}")
+    return {"status": "PRESERVED", "mnp_original_assets": 84, "read_only": True,
+            "verified_pack_versions": verified}
 
 
 def main():
