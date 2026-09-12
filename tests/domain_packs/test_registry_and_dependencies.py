@@ -36,7 +36,9 @@ def test_registry_lists_and_resolves_exact_repository_versions() -> None:
         ("minimal", "0.1.0"),
         ("mnp", "1.0.0"),
     ]
-    assert registry.resolve("minimal", "0.1.0").manifest.pack_id == "minimal"
+    for pack_id, version, _path in registry.list():
+        resolved = registry.resolve(pack_id, version)
+        assert (resolved.manifest.pack_id, resolved.manifest.pack_version) == (pack_id, version)
     with pytest.raises(DomainPackRegistryError, match="not found"):
         registry.resolve("forestry", "0.1.0")
     with pytest.raises(DomainPackRegistryError, match="not found"):
