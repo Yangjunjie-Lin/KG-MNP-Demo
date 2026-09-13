@@ -1,0 +1,257 @@
+{
+  "version": "1.1.0+603986351b9b",
+  "ontology_iri": "https://example.org/ontology/",
+  "profile_ref": "standardization/profile.json",
+  "authoritative_graph": "model/ontology.ttl",
+  "empty_array_semantics": "NO_ADDITIONAL_AXIOM_ASSERTED_NOT_CLOSED_WORLD_NEGATION",
+  "items": [
+    {
+      "iri": "https://example.org/ontology/Employee",
+      "name": "Employee",
+      "kind": "Class",
+      "labels": [
+        {
+          "language": "zh",
+          "value": "员工"
+        },
+        {
+          "language": "en",
+          "value": "Employee"
+        }
+      ],
+      "definition": {
+        "language": "zh",
+        "value": "当前人事管理范围内，用员工编号识别并记录姓名和当前所属部门的业务对象。"
+      },
+      "definition_origin": "LOCAL_SCOPE_AND_MAPPING_DRAFT",
+      "definition_review_ref": "quality/review.json#model_review",
+      "namespace": "https://example.org/ontology/",
+      "version": "1.1.0+70412a604dbc",
+      "decision": "REUSE",
+      "aliases": [],
+      "equivalent_terms": [],
+      "super_terms": [],
+      "sub_terms": [],
+      "characteristics": [],
+      "domain": null,
+      "range": null,
+      "property_refs": [
+        "https://example.org/ontology/belongsToDepartment",
+        "https://example.org/ontology/employeeId",
+        "https://example.org/ontology/employeeName"
+      ],
+      "constraint_refs": []
+    },
+    {
+      "iri": "https://example.org/ontology/Department",
+      "name": "Department",
+      "kind": "Class",
+      "labels": [
+        {
+          "language": "zh",
+          "value": "部门"
+        },
+        {
+          "language": "en",
+          "value": "Department"
+        }
+      ],
+      "definition": {
+        "language": "zh",
+        "value": "当前人事管理范围内，用部门编号识别并记录部门名称的组织单元。"
+      },
+      "definition_origin": "LOCAL_SCOPE_AND_MAPPING_DRAFT",
+      "definition_review_ref": "quality/review.json#model_review",
+      "namespace": "https://example.org/ontology/",
+      "version": "1.1.0+b5d46d51f04b",
+      "decision": "REUSE",
+      "aliases": [],
+      "equivalent_terms": [],
+      "super_terms": [],
+      "sub_terms": [],
+      "characteristics": [],
+      "domain": null,
+      "range": null,
+      "property_refs": [
+        "https://example.org/ontology/departmentId",
+        "https://example.org/ontology/departmentName"
+      ],
+      "constraint_refs": []
+    },
+    {
+      "iri": "https://example.org/ontology/belongsToDepartment",
+      "name": "belongsToDepartment",
+      "kind": "ObjectProperty",
+      "labels": [
+        {
+          "language": "zh",
+          "value": "所属部门"
+        },
+        {
+          "language": "en",
+          "value": "Belongs to department"
+        }
+      ],
+      "definition": {
+        "language": "zh",
+        "value": "把员工对象关联到其在当前快照中所属的已登记部门对象；不表达历史任职。"
+      },
+      "definition_origin": "LOCAL_SCOPE_AND_MAPPING_DRAFT",
+      "definition_review_ref": "quality/review.json#model_review",
+      "namespace": "https://example.org/ontology/",
+      "version": "1.1.0+7168a062238f",
+      "decision": "REUSE",
+      "aliases": [],
+      "equivalent_terms": [],
+      "super_terms": [],
+      "sub_terms": [],
+      "characteristics": [],
+      "domain": "https://example.org/ontology/Employee",
+      "range": "https://example.org/ontology/Department",
+      "property_refs": [],
+      "constraint_refs": [
+        "RULE-belongsToDepartment"
+      ]
+    },
+    {
+      "iri": "https://example.org/ontology/employeeId",
+      "name": "employeeId",
+      "kind": "DatatypeProperty",
+      "labels": [
+        {
+          "language": "zh",
+          "value": "员工编号"
+        },
+        {
+          "language": "en",
+          "value": "Employee identifier"
+        }
+      ],
+      "definition": {
+        "language": "zh",
+        "value": "员工在当前身份范围中的业务编号；以字符串保存，保留前导零和大小写。"
+      },
+      "definition_origin": "LOCAL_SCOPE_AND_MAPPING_DRAFT",
+      "definition_review_ref": "quality/review.json#model_review",
+      "namespace": "https://example.org/ontology/",
+      "version": "1.1.0+a5b02092b6a6",
+      "decision": "CREATE",
+      "aliases": [],
+      "equivalent_terms": [],
+      "super_terms": [],
+      "sub_terms": [],
+      "characteristics": [],
+      "domain": "https://example.org/ontology/Employee",
+      "range": "http://www.w3.org/2001/XMLSchema#string",
+      "property_refs": [],
+      "constraint_refs": [
+        "RULE-employeeId"
+      ]
+    },
+    {
+      "iri": "https://example.org/ontology/employeeName",
+      "name": "employeeName",
+      "kind": "DatatypeProperty",
+      "labels": [
+        {
+          "language": "zh",
+          "value": "员工姓名"
+        },
+        {
+          "language": "en",
+          "value": "Employee name"
+        }
+      ],
+      "definition": {
+        "language": "zh",
+        "value": "业务记录中用于展示员工的姓名；不单独作为对象身份或自动合并依据。"
+      },
+      "definition_origin": "LOCAL_SCOPE_AND_MAPPING_DRAFT",
+      "definition_review_ref": "quality/review.json#model_review",
+      "namespace": "https://example.org/ontology/",
+      "version": "1.1.0+c162aa17a98e",
+      "decision": "CREATE",
+      "aliases": [],
+      "equivalent_terms": [],
+      "super_terms": [],
+      "sub_terms": [],
+      "characteristics": [],
+      "domain": "https://example.org/ontology/Employee",
+      "range": "http://www.w3.org/2001/XMLSchema#string",
+      "property_refs": [],
+      "constraint_refs": [
+        "RULE-employeeName"
+      ]
+    },
+    {
+      "iri": "https://example.org/ontology/departmentId",
+      "name": "departmentId",
+      "kind": "DatatypeProperty",
+      "labels": [
+        {
+          "language": "zh",
+          "value": "部门编号"
+        },
+        {
+          "language": "en",
+          "value": "Department identifier"
+        }
+      ],
+      "definition": {
+        "language": "zh",
+        "value": "部门在当前身份范围中的业务编号；以字符串保存，保留前导零和大小写。"
+      },
+      "definition_origin": "LOCAL_SCOPE_AND_MAPPING_DRAFT",
+      "definition_review_ref": "quality/review.json#model_review",
+      "namespace": "https://example.org/ontology/",
+      "version": "1.1.0+3ddac152bd78",
+      "decision": "CREATE",
+      "aliases": [],
+      "equivalent_terms": [],
+      "super_terms": [],
+      "sub_terms": [],
+      "characteristics": [],
+      "domain": "https://example.org/ontology/Department",
+      "range": "http://www.w3.org/2001/XMLSchema#string",
+      "property_refs": [],
+      "constraint_refs": [
+        "RULE-departmentId"
+      ]
+    },
+    {
+      "iri": "https://example.org/ontology/departmentName",
+      "name": "departmentName",
+      "kind": "DatatypeProperty",
+      "labels": [
+        {
+          "language": "zh",
+          "value": "部门名称"
+        },
+        {
+          "language": "en",
+          "value": "Department name"
+        }
+      ],
+      "definition": {
+        "language": "zh",
+        "value": "业务记录中用于展示部门的名称；不单独作为对象身份或自动合并依据。"
+      },
+      "definition_origin": "LOCAL_SCOPE_AND_MAPPING_DRAFT",
+      "definition_review_ref": "quality/review.json#model_review",
+      "namespace": "https://example.org/ontology/",
+      "version": "1.1.0+aeddf2c126b4",
+      "decision": "CREATE",
+      "aliases": [],
+      "equivalent_terms": [],
+      "super_terms": [],
+      "sub_terms": [],
+      "characteristics": [],
+      "domain": "https://example.org/ontology/Department",
+      "range": "http://www.w3.org/2001/XMLSchema#string",
+      "property_refs": [],
+      "constraint_refs": [
+        "RULE-departmentName"
+      ]
+    }
+  ]
+}

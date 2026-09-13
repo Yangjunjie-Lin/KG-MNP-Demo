@@ -1,0 +1,39 @@
+{
+  "status": "DECLARATIONS_ONLY_NOT_DEPLOYED",
+  "read_functions": [
+    {
+      "function_id": "list_employee_departments",
+      "version": "1.0.0",
+      "query_ref": "acceptance/queries/employee_departments.rq",
+      "parameters": [],
+      "returns": [
+        "employeeId",
+        "departmentId"
+      ],
+      "side_effects": false
+    },
+    {
+      "function_id": "employee_department_by_id",
+      "version": "1.0.0",
+      "query_ref": "acceptance/queries/employee_department_by_id.rq",
+      "parameters": [
+        {
+          "name": "requestedEmployeeId",
+          "type": "xsd:string",
+          "required": true,
+          "binding": "RDF_LITERAL_INIT_BINDINGS"
+        }
+      ],
+      "returns": [
+        "employeeId",
+        "departmentId"
+      ],
+      "side_effects": false
+    }
+  ],
+  "actions": [],
+  "action_status": "NOT_DEFINED_IN_REQUIREMENTS",
+  "service_endpoint": null,
+  "authorization_policy": "MUST_BE_BOUND_BY_RECEIVER",
+  "write_enabled": false
+}

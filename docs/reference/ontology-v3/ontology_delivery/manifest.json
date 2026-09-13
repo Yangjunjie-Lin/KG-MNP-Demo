@@ -1,0 +1,318 @@
+{
+  "protocol": "ontology-delivery",
+  "schema_version": "3.0.0",
+  "package_id": "ONT-SAMPLE-3E82B74FC0F1E664",
+  "package_kind": "SNAPSHOT",
+  "is_synthetic": true,
+  "created_at": "2026-09-11T11:28:54.142Z",
+  "model_versions": {
+    "ontology": "1.1.0+603986351b9b",
+    "instances": "sample-r1-6d6ceddf",
+    "constraints": "1.0.0",
+    "mapping": "1.0.0",
+    "reference": "reference-4615cbee84fe"
+  },
+  "identity_scope": "HR-LOCAL",
+  "snapshot_id": "ONT-SAMPLE-3E82B74FC0F1E664",
+  "entrypoint": "integration/load_contract.json",
+  "review_status": "SYNTHETIC_CONFIRMATION_ONLY",
+  "validation_status": "OFFLINE_CHECKED_FORMAL_VALIDATION_PENDING",
+  "release_status": "NOT_RELEASED",
+  "counts": {
+    "classes": 2,
+    "properties": 5,
+    "objects": 5,
+    "facts": 18,
+    "assertions": 21,
+    "evidence": 8
+  },
+  "files": [
+    {
+      "path": "README_接入与实现.md",
+      "media_type": "text/markdown",
+      "bytes": 27052,
+      "sha256": "11619462c4a5d48c381121f0b26c6044b5aef2f8a3b491b0e25b616e5bd59d13",
+      "schema_ref": null
+    },
+    {
+      "path": "acceptance/baseline.json",
+      "media_type": "application/json",
+      "bytes": 2467,
+      "sha256": "1fcf0578f67c4c41326bf3a04939bf6379e4b56e0987cc27ce1723698d6a3862",
+      "schema_ref": "contracts/delivery.schema.json#/$defs/baseline"
+    },
+    {
+      "path": "acceptance/cases.json",
+      "media_type": "application/json",
+      "bytes": 2301,
+      "sha256": "42cea5ccb087d81d2cf86ed8537bf1f98b2acc4afc32911ede4be937663e92fb",
+      "schema_ref": "contracts/delivery.schema.json#/$defs/cases"
+    },
+    {
+      "path": "acceptance/queries/employee_department_by_id.rq",
+      "media_type": "application/sparql-query",
+      "bytes": 286,
+      "sha256": "9743e09e86c6a2eac2b6e16db429b2f4c35bc748ad34841bdf69811645f04a2f",
+      "schema_ref": null
+    },
+    {
+      "path": "acceptance/queries/employee_departments.rq",
+      "media_type": "application/sparql-query",
+      "bytes": 264,
+      "sha256": "1a42b72aba1f31ca8dba59c73b7aef7e2385ab4309ec4fe7f84a3f9e8d2ee69a",
+      "schema_ref": null
+    },
+    {
+      "path": "acceptance/results.json",
+      "media_type": "application/json",
+      "bytes": 4203,
+      "sha256": "6af0dc5480b6beb5faee8153bb1cab0dd100738b612c58643fa9fd9cf393ebe9",
+      "schema_ref": "contracts/delivery.schema.json#/$defs/results"
+    },
+    {
+      "path": "acceptance/standardization_cases.json",
+      "media_type": "application/json",
+      "bytes": 2130,
+      "sha256": "2dc635e39599c18680b015d5b156548b6416184153cdde2d7866a02cfc3721fc",
+      "schema_ref": "contracts/delivery.schema.json#/$defs/standard_cases"
+    },
+    {
+      "path": "contracts/delivery.schema.json",
+      "media_type": "application/json",
+      "bytes": 90778,
+      "sha256": "21519fcac6c85fe1e2b3d2c3bd080e0576a135c2882d9d01326b8dc0cbf8fd80",
+      "schema_ref": null
+    },
+    {
+      "path": "data/facts.jsonl",
+      "media_type": "application/x-ndjson",
+      "bytes": 11497,
+      "sha256": "178a473320ddf1fda77da14fbfb85fb12c1d30467c60e8e47b6eaa7d3ac3f40e",
+      "schema_ref": "contracts/delivery.schema.json#/$defs/fact"
+    },
+    {
+      "path": "data/objects.jsonl",
+      "media_type": "application/x-ndjson",
+      "bytes": 1295,
+      "sha256": "d96c08338bd75d2fff5171f49601b3fcd81b94e0a6c0a3927107b9597b54be07",
+      "schema_ref": "contracts/delivery.schema.json#/$defs/object"
+    },
+    {
+      "path": "evidence/snapshots/departments.json",
+      "media_type": "application/json",
+      "bytes": 259,
+      "sha256": "fd9b8d7fef27626c8d9f824424a4afead636d82b3f84ec963ebea2d8cf143fef",
+      "schema_ref": "contracts/delivery.schema.json#/$defs/departments_snapshot"
+    },
+    {
+      "path": "evidence/snapshots/employees.json",
+      "media_type": "application/json",
+      "bytes": 456,
+      "sha256": "86b6b84e55c6fa0961faeb7615144c8b79306a620624d33b1912be76e401f389",
+      "schema_ref": "contracts/delivery.schema.json#/$defs/employees_snapshot"
+    },
+    {
+      "path": "evidence/snapshots/relations.txt",
+      "media_type": "text/plain",
+      "bytes": 101,
+      "sha256": "732ff74cdc3225801e4941c8a919cf74f99c4ba33b353287520121de081cb0cb",
+      "schema_ref": null
+    },
+    {
+      "path": "evidence/snapshots/requirements.json",
+      "media_type": "application/json",
+      "bytes": 470,
+      "sha256": "69528bb5d7a8ad68286af1f18923da0b58470b0fe5eeef4581d5de09ed0691a1",
+      "schema_ref": "contracts/delivery.schema.json#/$defs/requirements_snapshot"
+    },
+    {
+      "path": "integration/capabilities.json",
+      "media_type": "application/json",
+      "bytes": 991,
+      "sha256": "3f0a9d241a397d8f6939ab85e7987e564fd787b9070856eece1d20581d601a31",
+      "schema_ref": "contracts/delivery.schema.json#/$defs/capabilities"
+    },
+    {
+      "path": "integration/context.json",
+      "media_type": "application/json",
+      "bytes": 1294,
+      "sha256": "3c70d9b0e4937e79304b1aefda9a3cc01e26dc53ce6cce05baaea60792b3c6be",
+      "schema_ref": "contracts/delivery.schema.json#/$defs/context"
+    },
+    {
+      "path": "integration/load_contract.json",
+      "media_type": "application/json",
+      "bytes": 2404,
+      "sha256": "7a50aac13d20ac50b0a4f9485d9bea2a3737a7184111492e4f1e1148a0d5dec3",
+      "schema_ref": "contracts/delivery.schema.json#/$defs/load"
+    },
+    {
+      "path": "mapping/mapping.json",
+      "media_type": "application/json",
+      "bytes": 2273,
+      "sha256": "97662f7b7c646cdc99464ba996ae46d62fa2601b349555395612a2ffa6d93414",
+      "schema_ref": "contracts/delivery.schema.json#/$defs/mapping"
+    },
+    {
+      "path": "model/axioms.json",
+      "media_type": "application/json",
+      "bytes": 6518,
+      "sha256": "36a6d5497a24b4c6bd25482d26c44217d32ab73ac3e19f4798c089be5c3e24e2",
+      "schema_ref": "contracts/delivery.schema.json#/$defs/axiom_catalog"
+    },
+    {
+      "path": "model/catalog.json",
+      "media_type": "application/json",
+      "bytes": 2427,
+      "sha256": "5d1f59d156228d02e9b199b7d9f4039168ab2ebb1c5898fad3030c8c139b2042",
+      "schema_ref": "contracts/delivery.schema.json#/$defs/catalog"
+    },
+    {
+      "path": "model/instances.ttl",
+      "media_type": "text/turtle",
+      "bytes": 2603,
+      "sha256": "d7216311302fcf39dbe2a83a712e2e4eb59a2dbc07fa4de7aa03ad259ebafad2",
+      "schema_ref": null
+    },
+    {
+      "path": "model/metadata.json",
+      "media_type": "application/json",
+      "bytes": 1566,
+      "sha256": "2c3d17f16d207a8f3be9ff53845380f9c740a9171f2d9c9e8cf276fb96497048",
+      "schema_ref": "contracts/delivery.schema.json#/$defs/ontology_metadata"
+    },
+    {
+      "path": "model/ontology.ttl",
+      "media_type": "text/turtle",
+      "bytes": 2708,
+      "sha256": "86d265c8b6595ebcbd75ea239178a9d79bf3f2c4552d29d555d473d6848d525b",
+      "schema_ref": null
+    },
+    {
+      "path": "model/rules.json",
+      "media_type": "application/json",
+      "bytes": 3446,
+      "sha256": "b3059696ee0fe2c32c5357048635f9f14acf15440fa145d6151245758da3b9ac",
+      "schema_ref": "contracts/delivery.schema.json#/$defs/rules"
+    },
+    {
+      "path": "model/scope.json",
+      "media_type": "application/json",
+      "bytes": 794,
+      "sha256": "c4311f664c4abdb5356d52ee8f832b04d23d448710bd6d1c2c2eec62447c00f5",
+      "schema_ref": "contracts/delivery.schema.json#/$defs/scope"
+    },
+    {
+      "path": "model/shapes.ttl",
+      "media_type": "text/turtle",
+      "bytes": 1245,
+      "sha256": "593719800abcaaa80914d205790202d76623a54731be245cecbdfe849f63dc30",
+      "schema_ref": null
+    },
+    {
+      "path": "model/terms.json",
+      "media_type": "application/json",
+      "bytes": 7922,
+      "sha256": "c5990c4a48c226fbcbad17b8dbc7c6ddfd39efad7aacb3ce1b98185fe1c08160",
+      "schema_ref": "contracts/delivery.schema.json#/$defs/term_catalog"
+    },
+    {
+      "path": "provenance/assertions.jsonl",
+      "media_type": "application/x-ndjson",
+      "bytes": 5042,
+      "sha256": "73ea0c68575e9c7a7766556fb6d9c008e72a7dc5c261ae0dad9e43d75c75008a",
+      "schema_ref": "contracts/delivery.schema.json#/$defs/assertion"
+    },
+    {
+      "path": "provenance/evidence.jsonl",
+      "media_type": "application/x-ndjson",
+      "bytes": 2722,
+      "sha256": "dd65b4b0daacd9383b647542bd2e205bc70166be8b84bab454f88dddedaca997",
+      "schema_ref": "contracts/delivery.schema.json#/$defs/evidence"
+    },
+    {
+      "path": "provenance/sources.json",
+      "media_type": "application/json",
+      "bytes": 1773,
+      "sha256": "c21235294e0cec4b816b2b69161165bc26e8a807ae6b33047afeea1b1a01b1c4",
+      "schema_ref": "contracts/delivery.schema.json#/$defs/sources"
+    },
+    {
+      "path": "quality/issues.jsonl",
+      "media_type": "application/x-ndjson",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "schema_ref": "contracts/delivery.schema.json#/$defs/issue"
+    },
+    {
+      "path": "quality/metrics.json",
+      "media_type": "application/json",
+      "bytes": 1672,
+      "sha256": "27086ee3026c5c56e685151738259583a2515f5f04de37112c43c49c39f22b39",
+      "schema_ref": "contracts/delivery.schema.json#/$defs/metrics"
+    },
+    {
+      "path": "quality/review.json",
+      "media_type": "application/json",
+      "bytes": 3852,
+      "sha256": "bd885a2b789a38f39078486f455089504f606c193249192ed626ecb3f35895c5",
+      "schema_ref": "contracts/delivery.schema.json#/$defs/review"
+    },
+    {
+      "path": "quality/standardization.json",
+      "media_type": "application/json",
+      "bytes": 3796,
+      "sha256": "6dc0aa358cad09ac81634d4bbd561d03f057cfddbb5c0d11868fc16dc81965c9",
+      "schema_ref": "contracts/delivery.schema.json#/$defs/standard_report"
+    },
+    {
+      "path": "quality/validation.json",
+      "media_type": "application/json",
+      "bytes": 5157,
+      "sha256": "a3b9bfa5f185ea9aa9af9360228974695f87149c977c6fbd62570ca81d91ee30",
+      "schema_ref": "contracts/delivery.schema.json#/$defs/validation"
+    },
+    {
+      "path": "standardization/crosswalk.json",
+      "media_type": "application/json",
+      "bytes": 3653,
+      "sha256": "121bda608bc6e846ffd63648cc85f4cb1c84748dbb90a547a72f7a97f5276593",
+      "schema_ref": "contracts/delivery.schema.json#/$defs/standard_crosswalk"
+    },
+    {
+      "path": "standardization/profile.json",
+      "media_type": "application/json",
+      "bytes": 1802,
+      "sha256": "0276a8833f1c23c2b257345703fd5a4bee4f5b2f00b2e7fbd728253454e62b9b",
+      "schema_ref": "contracts/delivery.schema.json#/$defs/standard_profile"
+    },
+    {
+      "path": "standardization/references.json",
+      "media_type": "application/json",
+      "bytes": 3152,
+      "sha256": "df0ca66b3c870851d94035d2c3b0b5d3d29a1740fd058157ff506ac9f849d198",
+      "schema_ref": "contracts/delivery.schema.json#/$defs/standard_references"
+    },
+    {
+      "path": "version/change_set.json",
+      "media_type": "application/json",
+      "bytes": 1049,
+      "sha256": "5a8a2e5666b15eea2f30377f4abf5bc4b9db3bdc758bccb2d990fcc2bf058c5f",
+      "schema_ref": "contracts/delivery.schema.json#/$defs/change"
+    },
+    {
+      "path": "version/dependencies.lock.json",
+      "media_type": "application/json",
+      "bytes": 908,
+      "sha256": "51f12e022cfacbfb1aae4772455c1d868b10b353c6ebb2cc0b074b3ad7be9f97",
+      "schema_ref": "contracts/delivery.schema.json#/$defs/dependencies"
+    }
+  ],
+  "reference_profile": {
+    "profile_id": "CN-ONTOLOGY-REFERENCE-2026-09",
+    "version": "1.0.0",
+    "path": "standardization/profile.json",
+    "formal_conformance_claim": false,
+    "final_text_review_status": "PENDING_OFFICIAL_FINAL_FULLTEXT"
+  }
+}

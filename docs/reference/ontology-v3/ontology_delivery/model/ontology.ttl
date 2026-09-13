@@ -1,0 +1,33 @@
+# Synthetic sample ontology; not a production release.
+@prefix ex: <https://example.org/ontology/> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+<https://example.org/ontology/> a owl:Ontology ; owl:versionIRI <https://example.org/ontology/version/1.1.0+603986351b9b> ; owl:versionInfo "1.1.0+603986351b9b" ; rdfs:label "员工与部门示例本体"@zh .
+<https://example.org/ontology/Employee> a owl:Class ;
+  rdfs:label "员工"@zh, "Employee"@en ;
+  rdfs:comment "当前人事管理范围内，用员工编号识别并记录姓名和当前所属部门的业务对象。"@zh .
+<https://example.org/ontology/Department> a owl:Class ;
+  rdfs:label "部门"@zh, "Department"@en ;
+  rdfs:comment "当前人事管理范围内，用部门编号识别并记录部门名称的组织单元。"@zh .
+<https://example.org/ontology/belongsToDepartment> a owl:ObjectProperty ;
+  rdfs:label "所属部门"@zh, "Belongs to department"@en ;
+  rdfs:comment "把员工对象关联到其在当前快照中所属的已登记部门对象；不表达历史任职。"@zh ;
+  rdfs:domain <https://example.org/ontology/Employee> ; rdfs:range <https://example.org/ontology/Department> .
+<https://example.org/ontology/employeeId> a owl:DatatypeProperty ;
+  rdfs:label "员工编号"@zh, "Employee identifier"@en ;
+  rdfs:comment "员工在当前身份范围中的业务编号；以字符串保存，保留前导零和大小写。"@zh ;
+  rdfs:domain <https://example.org/ontology/Employee> ; rdfs:range <http://www.w3.org/2001/XMLSchema#string> .
+<https://example.org/ontology/employeeName> a owl:DatatypeProperty ;
+  rdfs:label "员工姓名"@zh, "Employee name"@en ;
+  rdfs:comment "业务记录中用于展示员工的姓名；不单独作为对象身份或自动合并依据。"@zh ;
+  rdfs:domain <https://example.org/ontology/Employee> ; rdfs:range <http://www.w3.org/2001/XMLSchema#string> .
+<https://example.org/ontology/departmentId> a owl:DatatypeProperty ;
+  rdfs:label "部门编号"@zh, "Department identifier"@en ;
+  rdfs:comment "部门在当前身份范围中的业务编号；以字符串保存，保留前导零和大小写。"@zh ;
+  rdfs:domain <https://example.org/ontology/Department> ; rdfs:range <http://www.w3.org/2001/XMLSchema#string> .
+<https://example.org/ontology/departmentName> a owl:DatatypeProperty ;
+  rdfs:label "部门名称"@zh, "Department name"@en ;
+  rdfs:comment "业务记录中用于展示部门的名称；不单独作为对象身份或自动合并依据。"@zh ;
+  rdfs:domain <https://example.org/ontology/Department> ; rdfs:range <http://www.w3.org/2001/XMLSchema#string> .

@@ -1,0 +1,31 @@
+{
+  "scope_id": "SCOPE-HR-CURRENT",
+  "version": "1.0.0",
+  "object_types": [
+    "https://example.org/ontology/Employee",
+    "https://example.org/ontology/Department"
+  ],
+  "relation_types": [
+    "https://example.org/ontology/belongsToDepartment"
+  ],
+  "identity_scope": "HR-LOCAL",
+  "identity_fields": {
+    "Employee": "employee_id",
+    "Department": "department_id"
+  },
+  "time": {
+    "identity_scope": "HR-LOCAL",
+    "snapshot_id": "ONT-SAMPLE-3E82B74FC0F1E664",
+    "snapshot_at": "2026-09-11T11:28:54.142Z",
+    "temporal_mode": "CURRENT_SNAPSHOT",
+    "valid_from": null,
+    "valid_to": null
+  },
+  "excluded": [
+    "薪酬",
+    "绩效评价",
+    "历史部门变更"
+  ],
+  "baseline_ref": "acceptance/baseline.json",
+  "review_ref": "quality/review.json#scope_review"
+}

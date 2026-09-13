@@ -4,7 +4,10 @@
     "src/zhigou_toolchain/jobs",
     "src/zhigou_toolchain/api",
     "src/zhigou_toolchain/sdk",
-    "src/zhigou_toolchain/integrations"
+    "src/zhigou_toolchain/integrations",
+    "src/zhigou_toolchain/modeling/delivery",
+    "src/zhigou_toolchain/modeling/five_stage/agents.py",
+    "src/zhigou_toolchain/ontology_io"
   ],
   "extraPaths": ["src"],
   "typeCheckingMode": "basic",

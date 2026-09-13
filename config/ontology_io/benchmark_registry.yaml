@@ -1,0 +1,76 @@
+schema_version: 1.0.0
+purpose: INDEPENDENT_ONTOLOGY_IO_RESEARCH
+aggregate_ontology_score: FORBIDDEN
+benchmarks:
+  llms4ol_2026:
+    repository: https://github.com/sciknoworg/LLMs4OL-Challenge
+    commit: 315a9a5d883eada26e00fef1356a05802936c584
+    publication_kind: SHARED_TASK
+    code_license: VERIFY_FROM_PINNED_LICENSE
+    data_license: VERIFY_FROM_PINNED_LICENSE_AND_TASK_DOCUMENTATION
+    tasks:
+      flagship:
+        inputs: [text]
+        private_fields: [triples, ontology, gold]
+        input_path: 2026/TaskA-Flagship/train_task_a.json
+        evaluation_scope: LOCAL_HOLDOUT
+        metrics: [Precision, Recall, F1, Graph Similarity, Edge F1, Neighborhood Similarity, Taxonomy Similarity]
+      reuse:
+        inputs: [text, partial_ontology]
+        private_fields: [new_triples, target_ontology, gold]
+        input_path: 2026/TaskB-Reuse/train_task_b.json
+        evaluation_scope: LOCAL_HOLDOUT
+        prediction_set: ADDITIONS_ONLY
+        metrics: [Precision, Recall, F1, Graph Similarity, Edge F1, Neighborhood Similarity, Taxonomy Similarity]
+    scorer_path: 2026/metrics/graph_similarity.py
+    official_test_gold_status: AWAITING_OFFICIAL_SCORE
+    matching: FREEZE_UPSTREAM_EXACT_FUZZY_SEMANTIC_SEPARATELY
+  cq4oe_0_0_1:
+    repository: https://github.com/oeg-upm/cq4oe-benchmark
+    commit: 248e0c6cfa498c4630b17a83290628d9f8adc4b6
+    release_tag: 0.0.1
+    publication_kind: PUBLIC_BENCHMARK_ACCEPTANCE_UNVERIFIED
+    code_license: VERIFY_FROM_PINNED_LICENSE
+    data_license: VERIFY_FROM_PINNED_LICENSE
+    tasks:
+      cq2term:
+        inputs: [competency_questions]
+        private_fields: [gold_terms, annotation, target_ontology]
+        metrics: [ClassProperty]
+      cq2onto:
+        inputs: [competency_questions]
+        private_fields: [gold_axioms, annotation, target_ontology]
+        metrics: [ClassProperty, PropertyCharacteristics, Triple, Axiom, HierarchyClosure, CQCoverage]
+    triple_semantics: TBOX_DOMAIN_RANGE_NOT_ABOX_FACTS
+    cqcoverage_semantics: REQUIRED_AXIOM_COVERAGE_NOT_QUERY_ANSWER_ACCURACY
+  oskgc:
+    repository: https://github.com/HeraclesWang/OSKGC
+    commit: b6a12ed38f131abb10ba22a785bba1d5d886aee0
+    publication_kind: ISWC_2025_RELATED_WORKSHOP_NOT_MAIN_CONFERENCE
+    paper: https://ceur-ws.org/Vol-4041/paper1.pdf
+    code_license: MIT
+    data_license: HEADER_CC_BY_NC_SA_4_0_BODY_CC_BY_4_0_CONFLICT
+    data_license_policy: RESEARCH_ONLY_CONSERVATIVE_NONCOMMERCIAL_NO_DELIVERY_REDISTRIBUTION
+    commercial_delivery_data: FORBIDDEN
+    tasks:
+      schema_guided_abox:
+        inputs: [text, category_level_schema]
+        private_fields: [triples, sample_gold_schema, gold]
+        metrics: [Precision, Recall, micro_F1, macro_F1, SS]
+    scorer_path: evaluator/base_evaluator.py
+    scorer_sha256: d2684f2fb64e4f47d8b297a2932ea2eafe8fe6c54116b1cbcd319f48de40854c
+    hierarchy_path: benchmark/hierarchy.xml
+    hierarchy_sha256: 070cb4ad219f3083a949fe033fedf1473a9938654a5eb4ffdd065056df77674a
+    adapter_status: INPUT_AND_NATIVE_METRIC_METHODS_TESTED_TYPED_GENERATION_NOT_INTEGRATED
+    matching: NATIVE_PREDICTED_STRIP_LOWER_GOLD_UNDERSCORE_TO_SPACE_LOWER
+    aggregation:
+      micro: GLOBAL_UNIONED_TRIPLE_SETS_NOT_SUMMED_PER_SAMPLE_COUNTS
+      macro: MEAN_OF_PER_FILE_ROUNDED_MACRO_F1
+      SS: NATIVE_FIRST_MATCHING_RELATION_AND_EXTRA_SCHEMA_PENALTY
+  onto_generation:
+    repository: https://github.com/dersuchendee/Onto-Generation
+    commit: 13d2e17a448b8697811438f2ed88c213e9b47b63
+    publication_kind: ESWC_2025
+    paper: https://doi.org/10.1007/978-3-031-94575-5_18
+    method_status: NOT_RUN_UNTIL_PUBLIC_METHOD_AND_DEPENDENCIES_AUDITED
+    baseline_required: false

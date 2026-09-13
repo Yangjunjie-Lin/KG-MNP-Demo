@@ -1,0 +1,364 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:zhigou:ontology-io-report:1.0.0",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "benchmark_id",
+    "task_id",
+    "dataset_version",
+    "split",
+    "evaluation_scope",
+    "input_manifest_sha256",
+    "prediction_manifest_sha256",
+    "scorer_commit",
+    "scorer_config_sha256",
+    "system_id",
+    "model_id",
+    "declared_revision",
+    "observed_model_ids",
+    "run_id",
+    "source_commit",
+    "source_fingerprint_sha256",
+    "metrics",
+    "sample_count",
+    "failure_count",
+    "status",
+    "comparison",
+    "resources",
+    "limitations"
+  ],
+  "properties": {
+    "benchmark_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1000
+    },
+    "task_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1000
+    },
+    "dataset_version": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1000
+    },
+    "split": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1000
+    },
+    "system_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1000
+    },
+    "model_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1000
+    },
+    "declared_revision": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1000
+    },
+    "run_id": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 1000
+    },
+    "input_manifest_sha256": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "prediction_manifest_sha256": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "scorer_config_sha256": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "source_fingerprint_sha256": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "protocol_sha256": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "schema_version": {
+      "const": "1.0.0"
+    },
+    "status": {
+      "enum": [
+        "MEASURED",
+        "NOT_RUN",
+        "UNSCORABLE",
+        "AWAITING_OFFICIAL_SCORE"
+      ]
+    },
+    "evaluation_scope": {
+      "enum": [
+        "LOCAL_HOLDOUT",
+        "OFFICIAL_TEST",
+        "ENGINEERING_CHECK",
+        "ADAPTED_ANALYSIS",
+        "HUMAN_EVALUATION"
+      ]
+    },
+    "source_commit": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^[0-9a-f]{40,64}$"
+    },
+    "scorer_commit": {
+      "type": [
+        "string",
+        "null"
+      ],
+      "pattern": "^[0-9a-f]{40,64}$"
+    },
+    "sample_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "failure_count": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "observed_model_ids": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 1000
+      },
+      "uniqueItems": true
+    },
+    "comparison": {
+      "type": [
+        "object",
+        "null"
+      ]
+    },
+    "resources": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "limitations": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 1,
+        "maxLength": 1000
+      }
+    },
+    "samples": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "metrics": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "name",
+          "source",
+          "matching",
+          "value",
+          "unit",
+          "numerator",
+          "denominator",
+          "status"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          },
+          "source": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          },
+          "matching": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          },
+          "unit": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 1000
+          },
+          "value": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "status": {
+            "enum": [
+              "MEASURED",
+              "NOT_RUN",
+              "UNSCORABLE"
+            ]
+          },
+          "numerator": {
+            "type": [
+              "number",
+              "null"
+            ]
+          },
+          "denominator": {
+            "type": [
+              "number",
+              "null"
+            ],
+            "minimum": 0
+          },
+          "sample_count": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "failure_count": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "status": {
+                  "enum": [
+                    "NOT_RUN",
+                    "UNSCORABLE"
+                  ]
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "value": {
+                  "type": "null"
+                }
+              }
+            }
+          },
+          {
+            "if": {
+              "properties": {
+                "status": {
+                  "const": "MEASURED"
+                }
+              }
+            },
+            "then": {
+              "properties": {
+                "value": {
+                  "type": "number"
+                }
+              }
+            }
+          }
+        ],
+        "additionalProperties": false
+      },
+      "maxItems": 100
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "enum": [
+              "NOT_RUN",
+              "AWAITING_OFFICIAL_SCORE"
+            ]
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "metrics": {
+            "items": {
+              "properties": {
+                "status": {
+                  "const": "NOT_RUN"
+                },
+                "value": {
+                  "type": "null"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      "if": {
+        "properties": {
+          "status": {
+            "const": "MEASURED"
+          }
+        }
+      },
+      "then": {
+        "properties": {
+          "sample_count": {
+            "minimum": 1
+          },
+          "failure_count": {
+            "const": 0
+          },
+          "source_commit": {
+            "type": "string"
+          },
+          "scorer_commit": {
+            "type": "string"
+          },
+          "input_manifest_sha256": {
+            "type": "string"
+          },
+          "prediction_manifest_sha256": {
+            "type": "string"
+          },
+          "scorer_config_sha256": {
+            "type": "string"
+          },
+          "source_fingerprint_sha256": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  ],
+  "additionalProperties": true
+}

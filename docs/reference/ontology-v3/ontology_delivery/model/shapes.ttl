@@ -1,0 +1,13 @@
+@prefix ex: <https://example.org/ontology/> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+ex:EmployeeShape a sh:NodeShape ; sh:targetClass ex:Employee ;
+  sh:property ex:Employee_belongsToDepartmentShape, ex:Employee_employeeIdShape, ex:Employee_employeeNameShape .
+ex:Employee_belongsToDepartmentShape a sh:PropertyShape ; sh:path ex:belongsToDepartment ; sh:minCount 1 ; sh:maxCount 1 ; sh:nodeKind sh:IRI ; sh:class ex:Department .
+ex:Employee_employeeIdShape a sh:PropertyShape ; sh:path ex:employeeId ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:minLength 1 .
+ex:Employee_employeeNameShape a sh:PropertyShape ; sh:path ex:employeeName ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:minLength 1 .
+ex:DepartmentShape a sh:NodeShape ; sh:targetClass ex:Department ;
+  sh:property ex:Department_departmentIdShape, ex:Department_departmentNameShape .
+ex:Department_departmentIdShape a sh:PropertyShape ; sh:path ex:departmentId ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:minLength 1 .
+ex:Department_departmentNameShape a sh:PropertyShape ; sh:path ex:departmentName ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ; sh:minLength 1 .

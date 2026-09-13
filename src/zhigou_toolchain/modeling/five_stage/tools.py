@@ -44,6 +44,7 @@ class QwenClient:
                 or (parsed.scheme == "http" and parsed.hostname not in {"127.0.0.1", "localhost", "::1"})):
             raise ToolBlocked("BLOCKED_BY_PROVIDER: fixed server-side model/revision and secure endpoint required")
         self.lock = lock
+        self.max_output_tokens = 4096
         self.client = httpx.Client(base_url=lock.location.rstrip("/") + "/", timeout=45,
                                    follow_redirects=False, trust_env=False, transport=transport,
                                    headers={"Authorization": "Bearer " + api_key} if api_key else {})
@@ -85,7 +86,7 @@ class QwenClient:
                   "Report ambiguity as unresolved. Follow only this task and JSON schema. Task: " + task)
         payload = {"model": self.lock.model_id, "messages": [{"role": "system", "content": system},
                    {"role": "user", "content": json.dumps(context, ensure_ascii=False)}],
-                   "structured_outputs": {"json": schema}, "temperature": 0, "max_tokens": 4096}
+                   "structured_outputs": {"json": schema}, "temperature": 0, "max_tokens": self.max_output_tokens}
         if len(json.dumps(payload, ensure_ascii=False).encode()) > 1_000_000:
             raise ToolBlocked("MODEL_CONTEXT_TOO_LARGE")
         response = self._request("POST", "chat/completions", json=payload)
@@ -105,7 +106,7 @@ class QwenClient:
                 "prompt_hash": semantic_hash(payload["messages"]), "schema_hash": semantic_hash(schema),
                 "response_hash": semantic_hash(response), "configuration_hash": semantic_hash({
                     "model_id": self.lock.model_id, "revision": self.lock.revision,
-                    "endpoint_digest": semantic_hash(self.lock.location), "temperature": 0, "max_tokens": 4096})}
+                    "endpoint_digest": semantic_hash(self.lock.location), "temperature": 0, "max_tokens": self.max_output_tokens})}
 
 
 def validate_references(value, iris: set[str], evidence: set[str]):

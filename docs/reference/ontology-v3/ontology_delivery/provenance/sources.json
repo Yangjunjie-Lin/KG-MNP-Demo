@@ -1,0 +1,54 @@
+{
+  "items": [
+    {
+      "source_id": "SRC-EMP",
+      "version": "86b6b84e55c6fa09",
+      "path": "evidence/snapshots/employees.json",
+      "media_type": "application/json",
+      "sha256": "86b6b84e55c6fa0961faeb7615144c8b79306a620624d33b1912be76e401f389",
+      "bytes": 456,
+      "level": "NORMALIZED_SNAPSHOT",
+      "original_source_locator": null,
+      "availability": "EMBEDDED",
+      "is_synthetic": true
+    },
+    {
+      "source_id": "SRC-DEP",
+      "version": "fd9b8d7fef27626c",
+      "path": "evidence/snapshots/departments.json",
+      "media_type": "application/json",
+      "sha256": "fd9b8d7fef27626c8d9f824424a4afead636d82b3f84ec963ebea2d8cf143fef",
+      "bytes": 259,
+      "level": "NORMALIZED_SNAPSHOT",
+      "original_source_locator": null,
+      "availability": "EMBEDDED",
+      "is_synthetic": true
+    },
+    {
+      "source_id": "SRC-TXT",
+      "version": "732ff74cdc322580",
+      "path": "evidence/snapshots/relations.txt",
+      "media_type": "text/plain",
+      "sha256": "732ff74cdc3225801e4941c8a919cf74f99c4ba33b353287520121de081cb0cb",
+      "bytes": 101,
+      "level": "NORMALIZED_SNAPSHOT",
+      "original_source_locator": null,
+      "availability": "EMBEDDED",
+      "is_synthetic": true
+    },
+    {
+      "source_id": "SRC-REQ",
+      "version": "69528bb5d7a8ad68",
+      "path": "evidence/snapshots/requirements.json",
+      "media_type": "application/json",
+      "sha256": "69528bb5d7a8ad68286af1f18923da0b58470b0fe5eeef4581d5de09ed0691a1",
+      "bytes": 470,
+      "level": "NORMALIZED_SNAPSHOT",
+      "original_source_locator": null,
+      "availability": "EMBEDDED",
+      "is_synthetic": true
+    }
+  ],
+  "locator_policy": "JSON_POINTER_OR_UNICODE_CODE_POINT",
+  "original_locator_status": "NOT_PROVIDED"
+}

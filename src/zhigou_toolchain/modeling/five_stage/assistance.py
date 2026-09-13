@@ -14,6 +14,7 @@ from zhigou_toolchain.modeling.control_plane.providers.models import (
     candidate_draft,
 )
 
+from .agents import invoke
 from .tools import (
     ToolBlocked,
     bind_quote,
@@ -71,7 +72,7 @@ def _draft(row, index, items, *, prefix="model"):
         score_basis="LIVE model proposal, uncalibrated and subject to independent validation and human review")
 
 
-def generate(client, *, context, initial_drafts, configuration, model_locks=None):
+def generate(client, *, context, initial_drafts, configuration, model_locks=None, record_builder=None):
     """Only server-verified modeling context enters generation, never oracles."""
     items = {i["item_id"]: i for i in context["kg_ir_items"]}
     source_aliases = {f"S{n}": item for n, item in enumerate(items.values())}
@@ -84,8 +85,10 @@ def generate(client, *, context, initial_drafts, configuration, model_locks=None
     cards = [{**e, "label": next((l["value"] for l in e.get("labels", [])), e["iri"]),
               "definition": e.get("definition") or "", "aliases": []} for e in baseline]
     allowed = {c["iri"] for c in cards}
-    def ask(task, data, schema, iris=None):
-        result = client.propose(task, data, schema, allowed_iris=allowed if iris is None else iris, evidence_ids=evidence)
+    def ask(stage, task, data, schema, iris=None):
+        result = invoke(stage, "structure.design" if stage == 2 else "text.extract",
+            lambda: client.propose(task, data, schema, allowed_iris=allowed if iris is None else iris, evidence_ids=evidence),
+            inputs={"task": task, "data": data, "schema": schema})
         calls.append(result)
         return result["proposal"]
     terms = context["object_families"]
@@ -94,13 +97,15 @@ def generate(client, *, context, initial_drafts, configuration, model_locks=None
         for term in terms:
             if not cards:
                 break
-            recall = vector_recall(term, cards, model_locks["embedding"])
-            ranking = rerank(term, recall["candidates"], model_locks["reranker"], expected_kind="CLASS")
+            recall = invoke(2, "structure.retrieve", lambda term=term: vector_recall(term, cards, model_locks["embedding"]),
+                inputs={"query": term, "cards": cards}, model={"model_id": model_locks["embedding"].model_id, "revision": model_locks["embedding"].revision})
+            ranking = invoke(2, "structure.rerank", lambda term=term, recall=recall: rerank(term, recall["candidates"], model_locks["reranker"], expected_kind="CLASS"),
+                inputs={"query": term, "recall": recall}, model={"model_id": model_locks["reranker"].model_id, "revision": model_locks["reranker"].revision})
             retrieval.append({"term": term, "recall": recall, "ranking": ranking, "method": "BGE_FAISS_RERANKER"})
     else:
         for term in terms:
             retrieval.append({"term": term, "exact": merge_recall(term, cards, []), "method": "EXACT_PLUS_LLM_RANKING_SUBSTITUTE"})
-    reuse = ask("Round 1: rank supplied ontology cards for each object family; choose REUSE, GAP or UNRESOLVED. "
+    reuse = ask(2, "Round 1: rank supplied ontology cards for each object family; choose REUSE, GAP or UNRESOLVED. "
         "Inspect the complete supplied, verified locked baseline. This local baseline is the reuse source; no external search proof is required. "
         "A retrieval miss is not proof of absence. Give brief evidence-based reasons; "
         "never approve a new term. No vector scores are available in LLM substitute mode.",
@@ -117,7 +122,7 @@ def generate(client, *, context, initial_drafts, configuration, model_locks=None
         "NODE_SHAPE", "PROPERTY_SHAPE", "MIN_COUNT", "MAX_COUNT", "DATATYPE", "CLASS_CONSTRAINT", "NODE_KIND", "IN_VALUES"]},
         "subject_iri": NULL_STRING, "predicate_iri": {"enum": [None, *sorted(allowed | approved)]}, "object_iri": NULL_STRING, "target_iri": NULL_STRING,
         "label": NULL_STRING, "integer_value": {"type": ["integer", "null"], "minimum": 0, "maximum": 100000}, "values": array(STRING)})
-    completion = ask("Round 2: critically check the reuse decisions against baseline definitions and rules. "
+    completion = ask(2, "Round 2: critically check the reuse decisions against baseline definitions and rules. "
         "Propose ONLY missing structure or constraints, never duplicate baseline definitions. New IRIs must come from approved_new_iris. "
         "Return additions=[] when none are safely justified. Each addition binds source item_refs and rule_indexes (zero-based). "
         "Use only source aliases S0, S1 etc for item_refs; the server binds them to original immutable evidence. "
@@ -130,7 +135,7 @@ def generate(client, *, context, initial_drafts, configuration, model_locks=None
         "For SHACL: subject_iri is a shape, predicate_iri is a direct business-property path or null, never an RDF/RDFS/SHACL metapredicate. "
         "Hard rules may not be removed or weakened. Arbitrary rule equivalence is NOT proven; list unsupported rules explicitly. "
         "candidate_action is CREATE_NEW for new classes/properties, CONSTRAIN for shapes. Return brief reasons, not hidden reasoning.",
-        {"round_one": reuse, "baseline": cards, "existing_drafts": drafts, "business_rules": context["business_rules"], "approved_new_iris": sorted(approved),
+        {"round_one": reuse, "baseline": cards, "existing_drafts": drafts, "planned_record_mapping": context.get("planned_record_mapping"), "business_rules": context["business_rules"], "approved_new_iris": sorted(approved),
          "sources": [{"item_ref": alias, "payload": i["payload"]} for alias, i in source_aliases.items()]},
         obj({"additions": array(obj({"kind": {"enum": ["TBOX", "SHACL"]}, "action": {"enum": ["CREATE_NEW", "CONSTRAIN", "REUSE_EXISTING"]},
             "body": body, "item_refs": array({"enum": list(source_aliases)}), "rule_indexes": array({"type": "integer", "minimum": 0}), "rationale": STRING})),
@@ -148,6 +153,13 @@ def generate(client, *, context, initial_drafts, configuration, model_locks=None
         if row["body"]["candidate_type"] in {"CLASS", "DATA_PROPERTY", "OBJECT_PROPERTY"} and row["body"]["target_iri"] not in approved:
             raise ToolBlocked("MODEL_BASELINE_REDEFINITION")
         drafts.append(_draft(row, index, source_aliases))
+    record_mapping = None
+    if record_builder is not None:
+        mapped = invoke(3, "records.map", record_builder, inputs={"mapping": context.get("planned_record_mapping"), "sources": list(items)})
+        additions = drafts[len(initial_drafts):]
+        initial_drafts = [*initial_drafts, *mapped["drafts"]]
+        drafts = [*deepcopy(initial_drafts), *additions]
+        record_mapping = mapped.get("report")
     # Identity comes from deterministic mapping or explicit input drafts. The
     # model cannot mint an identity from a name or invent an unresolved target.
     subjects = {d["body"]["subject_iri"] for d in drafts if d["body"]["candidate_type"] == "INDIVIDUAL"}
@@ -159,12 +171,14 @@ def generate(client, *, context, initial_drafts, configuration, model_locks=None
         if not text:
             continue
         chunk_args = {"text_id": item["item_id"], "text_version": semantic_hash(item)}
-        chunks = text_chunks(text, lock=model_locks["tokenizer"], **chunk_args) if configuration["chunking"] == "LOCAL_TOKENIZER" else character_chunks(text, **chunk_args)
+        chunks = invoke(3, "text.chunk", lambda text=text, chunk_args=chunk_args: text_chunks(text, lock=model_locks["tokenizer"], **chunk_args)
+            if configuration["chunking"] == "LOCAL_TOKENIZER" else character_chunks(text, **chunk_args),
+            inputs={"text": text, **chunk_args, "method": configuration["chunking"]})
         chunks_report.append(chunks)
         if sum(len(c["chunks"]) for c in chunks_report) > 32:
             raise ToolBlocked("MODEL_CHUNK_BUDGET_EXCEEDED")
         for chunk in chunks["chunks"]:
-            extracted = ask("Extract only explicitly stated facts using supplied subject and predicate IRIs. "
+            extracted = ask(3, "Extract only explicitly stated facts using supplied subject and predicate IRIs. "
                 "Preserve negation and uncertainty as NEGATED/UNKNOWN, never assert them as positive facts. "
                 "subject_iri and object_iri (if present) must be supplied identities, otherwise return unresolved. "
                 "literal values must occur verbatim inside the quote. quote_start is absolute Unicode offset in the source. "
@@ -177,7 +191,8 @@ def generate(client, *, context, initial_drafts, configuration, model_locks=None
                     "polarity": {"enum": ["ASSERTED", "NEGATED", "UNKNOWN"]}, "reason": STRING})), "unresolved": array(STRING)}), predicates)
             facts.append({"chunk_id": chunk["chunk_id"], "unresolved": extracted["unresolved"], "facts": []})
             for fact in extracted["facts"]:
-                binding = bind_quote(text, chunk, fact["quote"], expected_start=fact["quote_start"])
+                binding = invoke(3, "evidence.bind", lambda text=text, chunk=chunk, fact=fact: bind_quote(text, chunk, fact["quote"], expected_start=fact["quote_start"]),
+                    inputs={"text_id": chunk["text_id"], "text_hash": chunk["text_hash"], "quote": fact["quote"], "start": fact["quote_start"]})
                 if fact["subject_iri"] not in subjects or fact["predicate_iri"] not in predicates:
                     raise ToolBlocked("MODEL_UNKNOWN_IDENTITY_OR_PREDICATE")
                 if (fact["object_iri"] is None) == (fact["literal_value"] is None):
@@ -198,7 +213,7 @@ def generate(client, *, context, initial_drafts, configuration, model_locks=None
     return drafts, {"execution_source": "LIVE" if all(c["execution_source"] == "LIVE" for c in calls) else "RECORDED", "authority": "PROPOSAL_ONLY", "configuration": configuration,
         "deterministic_input_drafts": {"count": len(initial_drafts), "digest": semantic_hash(initial_drafts), "unchanged": drafts[:len(initial_drafts)] == initial_drafts},
         "model_added_draft_count": len(drafts) - len(initial_drafts),
-        "retrieval": retrieval, "round_one": reuse, "round_two": completion, "chunks": chunks_report,
+        "retrieval": retrieval, "round_one": reuse, "round_two": completion, "chunks": chunks_report, "record_mapping": record_mapping,
         "extraction": facts, "calls": calls, "independent_answers_accessible": False,
         "rule_equivalence": "HUMAN_REVIEW_REQUIRED", "unresolved": reuse["unresolved"] + completion["unresolved"]}
 

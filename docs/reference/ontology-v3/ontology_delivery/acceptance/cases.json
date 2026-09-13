@@ -1,0 +1,89 @@
+{
+  "version": "1.0.0",
+  "profile": "OUTPUT_INTEGRITY_REGRESSION",
+  "mutate_copy_only": true,
+  "cases": [
+    {
+      "case_id": "NEG-MISSING-RELATION",
+      "description": "删除一条必需的当前部门关系。",
+      "mutations": [
+        {
+          "operation": "DELETE_FACT",
+          "fact_id": "F-004"
+        }
+      ],
+      "expected_check_ids": [
+        "LOCAL-CONSTRAINTS",
+        "QUERY-ANSWER"
+      ],
+      "expected_outcome": "REJECT"
+    },
+    {
+      "case_id": "NEG-UNKNOWN-TARGET",
+      "description": "把关系指向未登记的部门。",
+      "mutations": [
+        {
+          "operation": "REPLACE_OBJECT",
+          "fact_id": "F-004",
+          "value": {
+            "type": "iri",
+            "value": "https://example.org/data/hr/Department/UNREGISTERED"
+          }
+        }
+      ],
+      "expected_check_ids": [
+        "LOCAL-CONSTRAINTS",
+        "QUERY-ANSWER"
+      ],
+      "expected_outcome": "REJECT"
+    },
+    {
+      "case_id": "NEG-MISSING-TYPE",
+      "description": "移除员工的显式类型，验证覆盖不能为零时误通过。",
+      "mutations": [
+        {
+          "operation": "DELETE_MATCHING_FACT",
+          "subject": "https://example.org/data/hr/Employee/E-001",
+          "predicate": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type"
+        }
+      ],
+      "expected_check_ids": [
+        "TARGET-COVERAGE",
+        "QUERY-ANSWER"
+      ],
+      "expected_outcome": "REJECT"
+    },
+    {
+      "case_id": "NEG-MISSING-EVIDENCE",
+      "description": "让事实引用不存在的证据。",
+      "mutations": [
+        {
+          "operation": "REPLACE_EVIDENCE_REFS",
+          "fact_id": "F-004",
+          "evidence_refs": [
+            "EV-NOT-FOUND"
+          ]
+        }
+      ],
+      "expected_check_ids": [
+        "PROVENANCE-INTEGRITY"
+      ],
+      "expected_outcome": "REJECT"
+    },
+    {
+      "case_id": "NEG-QUOTE-MISMATCH",
+      "description": "更改文本证据引文，不修改原文快照。",
+      "mutations": [
+        {
+          "operation": "REPLACE_QUOTE",
+          "evidence_id": "EV-TXT-01",
+          "quote": "不属于原文的引文"
+        }
+      ],
+      "expected_check_ids": [
+        "PROVENANCE-INTEGRITY"
+      ],
+      "expected_outcome": "REJECT"
+    }
+  ]
+}

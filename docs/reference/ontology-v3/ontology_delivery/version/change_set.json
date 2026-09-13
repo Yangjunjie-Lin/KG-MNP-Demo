@@ -1,0 +1,39 @@
+{
+  "package_id": "ONT-SAMPLE-3E82B74FC0F1E664",
+  "kind": "INITIAL_SNAPSHOT",
+  "base_package_id": null,
+  "base_manifest_sha256": null,
+  "snapshot_version": "sample-r1-6d6ceddf",
+  "changes": [
+    {
+      "entity": "ontology",
+      "operation": "ADD_ALL",
+      "artifact_ref": "model/ontology.ttl"
+    },
+    {
+      "entity": "constraints",
+      "operation": "ADD_ALL",
+      "artifact_ref": "model/shapes.ttl"
+    },
+    {
+      "entity": "objects",
+      "operation": "ADD_ALL",
+      "count": 5,
+      "artifact_ref": "data/objects.jsonl"
+    },
+    {
+      "entity": "facts",
+      "operation": "ADD_ALL",
+      "count": 18,
+      "artifact_ref": "data/facts.jsonl"
+    },
+    {
+      "entity": "metadata",
+      "operation": "ADD_ALL",
+      "artifact_ref": "model/terms.json"
+    }
+  ],
+  "deleted_ids": [],
+  "compatibility": "NO_PREVIOUS_PACKAGE_PROVIDED",
+  "note": "未提供上一交付包，不能宣称已经完成跨版本差异比较。 本包不是原 v2 包的 DELTA；新增元数据不改实例事实或业务规则。"
+}

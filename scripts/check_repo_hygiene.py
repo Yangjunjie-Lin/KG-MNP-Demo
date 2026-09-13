@@ -71,6 +71,7 @@ SECRET_CONTENT_PATTERNS = (
     re.compile(r"\bxox[baprs]-[A-Za-z0-9-]{20,}\b"),
     re.compile(r"\bAKIA[0-9A-Z]{16}\b"),
     re.compile(r"\bsk-[A-Za-z0-9_-]{32,}\b"),
+    re.compile(r"\bagt_codex_[A-Za-z0-9_-]{20,}\b"),
 )
 
 

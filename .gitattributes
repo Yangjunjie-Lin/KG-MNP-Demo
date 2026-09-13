@@ -5,6 +5,13 @@ docs/upgrade/evidence/model-inputs/** -text
 docs/upgrade/evidence/model-inputs/*.json whitespace=cr-at-eol
 docs/upgrade/evidence/model-inputs/*.pdf binary
 docs/reference/zhigou-upgrade/** -text
+docs/reference/ontology-v3/** -text
+# The inventory is generated here, not part of the byte-pinned supplied ZIP.
+docs/reference/ontology-v3/source-manifest.json text eol=lf
+src/zhigou_toolchain/modeling/delivery/delivery-v3.schema.json -text
+tests/fixtures/ontology_io/** -text
+# Upstream scorer fixtures retain their audited bytes, including blank spaces.
+tests/fixtures/ontology_io/*.py.txt whitespace=-blank-at-eol
 tests/compatibility/fixtures/activation-1.0/*.json text eol=lf
 schemas/modeling/*.json text eol=lf
 src/kg_mnp/contracts/*.json text eol=lf

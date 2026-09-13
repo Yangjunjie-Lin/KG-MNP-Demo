@@ -198,7 +198,22 @@ class ApplicationService:
             handler = execute_lifecycle
         else:
             handler = execute_integration
-        return execute_fenced(self, job, request, principal, lambda project: handler(self, project, request, principal))
+        from zhigou_toolchain.modeling.five_stage.agents import execute_routed
+        agent_receipt = None
+        def routed(project):
+            nonlocal agent_receipt
+            result = execute_routed(project, request, lambda: handler(self, project, request, principal))
+            agent_receipt = result.get("agent_execution")
+            return result
+        try:
+            return execute_fenced(self, job, request, principal, routed)
+        except Exception as exc:
+            # A computation receipt may exist even if publication subsequently
+            # fails. Only the ordinary lease-fenced JobStore failure path may
+            # persist it; a stale worker still cannot overwrite a replacement.
+            if agent_receipt is not None and not getattr(exc, "agent_execution", None):
+                setattr(exc, "agent_execution", {**agent_receipt, "publication_status": "NOT_CONFIRMED"})  # noqa: B010 - arbitrary handler exception types
+            raise
 
     def recover_job(self, job):
         from .execution import committed_result
@@ -313,6 +328,14 @@ class ApplicationService:
                 return row
             return result
         project = self._project(request)
+        if name == "ontology.io.inspect":
+            from jsonschema.exceptions import ValidationError as SchemaValidationError
+
+            from zhigou_toolchain.ontology_io.reports import inspect_report
+            try:
+                return inspect_report(params["report"])
+            except (ValueError, SchemaValidationError) as exc:
+                raise ServiceBoundaryError("ONTOLOGY_IO_REPORT_INVALID", "Research report schema or disclosure policy rejected", status_code=422) from exc
         if name == "business.inspect":
             from .business import execute as execute_business
             from .execution import verify_module_generation

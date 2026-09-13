@@ -1,0 +1,95 @@
+{
+  "protocol": "ontology-delivery",
+  "schema_version": "3.0.0",
+  "load_mode": "ISOLATED_STAGING",
+  "graphs": [
+    {
+      "role": "ontology",
+      "path": "model/ontology.ttl",
+      "graph_iri": "urn:ontology-delivery:ONT-SAMPLE-3E82B74FC0F1E664:ontology"
+    },
+    {
+      "role": "instances",
+      "path": "model/instances.ttl",
+      "graph_iri": "urn:ontology-delivery:ONT-SAMPLE-3E82B74FC0F1E664:instances"
+    },
+    {
+      "role": "shapes",
+      "path": "model/shapes.ttl",
+      "graph_iri": "urn:ontology-delivery:ONT-SAMPLE-3E82B74FC0F1E664:shapes"
+    }
+  ],
+  "query_dataset": {
+    "default_graph_policy": "UNION_OF_ONTOLOGY_AND_INSTANCES_ONLY",
+    "include_roles": [
+      "ontology",
+      "instances"
+    ],
+    "exclude_roles": [
+      "shapes",
+      "evidence",
+      "baseline",
+      "reports"
+    ],
+    "inference": "NONE_EXPLICIT_FACTS"
+  },
+  "load_order": [
+    "manifest.json",
+    "contracts/delivery.schema.json",
+    "version/dependencies.lock.json",
+    "standardization/references.json",
+    "standardization/profile.json",
+    "model/metadata.json",
+    "model/terms.json",
+    "model/axioms.json",
+    "model/ontology.ttl",
+    "model/shapes.ttl",
+    "model/instances.ttl",
+    "data/objects.jsonl",
+    "data/facts.jsonl",
+    "provenance/sources.json",
+    "provenance/evidence.jsonl",
+    "provenance/assertions.jsonl",
+    "quality/review.json",
+    "quality/validation.json",
+    "acceptance/baseline.json",
+    "acceptance/results.json"
+  ],
+  "required_checks": [
+    "FILE-DIGESTS",
+    "JSON-SCHEMA",
+    "RDF-PARSE",
+    "GRAPH-EQUIVALENCE",
+    "PROVENANCE-INTEGRITY",
+    "TARGET-COVERAGE",
+    "QUERY-ANSWER",
+    "TERM-METADATA",
+    "TERM-IDENTITY",
+    "TERM-TYPING",
+    "TERM-DOMAIN-RANGE",
+    "NO-UNAPPROVED-AXIOMS",
+    "NAMESPACE-POLICY",
+    "REFERENCE-STATUS",
+    "BUSINESS-RULE-PRESERVATION"
+  ],
+  "production_required_checks": [
+    "SHACL",
+    "OWL",
+    "REAL-APPROVAL"
+  ],
+  "idempotency_key": [
+    "package_id"
+  ],
+  "same_id_different_manifest": "REJECT",
+  "unknown_major_version": "REJECT",
+  "external_imports": "DISABLED_UNLESS_PINNED",
+  "write_policy": "NO_AUTOMATIC_PUBLISH",
+  "snapshot_replacement_scope": [
+    "identity_scope",
+    "snapshot_id"
+  ],
+  "historical_merge": "FORBIDDEN_UNLESS_TEMPORAL_POLICY_DEFINED",
+  "encoding": "UTF-8",
+  "timestamp_format": "RFC3339_UTC",
+  "hash_algorithm": "SHA-256"
+}

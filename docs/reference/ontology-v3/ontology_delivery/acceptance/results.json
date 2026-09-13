@@ -1,0 +1,159 @@
+{
+  "evaluated_at": "2026-09-11T11:28:58.197133Z",
+  "package_id": "ONT-SAMPLE-3E82B74FC0F1E664",
+  "profile": "OFFLINE_REFERENCE_RECHECK",
+  "query_tests": [
+    {
+      "query_id": "employee_departments",
+      "engine": "RDFLib SPARQL 1.1",
+      "status": "PASS",
+      "expected_ref": "acceptance/baseline.json",
+      "actual": [
+        {
+          "employeeId": {
+            "type": "literal",
+            "value": "E-001",
+            "datatype": "http://www.w3.org/2001/XMLSchema#string",
+            "language": null
+          },
+          "departmentId": {
+            "type": "literal",
+            "value": "D-01",
+            "datatype": "http://www.w3.org/2001/XMLSchema#string",
+            "language": null
+          }
+        },
+        {
+          "employeeId": {
+            "type": "literal",
+            "value": "E-002",
+            "datatype": "http://www.w3.org/2001/XMLSchema#string",
+            "language": null
+          },
+          "departmentId": {
+            "type": "literal",
+            "value": "D-02",
+            "datatype": "http://www.w3.org/2001/XMLSchema#string",
+            "language": null
+          }
+        },
+        {
+          "employeeId": {
+            "type": "literal",
+            "value": "E-003",
+            "datatype": "http://www.w3.org/2001/XMLSchema#string",
+            "language": null
+          },
+          "departmentId": {
+            "type": "literal",
+            "value": "D-01",
+            "datatype": "http://www.w3.org/2001/XMLSchema#string",
+            "language": null
+          }
+        }
+      ],
+      "executed_sparql": true
+    },
+    {
+      "query_id": "employee_department_by_id",
+      "engine": "RDFLib SPARQL 1.1 with 3 RDF literal bindings",
+      "status": "PASS",
+      "expected_ref": "acceptance/baseline.json",
+      "actual": [
+        {
+          "employeeId": {
+            "type": "literal",
+            "value": "E-001",
+            "datatype": "http://www.w3.org/2001/XMLSchema#string",
+            "language": null
+          },
+          "departmentId": {
+            "type": "literal",
+            "value": "D-01",
+            "datatype": "http://www.w3.org/2001/XMLSchema#string",
+            "language": null
+          }
+        },
+        {
+          "employeeId": {
+            "type": "literal",
+            "value": "E-002",
+            "datatype": "http://www.w3.org/2001/XMLSchema#string",
+            "language": null
+          },
+          "departmentId": {
+            "type": "literal",
+            "value": "D-02",
+            "datatype": "http://www.w3.org/2001/XMLSchema#string",
+            "language": null
+          }
+        },
+        {
+          "employeeId": {
+            "type": "literal",
+            "value": "E-003",
+            "datatype": "http://www.w3.org/2001/XMLSchema#string",
+            "language": null
+          },
+          "departmentId": {
+            "type": "literal",
+            "value": "D-01",
+            "datatype": "http://www.w3.org/2001/XMLSchema#string",
+            "language": null
+          }
+        }
+      ],
+      "executed_sparql": true
+    }
+  ],
+  "negative_tests": [
+    {
+      "case_id": "NEG-MISSING-RELATION",
+      "status": "PASS",
+      "detected": true,
+      "check_ids": [
+        "LOCAL-CONSTRAINTS",
+        "QUERY-ANSWER"
+      ]
+    },
+    {
+      "case_id": "NEG-UNKNOWN-TARGET",
+      "status": "PASS",
+      "detected": true,
+      "check_ids": [
+        "LOCAL-CONSTRAINTS",
+        "QUERY-ANSWER"
+      ]
+    },
+    {
+      "case_id": "NEG-MISSING-TYPE",
+      "status": "PASS",
+      "detected": true,
+      "check_ids": [
+        "QUERY-ANSWER",
+        "TARGET-COVERAGE"
+      ]
+    },
+    {
+      "case_id": "NEG-MISSING-EVIDENCE",
+      "status": "PASS",
+      "detected": true,
+      "check_ids": [
+        "PROVENANCE-INTEGRITY"
+      ]
+    },
+    {
+      "case_id": "NEG-QUOTE-MISMATCH",
+      "status": "PASS",
+      "detected": true,
+      "check_ids": [
+        "PROVENANCE-INTEGRITY"
+      ]
+    }
+  ],
+  "semantic_accuracy": {
+    "status": "NOT_MEASURED",
+    "value": null,
+    "reason": "本示例没有独立概念与实体识别金标；查询答案一致不能替代语义准确率。"
+  }
+}

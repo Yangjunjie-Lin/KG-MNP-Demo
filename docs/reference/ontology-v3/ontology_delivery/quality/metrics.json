@@ -1,0 +1,56 @@
+{
+  "package_id": "ONT-SAMPLE-3E82B74FC0F1E664",
+  "scope": "THIS_SYNTHETIC_SNAPSHOT_ONLY",
+  "metrics": [
+    {
+      "metric_id": "FACT_EVIDENCE_COMPLETENESS",
+      "status": "MEASURED",
+      "numerator": 18,
+      "denominator": 18,
+      "value": 1,
+      "unit": "ratio",
+      "basis_ref": "data/facts.jsonl",
+      "note": "当前快照的证据引用覆盖，不等同于原始文件位置完整率。"
+    },
+    {
+      "metric_id": "QUERY_EXACT_MATCH",
+      "status": "MEASURED",
+      "numerator": 1,
+      "denominator": 1,
+      "value": 1,
+      "unit": "ratio",
+      "basis_ref": "acceptance/results.json",
+      "note": "一个已冻结关系查询的答案全量一致。"
+    },
+    {
+      "metric_id": "ORIGINAL_SOURCE_TRACEABILITY",
+      "status": "NOT_MEASURED",
+      "numerator": null,
+      "denominator": null,
+      "value": null,
+      "unit": "ratio",
+      "basis_ref": "provenance/sources.json",
+      "note": "只提供规则化快照，未提供真实原文件位置。"
+    },
+    {
+      "metric_id": "ONTOLOGY_SEMANTIC_ACCURACY",
+      "status": "NOT_MEASURED",
+      "numerator": null,
+      "denominator": null,
+      "value": null,
+      "unit": "ratio",
+      "basis_ref": "acceptance/baseline.json",
+      "note": "不得用约束通过率或同源重建结果代替独立准确率。"
+    },
+    {
+      "metric_id": "DOWNSTREAM_TASK_SUCCESS",
+      "status": "NOT_AVAILABLE",
+      "numerator": null,
+      "denominator": null,
+      "value": null,
+      "unit": "ratio",
+      "basis_ref": "integration/context.json",
+      "note": "由下游实际任务运行后提供；本包不虚构业务运行结果。"
+    }
+  ]
+}

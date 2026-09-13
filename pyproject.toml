@@ -86,6 +86,7 @@ where = ["src"]
 version = {attr = "zhigou_toolchain.__version__"}
 
 [tool.setuptools.package-data]
+"zhigou_toolchain.modeling.delivery" = ["delivery-v3.schema.json"]
 "zhigou_toolchain.modeling.five_stage" = ["resources/*.json", "resources/reference/*.json", "resources/tutorial/input/*", "resources/tutorial/stages/*", "resources/tutorial/output/*", "resources/tutorial/output/queries/*", "resources/tutorial/output/tests/*", "resources/tutorial/anomaly/*"]
 "zhigou_toolchain.contracts" = [
   "catalog.json",
