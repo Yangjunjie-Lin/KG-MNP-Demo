@@ -3,6 +3,7 @@ from __future__ import annotations
 
 from zhigou_toolchain.contracts.canonical import stable_urn
 
+from .agents import OWNERS
 from .contracts import StageRun, artifact, verify_handoff
 from .registry import registry
 
@@ -85,6 +86,7 @@ def project_flow(project_id: str, results: list[dict], jobs: list[dict]) -> dict
                         "review_status": "PENDING", "receipt_count": len(receipts), "artifact_refs": observed,
                         "reason": reason})
     return {"schema_version": "1.0.0", "session_id": session_id, "authority": "OBSERVATION_ONLY",
+            "agent_roles": OWNERS, "agent_runs": [r["result"]["agent_execution"] for r in results if "agent_execution" in r["result"]],
             "methods": methods, "bundles": bundles, "artifacts": artifacts, "step_runs": step_runs,
             "jobs": jobs, "delivery_status": "NOT_CERTIFIED_BY_PROJECTION",
             "limitations": ["项目历史观察不是单一 ModelingSession。跨会话下游失效尚未接入，不能作为五阶段完成凭证。"]}

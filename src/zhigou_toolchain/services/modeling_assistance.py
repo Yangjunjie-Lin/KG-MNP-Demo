@@ -2,6 +2,7 @@
 from zhigou_toolchain.contracts.canonical import semantic_hash
 from zhigou_toolchain.contracts.document_io import read_document
 from zhigou_toolchain.environment import get_setting
+from zhigou_toolchain.modeling.five_stage.agents import invoke
 from zhigou_toolchain.modeling.five_stage.assistance import generate, repair
 from zhigou_toolchain.modeling.five_stage.compatible import configured_client
 from zhigou_toolchain.modeling.five_stage.tools import ModelLock, ToolBlocked
@@ -31,7 +32,7 @@ def semantic_findings(app, session, project_id):
     return [a["content"] for a in value["artifacts"] if a["ref"]["step_id"] in {"4.1", "4.2"}]
 
 
-def assist(app, modeling, bundle, scope, provider_context, params):
+def assist(app, modeling, bundle, scope, provider_context, params, *, record_builder=None):
     configuration = ModelAssistance.model_validate(params["model_assistance"]).model_dump()
     session = modeling_sessions.read(modeling.root)
     if not session or session["revision"] != configuration["expected_session_revision"]:
@@ -55,15 +56,16 @@ def assist(app, modeling, bundle, scope, provider_context, params):
             if len({d["draft_ref"] for d in original}) != len(original):
                 raise ToolBlocked("REPAIR_AMBIGUOUS_DRAFT_REFERENCE")
             report = read_document(directory / "formal-prevalidation-report.json")
-            findings = {"prevalidation": repair_findings(report), "semantic_validation": semantic_findings(app, session, modeling.project["project_id"])}
-            drafts, receipt = repair(client, original_drafts=original, context=context, issues=findings,
-                configuration=configuration)
+            findings = invoke(4, "repair.route", lambda: {"prevalidation": repair_findings(report),
+                "semantic_validation": semantic_findings(app, session, modeling.project["project_id"])}, inputs={"parent": parent["proposal_id"]})
+            drafts, receipt = invoke(3, "facts.repair", lambda: repair(client, original_drafts=original, context=context, issues=findings,
+                configuration=configuration), inputs={"parent": parent["proposal_id"], "findings": findings})
             receipt["parent_proposal_id"] = parent["proposal_id"]
         else:
             locks = {key: ModelLock(get_setting(prefix + "_MODEL", ""), get_setting(prefix + "_REVISION", ""), get_setting(prefix + "_PATH", ""))
                      for key, prefix in (("embedding", "BGE"), ("reranker", "RERANKER"), ("tokenizer", "TOKENIZER"))}
             drafts, receipt = generate(client, context=context, initial_drafts=provider_context.get("manual_drafts", []),
-                configuration=configuration, model_locks=locks)
+                configuration=configuration, model_locks=locks, record_builder=record_builder)
         return drafts, receipt
     except (ToolBlocked, ImportError, ValueError, KeyError) as exc:
         code = str(exc) if isinstance(exc, ToolBlocked) and str(exc).replace("_", "").isalnum() else type(exc).__name__
@@ -84,7 +86,7 @@ def recheck(app, project, request, principal, result):
         {"review_id": result["queue"]["review_queue_id"], "candidate_ids": [c["candidate_id"] for c in candidates]}, idempotency_key=request.idempotency_key)
     try:
         modeling_sessions.before(project.root, checked_request)
-        checks = execute(app, project, checked_request, principal)
+        checks = invoke(4, "semantic.check", lambda: execute(app, project, checked_request, principal), inputs=checked_request.parameters)
         modeling_sessions.after(project.root, checked_request, checks)
         return checks
     except ServiceBoundaryError as exc:

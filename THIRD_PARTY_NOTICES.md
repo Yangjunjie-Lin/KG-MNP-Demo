@@ -36,3 +36,19 @@ BGE-M3 and BGE-reranker names in the method registry are not grants to redistrib
 weights. Review the selected model card/license during explicit preparation.
 The five-stage teaching materials are user-supplied synthetic references, not
 third-party employee records or live model/review evidence.
+
+## Pinned research scorer fixtures
+
+`tests/fixtures/ontology_io/graph_similarity.py.txt` is the unchanged LLMs4OL
+2026 scorer at commit `315a9a5d883eada26e00fef1356a05802936c584`.
+Its upstream MIT licence is retained alongside the fixture. Only the reviewed
+exact-matching function AST is executed; its eager remote-code embedding loader
+is not executed or redistributed as a model.
+
+`tests/fixtures/ontology_io/oskgc_base_evaluator.py.txt` is unchanged OSKGC code
+at commit `b6a12ed38f131abb10ba22a785bba1d5d886aee0`, copyright 2025 Dali Wang,
+under MIT (`OSKGC-LICENSE.txt`). Only reviewed native metric method ASTs are used.
+The OSKGC data licence header says CC BY-NC-SA 4.0, while its body says CC BY 4.0.
+Research assets remain in ignored runtime storage, with a conservative
+noncommercial/no-business-delivery redistribution policy; no benchmark dataset
+is included in these code fixtures or the application wheel.

@@ -1,0 +1,67 @@
+{
+  "version": "1.1.0+603986351b9b",
+  "ontology_iri": "https://example.org/ontology/",
+  "classes": [
+    {
+      "iri": "https://example.org/ontology/Employee",
+      "label": "员工",
+      "decision": "REUSE",
+      "identifier_property": "https://example.org/ontology/employeeId",
+      "label_property": "https://example.org/ontology/employeeName",
+      "shape_iri": "https://example.org/ontology/EmployeeShape"
+    },
+    {
+      "iri": "https://example.org/ontology/Department",
+      "label": "部门",
+      "decision": "REUSE",
+      "identifier_property": "https://example.org/ontology/departmentId",
+      "label_property": "https://example.org/ontology/departmentName",
+      "shape_iri": "https://example.org/ontology/DepartmentShape"
+    }
+  ],
+  "properties": [
+    {
+      "iri": "https://example.org/ontology/belongsToDepartment",
+      "label": "所属部门",
+      "kind": "ObjectProperty",
+      "domain": "https://example.org/ontology/Employee",
+      "range": "https://example.org/ontology/Department",
+      "rule_ref": "RULE-belongsToDepartment"
+    },
+    {
+      "iri": "https://example.org/ontology/employeeId",
+      "label": "员工编号",
+      "kind": "DatatypeProperty",
+      "domain": "https://example.org/ontology/Employee",
+      "range": "http://www.w3.org/2001/XMLSchema#string",
+      "rule_ref": "RULE-employeeId"
+    },
+    {
+      "iri": "https://example.org/ontology/employeeName",
+      "label": "员工姓名",
+      "kind": "DatatypeProperty",
+      "domain": "https://example.org/ontology/Employee",
+      "range": "http://www.w3.org/2001/XMLSchema#string",
+      "rule_ref": "RULE-employeeName"
+    },
+    {
+      "iri": "https://example.org/ontology/departmentId",
+      "label": "部门编号",
+      "kind": "DatatypeProperty",
+      "domain": "https://example.org/ontology/Department",
+      "range": "http://www.w3.org/2001/XMLSchema#string",
+      "rule_ref": "RULE-departmentId"
+    },
+    {
+      "iri": "https://example.org/ontology/departmentName",
+      "label": "部门名称",
+      "kind": "DatatypeProperty",
+      "domain": "https://example.org/ontology/Department",
+      "range": "http://www.w3.org/2001/XMLSchema#string",
+      "rule_ref": "RULE-departmentName"
+    }
+  ],
+  "authoritative_graph": "model/ontology.ttl",
+  "note": "JSON 为读取索引；完整语义以 ontology.ttl 和 shapes.ttl 为准。",
+  "term_metadata_ref": "model/terms.json"
+}

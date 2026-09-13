@@ -1,0 +1,122 @@
+{
+  "profile_id": "CN-ONTOLOGY-REFERENCE-2026-09",
+  "local_status": "PASS",
+  "checks": [
+    {
+      "check_id": "TERM-METADATA",
+      "status": "PASS",
+      "engine": "DETERMINISTIC_METADATA_CHECK",
+      "detail": "术语条数、非空定义与中英标签；不证明定义在业务上正确。"
+    },
+    {
+      "check_id": "TERM-IDENTITY",
+      "status": "PASS",
+      "engine": "DETERMINISTIC_METADATA_CHECK",
+      "detail": "稳定 IRI、名称唯一且与现有业务词汇对应；不声称全球注册。"
+    },
+    {
+      "check_id": "TERM-TYPING",
+      "status": "PASS",
+      "engine": "DETERMINISTIC_METADATA_CHECK",
+      "detail": "类、数据属性、对象属性分开；编号仍为 xsd:string。"
+    },
+    {
+      "check_id": "TERM-DOMAIN-RANGE",
+      "status": "PASS",
+      "engine": "DETERMINISTIC_METADATA_CHECK",
+      "detail": "属性方向、值类型与确认结构相同；OWL 域/值域不代替 SHACL。"
+    },
+    {
+      "check_id": "NO-UNAPPROVED-AXIOMS",
+      "status": "PASS",
+      "engine": "DETERMINISTIC_METADATA_CHECK",
+      "detail": "当前示例未批准额外继承、等价、互斥、传递或功能性公理，不为填表而添加。"
+    },
+    {
+      "check_id": "NAMESPACE-POLICY",
+      "status": "PASS",
+      "engine": "DETERMINISTIC_METADATA_CHECK",
+      "detail": "保留原有示例 IRI；第三方扩展必须另设受控命名空间并审核。"
+    },
+    {
+      "check_id": "TERM-SCOPE-BINDING",
+      "status": "PASS",
+      "engine": "DETERMINISTIC_METADATA_CHECK",
+      "detail": "定义与本批次输入绑定；修改后重建并重新审核。"
+    }
+  ],
+  "issues": [],
+  "formal_conformance_claim": false,
+  "final_text_review_status": "PENDING_OFFICIAL_FINAL_FULLTEXT",
+  "package_id": "ONT-SAMPLE-3E82B74FC0F1E664",
+  "profile_ref": "standardization/profile.json",
+  "checked_artifacts": [
+    {
+      "path": "model/ontology.ttl",
+      "sha256": "86d265c8b6595ebcbd75ea239178a9d79bf3f2c4552d29d555d473d6848d525b"
+    },
+    {
+      "path": "model/terms.json",
+      "sha256": "c5990c4a48c226fbcbad17b8dbc7c6ddfd39efad7aacb3ce1b98185fe1c08160"
+    },
+    {
+      "path": "model/metadata.json",
+      "sha256": "2c3d17f16d207a8f3be9ff53845380f9c740a9171f2d9c9e8cf276fb96497048"
+    },
+    {
+      "path": "model/axioms.json",
+      "sha256": "36a6d5497a24b4c6bd25482d26c44217d32ab73ac3e19f4798c089be5c3e24e2"
+    },
+    {
+      "path": "standardization/profile.json",
+      "sha256": "0276a8833f1c23c2b257345703fd5a4bee4f5b2f00b2e7fbd728253454e62b9b"
+    },
+    {
+      "path": "standardization/references.json",
+      "sha256": "df0ca66b3c870851d94035d2c3b0b5d3d29a1740fd058157ff506ac9f849d198"
+    }
+  ],
+  "negative_test_results": [
+    {
+      "case_id": "META-NEG-EMPTY-DEFINITION",
+      "status": "PASS",
+      "detected": true
+    },
+    {
+      "case_id": "META-NEG-IRI-COLLISION",
+      "status": "PASS",
+      "detected": true
+    },
+    {
+      "case_id": "META-NEG-WRONG-RANGE",
+      "status": "PASS",
+      "detected": true
+    },
+    {
+      "case_id": "META-NEG-UNAPPROVED-EQUIVALENCE",
+      "status": "PASS",
+      "detected": true
+    },
+    {
+      "case_id": "META-NEG-FALSE-CONFORMITY",
+      "status": "PASS",
+      "detected": true
+    },
+    {
+      "case_id": "META-NEG-DRAFT-AS-FINAL",
+      "status": "PASS",
+      "detected": true
+    },
+    {
+      "case_id": "META-NEG-WEAKENED-RULE",
+      "status": "PASS",
+      "detected": true
+    },
+    {
+      "case_id": "META-NEG-REMOVED-EVIDENCE",
+      "status": "PASS",
+      "detected": true
+    }
+  ],
+  "note": "local_status 只代表本地元数据规则，不是国标符合性。正式标准全文及专业语义验证仍需单独审核。 此独立下载快照已执行8项元数据/能力保留异常测试。"
+}

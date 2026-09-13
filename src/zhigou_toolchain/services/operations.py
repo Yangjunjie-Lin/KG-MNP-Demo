@@ -11,6 +11,7 @@ _WRITE = ("project:write",)
 
 def build_operation_catalog() -> dict[str, OperationDefinition]:
     definitions: list[OperationDefinition] = [
+        OperationDefinition("ontology.io.inspect", "OntologyIOReportRequest", "OntologyIOInspection", ("project:read",), True),
         OperationDefinition("source.sample.load", "EmptyRequest", "SampleBatch", ("project:write", "source:write", "source:read"), True, "JOB", "WRITE", "REQUIRED"),
         OperationDefinition("module.evaluate", "ModuleEvaluationRequest", "ModuleEvaluation", ("project:read", "source:read", "package:read", "task:read"), True, "JOB", "WRITE", "REQUIRED"),
         OperationDefinition("task.plan", "TaskPlanRequest", "TaskPlan", ("task:plan", "package:read", "source:read"), True, "JOB", "WRITE", "REQUIRED"),
@@ -119,6 +120,7 @@ def coverage_matrix() -> list[dict[str, str | None]]:
 # Deliberately explicit executable coverage, not a reflection-based dispatcher.
 # A catalogue declaration is not proof of a handler or a passing workflow.
 HANDLERS = {
+    "ontology.io.inspect": "zhigou_toolchain.ontology_io.reports.inspect_report",
     "source.sample.load": "zhigou_toolchain.services.sample_batch.execute",
     "module.evaluate": "zhigou_toolchain.services.evaluation.execute",
     "task.plan": "kg_mnp.services.business.execute", "task.execute": "kg_mnp.services.business.execute",

@@ -1,0 +1,99 @@
+{
+  "version": "1.0.0",
+  "scope_id": "SCOPE-HR-CURRENT",
+  "policy": "APPROVED_REQUIREMENTS_ONLY",
+  "approval_mode": "SYNTHETIC_EXAMPLE",
+  "items": [
+    {
+      "rule_id": "RULE-belongsToDepartment",
+      "label": "所属部门约束",
+      "target_class": "https://example.org/ontology/Employee",
+      "predicate": "https://example.org/ontology/belongsToDepartment",
+      "shape_iri": "https://example.org/ontology/Employee_belongsToDepartmentShape",
+      "severity": "VIOLATION",
+      "min_count": 1,
+      "max_count": 1,
+      "value_kind": "iri",
+      "datatype": null,
+      "value_class": "https://example.org/ontology/Department",
+      "min_length": null,
+      "basis_ref": "evidence/snapshots/requirements.json",
+      "mutable_by_consumer": false
+    },
+    {
+      "rule_id": "RULE-employeeId",
+      "label": "员工编号约束",
+      "target_class": "https://example.org/ontology/Employee",
+      "predicate": "https://example.org/ontology/employeeId",
+      "shape_iri": "https://example.org/ontology/Employee_employeeIdShape",
+      "severity": "VIOLATION",
+      "min_count": 1,
+      "max_count": 1,
+      "value_kind": "literal",
+      "datatype": "http://www.w3.org/2001/XMLSchema#string",
+      "value_class": null,
+      "min_length": 1,
+      "basis_ref": "evidence/snapshots/requirements.json",
+      "mutable_by_consumer": false
+    },
+    {
+      "rule_id": "RULE-employeeName",
+      "label": "员工姓名约束",
+      "target_class": "https://example.org/ontology/Employee",
+      "predicate": "https://example.org/ontology/employeeName",
+      "shape_iri": "https://example.org/ontology/Employee_employeeNameShape",
+      "severity": "VIOLATION",
+      "min_count": 1,
+      "max_count": 1,
+      "value_kind": "literal",
+      "datatype": "http://www.w3.org/2001/XMLSchema#string",
+      "value_class": null,
+      "min_length": 1,
+      "basis_ref": "evidence/snapshots/requirements.json",
+      "mutable_by_consumer": false
+    },
+    {
+      "rule_id": "RULE-departmentId",
+      "label": "部门编号约束",
+      "target_class": "https://example.org/ontology/Department",
+      "predicate": "https://example.org/ontology/departmentId",
+      "shape_iri": "https://example.org/ontology/Department_departmentIdShape",
+      "severity": "VIOLATION",
+      "min_count": 1,
+      "max_count": 1,
+      "value_kind": "literal",
+      "datatype": "http://www.w3.org/2001/XMLSchema#string",
+      "value_class": null,
+      "min_length": 1,
+      "basis_ref": "evidence/snapshots/requirements.json",
+      "mutable_by_consumer": false
+    },
+    {
+      "rule_id": "RULE-departmentName",
+      "label": "部门名称约束",
+      "target_class": "https://example.org/ontology/Department",
+      "predicate": "https://example.org/ontology/departmentName",
+      "shape_iri": "https://example.org/ontology/Department_departmentNameShape",
+      "severity": "VIOLATION",
+      "min_count": 1,
+      "max_count": 1,
+      "value_kind": "literal",
+      "datatype": "http://www.w3.org/2001/XMLSchema#string",
+      "value_class": null,
+      "min_length": 1,
+      "basis_ref": "evidence/snapshots/requirements.json",
+      "mutable_by_consumer": false
+    }
+  ],
+  "identity_rule": {
+    "id": "RULE-IDENTITY",
+    "components": [
+      "identity_scope",
+      "type_iri",
+      "business_id"
+    ],
+    "empty_policy": "REJECT",
+    "duplicate_policy": "BLOCK",
+    "name_similarity_merge": false
+  }
+}

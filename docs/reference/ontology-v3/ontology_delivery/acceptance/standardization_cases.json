@@ -1,0 +1,73 @@
+{
+  "format": "JSON_POINTER_MUTATIONS_V1",
+  "target": "COPY_OF_EXPORTED_PACKAGE",
+  "cases": [
+    {
+      "case_id": "META-NEG-EMPTY-DEFINITION",
+      "path": "model/terms.json",
+      "pointer": "/items/0/definition/value",
+      "operation": "REPLACE",
+      "value": "",
+      "expected_check_id": "TERM-METADATA"
+    },
+    {
+      "case_id": "META-NEG-IRI-COLLISION",
+      "path": "model/terms.json",
+      "pointer": "/items/1/iri",
+      "operation": "REPLACE",
+      "value": "https://example.org/ontology/Employee",
+      "expected_check_id": "TERM-IDENTITY"
+    },
+    {
+      "case_id": "META-NEG-WRONG-RANGE",
+      "path": "model/terms.json",
+      "pointer": "/items/2/range",
+      "operation": "REPLACE",
+      "value": "http://www.w3.org/2001/XMLSchema#string",
+      "expected_check_id": "TERM-DOMAIN-RANGE"
+    },
+    {
+      "case_id": "META-NEG-UNAPPROVED-EQUIVALENCE",
+      "path": "model/terms.json",
+      "pointer": "/items/0/equivalent_terms",
+      "operation": "REPLACE",
+      "value": [
+        "https://example.org/ontology/Department"
+      ],
+      "expected_check_id": "NO-UNAPPROVED-AXIOMS"
+    },
+    {
+      "case_id": "META-NEG-FALSE-CONFORMITY",
+      "path": "standardization/profile.json",
+      "pointer": "/formal_conformance_claim",
+      "operation": "REPLACE",
+      "value": true,
+      "expected_check_id": "REFERENCE-STATUS"
+    },
+    {
+      "case_id": "META-NEG-DRAFT-AS-FINAL",
+      "path": "standardization/references.json",
+      "pointer": "/items/1/edition",
+      "operation": "REPLACE",
+      "value": "PUBLISHED_STANDARD",
+      "expected_check_id": "REFERENCE-STATUS"
+    },
+    {
+      "case_id": "META-NEG-WEAKENED-RULE",
+      "path": "model/rules.json",
+      "pointer": "/items/0/min_count",
+      "operation": "REPLACE",
+      "value": 0,
+      "expected_check_id": "BUSINESS-RULE-PRESERVATION"
+    },
+    {
+      "case_id": "META-NEG-REMOVED-EVIDENCE",
+      "path": "data/facts.jsonl",
+      "line_index": 0,
+      "pointer": "/evidence_refs",
+      "operation": "REPLACE",
+      "value": [],
+      "expected_check_id": "PROVENANCE-INTEGRITY"
+    }
+  ]
+}

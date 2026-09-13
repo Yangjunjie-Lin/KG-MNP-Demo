@@ -416,7 +416,12 @@ class EvolutionRollbackRequest(RequestDTO):
     rationale: str = Field(min_length=1, max_length=5000)
 
 
+class OntologyIOReportRequest(RequestDTO):
+    report: dict
+
+
 REQUEST_MODELS = {
+    "ontology.io.inspect": OntologyIOReportRequest,
     "source.sample.load": EmptyRequest,
     "module.evaluate": ModuleEvaluationRequest,
     "task.plan": TaskPlanRequest, "task.execute": TaskExecuteRequest, "business.inspect": EmptyRequest,

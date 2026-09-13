@@ -83,3 +83,11 @@ def test_https_url_is_allowed(tmp_path: Path):
 def test_current_repository_passes():
     mod = _load_module()
     assert mod.run_checks() == []
+
+
+def test_local_gateway_credentials_are_rejected_without_echoing_the_value(tmp_path):
+    mod = _load_module()
+    credential = "agt_" + "codex_" + "x" * 32
+    (tmp_path / "accidental-token.txt").write_text(credential, encoding="utf-8")
+    failures = mod.check_sensitive_content(["accidental-token.txt"], root=tmp_path)
+    assert failures and all(credential not in message for message in failures)

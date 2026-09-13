@@ -1,0 +1,23 @@
+[
+  {
+    "employee_id": "E-001",
+    "employee_name": "林晓",
+    "department_id": "D-01",
+    "record_id": "ER-01",
+    "source_ref": "SRC-EMP"
+  },
+  {
+    "employee_id": "E-002",
+    "employee_name": "陈雨",
+    "department_id": "D-02",
+    "record_id": "ER-02",
+    "source_ref": "SRC-EMP"
+  },
+  {
+    "employee_id": "E-003",
+    "employee_name": "周宁",
+    "department_id": "D-01",
+    "record_id": "ER-03",
+    "source_ref": "SRC-EMP"
+  }
+]

@@ -1,0 +1,86 @@
+{
+  "baseline_id": "reference-4615cbee84fe",
+  "version": "1.0.0",
+  "origin": "SUPPLIED_BEFORE_FACT_CONSTRUCTION",
+  "data_kind": "SYNTHETIC_EXAMPLE",
+  "frozen": true,
+  "query_id": "employee_departments",
+  "query_ref": "acceptance/queries/employee_departments.rq",
+  "variables": [
+    "employeeId",
+    "departmentId"
+  ],
+  "comparison": "UNORDERED_EXACT_MULTISET",
+  "expected": [
+    {
+      "employeeId": {
+        "type": "literal",
+        "value": "E-001",
+        "datatype": "http://www.w3.org/2001/XMLSchema#string",
+        "language": null
+      },
+      "departmentId": {
+        "type": "literal",
+        "value": "D-01",
+        "datatype": "http://www.w3.org/2001/XMLSchema#string",
+        "language": null
+      }
+    },
+    {
+      "employeeId": {
+        "type": "literal",
+        "value": "E-002",
+        "datatype": "http://www.w3.org/2001/XMLSchema#string",
+        "language": null
+      },
+      "departmentId": {
+        "type": "literal",
+        "value": "D-02",
+        "datatype": "http://www.w3.org/2001/XMLSchema#string",
+        "language": null
+      }
+    },
+    {
+      "employeeId": {
+        "type": "literal",
+        "value": "E-003",
+        "datatype": "http://www.w3.org/2001/XMLSchema#string",
+        "language": null
+      },
+      "departmentId": {
+        "type": "literal",
+        "value": "D-01",
+        "datatype": "http://www.w3.org/2001/XMLSchema#string",
+        "language": null
+      }
+    }
+  ],
+  "expected_targets": {
+    "Employee": 3,
+    "Department": 2
+  },
+  "target_inventory": [
+    {
+      "object_id": "https://example.org/data/hr/Employee/E-001",
+      "type_iri": "https://example.org/ontology/Employee"
+    },
+    {
+      "object_id": "https://example.org/data/hr/Employee/E-002",
+      "type_iri": "https://example.org/ontology/Employee"
+    },
+    {
+      "object_id": "https://example.org/data/hr/Employee/E-003",
+      "type_iri": "https://example.org/ontology/Employee"
+    },
+    {
+      "object_id": "https://example.org/data/hr/Department/D-01",
+      "type_iri": "https://example.org/ontology/Department"
+    },
+    {
+      "object_id": "https://example.org/data/hr/Department/D-02",
+      "type_iri": "https://example.org/ontology/Department"
+    }
+  ],
+  "inventory_origin": "SCOPE_CONFIRMED_RECORD_IDENTITIES",
+  "independence_note": "关系答案来自构建前独立给定的 expected；对象清单来自已确认记录身份，不作为独立语义准确率金标。"
+}

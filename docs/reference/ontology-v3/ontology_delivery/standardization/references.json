@@ -1,0 +1,70 @@
+{
+  "checked_at": "2026-09-11",
+  "items": [
+    {
+      "reference_id": "CN-FINAL-METADATA",
+      "document_id": "GB/T 48000.3-2026",
+      "title": "标准数字化 第3部分：本体建模要求",
+      "edition": "PUBLISHED_STANDARD_METADATA",
+      "publisher": "国家标准馆·国家数字标准馆（中国标准化研究院）",
+      "url": "https://www.ndls.org.cn/standard-digit/index?index=2",
+      "published_on": "2026-01-28",
+      "effective_on": "2026-08-01",
+      "access_level": "OFFICIAL_BIBLIOGRAPHIC_RECORD",
+      "fulltext_verified": false,
+      "note": "题录日期已核实。网页“即将实施”标签未随日期及时更新，不能据此判断当前废止/修订状态；本包不宣称已完成正式版全文核验。"
+    },
+    {
+      "reference_id": "CN-DRAFT-2025",
+      "document_id": "20243482-T-469 / draft 2025-04-29",
+      "title": "标准数字化 第3部分：本体建模要求（征求意见稿）",
+      "edition": "CONSULTATION_DRAFT",
+      "publisher": "中国标准化研究院 / 全国标准数字化标准化工作组",
+      "url": "https://www.cnis.ac.cn/wap/dh/bydt/bzyjzq/gbzqyj/202504/P020250430358066515464.pdf",
+      "published_on": "2025-04-30",
+      "effective_on": null,
+      "access_level": "OFFICIAL_DRAFT_FULLTEXT",
+      "fulltext_verified": true,
+      "note": "封面标明征求意见稿；正文与正式版不得视为相同。crosswalk 的具体条款号只指此草案。通知页：https://www.cnis.ac.cn/wap/dh/bydt/bzyjzq/gbzqyj/202504/t20250430_59942.html"
+    },
+    {
+      "reference_id": "W3C-OWL2",
+      "document_id": "OWL 2 Primer, Second Edition",
+      "title": "OWL 2 Web Ontology Language Primer (Second Edition)",
+      "edition": "W3C_RECOMMENDATION",
+      "publisher": "W3C",
+      "url": "https://www.w3.org/TR/2012/REC-owl2-primer-20121211/",
+      "published_on": "2012-12-11",
+      "effective_on": null,
+      "access_level": "OFFICIAL_TECHNICAL_TEXT",
+      "fulltext_verified": true,
+      "note": "使用命名、注释、定义域/值域及开放世界语义；不把数据必填要求误当作 OWL 域和值域检查。"
+    },
+    {
+      "reference_id": "W3C-SHACL",
+      "document_id": "SHACL 2017",
+      "title": "Shapes Constraint Language (SHACL)",
+      "edition": "W3C_RECOMMENDATION",
+      "publisher": "W3C",
+      "url": "https://www.w3.org/TR/2017/REC-shacl-20170720/",
+      "published_on": "2017-07-20",
+      "effective_on": null,
+      "access_level": "OFFICIAL_TECHNICAL_TEXT",
+      "fulltext_verified": true,
+      "note": "数据约束图单独交付；正式验证器状态与本地字段检查状态分开。"
+    },
+    {
+      "reference_id": "W3C-TURTLE",
+      "document_id": "RDF 1.1 Turtle",
+      "title": "RDF 1.1 Turtle",
+      "edition": "W3C_RECOMMENDATION",
+      "publisher": "W3C",
+      "url": "https://www.w3.org/TR/turtle/",
+      "published_on": "2014-02-25",
+      "effective_on": null,
+      "access_level": "OFFICIAL_TECHNICAL_TEXT",
+      "fulltext_verified": true,
+      "note": "结构、实例及约束仍以 Turtle 分图表达；JSON 文件是辅助交换契约。"
+    }
+  ]
+}

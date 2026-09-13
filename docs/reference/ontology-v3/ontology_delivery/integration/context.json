@@ -1,0 +1,44 @@
+{
+  "context_id": "CTX-ONT-SAMPLE-3E82B74FC0F1E664",
+  "package_id": "ONT-SAMPLE-3E82B74FC0F1E664",
+  "model_versions": {
+    "ontology": "1.1.0+603986351b9b",
+    "instances": "sample-r1-6d6ceddf",
+    "constraints": "1.0.0",
+    "mapping": "1.0.0",
+    "reference": "reference-4615cbee84fe"
+  },
+  "identity_scope": "HR-LOCAL",
+  "snapshot_id": "ONT-SAMPLE-3E82B74FC0F1E664",
+  "graph_iri": "urn:ontology-delivery:ONT-SAMPLE-3E82B74FC0F1E664:instances",
+  "object_index_ref": "data/objects.jsonl",
+  "fact_index_ref": "data/facts.jsonl",
+  "rule_index_ref": "model/rules.json",
+  "mapping_ref": "mapping/mapping.json",
+  "evidence_index_ref": "provenance/evidence.jsonl",
+  "reference_ref": "acceptance/baseline.json",
+  "join_keys": [
+    "package_id",
+    "model_versions",
+    "object_id",
+    "fact_id",
+    "rule_id",
+    "evidence_id"
+  ],
+  "downstream_runtime_fields": [
+    "task_id",
+    "run_id",
+    "tool_id",
+    "tool_version",
+    "started_at",
+    "ended_at",
+    "outcome",
+    "used_object_ids",
+    "used_fact_ids",
+    "used_rule_ids"
+  ],
+  "downstream_event_schema": "contracts/delivery.schema.json#/$defs/runtime_event",
+  "runtime_records_supplied": false,
+  "ontology_metadata_ref": "model/metadata.json",
+  "reference_profile_ref": "standardization/profile.json"
+}

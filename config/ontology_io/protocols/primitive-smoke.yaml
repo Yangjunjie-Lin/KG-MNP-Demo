@@ -1,0 +1,23 @@
+# Deliberately not configured for paid inference. Replace the public model ID
+# and declared revision to match your explicitly configured real transport.
+protocol_id: primitive-local-holdout-smoke-v1
+model_id: REPLACE_WITH_CONFIGURED_MODEL
+declared_revision: REPLACE_WITH_DECLARED_REVISION
+systems: [DirectGeneralLLM, TwoAgentV3, DirectBudgetControl]
+replicates: 3
+matching: exact
+primary_metrics: [graph_similarity]
+primary_test_correction: HOLM
+bootstrap_samples: 2000
+statistics_seed: 1729
+truncation_policy: REJECT_FOR_ALL_SYSTEMS
+invalid_prediction_policy: UNSCORABLE_NO_SUCCESS_SUBSET_AGGREGATION
+budget:
+  max_calls: 2
+  max_input_characters: 14000
+  max_output_tokens: 2048
+  max_total_tokens: 60000
+  context_window_tokens: 32768
+  token_accounting_policy: UTF8_UPPER_BOUND_V1
+approval: NOT_GRANTED
+release_status: NOT_RELEASED

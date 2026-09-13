@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import subprocess
 import sys
@@ -17,18 +16,16 @@ SUITES = {
     "ontology": ["tests/upgrade/test_full_chain.py", "-k", "hr"],
     "evolution": ["tests/upgrade/test_guards.py", "tests/upgrade/test_full_chain.py", "-k", "forestry or unknown"],
     "safety": ["tests/upgrade/test_guards.py", "tests/services/test_browser_sessions.py", "tests/services/test_core_fencing.py"],
+    "ontology-io-engineering": ["tests/upgrade/test_agent_roles.py", "tests/upgrade/test_model_assistance.py",
+        "tests/upgrade/test_v3_delivery.py", "tests/upgrade/test_native_delivery.py", "tests/upgrade/test_ontology_io.py",
+        "tests/upgrade/test_ontology_io_integrity.py", "tests/upgrade/test_oskgc_native.py", "tests/upgrade/test_cq4oe_input.py", "tests/services/test_ontology_io_report.py",
+        "tests/services/test_five_stage_service.py", "tests/services/test_core_fencing.py"],
 }
 
 
 def fingerprint():
-    files = subprocess.check_output(["git", "ls-files", "--cached", "--others", "--exclude-standard", "-z"], cwd=ROOT).decode().split("\0")
-    selected = {}
-    for name in sorted(set(files) - {""}):
-        path = ROOT / name
-        if path.is_file() and (name.startswith(("src/", "tests/", "tools/", "scripts/", ".github/", "workbench/src/", "workbench/tests/", "domain_packs/")) or name in {"pyproject.toml", "setup.py", "MANIFEST.in", "requirements-dev.lock", "pyrightconfig.json", "workbench/package.json", "workbench/package-lock.json"}):
-            selected[name] = hashlib.sha256(path.read_bytes()).hexdigest()
-    digest = hashlib.sha256(json.dumps(selected, sort_keys=True).encode()).hexdigest()
-    return {"digest": digest, "files": selected}
+    from zhigou_toolchain.ontology_io.provenance import source_fingerprint
+    return source_fingerprint(ROOT)
 
 
 def main():
@@ -58,4 +55,8 @@ def main():
 
 
 if __name__ == "__main__":
-    raise SystemExit(main())
+    if len(sys.argv) > 1 and sys.argv[1] == "ontology-io":
+        from zhigou_toolchain.ontology_io.cli import main as ontology_io_main
+        ontology_io_main(sys.argv[2:])
+    else:
+        raise SystemExit(main())

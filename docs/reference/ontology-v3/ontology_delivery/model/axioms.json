@@ -1,0 +1,164 @@
+{
+  "version": "1.0.0",
+  "authoritative_graph": "model/ontology.ttl",
+  "scope": "DECLARATIONS_AND_DOMAIN_RANGE_ONLY",
+  "closed_world_validation": false,
+  "new_logical_constraints_introduced": false,
+  "items": [
+    {
+      "kind": "DECLARATION",
+      "subject": "https://example.org/ontology/Employee",
+      "predicate": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+      "object": "http://www.w3.org/2002/07/owl#Class",
+      "axiom_id": "AX-1e0e18cba63c",
+      "basis_ref": "model/terms.json",
+      "review_ref": "quality/review.json#model_review"
+    },
+    {
+      "kind": "DECLARATION",
+      "subject": "https://example.org/ontology/Department",
+      "predicate": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+      "object": "http://www.w3.org/2002/07/owl#Class",
+      "axiom_id": "AX-50810a6077c4",
+      "basis_ref": "model/terms.json",
+      "review_ref": "quality/review.json#model_review"
+    },
+    {
+      "kind": "DECLARATION",
+      "subject": "https://example.org/ontology/belongsToDepartment",
+      "predicate": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+      "object": "http://www.w3.org/2002/07/owl#ObjectProperty",
+      "axiom_id": "AX-797d7d2a13f1",
+      "basis_ref": "model/terms.json",
+      "review_ref": "quality/review.json#model_review"
+    },
+    {
+      "kind": "DOMAIN",
+      "subject": "https://example.org/ontology/belongsToDepartment",
+      "predicate": "http://www.w3.org/2000/01/rdf-schema#domain",
+      "object": "https://example.org/ontology/Employee",
+      "axiom_id": "AX-0f21d7359569",
+      "basis_ref": "model/terms.json",
+      "review_ref": "quality/review.json#model_review"
+    },
+    {
+      "kind": "RANGE",
+      "subject": "https://example.org/ontology/belongsToDepartment",
+      "predicate": "http://www.w3.org/2000/01/rdf-schema#range",
+      "object": "https://example.org/ontology/Department",
+      "axiom_id": "AX-fc0be373599e",
+      "basis_ref": "model/terms.json",
+      "review_ref": "quality/review.json#model_review"
+    },
+    {
+      "kind": "DECLARATION",
+      "subject": "https://example.org/ontology/employeeId",
+      "predicate": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+      "object": "http://www.w3.org/2002/07/owl#DatatypeProperty",
+      "axiom_id": "AX-4ceb3cc05f4e",
+      "basis_ref": "model/terms.json",
+      "review_ref": "quality/review.json#model_review"
+    },
+    {
+      "kind": "DOMAIN",
+      "subject": "https://example.org/ontology/employeeId",
+      "predicate": "http://www.w3.org/2000/01/rdf-schema#domain",
+      "object": "https://example.org/ontology/Employee",
+      "axiom_id": "AX-b1397c8ea697",
+      "basis_ref": "model/terms.json",
+      "review_ref": "quality/review.json#model_review"
+    },
+    {
+      "kind": "RANGE",
+      "subject": "https://example.org/ontology/employeeId",
+      "predicate": "http://www.w3.org/2000/01/rdf-schema#range",
+      "object": "http://www.w3.org/2001/XMLSchema#string",
+      "axiom_id": "AX-24e2bfa6a51f",
+      "basis_ref": "model/terms.json",
+      "review_ref": "quality/review.json#model_review"
+    },
+    {
+      "kind": "DECLARATION",
+      "subject": "https://example.org/ontology/employeeName",
+      "predicate": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+      "object": "http://www.w3.org/2002/07/owl#DatatypeProperty",
+      "axiom_id": "AX-4182b2b83358",
+      "basis_ref": "model/terms.json",
+      "review_ref": "quality/review.json#model_review"
+    },
+    {
+      "kind": "DOMAIN",
+      "subject": "https://example.org/ontology/employeeName",
+      "predicate": "http://www.w3.org/2000/01/rdf-schema#domain",
+      "object": "https://example.org/ontology/Employee",
+      "axiom_id": "AX-0d19ccd1c9ec",
+      "basis_ref": "model/terms.json",
+      "review_ref": "quality/review.json#model_review"
+    },
+    {
+      "kind": "RANGE",
+      "subject": "https://example.org/ontology/employeeName",
+      "predicate": "http://www.w3.org/2000/01/rdf-schema#range",
+      "object": "http://www.w3.org/2001/XMLSchema#string",
+      "axiom_id": "AX-02a3d53bf7c4",
+      "basis_ref": "model/terms.json",
+      "review_ref": "quality/review.json#model_review"
+    },
+    {
+      "kind": "DECLARATION",
+      "subject": "https://example.org/ontology/departmentId",
+      "predicate": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+      "object": "http://www.w3.org/2002/07/owl#DatatypeProperty",
+      "axiom_id": "AX-707841daf3d8",
+      "basis_ref": "model/terms.json",
+      "review_ref": "quality/review.json#model_review"
+    },
+    {
+      "kind": "DOMAIN",
+      "subject": "https://example.org/ontology/departmentId",
+      "predicate": "http://www.w3.org/2000/01/rdf-schema#domain",
+      "object": "https://example.org/ontology/Department",
+      "axiom_id": "AX-df168fa6e5bc",
+      "basis_ref": "model/terms.json",
+      "review_ref": "quality/review.json#model_review"
+    },
+    {
+      "kind": "RANGE",
+      "subject": "https://example.org/ontology/departmentId",
+      "predicate": "http://www.w3.org/2000/01/rdf-schema#range",
+      "object": "http://www.w3.org/2001/XMLSchema#string",
+      "axiom_id": "AX-8af7cf414568",
+      "basis_ref": "model/terms.json",
+      "review_ref": "quality/review.json#model_review"
+    },
+    {
+      "kind": "DECLARATION",
+      "subject": "https://example.org/ontology/departmentName",
+      "predicate": "http://www.w3.org/1999/02/22-rdf-syntax-ns#type",
+      "object": "http://www.w3.org/2002/07/owl#DatatypeProperty",
+      "axiom_id": "AX-e9318304c2f9",
+      "basis_ref": "model/terms.json",
+      "review_ref": "quality/review.json#model_review"
+    },
+    {
+      "kind": "DOMAIN",
+      "subject": "https://example.org/ontology/departmentName",
+      "predicate": "http://www.w3.org/2000/01/rdf-schema#domain",
+      "object": "https://example.org/ontology/Department",
+      "axiom_id": "AX-d57df1f83d77",
+      "basis_ref": "model/terms.json",
+      "review_ref": "quality/review.json#model_review"
+    },
+    {
+      "kind": "RANGE",
+      "subject": "https://example.org/ontology/departmentName",
+      "predicate": "http://www.w3.org/2000/01/rdf-schema#range",
+      "object": "http://www.w3.org/2001/XMLSchema#string",
+      "axiom_id": "AX-7173dad07a44",
+      "basis_ref": "model/terms.json",
+      "review_ref": "quality/review.json#model_review"
+    }
+  ],
+  "data_constraints_ref": "model/shapes.ttl",
+  "note": "rdfs:domain/range 支持类型推论，并非数据库外键/必填校验；额外业务约束见规则和 SHACL。"
+}

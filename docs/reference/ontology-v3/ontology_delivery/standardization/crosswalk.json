@@ -1,0 +1,133 @@
+{
+  "profile_id": "CN-ONTOLOGY-REFERENCE-2026-09",
+  "clause_edition": "CONSULTATION_DRAFT_2025_04_29",
+  "final_clause_mapping": "NOT_VERIFIED",
+  "items": [
+    {
+      "mapping_id": "REF-01",
+      "source_ref": "CN-DRAFT-2025",
+      "draft_clause": "5.1",
+      "final_clause": null,
+      "topic": "语义与呈现分离",
+      "artifact_refs": [
+        "model/ontology.ttl",
+        "provenance/evidence.jsonl"
+      ],
+      "application": "REFERENCE_ADAPTED",
+      "check_id": "EVIDENCE-SEPARATION"
+    },
+    {
+      "mapping_id": "REF-02",
+      "source_ref": "CN-DRAFT-2025",
+      "draft_clause": "5.3.1—5.3.2",
+      "final_clause": null,
+      "topic": "类型、属性、关系和三元组",
+      "artifact_refs": [
+        "model/terms.json",
+        "data/facts.jsonl"
+      ],
+      "application": "REFERENCE_ADAPTED",
+      "check_id": "TERM-TYPING"
+    },
+    {
+      "mapping_id": "REF-03",
+      "source_ref": "CN-DRAFT-2025",
+      "draft_clause": "5.4.1 / 表1",
+      "final_clause": null,
+      "topic": "类型的标识、名称、标签和定义",
+      "artifact_refs": [
+        "model/terms.json"
+      ],
+      "application": "REFERENCE_ADAPTED",
+      "check_id": "TERM-METADATA"
+    },
+    {
+      "mapping_id": "REF-04",
+      "source_ref": "CN-DRAFT-2025",
+      "draft_clause": "5.4.2 / 表2",
+      "final_clause": null,
+      "topic": "属性的类别、定义域和值域",
+      "artifact_refs": [
+        "model/terms.json",
+        "model/catalog.json"
+      ],
+      "application": "REFERENCE_ADAPTED",
+      "check_id": "TERM-DOMAIN-RANGE"
+    },
+    {
+      "mapping_id": "REF-05",
+      "source_ref": "CN-DRAFT-2025",
+      "draft_clause": "5.5 / 表3",
+      "final_clause": null,
+      "topic": "数据类型描述",
+      "artifact_refs": [
+        "model/terms.json",
+        "model/shapes.ttl"
+      ],
+      "application": "REFERENCE_ADAPTED",
+      "check_id": "TERM-TYPING"
+    },
+    {
+      "mapping_id": "REF-06",
+      "source_ref": "CN-DRAFT-2025",
+      "draft_clause": "6.1.2",
+      "final_clause": null,
+      "topic": "术语复用与避免重复表达",
+      "artifact_refs": [
+        "model/terms.json"
+      ],
+      "application": "REFERENCE_ADAPTED",
+      "check_id": "TERM-IDENTITY"
+    },
+    {
+      "mapping_id": "REF-07",
+      "source_ref": "CN-DRAFT-2025",
+      "draft_clause": "9.2",
+      "final_clause": null,
+      "topic": "扩展定义与命名空间管理",
+      "artifact_refs": [
+        "model/metadata.json",
+        "standardization/profile.json"
+      ],
+      "application": "REFERENCE_POLICY",
+      "check_id": "NAMESPACE-POLICY"
+    },
+    {
+      "mapping_id": "REF-08",
+      "source_ref": "CN-DRAFT-2025",
+      "draft_clause": "5.3.3 / 6.2 / 第8章",
+      "final_clause": null,
+      "topic": "标准文档专用概念和关系",
+      "artifact_refs": [
+        "standardization/profile.json"
+      ],
+      "application": "NOT_APPLICABLE_TO_THIS_BUSINESS_DEMO",
+      "check_id": null
+    }
+  ],
+  "engineering_extensions": [
+    {
+      "topic": "OWL 公理索引与 SHACL 数据约束分工",
+      "source_refs": [
+        "W3C-OWL2",
+        "W3C-SHACL"
+      ],
+      "artifact_refs": [
+        "model/axioms.json",
+        "model/rules.json",
+        "model/shapes.ttl"
+      ]
+    },
+    {
+      "topic": "JSON Schema、摘要清单、验收用例、版本和下游关联字段",
+      "source_refs": [],
+      "artifact_refs": [
+        "contracts/delivery.schema.json",
+        "manifest.json",
+        "acceptance/",
+        "integration/"
+      ],
+      "note": "自定义工程约定，不归因为国标要求。"
+    }
+  ]
+}

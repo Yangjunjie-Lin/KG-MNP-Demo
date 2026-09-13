@@ -82,7 +82,7 @@ def main() -> int:
     parser.add_argument("--smoke-only", action="store_true", help="verify startup/shutdown only, never claim Browser E2E")
     parser.add_argument("--startup-timeout", type=float, default=45)
     parser.add_argument("--probe-subprocess", action="store_true", help="include actual SHACL subprocess startup in smoke verification")
-    parser.add_argument("--selected-test", choices=("security.e2e.ts", "arbitrary-pack.e2e.ts", "five-stage.e2e.ts", "zhigou-console.e2e.ts", "saved-evidence.e2e.ts", "mnp-readback.e2e.ts", "mixed", "minimal", "forestry", "mnp"), help="bounded incremental check only, never full browser acceptance")
+    parser.add_argument("--selected-test", choices=("security.e2e.ts", "arbitrary-pack.e2e.ts", "five-stage.e2e.ts", "ontology-io.e2e.ts", "zhigou-console.e2e.ts", "saved-evidence.e2e.ts", "mnp-readback.e2e.ts", "mixed", "minimal", "forestry", "mnp"), help="bounded incremental check only, never full browser acceptance")
     parser.add_argument("--existing-upgrade-workspace", type=Path)
     args = parser.parse_args()
     if not 0 < args.startup_timeout <= 120:

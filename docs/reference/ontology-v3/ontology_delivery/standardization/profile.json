@@ -1,0 +1,48 @@
+{
+  "profile_id": "CN-ONTOLOGY-REFERENCE-2026-09",
+  "version": "1.0.0",
+  "profile_kind": "ENGINEERING_REFERENCE_PROFILE",
+  "target_standard": "GB/T 48000.3-2026",
+  "application_domain": "BUSINESS_ONTOLOGY_NOT_STANDARD_DOCUMENT_ONTOLOGY",
+  "adoption_mode": "SELECTIVE_REFERENCE_ONLY",
+  "formal_conformance_claim": false,
+  "certification_status": "NOT_ASSESSED",
+  "final_text_review_status": "PENDING_OFFICIAL_FINAL_FULLTEXT",
+  "clause_number_policy": "DRAFT_CLAUSES_ONLY_NOT_FINAL_CLAUSES",
+  "source_refs": [
+    "CN-FINAL-METADATA",
+    "CN-DRAFT-2025",
+    "W3C-OWL2",
+    "W3C-SHACL",
+    "W3C-TURTLE"
+  ],
+  "preserve_capabilities": [
+    "FIVE_STAGE_SEQUENCE",
+    "RULE_AGENT_1_2_4",
+    "TASK_EXECUTION_AGENT_3_5",
+    "INDEPENDENT_EXPECTED_ANSWERS",
+    "EVIDENCE_UNION_ON_DEDUP",
+    "VERSION_BOUND_HUMAN_REVIEW",
+    "SEPARATE_TBOX_ABOX_SHAPES",
+    "NO_AUTOMATIC_PUBLISH"
+  ],
+  "business_rule_authority": "evidence/snapshots/requirements.json",
+  "excluded_requirements": [
+    {
+      "topic": "标准文档专用类型、属性和条款关系",
+      "reason": "本次员工—部门业务数据不是标准文件本体，不强制加入 Standard、条款、章等类型。"
+    },
+    {
+      "topic": "正式版逐条符合性判定",
+      "reason": "仅核实发布题录和官方草案；取得正式版全文后另行确认适用条文及差异。"
+    }
+  ],
+  "namespace_policy": {
+    "retain_existing_iris": true,
+    "example_namespace_only": true,
+    "new_third_party_extension": "USE_SEPARATE_CONTROLLED_NAMESPACE_AND_REVIEW",
+    "rename_existing_term": "EXPLICIT_MIGRATION_NOT_AUTOMATIC",
+    "global_registration_claim": false
+  },
+  "protocol_note": "ontology-delivery 3.0.0 与文件名/字段名是自定义工程协议，不是国标指定数据格式。"
+}

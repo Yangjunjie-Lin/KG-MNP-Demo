@@ -1,0 +1,92 @@
+{
+  "report_kind": "ZHIGOU_TWO_AGENT_V3_INCREMENTAL_ENGINEERING_VERIFICATION",
+  "schema_version": "1.0.0",
+  "recorded_date": "2026-09-13",
+  "overall_delivery_status": "PARTIAL_NOT_COMPLETE",
+  "source": {
+    "branch": "codex/two-agent-v3-ontology-io",
+    "base_commit": "58473106efafb2e380e39577674d6968b3f62b82",
+    "actual_implementation_worktree_sha256": "7ca8206c287963fc4b34acc5ae2cc2a5e87a3c273c4cb351114c2619af22865d",
+    "fingerprint_policy": "GIT_TRACKED_AND_UNTRACKED_IMPLEMENTATION_V1",
+    "uncommitted": true,
+    "pushed": false,
+    "merged": false,
+    "published": false
+  },
+  "engineering": {
+    "ontology_io_suite": {
+      "tests": 118,
+      "passed": 118,
+      "failed": 0,
+      "skipped": 0,
+      "source_unchanged_during_execution": true,
+      "evidence": "runtime_reports/research-32f978ad886b40ac8ec484a4b1125a2b/verification.json",
+      "junit": "runtime_reports/research-32f978ad886b40ac8ec484a4b1125a2b/ontology-io-engineering.xml"
+    },
+    "native_archive_and_modeling_workflow": {
+      "tests": 7,
+      "passed": 7,
+      "failed": 0,
+      "evidence": "runtime_reports/two-agent-v3/native-workflow-regression.xml"
+    },
+    "frontend_components": {"tests": 42, "passed": 42, "failed": 0},
+    "real_browser": {
+      "tests": 1,
+      "status": "PASS",
+      "business_api_mocked": false,
+      "temporary_credentials_revoked_and_removed": true,
+      "worker_stopped": true,
+      "evidence": "runtime_logs/p09/browser-runs/managed-90fdba1b178a4ed19ddc0559841a5f30/managed-receipt.json"
+    },
+    "python_lint_src_tests_tools": "PASS",
+    "service_and_new_module_pyright": "PASS",
+    "frontend_typecheck_lint_build": "PASS",
+    "full_repository_backend_regression": "NOT_RUN_THIS_INCREMENT",
+    "retained_failed_attempt": {
+      "passed": 115,
+      "failed": 1,
+      "failure": "Seed task rejected by lease fencing before publication fault injection",
+      "root_cause": "NOT_ESTABLISHED_SUBSEQUENT_COMPLETE_RERUNS_PASSED",
+      "production_lease_guard_weakened": false,
+      "evidence": "runtime_reports/research-74d26e68a14343d1817629f28cd53a01/verification.json"
+    }
+  },
+  "delivery": {
+    "reference_v3_inspection": "PASS_ENGINEERING_ONLY",
+    "reference_v3_shacl": "PASS",
+    "reference_v3_owl": "NOT_RUN",
+    "real_approval": "NOT_RUN",
+    "native_package_reverification": "VALID",
+    "native_to_v3_formal_export": "NOT_IMPLEMENTED_REQUIRED_BOUND_INPUTS_ALSO_MISSING_FROM_STANDALONE_KGOP",
+    "native_preflight": "runtime_reports/two-agent-v3/native-preflight.json",
+    "diagnostic_archive": "runtime_reports/two-agent-v3/hr.ontology-diagnostic.zip",
+    "diagnostic_is_v3": false,
+    "standard_final_fulltext_conformance": "NOT_CLAIMED"
+  },
+  "research": {
+    "live_research_model_calls": 0,
+    "actual_complete_external_model_tasks": [],
+    "real_comparison_score": null,
+    "improvement_conclusion": "INSUFFICIENT_EVIDENCE",
+    "direct_general_llm": "BOUNDED_PRIMITIVE_PROFILE_IMPLEMENTED_NOT_LIVE_RUN",
+    "two_agent_v3": "PRIMITIVE_PILOT_NOT_FULL_OURS",
+    "budget_control": "IMPLEMENTED_NOT_LIVE_RUN",
+    "ablations": "BLOCKED_PARENT_COMPONENTS_NOT_ACTIVE",
+    "llms4ol_exact": "INPUT_AND_NATIVE_FUNCTION_ENGINEERING_TESTS_ONLY",
+    "llms4ol_fuzzy_semantic": "BLOCKED_NATIVE_MATCHER_MODEL_AND_CONFIGURATION_NOT_AUDITED",
+    "cq4oe": "CQ2TERM_AND_CQ2ONTO_INPUTS_PREPARED_OUTPUT_AND_NATIVE_SCORER_NOT_INTEGRATED",
+    "oskgc": "INPUT_AND_NATIVE_METRIC_METHODS_TESTED_TYPED_ARTIFACT_GENERATION_NOT_INTEGRATED",
+    "public_method_b1": "NOT_REPRODUCED",
+    "expert_comparison": "NOT_RUN",
+    "strong_os_generation_isolation": "NOT_IMPLEMENTED_DOCKER_ENGINE_UNAVAILABLE",
+    "model_configuration": "gpt-5.3-codex-spark",
+    "declared_model_revision": "configured-alias:gpt-5.3-codex-spark",
+    "model_endpoint_or_quota_probed": false,
+    "reserve_quota_called": false
+  },
+  "project_goals": [
+    {"id": "automatic_identification_accuracy", "target": 0.8, "value": null, "status": "DENOMINATOR_AND_INDEPENDENT_LABELS_NOT_ESTABLISHED"},
+    {"id": "expert_reviewed_accuracy", "target": 0.9, "value": null, "status": "NO_INDEPENDENT_EXPERT_EVALUATION"},
+    {"id": "provenance_completeness", "target": 0.9, "value": null, "status": "INDEPENDENT_ACCEPTANCE_EVIDENCE_NOT_ESTABLISHED"}
+  ]
+}

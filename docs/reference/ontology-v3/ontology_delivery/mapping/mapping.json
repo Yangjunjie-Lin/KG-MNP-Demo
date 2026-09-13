@@ -1,0 +1,77 @@
+{
+  "mapping_id": "MAP-HR-CURRENT",
+  "version": "1.0.0",
+  "identity_scope": "HR-LOCAL",
+  "iri_policy": {
+    "base": "https://example.org/data/hr/",
+    "template": "{base}{type}/{percent_encoded_business_id}",
+    "encoding": "UTF-8_PERCENT",
+    "case_sensitive": true,
+    "trim_identity": false
+  },
+  "entity_rules": [
+    {
+      "id": "MAP-EMPLOYEE",
+      "source_id": "SRC-EMP",
+      "type_iri": "https://example.org/ontology/Employee",
+      "id_field": "employee_id",
+      "attributes": {
+        "employee_id": "https://example.org/ontology/employeeId",
+        "employee_name": "https://example.org/ontology/employeeName"
+      }
+    },
+    {
+      "id": "MAP-DEPARTMENT",
+      "source_id": "SRC-DEP",
+      "type_iri": "https://example.org/ontology/Department",
+      "id_field": "department_id",
+      "attributes": {
+        "department_id": "https://example.org/ontology/departmentId",
+        "department_name": "https://example.org/ontology/departmentName"
+      }
+    }
+  ],
+  "fact_rules": [
+    {
+      "id": "MAP-TYPE",
+      "operation": "ASSERT_TYPE",
+      "transform_id": "identity-string@1.0.0"
+    },
+    {
+      "id": "MAP-ATTRIBUTE",
+      "operation": "COPY_STRING",
+      "transform_id": "identity-string@1.0.0"
+    },
+    {
+      "id": "MAP-DEPARTMENT-REFERENCE",
+      "operation": "LOOKUP_OBJECT",
+      "source_id": "SRC-EMP",
+      "source_field": "department_id",
+      "target_source_id": "SRC-DEP",
+      "target_field": "department_id",
+      "predicate": "https://example.org/ontology/belongsToDepartment",
+      "cardinality": "MANY_TO_ONE",
+      "empty_policy": "REJECT",
+      "missing_target_policy": "BLOCK"
+    },
+    {
+      "id": "MAP-TEXT-RELATION",
+      "operation": "EXACT_SENTENCE_EXTRACTION",
+      "source_id": "SRC-TXT",
+      "predicate": "https://example.org/ontology/belongsToDepartment",
+      "transform_id": "exact-sentence-extractor@1.0.0",
+      "template": "员工 {employee_id} 归属部门 {department_id}。",
+      "unmatched_policy": "BLOCK"
+    }
+  ],
+  "deduplication_key": [
+    "subject",
+    "predicate",
+    "object",
+    "context.identity_scope",
+    "context.snapshot_id"
+  ],
+  "evidence_merge": "UNION",
+  "conflict_policy": "RETAIN_AND_BLOCK",
+  "arbitrary_code_execution": false
+}

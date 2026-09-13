@@ -1,0 +1,9 @@
+{
+  "scope_id": "SCOPE-HR-CURRENT",
+  "version": "1.0.0",
+  "source_type": "SYNTHETIC_REQUIREMENTS",
+  "identity": "同一身份范围内，类型与业务编号唯一确定对象；不按姓名相似度合并。",
+  "current_department": "每个员工有且仅有一个已登记部门；不表达历史任职。",
+  "required_values": "员工与部门的编号及名称均为单个非空字符串。",
+  "human_approval": "示例确认不具有生产审批效力。"
+}

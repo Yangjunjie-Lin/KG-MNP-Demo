@@ -1,0 +1,153 @@
+{
+  "evaluated_at": "2026-09-11T11:28:58.197133Z",
+  "package_id": "ONT-SAMPLE-3E82B74FC0F1E664",
+  "profile": "OFFLINE_REFERENCE_RECHECK",
+  "checks": [
+    {
+      "check_id": "LOCAL-CONSTRAINTS",
+      "status": "PASS",
+      "engine": "JavaScript fixed-rule checker",
+      "detail": "实际执行：必填字符串、数量、关系目标和文本处理覆盖。"
+    },
+    {
+      "check_id": "PROVENANCE-INTEGRITY",
+      "status": "PASS",
+      "engine": "JavaScript evidence binding",
+      "detail": "实际构建时绑定记录与逐字引文；接收方仍应重验。"
+    },
+    {
+      "check_id": "RDF-PARSE",
+      "status": "PASS",
+      "engine": "RDFLib 7.5.0",
+      "detail": "在此下载快照上实际执行 RDF 解析、JSON/实例图同构或 SPARQL；不是浏览器服务。"
+    },
+    {
+      "check_id": "GRAPH-EQUIVALENCE",
+      "status": "PASS",
+      "engine": "RDFLib 7.5.0",
+      "detail": "在此下载快照上实际执行 RDF 解析、JSON/实例图同构或 SPARQL；不是浏览器服务。"
+    },
+    {
+      "check_id": "SHACL",
+      "status": "NOT_RUN",
+      "engine": "pySHACL",
+      "detail": "未运行专业 SHACL 验证器。"
+    },
+    {
+      "check_id": "OWL",
+      "status": "NOT_RUN",
+      "engine": "ROBOT/HermiT",
+      "detail": "未运行 OWL 逻辑推理器。"
+    },
+    {
+      "check_id": "SPARQL",
+      "status": "PASS",
+      "engine": "RDFLib 7.5.0",
+      "detail": "在此下载快照上实际执行 RDF 解析、JSON/实例图同构或 SPARQL；不是浏览器服务。"
+    },
+    {
+      "check_id": "TERM-METADATA",
+      "status": "PASS",
+      "engine": "DETERMINISTIC_METADATA_CHECK",
+      "detail": "术语条数、非空定义与中英标签；不证明定义在业务上正确。"
+    },
+    {
+      "check_id": "TERM-IDENTITY",
+      "status": "PASS",
+      "engine": "DETERMINISTIC_METADATA_CHECK",
+      "detail": "稳定 IRI、名称唯一且与现有业务词汇对应；不声称全球注册。"
+    },
+    {
+      "check_id": "TERM-TYPING",
+      "status": "PASS",
+      "engine": "DETERMINISTIC_METADATA_CHECK",
+      "detail": "类、数据属性、对象属性分开；编号仍为 xsd:string。"
+    },
+    {
+      "check_id": "TERM-DOMAIN-RANGE",
+      "status": "PASS",
+      "engine": "DETERMINISTIC_METADATA_CHECK",
+      "detail": "属性方向、值类型与确认结构相同；OWL 域/值域不代替 SHACL。"
+    },
+    {
+      "check_id": "NO-UNAPPROVED-AXIOMS",
+      "status": "PASS",
+      "engine": "DETERMINISTIC_METADATA_CHECK",
+      "detail": "当前示例未批准额外继承、等价、互斥、传递或功能性公理，不为填表而添加。"
+    },
+    {
+      "check_id": "NAMESPACE-POLICY",
+      "status": "PASS",
+      "engine": "DETERMINISTIC_METADATA_CHECK",
+      "detail": "保留原有示例 IRI；第三方扩展必须另设受控命名空间并审核。"
+    },
+    {
+      "check_id": "TERM-SCOPE-BINDING",
+      "status": "PASS",
+      "engine": "DETERMINISTIC_METADATA_CHECK",
+      "detail": "定义与本批次输入绑定；修改后重建并重新审核。"
+    },
+    {
+      "check_id": "REFERENCE-STATUS",
+      "status": "PASS",
+      "engine": "Python offline payload checker",
+      "detail": "对导出文件与参考配置进行交叉校验；不等于完整国标或 OWL 推理验证。"
+    },
+    {
+      "check_id": "AXIOM-GRAPH-CONSISTENCY",
+      "status": "PASS",
+      "engine": "Python offline payload checker",
+      "detail": "对导出文件与参考配置进行交叉校验；不等于完整国标或 OWL 推理验证。"
+    },
+    {
+      "check_id": "BUSINESS-RULE-PRESERVATION",
+      "status": "PASS",
+      "engine": "Python offline payload checker",
+      "detail": "对导出文件与参考配置进行交叉校验；不等于完整国标或 OWL 推理验证。"
+    },
+    {
+      "check_id": "TARGET-COVERAGE",
+      "status": "PASS",
+      "engine": "Python offline payload checker",
+      "detail": "对导出文件与参考配置进行交叉校验；不等于完整国标或 OWL 推理验证。"
+    },
+    {
+      "check_id": "QUERY-ANSWER",
+      "status": "PASS",
+      "engine": "Python offline payload checker",
+      "detail": "对导出文件与参考配置进行交叉校验；不等于完整国标或 OWL 推理验证。"
+    },
+    {
+      "check_id": "JSON-SCHEMA",
+      "status": "PASS",
+      "engine": "jsonschema 2020-12",
+      "detail": "所有登记JSON/JSONL使用包内Schema实际验证。"
+    },
+    {
+      "check_id": "V2-CAPABILITY-PRESERVATION",
+      "status": "PASS",
+      "engine": "RDFLib + byte comparison",
+      "detail": "与v2实例图同构；规则、映射、SHACL和源证据保持不变；原TBox三元组保留。"
+    }
+  ],
+  "coverage": {
+    "expected_by_class": {
+      "Employee": 3,
+      "Department": 2
+    },
+    "observed_by_class": {
+      "Employee": 3,
+      "Department": 2
+    },
+    "basis": "OBJECT_INVENTORY_NOT_FORMAL_SHACL_TARGETS"
+  },
+  "production_gate": {
+    "allowed": false,
+    "blocking_check_ids": [
+      "SHACL",
+      "OWL",
+      "REAL-APPROVAL"
+    ],
+    "release_status": "NOT_RELEASED"
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "ontology_iri": "https://example.org/ontology/",
+  "version": "1.1.0+603986351b9b",
+  "version_iri": "https://example.org/ontology/version/1.1.0+603986351b9b",
+  "title": {
+    "zh": "员工与部门示例本体",
+    "en": "Employee and department sample ontology"
+  },
+  "language": [
+    "zh",
+    "en"
+  ],
+  "is_synthetic": true,
+  "formal_conformance_claim": false,
+  "modeling_domain": "HR_CURRENT_SNAPSHOT",
+  "profile_ref": "standardization/profile.json",
+  "references_ref": "standardization/references.json",
+  "terms_ref": "model/terms.json",
+  "axioms_ref": "model/axioms.json",
+  "namespace_registry": [
+    {
+      "prefix": "ex",
+      "iri": "https://example.org/ontology/",
+      "role": "LEGACY_DOMAIN_VOCABULARY",
+      "control": "SYNTHETIC_EXAMPLE_NOT_REGISTERED"
+    },
+    {
+      "prefix": "data",
+      "iri": "https://example.org/data/hr/",
+      "role": "BUSINESS_INSTANCES",
+      "control": "SYNTHETIC_EXAMPLE_NOT_REGISTERED"
+    },
+    {
+      "prefix": "owl",
+      "iri": "http://www.w3.org/2002/07/owl#",
+      "role": "W3C_VOCABULARY",
+      "control": "EXTERNAL"
+    },
+    {
+      "prefix": "rdfs",
+      "iri": "http://www.w3.org/2000/01/rdf-schema#",
+      "role": "W3C_VOCABULARY",
+      "control": "EXTERNAL"
+    },
+    {
+      "prefix": "xsd",
+      "iri": "http://www.w3.org/2001/XMLSchema#",
+      "role": "W3C_DATATYPES",
+      "control": "EXTERNAL"
+    }
+  ],
+  "release_status": "NOT_RELEASED",
+  "note": "术语定义是本地建模草案，经本轮模拟确认，不冒充外部标准给出的员工定义。"
+}

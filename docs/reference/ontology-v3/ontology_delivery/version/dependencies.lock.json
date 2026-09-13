@@ -1,0 +1,43 @@
+{
+  "imports": [],
+  "external_fetch_allowed": false,
+  "producer": {
+    "id": "deterministic-sample-exporter",
+    "version": "3.0.0"
+  },
+  "transforms": [
+    {
+      "id": "identity-string",
+      "version": "1.0.0",
+      "kind": "DETERMINISTIC"
+    },
+    {
+      "id": "exact-sentence-extractor",
+      "version": "1.0.0",
+      "kind": "DETERMINISTIC"
+    }
+  ],
+  "required_reader_capabilities": [
+    "RDF_TURTLE",
+    "SPARQL_1_1_SELECT",
+    "JSON_SCHEMA_2020_12"
+  ],
+  "optional_validators": [
+    {
+      "id": "pySHACL",
+      "version": null,
+      "status": "NOT_RUN"
+    },
+    {
+      "id": "ROBOT/HermiT",
+      "version": null,
+      "status": "NOT_RUN"
+    }
+  ],
+  "model_inference_used": false,
+  "reference_profile": {
+    "profile_id": "CN-ONTOLOGY-REFERENCE-2026-09",
+    "version": "1.0.0",
+    "sha256": "0276a8833f1c23c2b257345703fd5a4bee4f5b2f00b2e7fbd728253454e62b9b"
+  }
+}

@@ -1,0 +1,28 @@
+schema_version: 1.0.0
+scope: PRIMITIVE_PILOT_NOT_COMPLETE_TWO_AGENT_V3
+variants:
+  DirectGeneralLLM:
+    model_calls: 1
+    five_stage: false
+    retrieval: false
+    validation_feedback_repair: false
+    status: EXECUTABLE_WITH_EXPLICIT_REAL_PROVIDER
+  TwoAgentV3:
+    model_calls: 2
+    five_stage: COMPUTATIONAL_PILOT_ONLY
+    retrieval: false
+    validation_feedback_repair: false
+    status: PARTIAL_NOT_FULL_OURS
+  DirectBudgetControl:
+    model_calls: PROTOCOL_MAX_CALLS
+    five_stage: false
+    mechanism: DIRECT_REPEATED_SELF_CHECK
+    status: EXECUTABLE_WITH_EXPLICIT_REAL_PROVIDER
+  NoRetrieval:
+    status: BLOCKED_PARENT_COMPONENT_NOT_ACTIVE
+  NoConstrainedExtraction:
+    status: BLOCKED_PARENT_COMPONENT_NOT_ACTIVE
+  NoValidationFeedback:
+    status: BLOCKED_PARENT_COMPONENT_NOT_ACTIVE
+production_authorization_and_review_ablation: FORBIDDEN
+human_comparisons: NOT_RUN_NO_INDEPENDENT_EXPERT_EVALUATION

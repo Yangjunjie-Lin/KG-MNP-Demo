@@ -72,6 +72,7 @@ from zhigou_toolchain.modeling.control_plane.service import ModelingWorkspaceSer
 from zhigou_toolchain.modeling.control_plane.terminology import (
     build_terminology_catalog,
 )
+from zhigou_toolchain.modeling.five_stage.agents import invoke
 from zhigou_toolchain.plugins.registry import PluginRegistry
 from zhigou_toolchain.plugins.snapshot import build_snapshot, verify_snapshot
 
@@ -200,7 +201,7 @@ def _propose(app,modeling, params):
         if declared or params["providers"] != ["manual-candidate-provider"]:
             raise ServiceBoundaryError("MANUAL_DRAFT_PROVIDER_CONFLICT", "Explicit manual drafts require only the manual provider and no record mapping", status_code=422)
         provider_context["manual_drafts"] = params["manual_drafts"]
-    extraction = None
+    extraction, record_builder = None, None
     if declared:
         if "manual-candidate-provider" not in params["providers"] or "rule-mapping-provider" in params["providers"]:
             raise ServiceBoundaryError("MAPPING_PROVIDER_CONFLICT", "Explicit mappings require the manual provider and exclude default row identities", status_code=422)
@@ -208,20 +209,30 @@ def _propose(app,modeling, params):
         source_ids={source for data in datasets for source in source_store.load_batch(data["source_batch_id"])["sources"]}
         if declared[1]["profile"] == "evidence-record-mapping-v2":
             declared = (declared[0], MixedRecordMapping.model_validate(declared[1]).model_dump())
-            provider_context["manual_drafts"], extraction = mixed_mapping_drafts(rules=declared[1], datasets=datasets,
+        def build_records():
+            if declared[1]["profile"] == "evidence-record-mapping-v2":
+                drafts, report = mixed_mapping_drafts(rules=declared[1], datasets=datasets,
+                    namespace=scope["namespace_policy"]["default_namespace"], baseline=baseline,
+                    question_ids=provider_context["competency_question_ids"], asset_id=declared[0])
+                return {"drafts": drafts, "report": report}
+            drafts = record_mapping_drafts(rules=declared[1], datasets=datasets,
+                source_names={identifier: source_store.verify_source(identifier)["original_name"] for identifier in source_ids},
                 namespace=scope["namespace_policy"]["default_namespace"], baseline=baseline,
                 question_ids=provider_context["competency_question_ids"], asset_id=declared[0])
-        else:
-            provider_context["manual_drafts"]=record_mapping_drafts(rules=declared[1],datasets=datasets,
-                source_names={identifier:source_store.verify_source(identifier)["original_name"] for identifier in source_ids},
-                namespace=scope["namespace_policy"]["default_namespace"],baseline=baseline,
-                question_ids=provider_context["competency_question_ids"],asset_id=declared[0])
+            return {"drafts": drafts, "report": None}
+        record_builder = build_records
+        provider_context["planned_record_mapping"] = declared[1]
+        if not params.get("model_assistance"):
+            mapped = invoke(3, "records.map", record_builder, inputs={"mapping": declared[1], "source_ids": sorted(source_ids)})
+            provider_context["manual_drafts"], extraction = mapped["drafts"], mapped["report"]
+            record_builder = None
     elif "rule-mapping-provider" in params["providers"] and len([e for e in baseline["elements"] if e["element_kind"] == "CLASS"]) > 1:
         raise ServiceBoundaryError("MAPPING_CLASS_REQUIRED", "Multiple baseline classes require explicit record mappings", status_code=422)
     assistance = None
     if params.get("model_assistance"):
         from .modeling_assistance import assist
-        provider_context["manual_drafts"], assistance = assist(app, modeling, bundle, scope, provider_context, params)
+        provider_context["manual_drafts"], assistance = assist(app, modeling, bundle, scope, provider_context, params, record_builder=record_builder)
+        extraction = assistance.get("record_mapping", extraction)
     for provider in sorted(set(params["providers"])):
         if provider not in bundle["provider_policy"]["allowed_provider_ids"]:
             raise ServiceBoundaryError("PROVIDER_FORBIDDEN", "provider not allowed by input bundle", status_code=403)
@@ -274,12 +285,14 @@ def _propose(app,modeling, params):
         snapshots.append(snapshot)
         requests.append(request.artifact)
     item_ids, baseline_ids = {item["item_id"] for item in items}, {item["element_id"] for item in baseline["elements"]}
-    candidates = normalize_candidate_drafts(responses, scope=scope, evidence_ids=evidence_ids, kg_ir_item_ids=item_ids, baseline_element_ids=baseline_ids,model_invocation_refs_by_response=invocation_refs)
+    candidates = invoke(3, "facts.normalize", lambda: normalize_candidate_drafts(responses, scope=scope, evidence_ids=evidence_ids,
+        kg_ir_item_ids=item_ids, baseline_element_ids=baseline_ids, model_invocation_refs_by_response=invocation_refs), inputs={"responses": responses})
     proposal = build_proposal(project_lock_id=modeling.project_lock["lock_id"], input_bundle=bundle,
         field_mappings=mappings, candidate_set=candidates, provider_snapshot_ids=[s["snapshot_id"] for s in snapshots],model_invocation_ids=[i["invocation_id"] for i in invocations], **context)
-    report = prevalidate(proposal, current_project_lock_id=modeling.project_lock["lock_id"], evidence_ids=evidence_ids,
+    report = invoke(4, "integrity.check", lambda: prevalidate(proposal, current_project_lock_id=modeling.project_lock["lock_id"], evidence_ids=evidence_ids,
         kg_ir_item_ids=item_ids, baseline_element_ids=baseline_ids, provider_snapshot_ids=set(proposal["provider_snapshots"]),
-        allowed_namespaces=tuple(scope["namespace_policy"]["allowed_new_namespaces"]), input_bundle=bundle, scope=scope, scope_approval=approval,model_invocation_ids={i["invocation_id"] for i in invocations})
+        allowed_namespaces=tuple(scope["namespace_policy"]["allowed_new_namespaces"]), input_bundle=bundle, scope=scope, scope_approval=approval,
+        model_invocation_ids={i["invocation_id"] for i in invocations}), inputs={"proposal": proposal["proposal_id"]})
     coverage = structural_coverage(context["question_set"], proposal)
     queue = build_review_queue(proposal, report, policy)
     modeling.write_proposal(proposal["proposal_id"], {"ontology-modeling-proposal.json": proposal,
