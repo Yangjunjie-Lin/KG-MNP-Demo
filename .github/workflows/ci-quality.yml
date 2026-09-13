@@ -20,6 +20,8 @@ jobs:
           fetch-depth: 0
       - uses: ./.github/actions/setup-toolchain
       - run: python -m ruff check . --no-cache
+      - name: Check evidence selection source guard early
+        run: python -m pytest tests/test_case_evidence.py::test_no_prefix_selection_in_source -q
       - run: python tools/check_types.py
       - run: python tools/generate_compiler_contracts.py --check
       - run: python scripts/generate_contract_catalog.py --check
