@@ -65,12 +65,13 @@ def read_zip(raw):
         require(len(infos) <= 4096 and sum(i.file_size for i in infos) <= 64_000_000, "ZIP_EXPANSION_LIMIT")
         manifests = [i.filename for i in infos if i.filename == "manifest.json" or i.filename.endswith("/manifest.json")]
         require(len(manifests) == 1, "SINGLE_MANIFEST_REQUIRED")
-        prefix = manifests[0].removesuffix("manifest.json")
+        archive_root = PurePosixPath(manifests[0]).parent
         files, seen = {}, set()
         for info in infos:
             path_name(info.filename)
-            require(info.filename.startswith(prefix), "MIXED_ZIP_ROOTS")
-            name = path_name(info.filename[len(prefix):])
+            member = PurePosixPath(info.filename)
+            require(member.is_relative_to(archive_root), "MIXED_ZIP_ROOTS")
+            name = path_name(member.relative_to(archive_root).as_posix())
             require(name.casefold() not in seen, "DUPLICATE_DELIVERY_PATH")
             require((info.external_attr >> 16) & 0o170000 != 0o120000, "ZIP_SYMLINK_REJECTED")
             require(info.file_size <= 32_000_000 and info.file_size <= max(1, info.compress_size) * 200, "ZIP_ENTRY_LIMIT")

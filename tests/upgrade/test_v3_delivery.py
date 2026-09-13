@@ -68,6 +68,24 @@ def test_zip_paths_rejected_without_writing_files(name):
         read_zip(data.getvalue())
 
 
+@pytest.mark.parametrize("name", ["delivery-other/payload.txt", "delivery2/payload.txt", "outside/payload.txt"])
+def test_zip_root_is_a_directory_boundary_not_a_similar_name(name):
+    data = BytesIO()
+    with zipfile.ZipFile(data, "w") as archive:
+        archive.writestr("delivery/manifest.json", b"{}")
+        archive.writestr(name, b"unrelated")
+    with pytest.raises(DeliveryError, match="MIXED_ZIP_ROOTS"):
+        read_zip(data.getvalue())
+
+
+def test_zip_root_preserves_nested_relative_files():
+    data = BytesIO()
+    with zipfile.ZipFile(data, "w") as archive:
+        archive.writestr("delivery/manifest.json", b"{}")
+        archive.writestr("delivery/nested/payload.txt", b"retained")
+    assert read_zip(data.getvalue()) == {"manifest.json": b"{}", "nested/payload.txt": b"retained"}
+
+
 def test_incoming_schema_cannot_relax_pinned_contract():
     files = reference_files()
     update_file(files, "contracts/delivery.schema.json", {"type": "object"})

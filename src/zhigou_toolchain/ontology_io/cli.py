@@ -5,7 +5,7 @@ import argparse
 import hashlib
 import json
 from collections import defaultdict
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from statistics import mean
 from uuid import uuid4
 
@@ -147,8 +147,9 @@ def prepare_cq4oe(directory, output, *, task, limit):
     asset = load(Path(directory) / "asset-lock.json")
     if asset["commit"] != CQ4OE_COMMIT:
         raise ValueError("CQ4OE_REVISION_MISMATCH")
-    prefix = ("CQ2Term" if task == "cq2term" else "CQ2Onto") + "/competency_question/"
-    declarations = sorted((r for r in asset["files"] if r["path"].startswith(prefix) and r["path"].endswith(".json")), key=lambda r: r["path"])[:limit]
+    input_directory = PurePosixPath("CQ2Term" if task == "cq2term" else "CQ2Onto") / "competency_question"
+    declarations = sorted((r for r in asset["files"] if PurePosixPath(r["path"]).parent == input_directory
+        and PurePosixPath(r["path"]).suffix == ".json"), key=lambda r: r["path"])[:limit]
     if not declarations:
         raise ValueError("CQ4OE_INPUT_ASSETS_MISSING")
     samples = [adapt_cq4oe(load(Path(directory) / row["path"]), sample_id=Path(row["path"]).stem, task=task).model_dump(mode="json") for row in declarations]
