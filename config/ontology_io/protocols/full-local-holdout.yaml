@@ -1,0 +1,54 @@
+# Frozen design; NOT a paid-experiment authorization or a completed run.
+matrix_id: ontology-io-local-holdout-20260913-v1
+source_registry: config/ontology_io/benchmark_registry.yaml
+tasks:
+  - {benchmark: llms4ol_2026, task: flagship, primary: graph_similarity}
+  - {benchmark: llms4ol_2026, task: reuse, primary: graph_similarity}
+  - {benchmark: cq4oe_0_0_1, task: cq2term, primary: ClassProperty}
+  - {benchmark: cq4oe_0_0_1, task: cq2onto, primary: Axiom}
+  - {benchmark: oskgc, task: schema_guided_abox, primary: micro_F1}
+planned_systems: [DirectGeneralLLM, DirectBudgetControl, OursFull]
+paper_systems: [Ontogenia, MemorylessCQbyCQ]
+paper_scope: CQ_TASKS_ONLY_AFTER_NATIVE_CORE_COMPARISON
+total_budget_authorization: null
+isolation: VERIFIED_OS_MINIMAL_FILES_ENDPOINT_ONLY_REQUIRED
+retrieval_corpus: NONE_AUTHORIZED_NO_TARGET_ONTOLOGY_OR_FEWSHOT
+matcher:
+  llms4ol_exact: PINNED_NATIVE
+  llms4ol_fuzzy: {threshold: 0.90, primary: false}
+  llms4ol_semantic: BLOCKED_REMOTE_MODEL_CODE_AND_WEIGHT_LOCK
+  cq4oe: BLOCKED_EMBEDDINGGEMMA_REVISION_AND_HERMIT_PROFILE
+  oskgc: PINNED_NATIVE_GLOBAL_SETS_FILE_ROUNDING_SS
+statistics:
+  unit: SOURCE_DOCUMENT_OR_WHOLE_ONTOLOGY_CLUSTER
+  repeats: NATIVE_AGGREGATE_PER_REPEAT_THEN_MEAN
+  nonadditive: RECOMPUTE_NATIVE_AGGREGATE_EACH_RESAMPLE
+  family: ALL_PRIMARY_B0_OURS_AND_BBUDGET_OURS_COMPARISONS
+  correction: HOLM
+  practical_importance_threshold: null
+  tiny_ontology_sets: EXACT_CLUSTER_EXCHANGE_WITH_UNCERTAINTY
+failure_policy: ALL_PLANNED_ROWS_RETAINED_NULL_PRIMARY_IF_ANY_UNSCORABLE
+missing_prediction_sensitivity: EMPTY_OUTPUT_ONLY_AS_SEPARATE_LOCAL_ANALYSIS_NOT_OFFICIAL
+contamination: POSSIBLE_PUBLIC_DATA_CONTAMINATION
+generation:
+  protocol_id: ontology-io-full-design-v1
+  model_id: gpt-6-astra
+  declared_revision: configured-alias:gpt-6-astra
+  reasoning_effort: xhigh
+  systems: [DirectGeneralLLM, DirectBudgetControl, TwoAgentV3]
+  replicates: 3
+  matching: exact
+  primary_metrics: [graph_similarity]
+  bootstrap_samples: 2000
+  statistics_seed: 1729
+  budget:
+    max_calls: 4
+    max_input_characters: 14000
+    max_output_tokens: 8192
+    max_total_tokens: 120000
+    context_window_tokens: 32768
+model_revision_attestation: PROVIDER_ALIAS_NOT_INDEPENDENTLY_VERIFIED_WEIGHT
+sampling: PROVIDER_DEFAULT_NOT_FIXED_SEED_NOT_SUPPORTED_BY_CURRENT_TRANSPORT
+requested_seeds_if_supported: [17, 29, 43]
+# Final LIVE freeze MUST resolve sampling and supported seeds explicitly.
+full_execution_qualification: BLOCKED_NOT_PREREGISTERED_READY

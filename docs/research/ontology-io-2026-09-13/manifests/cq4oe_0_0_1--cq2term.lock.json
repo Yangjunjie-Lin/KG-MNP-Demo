@@ -1,0 +1,68 @@
+{
+  "benchmark_id": "cq4oe_0_0_1",
+  "dataset_version": "248e0c6cfa498c4630b17a83290628d9f8adc4b6",
+  "task_id": "cq2term",
+  "evaluation_scope": "ADAPTED_ANALYSIS",
+  "input_sha256": "ed2628fd2068c03e33bbb9ab14211becf6347e878f8cfd0dc1b51b2da1277ce7",
+  "sample_count": 6,
+  "grouping": "WHOLE_ONTOLOGY_CQ_SET",
+  "selection": "ALL_LOCKED_CQ_DOCUMENTS",
+  "source_files": [
+    {
+      "path": "CQ2Term/competency_question/awo_cqs.json",
+      "bytes": 511,
+      "sha256": "93beca4a263aed32fdab66be8e5dd4ac0969d460d11bb5a2f3aaed8e5649932d",
+      "git_blob": "7c23d539de2e614f91ad2a7ebfa6d3b7fd8704bf"
+    },
+    {
+      "path": "CQ2Term/competency_question/odrl_cq2term_cqs.json",
+      "bytes": 2085,
+      "sha256": "e2d1508d07c069c5179ba6a855bc9e17b7a383ffa47cbdbed14a9397ff09d0b8",
+      "git_blob": "fddf38c14eb10b8c5da25d333e9295f221f3585d"
+    },
+    {
+      "path": "CQ2Term/competency_question/swo_cq2term_cqs.json",
+      "bytes": 2567,
+      "sha256": "beebd6c838f2909e128ea7592101015c9910e13b11ceea442b12eeee95b75509",
+      "git_blob": "cff89e183bfbac65b2e84142b8f00f4e6903bea3"
+    },
+    {
+      "path": "CQ2Term/competency_question/vgo_cq2term_cqs.json",
+      "bytes": 2134,
+      "sha256": "0788bd66092887a09486c858bd3b22d4b7e82bd75ebfa5cd9a329dad37c8f492",
+      "git_blob": "e7a209915060ce8aacb86a7d109de371770ad0ec"
+    },
+    {
+      "path": "CQ2Term/competency_question/water_cq2term_cqs.json",
+      "bytes": 2183,
+      "sha256": "618d4f6641995a6e49918152bde54f5da4ad9c369eb789a6b1f0e36a55e37638",
+      "git_blob": "df67c09e303e2c7fae5bebbe2a8ab7c33378a333"
+    },
+    {
+      "path": "CQ2Term/competency_question/wine_cqs.json",
+      "bytes": 394,
+      "sha256": "8a4e84a4ed0869da765fc784686ed0d7eeab3846936e995c4c1af70a8d1cad3a",
+      "git_blob": "e46ee8e185791d2a2106d3c52da5680c8b41e5df"
+    }
+  ],
+  "generation_files": [
+    "generation/inputs.json"
+  ],
+  "scorer_only_files": [
+    "scoring/gold.json"
+  ],
+  "gold_sha256": "f08d88f442f6de89f98b8edc0f49a01bf9c5d4ec9da276ea1de2f596297e159a",
+  "scorer_status": "NATIVE_HARD_TERM_METHOD_ONLY_FULL_TOP3_ALIGNMENT_BLOCKED",
+  "abox": "NOT_APPLICABLE_NO_INSTANCES",
+  "smoke_subset_not_full_benchmark": false,
+  "scope_label": "ALL_PUBLIC_ONTOLOGIES_NOT_OFFICIAL_TEST",
+  "group_count": 6,
+  "ontologies": [
+    "awo_cqs",
+    "odrl_cq2term_cqs",
+    "swo_cq2term_cqs",
+    "vgo_cq2term_cqs",
+    "water_cq2term_cqs",
+    "wine_cqs"
+  ]
+}

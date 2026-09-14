@@ -1,0 +1,2788 @@
+[
+  {
+    "benchmark": "llms4ol_2026",
+    "commit": "315a9a5d883eada26e00fef1356a05802936c584",
+    "repository": "https://github.com/sciknoworg/LLMs4OL-Challenge",
+    "lock_sha256": "61dfb006a70ccae2a75df92842cca584529636f8d0b4730dda44870ce428f521",
+    "files": [
+      {
+        "path": "2026/README.md",
+        "sha256": "b6d6268c879281644724a99ab37e0b8eed1ba5e579ce6add454a849a73505352",
+        "bytes": 1582
+      },
+      {
+        "path": "2026/TaskA-Flagship/train_task_a.json",
+        "sha256": "ddf05cdc7970c64616569252234655985014e3ddbc4e32f1c1be7e5dcc6b1569",
+        "bytes": 15594307
+      },
+      {
+        "path": "2026/TaskB-Reuse/train_task_b.json",
+        "sha256": "6eb4213eb361bced27cfee8c0a2f7ff50e26020feca99ba48492c885ca733dca",
+        "bytes": 11254890
+      },
+      {
+        "path": "2026/metrics/graph_similarity.py",
+        "sha256": "4eb22bfb304a0239269951c3ac65ff8fa39a8fd69fe1159ee40bbeba676159c9",
+        "bytes": 6667,
+        "functions": [
+          {
+            "name": "build_graph",
+            "line": 12
+          },
+          {
+            "name": "edge_f1",
+            "line": 19
+          },
+          {
+            "name": "get_neighborhood",
+            "line": 40
+          },
+          {
+            "name": "neighborhood_similarity",
+            "line": 48
+          },
+          {
+            "name": "normalize",
+            "line": 68
+          },
+          {
+            "name": "normalize_triples",
+            "line": 71
+          },
+          {
+            "name": "build_taxonomy_graph",
+            "line": 74
+          },
+          {
+            "name": "taxonomy_similarity",
+            "line": 82
+          },
+          {
+            "name": "triple_similarity_fuzzy",
+            "line": 108
+          },
+          {
+            "name": "align_triples_fuzzy",
+            "line": 114
+          },
+          {
+            "name": "build_embeddings",
+            "line": 131
+          },
+          {
+            "name": "triple_similarity_semantic",
+            "line": 138
+          },
+          {
+            "name": "align_triples_semantic",
+            "line": 144
+          },
+          {
+            "name": "exact_match",
+            "line": 161
+          },
+          {
+            "name": "fuzzy_match",
+            "line": 179
+          },
+          {
+            "name": "semantic_match",
+            "line": 194
+          },
+          {
+            "name": "evaluate",
+            "line": 211
+          }
+        ],
+        "imports": [
+          "import networkx as nx",
+          "from collections import defaultdict",
+          "from rapidfuzz import fuzz",
+          "from sentence_transformers import SentenceTransformer",
+          "import numpy as np",
+          "from scipy.optimize import linear_sum_assignment"
+        ]
+      },
+      {
+        "path": "2026/metrics/taxonomy.py",
+        "sha256": "0598f066f8fbf96a5f590bc7c6ca4eb67ebbf7cb5088431359ae8fd42290fce2",
+        "bytes": 4877,
+        "functions": [
+          {
+            "name": "exact_match",
+            "line": 12
+          },
+          {
+            "name": "normalize",
+            "line": 34
+          },
+          {
+            "name": "edge_similarity",
+            "line": 37
+          },
+          {
+            "name": "fuzzy_match",
+            "line": 42
+          },
+          {
+            "name": "semantic_match",
+            "line": 72
+          },
+          {
+            "name": "evaluate",
+            "line": 117
+          }
+        ],
+        "imports": [
+          "from typing import Dict, List, Union",
+          "from rapidfuzz import fuzz",
+          "import numpy as np",
+          "from sentence_transformers import SentenceTransformer",
+          "from sklearn.metrics.pairwise import cosine_similarity",
+          "from scipy.optimize import linear_sum_assignment",
+          "from tqdm import tqdm"
+        ]
+      },
+      {
+        "path": "LICENSE",
+        "sha256": "92b5cc2ee30a8335fe5206ae7e07c9766f688c8968668b7b65dbc95273719782",
+        "bytes": 1067,
+        "notice_start": [
+          "MIT License",
+          "",
+          "Copyright (c) 2025 SciKnowOrg",
+          "",
+          "Permission is hereby granted, free of charge, to any person obtaining a copy",
+          "of this software and associated documentation files (the \"Software\"), to deal",
+          "in the Software without restriction, including without limitation the rights",
+          "to use, copy, modify, merge, publish, distribute, sublicense, and/or sell"
+        ]
+      },
+      {
+        "path": "README.md",
+        "sha256": "325c0721a975e2eaf617396490f8b5247fa407822b8fd3660cdc6c6364d0d385",
+        "bytes": 3974
+      }
+    ]
+  },
+  {
+    "benchmark": "cq4oe_0_0_1",
+    "commit": "248e0c6cfa498c4630b17a83290628d9f8adc4b6",
+    "repository": "https://github.com/oeg-upm/cq4oe-benchmark",
+    "lock_sha256": "6eab0cb6682d7497ab0043e842cea7e9186eec790db8a0835389471f81329fbb",
+    "files": [
+      {
+        "path": "CQ2Onto/00_gold_standard/awo/axioms/awo_axiom_gold.json",
+        "sha256": "a74b7f3428d74e69987f7fcdb4706bb51aa660528c9c947fac90db16492bf330",
+        "bytes": 20211
+      },
+      {
+        "path": "CQ2Onto/00_gold_standard/awo/axioms/sub_awo_atomic_tbox.json",
+        "sha256": "528e2143884e0513aebe0a65f3001ea13d80124ab4c520f12422a90f5168979a",
+        "bytes": 16584
+      },
+      {
+        "path": "CQ2Onto/00_gold_standard/awo/axioms/sub_awo_atomic_tbox.txt",
+        "sha256": "7c2b35cc0b2dfaf5ad3b5c59da77c8eeba8cf637388a95a3bdff79c37ddfeb6b",
+        "bytes": 4547
+      },
+      {
+        "path": "CQ2Onto/00_gold_standard/awo/axioms/sub_awo_atomic_tbox.xlsx",
+        "sha256": "c999a29b8acee515896b6d77e2ae6348067b1eefc0bb11e4200ea4aed0b0e58a",
+        "bytes": 6292
+      },
+      {
+        "path": "CQ2Onto/00_gold_standard/awo/ontology/sub_awo.owl",
+        "sha256": "af71c471eb68add586d307cb0e0ed8deebd988047c7f3a1c1872360ed4b75c05",
+        "bytes": 14363
+      },
+      {
+        "path": "CQ2Onto/00_gold_standard/odrl/axioms/odrl_axiom_gold.json",
+        "sha256": "3ba39978a829cc6a48a8d4ba943bc8cefda1fc33202be754bb4555a1f86a5a9b",
+        "bytes": 40331
+      },
+      {
+        "path": "CQ2Onto/00_gold_standard/odrl/axioms/sub_odrl_atomic_tbox.json",
+        "sha256": "8069af18cd81846c741d16617a896bf3913b90ab132be9cd139760b9e7043d83",
+        "bytes": 32391
+      },
+      {
+        "path": "CQ2Onto/00_gold_standard/odrl/axioms/sub_odrl_atomic_tbox.txt",
+        "sha256": "48dedd516fa1ca64618b9cc131c85e553a65c5b34154898fc40e6dd7e0d404b6",
+        "bytes": 8569
+      },
+      {
+        "path": "CQ2Onto/00_gold_standard/odrl/axioms/sub_odrl_atomic_tbox.xlsx",
+        "sha256": "80b138d96dbcbd7f6710237a436e05db179d713967ed346d11633810635351d4",
+        "bytes": 7742
+      },
+      {
+        "path": "CQ2Onto/00_gold_standard/odrl/ontology/sub_odrl.owl",
+        "sha256": "95b0e95324a920c175be995dfb7d64c52506966cf5515a6b841ab77538d41e1a",
+        "bytes": 16365
+      },
+      {
+        "path": "CQ2Onto/00_gold_standard/swo/axioms/sub_swo_atomic_tbox.json",
+        "sha256": "687f314fb04e5b3111104445697fbb87dffe147222e8966f7102090bac4a0f0b",
+        "bytes": 49260
+      },
+      {
+        "path": "CQ2Onto/00_gold_standard/swo/axioms/sub_swo_atomic_tbox.txt",
+        "sha256": "fca7b41b6cca4ca7a4416d744abba9728c2a2b6556aa9b3bc88791b5316d6a06",
+        "bytes": 14502
+      },
+      {
+        "path": "CQ2Onto/00_gold_standard/swo/axioms/swo_axiom_gold.json",
+        "sha256": "bf688ff25894cfe0f4968836fffe3670f48bed017bb329b4b326c870258a4de4",
+        "bytes": 55181
+      },
+      {
+        "path": "CQ2Onto/00_gold_standard/swo/ontology/sub_swo.owl",
+        "sha256": "654b5d6e767f3d269f4a1a2f1fa26ffc46158d826937daf4ddf150eb5c3a2a03",
+        "bytes": 45618
+      },
+      {
+        "path": "CQ2Onto/00_gold_standard/vgo/axioms/sub_vgo_atomic_tbox.json",
+        "sha256": "ebf85f1f66585e4b20a29a56f98c5f3cacf9bc4b00e29425f4562388cd73fde6",
+        "bytes": 42308
+      },
+      {
+        "path": "CQ2Onto/00_gold_standard/vgo/axioms/sub_vgo_atomic_tbox.txt",
+        "sha256": "4fc371ab994a1078513f3b9728405af28d11b104cec36da3db9dd0e4a6cbb97e",
+        "bytes": 11738
+      },
+      {
+        "path": "CQ2Onto/00_gold_standard/vgo/axioms/sub_vgo_atomic_tbox.xlsx",
+        "sha256": "af91492797480844fd9f8694f0fa4f8a8ca39661c0845db674f3e655a175c5af",
+        "bytes": 8553
+      },
+      {
+        "path": "CQ2Onto/00_gold_standard/vgo/axioms/vgo_axiom_gold.json",
+        "sha256": "4ff69245fd3e507b158255c004b3ee9a50e4f97f7aa9878aa69e7b3b9ec1f83d",
+        "bytes": 52161
+      },
+      {
+        "path": "CQ2Onto/00_gold_standard/vgo/ontology/sub_vgo.owl",
+        "sha256": "5e710d3f7e13b750b2bb0e3a82834b9d65e20462cef51e772271c727fb61703b",
+        "bytes": 37584
+      },
+      {
+        "path": "CQ2Onto/00_gold_standard/water/axioms/sub_water_atomic_tbox.json",
+        "sha256": "3fa5973d45ee1dd00b3bc1f5f7c7539d5745bd8a12fec37b9ded1fe71e6788c8",
+        "bytes": 24896
+      },
+      {
+        "path": "CQ2Onto/00_gold_standard/water/axioms/sub_water_atomic_tbox.txt",
+        "sha256": "23e18587cc73939a2eedbb1dfe5844e2f45d7634ac2b901522b4badc051bdd1b",
+        "bytes": 7323
+      },
+      {
+        "path": "CQ2Onto/00_gold_standard/water/axioms/sub_water_atomic_tbox.xlsx",
+        "sha256": "95fd1bd55263a25167b08808f8968d62bedf7d766f3dfa7190ee22ab6272f0f1",
+        "bytes": 7232
+      },
+      {
+        "path": "CQ2Onto/00_gold_standard/water/axioms/water_axiom_gold.json",
+        "sha256": "d664c2e9c8d7cd4eebbc39dd497c4fe510278c9c48a1820256915e40087650bb",
+        "bytes": 31214
+      },
+      {
+        "path": "CQ2Onto/00_gold_standard/water/ontology/sub_water.owl",
+        "sha256": "4c5bd828ee94150b8cadcf38eb1b54815ff004d5520d497dd994877b0b5faa86",
+        "bytes": 58307
+      },
+      {
+        "path": "CQ2Onto/00_gold_standard/wine/axioms/.DS_Store",
+        "sha256": "d65165279105ca6773180500688df4bdc69a2c7b771752f0a46ef120b7fd8ec3",
+        "bytes": 6148
+      },
+      {
+        "path": "CQ2Onto/00_gold_standard/wine/axioms/sub_wine_atomic_tbox.json",
+        "sha256": "e127aa20daa5ee164a6fd1e474d29b965e0881c61348bb52e0b34ad0a6e59bf9",
+        "bytes": 44567
+      },
+      {
+        "path": "CQ2Onto/00_gold_standard/wine/axioms/sub_wine_atomic_tbox.txt",
+        "sha256": "75df97194994d6239fe4e7dafee63e3b47c298e244ffa2e8cf82498dfe32261a",
+        "bytes": 11569
+      },
+      {
+        "path": "CQ2Onto/00_gold_standard/wine/axioms/sub_wine_atomic_tbox.xlsx",
+        "sha256": "60ac0b8aac1f046af221e0c0f403123aaad33fe9a5e12c8eb33ee95494788e98",
+        "bytes": 8558
+      },
+      {
+        "path": "CQ2Onto/00_gold_standard/wine/axioms/wine_axiom_gold.json",
+        "sha256": "dad9bb8f87de72d176a1399f3c544c9f83f0e5643fc7713fa0913284486d5ba1",
+        "bytes": 45027
+      },
+      {
+        "path": "CQ2Onto/00_gold_standard/wine/ontology/sub_wine.owl",
+        "sha256": "64a2be02a2a5ae1b6fdd163b298c8af5524e9639a6b7c6cbe9faa97d6db4efad",
+        "bytes": 90695
+      },
+      {
+        "path": "CQ2Onto/competency_question/awo_cqs.json",
+        "sha256": "93beca4a263aed32fdab66be8e5dd4ac0969d460d11bb5a2f3aaed8e5649932d",
+        "bytes": 511
+      },
+      {
+        "path": "CQ2Onto/competency_question/odrl_cq2onto_cqs.json",
+        "sha256": "369cbc7cf2f5f554d562ce5446fc865b5dc022a495dadc31b0b71721b2d502b5",
+        "bytes": 1981
+      },
+      {
+        "path": "CQ2Onto/competency_question/swo_cq2onto_cqs.json",
+        "sha256": "42fbd56ad09b5d5ad71f77a6296dde3c50b66e2dab0b054ef60743f4a48b16f4",
+        "bytes": 3427
+      },
+      {
+        "path": "CQ2Onto/competency_question/vgo_cq2onto_cqs.json",
+        "sha256": "fc3b6ec0e290ab651bf0aa5af22fa363c308677294993bf673a5a516fedc5af6",
+        "bytes": 3085
+      },
+      {
+        "path": "CQ2Onto/competency_question/water_cq2onto_cqs.json",
+        "sha256": "c19b6325b3206204d4f86da391b85108766e6d77b0c96844a58ae999710fd0fd",
+        "bytes": 2280
+      },
+      {
+        "path": "CQ2Onto/competency_question/wine_cqs.json",
+        "sha256": "8a4e84a4ed0869da765fc784686ed0d7eeab3846936e995c4c1af70a8d1cad3a",
+        "bytes": 394
+      },
+      {
+        "path": "CQ2Onto/prompts/cqbycq_prompts.json",
+        "sha256": "0a644b9be2af9f3f1038c9dea4c2dc236435938c26ccbc1dec74072fb1f1a27d",
+        "bytes": 2772
+      },
+      {
+        "path": "CQ2Onto/prompts/maseo_prompts.json",
+        "sha256": "5f84d422048d0a890c743c990e3cf33f689d38f06446dd29e0d07b391a405302",
+        "bytes": 3490
+      },
+      {
+        "path": "CQ2Onto/scripts/axioms/Axioms_atomic.py",
+        "sha256": "81cf74134b007d9a983d6a8492918615d2c7eb7a94a49740263fb5d54868b774",
+        "bytes": 32624,
+        "functions": [
+          {
+            "name": "_detect_rdf_format",
+            "line": 28
+          },
+          {
+            "name": "_parse_rdf_with_fallback",
+            "line": 33
+          },
+          {
+            "name": "_ensure_rdfxml_for_owlready",
+            "line": 50
+          },
+          {
+            "name": "_clean_name",
+            "line": 66
+          },
+          {
+            "name": "_to_display_name",
+            "line": 75
+          },
+          {
+            "name": "_get_prop_name",
+            "line": 81
+          },
+          {
+            "name": "_python_type_to_xsd",
+            "line": 88
+          },
+          {
+            "name": "_is_literal_like",
+            "line": 97
+          },
+          {
+            "name": "_literal_to_json",
+            "line": 101
+          },
+          {
+            "name": "_looks_like_data_expr",
+            "line": 107
+          },
+          {
+            "name": "_get_filler",
+            "line": 121
+          },
+          {
+            "name": "to_dl",
+            "line": 124
+          },
+          {
+            "name": "expr_to_struct",
+            "line": 184
+          },
+          {
+            "name": "get_characteristics",
+            "line": 295
+          },
+          {
+            "name": "_flatten_and",
+            "line": 301
+          },
+          {
+            "name": "_flatten_struct_intersection",
+            "line": 311
+          },
+          {
+            "name": "extract_tbox_axioms",
+            "line": 321
+          },
+          {
+            "name": "_sanitize_for_excel",
+            "line": 754
+          },
+          {
+            "name": "save_excel",
+            "line": 775
+          },
+          {
+            "name": "save_json",
+            "line": 819
+          },
+          {
+            "name": "save_txt",
+            "line": 873
+          },
+          {
+            "name": "_resolve_label",
+            "line": 335
+          },
+          {
+            "name": "add_axiom",
+            "line": 374
+          },
+          {
+            "name": "_add_subclass_decomposed",
+            "line": 389
+          },
+          {
+            "name": "_label_for",
+            "line": 792
+          },
+          {
+            "name": "_label_for",
+            "line": 822
+          }
+        ],
+        "imports": [
+          "import sys",
+          "import os",
+          "import json",
+          "import tempfile",
+          "from collections import defaultdict",
+          "from owlready2 import *",
+          "import rdflib",
+          "from rdflib import RDF, RDFS, OWL, URIRef",
+          "import openpyxl",
+          "from openpyxl.styles import Font, PatternFill, Alignment"
+        ]
+      },
+      {
+        "path": "CQ2Onto/scripts/axioms/eval_axioms.py",
+        "sha256": "9fe255be088e2eb02ec9b1ddd9ffa40bfc69cfb0071eeb5d856ea34c9822f0f4",
+        "bytes": 94681,
+        "functions": [
+          {
+            "name": "load_axioms",
+            "line": 19
+          },
+          {
+            "name": "load_cq_definitions",
+            "line": 35
+          },
+          {
+            "name": "_norm",
+            "line": 41
+          },
+          {
+            "name": "load_alignment_csv",
+            "line": 48
+          },
+          {
+            "name": "label_map_for",
+            "line": 107
+          },
+          {
+            "name": "label_map_from_owl",
+            "line": 127
+          },
+          {
+            "name": "compute_layer1",
+            "line": 194
+          },
+          {
+            "name": "_format_layer1_table",
+            "line": 207
+          },
+          {
+            "name": "_cosine",
+            "line": 295
+          },
+          {
+            "name": "_axiom_embed_text",
+            "line": 306
+          },
+          {
+            "name": "_greedy_one_to_one",
+            "line": 310
+          },
+          {
+            "name": "compute_layer2",
+            "line": 330
+          },
+          {
+            "name": "_attach_prf",
+            "line": 396
+          },
+          {
+            "name": "_format_layer2_table",
+            "line": 412
+          },
+          {
+            "name": "_save_layer2_pairs_csv",
+            "line": 461
+          },
+          {
+            "name": "normalize_datatype",
+            "line": 484
+          },
+          {
+            "name": "normalize_oneof",
+            "line": 518
+          },
+          {
+            "name": "_norm_entity",
+            "line": 533
+          },
+          {
+            "name": "_aligned_subject",
+            "line": 545
+          },
+          {
+            "name": "_equal_under_class_align",
+            "line": 564
+          },
+          {
+            "name": "_equal_under_prop_align",
+            "line": 582
+          },
+          {
+            "name": "_struct_equal",
+            "line": 599
+          },
+          {
+            "name": "_collect_pred_entity_names",
+            "line": 744
+          },
+          {
+            "name": "_judge_one_axiom",
+            "line": 775
+          },
+          {
+            "name": "compute_layer3",
+            "line": 837
+          },
+          {
+            "name": "_prf1",
+            "line": 921
+          },
+          {
+            "name": "_format_layer3_table",
+            "line": 928
+          },
+          {
+            "name": "_format_layer3_details",
+            "line": 976
+          },
+          {
+            "name": "_save_details_csv",
+            "line": 996
+          },
+          {
+            "name": "compute_layer4",
+            "line": 1080
+          },
+          {
+            "name": "_format_layer4",
+            "line": 1140
+          },
+          {
+            "name": "compute_cq_coverage",
+            "line": 1204
+          },
+          {
+            "name": "_format_cq_coverage",
+            "line": 1287
+          },
+          {
+            "name": "_tt_label",
+            "line": 1334
+          },
+          {
+            "name": "build_axioms_report_md",
+            "line": 1338
+          },
+          {
+            "name": "append_axioms_report_to_md",
+            "line": 1900
+          },
+          {
+            "name": "save_cq_coverage_csv",
+            "line": 1940
+          },
+          {
+            "name": "save_result_json",
+            "line": 1963
+          },
+          {
+            "name": "main",
+            "line": 2090
+          },
+          {
+            "name": "_resolve_label",
+            "line": 158
+          },
+          {
+            "name": "__init__",
+            "line": 233
+          },
+          {
+            "name": "_key",
+            "line": 250
+          },
+          {
+            "name": "embed",
+            "line": 253
+          },
+          {
+            "name": "flush_cache",
+            "line": 285
+          },
+          {
+            "name": "_bucket",
+            "line": 348
+          },
+          {
+            "name": "_walk",
+            "line": 750
+          },
+          {
+            "name": "_is_aligned",
+            "line": 1086
+          },
+          {
+            "name": "_layer3_for",
+            "line": 1104
+          },
+          {
+            "name": "_fmt_prf",
+            "line": 1521
+          },
+          {
+            "name": "_compact_judgment",
+            "line": 1976
+          },
+          {
+            "name": "_enrich_axioms",
+            "line": 2195
+          }
+        ],
+        "imports": [
+          "import argparse",
+          "import csv",
+          "import hashlib",
+          "import json",
+          "import math",
+          "import os",
+          "import re",
+          "import sys",
+          "from collections import Counter, defaultdict",
+          "from typing import Dict, List, Optional, Set, Tuple"
+        ]
+      },
+      {
+        "path": "CQ2Onto/scripts/concept/eval_concept.py",
+        "sha256": "c16e9f9ff04e2335f9e6924ae9d359d21c0c67bd117ef62506ce9d2247118095",
+        "bytes": 65725,
+        "functions": [
+          {
+            "name": "ensure_nltk_resource",
+            "line": 32
+          },
+          {
+            "name": "get_class_name",
+            "line": 40
+          },
+          {
+            "name": "_norm",
+            "line": 67
+          },
+          {
+            "name": "_iri_local_name",
+            "line": 74
+          },
+          {
+            "name": "_rdflib_extract_explicit_classes",
+            "line": 81
+          },
+          {
+            "name": "extract_classes_from_rdfxml_etree",
+            "line": 112
+          },
+          {
+            "name": "extract_classes_from_functional_owlxml",
+            "line": 214
+          },
+          {
+            "name": "extract_classes_from_jsonld",
+            "line": 323
+          },
+          {
+            "name": "extract_classes",
+            "line": 422
+          },
+          {
+            "name": "split_camel_case",
+            "line": 482
+          },
+          {
+            "name": "normalize_key",
+            "line": 488
+          },
+          {
+            "name": "normalize_text",
+            "line": 498
+          },
+          {
+            "name": "check_normalized_duplicates",
+            "line": 507
+          },
+          {
+            "name": "build_records",
+            "line": 525
+          },
+          {
+            "name": "make_gold_entry",
+            "line": 539
+          },
+          {
+            "name": "make_pred_entry",
+            "line": 546
+          },
+          {
+            "name": "match_one_to_one_greedy",
+            "line": 553
+          },
+          {
+            "name": "compute_full_score_matrix",
+            "line": 588
+          },
+          {
+            "name": "compute_lexical_sim_from_normalized",
+            "line": 598
+          },
+          {
+            "name": "get_threshold",
+            "line": 618
+          },
+          {
+            "name": "compute_full_score_table",
+            "line": 628
+          },
+          {
+            "name": "pre_process",
+            "line": 679
+          },
+          {
+            "name": "cal_metrics",
+            "line": 823
+          },
+          {
+            "name": "wordnet_noun_synonyms_from_normalized_text",
+            "line": 850
+          },
+          {
+            "name": "cal_synonym",
+            "line": 867
+          },
+          {
+            "name": "_dict_to_list_of_objects",
+            "line": 949
+          },
+          {
+            "name": "save_json",
+            "line": 972
+          },
+          {
+            "name": "save_all_pairings_to_json",
+            "line": 983
+          },
+          {
+            "name": "build_merged_tp_gold_to_pred",
+            "line": 993
+          },
+          {
+            "name": "build_merged_tp_pred_to_gold",
+            "line": 1016
+          },
+          {
+            "name": "build_best_class_map_top_n",
+            "line": 1039
+          },
+          {
+            "name": "build_best_class_map",
+            "line": 1177
+          },
+          {
+            "name": "save_alignment_trace_csv",
+            "line": 1327
+          },
+          {
+            "name": "save_alignment_trace_json",
+            "line": 1347
+          },
+          {
+            "name": "save_matching_csv",
+            "line": 1385
+          },
+          {
+            "name": "save_best_matching_csv",
+            "line": 1427
+          },
+          {
+            "name": "build_class_report_md",
+            "line": 1449
+          },
+          {
+            "name": "save_class_report_md",
+            "line": 1612
+          },
+          {
+            "name": "get_parser",
+            "line": 1619
+          },
+          {
+            "name": "main",
+            "line": 1750
+          },
+          {
+            "name": "best_label_from_elem",
+            "line": 125
+          },
+          {
+            "name": "_get_label",
+            "line": 341
+          },
+          {
+            "name": "sim_func",
+            "line": 884
+          },
+          {
+            "name": "_vote_count",
+            "line": 1235
+          },
+          {
+            "name": "sim_func",
+            "line": 639
+          },
+          {
+            "name": "sim_func",
+            "line": 700
+          },
+          {
+            "name": "sim_func",
+            "line": 658
+          },
+          {
+            "name": "sim_func",
+            "line": 737
+          }
+        ],
+        "imports": [
+          "import re",
+          "import os",
+          "import csv",
+          "import json",
+          "import argparse",
+          "import xml.etree.ElementTree as ET",
+          "from collections import Counter, defaultdict",
+          "from rdflib import Graph, RDF, OWL, RDFS, Literal",
+          "from rdflib.term import BNode",
+          "from sentence_transformers import util",
+          "from langchain_ollama import OllamaEmbeddings",
+          "import difflib",
+          "import Levenshtein",
+          "import textdistance",
+          "import nltk",
+          "from nltk.corpus import wordnet as wn"
+        ]
+      },
+      {
+        "path": "CQ2Onto/scripts/hierarchy/eval_hierarchy.py",
+        "sha256": "b15112a68ae474312f79a7b89564689313ed085da5f6054cb9ac536ce7ed2940",
+        "bytes": 92563,
+        "functions": [
+          {
+            "name": "_norm",
+            "line": 12
+          },
+          {
+            "name": "load_axioms",
+            "line": 27
+          },
+          {
+            "name": "load_cq_definitions",
+            "line": 43
+          },
+          {
+            "name": "load_alignment_csv",
+            "line": 50
+          },
+          {
+            "name": "label_map_from_owl",
+            "line": 66
+          },
+          {
+            "name": "asserted_hierarchy_from_owl",
+            "line": 128
+          },
+          {
+            "name": "compute_axiom_closure_hermit",
+            "line": 215
+          },
+          {
+            "name": "_split_camel",
+            "line": 511
+          },
+          {
+            "name": "compute_hermit_evaluation",
+            "line": 522
+          },
+          {
+            "name": "compute_cq_coverage_closure",
+            "line": 675
+          },
+          {
+            "name": "load_strict_covered_cqs",
+            "line": 1298
+          },
+          {
+            "name": "_serialize_pairs",
+            "line": 1358
+          },
+          {
+            "name": "build_json_output",
+            "line": 1363
+          },
+          {
+            "name": "save_csv_output",
+            "line": 1451
+          },
+          {
+            "name": "build_md_report",
+            "line": 1524
+          },
+          {
+            "name": "append_md_report",
+            "line": 2139
+          },
+          {
+            "name": "get_parser",
+            "line": 2174
+          },
+          {
+            "name": "main",
+            "line": 2217
+          },
+          {
+            "name": "_resolve_label",
+            "line": 97
+          },
+          {
+            "name": "_local",
+            "line": 152
+          },
+          {
+            "name": "_run_hermit",
+            "line": 251
+          },
+          {
+            "name": "_extract_unsupported_iri",
+            "line": 280
+          },
+          {
+            "name": "_classify_severity",
+            "line": 294
+          },
+          {
+            "name": "_local_name",
+            "line": 424
+          },
+          {
+            "name": "_transitive_closure",
+            "line": 448
+          },
+          {
+            "name": "_normalize_to_gold_iri",
+            "line": 556
+          },
+          {
+            "name": "_pred_to_gold_iri",
+            "line": 563
+          },
+          {
+            "name": "_translate_set",
+            "line": 589
+          },
+          {
+            "name": "_metrics",
+            "line": 618
+          },
+          {
+            "name": "_as_label",
+            "line": 715
+          },
+          {
+            "name": "_extract_names_from_struct",
+            "line": 718
+          },
+          {
+            "name": "_to_frag",
+            "line": 758
+          },
+          {
+            "name": "_is_atomic_class",
+            "line": 767
+          },
+          {
+            "name": "_is_atomic_property",
+            "line": 773
+          },
+          {
+            "name": "axiom_required_pairs",
+            "line": 781
+          },
+          {
+            "name": "axiom_required_pair",
+            "line": 831
+          },
+          {
+            "name": "bfs_shortest_path",
+            "line": 835
+          },
+          {
+            "name": "evaluate_axiom_rescue",
+            "line": 880
+          },
+          {
+            "name": "gold_axioms_to_hierarchy_pairs_for_cq",
+            "line": 958
+          },
+          {
+            "name": "_fmt_gold",
+            "line": 1535
+          },
+          {
+            "name": "_fmt_pred",
+            "line": 1543
+          },
+          {
+            "name": "_src_tag",
+            "line": 1637
+          },
+          {
+            "name": "_gold_src_tag",
+            "line": 1642
+          },
+          {
+            "name": "_pred_origin_str",
+            "line": 1660
+          },
+          {
+            "name": "_record_pair",
+            "line": 965
+          },
+          {
+            "name": "_can_translate",
+            "line": 1824
+          },
+          {
+            "name": "_classify",
+            "line": 1843
+          }
+        ],
+        "imports": [
+          "import argparse",
+          "import csv",
+          "import json",
+          "import os",
+          "import re",
+          "import subprocess",
+          "import sys",
+          "import tempfile",
+          "from collections import defaultdict",
+          "from typing import Dict, List, Optional, Tuple"
+        ]
+      },
+      {
+        "path": "CQ2Onto/scripts/hierarchy/eval_hierarchy_clouser_only_pairs.py",
+        "sha256": "c3d0a31dfd5fc2aa7eb058d12e6477794cbfc4d992336858b4efe0eb3c8a6403",
+        "bytes": 83822,
+        "functions": [
+          {
+            "name": "_norm",
+            "line": 12
+          },
+          {
+            "name": "load_axioms",
+            "line": 26
+          },
+          {
+            "name": "load_cq_definitions",
+            "line": 42
+          },
+          {
+            "name": "load_alignment_csv",
+            "line": 48
+          },
+          {
+            "name": "label_map_from_owl",
+            "line": 63
+          },
+          {
+            "name": "asserted_hierarchy_from_owl",
+            "line": 122
+          },
+          {
+            "name": "compute_axiom_closure_hermit",
+            "line": 208
+          },
+          {
+            "name": "_split_camel",
+            "line": 467
+          },
+          {
+            "name": "compute_hermit_evaluation",
+            "line": 474
+          },
+          {
+            "name": "compute_cq_coverage_closure",
+            "line": 621
+          },
+          {
+            "name": "load_strict_covered_cqs",
+            "line": 1105
+          },
+          {
+            "name": "_serialize_pairs",
+            "line": 1165
+          },
+          {
+            "name": "build_json_output",
+            "line": 1169
+          },
+          {
+            "name": "save_csv_output",
+            "line": 1257
+          },
+          {
+            "name": "build_md_report",
+            "line": 1328
+          },
+          {
+            "name": "append_md_report",
+            "line": 1914
+          },
+          {
+            "name": "get_parser",
+            "line": 1950
+          },
+          {
+            "name": "main",
+            "line": 1996
+          },
+          {
+            "name": "_resolve_label",
+            "line": 93
+          },
+          {
+            "name": "_local",
+            "line": 146
+          },
+          {
+            "name": "_run_hermit",
+            "line": 243
+          },
+          {
+            "name": "_extract_unsupported_iri",
+            "line": 271
+          },
+          {
+            "name": "_classify_severity",
+            "line": 285
+          },
+          {
+            "name": "_local_name",
+            "line": 409
+          },
+          {
+            "name": "_normalize_to_gold_iri",
+            "line": 507
+          },
+          {
+            "name": "_pred_to_gold_iri",
+            "line": 514
+          },
+          {
+            "name": "_translate_set",
+            "line": 538
+          },
+          {
+            "name": "_metrics",
+            "line": 567
+          },
+          {
+            "name": "_as_label",
+            "line": 659
+          },
+          {
+            "name": "_extract_names_from_struct",
+            "line": 662
+          },
+          {
+            "name": "_to_frag",
+            "line": 700
+          },
+          {
+            "name": "_is_atomic_class",
+            "line": 708
+          },
+          {
+            "name": "_is_atomic_property",
+            "line": 713
+          },
+          {
+            "name": "axiom_required_pair",
+            "line": 720
+          },
+          {
+            "name": "bfs_shortest_path",
+            "line": 752
+          },
+          {
+            "name": "evaluate_axiom_rescue",
+            "line": 796
+          },
+          {
+            "name": "gold_axioms_to_hierarchy_pairs_for_cq",
+            "line": 840
+          },
+          {
+            "name": "_fmt_gold",
+            "line": 1339
+          },
+          {
+            "name": "_fmt_pred",
+            "line": 1347
+          },
+          {
+            "name": "_src_tag",
+            "line": 1440
+          },
+          {
+            "name": "_gold_src_tag",
+            "line": 1446
+          },
+          {
+            "name": "_pred_origin_str",
+            "line": 1463
+          },
+          {
+            "name": "_record_pair",
+            "line": 847
+          },
+          {
+            "name": "_can_translate",
+            "line": 1625
+          },
+          {
+            "name": "_classify",
+            "line": 1637
+          }
+        ],
+        "imports": [
+          "import argparse",
+          "import csv",
+          "import json",
+          "import os",
+          "import re",
+          "import subprocess",
+          "import sys",
+          "import tempfile",
+          "from collections import defaultdict",
+          "from typing import Dict, List, Optional, Tuple"
+        ]
+      },
+      {
+        "path": "CQ2Onto/scripts/property/eva_char_in_property.py",
+        "sha256": "825b66ce8f401a6fed1af275dd15b76b1e497cb57c3ae79190f8d8eeba12cfe7",
+        "bytes": 9089,
+        "functions": [
+          {
+            "name": "_build_mutex_map",
+            "line": 21
+          },
+          {
+            "name": "eval_characteristics",
+            "line": 31
+          },
+          {
+            "name": "_metrics",
+            "line": 123
+          },
+          {
+            "name": "_fmt",
+            "line": 134
+          }
+        ],
+        "imports": [
+          "import warnings",
+          "from typing import Optional",
+          "from rdflib import OWL"
+        ]
+      },
+      {
+        "path": "CQ2Onto/scripts/property/eval_property.py",
+        "sha256": "3e286e3bfb41e0d51cc0b5dd5002f10dd5ffbf18c9db1331efe870575dc77cb8",
+        "bytes": 51727,
+        "functions": [
+          {
+            "name": "split_camel_case",
+            "line": 56
+          },
+          {
+            "name": "normalize_key",
+            "line": 62
+          },
+          {
+            "name": "normalize_text",
+            "line": 72
+          },
+          {
+            "name": "check_normalized_duplicates",
+            "line": 81
+          },
+          {
+            "name": "_label_from_uri",
+            "line": 98
+          },
+          {
+            "name": "_get_label",
+            "line": 103
+          },
+          {
+            "name": "_norm",
+            "line": 122
+          },
+          {
+            "name": "_node_label",
+            "line": 128
+          },
+          {
+            "name": "_parse_graph",
+            "line": 135
+          },
+          {
+            "name": "_compute_lexical_sim_from_normalized",
+            "line": 149
+          },
+          {
+            "name": "_build_name_records",
+            "line": 182
+          },
+          {
+            "name": "parse_properties",
+            "line": 193
+          },
+          {
+            "name": "_group_by_type",
+            "line": 245
+          },
+          {
+            "name": "eval_type_distribution",
+            "line": 252
+          },
+          {
+            "name": "_match_one_to_one_greedy",
+            "line": 287
+          },
+          {
+            "name": "_zero_metrics",
+            "line": 317
+          },
+          {
+            "name": "_calc_metrics",
+            "line": 322
+          },
+          {
+            "name": "_match_one_method_standalone",
+            "line": 337
+          },
+          {
+            "name": "_compute_full_score_table",
+            "line": 377
+          },
+          {
+            "name": "_build_best_prop_map_top_n",
+            "line": 419
+          },
+          {
+            "name": "_eval_within_type",
+            "line": 532
+          },
+          {
+            "name": "eval_label_matching",
+            "line": 614
+          },
+          {
+            "name": "eval_functional",
+            "line": 656
+          },
+          {
+            "name": "save_best_matching_csv",
+            "line": 695
+          },
+          {
+            "name": "_compute_property_alignment_trace",
+            "line": 723
+          },
+          {
+            "name": "save_property_alignment_trace_csv",
+            "line": 763
+          },
+          {
+            "name": "save_property_alignment_trace_json",
+            "line": 782
+          },
+          {
+            "name": "build_property_report_md",
+            "line": 824
+          },
+          {
+            "name": "append_property_report_to_md",
+            "line": 1138
+          },
+          {
+            "name": "evaluate_properties",
+            "line": 1196
+          },
+          {
+            "name": "get_parser",
+            "line": 1263
+          },
+          {
+            "name": "main",
+            "line": 1294
+          },
+          {
+            "name": "sim_func",
+            "line": 362
+          },
+          {
+            "name": "sim_func",
+            "line": 365
+          },
+          {
+            "name": "sim_func",
+            "line": 401
+          },
+          {
+            "name": "sim_func",
+            "line": 404
+          },
+          {
+            "name": "_fmt",
+            "line": 684
+          },
+          {
+            "name": "_num",
+            "line": 1035
+          },
+          {
+            "name": "_pct",
+            "line": 1037
+          }
+        ],
+        "imports": [
+          "import argparse",
+          "import csv",
+          "import difflib",
+          "import json",
+          "import os",
+          "import re",
+          "from collections import Counter, defaultdict",
+          "from dataclasses import dataclass, field",
+          "from typing import Optional",
+          "import Levenshtein",
+          "import textdistance",
+          "from langchain_ollama import OllamaEmbeddings",
+          "from rdflib import Graph, Literal, OWL, RDF, RDFS",
+          "from rdflib.term import BNode",
+          "from sentence_transformers import util",
+          "from eva_char_in_property import eval_characteristics"
+        ]
+      },
+      {
+        "path": "CQ2Onto/scripts/run_all_evaluation_agent_4datsets.py",
+        "sha256": "c224a598ce64f4155afbdf28ce2c8c91acdae71170e20c002b2cdb790f941320",
+        "bytes": 7711,
+        "functions": [
+          {
+            "name": "run",
+            "line": 12
+          },
+          {
+            "name": "detect_dataset",
+            "line": 19
+          },
+          {
+            "name": "find_gold_owl",
+            "line": 27
+          },
+          {
+            "name": "find_gold_axioms",
+            "line": 35
+          },
+          {
+            "name": "main",
+            "line": 45
+          }
+        ],
+        "imports": [
+          "import subprocess",
+          "from pathlib import Path"
+        ]
+      },
+      {
+        "path": "CQ2Onto/scripts/triple/eval_triple.py",
+        "sha256": "a326ce3575e167f8685cbbd963f295a586f67b1ee7c0af80170d3787c22ba1ca",
+        "bytes": 65349,
+        "functions": [
+          {
+            "name": "split_camel_case",
+            "line": 27
+          },
+          {
+            "name": "normalize_text",
+            "line": 33
+          },
+          {
+            "name": "normalize_datatype",
+            "line": 43
+          },
+          {
+            "name": "_parse_graph",
+            "line": 124
+          },
+          {
+            "name": "_label_from_uri",
+            "line": 139
+          },
+          {
+            "name": "_get_label",
+            "line": 144
+          },
+          {
+            "name": "_norm",
+            "line": 174
+          },
+          {
+            "name": "_class_label",
+            "line": 197
+          },
+          {
+            "name": "parse_property_axioms",
+            "line": 204
+          },
+          {
+            "name": "_load_alignment_csv",
+            "line": 257
+          },
+          {
+            "name": "load_class_alignment",
+            "line": 290
+          },
+          {
+            "name": "load_property_alignment",
+            "line": 295
+          },
+          {
+            "name": "evaluate_layer1",
+            "line": 301
+          },
+          {
+            "name": "evaluate_layer2",
+            "line": 332
+          },
+          {
+            "name": "_judge_class_set",
+            "line": 421
+          },
+          {
+            "name": "_judge_datatype_set",
+            "line": 459
+          },
+          {
+            "name": "evaluate_layer3",
+            "line": 474
+          },
+          {
+            "name": "evaluate_layer4",
+            "line": 659
+          },
+          {
+            "name": "evaluate",
+            "line": 789
+          },
+          {
+            "name": "generate_report",
+            "line": 842
+          },
+          {
+            "name": "save_layer3_pairs_csv",
+            "line": 1088
+          },
+          {
+            "name": "save_layer3_pairs_json",
+            "line": 1140
+          },
+          {
+            "name": "build_triple_report_md",
+            "line": 1171
+          },
+          {
+            "name": "append_triple_report_to_md",
+            "line": 1524
+          },
+          {
+            "name": "get_parser",
+            "line": 1563
+          },
+          {
+            "name": "main",
+            "line": 1593
+          },
+          {
+            "name": "shape",
+            "line": 94
+          },
+          {
+            "name": "to_text",
+            "line": 105
+          },
+          {
+            "name": "_bucket",
+            "line": 306
+          },
+          {
+            "name": "_totals",
+            "line": 319
+          },
+          {
+            "name": "_eval_group",
+            "line": 341
+          },
+          {
+            "name": "_rollup",
+            "line": 592
+          },
+          {
+            "name": "_prf",
+            "line": 602
+          },
+          {
+            "name": "_combine",
+            "line": 614
+          },
+          {
+            "name": "_axioms_count",
+            "line": 669
+          },
+          {
+            "name": "_layer3_raw",
+            "line": 688
+          },
+          {
+            "name": "_fmt",
+            "line": 1104
+          },
+          {
+            "name": "_fmt_norm",
+            "line": 1107
+          },
+          {
+            "name": "_fmt_pct_l4",
+            "line": 1447
+          },
+          {
+            "name": "_strip",
+            "line": 1605
+          },
+          {
+            "name": "_fmt_pct",
+            "line": 1332
+          },
+          {
+            "name": "_row_metrics",
+            "line": 1337
+          }
+        ],
+        "imports": [
+          "import argparse",
+          "import csv",
+          "import json",
+          "import os",
+          "import re",
+          "from dataclasses import dataclass",
+          "from typing import Optional",
+          "from langchain_ollama import OllamaEmbeddings",
+          "from rdflib import Graph, Literal, OWL, RDF, RDFS",
+          "from rdflib.term import BNode",
+          "from sentence_transformers import util"
+        ]
+      },
+      {
+        "path": "CQ2Term/00_gold_standard/awo/cq_to_terms_awo.json",
+        "sha256": "db54846f6ca79bf13a6f67f0120b9435e1cbec32be47faf5d5db4392aaaa7de6",
+        "bytes": 1329
+      },
+      {
+        "path": "CQ2Term/00_gold_standard/awo/term_to_cqs_awo.json",
+        "sha256": "b8ce50bfb3cb7dc7168b2e3d2ebfd07fb301208b52e36d966b4168a289e73e10",
+        "bytes": 942
+      },
+      {
+        "path": "CQ2Term/00_gold_standard/odrl/cq_to_terms_odrl.json",
+        "sha256": "f7a2247c2aa872fa588ee9e7511f501410afc7fee239d0523d9a487baf7d1e82",
+        "bytes": 4323
+      },
+      {
+        "path": "CQ2Term/00_gold_standard/odrl/term_to_cqs_odrl.json",
+        "sha256": "844e3aaf6b38c8305d05f779255983bc8edddbaff3ed1b59db09bccc626c2ecc",
+        "bytes": 4045
+      },
+      {
+        "path": "CQ2Term/00_gold_standard/swo/cq_to_terms_swo.json",
+        "sha256": "c67b407df441482c1f2b55f38be073779ad55048c93c7bf2affcba2d3b1b4a4c",
+        "bytes": 5747
+      },
+      {
+        "path": "CQ2Term/00_gold_standard/swo/term_to_cqs_swo.json",
+        "sha256": "84ac5f5c4eb3ffbbb44f15ce6dcb17eba07cf0929e2c2900a950cacdc1b326f9",
+        "bytes": 4449
+      },
+      {
+        "path": "CQ2Term/00_gold_standard/vgo/cq_to_terms_vgo.json",
+        "sha256": "96bfbf987f122886c75d72f40697af2b72ce33b3fa4dd750c81a98c0d889fdfc",
+        "bytes": 4440
+      },
+      {
+        "path": "CQ2Term/00_gold_standard/vgo/term_to_cqs_vgo.json",
+        "sha256": "b72ee505c0440e92b59d27c3f4b494411f28a5f9e2d4cb8c03d3af6094f5a230",
+        "bytes": 2646
+      },
+      {
+        "path": "CQ2Term/00_gold_standard/water/cq_to_terms_water.json",
+        "sha256": "de7b037418bc08aa115a6ec32e5526967c5f577c2364e229e312379b83b1d696",
+        "bytes": 4569
+      },
+      {
+        "path": "CQ2Term/00_gold_standard/water/term_to_cqs_water.json",
+        "sha256": "0eb792fe58886435b09ca699b3a826c62ada9e4a1371ecf6e674db7eb483a37e",
+        "bytes": 4001
+      },
+      {
+        "path": "CQ2Term/00_gold_standard/wine/cq_to_terms_wine.json",
+        "sha256": "ce57bdcb510cd485da9a238ff6c7a397b63f08f85be688956936c4c73a69410b",
+        "bytes": 1164
+      },
+      {
+        "path": "CQ2Term/00_gold_standard/wine/term_to_cqs_wine.json",
+        "sha256": "f9e8075bb2b2302a136725c69bb32e1b0ce96cbbe57d1a30bf296cd9feaabd52",
+        "bytes": 1530
+      },
+      {
+        "path": "CQ2Term/competency_question/awo_cqs.json",
+        "sha256": "93beca4a263aed32fdab66be8e5dd4ac0969d460d11bb5a2f3aaed8e5649932d",
+        "bytes": 511
+      },
+      {
+        "path": "CQ2Term/competency_question/odrl_cq2term_cqs.json",
+        "sha256": "e2d1508d07c069c5179ba6a855bc9e17b7a383ffa47cbdbed14a9397ff09d0b8",
+        "bytes": 2085
+      },
+      {
+        "path": "CQ2Term/competency_question/swo_cq2term_cqs.json",
+        "sha256": "beebd6c838f2909e128ea7592101015c9910e13b11ceea442b12eeee95b75509",
+        "bytes": 2567
+      },
+      {
+        "path": "CQ2Term/competency_question/vgo_cq2term_cqs.json",
+        "sha256": "0788bd66092887a09486c858bd3b22d4b7e82bd75ebfa5cd9a329dad37c8f492",
+        "bytes": 2134
+      },
+      {
+        "path": "CQ2Term/competency_question/water_cq2term_cqs.json",
+        "sha256": "618d4f6641995a6e49918152bde54f5da4ad9c369eb789a6b1f0e36a55e37638",
+        "bytes": 2183
+      },
+      {
+        "path": "CQ2Term/competency_question/wine_cqs.json",
+        "sha256": "8a4e84a4ed0869da765fc784686ed0d7eeab3846936e995c4c1af70a8d1cad3a",
+        "bytes": 394
+      },
+      {
+        "path": "CQ2Term/prompts/cq2terms_prompts.json",
+        "sha256": "3b0bbb24b22d5b270c1830ff4a59205914978437b6c5319bf9f529470d5860c6",
+        "bytes": 931
+      },
+      {
+        "path": "CQ2Term/scripts/concept_label_matching.py",
+        "sha256": "1f675c2320a7d8c302d9d9d3bacf4231c488d41b82d47756960d79ffbc03f7a4",
+        "bytes": 65036,
+        "functions": [
+          {
+            "name": "ensure_nltk_resource",
+            "line": 33
+          },
+          {
+            "name": "get_class_name",
+            "line": 42
+          },
+          {
+            "name": "_norm",
+            "line": 69
+          },
+          {
+            "name": "_iri_local_name",
+            "line": 76
+          },
+          {
+            "name": "_rdflib_extract_explicit_classes",
+            "line": 82
+          },
+          {
+            "name": "extract_classes_from_rdfxml_etree",
+            "line": 113
+          },
+          {
+            "name": "extract_classes_from_functional_owlxml",
+            "line": 215
+          },
+          {
+            "name": "extract_classes_from_jsonld",
+            "line": 324
+          },
+          {
+            "name": "extract_classes",
+            "line": 423
+          },
+          {
+            "name": "split_camel_case",
+            "line": 482
+          },
+          {
+            "name": "normalize_key",
+            "line": 488
+          },
+          {
+            "name": "normalize_text",
+            "line": 499
+          },
+          {
+            "name": "check_normalized_duplicates",
+            "line": 509
+          },
+          {
+            "name": "build_records",
+            "line": 527
+          },
+          {
+            "name": "make_gold_entry",
+            "line": 542
+          },
+          {
+            "name": "make_pred_entry",
+            "line": 549
+          },
+          {
+            "name": "match_one_to_one_greedy",
+            "line": 556
+          },
+          {
+            "name": "compute_full_score_matrix",
+            "line": 591
+          },
+          {
+            "name": "compute_lexical_sim_from_normalized",
+            "line": 601
+          },
+          {
+            "name": "get_threshold",
+            "line": 622
+          },
+          {
+            "name": "compute_full_score_table",
+            "line": 632
+          },
+          {
+            "name": "pre_process",
+            "line": 683
+          },
+          {
+            "name": "cal_metrics",
+            "line": 827
+          },
+          {
+            "name": "wordnet_noun_synonyms_from_normalized_text",
+            "line": 854
+          },
+          {
+            "name": "cal_synonym",
+            "line": 872
+          },
+          {
+            "name": "_dict_to_list_of_objects",
+            "line": 952
+          },
+          {
+            "name": "save_json",
+            "line": 974
+          },
+          {
+            "name": "save_all_pairings_to_json",
+            "line": 984
+          },
+          {
+            "name": "build_merged_tp_gold_to_pred",
+            "line": 994
+          },
+          {
+            "name": "build_merged_tp_pred_to_gold",
+            "line": 1017
+          },
+          {
+            "name": "build_best_class_map_top_n",
+            "line": 1040
+          },
+          {
+            "name": "build_best_class_map",
+            "line": 1174
+          },
+          {
+            "name": "save_alignment_trace_csv",
+            "line": 1323
+          },
+          {
+            "name": "save_alignment_trace_json",
+            "line": 1343
+          },
+          {
+            "name": "save_matching_csv",
+            "line": 1380
+          },
+          {
+            "name": "save_best_matching_csv",
+            "line": 1422
+          },
+          {
+            "name": "build_class_report_md",
+            "line": 1443
+          },
+          {
+            "name": "save_class_report_md",
+            "line": 1601
+          },
+          {
+            "name": "get_parser",
+            "line": 1609
+          },
+          {
+            "name": "main",
+            "line": 1739
+          },
+          {
+            "name": "best_label_from_elem",
+            "line": 126
+          },
+          {
+            "name": "_get_label",
+            "line": 342
+          },
+          {
+            "name": "sim_func",
+            "line": 888
+          },
+          {
+            "name": "_vote_count",
+            "line": 1232
+          },
+          {
+            "name": "sim_func",
+            "line": 643
+          },
+          {
+            "name": "sim_func",
+            "line": 704
+          },
+          {
+            "name": "sim_func",
+            "line": 662
+          },
+          {
+            "name": "sim_func",
+            "line": 741
+          }
+        ],
+        "imports": [
+          "import re",
+          "import os",
+          "import csv",
+          "import json",
+          "import argparse",
+          "import xml.etree.ElementTree as ET",
+          "from collections import Counter, defaultdict",
+          "from rdflib import Graph, RDF, OWL, RDFS, Literal",
+          "from rdflib.term import BNode",
+          "from sentence_transformers import util",
+          "from langchain_ollama import OllamaEmbeddings",
+          "import difflib",
+          "import Levenshtein",
+          "import textdistance",
+          "import nltk",
+          "from nltk.corpus import wordnet as wn"
+        ]
+      },
+      {
+        "path": "CQ2Term/scripts/eval_cq_terms.py",
+        "sha256": "2c628369eab8d4fc374a3d12e7cf774185b4e1afc17e7beb5ebad10fc6d429a5",
+        "bytes": 42863,
+        "functions": [
+          {
+            "name": "_normalize_term",
+            "line": 8
+          },
+          {
+            "name": "_normalize_cq_entry",
+            "line": 14
+          },
+          {
+            "name": "load_cq_to_terms",
+            "line": 46
+          },
+          {
+            "name": "collect_unique_terms",
+            "line": 54
+          },
+          {
+            "name": "build_alignment",
+            "line": 71
+          },
+          {
+            "name": "alignment_to_simple_map",
+            "line": 158
+          },
+          {
+            "name": "evaluate_per_method",
+            "line": 166
+          },
+          {
+            "name": "compute_per_cq_coverage",
+            "line": 206
+          },
+          {
+            "name": "compute_per_term_coverage",
+            "line": 315
+          },
+          {
+            "name": "aggregate_metrics_full",
+            "line": 344
+          },
+          {
+            "name": "save_alignment_csv",
+            "line": 412
+          },
+          {
+            "name": "save_best_matching_csv",
+            "line": 434
+          },
+          {
+            "name": "save_cq_coverage_csv",
+            "line": 466
+          },
+          {
+            "name": "save_term_coverage_csv",
+            "line": 488
+          },
+          {
+            "name": "save_result_json",
+            "line": 504
+          },
+          {
+            "name": "build_report_md",
+            "line": 511
+          },
+          {
+            "name": "append_report_md",
+            "line": 842
+          },
+          {
+            "name": "main",
+            "line": 869
+          },
+          {
+            "name": "_norm_list",
+            "line": 26
+          },
+          {
+            "name": "_score",
+            "line": 360
+          },
+          {
+            "name": "_accepted",
+            "line": 539
+          },
+          {
+            "name": "_collect",
+            "line": 544
+          },
+          {
+            "name": "_emit_per_method_table",
+            "line": 629
+          }
+        ],
+        "imports": [
+          "import argparse",
+          "import csv",
+          "import json",
+          "import os",
+          "import sys",
+          "from collections import defaultdict"
+        ]
+      },
+      {
+        "path": "CQ2Term/scripts/run_all_cq2term.py",
+        "sha256": "6c1436b0c595741a8a0e9779389aa90003b403b705cc734557048958a5f447b6",
+        "bytes": 3963,
+        "functions": [
+          {
+            "name": "run",
+            "line": 17
+          },
+          {
+            "name": "find_gold_cq_terms",
+            "line": 24
+          },
+          {
+            "name": "find_pred_cq_terms",
+            "line": 38
+          },
+          {
+            "name": "main",
+            "line": 62
+          }
+        ],
+        "imports": [
+          "import subprocess",
+          "from pathlib import Path"
+        ]
+      },
+      {
+        "path": "LICENSE",
+        "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4",
+        "bytes": 11357,
+        "notice_start": [
+          "                                 Apache License",
+          "                           Version 2.0, January 2004",
+          "                        http://www.apache.org/licenses/",
+          "",
+          "   TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION",
+          "",
+          "   1. Definitions.",
+          ""
+        ]
+      },
+      {
+        "path": "OntoCatalogue/KG/AggregatedTop3.ttl",
+        "sha256": "9dd1d14e1d2fd125c93110443b088fc38eb6a728f24367577adfb758e909b838",
+        "bytes": 3649
+      },
+      {
+        "path": "OntoCatalogue/KG/AtLeastOneCoverage.ttl",
+        "sha256": "fa8bc6823a3bf09ba5a53cd88bb8f98d5f7db7d26ee3281ca4ecad923d04ebae",
+        "bytes": 3452
+      },
+      {
+        "path": "OntoCatalogue/KG/Axiom.ttl",
+        "sha256": "ddc8be7a890e3a10407a8358a1a1e3d3deac2db05c90561bc5fd110ca490417f",
+        "bytes": 3034
+      },
+      {
+        "path": "OntoCatalogue/KG/CQ2Onto.ttl",
+        "sha256": "d7de9189dc1858257a6bb6bf150429f77c1c00cbf2ac967715284518fa18be80",
+        "bytes": 4340
+      },
+      {
+        "path": "OntoCatalogue/KG/CQ2Term.ttl",
+        "sha256": "f9bb1e9d8b3538302ae830ed474dab63238c75579f4e830b522c86168429ba9d",
+        "bytes": 3783
+      },
+      {
+        "path": "OntoCatalogue/KG/CQCoverage.ttl",
+        "sha256": "78b1fd6083b05e1241359c417828793f575e49524b385515db0560c60d432fc4",
+        "bytes": 2988
+      },
+      {
+        "path": "OntoCatalogue/KG/ClassProperty.ttl",
+        "sha256": "966db29403823de440ee5c7bad572b42a19a2ebe0d366a56a0a00502b79e5c59",
+        "bytes": 3460
+      },
+      {
+        "path": "OntoCatalogue/KG/ClosureRescueCoverage.ttl",
+        "sha256": "7b17d7a5710db51156abfb627aae7b1f0882d686890b85e88a1de1ff5914a59d",
+        "bytes": 4056
+      },
+      {
+        "path": "OntoCatalogue/KG/EmbeddingDiagnostic.ttl",
+        "sha256": "3907638bb17b040f8774db2422f03890e493ecb02bd3edc500aaff24fb5a31ff",
+        "bytes": 3702
+      },
+      {
+        "path": "OntoCatalogue/KG/F1.ttl",
+        "sha256": "98e1a367b846b58134bddeef29050625b3ffddeca039c38453b4a625192e6bd7",
+        "bytes": 2977
+      },
+      {
+        "path": "OntoCatalogue/KG/FullCoverage.ttl",
+        "sha256": "90cd8aaf89ad050ced7b790f30a1ad9194fbd13f7b904ab4344ab31ec32dbea1",
+        "bytes": 3247
+      },
+      {
+        "path": "OntoCatalogue/KG/HardMatch.ttl",
+        "sha256": "3cc018d6d6380c96ed5d2c380260fdec1c5cc15f88d309d9c0f9e1cc932548de",
+        "bytes": 3397
+      },
+      {
+        "path": "OntoCatalogue/KG/HierarchyClosure.ttl",
+        "sha256": "b76f248b1a42bee449579b5c8c26345803f709879a5f6de77b0bc0bfe5175236",
+        "bytes": 2765
+      },
+      {
+        "path": "OntoCatalogue/KG/InformationContent.ttl",
+        "sha256": "252bf6f6d68d0492c81581a29688f875a4f9570e259c313ea6c982dda03f208f",
+        "bytes": 3875
+      },
+      {
+        "path": "OntoCatalogue/KG/JaroWinklerDistance.ttl",
+        "sha256": "8cf50ad1dbf8e7120c8152f2d4671e7b5f04ec37681b9b2c6cd015ae5e3d324c",
+        "bytes": 3587
+      },
+      {
+        "path": "OntoCatalogue/KG/LevenshteinDistance.ttl",
+        "sha256": "0f109c8df1b7d196c1334213060936934c8edda7b12b10c148636b8ae8c21778",
+        "bytes": 3669
+      },
+      {
+        "path": "OntoCatalogue/KG/MeanCoverage.ttl",
+        "sha256": "07a098a2d5d887420e793161d3e22ca6ca4c6806149e3a694e727e0e0a1c58e7",
+        "bytes": 3137
+      },
+      {
+        "path": "OntoCatalogue/KG/Precision.ttl",
+        "sha256": "1c8fda57601553496cb10a41c02455bf7bbb7407c13968d26f792a174eb37507",
+        "bytes": 3094
+      },
+      {
+        "path": "OntoCatalogue/KG/PropertyCharacteristics.ttl",
+        "sha256": "466e9ea751d9cb378c7eef219f20908c36deac62880b0d813ab28a9fbd78fe4c",
+        "bytes": 2724
+      },
+      {
+        "path": "OntoCatalogue/KG/Recall.ttl",
+        "sha256": "21c64005ae02e9e714d2334cc2a9c775e60ab10190926e503b2bb8dc8899adae",
+        "bytes": 3064
+      },
+      {
+        "path": "OntoCatalogue/KG/SemanticCosineSimilarity.ttl",
+        "sha256": "5e0e9057ddb8eada00ae8d77475d3048059430847f7813e387f7aeffa67fac0f",
+        "bytes": 3856
+      },
+      {
+        "path": "OntoCatalogue/KG/SequenceMatch.ttl",
+        "sha256": "97b67a02b23a47fb56c219e828bc4ce9ded6c507f1521aeeb794e5b92df3e75b",
+        "bytes": 3525
+      },
+      {
+        "path": "OntoCatalogue/KG/Synonyms.ttl",
+        "sha256": "b44a0244c5aceea414cc2a9e0a36307c6c041f98bf52074f65e1b3cfe085c776",
+        "bytes": 3667
+      },
+      {
+        "path": "OntoCatalogue/KG/Triple.ttl",
+        "sha256": "10665412f5049a10f85cd402d768cd2c8997b28825bd1c4ac1037ad68b9b37ba",
+        "bytes": 2817
+      },
+      {
+        "path": "README.md",
+        "sha256": "8dfb3aece91e0e83e16d6d8cef9ea12b8e0a4049b4e4425b69fd94585e5bdd48",
+        "bytes": 7389
+      }
+    ]
+  },
+  {
+    "benchmark": "oskgc",
+    "commit": "b6a12ed38f131abb10ba22a785bba1d5d886aee0",
+    "repository": "https://github.com/HeraclesWang/OSKGC",
+    "lock_sha256": "2eeab9cd8a951e332b75c61a9411e553d9968326a52e1e6d5db1a4eb60fd066a",
+    "files": [
+      {
+        "path": "LICENSE",
+        "sha256": "c7dd609b5b7ba6f2920e3d6286102266d939b067ff6e7a26b4870af87076be62",
+        "bytes": 1066,
+        "notice_start": [
+          "MIT License",
+          "",
+          "Copyright (c) 2025 Dali Wang",
+          "",
+          "Permission is hereby granted, free of charge, to any person obtaining a copy",
+          "of this software and associated documentation files (the \"Software\"), to deal",
+          "in the Software without restriction, including without limitation the rights",
+          "to use, copy, modify, merge, publish, distribute, sublicense, and/or sell"
+        ]
+      },
+      {
+        "path": "README.md",
+        "sha256": "a3d925e6db2d44b108b466401a726f0eb5223db8cadcfb6c69003ead2902a3ea",
+        "bytes": 17608
+      },
+      {
+        "path": "benchmark/LICENSE",
+        "sha256": "1470e2776db4f0c1807cdb19c6b0b8bf19fe48bb8d7b84dd7ae86283be4e531d",
+        "bytes": 18883,
+        "notice_start": [
+          "OSKGC © 2025 by Dali Wang, Mizuho Iwaihara is licensed under Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International. ",
+          "",
+          "To view a copy of this license, visit https://creativecommons.org/licenses/by-nc-sa/4.0/",
+          "",
+          "Attribution 4.0 International",
+          "",
+          "=======================================================================",
+          ""
+        ]
+      },
+      {
+        "path": "benchmark/data/dev/1_Airport.xml",
+        "sha256": "2775433a9cec2aa64cd34a437ce33712fa211f174b979430fb5b38cdc89d3fc2",
+        "bytes": 16826
+      },
+      {
+        "path": "benchmark/data/dev/2_Airport.xml",
+        "sha256": "6d9c420b93abd7963a1835e42ec0904a2a55fd8d352ef08703c14a25148cd970",
+        "bytes": 19354
+      },
+      {
+        "path": "benchmark/data/dev/3_Airport.xml",
+        "sha256": "f5cf9e5a09f87feda73bfa9a9380ab7a967f8ab0a444d773b43b6151545ce661",
+        "bytes": 23969
+      },
+      {
+        "path": "benchmark/data/test/1_Airport.xml",
+        "sha256": "06159627b3d9fc2b64036bb98e5b64c3929eece782535b005a23a7dd56f16b57",
+        "bytes": 34238
+      },
+      {
+        "path": "benchmark/data/test/2_Airport.xml",
+        "sha256": "d0389741dadd66cbdd91e707175e14349437771cf7e0918f0b0fb7a9e1e83e61",
+        "bytes": 38158
+      },
+      {
+        "path": "benchmark/data/test/3_Airport.xml",
+        "sha256": "78a674855b6ba15a0ed01704acc3b42655d657585743353592c4a244981f085d",
+        "bytes": 51618
+      },
+      {
+        "path": "benchmark/data/train/1_Airport.xml",
+        "sha256": "2ec318576e7ae53dd77cf6a0cead6fb80c991e09eb092319109aed6f0699bcc0",
+        "bytes": 117702
+      },
+      {
+        "path": "benchmark/data/train/2_Airport.xml",
+        "sha256": "bc7cfd21181ab1b9cdc4dbf23dcc6a1e19c0044b6d7c0dbc968c0a7f91b5a287",
+        "bytes": 135968
+      },
+      {
+        "path": "benchmark/data/train/3_Airport.xml",
+        "sha256": "c3b6b7234583e6e1d1d436123346b9a2e5feb354cd9b4f346db07ebda43778bb",
+        "bytes": 175762
+      },
+      {
+        "path": "benchmark/hierarchy.xml",
+        "sha256": "070cb4ad219f3083a949fe033fedf1473a9938654a5eb4ffdd065056df77674a",
+        "bytes": 9287
+      },
+      {
+        "path": "benchmark/ontology/1_Airport.json",
+        "sha256": "2b861081f359d3df1ee6fc9874a7b2bb61d079a264fbe37a3887211b56725095",
+        "bytes": 21183
+      },
+      {
+        "path": "benchmark/ontology/2_Airport.json",
+        "sha256": "de0537d431bb8a16b6bbde3ef0211e1fa56f1ce34ccf2ef68846a490cf8af97b",
+        "bytes": 20455
+      },
+      {
+        "path": "benchmark/ontology/3_Airport.json",
+        "sha256": "7e8bce03d09937976f4e95ce56ebb5abf927abe5b127a0fae5d6121a3f960f26",
+        "bytes": 17217
+      },
+      {
+        "path": "benchmark/ontology/rdf/1_Airport.ttl",
+        "sha256": "5e6d63921aeaae8c8311c456a7151ef0e2a3a5f2927b1cf385a3f556cf2ec2bb",
+        "bytes": 20555
+      },
+      {
+        "path": "benchmark/ontology/rdf/2_Airport.ttl",
+        "sha256": "d9f7d490475391983af8bd4bebb85fd716b2cf7b291cf7bb2588dd948e74710c",
+        "bytes": 19814
+      },
+      {
+        "path": "benchmark/ontology/rdf/3_Airport.ttl",
+        "sha256": "96fcf50b1eba02b4f7d55975423a22406dba0cf12b0b56f3f1936101643ed5b0",
+        "bytes": 16360
+      },
+      {
+        "path": "evaluate.py",
+        "sha256": "796e1db6f9f13389f9cfb72a0704e9722b510944d8987d5b748a3d05bdaaa7c1",
+        "bytes": 1639,
+        "functions": [
+          {
+            "name": "get_model_name",
+            "line": 10
+          },
+          {
+            "name": "main",
+            "line": 21
+          }
+        ],
+        "imports": [
+          "import os",
+          "import argparse",
+          "from utils.config_loader import load_config, load_api_config",
+          "from evaluator.pipeline_evaluator import PipelineEvaluator",
+          "from evaluator.joint_evaluator import JointEvaluator",
+          "from typing import Dict",
+          "from main import update_output_paths"
+        ]
+      },
+      {
+        "path": "evaluator/__init__.py",
+        "sha256": "da4fd97aa53b16fa99305a869be11846257df2ec54c668b2e705f282f2286cf5",
+        "bytes": 13,
+        "functions": [],
+        "imports": []
+      },
+      {
+        "path": "evaluator/base_evaluator.py",
+        "sha256": "d2684f2fb64e4f47d8b297a2932ea2eafe8fe6c54116b1cbcd319f48de40854c",
+        "bytes": 14176,
+        "functions": [
+          {
+            "name": "__init__",
+            "line": 11
+          },
+          {
+            "name": "parse_xml",
+            "line": 24
+          },
+          {
+            "name": "calculate_metrics",
+            "line": 46
+          },
+          {
+            "name": "parse_hierarchy_file",
+            "line": 58
+          },
+          {
+            "name": "calculate_ss_score",
+            "line": 87
+          },
+          {
+            "name": "get_distance_between_types",
+            "line": 123
+          },
+          {
+            "name": "get_distance_to_root",
+            "line": 142
+          },
+          {
+            "name": "process_structural_similarity",
+            "line": 149
+          },
+          {
+            "name": "process_file",
+            "line": 168
+          },
+          {
+            "name": "process_record",
+            "line": 204
+          },
+          {
+            "name": "save_results",
+            "line": 277
+          },
+          {
+            "name": "combine_results",
+            "line": 283
+          },
+          {
+            "name": "parse_xml_file",
+            "line": 316
+          },
+          {
+            "name": "calculate_scores_from_ss",
+            "line": 345
+          },
+          {
+            "name": "natural_sort_key",
+            "line": 363
+          },
+          {
+            "name": "build_hierarchy",
+            "line": 66
+          },
+          {
+            "name": "convert",
+            "line": 365
+          }
+        ],
+        "imports": [
+          "import os",
+          "import json",
+          "import xml.etree.ElementTree as ET",
+          "import re",
+          "import math",
+          "from collections import defaultdict",
+          "from typing import Dict, List, Tuple, Optional"
+        ]
+      },
+      {
+        "path": "evaluator/joint_evaluator.py",
+        "sha256": "0730890bd99105fc53c38e559b569e4fcffd938c068d912820e97c901ed8a56b",
+        "bytes": 6026,
+        "functions": [
+          {
+            "name": "__init__",
+            "line": 10
+          },
+          {
+            "name": "evaluate",
+            "line": 19
+          },
+          {
+            "name": "process_triple_evaluation",
+            "line": 25
+          },
+          {
+            "name": "parse_response",
+            "line": 102
+          },
+          {
+            "name": "process_schema_stage",
+            "line": 109
+          }
+        ],
+        "imports": [
+          "import os",
+          "import json",
+          "import re",
+          "from collections import defaultdict",
+          "from typing import Dict, List, Tuple",
+          "from evaluator.base_evaluator import BaseEvaluator"
+        ]
+      },
+      {
+        "path": "evaluator/pipeline_evaluator.py",
+        "sha256": "737cca037c2db44d07f55aa48d030b727b40ee0fb9cc0de7e9bbfb251eccb67a",
+        "bytes": 7712,
+        "functions": [
+          {
+            "name": "__init__",
+            "line": 10
+          },
+          {
+            "name": "evaluate",
+            "line": 22
+          },
+          {
+            "name": "process_triple_evaluation",
+            "line": 28
+          },
+          {
+            "name": "parse_response",
+            "line": 104
+          },
+          {
+            "name": "process_schema_stage",
+            "line": 111
+          },
+          {
+            "name": "parse_entities",
+            "line": 154
+          },
+          {
+            "name": "parse_relations",
+            "line": 166
+          }
+        ],
+        "imports": [
+          "import os",
+          "import json",
+          "import re",
+          "from collections import defaultdict",
+          "from typing import Dict, List, Tuple",
+          "from evaluator.base_evaluator import BaseEvaluator"
+        ]
+      },
+      {
+        "path": "requirements.txt",
+        "sha256": "9342fb2f21a612c2bc0dda40b9de11f7754ab9e872601fc39daf10b136943329",
+        "bytes": 116
+      },
+      {
+        "path": "utils/data_processing.py",
+        "sha256": "5d491b2f7d4d7995c959eb024fc79e9035564a57d5732f5bb20c03f3b77f4352",
+        "bytes": 11233,
+        "functions": [
+          {
+            "name": "parse_xml_file",
+            "line": 8
+          },
+          {
+            "name": "extract_entities_and_types",
+            "line": 43
+          },
+          {
+            "name": "get_seed_from_filename",
+            "line": 49
+          },
+          {
+            "name": "clean_and_deduplicate_entities",
+            "line": 53
+          },
+          {
+            "name": "parse_ontology_schema",
+            "line": 60
+          },
+          {
+            "name": "get_candidate_types",
+            "line": 76
+          },
+          {
+            "name": "find_entity_info",
+            "line": 150
+          },
+          {
+            "name": "find_relation_labels",
+            "line": 159
+          },
+          {
+            "name": "get_example_candidate_relations",
+            "line": 173
+          },
+          {
+            "name": "get_triples",
+            "line": 199
+          },
+          {
+            "name": "generate_output",
+            "line": 212
+          },
+          {
+            "name": "select_example_from_json",
+            "line": 237
+          },
+          {
+            "name": "get_train_data_by_id",
+            "line": 263
+          },
+          {
+            "name": "find_entity_paths",
+            "line": 14
+          },
+          {
+            "name": "trim_xml_tree",
+            "line": 87
+          },
+          {
+            "name": "parse_entity",
+            "line": 118
+          },
+          {
+            "name": "get_xml_entity_types",
+            "line": 130
+          },
+          {
+            "name": "find_paths_to_root",
+            "line": 88
+          },
+          {
+            "name": "copy_element_with_children",
+            "line": 104
+          },
+          {
+            "name": "find_leaf_paths",
+            "line": 24
+          }
+        ],
+        "imports": [
+          "import xml.etree.ElementTree as ET",
+          "import json",
+          "import re",
+          "import os",
+          "import hashlib",
+          "from typing import List, Dict, Tuple, Set"
+        ]
+      }
+    ]
+  },
+  {
+    "benchmark": "onto_generation",
+    "commit": "13d2e17a448b8697811438f2ed88c213e9b47b63",
+    "repository": "https://github.com/dersuchendee/Onto-Generation",
+    "lock_sha256": "f15edeed4076974c6abba9c3c65381687b20ee52a0b46434ab35987905fb50ad",
+    "files": [
+      {
+        "path": "Dataset_OntoGen/README.md",
+        "sha256": "491c67656d5bd9f152fa96172f2193be837ba3e8e15581cbab76b32213469b57",
+        "bytes": 775
+      },
+      {
+        "path": "PromptingTechniques/README.md",
+        "sha256": "8547a3c9a3f2124e0634eeb5590ec81fef774f02906df53b5ce95ca38161cdae",
+        "bytes": 14427
+      },
+      {
+        "path": "README.md",
+        "sha256": "dad7797f0a0b9b138496b6f799e2d530c59f10f360fdc139a02eaad3fecf4340",
+        "bytes": 4264
+      }
+    ]
+  }
+]

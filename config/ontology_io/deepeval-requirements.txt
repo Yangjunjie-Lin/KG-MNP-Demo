@@ -1,0 +1,3 @@
+# Optional scoring-only environment. Retain the installed/audited version.
+# Do not upgrade the application environment or install a judge implicitly.
+deepeval==4.1.0

@@ -16,7 +16,7 @@ benchmarks:
         evaluation_scope: LOCAL_HOLDOUT
         metrics: [Precision, Recall, F1, Graph Similarity, Edge F1, Neighborhood Similarity, Taxonomy Similarity]
       reuse:
-        inputs: [text, partial_ontology]
+        inputs: [text, partial_ontology, terms, types]
         private_fields: [new_triples, target_ontology, gold]
         input_path: 2026/TaskB-Reuse/train_task_b.json
         evaluation_scope: LOCAL_HOLDOUT
@@ -50,7 +50,7 @@ benchmarks:
     paper: https://ceur-ws.org/Vol-4041/paper1.pdf
     code_license: MIT
     data_license: HEADER_CC_BY_NC_SA_4_0_BODY_CC_BY_4_0_CONFLICT
-    data_license_policy: RESEARCH_ONLY_CONSERVATIVE_NONCOMMERCIAL_NO_DELIVERY_REDISTRIBUTION
+    data_license_policy: BLOCK_NEW_DATA_USE_UNTIL_LICENSE_CONFLICT_CLARIFIED
     commercial_delivery_data: FORBIDDEN
     tasks:
       schema_guided_abox:

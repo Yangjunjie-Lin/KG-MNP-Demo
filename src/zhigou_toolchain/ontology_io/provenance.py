@@ -36,7 +36,7 @@ def source_identity(root):
 
 def runtime_versions():
     versions = {}
-    for package in ("rdflib", "jsonschema", "pyshacl", "networkx", "httpx", "pydantic"):
+    for package in ("rdflib", "jsonschema", "pyshacl", "networkx", "httpx", "pydantic", "rapidfuzz", "numpy", "scipy"):
         try:
             versions[package] = version(package)
         except PackageNotFoundError:

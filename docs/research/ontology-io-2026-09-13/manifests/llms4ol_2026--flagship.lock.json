@@ -1,0 +1,31 @@
+{
+  "benchmark_id": "llms4ol_2026",
+  "dataset_version": "315a9a5d883eada26e00fef1356a05802936c584",
+  "task_id": "flagship",
+  "evaluation_scope": "LOCAL_HOLDOUT",
+  "phase": "full",
+  "input_sha256": "367596d10767f67027c04ecf7a008c42b08b1046737565800dbcfd7ae50cf730",
+  "gold_sha256": "f5c6095d8db9fd85d00dddd30ec23e28f50381f5a70e472ff20a2d0386c2922c",
+  "sample_count": 3471,
+  "group_count": 3471,
+  "source_count": 4303,
+  "grouping": "PUBLIC_SOURCE_OR_EXACT_TEXT_OR_TOKEN5_JACCARD_CONNECTED_COMPONENT_V1",
+  "split_sha256": "50286871de88eb130d73e9dfec4c3db503a076aa02446ace648a56ded5b36dbe",
+  "near_duplicate_audit_sha256": "4134b95631b8a7ae15117a4210457b2a98999b061a65a01dd5e41cac953e4978",
+  "selection": "ALL_RECORDS_IN_PREDECLARED_PUBLIC_GROUP_HASH_PARTITION_NO_LIMIT",
+  "phase_policy": "hash%10:0=smoke,1=pilot,2..9=full",
+  "generation_files": [
+    "generation/inputs.json"
+  ],
+  "scorer_only_files": [
+    "scoring/gold.json"
+  ],
+  "source_files": {
+    "2026/TaskA-Flagship/train_task_a.json": "ddf05cdc7970c64616569252234655985014e3ddbc4e32f1c1be7e5dcc6b1569",
+    "2026/TaskB-Reuse/train_task_b.json": "6eb4213eb361bced27cfee8c0a2f7ff50e26020feca99ba48492c885ca733dca"
+  },
+  "smoke_subset_not_full_benchmark": false,
+  "scope_label": "FULL_LOCAL_HOLDOUT",
+  "pretraining_contamination": "POSSIBLE_PUBLIC_DATA_CONTAMINATION",
+  "historical_development_overlap": "NOT_YET_CLEARED_DO_NOT_CLAIM_STRONG_HOLDOUT"
+}

@@ -1,5 +1,93 @@
 # 立项 方法 实现与独立证据
 
+## 全量实验续办（2026-09-14）
+
+`CompatibleClient.propose`在内容验证之前白名单保留usage/耗时；
+`live_broker.dispatch`将无效输出的已知成本和输出超限同样计入持久预算，
+`engine.generate_sample`保留失败调用的已知资源。未知token/成本仍为null。
+`live_inventory.snapshot`经既有finalize CLI导出全部120462个调度位置，
+检查冻结结果、响应摘要及原适配器图往返；不访问gold、不推理、不按成功子集报分。
+测试位于`test_ontology_request_profile.py`、`test_ontology_live.py`；
+交付与限制见`docs/research/full-experiment-continuation-2026-09-14.md`。
+累计真实调用仍24次、full仍0；本轮不解除上游硬token上限未执行的预算锁。
+
+## 全量授权与真实执行（2026-09-14）
+
+用户明确授权全量及过程修复后，按既有325311 calls / 10659790848 token额度激活；
+新增WSL/bubblewrap最小文件/网络namespace、单请求可终止broker进程、SQLite原子预算和任务账本。
+真正OS canary通过，不再仅凭raw_gold_access=false声明隔离；生成进程没有密钥/宿主gold/相邻答案访问。
+完成9个真实smoke job后，第1个独立pilot job出现max_completion_tokens=8192但reported completion_tokens=27832。
+自动暂停并增加持久预算latch，保留全部24次调用与85852 reported tokens；full 99501个job仍未执行。
+同网关公开源码明确剥离token-limit参数，已保存固定源码与二进制摘要，不擅改网关/换模型或放宽预算。
+详见`docs/research/full-experiment-activation-2026-09-14.md`；当前需解决API硬上限路径，不能冒称全量完成。
+
+## 正式调用参数核实与候选包（2026-09-14）
+
+已读官方Chat Completions参考和Spark官方模型说明，区分参数定义、现有网关配置和实验设计。
+新增`RequestProfile`、`formal_calls.py`和`prepare_ontology_call_pack.py`，生成4个task协议、
+合法输入副本、完整job矩阵和预算表；不访问gold，不执行推理，不伪造授权。
+当前Spark模型列表可见，但专属HTTP支持、有效默认采样和权重版本未独立核实；不套用普通Codex模型参数。
+主比较调用上界168213、包含适用消融/资源对照325311；完整前置项和候选探测预算见
+`docs/research/formal-call-parameters-2026-09-14.md`。
+
+## 2026-09-14 通用benchmark检索与DeepEval选择
+
+用户要求检索并选择评测方式后，核对15个主要来源快照，选择LLMs4OL文本任务为主、CQ4OE为OWL补充。
+DeepEval为框架而非本体benchmark；新增`ontology_io/deepeval_bridge.py`复用固定exact/fuzzy原函数，
+既有score CLI支持可选framework，未另造总分、未调用默认LLM裁判、未升级既有benchmark锁。
+无凭证worker实际验证80组同步/异步指标一致性及零网络尝试，范围仅为工程适配。
+详情/未执行范围见`docs/research/benchmark-selection-2026-09-14.md`。
+完整模型性能测试仍因总预算、OS隔离、最终协议和部分native评分缺口未完成，分数/CI仍null。
+
+## 后续本体功能实现（TwoAgentKernelV1）
+
+用户要求继续具体实现后，新增`ontology_io/kernel.py`、`compilation.py`、`replay.py`，
+复用并提取`five_stage.assistance.retrieve_cards/select_reuse`，扩展原协调器支持有界研究回退，
+实际连接共享TBox/ABox编译、同一个pySHACL worker和固定HermiT。
+产物仍是UNREVIEWED_EVAL_DRAFT；不放宽生产Schema/审批/鉴权。
+
+S4结构问题回S2、事实/引用问题回S3；原输入摘要不变，保留每个候选与修复记录。
+三个消融有真实调用/输入差异测试，同检索上下文直接控制只生成一次。
+CQs-only S3、无初始本体的复用、无合法shapes的SHACL均明确N/A，不制造数据。
+新profile不替换历史TwoAgentV3，不冒称完整生产方法或完整外部Ours结果。
+
+具体功能、输入/输出接口及重放命令见`docs/upgrade/ontology-kernel-v1.md`；
+实物回执`runtime_reports/kernel-v1-final-{primitive,cqs,typed}/replay-receipt.json`。
+实际录制边界4/2/3次，真实模型推理0次，均运行了本地固定HermiT并保存实际图。
+受测源码指纹`47238715fc3aa7b4f74091cba02e28ec05d3ce92cc00ab9dfbdbd29f56c142e7`；
+前次下面的指纹/149项结果仍仅对应其旧源码，不能在本次修改后直接继承。
+
+本次独立最终回归：ruff/types退出0；本体工程suite170项通过（13 warnings）；
+新内核与原五步模块42项独立回归通过。记录在`kernel-v1-final-verification`和
+`research-07ece920144c43aebc058dbf41be8d7e`；源码前后未变，不表示真实模型研究提升。
+
+## 前次 develop 增量审计（2026-09-13）
+
+实际起点 `develop@adc2a40512f8b029b6c21420b905628c32952d00`，本地/远端一致且工作树干净。
+最终受测实现指纹 `45688ee99f530c1fa20bb322959e4b1fdc4f7cebcf2392b16ab8310b63267eb5`；
+未提交、推送或发布。下方旧基点/实施记录按历史保留。
+
+| 本轮要求 | 实现/证据 | 状态 |
+| --- | --- | --- |
+| 现状分层审计 | `docs/research/ontology-io-2026-09-13/audit-before.md` | 已交付；不把登记/函数/工程/API烟雾当完整外部评分 |
+| source→task→metric追踪 | 同目录 `benchmark-sources.md`、`native-source-audit.json` | 固定版本+网页差异+许可证；无排行榜/发表夸大 |
+| 合法输入一致 | `ontology_io/adapters.adapt_llms4ol`、`cq4oe.adapt_cq4oe` | terms/types、CQ复合ID、gold变更请求不变测试 |
+| 无损输出 | `adapters.{task_output_schema,freeze_task_prediction,project_task_prediction}`；`engine.generate_sample` | B0/Bbudget primitive/OWL TBox/typed ABox工程可用；未证明完整Ours |
+| native metrics | `native_metrics.llms4ol_fuzzy`、`cq4oe.native_term_hard`、`cli.score`、`oskgc.score_native` | exact/fuzzy原函数、hard term等价测试；完整CQ/semantic仍阻塞 |
+| full分区/预算/台账 | `splits.py`、`matrix.py`、`full-local-holdout.yaml`；`manifests/` | 5735任务输入/51615运行单元冻结，全部NOT_RUN；预算null授权 |
+| 生成评分隔离 | `isolation.probe_isolation/require_isolation`、CLI gate | canary实际可读、Docker服务不可用，强OS隔离BLOCKED，不假装通过 |
+| 成对统计 | `statistics.paired_cluster_aggregate`、`cli.compare` | 重复分层、每次重算原聚合、精确小样本交换；无真实效应/CI/p |
+| 旧方法/消融 | `variants.yaml`、`engine`能力收据 | TwoAgentV3仍primitive PARTIAL，无检索/约束抽取/联合修复研究接入；无有效消融 |
+| 工程验证 | `runtime_reports/ontology-io-final-verification-20260913`；`research-5895dd59a83e4762bd50f339cabea8a3` | ruff/types退出0；149工程tests、26新增模块独立tests；source未变 |
+| 结果/复现/展示 | 同目录report、results.csv、comparison.json、reproduce.ps1、scorecards | 每任务BLOCKED，分数/CI=null；5份NOT_RUN卡片通过现有Schema，只读展示 |
+
+正式实验没有完成，真实外部模型调用0；不能以工程结果回答研究提升已成立。
+未完成项包括完整共享五步Ours、行为消融、最小OS生成环境、完整CQ4OE scorer、
+semantic模型锁、OSKGC明确许可、论文方法复现和正式付费预算/采样冻结。
+完整原生→v3正式出口是独立工程缺口，未放宽协议或伪造人工批准。
+
+## 前序记录
+
 本轮基点：`main@58473106efafb2e380e39577674d6968b3f62b82`，起始工作区干净；本轮不自动推送、合并、发布或提交榜单。
 
 ## 已核对资料

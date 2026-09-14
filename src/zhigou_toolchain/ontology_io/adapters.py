@@ -25,6 +25,8 @@ def adapt_llms4ol(record, *, task, split: EvaluationScope = "LOCAL_HOLDOUT"):
         dataset_version="315a9a5d883eada26e00fef1356a05802936c584", split=split, evaluation_scope=split,
         group_id=hashlib.sha256(" ".join(text.casefold().split()).encode()).hexdigest(),
         mode="TEXT_EXTEND" if task == "reuse" else "TEXT_NEW", text=text, initial_triples=initial,
+        supplied_terms=record.get("terms", []) if task == "reuse" else [],
+        supplied_types=record.get("types", []) if task == "reuse" else [],
         requirements=["Construct primitive ontology triples; distinguish is-a from instance-of.", "Return additions only for reuse."])
 
 
@@ -94,3 +96,105 @@ def project_prediction(directory, sample):
         "input_sha256": semantic_hash(sample.model_dump(mode="json")), "raw_count": len(predicted), "projected_count": len(additions),
         "removed_input_triples": len(predicted) - len(additions), "gold_access": False, "model_called": False,
         "unmatched_predictions_discarded": False}}
+
+
+def task_output_schema(sample):
+    from .engine import OUTPUT_SCHEMA
+    if sample.task_id == "cq2onto":
+        return {"type": "object", "additionalProperties": False, "required": ["turtle"],
+            "properties": {"turtle": {"type": "string", "maxLength": 200000}}}
+    if sample.task_id == "cq2term":
+        occurrence_ids = [r["id"] for r in sample.cq_occurrences]
+        terms = {"type": "array", "maxItems": 300, "items": {"type": "string", "minLength": 1, "maxLength": 500}}
+        entry = {"type": "object", "additionalProperties": False, "required": ["id", "classes", "properties"],
+            "properties": {"id": {"enum": occurrence_ids}, "classes": terms, "properties": terms}}
+        return {"type": "object", "additionalProperties": False, "required": ["cq_terms"], "properties": {
+            "cq_terms": {"type": "array", "maxItems": 1000, "items": entry}}}
+    if sample.mode == "SCHEMA_ABOX":
+        return {**OUTPUT_SCHEMA, "required": ["triples", "schemas"], "properties": {**OUTPUT_SCHEMA["properties"],
+            "schemas": {"type": "array", "maxItems": 300, "items": {"type": "object", "additionalProperties": False,
+                "required": ["sub", "rel", "obj"], "properties": {k: {"type": "string", "minLength": 1, "maxLength": 500} for k in ("sub", "rel", "obj")}}}}}
+    return OUTPUT_SCHEMA
+
+
+def typed_graphs(prediction):
+    """Keep native schema predictions and bind types to the corresponding facts.
+
+    No gold-driven filtering or business-fact/declaration mixing. Duplicate
+    schemas are deliberately retained in JSON because native SS counts them.
+    """
+    if len(prediction["triples"]) != len(prediction["schemas"]):
+        raise ValueError("TYPED_FACT_SCHEMA_BINDING_COUNT_MISMATCH")
+    facts, schema = Graph(), Graph()
+    for (s, p, o), types in zip(prediction["triples"], prediction["schemas"], strict=True):
+        if p != types["rel"]:
+            raise ValueError("TYPED_FACT_SCHEMA_RELATION_MISMATCH")
+        facts.add((iri(s), iri(p), iri(o)))
+        facts.add((iri(s), RDF.type, iri(types["sub"])))
+        facts.add((iri(o), RDF.type, iri(types["obj"])))
+        schema.add((iri(p), RDFS.domain, iri(types["sub"])))
+        schema.add((iri(p), RDFS.range, iri(types["obj"])))
+    return {"instances.ttl": facts, "schema.ttl": schema}
+
+
+def draft_turtle(graph):
+    # Production RDF forbids BNodes; arbitrary OWL restrictions require them.
+    # Research-only canonical serialization, without changing the v3 compiler.
+    from zhigou_toolchain.semantic_kernel.rdf.serializers import research_ntriples
+    return research_ntriples(graph)
+
+
+def freeze_task_prediction(directory, sample, prediction):
+    from jsonschema import validate
+    validate(prediction, task_output_schema(sample))
+    if sample.mode in {"TEXT_NEW", "TEXT_EXTEND"}:
+        return freeze_prediction(directory, sample, prediction["triples"])
+    directory = Path(directory)
+    directory.mkdir(parents=True, exist_ok=False)
+    graphs = {}
+    if sample.task_id == "cq2onto":
+        # Parse supplied bytes, never a URL/JSON-LD context or owl:imports fetch.
+        graphs["ontology.ttl"] = Graph().parse(data=prediction["turtle"], format="turtle", publicID="urn:ontology-io:draft:")
+    elif sample.mode == "SCHEMA_ABOX":
+        graphs = typed_graphs(prediction)
+    elif sample.task_id == "cq2term":
+        ids = [r["id"] for r in prediction["cq_terms"]]
+        if len(set(ids)) != len(ids) or set(ids) != {r["id"] for r in sample.cq_occurrences}:
+            raise ValueError("CQ_TERM_OCCURRENCE_INVENTORY_MISMATCH")
+    else:
+        raise ValueError("UNSUPPORTED_TASK_ARTIFACT")
+    files = {}
+    for name, graph in graphs.items():
+        data = draft_turtle(graph)
+        (directory / name).write_bytes(data)
+        if not isomorphic(graph, Graph().parse(data=data, format="turtle")):
+            raise ValueError("DISK_GRAPH_MISMATCH")
+        files[name] = hashlib.sha256(data).hexdigest()
+    data = {"sample_id": sample.sample_id, "payload": prediction, "files": files,
+        "representation": sample.task_id, "approval": "UNREVIEWED_EVAL_DRAFT", "release_status": "NOT_RELEASED",
+        "serialization": "RDFLIB_CANONICAL_BNODE_TURTLE_RESEARCH_ONLY_V1", "imports": "RETAINED_NOT_FETCHED"}
+    (directory / "projection.json").write_text(json.dumps(data, ensure_ascii=False, indent=2), encoding="utf-8")
+    return data
+
+
+def project_task_prediction(directory, sample):
+    if sample.mode in {"TEXT_NEW", "TEXT_EXTEND"}:
+        return project_prediction(directory, sample)
+    directory = Path(directory)
+    data = json.loads((directory / "projection.json").read_bytes())
+    if data["sample_id"] != sample.sample_id or data["representation"] != sample.task_id:
+        raise ValueError("PREDICTION_CONTEXT_CHANGED")
+    payload = data["payload"]
+    if sample.task_id == "cq2onto":
+        expected = {"ontology.ttl": Graph().parse(data=payload["turtle"], format="turtle", publicID="urn:ontology-io:draft:")}
+    elif sample.mode == "SCHEMA_ABOX":
+        expected = typed_graphs(payload)
+    else:
+        expected = {}
+    if set(data["files"]) != set(expected):
+        raise ValueError("ARTIFACT_FILE_INVENTORY_CHANGED")
+    for name, graph in expected.items():
+        raw = (directory / name).read_bytes()
+        if hashlib.sha256(raw).hexdigest() != data["files"][name] or not isomorphic(graph, Graph().parse(data=raw, format="turtle")):
+            raise ValueError("PREDICTION_ARTIFACT_CHANGED")
+    return {"id": sample.sample_id, **payload}

@@ -1,0 +1,63 @@
+selection_id: ontology-native-plus-deepeval-20260914
+status: SELECTED_NOT_FULLY_EXECUTED
+framework:
+  name: DeepEval
+  version: 4.1.0
+  usage: OPTIONAL_CUSTOM_BASEMETRIC_WRAPPING_PINNED_NATIVE_FUNCTIONS
+  automatic_llm_judge: false
+  automatic_synthetic_gold: false
+  cloud_upload: false
+  telemetry: false
+  native_aggregation_unchanged: true
+selected:
+  primary:
+    benchmark: llms4ol_2026
+    commit: 315a9a5d883eada26e00fef1356a05802936c584
+    scope: LOCAL_HOLDOUT_NOT_OFFICIAL_TEST_SCORE
+    tasks:
+      flagship:
+        planned_full_inputs: 3471
+        primary_metric: graph_similarity
+      reuse:
+        planned_full_inputs: 2252
+        primary_metric: edge_f1
+    matching_primary: exact
+    matching_secondary: fuzzy_0_90
+    semantic: BLOCKED_MODEL_CODE_AND_WEIGHT_LOCK
+    aggregation: LOCAL_SAMPLE_MEAN_NOT_OFFICIAL_RANKING
+  complementary:
+    benchmark: cq4oe_0_0_1
+    commit: 248e0c6cfa498c4630b17a83290628d9f8adc4b6
+    tasks: [cq2term, cq2onto]
+    whole_ontology_units_per_task: 6
+    status: BLOCKED_FULL_NATIVE_ALIGNMENT_AXIOM_REASONER_PROFILE
+comparison:
+  systems: [DirectGeneralLLM, DirectBudgetControl, TwoAgentKernelV1]
+  replicates: 3
+  model: SAME_EXPLICITLY_CONFIGURED_BACKBONE_NO_AUTOMATIC_SUBSTITUTION
+  full_ours_label: false
+  per_sample_model_call_cap: 6
+  per_sample_reserved_token_cap: 120000
+  retries: INCLUDED_IN_CAP_NO_UNPLANNED_RETRY
+  auxiliary_llm_judge_calls: 0
+  total_budget_authorization: null
+statistics:
+  primary_comparisons: [B0_vs_kernel, Bbudget_vs_kernel]
+  resampling: PAIRED_SOURCE_CLUSTER_BOOTSTRAP_95_CI
+  repetitions: NATIVE_AGGREGATE_PER_REPLICATE_THEN_MEAN
+  correction: HOLM_ACROSS_ALL_PRIMARY_TASK_COMPARISONS
+  nonadditive_metrics: RECOMPUTE_NATIVE_AGGREGATE_NOT_MEAN_SAMPLE_F1
+run_qualification:
+  generation_predictions: 0
+  paired_quality_scores: null
+  blocked: [BUDGET_UNSET, OS_GENERATION_ISOLATION, FINAL_SAMPLING_LOCK, HISTORICAL_SPLIT_OVERLAP_AUDIT]
+exclusions:
+  DeepEval_MMLU: GENERAL_MULTIPLE_CHOICE_KNOWLEDGE_NOT_ONTOLOGY_GENERATION
+  DeepEval_GEval_as_primary: LLM_JUDGE_NOT_NATIVE_ONTOLOGY_GOLD_METRIC
+  Ragas_as_primary: RAG_OR_NATURAL_LANGUAGE_CLAIMS_NOT_NATIVE_OWL_AXIOMS
+  Text2KGBench: SCHEMA_GUIDED_ABOX_COMPLEMENT_DATA_LICENSES_REQUIRE_SEPARATE_REVIEW
+  Text2KGBench_LettrIA: PAPER_STATES_AVAILABLE_ON_REQUEST_NO_AUTHORIZED_LOCAL_DATA
+  OSKGC: RETAINED_LICENSE_CONFLICT_BLOCK
+  SCOPE: CORPUS_RE_EE_SCHEMA_INDUCTION_REQUIRES_NEW_TASK_ADAPTER_AND_RESOURCE_LOCK
+  OAEI: ONTOLOGY_MATCHING_NOT_END_TO_END_GENERATION
+  OWL2Bench: REASONER_SCALABILITY_NOT_NATURAL_LANGUAGE_ONTOLOGY_QUALITY

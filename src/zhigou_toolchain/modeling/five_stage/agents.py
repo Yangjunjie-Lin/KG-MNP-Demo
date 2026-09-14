@@ -98,19 +98,36 @@ class TaskExecutionAgent(RuleAgent):
 
 class FiveStageCoordinator:
     """In-memory sequencing, not a second production session authority."""
-    def __init__(self, run: AgentRun):
+    def __init__(self, run: AgentRun, *, max_repairs=0):
         self.run = run
         self.next_stage = 1
         self.parent_digest = None
+        self.max_repairs = max_repairs
+        self.repairs = 0
 
-    def execute(self, stage, tool, action, *, inputs, parent_digest=None):
+    def execute(self, stage, tool, action, *, inputs, parent_digest=None, finish_stage=True):
         if stage != self.next_stage or parent_digest != self.parent_digest:
             raise AgentToolDenied("STAGE_ORDER_OR_HANDOFF_MISMATCH")
         actor = RuleAgent(self.run) if OWNERS[stage] == "RuleAgent" else TaskExecutionAgent(self.run)
         value = actor.execute(stage, tool, action, inputs=inputs)
         self.parent_digest = semantic_hash(value)
-        self.next_stage += 1
+        if finish_stage:
+            self.next_stage += 1
         return value
+
+    def repair(self, target_stage, *, feedback, parent_digest):
+        """Research-only bounded S4 -> S2/S3; never bypass production review."""
+        if (self.run.mode != "BENCHMARK_DRAFT" or self.next_stage != 5 or target_stage not in {2, 3}
+                or parent_digest != self.parent_digest or semantic_hash(feedback) != self.parent_digest
+                or self.repairs >= self.max_repairs):
+            raise AgentToolDenied("REPAIR_ROUTE_OR_HANDOFF_FORBIDDEN")
+        route = RuleAgent(self.run).execute(4, "repair.route", lambda: {
+            "target_stage": target_stage, "feedback_sha256": parent_digest, "cycle": self.repairs + 1,
+            "invalidated_stages": list(range(target_stage, 6))}, inputs=feedback)
+        self.repairs += 1
+        self.next_stage = target_stage
+        self.parent_digest = semantic_hash(route)
+        return route
 
 
 def invoke(stage: int, tool: str, action, *, inputs, model=None, versions=None):

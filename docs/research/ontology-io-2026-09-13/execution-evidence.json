@@ -1,0 +1,297 @@
+{
+  "verification": {
+    "status": "ENGINEERING_CHECKS_ONLY",
+    "source_unchanged": true,
+    "commands": [
+      {
+        "command": [
+          "C:\\Users\\Yangjunjie Lin\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+          "-m",
+          "ruff",
+          "check",
+          "."
+        ],
+        "exit_code": 0,
+        "seconds": 0.19930809998186305,
+        "log": "command-0.log",
+        "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+      },
+      {
+        "command": [
+          "C:\\Users\\Yangjunjie Lin\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+          "tools/check_types.py"
+        ],
+        "exit_code": 0,
+        "seconds": 5.397315100010019,
+        "log": "command-1.log",
+        "sha256": "6d88a1b220adb7a3d62092b6e38431f0b3fe8babe9864fab90e5849766260332"
+      },
+      {
+        "command": [
+          "C:\\Users\\Yangjunjie Lin\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+          "tools/evaluate_research.py",
+          "--suite",
+          "ontology-io-engineering"
+        ],
+        "exit_code": 0,
+        "seconds": 111.0436980999948,
+        "log": "command-2.log",
+        "sha256": "116873c97345bf94549eac4cd5ef1942501e98ac2489ba47bc4d5ba6d3ca066a"
+      },
+      {
+        "command": [
+          "C:\\Users\\Yangjunjie Lin\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+          "-m",
+          "pytest",
+          "tests/upgrade/test_ontology_io_extended.py",
+          "--tb=short",
+          "--junitxml=D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime_reports\\ontology-io-final-verification-20260913\\extended.xml"
+        ],
+        "exit_code": 0,
+        "seconds": 5.958032700000331,
+        "log": "command-3.log",
+        "sha256": "474399b9ea6d1079fb9f1b96ef7ff4bf8094fc16faa1226409378e54e7916bd1"
+      }
+    ],
+    "runtime": {
+      "python": "3.12.6",
+      "os": "Windows",
+      "packages": {
+        "rdflib": "7.6.0",
+        "jsonschema": "4.23.0",
+        "pyshacl": "0.28.1",
+        "networkx": "3.6.1",
+        "httpx": "0.27.2",
+        "pydantic": "2.12.4",
+        "rapidfuzz": "3.14.3",
+        "numpy": "2.4.6",
+        "scipy": "1.15.2"
+      }
+    },
+    "research_score": null,
+    "experiment_complete": false
+  },
+  "source_commit": "adc2a40512f8b029b6c21420b905628c32952d00",
+  "source_fingerprint_sha256": "45688ee99f530c1fa20bb322959e4b1fdc4f7cebcf2392b16ab8310b63267eb5",
+  "matrix": {
+    "status": "BLOCKED",
+    "phase": "full",
+    "coverage": [
+      {
+        "benchmark": "llms4ol_2026",
+        "task": "flagship",
+        "planned_samples": 3471,
+        "prepared_samples": 3471,
+        "planned_groups": 3471,
+        "scope": "FULL_LOCAL_HOLDOUT",
+        "ontologies": null,
+        "status": "INPUTS_FROZEN_NOT_RUN"
+      },
+      {
+        "benchmark": "llms4ol_2026",
+        "task": "reuse",
+        "planned_samples": 2252,
+        "prepared_samples": 2252,
+        "planned_groups": 2252,
+        "scope": "FULL_LOCAL_HOLDOUT",
+        "ontologies": null,
+        "status": "INPUTS_FROZEN_NOT_RUN"
+      },
+      {
+        "benchmark": "cq4oe_0_0_1",
+        "task": "cq2term",
+        "planned_samples": 6,
+        "prepared_samples": 6,
+        "planned_groups": 6,
+        "scope": "ALL_PUBLIC_ONTOLOGIES_NOT_OFFICIAL_TEST",
+        "ontologies": [
+          "awo_cqs",
+          "odrl_cq2term_cqs",
+          "swo_cq2term_cqs",
+          "vgo_cq2term_cqs",
+          "water_cq2term_cqs",
+          "wine_cqs"
+        ],
+        "status": "INPUTS_FROZEN_NOT_RUN"
+      },
+      {
+        "benchmark": "cq4oe_0_0_1",
+        "task": "cq2onto",
+        "planned_samples": 6,
+        "prepared_samples": 6,
+        "planned_groups": 6,
+        "scope": "ALL_PUBLIC_ONTOLOGIES_NOT_OFFICIAL_TEST",
+        "ontologies": [
+          "awo_cqs",
+          "odrl_cq2onto_cqs",
+          "swo_cq2onto_cqs",
+          "vgo_cq2onto_cqs",
+          "water_cq2onto_cqs",
+          "wine_cqs"
+        ],
+        "status": "INPUTS_FROZEN_NOT_RUN"
+      },
+      {
+        "benchmark": "oskgc",
+        "task": "schema_guided_abox",
+        "planned_samples": null,
+        "prepared_samples": 0,
+        "planned_groups": null,
+        "test_files_in_public_tree": [
+          "benchmark/data/test/1_Airport.xml",
+          "benchmark/data/test/1_Artist.xml",
+          "benchmark/data/test/1_Astronaut.xml",
+          "benchmark/data/test/1_Athlete.xml",
+          "benchmark/data/test/1_Building.xml",
+          "benchmark/data/test/1_CelestialBody.xml",
+          "benchmark/data/test/1_City.xml",
+          "benchmark/data/test/1_ComicsCharacter.xml",
+          "benchmark/data/test/1_Company.xml",
+          "benchmark/data/test/1_Film.xml",
+          "benchmark/data/test/1_Food.xml",
+          "benchmark/data/test/1_MeanOfTransportation.xml",
+          "benchmark/data/test/1_Monument.xml",
+          "benchmark/data/test/1_MusicalWork.xml",
+          "benchmark/data/test/1_Politician.xml",
+          "benchmark/data/test/1_Scientist.xml",
+          "benchmark/data/test/1_SportsTeam.xml",
+          "benchmark/data/test/1_University.xml",
+          "benchmark/data/test/1_WrittenWork.xml",
+          "benchmark/data/test/2_Airport.xml",
+          "benchmark/data/test/2_Artist.xml",
+          "benchmark/data/test/2_Astronaut.xml",
+          "benchmark/data/test/2_Athlete.xml",
+          "benchmark/data/test/2_Building.xml",
+          "benchmark/data/test/2_CelestialBody.xml",
+          "benchmark/data/test/2_City.xml",
+          "benchmark/data/test/2_ComicsCharacter.xml",
+          "benchmark/data/test/2_Company.xml",
+          "benchmark/data/test/2_Film.xml",
+          "benchmark/data/test/2_Food.xml",
+          "benchmark/data/test/2_MeanOfTransportation.xml",
+          "benchmark/data/test/2_Monument.xml",
+          "benchmark/data/test/2_MusicalWork.xml",
+          "benchmark/data/test/2_Politician.xml",
+          "benchmark/data/test/2_Scientist.xml",
+          "benchmark/data/test/2_SportsTeam.xml",
+          "benchmark/data/test/2_University.xml",
+          "benchmark/data/test/2_WrittenWork.xml",
+          "benchmark/data/test/3_Airport.xml",
+          "benchmark/data/test/3_Artist.xml",
+          "benchmark/data/test/3_Astronaut.xml",
+          "benchmark/data/test/3_Athlete.xml",
+          "benchmark/data/test/3_Building.xml",
+          "benchmark/data/test/3_CelestialBody.xml",
+          "benchmark/data/test/3_City.xml",
+          "benchmark/data/test/3_ComicsCharacter.xml",
+          "benchmark/data/test/3_Company.xml",
+          "benchmark/data/test/3_Film.xml",
+          "benchmark/data/test/3_Food.xml",
+          "benchmark/data/test/3_MeanOfTransportation.xml",
+          "benchmark/data/test/3_Monument.xml",
+          "benchmark/data/test/3_MusicalWork.xml",
+          "benchmark/data/test/3_Politician.xml",
+          "benchmark/data/test/3_Scientist.xml",
+          "benchmark/data/test/3_SportsTeam.xml",
+          "benchmark/data/test/3_University.xml",
+          "benchmark/data/test/3_WrittenWork.xml"
+        ],
+        "scope": "OFFICIAL_TEST_ALL_CATEGORIES_NOT_FETCHED",
+        "status": "BLOCKED_LICENSE"
+      }
+    ],
+    "budget": {
+      "planned_sample_system_replicates": 51615,
+      "model_call_upper_bound": 154845,
+      "calls_by_system": {
+        "DirectGeneralLLM": 17205,
+        "DirectBudgetControl": 68820,
+        "OursFull": 68820
+      },
+      "token_reservation_upper_bound": 6193800000,
+      "unplanned_retry_allowance": 0,
+      "cost_upper_bound": null,
+      "qualification": "ONLY_ENUMERATED_AVAILABLE_INPUTS_NOT_UNAVAILABLE_OSKGC_OR_PAPER_COMPONENTS"
+    },
+    "isolation": {
+      "status": "BLOCKED_OS_ISOLATION",
+      "docker_cli_present": true,
+      "docker_server_available": false,
+      "os_canary_access_denied": false,
+      "endpoint_egress_verified": false,
+      "canary_scope": "BENIGN_SIBLING_SCORING_DIRECTORY_SAME_USER_PYTHON_ISOLATED_MODE",
+      "reason": "VERIFIED_MINIMAL_MOUNT_AND_ENDPOINT_ONLY_WORKER_NOT_IMPLEMENTED",
+      "strong_leakage_isolation": false
+    },
+    "blockers": [
+      "BLOCKED_BUDGET_UNSET",
+      "BLOCKED_OS_ISOLATION",
+      "BLOCKED_OURS_FULL_NOT_IMPLEMENTED",
+      "BLOCKED_SAMPLING_PROTOCOL_NOT_FINAL",
+      "BLOCKED_CQ4OE_FULL_NATIVE_PROFILE",
+      "BLOCKED_OSKGC_LICENSE",
+      "BLOCKED_HISTORICAL_DEVELOPMENT_OVERLAP_AUDIT"
+    ],
+    "inference_calls": 0,
+    "measured_native_metrics": null,
+    "ledger_counts": {
+      "NOT_RUN": 51615
+    },
+    "freeze_sha256": "a6e37c0b8dc286bdd43b0f01a7232f66fb13f1eb39e7398bfe05081d756c4244",
+    "source_unchanged": true,
+    "paper_methods": [
+      {
+        "system": "Ontogenia",
+        "benchmark": "onto_generation",
+        "scope": "SAME_BACKBONE_RETEST_NOT_AUTHOR_ORIGINAL_SCORE",
+        "planned_samples": null,
+        "successful": 0,
+        "failed": 0,
+        "not_run": null,
+        "status": "BLOCKED",
+        "reason": "AUTHOR_PATTERNS_CSV_AND_PROCEDURE_ASSETS_NOT_PRESENT_IN_PINNED_TREE; TASK_STORY_ADAPTATION_NOT_FROZEN; NO_BUDGET",
+        "human_judged_metrics": null,
+        "calls": 0,
+        "tokens": null
+      },
+      {
+        "system": "MemorylessCQbyCQ",
+        "benchmark": "onto_generation",
+        "scope": "SAME_BACKBONE_RETEST_NOT_AUTHOR_ORIGINAL_SCORE",
+        "planned_samples": null,
+        "successful": 0,
+        "failed": 0,
+        "not_run": null,
+        "status": "BLOCKED",
+        "reason": "AUTHOR_PATTERNS_CSV_AND_PROCEDURE_ASSETS_NOT_PRESENT_IN_PINNED_TREE; TASK_STORY_ADAPTATION_NOT_FROZEN; NO_BUDGET",
+        "human_judged_metrics": null,
+        "calls": 0,
+        "tokens": null
+      }
+    ],
+    "metric_gaps": {
+      "llms4ol": [
+        "TASK_SUBTYPE_PR_OFFICIAL_AGGREGATION_NOT_IN_FIXED_SCORER",
+        "SEMANTIC_MODEL_NOT_LOCKED"
+      ],
+      "cq4oe": [
+        "FULL_TOP3_ALIGNMENT",
+        "PROPERTY_CHARACTERISTICS",
+        "TBOX_TRIPLE",
+        "AXIOM",
+        "HIERARCHY_CLOSURE",
+        "CQ_COVERAGE"
+      ],
+      "oskgc": [
+        "NO_AUTHORIZED_FULL_TEST_GENERATION",
+        "NATIVE_AGGREGATE_COMPARE_CLI_NOT_CONNECTED"
+      ],
+      "ours": [
+        "SHARED_REUSE_STRUCTURE_KERNEL",
+        "CONSTRAINED_EXTRACTION",
+        "JOINT_VALIDATION_FEEDBACK",
+        "BEHAVIOUR_PROVEN_ABLATIONS"
+      ]
+    }
+  }
+}

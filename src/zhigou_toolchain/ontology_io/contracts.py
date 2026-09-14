@@ -25,7 +25,11 @@ class ModelingInput(Closed):
     records: list[dict[str, str]] = Field(default_factory=list, max_length=10000)
     competency_questions: list[str] = Field(default_factory=list, max_length=1000)
     initial_triples: list[tuple[str, str, str]] = Field(default_factory=list, max_length=10000)
+    supplied_terms: list[str] = Field(default_factory=list, max_length=10000)
+    supplied_types: list[str] = Field(default_factory=list, max_length=10000)
+    cq_occurrences: list[dict[str, str]] = Field(default_factory=list, max_length=1000)
     allowed_schema: dict = Field(default_factory=dict)
+    allowed_shapes_turtle: str = Field(default="", max_length=200000)
     requirements: list[str] = Field(default_factory=list)
     identity_policy: Literal["PER_SAMPLE_CANDIDATE_LABEL_V1"] = "PER_SAMPLE_CANDIDATE_LABEL_V1"
     temporal_policy: str = "ONLY_EXPLICIT_TIME_NO_IMPLICIT_HISTORY_MERGE"
@@ -41,12 +45,33 @@ class Budget(Closed):
     token_accounting_policy: Literal["UTF8_UPPER_BOUND_V1"] = "UTF8_UPPER_BOUND_V1"
 
 
+class KernelProfile(Closed):
+    profile_id: Literal["task-input-kernel-v1"] = "task-input-kernel-v1"
+    retrieval: Literal["TASK_INPUT_EXACT", "NONE"] = "TASK_INPUT_EXACT"
+    constrained_extraction: bool = True
+    validation_feedback: bool = True
+    max_repair_cycles: int = Field(default=1, ge=0, le=3)
+    reasoner_jar: str | None = None
+    validation_timeout_seconds: int = Field(default=30, ge=1, le=60)
+
+
+class RequestProfile(Closed):
+    completion_token_parameter: Literal["max_completion_tokens", "max_tokens"] = "max_completion_tokens"
+    response_format: Literal["json_object", "json_schema"] = "json_object"
+    timeout_seconds: int = Field(default=120, ge=1, le=600)
+    n: Literal[1] = 1
+    stream: Literal[False] = False
+    store: Literal[False] = False
+
+
 class Protocol(Closed):
     protocol_id: str
     model_id: str
     declared_revision: str
     reasoning_effort: Literal["none", "minimal", "low", "medium", "high", "xhigh", "max", "ultra"] | None = None
-    systems: list[Literal["DirectGeneralLLM", "TwoAgentV3", "DirectBudgetControl", "NoRetrieval", "NoConstrainedExtraction", "NoValidationFeedback"]]
+    systems: list[Literal["DirectGeneralLLM", "TwoAgentV3", "DirectBudgetControl", "TwoAgentKernelV1", "DirectRetrievalContext", "NoRetrieval", "NoConstrainedExtraction", "NoValidationFeedback"]]
+    kernel_profile: KernelProfile | None = None
+    request_profile: RequestProfile | None = None
     budget: Budget = Field(default_factory=Budget)
     replicates: int = Field(default=3, ge=1, le=10)
     matching: Literal["exact", "fuzzy", "semantic"] = "exact"
@@ -58,6 +83,7 @@ class Protocol(Closed):
     invalid_prediction_policy: Literal["UNSCORABLE_NO_SUCCESS_SUBSET_AGGREGATION"] = "UNSCORABLE_NO_SUCCESS_SUBSET_AGGREGATION"
     approval: Literal["NOT_GRANTED"] = "NOT_GRANTED"
     release_status: Literal["NOT_RELEASED"] = "NOT_RELEASED"
+    total_run_authorization: dict | None = None
 
     @model_validator(mode="after")
     def unique_variants_and_metrics(self):

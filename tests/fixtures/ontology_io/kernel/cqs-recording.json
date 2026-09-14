@@ -1,0 +1,13 @@
+{
+  "model_id": "recorded-engineering",
+  "declared_revision": "fixture-v1",
+  "input_sha256": "3f80707aac839cc90ab67c239ded35986543d800ee9d407aae9d0a61981bebb6",
+  "replies": [
+    {
+      "turtle": "not Turtle"
+    },
+    {
+      "turtle": "@prefix : <urn:test:> . @prefix owl: <http://www.w3.org/2002/07/owl#> . @prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> . :Animal a owl:Class; rdfs:subClassOf [a owl:Restriction; owl:onProperty :eats; owl:someValuesFrom :Plant] . :Plant a owl:Class . :eats a owl:ObjectProperty ."
+    }
+  ]
+}

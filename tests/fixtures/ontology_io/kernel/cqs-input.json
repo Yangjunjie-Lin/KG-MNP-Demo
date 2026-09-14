@@ -1,0 +1,20 @@
+{
+  "sample_id": "cq-kernel",
+  "benchmark_id": "synthetic-kernel-engineering",
+  "task_id": "cq2onto",
+  "dataset_version": "fixture-v1",
+  "split": "ENGINEERING_CHECK",
+  "evaluation_scope": "ENGINEERING_CHECK",
+  "group_id": "cq-fixture",
+  "mode": "CQS_TBOX",
+  "competency_questions": [
+    "CQ1: Which animals eat plants?"
+  ],
+  "cq_occurrences": [
+    {
+      "id": "cq-kernel--0000",
+      "original_id": "CQ1",
+      "value": "Which animals eat plants?"
+    }
+  ]
+}

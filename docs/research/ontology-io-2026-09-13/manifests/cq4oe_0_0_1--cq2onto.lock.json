@@ -1,0 +1,66 @@
+{
+  "benchmark_id": "cq4oe_0_0_1",
+  "dataset_version": "248e0c6cfa498c4630b17a83290628d9f8adc4b6",
+  "task_id": "cq2onto",
+  "evaluation_scope": "ADAPTED_ANALYSIS",
+  "input_sha256": "20872ed436e3e17cbf1945023ad9d32ab12e4a52e3f8d1a87ee2ae68b5bda604",
+  "sample_count": 6,
+  "grouping": "WHOLE_ONTOLOGY_CQ_SET",
+  "selection": "ALL_LOCKED_CQ_DOCUMENTS",
+  "source_files": [
+    {
+      "path": "CQ2Onto/competency_question/awo_cqs.json",
+      "bytes": 511,
+      "sha256": "93beca4a263aed32fdab66be8e5dd4ac0969d460d11bb5a2f3aaed8e5649932d",
+      "git_blob": "7c23d539de2e614f91ad2a7ebfa6d3b7fd8704bf"
+    },
+    {
+      "path": "CQ2Onto/competency_question/odrl_cq2onto_cqs.json",
+      "bytes": 1981,
+      "sha256": "369cbc7cf2f5f554d562ce5446fc865b5dc022a495dadc31b0b71721b2d502b5",
+      "git_blob": "50b6d58cae4758e07f6f05a4a20706a9d44154b6"
+    },
+    {
+      "path": "CQ2Onto/competency_question/swo_cq2onto_cqs.json",
+      "bytes": 3427,
+      "sha256": "42fbd56ad09b5d5ad71f77a6296dde3c50b66e2dab0b054ef60743f4a48b16f4",
+      "git_blob": "c6e0ca2a27231943c2014a00ea76505dd0674726"
+    },
+    {
+      "path": "CQ2Onto/competency_question/vgo_cq2onto_cqs.json",
+      "bytes": 3085,
+      "sha256": "fc3b6ec0e290ab651bf0aa5af22fa363c308677294993bf673a5a516fedc5af6",
+      "git_blob": "f1ca850b1cff496945972a069b0712b2864fa0c0"
+    },
+    {
+      "path": "CQ2Onto/competency_question/water_cq2onto_cqs.json",
+      "bytes": 2280,
+      "sha256": "c19b6325b3206204d4f86da391b85108766e6d77b0c96844a58ae999710fd0fd",
+      "git_blob": "6030d831242b7cc1e69860e7d6052edc1b2910a3"
+    },
+    {
+      "path": "CQ2Onto/competency_question/wine_cqs.json",
+      "bytes": 394,
+      "sha256": "8a4e84a4ed0869da765fc784686ed0d7eeab3846936e995c4c1af70a8d1cad3a",
+      "git_blob": "e46ee8e185791d2a2106d3c52da5680c8b41e5df"
+    }
+  ],
+  "generation_files": [
+    "generation/inputs.json"
+  ],
+  "scorer_only_files": [],
+  "gold_sha256": null,
+  "scorer_status": "NOT_PREPARED_NATIVE_ALIGNMENT_AND_REASONER_PROFILE_NOT_YET_AUDITED",
+  "abox": "NOT_APPLICABLE_NO_INSTANCES",
+  "smoke_subset_not_full_benchmark": false,
+  "scope_label": "ALL_PUBLIC_ONTOLOGIES_NOT_OFFICIAL_TEST",
+  "group_count": 6,
+  "ontologies": [
+    "awo_cqs",
+    "odrl_cq2onto_cqs",
+    "swo_cq2onto_cqs",
+    "vgo_cq2onto_cqs",
+    "water_cq2onto_cqs",
+    "wine_cqs"
+  ]
+}

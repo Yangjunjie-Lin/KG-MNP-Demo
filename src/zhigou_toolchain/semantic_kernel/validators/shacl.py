@@ -62,25 +62,15 @@ def _shacl_worker(
         output.put(("ENGINE_ERROR", False, [type(exc).__name__]))
 
 
-def validate_shacl(
-    *,
-    data_graph: Graph,
-    shapes_graph: Graph,
-    ontology_graph: Graph,
-    max_results: int = 100_000,
-    max_seconds: int = 120,
-) -> tuple[dict[str, Any], Graph]:
-    assert_safe_shacl_graph(shapes_graph)
-    from ..rdf.canonical import canonical_ntriples
-
+def _execute_shacl_bytes(data_bytes, shapes_bytes, ontology_bytes, *, max_seconds):
     context = multiprocessing.get_context("spawn")
     output = context.Queue(maxsize=1)
     process = context.Process(
         target=_shacl_worker,
         args=(
-            canonical_ntriples(data_graph),
-            canonical_ntriples(shapes_graph),
-            canonical_ntriples(ontology_graph),
+            data_bytes,
+            shapes_bytes,
+            ontology_bytes,
             output,
         ),
     )
@@ -94,6 +84,22 @@ def validate_shacl(
         execution, conforms, raw_rows = "ENGINE_ERROR", False, []
     else:
         execution, conforms, raw_rows = output.get()
+    output.close()
+    return execution, conforms, raw_rows
+
+
+def validate_shacl(
+    *,
+    data_graph: Graph,
+    shapes_graph: Graph,
+    ontology_graph: Graph,
+    max_results: int = 100_000,
+    max_seconds: int = 120,
+) -> tuple[dict[str, Any], Graph]:
+    assert_safe_shacl_graph(shapes_graph)
+    from ..rdf.canonical import canonical_ntriples
+    execution, conforms, raw_rows = _execute_shacl_bytes(canonical_ntriples(data_graph), canonical_ntriples(shapes_graph),
+        canonical_ntriples(ontology_graph), max_seconds=max_seconds)
     results = []
     stable_graph = Graph()
     for row in raw_rows if execution == "OK" else []:
@@ -117,3 +123,14 @@ def validate_shacl(
     core = {"manifest_kind": "KG_MNP_SEMANTIC_SHACL_VALIDATION_REPORT", "schema_version": "1.0.0", "conforms": passes, "status": status, "results": results, "violation_count": counts["VIOLATION"], "warning_count": counts["WARNING"], "info_count": counts["INFO"], "shape_graph_digest": graph_semantic_digest(shapes_graph), "data_graph_digest": graph_semantic_digest(data_graph), "ontology_graph_digest": graph_semantic_digest(ontology_graph), "pyshacl_version": importlib.metadata.version("pyshacl"), "inference_profile": "RDFS", "meta_shacl_status": "PASSED" if execution == "OK" else "NOT_RUN_UNSUPPORTED", "execution_limits": [{"name": "max_shacl_results", "value": max_results}, {"name": "max_shacl_seconds", "value": max_seconds}]}
     report = finalize_artifact(core, id_field="report_id", urn_kind="semantic-shacl-validation-report", contract="semantic-shacl-validation-report")
     return report, stable_graph
+
+
+def validate_research_shacl(*, data_graph, shapes_graph, ontology_graph, max_seconds=30):
+    """Same isolated pySHACL worker for BNode-capable, unreviewed drafts."""
+    from ..rdf.serializers import research_ntriples
+    assert_safe_shacl_graph(shapes_graph)
+    execution, conforms, rows = _execute_shacl_bytes(research_ntriples(data_graph), research_ntriples(shapes_graph),
+        research_ntriples(ontology_graph), max_seconds=max_seconds)
+    return {"status": ("CONFORMS" if conforms else "VIOLATION") if execution == "OK" else execution,
+        "conforms": execution == "OK" and conforms, "results": rows, "execution": execution,
+        "approval": "UNREVIEWED_EVAL_DRAFT", "inference_profile": "RDFS", "authority": "DIAGNOSTIC_ONLY"}

@@ -38,6 +38,20 @@ class CompatibleClient(QwenClient):
         self.max_output_tokens = 8192
         self.reasoning_effort = reasoning_effort
         self.client.timeout = httpx.Timeout(timeout_seconds)
+        self.request_profile = None
+
+    def configure_request_profile(self, *, completion_token_parameter, response_format, timeout_seconds, n, stream, store):
+        """Explicit research request shape; legacy service defaults stay intact."""
+        if (completion_token_parameter not in {"max_completion_tokens", "max_tokens"}
+                or response_format not in {"json_object", "json_schema"} or not 1 <= timeout_seconds <= 600
+                or type(n) is not int or n != 1 or stream is not False or store is not False):
+            raise ToolBlocked("MODEL_REQUEST_PROFILE_INVALID")
+        if completion_token_parameter == "max_tokens" and self.reasoning_effort is not None:
+            raise ToolBlocked("MODEL_LEGACY_TOKEN_PARAMETER_WITH_REASONING_FORBIDDEN")
+        self.response_format = response_format
+        self.client.timeout = httpx.Timeout(timeout_seconds)
+        self.request_profile = {"completion_token_parameter": completion_token_parameter, "response_format": response_format,
+            "timeout_seconds": timeout_seconds, "n": n, "stream": stream, "store": store}
 
     def propose(self, task, context, schema, *, allowed_iris=(), evidence_ids=(), image_data_urls=()):
         Draft202012Validator.check_schema(schema)
@@ -62,6 +76,11 @@ class CompatibleClient(QwenClient):
         if self.reasoning_effort is not None:
             payload["reasoning_effort"] = self.reasoning_effort
             payload["max_completion_tokens"] = payload.pop("max_tokens")
+        if self.request_profile is not None:
+            payload.pop("max_tokens", None)
+            payload.pop("max_completion_tokens", None)
+            payload[self.request_profile["completion_token_parameter"]] = self.max_output_tokens
+            payload.update(n=1, stream=False, store=False)
         if image_data_urls:
             payload["messages"][1]["content"] = [{"type": "text", "text": json.dumps(context, ensure_ascii=False)},
                 *[{"type": "image_url", "image_url": {"url": url}} for url in image_data_urls]]
@@ -71,12 +90,24 @@ class CompatibleClient(QwenClient):
             raise ToolBlocked("MODEL_CONTEXT_TOO_LARGE")
         started, timestamp = perf_counter(), datetime.now(UTC).isoformat()
         self.last_public_response = None
+        self.last_rejection = None
+        self.rejected_proposal = None
         response = self._request("POST", "chat/completions", json=payload)
         if isinstance(response, dict):
+            raw_usage = response.get("usage")
+            usage_fields = ("prompt_tokens", "completion_tokens", "total_tokens")
+            # Capture billing metadata BEFORE JSON/schema/refusal validation.
+            # An unusable answer still consumed a real request and tokens.
+            usage = {k: raw_usage[k] for k in usage_fields if isinstance(raw_usage, dict)
+                and k in raw_usage and type(raw_usage[k]) is int and raw_usage[k] >= 0}
+            invalid_usage = ([k for k in usage_fields if k in raw_usage and k not in usage]
+                if isinstance(raw_usage, dict) else ["usage"] if raw_usage is not None else [])
             public_choices = response.get("choices")
             if not isinstance(public_choices, list):
                 public_choices = []
             self.last_public_response = {"model": response.get("model"), "id": response.get("id"),
+                "usage": usage, "invalid_usage_fields": invalid_usage,
+                "duration_seconds": perf_counter() - started, "started_at": timestamp,
                 "choices": [{"finish_reason": c.get("finish_reason"), "content": c.get("message", {}).get("content")}
                     for c in public_choices if isinstance(c, dict) and isinstance(c.get("message"), dict)]}
         try:
@@ -103,12 +134,18 @@ class CompatibleClient(QwenClient):
         observed_effort = response.get("reasoning_effort")
         if self.reasoning_effort is not None and observed_effort is not None and observed_effort != self.reasoning_effort:
             raise ToolBlocked("MODEL_REASONING_EFFORT_MISMATCH")
+        fingerprint = response.get("system_fingerprint")
+        fingerprint = fingerprint if isinstance(fingerprint, str) and len(fingerprint) <= 256 else None
+        if self.last_public_response["invalid_usage_fields"]:
+            raise ToolBlocked("MODEL_PROVIDER_USAGE_INVALID")
         response = {"id": response.get("id"), "model": response["model"], "choices": [{"finish_reason": "stop",
-            "message": {"role": "assistant", "content": choice["message"]["content"]}}], "usage": response.get("usage", {})}
+            "message": {"role": "assistant", "content": choice["message"]["content"]}}], "usage": self.last_public_response["usage"],
+            "system_fingerprint": fingerprint}
         return {"proposal": value, "execution_source": "LIVE", "approval": "NOT_GRANTED",
                 "provider": "OPENAI_COMPATIBLE", "tool_versions": {"httpx": version("httpx")},
                 "model": {"model_id": self.lock.model_id, "configured_revision": self.lock.revision,
                           "observed_model_id": response["model"], "revision_attestation": "PROVIDER_ALIAS_NOT_WEIGHT_ATTESTED",
+                          "observed_system_fingerprint": fingerprint,
                           "requested_reasoning_effort": self.reasoning_effort, "observed_reasoning_effort": observed_effort,
                           "reasoning_attestation": "RESPONSE_ECHO" if observed_effort is not None else "REQUEST_ONLY_NOT_ECHOED"},
                 "request_id": response.get("id"), "started_at": timestamp, "duration_seconds": perf_counter() - started,
@@ -118,7 +155,7 @@ class CompatibleClient(QwenClient):
                 "schema_hash": semantic_hash(schema), "response_hash": semantic_hash(response),
                 "configuration_hash": semantic_hash({"model": self.lock.model_id, "revision": self.lock.revision,
                     "endpoint_digest": semantic_hash(self.lock.location), "response_format": self.response_format, "max_tokens": self.max_output_tokens,
-                    "reasoning_effort": self.reasoning_effort}),
+                    "reasoning_effort": self.reasoning_effort, "request_profile": self.request_profile}),
                 "validation": "LOCAL_SCHEMA_AND_REFERENCE_CHECKS", "server_schema_enforced": self.response_format == "json_schema"}
 
 

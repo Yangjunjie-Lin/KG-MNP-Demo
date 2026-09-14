@@ -45,6 +45,17 @@ def deterministic_turtle(
     return ("\n".join([*prefix_lines, "", *lines]) + "\n").encode()
 
 
+def research_ntriples(graph: Graph) -> bytes:
+    """Canonical BNodes for unapproved OWL drafts; NOT authoritative RDF.
+
+    Keep production canonical_term's no-BNode rule unchanged. RDF/OWL native
+    task adapters may serialize restrictions without lossy skolem conversion.
+    """
+    from rdflib.compare import to_canonical_graph
+    canonical = to_canonical_graph(graph)
+    return ("\n".join(sorted(" ".join(term.n3() for term in row) + " ." for row in canonical)) + "\n").encode()
+
+
 def deterministic_trig(
     graphs: Mapping[URIRef | str, Iterable[Triple] | Graph],
     *,

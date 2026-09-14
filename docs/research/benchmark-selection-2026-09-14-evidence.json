@@ -1,0 +1,274 @@
+{
+  "research_status": "BLOCKED_NOT_FULLY_EXECUTED",
+  "model_listing": {
+    "model_id": "gpt-5.3-codex-spark",
+    "configured_revision": "configured-alias:gpt-5.3-codex-spark",
+    "kind": "READ_ONLY_HEALTH_NOT_INFERENCE",
+    "weight_attestation": false
+  },
+  "primary_plan": {
+    "inputs": 5723,
+    "systems": 3,
+    "replicates": 3,
+    "runs": 51507,
+    "call_upper_bound": 223197,
+    "token_reservation_upper_bound": 6180840000,
+    "budget_authorization": null
+  },
+  "artifacts": [
+    {
+      "file": "runtime_reports/deepeval-native-20260914-final/receipt.json",
+      "content": {
+        "exit_code": 0,
+        "source_commit": "adc2a40512f8b029b6c21420b905628c32952d00",
+        "source_fingerprint_sha256": "849da6381e31da739e01da68ad205f28126b30a8e9d860d64185c2c756af9caa",
+        "source_unchanged": true,
+        "environment_policy": "CREDENTIAL_FREE_OFFLINE_ALLOWLIST",
+        "research_scores": null,
+        "scope": "DEEPEVAL_NATIVE_METRIC_BRIDGE_ENGINEERING_CHECK"
+      }
+    },
+    {
+      "file": "runtime_reports/deepeval-native-20260914-final/equivalence.json",
+      "content": {
+        "status": "ENGINEERING_EQUIVALENCE_VERIFIED",
+        "deepeval_version": "4.1.0",
+        "synthetic_cases": 10,
+        "metric_comparisons": 80,
+        "sync_and_async": true,
+        "failed_metric_state_cleared": true,
+        "import_seconds": 3.2151520999905188,
+        "scoring_check_seconds": 3.0941467999946326,
+        "network_attempts": [],
+        "live_generation_calls": 0,
+        "llm_judge_calls": 0,
+        "research_scores": null,
+        "telemetry": "DISABLED",
+        "isolation_scope": "PYTHON_NETWORK_GUARD_NOT_OS_GOLD_SANDBOX",
+        "scope": "SCORER_WRAPPER_TEST_NOT_MODEL_QUALITY_OR_FULL_BENCHMARK"
+      }
+    },
+    {
+      "file": "runtime_reports/deepeval-selection-final-verification/verification.json",
+      "content": {
+        "status": "ENGINEERING_CHECKS_ONLY",
+        "source_unchanged": true,
+        "commands": [
+          {
+            "command": [
+              "C:\\Users\\Yangjunjie Lin\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+              "-m",
+              "ruff",
+              "check",
+              "."
+            ],
+            "exit_code": 0,
+            "seconds": 0.17027740000048652,
+            "log": "command-0.log",
+            "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+          },
+          {
+            "command": [
+              "C:\\Users\\Yangjunjie Lin\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+              "tools/check_types.py"
+            ],
+            "exit_code": 0,
+            "seconds": 6.866593200014904,
+            "log": "command-1.log",
+            "sha256": "6d88a1b220adb7a3d62092b6e38431f0b3fe8babe9864fab90e5849766260332"
+          },
+          {
+            "command": [
+              "C:\\Users\\Yangjunjie Lin\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+              "tools/evaluate_research.py",
+              "--suite",
+              "ontology-io-engineering"
+            ],
+            "exit_code": 0,
+            "seconds": 130.85167389997514,
+            "log": "command-2.log",
+            "sha256": "8290fc4cb741f0fd8272093119aa2534e712ed8e81b92c1db4764bbc93a3e4de"
+          },
+          {
+            "command": [
+              "C:\\Users\\Yangjunjie Lin\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+              "-m",
+              "pytest",
+              "tests/upgrade/test_ontology_io_extended.py",
+              "--tb=short",
+              "--junitxml=D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime_reports\\deepeval-selection-final-verification\\extended.xml"
+            ],
+            "exit_code": 0,
+            "seconds": 6.268088399985572,
+            "log": "command-3.log",
+            "sha256": "35b219cbd9cd5db090d2d2186f2d02f0fb28ffc6b04427803505ae1c72822e54"
+          }
+        ],
+        "runtime": {
+          "python": "3.12.6",
+          "os": "Windows",
+          "packages": {
+            "rdflib": "7.6.0",
+            "jsonschema": "4.23.0",
+            "pyshacl": "0.28.1",
+            "networkx": "3.6.1",
+            "httpx": "0.27.2",
+            "pydantic": "2.12.4",
+            "rapidfuzz": "3.14.3",
+            "numpy": "2.4.6",
+            "scipy": "1.15.2"
+          }
+        },
+        "research_score": null,
+        "experiment_complete": false
+      }
+    },
+    {
+      "file": "runtime_reports/ontology-benchmark-search-20260914/sources.json",
+      "content": {
+        "source_scope": "PRIMARY_SOURCES_DISCOVERED_BY_WEB_SEARCH_NOT_EXHAUSTIVE_INTERNET",
+        "sources": [
+          {
+            "name": "deepeval-custom",
+            "url": "https://deepeval.com/docs/metrics-custom",
+            "accessed_at": "2026-09-14T14:11:34.466214+00:00",
+            "status": "FETCHED",
+            "file": "deepeval-custom.html",
+            "sha256": "7a9618cd1baf73da9a307c4ec5e9f3c913abaf0be82bf89cd83d2d3ca2994a3f"
+          },
+          {
+            "name": "deepeval-geval",
+            "url": "https://deepeval.com/docs/metrics-llm-evals",
+            "accessed_at": "2026-09-14T14:11:35.742485+00:00",
+            "status": "FETCHED",
+            "file": "deepeval-geval.html",
+            "sha256": "97191dad5bf728ddce647f5ced5382964d92253e8c3dceed4ec5b88180a6af4b"
+          },
+          {
+            "name": "deepeval-privacy",
+            "url": "https://deepeval.com/docs/data-privacy",
+            "accessed_at": "2026-09-14T14:11:36.068431+00:00",
+            "status": "FETCHED",
+            "file": "deepeval-privacy.html",
+            "sha256": "daeddbead40eb425ca1f3f6654d72b028765b2997f948d28b0ca853437796511"
+          },
+          {
+            "name": "deepeval-benchmarks",
+            "url": "https://deepeval.com/docs/benchmarks-introduction",
+            "accessed_at": "2026-09-14T14:11:36.251687+00:00",
+            "status": "FETCHED",
+            "file": "deepeval-benchmarks.html",
+            "sha256": "3d8504401f0e973b5f4823f33969b7f236d28a4487368f75162b7e1ea15baae2"
+          },
+          {
+            "name": "ragas-factual",
+            "url": "https://docs.ragas.io/en/stable/concepts/metrics/available_metrics/factual_correctness/",
+            "accessed_at": "2026-09-14T14:11:36.437620+00:00",
+            "status": "FETCHED",
+            "file": "ragas-factual.html",
+            "sha256": "63d4d69194454cefdca0048608af4675d572922dbabb48e37d0bb26800576ddd"
+          },
+          {
+            "name": "promptfoo",
+            "url": "https://www.promptfoo.dev/docs/configuration/expected-outputs/",
+            "accessed_at": "2026-09-14T14:11:36.630027+00:00",
+            "status": "FETCHED",
+            "file": "promptfoo.html",
+            "sha256": "159019f94e4f7d332bae257f2c4ebeadc433169ba810ca678aada87286c40ac3"
+          },
+          {
+            "name": "llms4ol-flagship",
+            "url": "https://sites.google.com/view/llms4ol2026/flagship-task",
+            "accessed_at": "2026-09-14T14:11:36.773378+00:00",
+            "status": "FETCHED",
+            "file": "llms4ol-flagship.html",
+            "sha256": "ae2a52b850635519fb36735592c37b228ea2711aba9367fae45860d26ef8e8dd"
+          },
+          {
+            "name": "llms4ol-reuse",
+            "url": "https://sites.google.com/view/llms4ol2026/reuse-task",
+            "accessed_at": "2026-09-14T14:11:37.052660+00:00",
+            "status": "FETCHED",
+            "file": "llms4ol-reuse.html",
+            "sha256": "c2c1d6cf98410d5327193c3de9fbff54c71e7186fab5855b9146a1d69e112bef"
+          },
+          {
+            "name": "cq4oe-current",
+            "url": "https://oeg-upm.github.io/cq4oe-benchmark/leaderboard/index.html",
+            "accessed_at": "2026-09-14T14:11:37.249899+00:00",
+            "status": "FETCHED",
+            "file": "cq4oe-current.html",
+            "sha256": "35b16fe4a5c69f95f47254574d083d08b8e38a0fddb3161ac53199f466cb2b0e"
+          },
+          {
+            "name": "lettria-paper",
+            "url": "https://ceur-ws.org/Vol-4041/paper3.pdf",
+            "accessed_at": "2026-09-14T14:11:37.417947+00:00",
+            "status": "FETCHED",
+            "file": "lettria-paper.pdf",
+            "sha256": "6fcdae1cd18fcb2d50c56ea75c3bfd3daedf65cd499715d342e75925679e72ba"
+          },
+          {
+            "name": "oaei",
+            "url": "https://oaei.ontologymatching.org/2026/",
+            "accessed_at": "2026-09-14T14:11:38.827794+00:00",
+            "status": "FETCHED",
+            "file": "oaei.html",
+            "sha256": "63fe69132251013ed7693bb396840b66006c03d2722b532a18a68cbe71e2dc63"
+          },
+          {
+            "name": "text2kgbench",
+            "repository": "https://github.com/cenguix/Text2KGBench",
+            "accessed_at": "2026-09-14T14:11:39.553681+00:00",
+            "status": "FETCHED_README_ONLY",
+            "commit": "50a3d255371b8817cdff70fd88459ac82b339cfe",
+            "file": "text2kgbench-README.md",
+            "sha256": "e70988a519a6fc1d3b69e6a75a88920c0137622d419452e6f3e475c15ff99729",
+            "benchmark_execution": "NOT_RUN"
+          },
+          {
+            "name": "scope",
+            "repository": "https://github.com/wandugu/paper_scion",
+            "accessed_at": "2026-09-14T14:11:41.049805+00:00",
+            "status": "FETCHED_README_ONLY",
+            "commit": "d4428df499af368e8e9a65397eef222fa41f160e",
+            "file": "scope-README.md",
+            "sha256": "02a7fbaa782a354ea724e668c388d34cf2bfd7cf39b2a7f5a36fec72bf2525f3",
+            "benchmark_execution": "NOT_RUN"
+          },
+          {
+            "name": "ontoeval",
+            "repository": "https://github.com/ai4curation/ontoeval",
+            "accessed_at": "2026-09-14T14:11:41.562666+00:00",
+            "status": "FETCHED_README_ONLY",
+            "commit": "7d514b03bae3d248b53c5f503336da1d3008ff7f",
+            "file": "ontoeval-README.md",
+            "sha256": "21043e6c170b20b1acbea53a6fd275e5730092930875b5a90d7e45546eaa7b78",
+            "benchmark_execution": "NOT_RUN"
+          },
+          {
+            "name": "owl2bench",
+            "repository": "https://github.com/kracr/owl2bench",
+            "accessed_at": "2026-09-14T14:11:42.138945+00:00",
+            "status": "FETCHED_README_ONLY",
+            "commit": "5a27536c8e7f7621b34c61c8a57ed9eb63e7829a",
+            "file": "owl2bench-README.md",
+            "sha256": "f361b0009e2f0bbc4be093b12a0189cd7f27bc671a5c9601ac0ca53c50e39236",
+            "benchmark_execution": "NOT_RUN"
+          }
+        ],
+        "deepeval_installed_version": "4.1.0",
+        "deepeval_audited_files": {
+          "__init__.py": "05f0cb82c9a835db6dbb02a0160ab751361d094a2b63fb03b860855a96d83f70",
+          "telemetry.py": "ef8a0c4e420b91a25f7baa1cba16a6483c60ca1576bb52a8c76a8528a38acad1",
+          "metrics/base_metric.py": "83ffa4ec929408123b6d124c7d3e70ac402b4f4ddb85bec1f3f1cb40f2f61bc6",
+          "config/settings.py": "f06340b0798f2d2d4a2215e01daab529475091daedfbd7a9886f589ed4956e04",
+          "tracing/internal.py": "9e17711dd5ed17445f36cb01b77277fdffe958ab6ea98857b6677ce1a98713c6"
+        },
+        "upstream_existing_locks": "UNCHANGED",
+        "data_acquisition": "NO_NEW_BENCHMARK_DATA_DOWNLOADED",
+        "model_calls": 0
+      }
+    }
+  ]
+}

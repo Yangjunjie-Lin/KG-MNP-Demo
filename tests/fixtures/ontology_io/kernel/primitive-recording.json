@@ -1,0 +1,56 @@
+{
+  "model_id": "recorded-engineering",
+  "declared_revision": "fixture-v1",
+  "input_sha256": "db758890f0feaf94e7ea8c4250e15c0eddbc8b010195e1362959dbabaa463a2e",
+  "replies": [
+    {
+      "decisions": [],
+      "unresolved": []
+    },
+    {
+      "classes": [
+        "Oak",
+        "Tree"
+      ],
+      "entities": [],
+      "relations": [],
+      "unresolved": []
+    },
+    {
+      "prediction": {
+        "triples": [
+          [
+            "Oak",
+            "is-a",
+            "Tree"
+          ]
+        ]
+      },
+      "evidence": [
+        {
+          "triple_index": 0,
+          "quote": "Wrong quotation",
+          "start": 0
+        }
+      ]
+    },
+    {
+      "prediction": {
+        "triples": [
+          [
+            "Oak",
+            "is-a",
+            "Tree"
+          ]
+        ]
+      },
+      "evidence": [
+        {
+          "triple_index": 0,
+          "quote": "Oak is a tree.",
+          "start": 0
+        }
+      ]
+    }
+  ]
+}
