@@ -205,3 +205,24 @@ semantic模型锁、OSKGC明确许可、论文方法复现和正式付费预算/
 ## 立项目标与研究结论边界
 
 自动识别准确率 ≥80%、专家审核后准确率 ≥90%、来源可追溯完整率 ≥90% 均保留为立项验收目标。当前没有独立专家标注与定义清楚的准确率分母，均不能宣布达标。外部任务按其原始公式分别评分，不以 F1 偷换“准确率”，不把工程检查或 v3 合规视为语义正确性。
+
+## 2026-09-16 本体交接 ZIP 增量落实
+
+用户要求实际完成附件中的代码、交接和验证；附件不新增付费/发布权限。
+固定基线 develop@194e091；原协议与会议 ZIP 原字节保留于 docs/ontology/references。
+详细结果与命令见 `docs/ontology/IMPLEMENTATION_STATUS.md`。
+
+| 需求 | 实际入口 | 实现/验证边界 |
+|---|---|---|
+| C 真实输入 | delivery/meeting_input.py；services/handoff_input.py | 会议上游 manifest/来源/记录/文本/质量进入真实 Source/Batch/Run；不把整包或原生 DTO 混用；不自动冻结未登记会议 CQ |
+| D 结果出口 | delivery/handoff.py；services/handoff.py | 原图/原生包原字节，原生审核/编译/独立答案/来源闭包、实际候选构建与 declarative mapping 分开；不是原 v3 |
+| E 受控轨迹 | delivery/trace.py；five_stage/agents.py / compatible.py / tools.py | 默认关闭，成功/公开失败/拒绝/重试均在真实边界捕获；低敏审计不变；服务内容另存且单独授权 |
+| F 严格 v2 | delivery/evolution.py | call_id、连续 turn、并行/乱序/跨轮，兼容 warning 与严格生产者分开；程序前置步骤明确阻断，不造 LLM |
+| G harness/评价 | services/ontology_traces.py | 六类实际资源摘要、commit/脏树指纹；人工运行评价与本体审核分开；完整 verdict/本体评分仍待对方确认 |
+| H 批次与入口 | exchange_io.py / cover.py / delivery CLI / operation registry / API / Worker / handoff-download.tsx | 原子不覆盖、源权限、重复投递账本、稳定外部 ID；第五阶段与失败任务下载来自服务端 |
+| I 安全与验证 | test_evolution_delivery.py / test_meeting_handoff_input.py / test_handoff_delivery.py / verify_handoff_isolation.py | HR/林业真实服务、网络边界明确 Mock；真实研究生成修复进程 OS 不可读 canary；生产 Worker 全体未沙箱化 |
+| J 文档和产物 | docs/ontology 与 runtime_reports/handoff-20260916 | 已实现、已实测、待确认、未执行分项记录；不改历史失败/外部研究结果 |
+
+补充限制：原生→原 v3 的历史预检仍保持阻塞；新项目格式不消除原 v3 限制。
+无独立负例计划的具体交接包标 NOT_RUN。无真实人工评价不输出 reviews。
+本轮无付费模型请求、无对方接收器联调、无生产发布。

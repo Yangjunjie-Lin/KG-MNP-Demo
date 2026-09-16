@@ -76,6 +76,7 @@ def canary(paths):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--canary", action="store_true")
+    parser.add_argument("--recording-check", action="store_true", help="Run the real kernel with explicitly synthetic recording and access probes")
     parser.add_argument("--forbidden", nargs="*", default=[])
     args = parser.parse_args()
     if args.canary:
@@ -92,7 +93,23 @@ def main():
     job = json.loads(Path("/input/job.json").read_bytes())
     sample = ModelingInput.model_validate(job["sample"])
     protocol = Protocol.model_validate(job["protocol"])
-    result = generate_sample(sample, protocol, job["system"], Path("/out/result"), client=IPCClient(protocol), replicate_id=job["replicate_id"])
+    if args.recording_check:
+        from zhigou_toolchain.contracts.canonical import semantic_hash
+
+        from .replay import RecordedProposalClient, Recording
+        recording = Recording.model_validate_json(Path("/input/recording.json").read_bytes())
+        if sample.evaluation_scope != "ENGINEERING_CHECK" or recording.input_sha256 != semantic_hash(sample.model_dump(mode="json")):
+            raise ValueError("ISOLATED_RECORDING_ENGINEERING_ONLY")
+        probe = canary(args.forbidden)
+        if not probe["passed"]:
+            raise ValueError("GENERATION_PRIVATE_ACCESS_NOT_DENIED")
+        client = RecordedProposalClient(recording, protocol)
+        result = generate_sample(sample, protocol, job["system"], Path("/out/result"), client=client, replicate_id=job["replicate_id"], record_trace=True)
+        Path("/out/isolation-check.json").write_text(json.dumps({"access": probe, "generation_status": result["status"],
+            "execution_mode": "RECORDED_ENGINEERING_ONLY", "live_inference_calls": 0, "repair_cycles": result.get("kernel", {}).get("repair_cycles"),
+            "logical_recorded_calls": client.index}), encoding="utf-8")
+    else:
+        result = generate_sample(sample, protocol, job["system"], Path("/out/result"), client=IPCClient(protocol), replicate_id=job["replicate_id"])
     print(json.dumps({"op": "done", "status": result["status"], "resources": result["resources"], "runtime": runtime_versions()}), flush=True)
 
 

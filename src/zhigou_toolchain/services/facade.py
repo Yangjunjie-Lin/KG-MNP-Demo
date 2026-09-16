@@ -175,6 +175,8 @@ class ApplicationService:
         from .compilation import OPERATIONS as COMPILATION_OPERATIONS
         from .compilation import execute as execute_compilation
         from .execution import execute_fenced
+        from .handoff import OPERATIONS as HANDOFF_OPERATIONS
+        from .handoff import execute as execute_handoff
         from .integrations import OPERATIONS as INTEGRATION_OPERATIONS
         from .integrations import execute as execute_integration
         from .lifecycle import OPERATIONS as LIFECYCLE_OPERATIONS
@@ -184,9 +186,11 @@ class ApplicationService:
         from .requests import validate_parameters
         from .sources import OPERATIONS, execute
         validate_parameters(request)
-        if job.operation_id not in OPERATIONS | MODELING_OPERATIONS | COMPILATION_OPERATIONS | LIFECYCLE_OPERATIONS | INTEGRATION_OPERATIONS | BUSINESS_OPERATIONS:
+        if job.operation_id not in OPERATIONS | MODELING_OPERATIONS | COMPILATION_OPERATIONS | LIFECYCLE_OPERATIONS | INTEGRATION_OPERATIONS | BUSINESS_OPERATIONS | HANDOFF_OPERATIONS:
             raise ServiceBoundaryError("OPERATION_BLOCKED", "queued operation has no commit-fenced handler", status_code=501)
-        if job.operation_id in BUSINESS_OPERATIONS:
+        if job.operation_id in HANDOFF_OPERATIONS:
+            handler = execute_handoff
+        elif job.operation_id in BUSINESS_OPERATIONS:
             handler = execute_business
         elif job.operation_id in OPERATIONS:
             handler = execute
@@ -199,20 +203,27 @@ class ApplicationService:
         else:
             handler = execute_integration
         from zhigou_toolchain.modeling.five_stage.agents import execute_routed
+
+        from .ontology_traces import finish_recorders, recorder_factory
         agent_receipt = None
+        recorders = []
         def routed(project):
             nonlocal agent_receipt
-            result = execute_routed(project, request, lambda: handler(self, project, request, principal))
+            result = execute_routed(project, request, lambda: handler(self, project, request, principal),
+                trace_factory=recorder_factory(self, project, request, principal, job, recorders))
             agent_receipt = result.get("agent_execution")
             return result
         try:
-            return execute_fenced(self, job, request, principal, routed)
+            result = execute_fenced(self, job, request, principal, routed)
+            finish_recorders(recorders, result=result)
+            return result
         except Exception as exc:
             # A computation receipt may exist even if publication subsequently
             # fails. Only the ordinary lease-fenced JobStore failure path may
             # persist it; a stale worker still cannot overwrite a replacement.
             if agent_receipt is not None and not getattr(exc, "agent_execution", None):
                 setattr(exc, "agent_execution", {**agent_receipt, "publication_status": "NOT_CONFIRMED"})  # noqa: B010 - arbitrary handler exception types
+            finish_recorders(recorders, error=exc, cancelled=self.jobs.get(job.job_id).status in {"CANCELLED", "CANCEL_REQUESTED"})
             raise
 
     def recover_job(self, job):
@@ -239,12 +250,13 @@ class ApplicationService:
             raise ServiceBoundaryError("COMMIT_NOT_FOUND", "no verified core commit receipt exists", status_code=409)
         from .business import OPERATIONS as business
         from .compilation import OPERATIONS as compilation
+        from .handoff import OPERATIONS as handoff
         from .lifecycle import OPERATIONS as lifecycle
         from .modeling import OPERATIONS as modeling
         from .sources import OPERATIONS as sources
         # External integration/workflow operations are deliberately excluded;
         # this is not a claim of safe replay for unknown external side effects.
-        if job.operation_id not in sources | modeling | compilation | lifecycle | business:
+        if job.operation_id not in sources | modeling | compilation | lifecycle | business | handoff:
             raise ServiceBoundaryError("RECOVERY_REQUIRED", "external or unknown operation requires explicit reconciliation", status_code=409)
         parameters = self.jobs.parameters(job_id)
         identity = parameters.get("__principal", {})

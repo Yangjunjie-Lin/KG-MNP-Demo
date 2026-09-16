@@ -420,7 +420,43 @@ class OntologyIOReportRequest(RequestDTO):
     report: dict
 
 
+class SourceExportGrant(RequestDTO):
+    source_id: str = Field(pattern=r"^urn:kg-mnp:source:[a-f0-9]{64}$")
+    sha256: str = Field(pattern=r"^[a-f0-9]{64}$")
+    license: str = Field(min_length=1, max_length=500)
+    permission_basis: str = Field(min_length=1, max_length=2000)
+
+
+class HandoffExportRequest(PackageRequest):
+    expected_revision: int = Field(ge=1)
+    source_grants: list[SourceExportGrant] = Field(min_length=1, max_length=1000)
+    recipient: str = Field(min_length=1, max_length=500)
+    data_classification: Literal["SYNTHETIC", "AUTHORIZED_DATA"]
+
+
+class TrajectoryExportRequest(RequestDTO):
+    job_id: str = Field(min_length=1, max_length=250)
+    batch_id: str = Field(pattern=r"^[A-Za-z0-9._-]{1,100}$")
+    profile: Literal["strict-v2", "local"] = "strict-v2"
+
+
+class TrajectoryAnnotation(RequestDTO):
+    aspect: Literal["引用准确性", "事实正确性", "格式合规", "完整性", "其他"]
+    severity: Literal["info", "minor", "major", "critical"]
+    comment: str = Field(min_length=1, max_length=5000)
+
+
+class TrajectoryReviewRequest(RequestDTO):
+    job_id: str = Field(min_length=1, max_length=250)
+    verdict: Literal["fail"]
+    annotations: list[TrajectoryAnnotation] = Field(min_length=1, max_length=100)
+
+
 REQUEST_MODELS = {
+    "modeling.handoff.import": SourceRegisterRequest,
+    "modeling.handoff.export": HandoffExportRequest,
+    "modeling.evolution.export": TrajectoryExportRequest,
+    "modeling.evolution.review": TrajectoryReviewRequest,
     "ontology.io.inspect": OntologyIOReportRequest,
     "source.sample.load": EmptyRequest,
     "module.evaluate": ModuleEvaluationRequest,

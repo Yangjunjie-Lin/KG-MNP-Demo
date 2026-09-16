@@ -27,6 +27,8 @@ class ServiceConfiguration:
     reasoner_jar: str | None = None
     allow_insecure_loopback_session: bool = False
     workbench_root: str | None = None
+    ontology_trace_enabled: bool = False
+    ontology_trace_data_policy: str = "AUTHORIZED_PUBLIC_CONTENT_ONLY"
 
     def validate(self) -> None:
         import ipaddress

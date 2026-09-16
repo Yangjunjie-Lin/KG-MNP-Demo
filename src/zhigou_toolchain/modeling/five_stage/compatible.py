@@ -18,6 +18,7 @@ from jsonschema.exceptions import ValidationError
 
 from zhigou_toolchain.contracts.canonical import semantic_hash
 from zhigou_toolchain.environment import get_setting
+from zhigou_toolchain.modeling.delivery.trace import traced_proposal
 
 from .tools import ModelLock, QwenClient, ToolBlocked, validate_references
 
@@ -53,6 +54,7 @@ class CompatibleClient(QwenClient):
         self.request_profile = {"completion_token_parameter": completion_token_parameter, "response_format": response_format,
             "timeout_seconds": timeout_seconds, "n": n, "stream": stream, "store": store}
 
+    @traced_proposal
     def propose(self, task, context, schema, *, allowed_iris=(), evidence_ids=(), image_data_urls=()):
         Draft202012Validator.check_schema(schema)
         if len(image_data_urls) > 4:

@@ -494,6 +494,7 @@ def main(argv=None):
     replay = sub.add_parser("replay", help="Run actual kernels with a frozen ENGINEERING_CHECK recording; never LIVE")
     replay.add_argument("input", type=Path); replay.add_argument("protocol", type=Path)
     replay.add_argument("recording", type=Path); replay.add_argument("output", type=Path); replay.add_argument("--system", required=True)
+    replay.add_argument("--record-trace", action="store_true", help="Opt-in local content journal; replay is never an LLM event")
     scorer = sub.add_parser("score"); scorer.add_argument("run", type=Path); scorer.add_argument("prepared", type=Path); scorer.add_argument("upstream", type=Path); scorer.add_argument("output", type=Path)
     scorer.add_argument("--framework", choices=["native", "deepeval"], default="native", help="deepeval requires credential-free OFFLINE_SETTINGS; never an LLM judge")
     comparison = sub.add_parser("compare"); comparison.add_argument("baseline", type=Path); comparison.add_argument("experiment", type=Path); comparison.add_argument("output", type=Path)
@@ -510,7 +511,7 @@ def main(argv=None):
         result = run(args.prepared, args.protocol, args.output, system=args.system, dry_run=args.dry_run)
     elif args.command == "replay":
         from .replay import replay_sample
-        result = replay_sample(args.input, args.protocol, args.recording, args.output, system=args.system)
+        result = replay_sample(args.input, args.protocol, args.recording, args.output, system=args.system, record_trace=args.record_trace)
     elif args.command == "score":
         result = score(args.run, args.prepared, args.upstream, args.output, framework=args.framework)
     elif args.command == "compare":

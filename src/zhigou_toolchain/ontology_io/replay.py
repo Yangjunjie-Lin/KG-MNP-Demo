@@ -29,6 +29,7 @@ class Recording(Closed):
 
 
 class RecordedProposalClient:
+    execution_mode = "RECORDED"
     def __init__(self, recording, protocol):
         self.recording = recording
         self.index = 0
@@ -37,6 +38,20 @@ class RecordedProposalClient:
         self.last_public_response = None
 
     def propose(self, instruction, content, schema, *, allowed_iris=()):
+        from zhigou_toolchain.modeling.delivery.trace import ACTIVE_TRACE
+        trace = ACTIVE_TRACE.get()
+        call_id = trace.call("tool", tool="recording.replay", args={"instruction": instruction, "content": content, "schema": schema}) if trace else None
+        try:
+            return self._replay(instruction, content, schema, allowed_iris=allowed_iris)
+        except BaseException as exc:
+            if trace and call_id:
+                trace.result(call_id, {}, error={"type": type(exc).__name__})
+            raise
+        finally:
+            if trace and call_id and call_id in trace.pending:
+                trace.result(call_id, self.recording.replies[self.index - 1])
+
+    def _replay(self, instruction, content, schema, *, allowed_iris=()):
         if self.index >= len(self.recording.replies):
             raise ValueError("ENGINEERING_RECORDING_EXHAUSTED")
         value = self.recording.replies[self.index]
@@ -48,7 +63,7 @@ class RecordedProposalClient:
             "usage": {"total_tokens": None}, "authority": "ENGINEERING_FIXTURE_ONLY", "live_inference_calls": 0}
 
 
-def replay_sample(input_path, protocol_path, recording_path, output, *, system):
+def replay_sample(input_path, protocol_path, recording_path, output, *, system, record_trace=False):
     sample = ModelingInput.model_validate_json(Path(input_path).read_bytes())
     protocol = Protocol.model_validate(yaml.safe_load(Path(protocol_path).read_text(encoding="utf-8")))
     recording = Recording.model_validate_json(Path(recording_path).read_bytes())
@@ -60,7 +75,7 @@ def replay_sample(input_path, protocol_path, recording_path, output, *, system):
         raise ValueError("REPLAY_MODEL_CONTEXT_CHANGED")
     client = RecordedProposalClient(recording, protocol)
     identity = source_identity(Path(__file__).resolve().parents[3])
-    result = generate_sample(sample, protocol, system, Path(output), client=client)
+    result = generate_sample(sample, protocol, system, Path(output), client=client, record_trace=record_trace)
     unchanged = source_identity(Path(__file__).resolve().parents[3]) == identity
     report = {"status": result["status"] if unchanged else "INVALID_SOURCE_CHANGED", "execution_mode": "RECORDED_ENGINEERING_ONLY", "live_inference_calls": 0,
         "logical_provider_calls": len(result["calls"]), "recorded_replies_consumed": client.index,

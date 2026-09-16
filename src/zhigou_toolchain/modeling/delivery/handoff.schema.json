@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:zhigou:ontology-handoff:1.0.0",
+  "title": "ZhiGou native-bound handoff manifest (not ontology-delivery v3)",
+  "type": "object",
+  "required": ["format", "schema_version", "package_kind", "native_package_id", "native_archive_sha256", "session_id", "session_revision", "input_run_id", "project_id", "execution_mode", "data_classification", "validation_status", "review_status", "review_nature", "release_status", "default_query_graph", "generation_access", "files"],
+  "additionalProperties": false,
+  "properties": {
+    "format": {"const": "zhigou-ontology-handoff/1.0.0"},
+    "schema_version": {"const": "1.0.0"},
+    "package_kind": {"const": "NATIVE_BOUND_EXCHANGE_VIEW"},
+    "native_package_id": {"type": "string", "minLength": 1},
+    "native_archive_sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"},
+    "session_id": {"type": "string", "minLength": 1},
+    "session_revision": {"type": "integer", "minimum": 1},
+    "input_run_id": {"type": "string", "minLength": 1},
+    "project_id": {"type": "string", "minLength": 1},
+    "execution_mode": {"enum": ["DETERMINISTIC", "RECORDED", "LIVE"]},
+    "data_classification": {"enum": ["SYNTHETIC", "AUTHORIZED_DATA"]},
+    "validation_status": {"type": "string"},
+    "review_status": {"const": "NATIVE_REVIEW_CONFIRMED"},
+    "review_nature": {"enum": ["SYNTHETIC_ENGINEERING", "AUTHENTICATED_HUMAN"]},
+    "release_status": {"const": "NOT_GRANTED_BY_EXPORT"},
+    "default_query_graph": {"const": "instances.ttl"},
+    "generation_access": {"const": "FORBIDDEN_CONTAINS_INDEPENDENT_ACCEPTANCE"},
+    "files": {"type": "array", "minItems": 11, "items": {
+      "type": "object", "additionalProperties": false, "required": ["path", "sha256", "size_bytes"],
+      "properties": {"path": {"type": "string"}, "sha256": {"type": "string", "pattern": "^[a-f0-9]{64}$"}, "size_bytes": {"type": "integer", "minimum": 0}}
+    }}
+  }
+}

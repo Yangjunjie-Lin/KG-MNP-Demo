@@ -16,10 +16,12 @@ from .projects import require_access
 from .sources import upload_root
 
 
-async def receive_upload(service, project_id, principal, chunks, *, filename, media_type, idempotency_key):
+async def receive_upload(service, project_id, principal, chunks, *, filename, media_type, idempotency_key, operation="source.register"):
     principal = service._current(principal)
-    request = OperationRequest("source.register", project_id, {}, idempotency_key)
-    authorize(principal, service.catalog["source.register"], request)
+    if operation not in {"source.register", "modeling.handoff.import"}:
+        raise ServiceBoundaryError("UPLOAD_OPERATION_INVALID", "unsupported upload workflow", status_code=422)
+    request = OperationRequest(operation, project_id, {}, idempotency_key)
+    authorize(principal, service.catalog[operation], request)
     project = service._project(request)
     require_access(principal, project)
     if not idempotency_key or len(idempotency_key) > 200:
@@ -56,7 +58,7 @@ async def receive_upload(service, project_id, principal, chunks, *, filename, me
         # previously accepted durable job. Incomplete .part files are removed.
         principal = service._current(principal)
         require_access(principal, service._project(request))
-        authorize(principal, service.catalog["source.register"], request)
+        authorize(principal, service.catalog[operation], request)
         with metadata_lock(root / "uploads-lock.sqlite3"):
             blob, metadata = root / (upload_id + ".blob"), root / (upload_id + ".json")
             created = not blob.exists()
@@ -64,7 +66,7 @@ async def receive_upload(service, project_id, principal, chunks, *, filename, me
                 temporary.replace(blob)
                 atomic_write_json(metadata, record)
             try:
-                result = service.execute(OperationRequest("source.register", project_id, {"upload_id": upload_id}, idempotency_key), principal)
+                result = service.execute(OperationRequest(operation, project_id, {"upload_id": upload_id}, idempotency_key), principal)
             except BaseException:
                 if created:
                     blob.unlink(missing_ok=True)

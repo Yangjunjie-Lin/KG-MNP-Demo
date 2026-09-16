@@ -17,6 +17,7 @@ from uuid import uuid4
 
 from zhigou_toolchain import __version__
 from zhigou_toolchain.contracts.canonical import semantic_hash
+from zhigou_toolchain.modeling.delivery.trace import ACTIVE_TRACE
 
 OWNERS = {1: "RuleAgent", 2: "RuleAgent", 3: "TaskExecutionAgent", 4: "RuleAgent", 5: "TaskExecutionAgent"}
 TOOLS = {
@@ -42,6 +43,7 @@ class AgentRun:
     mode: str = "PRODUCTION"
     run_id: str = field(default_factory=lambda: "agent-run:" + uuid4().hex)
     records: list[dict] = field(default_factory=list)
+    trace: Any = field(default=None, repr=False)
 
     def call(self, agent_id: str, stage_id: int, tool_id: str, action: Callable[[], Any],
              *, inputs: Any, model: dict | None = None, versions: dict | None = None):
@@ -56,11 +58,20 @@ class AgentRun:
             "tool_versions": {"zhigou_toolchain": __version__, **(versions or {})}, "model": model,
             "started_at": started, "status": "RUNNING", "mode": self.mode, "authority": "OBSERVATION_ONLY"}
         self.records.append(record)
+        trace, call_id = self.trace or ACTIVE_TRACE.get(), None
+        if trace is not None:
+            self.trace = trace
+        trace_context = ACTIVE_TRACE.set(trace)
         try:
             if OWNERS.get(stage_id) != agent_id or tool_id not in TOOLS.get(stage_id, ()):
                 record.update(status="DENIED", reason="AGENT_TOOL_OR_STAGE_FORBIDDEN")
                 raise AgentToolDenied("AGENT_TOOL_OR_STAGE_FORBIDDEN")
+            if trace is not None:
+                call_id = trace.call("tool", tool=tool_id, args=inputs, stage_id=stage_id, agent_id=agent_id)
             value = action()
+            if trace is not None and call_id:
+                trace.result(call_id, value)
+                call_id = None
             record.update(status="SUCCEEDED", output_sha256=semantic_hash(value), reason="Registered tool completed; semantic outcome is in its result")
             if isinstance(value, dict):
                 if isinstance(value.get("tool_versions"), dict):
@@ -69,11 +80,14 @@ class AgentRun:
                     record["model"] = {k: v for k, v in value["model"].items() if k in {
                         "model_id", "configured_revision", "observed_model_id", "revision_attestation"}}
             return value
-        except Exception as exc:
+        except BaseException as exc:
+            if trace is not None and call_id and call_id in trace.pending:
+                trace.result(call_id, {}, error={"type": type(exc).__name__})
             if record["status"] != "DENIED":
                 record.update(status="FAILED", reason=type(exc).__name__)
             raise
         finally:
+            ACTIVE_TRACE.reset(trace_context)
             record.update(ended_at=datetime.now(UTC).isoformat(), duration_seconds=perf_counter() - clock)
 
     def report(self):
@@ -152,7 +166,7 @@ OPERATION_TO_TOOL = {
 }
 
 
-def execute_routed(project, request, action):
+def execute_routed(project, request, action, *, trace_factory=None):
     """Called inside the existing Worker generation/CAS transaction.
 
 Human scope/review decisions deliberately do not appear as Agent tool calls.
@@ -165,7 +179,10 @@ The proposal handler records fine-grained S2/S3/S4 calls itself.
     run = AgentRun(session_id=session["session_id"] if session else "legacy-session:" + project.project_id,
         task_id=request.idempotency_key, parent_version=str(session["revision"]) if session else None,
         dependencies=[{k: o[k] for k in ("identifier", "digest", "status")} for o in (session or {}).get("outputs", []) if o["status"] != "STALE"])
+    trace = trace_factory(run, session) if trace_factory else None
+    run.trace = trace
     token = ACTIVE.set(run)
+    trace_token = ACTIVE_TRACE.set(trace) if trace else None
     try:
         if request.operation_id in OPERATION_TO_TOOL:
             stage, tool = OPERATION_TO_TOOL[request.operation_id]
@@ -177,4 +194,6 @@ The proposal handler records fine-grained S2/S3/S4 calls itself.
         setattr(exc, "agent_execution", run.report())  # noqa: B010 - arbitrary tool exception types
         raise
     finally:
+        if trace_token is not None:
+            ACTIVE_TRACE.reset(trace_token)
         ACTIVE.reset(token)

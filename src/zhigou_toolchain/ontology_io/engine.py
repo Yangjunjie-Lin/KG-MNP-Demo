@@ -36,13 +36,36 @@ PUBLIC_FAILURE_CODES = frozenset({
 })
 
 
-def generate_sample(sample: ModelingInput, protocol: Protocol, system: str, directory: Path, *, client=None, replicate_id=0):
+def generate_sample(sample: ModelingInput, protocol: Protocol, system: str, directory: Path, *, client=None, replicate_id=0, record_trace=False):
     if system not in protocol.systems:
         raise ValueError("SYSTEM_NOT_IN_FROZEN_PROTOCOL")
     directory.mkdir(parents=True, exist_ok=False)
     input_data = sample.model_dump(mode="json")
     run = AgentRun("benchmark:" + sample.sample_id, uuid4().hex, None, [], mode="BENCHMARK_DRAFT")
     coordinator = FiveStageCoordinator(run)
+    trace, trace_token = None, None
+    if record_trace:
+        from zhigou_toolchain.modeling.delivery.exchange_io import digest
+        from zhigou_toolchain.modeling.delivery.trace import (
+            ACTIVE_TRACE,
+            TraceRecorder,
+            freeze_harness,
+        )
+
+        from .provenance import runtime_versions
+        code_files = {p.name: digest(p.read_bytes()) for p in sorted(Path(__file__).parent.glob("*.py"))}
+        resources = {"tasks": {"input": input_data, "system": system}, "prompts": {"source_files": code_files},
+            "tools": {"source_files": code_files, "runtime": runtime_versions()}, "rules": protocol.model_dump(mode="json"),
+            "knowledge": {"authorized_task_input": input_data},
+            "ontology": {k: v for k, v in input_data.items() if k.startswith("initial_") or k in {"schema", "ontology", "category_schema"}}}
+        if not resources["ontology"]:
+            resources["ontology"] = {"status": "NOT_APPLICABLE", "reason": "No initial ontology supplied by task"}
+        trace = TraceRecorder(native_run_id=run.run_id, task_id=run.task_id, task_input=input_data,
+            harness=freeze_harness(resources, provenance={"source_files": code_files, "runtime": runtime_versions()}),
+            bindings={"execution_mode": getattr(client, "execution_mode", "LIVE"), "system_id": system,
+                      "session_id": run.session_id, "replicate_id": replicate_id, "approval": "UNREVIEWED_EVAL_DRAFT"},
+            journal=directory / "trajectory.jsonl.tmp")
+        trace_token = ACTIVE_TRACE.set(trace)
     started = perf_counter()
     result = {"sample_id": sample.sample_id, "group_id": sample.group_id, "system_id": system, "replicate_id": replicate_id,
         "model_id": protocol.model_id, "declared_revision": protocol.declared_revision, "protocol_sha256": semantic_hash(protocol.model_dump(mode="json")),
@@ -190,5 +213,13 @@ def generate_sample(sample: ModelingInput, protocol: Protocol, system: str, dire
                 "model_seconds": sum(c["duration_seconds"] for c in result["calls"]) if result["calls"] and all("duration_seconds" in c for c in result["calls"]) else None,
                 "tool_seconds": sum(r["duration_seconds"] for r in run.records),
                 "tool_time_semantics": "INCLUSIVE_AGENT_WRAPPERS_MAY_INCLUDE_MODEL_TIME_NOT_ADDITIVE"})
+        if trace is not None:
+            try:
+                trace.finish("failed" if result["status"] == "FAILED" else "success", {
+                    "kind": "zhigou-research-result/1.0.0", "status": result["status"], "prediction": result.get("prediction"),
+                    "approval": "UNREVIEWED_EVAL_DRAFT", "release_status": "NOT_RELEASED"})
+            finally:
+                if trace_token is not None:
+                    ACTIVE_TRACE.reset(trace_token)
         (directory / "result.json").write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
     return result

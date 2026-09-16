@@ -14,6 +14,12 @@ import httpx
 from jsonschema import Draft202012Validator
 
 from zhigou_toolchain.contracts.canonical import semantic_hash
+from zhigou_toolchain.modeling.delivery.trace import (
+    model_request,
+    model_response,
+    partial_model_response,
+    traced_proposal,
+)
 
 
 class ToolBlocked(ValueError):
@@ -53,16 +59,30 @@ class QwenClient:
         self.client.close()
 
     def _request(self, method: str, path: str, **kwargs):
+        inference = method == "POST" and path == "chat/completions"
+        if inference:
+            model_request(kwargs["json"])
         try:
             with self.client.stream(method, path, **kwargs) as response:
-                response.raise_for_status()
                 parts, size = [], 0
                 for chunk in response.iter_bytes():
                     size += len(chunk)
                     if size > 2_000_000:
+                        if inference:
+                            partial_model_response("RESPONSE_LIMIT")
                         raise ToolBlocked("MODEL_RESPONSE_TOO_LARGE")
                     parts.append(chunk)
-                return json.loads(b"".join(parts))
+                raw = b"".join(parts)
+                try:
+                    data = json.loads(raw)
+                except ValueError:
+                    if inference:
+                        model_response(raw.decode("utf-8", errors="replace"), http_status=response.status_code)
+                    raise
+                if inference:
+                    model_response(data, http_status=response.status_code)
+                response.raise_for_status()
+                return data
         except (httpx.HTTPError, ValueError) as exc:
             # Never include endpoint URL, credentials, provider body or error text.
             if isinstance(exc, ToolBlocked):
@@ -78,6 +98,7 @@ class QwenClient:
         return {"model_id": self.lock.model_id, "configured_revision": self.lock.revision,
                 "model_id_observed": True, "revision_attestation": "DEPLOYMENT_CONFIGURATION_ONLY"}
 
+    @traced_proposal
     def propose(self, task: str, context: dict, schema: dict, *, allowed_iris=(), evidence_ids=()) -> dict:
         Draft202012Validator.check_schema(schema)
         health = self.health()
