@@ -146,11 +146,11 @@ def _prepare(app, modeling, params):
     approval = modeling.find_artifact(params["approval_id"])
     verify_scope_approval(scope, approval)
     datasets, packs = _datasets(modeling, scope), _packs(app, modeling)
-    question_set = build_question_set(project_lock_id=modeling.project_lock["lock_id"], scope_id=scope["scope_id"], questions=params["questions"])
-    baseline = build_baseline_snapshot(project_lock_id=modeling.project_lock["lock_id"], pack_roots=[p.root for p in packs])
-    terminology = build_terminology_catalog(scope=scope, baseline=baseline, kg_ir_datasets=datasets, domain_terms=_terms(packs))
-    alignments = align_terms(terminology, baseline)
-    mappings = build_field_mapping_candidates(kg_ir_datasets=datasets, alignments=alignments, terminology=terminology, baseline=baseline)
+    question_set = invoke(2, "cq.define", lambda: build_question_set(project_lock_id=modeling.project_lock["lock_id"], scope_id=scope["scope_id"], questions=params["questions"]), inputs={"scope": scope, "questions": params["questions"]})
+    baseline = invoke(2, "baseline.load", lambda: build_baseline_snapshot(project_lock_id=modeling.project_lock["lock_id"], pack_roots=[p.root for p in packs]), inputs={"project_lock": modeling.project_lock})
+    terminology = invoke(2, "terminology.build", lambda: build_terminology_catalog(scope=scope, baseline=baseline, kg_ir_datasets=datasets, domain_terms=_terms(packs)), inputs={"scope": scope, "baseline": baseline, "datasets": datasets})
+    alignments = invoke(2, "alignment.match", lambda: align_terms(terminology, baseline), inputs={"terminology": terminology, "baseline": baseline})
+    mappings = invoke(2, "mapping.plan", lambda: build_field_mapping_candidates(kg_ir_datasets=datasets, alignments=alignments, terminology=terminology, baseline=baseline), inputs={"datasets": datasets, "alignments": alignments, "terminology": terminology, "baseline": baseline})
     policy = build_review_policy(project_lock_id=modeling.project_lock["lock_id"], profile=app.configuration.review_profile)
     bundle = build_input_bundle(project_lock=modeling.project_lock, scope=scope, approval=approval, question_set=question_set,
                                 baseline=baseline, terminology=terminology, alignments=alignments, kg_ir_datasets=datasets,
@@ -280,7 +280,11 @@ def _propose(app,modeling, params):
             response = build_provider_response(request, candidate_drafts=drafts)
             invocations.append(invocation)
             invocation_refs[response["response_id"]] = (invocation["invocation_id"],)
-        else:response=execute_provider(registry,provider,request)
+        else:
+            response = invoke(2 if provider == "baseline-reuse-provider" else 3,
+                "structure.design" if provider == "baseline-reuse-provider" else "records.map",
+                lambda provider=provider, request=request: execute_provider(registry, provider, request),
+                inputs={"provider": provider, "request": request.artifact, "context": provider_context})
         responses.append(response)
         snapshots.append(snapshot)
         requests.append(request.artifact)

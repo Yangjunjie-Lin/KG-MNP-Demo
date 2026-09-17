@@ -5,6 +5,7 @@ from importlib.metadata import version
 
 from zhigou_toolchain.contracts.canonical import semantic_hash, stable_urn
 from zhigou_toolchain.modeling.control_plane.service import ModelingWorkspaceService
+from zhigou_toolchain.modeling.five_stage.agents import invoke
 from zhigou_toolchain.modeling.five_stage.compatible import configured_client
 from zhigou_toolchain.modeling.five_stage.contracts import artifact, bind_job, receipt
 from zhigou_toolchain.modeling.five_stage.profiling import check_input, profile_data
@@ -27,13 +28,15 @@ def execute(app, project, request, principal):
         return artifact(value, project_id=project.project_id, session_id=session, step_id=step,
                         produced_by=request.operation_id, data_kind=kind)
     source = make(run.dataset, "0.0", "KG_IR")
-    checked = make(check_input(run.dataset, run.quality_report), "1.1")
+    checked = make(invoke(1, "input.check", lambda: check_input(run.dataset, run.quality_report),
+        inputs={"dataset": run.dataset, "quality": run.quality_report}), "1.1")
     receipts, artifacts = [], [source, checked]
     if request.operation_id == "modeling.profile":
         receipts.append(receipt("1.1", [source], [checked], configuration={"policy": "EVIDENCE_REQUIRED_V1"},
                                 tools={"pydantic": version("pydantic")}, scope="Verified KG-IR contract/evidence and per-item quality routing; not raw document cleaning."))
         try:
-            profile, versions = profile_data(run.dataset, checked["content"])
+            profile, versions = invoke(1, "data.profile", lambda: profile_data(run.dataset, checked["content"]),
+                inputs={"dataset": run.dataset, "input_check": checked["content"]})
         except ImportError:
             raise ServiceBoundaryError("PROFILE_DEPENDENCY_MISSING", "Explicitly install the modeling-analysis extra", status_code=422) from None
         profiled = make(profile, "1.2")

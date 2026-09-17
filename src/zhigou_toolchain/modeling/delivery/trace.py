@@ -17,7 +17,7 @@ from .exchange_io import atomic_file, checked_path, digest, json_bytes, require
 
 ACTIVE_TRACE: ContextVar[TraceRecorder | None] = ContextVar("ontology_content_trace", default=None)
 MODEL_SCOPE: ContextVar[dict | None] = ContextVar("ontology_model_trace_scope", default=None)
-PRIVATE_KEYS = {"authorization", "cookie", "set-cookie", "api_key", "apikey", "access_token", "password",
+PRIVATE_KEYS = {"negative_case_plan", "negative_case_results", "authorization", "cookie", "set-cookie", "api_key", "apikey", "access_token", "password",
                 "reasoning_content", "reasoning", "analysis", "acceptance", "expected", "expected_answers",
                 "independent_expected_answers", "corrected_answer", "gold", "oracles"}
 

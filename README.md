@@ -12,6 +12,15 @@
 
 ## 本体建模与交接（2026-09-16 增量）
 
+2026-09-17 新增[双 Agent 与逐步审计](docs/ontology/AGENT_STEP_AUDIT.md)：工作台按
+“规划 Agent（RuleAgent，S1/S2/S4）／任务执行 Agent（S3/S5）”组织现有步骤，
+真实操作和工具调用保存处理前后文件，支持失败与历史尝试审计 ZIP 下载。
+演示启动加 `--record-step-content` 显式启用受控正文；默认仅摘要，旧内容不补造。
+
+阶段收口扩展见 [阶段验收与真实打包](docs/ontology/STAGE_CLOSEOUT.md)：新增生成前冻结的负例计划、
+真实校验结果、有效祖先与原生包绑定、1.1 交换格式，以及 `validate-stage` 独立总 ZIP 验包。
+`verify_stage_handoff.py` 完成代码/文档后冻结全文件范围，输出独立实际回执，不更新旧历史结论。
+
 模块职责见 [本体模块说明](docs/ontology/ONTOLOGY_MODULE.md)，文件与协议见
 [交接契约](docs/ontology/HANDOFF_CONTRACT.md)，本轮状态与证据见
 [实施记录](docs/ontology/IMPLEMENTATION_STATUS.md)。原方案、协议和会议样例均保留，

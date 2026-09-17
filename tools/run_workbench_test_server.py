@@ -28,6 +28,7 @@ def main():
     parser.add_argument("--temporary-pack", action="store_true")
     parser.add_argument("--stop-file", type=Path, help="owned local test-control marker; never a public API")
     parser.add_argument("--probe-subprocess", action="store_true", help="exercise actual isolated validation before browser readiness")
+    parser.add_argument("--record-step-content", action="store_true", help="explicitly retain redacted before/after modeling content in this synthetic workspace")
     args = parser.parse_args()
     root = Path(__file__).resolve().parents[1]
     runtime = root / "runtime"
@@ -63,6 +64,7 @@ def main():
     service = ApplicationService(ServiceConfiguration(str(workspace), port=port,
         domain_packs_root=str(packs), workbench_root=str(root / "workbench/dist"),
         allow_insecure_loopback_session=True, review_profile="DEVELOPMENT_SINGLE_REVIEWER",
+        modeling_audit_content_enabled=args.record_step_content,
         reasoner_jar=str(root / "third_party/downloads/robot-1.9.7.jar")))
     token, human = service.tokens.create(principal_id="synthetic-browser-human", principal_type="HUMAN",
                                     permissions={"*"}, project_ids=set(), created_by="explicit-synthetic-browser-test")

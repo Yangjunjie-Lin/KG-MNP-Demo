@@ -64,6 +64,9 @@ def execute(app, project, request, principal):
         frozen = {"run_id": params["run_id"], "dataset_digest": semantic_hash(verified.dataset),
                   "business_rules": params["business_rules"], "acceptance": params["acceptance"],
                   "configuration": params.get("configuration", {}), "quality_digest": semantic_hash(quality)}
+        if params.get("negative_case_plan") is not None:
+            from zhigou_toolchain.modeling.delivery.negative_plan import normalize_plan
+            frozen["negative_case_plan"] = normalize_plan(params["negative_case_plan"])
         identifier = stable_urn("modeling-session", {"project": project.project_id, "frozen": frozen})
         if previous and previous["session_id"] == identifier:
             return {"session": previous}

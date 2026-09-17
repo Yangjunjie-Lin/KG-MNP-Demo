@@ -226,3 +226,29 @@ semantic模型锁、OSKGC明确许可、论文方法复现和正式付费预算/
 补充限制：原生→原 v3 的历史预检仍保持阻塞；新项目格式不消除原 v3 限制。
 无独立负例计划的具体交接包标 NOT_RUN。无真实人工评价不输出 reviews。
 本轮无付费模型请求、无对方接收器联调、无生产发布。
+
+## 2026-09-16 阶段收口（979128e 之后）
+
+| 本轮要求 | 实现 | 验收依据 |
+|---|---|---|
+| 独立负例输入/冻结 | delivery/negative_plan.py；原 modeling.session.open.frozen | 版本化封闭计划、生成前冻结、模型/内容日志隔离 |
+| 六类实际负例 | delivery/negative.py；modeling.handoff.check | HR/林业各14例，真实 SHACL/溯源/文件/状态/权限/关联检查；日志、变异字节、校验器版本与目标绑定 |
+| 新结果格式 | handoff-1.1.schema.json；handoff.py | 1.0只读兼容；原v3不变；负例NOT_RUN/N/A/ERROR/PASS与格式状态分离 |
+| 有效祖先与不可变产物 | delivery/bindings.py；services/handoff.py / ontology_traces.py | 原CURRENT输出、已提交任务、revision依赖、输入、编译/确认包/native SHA、harness闭合；STALE旁支拒绝 |
+| 总包独立验读 | delivery/stage.py；CLI validate-stage | 有界内存解包、逐内包及负例重验、实际案例领域核对、包外可信摘要；无ZIP脚本执行 |
+| 同源码资格 | delivery/snapshot.py；tools/verify_stage_handoff.py | 全跟踪/新未忽略文件含配置测试文档依赖；逐命令及压缩后同范围指纹，变化即失去资格 |
+| 历史失败复现 | 未改原脚本和两个用例；干净979128e检出与当前分别执行 | 原件保留，原始FAIL、逐节点结果、同基线对比独立记录；不自动放行 |
+
+完整规则与可执行命令见 docs/ontology/STAGE_CLOSEOUT.md。实际状态、计数、源码快照、成果路径与哈希
+见 runtime_reports/stage-closeout-20260916/ 下新的最终回执；本表不预先将未运行项标为通过。
+
+## 2026-09-17 双 Agent 与逐步审计
+
+| 要求 | 实现 | 验证 |
+|---|---|---|
+| 规划/任务执行封装 | five_stage/agents.py、flow.py；agent-workbench.tsx | 保留 RuleAgent/TaskExecutionAgent 与 1/2/4、3/5 分工；卡片仅导航 |
+| 每步处理前后文件 | five_stage/audit.py；services/modeling_audit.py；facade/execution | BEFORE 先落盘，AFTER 真实输出/错误；绑定 job/attempt/run/revision 与依赖 |
+| 受控捕获和下载 | 显式配置、原鉴权、审计 API | 默认摘要、内容遮蔽；失败/被替换尝试留存；无权限/跨项目拒绝；旧内容不补造 |
+| 真实核验 | test_step_audit.py、agent-workbench.test.tsx、agent-audit.e2e.ts、verify_agent_workbench.py | Worker、同任务 API/浏览器下载字节、S1—S5 合成样例；不替代全仓/专家/生产认证 |
+
+契约见 docs/ontology/AGENT_STEP_AUDIT.md，本次回执与样例在 runtime_reports/agent-step-audit-20260917/。

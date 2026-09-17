@@ -29,6 +29,7 @@ class ServiceConfiguration:
     workbench_root: str | None = None
     ontology_trace_enabled: bool = False
     ontology_trace_data_policy: str = "AUTHORIZED_PUBLIC_CONTENT_ONLY"
+    modeling_audit_content_enabled: bool = False
 
     def validate(self) -> None:
         import ipaddress

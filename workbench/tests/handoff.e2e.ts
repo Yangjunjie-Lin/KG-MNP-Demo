@@ -16,7 +16,9 @@ test('authorized fifth-stage handoff downloads the actual Worker snapshot',async
   const prefix=href.split('/').slice(0,3).join('/');
   await page.goto(prefix+'/modeling?stage=5');
   await expect(page.getByRole('button',{name:'本体交接包',exact:true})).toBeVisible({timeout:120000});
-  await page.getByRole('button',{name:'本体交接包',exact:true}).click();
+  let jobId=process.env.ZHIGOU_HANDOFF_EXPORT_JOB_ID;
+  if(!jobId){
+    await page.getByRole('button',{name:'本体交接包',exact:true}).click();
   await page.getByLabel('接收人', {exact:true}).fill('synthetic browser acceptance');
   await page.getByLabel('来源许可', {exact:true}).fill('PROJECT_SYNTHETIC_FIXTURE');
   await page.getByLabel('导出授权依据', {exact:true}).fill('Explicit synthetic browser engineering check');
@@ -24,7 +26,8 @@ test('authorized fifth-stage handoff downloads the actual Worker snapshot',async
   await page.getByRole('button',{name:'确认授权并生成交接包'}).click();
   const accepted=await acceptedPromise;
   expect(accepted.status()).toBe(202);
-  const jobId=(await accepted.json()).job_id;
+    jobId=(await accepted.json()).job_id;
+  }
   const link=page.locator(`a[href$="/handoffs/${jobId}/archive"]`);
   await expect(link).toBeVisible({timeout:120000});
   const downloadPromise=page.waitForEvent('download');

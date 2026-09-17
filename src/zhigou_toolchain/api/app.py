@@ -369,7 +369,21 @@ def create_app(service: ApplicationService) -> FastAPI:
         store = SourceStore(project.root)
         sources = [store.verify_source(i) for i in store.load_batch(run.run["source_batch_id"])["sources"]]
         return {"status": "READY" if current(session, "compile.build") else "BUILD_REQUIRED", "expected_revision": session["revision"],
+            "negative_plan_required": bool(session["frozen"].get("negative_case_plan")),
             "sources": [{"source_id": s["source_id"], "sha256": s["content_sha256"], "name": s["original_name"]} for s in sources]}
+
+    @app.get("/api/v1/projects/{project_id}/modeling/audits", operation_id="listModelingStepAudits")
+    def modeling_step_audits(project_id: str, authorization: str | None = Header(default=None)):
+        from zhigou_toolchain.modeling.five_stage.agents import AGENT_PACKAGES
+        from zhigou_toolchain.services.modeling_audit import audit_index
+        return {**audit_index(service, service.authenticate(authorization or ""), project_id), "agents": AGENT_PACKAGES}
+
+    @app.get("/api/v1/projects/{project_id}/modeling/audits/{job_id}/archive", operation_id="downloadModelingStepAudit")
+    def modeling_step_audit_archive(project_id: str, job_id: str, attempt: int | None = None, authorization: str | None = Header(default=None)):
+        from zhigou_toolchain.services.modeling_audit import download_audit
+        content = download_audit(service, service.authenticate(authorization or ""), project_id, job_id, attempt=attempt)
+        return Response(content, media_type="application/zip", headers={
+            "Content-Disposition": 'attachment; filename="modeling-step-audit.zip"', "Cache-Control": "no-store"})
 
     @app.post("/api/v1/projects/{project_id}/compilations/exact-plans", operation_id="createExactCompilationPlan", status_code=202)
     def compile_exact_plan(project_id: str, payload: CompileExactPlanRequest, authorization: str | None = Header(default=None), idempotency_key: str | None = Header(default=None)):

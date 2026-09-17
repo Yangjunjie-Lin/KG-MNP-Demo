@@ -1,5 +1,9 @@
 # 本体结果与演进轨迹交接契约
 
+2026-09-17 新增项目本地 `zhigou-modeling-step-audit/1.0.0` 前后快照 ZIP，见
+[逐步审计契约](AGENT_STEP_AUDIT.md)。独立于本体交换/v2，不修改旧 Schema 或历史包。
+记录、审批、程序验收、提交和发布仍分别记账。
+
 > 2026-09-16 / 项目实现与外部协议对照。原设计原文保留；已实现接口和收缩范围见第 11 节，双方联调尚未执行。
 > 外部依据：`references/evolution-upstream-v2.original.md`；现有交换样例：`references/meeting-handoff-v2.original.zip`。
 > “对方要求”与“本项目建议”在本文件分开标注。不得把本建议冒称外部标准、原 v3 Schema 或已上线协议。
@@ -197,3 +201,12 @@ harness 使用 UTF-8、排序键、紧凑 JSON、末尾 LF 的 SHA-256，清单�
 acceptance_private、tests gold、references 整包和 evidence；生产服务 Worker 仍是可信控制面，
 没有把整个 Worker 改造成 OS 沙箱。生产模型无任意文件工具，模型输入继续使用既有白名单。
 原研究跨进程 LIVE broker 的完整 end-to-end 轨迹合流未在本轮运行；不将录制轨迹称 LIVE。
+
+## 12. 阶段验收与不可变关联
+
+2026-09-16 在已提交 979128e 上扩展到项目 1.1.0：旧 Schema/历史归档不变，兼容只读。
+独立负例在原 session.open 时冻结；check 操作消费同一计划，对本次原生包隔离变异，输出实际检测和日志。
+export 通过显式 report_id 取结果，不从图猜测试期望，不将缺失/超时/N/A 变成 PASS。
+新 cover 与 stage 验证当前有效祖先、输入快照、最终 native package/archive、harness 和真实服务结果引用。
+无外部授权回执/可信总 ZIP 摘要的自洽包不授予阶段授权资格。
+完整 DTO、摘要算法、版本兼容、同源码验证、总 ZIP 入口和最小协议待确认问题见 [STAGE_CLOSEOUT.md](STAGE_CLOSEOUT.md)。

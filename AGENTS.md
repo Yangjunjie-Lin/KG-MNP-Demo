@@ -1,5 +1,9 @@
 # AGENTS.md
 
+2026-09-17 新增 `docs/ontology/AGENT_STEP_AUDIT.md`。PlanningAgent 只是 RuleAgent 别名；
+不要添加第三个计算角色。逐步审计不替代 JobStore/session/CAS，不给 Agent 审批工具。
+默认仅元数据，正文必须显式启用并按权限记录/下载；旧处理前内容缺失不可补造。
+
 本文件供后续开发 Agent 使用，作用于本仓库；更细目录指令应一并读取。本文件不代替本轮用户要求，不赋予运行时 Agent 额外权限。
 
 ## 先读什么
@@ -60,3 +64,12 @@
 继续任务时先读 `docs/ontology/IMPLEMENTATION_STATUS.md` 的真实结果和限制。
 使用完整验证器时，无明确付费授权必须加 `--skip-model-probe`；默认旧验证器末尾有 LIVE 推理探测。
 隔离研究内核的 canary 成功不代表整个生产 Worker 已 OS 沙箱化，不能扩大结论。
+
+## 阶段验收收口
+
+979128e 之后的 negative_case_plan、1.1 交接/祖先关联、阶段 ZIP 与验证规则见
+`docs/ontology/STAGE_CLOSEOUT.md`。负例计划属于独立验收输入，不给生成/修复流程。
+`modeling.handoff.check` 是程序验收，不是审批；PASS 表示预先规定的拒绝被实际检出。
+`verify_stage_handoff.py` 冻结后不得再修改实现、配置、测试或被冻结文档；结论只写独立输出。
+若必须修复，保留失败回执，新目录重新冻结。历史卫生 FAIL 不删测试、不加 skip/白名单、不过滤隐藏。
+独立包自洽不等于授权；按契约使用服务回执/包外可信 SHA，不能信任 ZIP 自报“已批准”。

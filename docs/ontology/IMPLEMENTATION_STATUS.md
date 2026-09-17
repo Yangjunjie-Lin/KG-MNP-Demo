@@ -1,5 +1,16 @@
 # 2026-09-16 交接改造实施记录
 
+## 2026-09-17 新任务：双 Agent 与处理前后审计
+
+新增规划/任务执行 Agent 界面、服务与工具前后文件、显式内容捕获和受限 ZIP 下载。
+实现与命令见 [AGENT_STEP_AUDIT.md](AGENT_STEP_AUDIT.md)，新回执在
+`runtime_reports/agent-step-audit-20260917/`。新源码不借用上一轮指纹作为回归证明。
+没有新增付费调用、正式审批或发布授权；以下历史记录保留，不追改结论。
+
+> 下文为上一轮历史记录。当前已提交基线是 develop@979128ee16746cd124aca29257a23910e8edcea0，
+> 并非仍“未提交”。本轮阶段收口接口及冻结规则见 [STAGE_CLOSEOUT.md](STAGE_CLOSEOUT.md)；
+> 新的实际验收报告写入 runtime_reports/stage-closeout-20260916/，不覆盖下方旧回执。
+
 基线：develop@194e091d13cabba5833ff1d531f814858ea968ae；开始时工作树干净。
 用户要求实际完成 ZIP 中的交接改造；附件是需求材料，不是额外授权。
 

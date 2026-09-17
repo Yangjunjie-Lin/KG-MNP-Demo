@@ -68,6 +68,7 @@ def read_zip(raw):
         archive_root = PurePosixPath(manifests[0]).parent
         files, seen = {}, set()
         for info in infos:
+            require(info.orig_filename == info.filename, "ZIP_FILENAME_NORMALIZATION_FORBIDDEN")
             path_name(info.filename)
             member = PurePosixPath(info.filename)
             require(member.is_relative_to(archive_root), "MIXED_ZIP_ROOTS")

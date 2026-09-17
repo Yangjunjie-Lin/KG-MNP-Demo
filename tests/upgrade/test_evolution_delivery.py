@@ -47,7 +47,7 @@ def valid_trace():
 def test_pairing_parallel_cross_turn_and_idempotent_export(tmp_path):
     trace = valid_trace()
     assert trace["protocol"]["status"] == "LOCAL_PROTOCOL_VALID"
-    files = evolution_files([trace], batch_id="synthetic-b1", deliverer="engineering-test")
+    files = evolution_files([trace], batch_id="synthetic-b1", deliverer="engineering-test", allow_synthetic=True)
     assert validate_batch(files, producer=True)["status"] == "LOCAL_PROTOCOL_VALID"
     assert not any(n.startswith("reviews/") for n in files)
     assert export_batch(tmp_path / "batch", files)["status"] == "EXPORTED"
@@ -91,7 +91,7 @@ def test_program_steps_cannot_be_fabricated_and_crash_stays_incomplete(tmp_path)
     trace = r.finish("cancelled", {}, error={"type": "ConfirmedCancellation"})
     assert not any(e["event"] == "llm_call" for e in trace["events"])
     with pytest.raises(ValueError, match="PRE_MODEL"):
-        evolution_files([trace], batch_id="program", deliverer="test")
+        evolution_files([trace], batch_id="program", deliverer="test", allow_synthetic=True)
 
 
 @pytest.mark.parametrize("client_type", [CompatibleClient, QwenClient])
@@ -171,7 +171,7 @@ def test_tool_failure_retry_concurrency_and_redaction():
     result = trace.finish("success", {})
     assert result["capture_status"] == "REDACTED" and "SECRET_VALUE" not in json.dumps(result)
     with pytest.raises(ValueError, match="REDACTED_OR_PARTIAL"):
-        evolution_files([result], batch_id="redacted", deliverer="test")
+        evolution_files([result], batch_id="redacted", deliverer="test", allow_synthetic=True)
 
 
 @pytest.mark.parametrize("name", ["../escape", "/abs", "C:/drive", "file:stream", "a\\b", "a/../b", "CON", "x\u0000y", "a.", "x?"])
@@ -183,7 +183,7 @@ def test_paths_are_rejected(name):
 
 @pytest.mark.parametrize("change", ["missing", "length", "hash", "path", "duplicate"])
 def test_manifest_rejects_whole_batch(change):
-    files = evolution_files([valid_trace()], batch_id="negative-batch", deliverer="test")
+    files = evolution_files([valid_trace()], batch_id="negative-batch", deliverer="test", allow_synthetic=True)
     manifest = json.loads(files["upstream_manifest.json"])
     row = manifest["files"][0]
     if change == "missing":

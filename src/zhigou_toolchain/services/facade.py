@@ -204,6 +204,7 @@ class ApplicationService:
             handler = execute_integration
         from zhigou_toolchain.modeling.five_stage.agents import execute_routed
 
+        from .modeling_audit import execute_audited
         from .ontology_traces import finish_recorders, recorder_factory
         agent_receipt = None
         recorders = []
@@ -214,7 +215,8 @@ class ApplicationService:
             agent_receipt = result.get("agent_execution")
             return result
         try:
-            result = execute_fenced(self, job, request, principal, routed)
+            result = execute_audited(self, job, request, principal,
+                lambda: execute_fenced(self, job, request, principal, routed))
             finish_recorders(recorders, result=result)
             return result
         except Exception as exc:

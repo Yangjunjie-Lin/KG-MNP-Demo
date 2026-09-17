@@ -9,13 +9,20 @@ from zhigou_toolchain.contracts.document_io import read_document
 from zhigou_toolchain.domain_packs.registry import DomainPackRegistry
 from zhigou_toolchain.ingestion.source_store import SourceStore
 from zhigou_toolchain.modeling.control_plane.service import ModelingWorkspaceService
+from zhigou_toolchain.modeling.delivery.bindings import (
+    artifact_identity,
+    require_handoff_head,
+    verify_ancestor,
+)
 from zhigou_toolchain.modeling.delivery.exchange_io import (
     atomic_file,
     digest,
+    json_bytes,
     read_bounded,
     require,
 )
 from zhigou_toolchain.modeling.delivery.handoff import handoff_bytes, handoff_files
+from zhigou_toolchain.modeling.delivery.negative_plan import plan_digest
 from zhigou_toolchain.semantic_kernel.compiler import SemanticCompiler
 from zhigou_toolchain.semantic_kernel.packaging.archive import (
     archive_mapping_bytes,
@@ -27,7 +34,55 @@ from .errors import ServiceBoundaryError
 from .modeling_sessions import current, read
 from .sources import verified_run
 
-OPERATIONS = frozenset({"modeling.handoff.import", "modeling.handoff.export", "modeling.evolution.export", "modeling.evolution.review"})
+OPERATIONS = frozenset({"modeling.handoff.import", "modeling.handoff.check", "modeling.handoff.export", "modeling.evolution.export", "modeling.evolution.review"})
+
+
+def observations_for(app, project, session):
+    from .execution import committed_result
+    from .modeling_sessions import STAGES
+    from .projects import load_catalog
+    observations = []
+    catalog = load_catalog(app.root)
+    for output in session["outputs"]:
+        if output["status"] != "CURRENT":
+            continue
+        receipt = catalog.get("commits", {}).get(output["job_id"])
+        require(receipt and receipt["context"]["project_id"] == project.project_id, "DELIVERY_COMMIT_MISSING")
+        result = committed_result(app, app.jobs.get(output["job_id"]))
+        require(result is not None and semantic_hash(result[STAGES[output["operation"]][1]]) == output["digest"], "DELIVERY_COMMIT_OUTPUT_CHANGED")
+        assert result is not None
+        audit = result.get("agent_execution")
+        if audit is None:  # Human decisions are not invented computational Agent runs.
+            continue
+        from zhigou_toolchain.modeling.delivery.bindings import dependency_parts
+        historical_session = read(receipt["root"])
+        require(historical_session is not None, "DELIVERY_SESSION_RECEIPT_MISSING")
+        assert historical_session is not None
+        observed = {"job_id": output["job_id"], "operation_id": output["operation"], "authority_revision": receipt["authority_revision"],
+            "result_digest": semantic_hash(result), "native_agent_run_id": audit["run_id"], "session_id": audit["session_id"],
+            "session_revision": int(audit["records"][0]["parent_version"]), "session_output": output,
+            "frozen_dependency_sha256": semantic_hash(historical_session["frozen"]), "dependency_parts": dependency_parts(historical_session["frozen"])}
+        verify_ancestor(observed, session)
+        observations.append(observed)
+    return sorted(observations, key=lambda r: r["authority_revision"])
+
+
+def acceptance_origin(app, project, session):
+    from .execution import committed_result
+    from .projects import load_catalog
+    for job_id, receipt in load_catalog(app.root).get("commits", {}).items():
+        if receipt["context"]["project_id"] != project.project_id or receipt["context"]["operation_id"] != "modeling.session.open":
+            continue
+        original = receipt["result"].get("session", {})
+        if original.get("session_id") == session["session_id"]:
+            result = committed_result(app, app.jobs.get(job_id))
+            require(result is not None, "ACCEPTANCE_FREEZE_COMMIT_MISSING")
+            assert result is not None
+            frozen = result["session"]["frozen"]
+            require(frozen.get("negative_case_plan") == session["frozen"].get("negative_case_plan"), "NEGATIVE_ORIGIN_CHANGED")
+            return {"job_id": job_id, "result_digest": semantic_hash(result), "session_id": session["session_id"],
+                "frozen_semantic_sha256": semantic_hash(frozen), "negative_plan_sha256": plan_digest(frozen["negative_case_plan"]) if frozen.get("negative_case_plan") else None}
+    raise ValueError("ACCEPTANCE_FREEZE_COMMIT_MISSING")
 
 
 def execution_mode(assistance, invocations):
@@ -42,12 +97,10 @@ def execution_mode(assistance, invocations):
 
 
 def build_handoff(project, *, package_id, expected_revision, source_grants, recipient,
-                  data_classification, domain_packs_root=None, reasoner_jar=None, review_nature="AUTHENTICATED_HUMAN", run_observations=()):
+                  data_classification, domain_packs_root=None, reasoner_jar=None, review_nature="AUTHENTICATED_HUMAN", run_observations=(), negative_report_id=None, acceptance_freeze=None):
     session = read(project.root)
-    if session is None or session["revision"] != expected_revision:
-        raise ValueError("HANDOFF_SESSION_REVISION_STALE")
-    built = current(session, "compile.build")
-    require(built and built["identifier"] == package_id, "HANDOFF_PACKAGE_STALE")
+    require_handoff_head(session, package_id, expected_revision)
+    assert session is not None
     files, _ = read_verified_package_files(package_location(project, package_id), expected_package_id=package_id)
     confirmed = json.loads(files["source/confirmed-modeling-package.json"])
     native_plan = json.loads(files["source/semantic-compilation-plan.json"])
@@ -106,8 +159,21 @@ def build_handoff(project, *, package_id, expected_revision, source_grants, reci
         "independent_acceptance": session["frozen"]["acceptance"], "data_classification": data_classification,
         "execution_mode": mode, "review_nature": review_nature,
         "agent_runs": list(run_observations),
+        "session_snapshot": session, "acceptance_freeze": acceptance_freeze,
+        "negative_case_plan": session["frozen"].get("negative_case_plan"), "negative_case_results": None,
         "mapping_execution": {"status": "CANDIDATES_GENERATED", "record_mapping": records, "source_extraction": extraction,
                               "provider_responses": responses, "proposal_digest": proposal["content_digest"]}}
+    if negative_report_id:
+        root = Path(project.root) / "artifacts/builds/negative-acceptance" / negative_report_id
+        report = json.loads(read_bounded(root / "report.json"))
+        require(digest(json_bytes(report)) == negative_report_id, "NEGATIVE_REPORT_ID_MISMATCH")
+        bindings["negative_case_results"] = report
+        for row in report["cases"]:
+            for key in ("log", "input_artifact"):
+                from zhigou_toolchain.modeling.delivery.exchange_io import safe_name
+                name = safe_name(row[key])
+                require(name.startswith("negative-logs/"), "NEGATIVE_LOG_PATH_INVALID")
+                dependencies[name] = read_bounded(root / name)
     return handoff_files(archive_mapping_bytes(files), files, bindings, dependencies)
 
 
@@ -116,22 +182,33 @@ def execute(app, project, request, principal):
         from .handoff_input import execute as import_input
         return import_input(app, project, request, principal)
     try:
-        if request.operation_id == "modeling.handoff.export":
-            from .projects import load_catalog
+        if request.operation_id in {"modeling.handoff.export", "modeling.handoff.check"}:
             session = read(project.root)
-            observations = []
-            for job_id, receipt in load_catalog(app.root).get("commits", {}).items():
-                audit = receipt["result"].get("agent_execution")
-                if receipt["context"]["project_id"] == project.project_id and audit and session and audit["session_id"] == session["session_id"]:
-                    observations.append({"job_id": job_id, "operation_id": receipt["context"]["operation_id"],
-                        "authority_revision": receipt["authority_revision"], "result_digest": semantic_hash(receipt["result"]),
-                        "native_agent_run_id": audit["run_id"], "session_id": audit["session_id"], "parent_version": audit["records"][0]["parent_version"] if audit["records"] else None})
-            files = build_handoff(project, **request.parameters,
+            require_handoff_head(session, request.parameters["package_id"], request.parameters["expected_revision"])
+            assert session is not None
+            observations = observations_for(app, project, session)
+            origin = acceptance_origin(app, project, session)
+            params = dict(request.parameters)
+            if request.operation_id == "modeling.handoff.check":
+                # Internal evaluator copies are not redistribution grants.
+                sources = verified_run(project.root, session["frozen"]["run_id"]).dataset["evidence_records"]
+                source_ids = sorted({e["source_id"] for e in sources})
+                store = SourceStore(project.root)
+                params.update(recipient="INTERNAL_AUTHORIZED_ACCEPTANCE", data_classification="SYNTHETIC" if app.configuration.review_profile == "DEVELOPMENT_SINGLE_REVIEWER" else "AUTHORIZED_DATA",
+                    source_grants=[{"source_id": i, "sha256": store.verify_source(i)["content_sha256"], "license": "INTERNAL_EVALUATION_ONLY",
+                                    "permission_basis": "Authenticated acceptance:run and source:read; not permission to redistribute"} for i in source_ids])
+            elif session["frozen"].get("negative_case_plan"):
+                require(params.get("negative_report_id"), "NEGATIVE_REPORT_REQUIRED")
+            files = build_handoff(project, **params,
                 domain_packs_root=app.configuration.domain_packs_root, reasoner_jar=app.configuration.reasoner_jar,
-                run_observations=sorted(observations, key=lambda r: r["authority_revision"]),
+                run_observations=observations, acceptance_freeze=origin,
                 review_nature="SYNTHETIC_ENGINEERING" if app.configuration.review_profile == "DEVELOPMENT_SINGLE_REVIEWER" else "AUTHENTICATED_HUMAN")
+            if request.operation_id == "modeling.handoff.check":
+                return check_negative(app, project, session, files)
             raw = handoff_bytes(files)
-            result = {"status": "EXPORTED", "format": "zhigou-ontology-handoff/1.0.0", "package_id": request.parameters["package_id"],
+            manifest = json.loads(files["manifest.json"])
+            result = {"status": "EXPORTED", "format": manifest["format"], "package_id": request.parameters["package_id"],
+                      "stage_acceptance": manifest["stage_acceptance"],
                       "receiver_status": "NOT_CONTACTED", "release_status": "NOT_GRANTED_BY_EXPORT"}
         else:
             from .ontology_traces import export_trace, submit_review
@@ -151,6 +228,42 @@ def execute(app, project, request, principal):
         # Only our enumerated error labels, never a path or arbitrary provider text.
         code = str(exc) if isinstance(exc, ValueError) and str(exc).replace("_", "").isalnum() else "HANDOFF_INPUT_OR_PROTOCOL_INVALID"
         raise ServiceBoundaryError(code, "handoff binding, authority or protocol validation failed", status_code=409) from exc
+
+
+def check_negative(app, project, session, files):
+    import tempfile
+
+    from zhigou_toolchain.modeling.delivery.exchange_io import (
+        json_bytes,
+        read_directory,
+        write_directory,
+    )
+    from zhigou_toolchain.modeling.delivery.negative import (
+        execute_negative_plan,
+        verify_negative_report,
+    )
+    plan = session["frozen"].get("negative_case_plan")
+    if plan is None:
+        return {"status": "NOT_RUN", "reason": "NO_INDEPENDENT_PLAN", "report_id": None}
+    # Native .kgop was already verified while constructing the fixed view.
+    import zipfile
+    from io import BytesIO
+    with zipfile.ZipFile(BytesIO(files["native/ontology.kgop"])) as archive:
+        native = {n: archive.read(n) for n in archive.namelist()}
+    with tempfile.TemporaryDirectory(prefix="zhigou-negative-results-") as directory:
+        report, logs = execute_negative_plan(plan, files, native, output=Path(directory) / "observations")
+    bound = json.loads(files["dependencies/run_bindings.json"])
+    verify_negative_report(plan, report, artifact_identity(bound, digest(files["native/ontology.kgop"])), logs)
+    report_raw = json_bytes(report)
+    report_id = digest(report_raw)
+    directory = Path(project.root) / "artifacts/builds/negative-acceptance" / report_id
+    payload = {**logs, "report.json": report_raw}
+    if directory.exists():
+        require(read_directory(directory) == payload, "NEGATIVE_REPORT_COLLISION")
+    else:
+        write_directory(directory, payload, manifest="report.json")
+    return {"status": report["status"], "package_id": bound["package_id"], "session_revision": session["revision"],
+            "report_id": report_id, "plan_sha256": plan_digest(plan), "target": report["target"], "case_count": len(report["cases"])}
 
 
 def download(app, principal, project_id, job_id):

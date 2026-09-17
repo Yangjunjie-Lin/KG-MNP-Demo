@@ -34,6 +34,11 @@ def main():
     handoff.add_argument("--job-id", required=True)
     check_handoff = sub.add_parser("validate-handoff")
     check_handoff.add_argument("archive", type=Path)
+    check_handoff.add_argument("--receipt", type=Path, help="Out-of-band authorized service export result, not a bundled self-assertion")
+    check_stage = sub.add_parser("validate-stage")
+    check_stage.add_argument("archive", type=Path)
+    check_stage.add_argument("--sha256", help="Trusted out-of-band digest of the complete final ZIP")
+    check_stage.add_argument("--replay-negatives", action="store_true")
     check_evolution = sub.add_parser("validate-evolution")
     check_evolution.add_argument("directory", type=Path)
     check_evolution.add_argument("--producer", action="store_true")
@@ -76,7 +81,10 @@ def main():
         result = {"status": "EXPORTED", "source": "AUTHORIZED_COMMITTED_SERVICE_SNAPSHOT"}
     elif args.command == "validate-handoff":
         from .handoff import verify_handoff
-        result = verify_handoff(read_zip(read_bounded(args.archive)))
+        result = verify_handoff(read_zip(read_bounded(args.archive)), trusted_receipt=json.loads(read_bounded(args.receipt)) if args.receipt else None)
+    elif args.command == "validate-stage":
+        from .stage import verify_stage_archive
+        result = verify_stage_archive(args.archive, expected_sha256=args.sha256, replay_negatives=args.replay_negatives)
     elif args.command == "validate-evolution":
         from .evolution import validate_batch
         result = validate_batch(read_directory(args.directory), producer=args.producer)

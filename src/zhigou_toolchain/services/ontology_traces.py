@@ -7,6 +7,10 @@ from pathlib import Path
 from uuid import uuid4
 
 from zhigou_toolchain.contracts.canonical import semantic_hash
+from zhigou_toolchain.modeling.delivery.bindings import (
+    require_handoff_head,
+    validate_trace_context,
+)
 from zhigou_toolchain.modeling.delivery.evolution import (
     evolution_files,
     validate_review,
@@ -112,17 +116,45 @@ def load_trace(app, project, principal, job_id):
     require(read_bounded(path.with_suffix(".tmp")) == b"".join(json_bytes(r) for r in trace["events"]), "TRACE_JOURNAL_MISMATCH")
     frozen = trace["harness_manifest"]
     require(freeze_harness(frozen["resources"], provenance=frozen["provenance"])["hashes"] == frozen["hashes"], "TRACE_HARNESS_MISMATCH")
+    validate_trace_context(trace)
     return trace
 
 
 def export_trace(app, project, request, principal):
     trace = load_trace(app, project, principal, request.parameters["job_id"])
+    target_package = request.parameters.get("target_package_id")
+    if target_package:
+        from zhigou_toolchain.semantic_kernel.packaging.archive import (
+            archive_mapping_bytes,
+            read_verified_package_files,
+        )
+
+        from .compilation import package_location
+        from .handoff import observations_for
+        from .modeling_sessions import read
+        session = read(project.root)
+        require_handoff_head(session, target_package, request.parameters.get("expected_revision"))
+        assert session is not None
+        observed = next((o for o in observations_for(app, project, session) if o["job_id"] == request.parameters["job_id"]), None)
+        require(observed is not None, "DELIVERY_RUN_REFERENCE_MISSING")
+        assert observed is not None
+        native, _ = read_verified_package_files(package_location(project, target_package), expected_package_id=target_package)
+        confirmed = json.loads(native["source/confirmed-modeling-package.json"])
+        plan = json.loads(native["source/semantic-compilation-plan.json"])
+        trace["bindings"].update(delivery_target={"project_id": project.project_id, "session_id": session["session_id"], "session_revision": session["revision"],
+            "input_run_id": session["frozen"]["run_id"], "input_snapshot": session["frozen"]["dataset_digest"],
+            "confirmed_package_id": confirmed["package_id"], "compilation_plan_id": plan["plan_id"], "compiler_snapshot_id": plan["compiler_snapshot_id"],
+            "package_id": target_package, "native_archive_sha256": digest(archive_mapping_bytes(native))},
+            output_artifacts=[observed["session_output"]], committed_result_digest=observed["result_digest"])
     if request.parameters.get("profile", "strict-v2") == "local":
-        return {"local-trace.json": json_bytes(trace), "protocol-diagnostic.json": json_bytes(trace["protocol"])}, {
+        return {"local-trace.json": json_bytes(trace), "protocol-diagnostic.json": json_bytes(trace["protocol"]),
+                "journal.jsonl": b"".join(json_bytes(r) for r in trace["events"])}, {
             "status": "LOCAL_DIAGNOSTIC_EXPORTED", "format": "zhigou-local-trace/1.0.0",
             "strict_v2": trace["protocol"]["status"], "receiver_status": "NOT_CONTACTED"}
     if trace["protocol"]["errors"]:
         raise ServiceBoundaryError("EVOLUTION_STRICT_V2_BLOCKED", "strict v2 cannot represent this complete trace; export local diagnostics", status_code=409)
+    if trace["bindings"].get("execution_mode") != "LIVE":
+        raise ServiceBoundaryError("NON_LIVE_TRACE_NOT_COLLECTIBLE", "recorded/program traces are local diagnostics only", status_code=409)
     if trace["capture_status"] != "COMPLETE":
         raise ServiceBoundaryError("TRACE_REDACTED_OR_PARTIAL", "redacted or partial messages are not a complete v2 sample", status_code=409)
     reviews = []

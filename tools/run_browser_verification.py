@@ -82,8 +82,9 @@ def main() -> int:
     parser.add_argument("--smoke-only", action="store_true", help="verify startup/shutdown only, never claim Browser E2E")
     parser.add_argument("--startup-timeout", type=float, default=45)
     parser.add_argument("--probe-subprocess", action="store_true", help="include actual SHACL subprocess startup in smoke verification")
-    parser.add_argument("--selected-test", choices=("security.e2e.ts", "arbitrary-pack.e2e.ts", "five-stage.e2e.ts", "ontology-io.e2e.ts", "zhigou-console.e2e.ts", "saved-evidence.e2e.ts", "handoff.e2e.ts", "mnp-readback.e2e.ts", "mixed", "minimal", "forestry", "mnp"), help="bounded incremental check only, never full browser acceptance")
+    parser.add_argument("--selected-test", choices=("agent-audit.e2e.ts", "security.e2e.ts", "arbitrary-pack.e2e.ts", "five-stage.e2e.ts", "ontology-io.e2e.ts", "zhigou-console.e2e.ts", "saved-evidence.e2e.ts", "handoff.e2e.ts", "mnp-readback.e2e.ts", "mixed", "minimal", "forestry", "mnp"), help="bounded incremental check only, never full browser acceptance")
     parser.add_argument("--existing-upgrade-workspace", type=Path)
+    parser.add_argument("--existing-export-job-id", help="Handoff E2E verifies the very same already committed task as CLI/API")
     args = parser.parse_args()
     if not 0 < args.startup_timeout <= 120:
         parser.error("startup timeout must be in (0, 120]")
@@ -95,6 +96,8 @@ def main() -> int:
     try:
         with (directory / "server.log").open("w", encoding="utf-8") as log:
             command = [sys.executable, str(ROOT / "tools/run_workbench_test_server.py"), "--stop-file", str(stop_file)]
+            if args.selected_test == "agent-audit.e2e.ts":
+                command.append("--record-step-content")
             if args.existing_upgrade_workspace:
                 if args.selected_test not in {"saved-evidence.e2e.ts", "handoff.e2e.ts", "mnp-readback.e2e.ts"}:
                     raise ValueError("Existing synthetic workspace is only for read-only saved evidence inspection")
@@ -118,6 +121,10 @@ def main() -> int:
                 if args.existing_upgrade_workspace:
                     environment["ZHIGOU_SAVED_EVIDENCE"] = "1"
                     environment["ZHIGOU_SAVED_WORKSPACE"] = str(args.existing_upgrade_workspace.resolve())
+                if args.existing_export_job_id:
+                    if args.selected_test != "handoff.e2e.ts":
+                        raise ValueError("Existing export selection is only for handoff E2E")
+                    environment["ZHIGOU_HANDOFF_EXPORT_JOB_ID"] = args.existing_export_job_id
                 receipt["browser_exit_code"] = None
                 if not args.smoke_only:
                     npm = "npm.cmd" if os.name == "nt" else "npm"

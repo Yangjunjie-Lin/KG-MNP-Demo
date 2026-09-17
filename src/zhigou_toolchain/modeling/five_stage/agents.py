@@ -18,14 +18,21 @@ from uuid import uuid4
 from zhigou_toolchain import __version__
 from zhigou_toolchain.contracts.canonical import semantic_hash
 from zhigou_toolchain.modeling.delivery.trace import ACTIVE_TRACE
+from zhigou_toolchain.modeling.five_stage.audit import ACTIVE_AUDIT
 
 OWNERS = {1: "RuleAgent", 2: "RuleAgent", 3: "TaskExecutionAgent", 4: "RuleAgent", 5: "TaskExecutionAgent"}
+AGENT_PACKAGES = (
+    {"agent_id": "RuleAgent", "display_name": "规划 Agent", "stages": [1, 2, 4],
+     "responsibility": "输入与范围核验、本体结构规划、联合校验与修复分流；不代替人工审批"},
+    {"agent_id": "TaskExecutionAgent", "display_name": "任务执行 Agent", "stages": [3, 5],
+     "responsibility": "数据映射、事实构建、确定性编译、验证与交付；不自动发布"},
+)
 TOOLS = {
-    1: frozenset({"input.profile", "scope.suggest", "scope.validate"}),
-    2: frozenset({"baseline.prepare", "structure.retrieve", "structure.rerank", "structure.design"}),
+    1: frozenset({"input.profile", "input.check", "data.profile", "scope.suggest", "scope.validate"}),
+    2: frozenset({"baseline.prepare", "baseline.load", "terminology.build", "cq.define", "alignment.match", "mapping.plan", "structure.retrieve", "structure.rerank", "structure.design"}),
     3: frozenset({"records.map", "text.chunk", "text.extract", "evidence.bind", "facts.normalize", "facts.repair"}),
-    4: frozenset({"integrity.check", "semantic.check", "repair.route"}),
-    5: frozenset({"compile.plan", "compile.build", "archive.verify", "archive.export", "delivery.v3"}),
+    4: frozenset({"integrity.check", "semantic.check", "semantic.graphs", "repair.route"}),
+    5: frozenset({"compile.plan", "compile.build", "archive.verify", "archive.export", "delivery.v3", "handoff.export"}),
 }
 ACTIVE: ContextVar[AgentRun | None] = ContextVar("ontology_agent_run", default=None)
 
@@ -58,11 +65,18 @@ class AgentRun:
             "tool_versions": {"zhigou_toolchain": __version__, **(versions or {})}, "model": model,
             "started_at": started, "status": "RUNNING", "mode": self.mode, "authority": "OBSERVATION_ONLY"}
         self.records.append(record)
+        audit, audit_call = ACTIVE_AUDIT.get(), None
         trace, call_id = self.trace or ACTIVE_TRACE.get(), None
         if trace is not None:
             self.trace = trace
         trace_context = ACTIVE_TRACE.set(trace)
         try:
+            if audit is not None:
+                audit_call = audit.before({"kind": "TOOL", "stage_id": stage_id, "actor": agent_id,
+                    "tool_id": tool_id, "native_agent_run_id": self.run_id, "session_id": self.session_id,
+                    "session_revision": self.parent_version, "dependencies": self.dependencies,
+                    "tool_versions": record["tool_versions"], "authority": "OBSERVATION_ONLY"}, inputs)
+                record["audit_before_sha256"] = audit.calls[audit_call]["before_event_sha256"]
             if OWNERS.get(stage_id) != agent_id or tool_id not in TOOLS.get(stage_id, ()):
                 record.update(status="DENIED", reason="AGENT_TOOL_OR_STAGE_FORBIDDEN")
                 raise AgentToolDenied("AGENT_TOOL_OR_STAGE_FORBIDDEN")
@@ -79,12 +93,17 @@ class AgentRun:
                 if isinstance(value.get("model"), dict) and value.get("execution_source") in {"LIVE", "RECORDED"}:
                     record["model"] = {k: v for k, v in value["model"].items() if k in {
                         "model_id", "configured_revision", "observed_model_id", "revision_attestation"}}
+            if audit is not None and audit_call:
+                record["audit_after_sha256"] = audit.after(audit_call, value, status="SUCCEEDED", outcome={"tool_versions": record["tool_versions"]})
+                audit_call = None
             return value
         except BaseException as exc:
             if trace is not None and call_id and call_id in trace.pending:
                 trace.result(call_id, {}, error={"type": type(exc).__name__})
             if record["status"] != "DENIED":
                 record.update(status="FAILED", reason=type(exc).__name__)
+            if audit is not None and audit_call and audit_call in audit.pending:
+                record["audit_after_sha256"] = audit.after(audit_call, status=record["status"], error=exc)
             raise
         finally:
             ACTIVE_TRACE.reset(trace_context)
@@ -108,6 +127,10 @@ class RuleAgent:
 
 class TaskExecutionAgent(RuleAgent):
     agent_id = "TaskExecutionAgent"
+
+
+# Public planning name, not a third identity or a new approval authority.
+PlanningAgent = RuleAgent
 
 
 class FiveStageCoordinator:
@@ -163,6 +186,7 @@ OPERATION_TO_TOOL = {
     "compile.build": (5, "compile.build"), "compile.validate": (5, "archive.verify"),
     "compile.reproduce": (5, "compile.build"), "package.verify": (5, "archive.verify"),
     "package.export": (5, "archive.export"),
+    "modeling.handoff.export": (5, "handoff.export"),
 }
 
 

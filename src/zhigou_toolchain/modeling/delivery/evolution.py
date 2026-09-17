@@ -188,10 +188,12 @@ def validate_batch(files, *, producer=False):
             "receiver_status": "NOT_CONTACTED"}
 
 
-def evolution_files(traces, *, batch_id, deliverer, reviews=()):
+def evolution_files(traces, *, batch_id, deliverer, reviews=(), allow_synthetic=False):
     require(re.fullmatch(ID_PATTERN, batch_id) and traces, "BATCH_ID_OR_TRACES_REQUIRED")
     files, bindings, harnesses = {}, [], []
     for trace in traces:
+        mode = trace["bindings"].get("execution_mode")
+        require(mode == "LIVE" or (allow_synthetic and mode == "SYNTHETIC_MOCK"), "NON_LIVE_TRACE_NOT_COLLECTIBLE")
         run_id = trace["bindings"]["transport_run_id"]
         report = validate_events(trace["events"], run_id, producer=True)
         require(not report["errors"], "STRICT_V2_BLOCKED:" + ",".join(sorted({e["code"] for e in report["errors"]})))

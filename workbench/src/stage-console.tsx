@@ -11,6 +11,7 @@ import {StageRunControls} from './stage-run-controls';
 import {ScopeSuggestion} from './scope-suggestion';
 import {ManualDrafts} from './manual-drafts';
 import {ModelAssistance} from './model-assistance';
+import {AgentWorkbench} from './agent-workbench';
 
 export const stages = [
   ['输入核验与范围确认','核验资料与来源，冻结本轮规则及独立验收预期。','规则化记录与原文','确认范围、规则与验收要求'],
@@ -67,6 +68,7 @@ export function FiveStageModeling(){
   const openDetail=(value:Document)=>{const refs=Array.isArray(value.evidence_refs)?value.evidence_refs:[];setDetail({...value,linked_evidence:rows(input.evidence_records).filter(e=>refs.includes(e.evidence_id))});};
   const navigate=(n:number)=>setParams({...Object.fromEntries(params),stage:String(n)});
   return <div className="five-stage-workbench stage-console"><header className="modeling-heading"><div><span className="eyebrow">ZhiGou Toolchain · 本体内部流程</span><h1>本体建模工作台</h1><p className="muted">同一批次，五个阶段。校验、审核、交付与发布分别记账。</p></div><div className="actions"><button onClick={()=>setParams({...Object.fromEntries(params),focus:params.get('focus')==='1'?'0':'1'})}>{params.get('focus')==='1'?'退出专注':'专注模式'}</button><button onClick={()=>setDetail({session, jobs:state.jobs})}>运行记录</button></div></header>
+  <AgentWorkbench stage={stage} navigate={navigate} titles={stages.map(s=>s[0])}/>
   <nav className="modeling-stepper" aria-label="本体建模五阶段">{stages.map((s,i)=><button key={s[0]} aria-current={stage===i+1?'step':undefined} onClick={()=>navigate(i+1)}><span>0{i+1}</span><strong>{s[0]}</strong><small>{selected.some(r=>operationStage[r.operation]===i+1)?'有真实产物':'尚未运行'}</small></button>)}</nav>
   <section className="stage-panel"><header className="panel-heading"><div><h2>{title[0]}</h2><p>{title[1]}</p></div><Status value={attemptStatus}/></header><div className="compare-grid"><section aria-label="处理前"><h3>处理前 · {title[2]}</h3><ComparisonTable data={beforeRows} onDetail={openDetail}/></section><section aria-label="处理后"><h3>处理后 · {title[3]}</h3><ComparisonTable data={afterRows} onDetail={openDetail}/></section></div><div className="stage-delta"><strong>本次变化</strong><p>{after?`本阶段已提交 ${selected.filter(r=>operationStage[r.operation]===stage).length} 个真实操作结果，最新结果包含 ${afterRows.length} 项可查看内容。点击表格追溯实际产物。`:'本阶段尚无已提交产物，不预填成功结果。'}</p></div><footer className="handoff-band">下一步接收：{stage<5?stages[stage][2]:'同一个已验证交付包，交给本体服务与版本管理。'} {stage<5?<button onClick={()=>navigate(stage+1)}>查看下一阶段</button>:<Link to={`${prefix}/releases`}>交接服务与版本管理</Link>}</footer></section>
   <p className="notice">后端阶段归属：{agentId||'尚未获取角色配置'}。本轮记录 {agentRecords.length} 次实际工具调用。人工审核继续使用原有授权体系。 <Link to={`${prefix}/modeling/io`}>本体 I/O 独立评测</Link></p>

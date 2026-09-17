@@ -2,6 +2,7 @@
 from zhigou_toolchain.contracts.canonical import stable_urn
 from zhigou_toolchain.domain_packs.registry import DomainPackRegistry
 from zhigou_toolchain.modeling.control_plane.service import ModelingWorkspaceService
+from zhigou_toolchain.modeling.five_stage.agents import invoke
 from zhigou_toolchain.modeling.five_stage.contracts import artifact, bind_job, receipt
 from zhigou_toolchain.modeling.five_stage.semantic_check import check_graphs, integrity
 from zhigou_toolchain.semantic_kernel.baseline import load_baseline_closure
@@ -31,7 +32,7 @@ def execute(app, project, request, principal):
         return artifact(value, project_id=project.project_id, session_id=session, step_id=step, produced_by=request.operation_id, data_kind=kind)
     source = make(candidates, "3.6", "MODELING_CANDIDATE")
     try:
-        checked = make(integrity(candidates, {e["evidence_id"] for d in datasets for e in d["evidence_records"]}), "4.1")
+        checked = make(invoke(4, "integrity.check", lambda: integrity(candidates, {e["evidence_id"] for d in datasets for e in d["evidence_records"]}), inputs={"candidates": candidates, "evidence_records": [e for d in datasets for e in d["evidence_records"]]}), "4.1")
     except ImportError:
         raise ServiceBoundaryError("SEMANTIC_DEPENDENCY_MISSING", "Explicitly install modeling-analysis for task dependency checks", status_code=422) from None
     r1 = receipt("4.1", [source], [checked], configuration={"selection": sorted(ids)}, tools={"networkx": version("networkx")}, scope="Explicit selected candidate construction dependencies and evidence closure.")
@@ -40,7 +41,7 @@ def execute(app, project, request, principal):
     if checked["content"]["status"] == "PASS":
         baseline = load_baseline_closure(modeling.project_lock, domain_packs_root=DomainPackRegistry(app.configuration.domain_packs_root).root)
         try:
-            result = check_graphs(candidates, baseline=baseline, namespace=scope["namespace_policy"]["default_namespace"], reasoner_jar=app.configuration.reasoner_jar)
+            result = invoke(4, "semantic.graphs", lambda: check_graphs(candidates, baseline=baseline, namespace=scope["namespace_policy"]["default_namespace"], reasoner_jar=app.configuration.reasoner_jar), inputs={"candidates": candidates, "baseline_snapshot_id": proposal["baseline_snapshot_id"], "namespace": scope["namespace_policy"]["default_namespace"]})
         except (ValueError, OSError) as exc:
             raise ServiceBoundaryError("SEMANTIC_CHECK_BLOCKED", "Candidate conversion, dependency or semantic tool failed", status_code=422) from exc
         output = make(result, "4.2")

@@ -11,6 +11,7 @@ _WRITE = ("project:write",)
 
 def build_operation_catalog() -> dict[str, OperationDefinition]:
     definitions: list[OperationDefinition] = [
+        OperationDefinition("modeling.handoff.check", "HandoffCheckRequest", "NegativeAcceptanceReceipt", ("acceptance:run", "source:read", "package:read"), True, "JOB", "WRITE", "REQUIRED"),
         OperationDefinition("modeling.handoff.import", "SourceRegisterRequest", "InputHandoffReceipt", ("source:write", "source:read", "model:propose"), True, "JOB", "WRITE", "REQUIRED"),
         OperationDefinition("modeling.handoff.export", "HandoffExportRequest", "ExportReceipt", ("package:export", "source:read", "source:export", "acceptance:export"), True, "JOB", "WRITE", "REQUIRED"),
         OperationDefinition("modeling.evolution.export", "TrajectoryExportRequest", "ExportReceipt", ("package:export", "source:read", "trace:export"), True, "JOB", "WRITE", "REQUIRED"),
@@ -124,6 +125,7 @@ def coverage_matrix() -> list[dict[str, str | None]]:
 # Deliberately explicit executable coverage, not a reflection-based dispatcher.
 # A catalogue declaration is not proof of a handler or a passing workflow.
 HANDLERS = {
+    "modeling.handoff.check": "zhigou_toolchain.services.handoff.execute",
     "modeling.handoff.import": "zhigou_toolchain.services.handoff.execute",
     "modeling.handoff.export": "zhigou_toolchain.services.handoff.execute",
     "modeling.evolution.export": "zhigou_toolchain.services.handoff.execute",

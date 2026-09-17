@@ -14,10 +14,19 @@ export function HandoffDownload({packageId}:{packageId:string}) {
   const exported=state.results.filter(r=>r.operation==='modeling.handoff.export'&&r.result.package_id===packageId&&ids.has(r.job_id)).at(-1);
   const modeled=state.results.filter(r=>r.operation==='compile.build'&&r.result.package_id===packageId&&ids.has(r.job_id)).at(-1);
   const task=state.jobs.find(j=>j.job_id===requestedJob);
+  const negative=state.results.filter(r=>r.operation==='modeling.handoff.check'&&r.result.package_id===packageId&&r.result.session_revision===options.data?.expected_revision).at(-1);
+  const canCheck=principal.permissions.includes('*')||principal.permissions.includes('acceptance:run');
+  async function checkNegatives(){
+    setPending(true);setError('');
+    try{const accepted=await post<Document>('/operations/modeling.handoff.check',{project_id:state.project.project_id,package_id:packageId,expected_revision:options.data?.expected_revision});
+      setRequestedJob(str(accepted.job_id));await queryClient.invalidateQueries({queryKey:['state']});
+    }catch(e){setError(String(e));}finally{setPending(false);}
+  }
   async function prepare(){
     setPending(true);setError('');
     try{const accepted=await post<Document>('/operations/modeling.handoff.export',{project_id:state.project.project_id,package_id:packageId,
-      expected_revision:options.data?.expected_revision,source_grants:rows(options.data?.sources).map(s=>({source_id:s.source_id,sha256:s.sha256,license,permission_basis:basis})),recipient,data_classification:classification});
+      expected_revision:options.data?.expected_revision,source_grants:rows(options.data?.sources).map(s=>({source_id:s.source_id,sha256:s.sha256,license,permission_basis:basis})),recipient,data_classification:classification,
+      ...(options.data?.negative_plan_required?{negative_report_id:negative?.result.report_id}:{})});
       setRequestedJob(str(accepted.job_id));
       await queryClient.invalidateQueries({queryKey:['state']});
     }catch(e){setError(String(e));}finally{setPending(false);}
@@ -30,7 +39,8 @@ export function HandoffDownload({packageId}:{packageId:string}) {
       <label>导出授权依据<input value={basis} onChange={e=>setBasis(e.target.value)}/></label>
       <label>数据性质<select value={classification} onChange={e=>setClassification(e.target.value)}><option value="SYNTHETIC">合成工程数据</option><option value="AUTHORIZED_DATA">已授权数据</option></select></label>
       <p>{rows(options.data?.sources).map(s=>str(s.name)).join('、')}</p>
-      <button disabled={busy||pending||!license.trim()||!basis.trim()||!recipient.trim()||options.data?.status!=='READY'} onClick={prepare}>确认授权并生成交接包</button>
+      {options.data?.negative_plan_required===true&&<p>冻结负例验收：{str(negative?.result.status)||'NOT_RUN'} <button disabled={busy||pending||!canCheck} onClick={checkNegatives}>执行冻结负例</button></p>}
+      <button disabled={busy||pending||!license.trim()||!basis.trim()||!recipient.trim()||options.data?.status!=='READY'||(options.data?.negative_plan_required===true&&!negative?.result.report_id)} onClick={prepare}>确认授权并生成交接包</button>
       {(error||options.error)&&<p role="alert">{error||String(options.error)}</p>}
     </div>}
     {task&&<p role={task.status==='FAILED'?'alert':'status'}>本次导出：{task.status} {task.error?.code}{task.status==='FAILED'&&exported?'；下方是之前已生成的快照。':''}</p>}

@@ -15,10 +15,13 @@ from zhigou_toolchain.contracts.document_io import deterministic_json_bytes
 from zhigou_toolchain.modeling.five_stage.exact_answers import ExactAnswer, assertions
 from zhigou_toolchain.semantic_kernel.packaging.archive import archive_mapping_bytes
 
+from .bindings import artifact_identity, verify_ancestor, verify_provenance_refs
 from .exchange_io import MAX_BYTES, digest, file_rows, json_bytes, require, verify_rows
 from .native import GRAPH_PATHS, capture_native
+from .negative_plan import plan_digest
 
 FORMAT = "zhigou-ontology-handoff/1.0.0"
+STAGE_FORMAT = "zhigou-ontology-handoff/1.1.0"
 
 
 def handoff_files(native_raw, native_files, bindings, dependencies):
@@ -63,9 +66,17 @@ def handoff_files(native_raw, native_files, bindings, dependencies):
         files["queries/" + name + ".rq"] = matches[0]
         files["tests/" + name + ".json"] = json_bytes({"native_test": test, "expected": answer.model_dump(mode="json"),
             "independence": "SESSION_FROZEN_BEFORE_PROPOSAL", "query": "queries/" + name + ".rq"})
-    files["tests/negative_cases.json"] = json_bytes({"status": "NOT_RUN", "cases": [],
-        "reason": "No independently supplied per-run negative-case plan; repository security regressions are separate evidence."})
-    files["manifest.json"] = json_bytes({"format": FORMAT, "schema_version": "1.0.0", "package_kind": "NATIVE_BOUND_EXCHANGE_VIEW",
+    current = "session_snapshot" in bindings
+    negative_plan = bindings.get("negative_case_plan")
+    negative_report = bindings.get("negative_case_results")
+    acceptance = {"negative_status": negative_report["status"] if negative_report else "NOT_RUN",
+        "plan_sha256": plan_digest(negative_plan) if negative_plan else None,
+        "report_sha256": digest(json_bytes(negative_report)) if negative_report else None}
+    files["tests/negative_cases.json"] = json_bytes({"format": "zhigou-negative-acceptance/1.0.0", "status": acceptance["negative_status"],
+        "plan": negative_plan, "report": negative_report,
+        "reason": None if negative_report else "PLAN_NOT_EXECUTED" if negative_plan else "NO_INDEPENDENT_PLAN"} if current else {
+        "status": "NOT_RUN", "cases": [], "reason": "No independently supplied per-run negative-case plan; repository security regressions are separate evidence."})
+    files["manifest.json"] = json_bytes({"format": STAGE_FORMAT if current else FORMAT, "schema_version": "1.1.0" if current else "1.0.0", "package_kind": "NATIVE_BOUND_EXCHANGE_VIEW",
         "native_package_id": native_manifest["package_id"], "native_archive_sha256": digest(native_raw),
         "session_id": bindings["session_id"], "session_revision": bindings["session_revision"],
         "input_run_id": bindings["input_run_id"], "project_id": bindings["project_id"],
@@ -73,13 +84,14 @@ def handoff_files(native_raw, native_files, bindings, dependencies):
         "validation_status": native_manifest["package_status"], "review_status": "NATIVE_REVIEW_CONFIRMED",
         "review_nature": bindings["review_nature"], "release_status": "NOT_GRANTED_BY_EXPORT",
         "default_query_graph": "instances.ttl", "generation_access": "FORBIDDEN_CONTAINS_INDEPENDENT_ACCEPTANCE",
-        "files": file_rows(files)})
+        "files": file_rows(files), **({"stage_acceptance": acceptance} if current else {})})
     return files
 
 
-def verify_handoff(files):
+def verify_handoff(files, *, trusted_receipt=None):
     manifest = json.loads(files["manifest.json"])
-    schema = json.loads(Path(__file__).with_name("handoff.schema.json").read_bytes())
+    require(manifest["format"] in {FORMAT, STAGE_FORMAT}, "HANDOFF_FORMAT_UNSUPPORTED")
+    schema = json.loads(Path(__file__).with_name("handoff-1.1.schema.json" if manifest["format"] == STAGE_FORMAT else "handoff.schema.json").read_bytes())
     Draft202012Validator(schema).validate(manifest)
     listed = verify_rows(files, manifest["files"])
     require(listed == {n.casefold() for n in files if n != "manifest.json"}, "HANDOFF_UNDECLARED_FILE")
@@ -112,9 +124,42 @@ def verify_handoff(files):
     from zhigou_toolchain.ingestion.limits import DEFAULT_LIMITS
     verify_evidence_closure(records=tuple(dataset["evidence_records"]), transformations=tuple(dataset["transformation_records"]),
         snapshots=tuple(dataset["plugin_snapshots"]), sources={i: (s["native_document"], dependencies[s["delivery_path"]]) for i, s in sources.items()}, limits=DEFAULT_LIMITS)
-    for row in json.loads(native["provenance/statement-provenance-manifest.json"])["statements"]:
-        require(set(row["source_asset_refs"]).issubset(sources) and set(row["evidence_record_refs"]).issubset(evidence), "HANDOFF_PROVENANCE_OPEN")
-    return {"status": "VERIFIED", "format": FORMAT, "native_package_id": verified["package_id"],
+    verify_provenance_refs(json.loads(native["provenance/statement-provenance-manifest.json"])["statements"], sources, evidence)
+    negative_status = "NOT_RUN"
+    if manifest["format"] == STAGE_FORMAT:
+        from zhigou_toolchain.contracts.canonical import semantic_hash
+
+        from .negative import verify_negative_report
+        session = bindings["session_snapshot"]
+        require(session["session_id"] == bindings["session_id"] and session["revision"] == bindings["session_revision"]
+            and session["frozen"]["dataset_digest"] == semantic_hash(dataset)
+            and session["frozen"]["run_id"] == bindings["input_run_id"], "HANDOFF_SESSION_BINDING_MISMATCH")
+        from zhigou_toolchain.services.modeling_sessions import (
+            current as session_current,
+        )
+        confirmed = json.loads(native["source/confirmed-modeling-package.json"])
+        native_plan = json.loads(native["source/semantic-compilation-plan.json"])
+        selected = {"compile.build": (verified["package_id"], json.loads(native["ontology-package.json"])),
+            "compile.plan.exact": (native_plan["plan_id"], native_plan), "review.finalize": (confirmed["package_id"], confirmed),
+            "modeling.scope": (bindings["scope"]["scope_id"], bindings["scope"]),
+            "modeling.proposal": (bindings["proposal"]["proposal_id"], bindings["proposal"])}
+        for operation, (identifier, document) in selected.items():
+            selected_output = session_current(session, operation)
+            require(selected_output and selected_output["identifier"] == identifier and selected_output["digest"] == semantic_hash(document), "HANDOFF_NATIVE_DEPENDENCY_MISMATCH")
+        require(any(o["operation_id"] == "compile.build" for o in bindings["agent_runs"]), "DELIVERY_BUILD_RUN_REQUIRED")
+        require(bindings.get("negative_case_plan") == session["frozen"].get("negative_case_plan"), "NEGATIVE_FREEZE_MISMATCH")
+        for observed in bindings["agent_runs"]:
+            verify_ancestor(observed, session)
+        if bindings.get("negative_case_results"):
+            require(bindings["acceptance_freeze"]["negative_plan_sha256"] == plan_digest(bindings["negative_case_plan"]), "NEGATIVE_ORIGIN_MISMATCH")
+            negative_status = verify_negative_report(bindings["negative_case_plan"], bindings["negative_case_results"],
+                artifact_identity(bindings, digest(native_raw)), dependencies)
+    if trusted_receipt is not None:
+        receipt = trusted_receipt.get("result", trusted_receipt)
+        require(receipt["sha256"] == digest(archive_mapping_bytes(files)) and receipt["package_id"] == verified["package_id"], "TRUSTED_EXPORT_RECEIPT_MISMATCH")
+    return {"status": "VERIFIED", "format": manifest["format"], "native_package_id": verified["package_id"],
+            "negative_acceptance": negative_status, "authority": "TRUSTED_EXPORT_RECEIPT_MATCHED" if trusted_receipt else "CONSISTENCY_ONLY_REQUIRE_OUT_OF_BAND_RECEIPT",
+            "stage_acceptance": "PASS" if trusted_receipt and negative_status == "PASS" else "NOT_ATTESTED" if negative_status == "PASS" else negative_status,
             "native_archive_sha256": digest(native_raw), "graphs": "ORIGINAL_BYTES", "receiver_status": "NOT_CONTACTED",
             "release_status": "NOT_GRANTED_BY_EXPORT"}
 

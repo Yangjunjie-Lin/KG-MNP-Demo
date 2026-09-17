@@ -42,8 +42,10 @@ def hr_mapping(prepared, sources):
         "references": [{"field": "department_id", "target_space": "departments", "predicate_iri": vocab + "belongsToDepartment"}]}]}
 
 
-def build_case(workspace, pack, *, model_assistance=False):
+def build_case(workspace, pack, *, model_assistance=False, negative_case_plan=None, record_trace=False, configuration=None, record_step_content=False):
     service = ApplicationService(ServiceConfiguration(str(workspace), review_profile="DEVELOPMENT_SINGLE_REVIEWER",
+        ontology_trace_enabled=record_trace,
+        modeling_audit_content_enabled=record_step_content,
         reasoner_jar=str(ROOT / "third_party/downloads/robot-1.9.7.jar")))
     _, principal = service.tokens.create(principal_id="synthetic-upgrade-reviewer", principal_type="HUMAN", permissions={"*"}, project_ids=set(), created_by="isolated-engineering-test")
     project = service.execute(OperationRequest("project.create", parameters={"name": f"synthetic-{pack}", "domain_pack": pack, "domain_pack_version": "0.1.0" if pack == "hr" else "0.1.1"}), principal).payload
@@ -66,7 +68,9 @@ def build_case(workspace, pack, *, model_assistance=False):
     query = "hr-query-employees" if pack == "hr" else "forestry-query-tree-inspections"
     acceptance = [{"query_asset_id": query, "expected": expected}]
     session = run("modeling.session.open", {"run_id": ingestion["run_id"], "business_rules": ["Preserve exact identifiers, explicit negatives, unknown values and all source evidence"],
-        "acceptance": acceptance, "expected_revision": None}, "session")["session"]
+        "acceptance": acceptance, "expected_revision": None,
+        **({"configuration": configuration} if configuration is not None else {}),
+        **({"negative_case_plan": negative_case_plan} if negative_case_plan is not None else {})}, "session")["session"]
     run("modeling.profile", {"run_id": ingestion["run_id"]}, "profile")
     concepts = ["Employee", "Department"] if pack == "hr" else ["TreeRecord", "InspectionRecord", "Site"]
     scope = run("modeling.scope", {"run_id": ingestion["run_id"], "description": "Synthetic engineering regression",

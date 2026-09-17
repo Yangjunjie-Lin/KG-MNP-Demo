@@ -8,6 +8,7 @@ from pydantic import BaseModel, ConfigDict, Field, ValidationError
 from zhigou_toolchain.modeling.control_plane.providers.record_profile import (
     MixedRecordMapping,
 )
+from zhigou_toolchain.modeling.delivery.negative_plan import NegativeCasePlan
 
 from .errors import ServiceBoundaryError
 
@@ -380,6 +381,7 @@ class ModelingSessionRequest(RequestDTO):
     acceptance: list[FrozenAnswerRequest] = Field(min_length=1, max_length=100)
     configuration: dict = Field(default_factory=dict)
     expected_revision: int | None = None
+    negative_case_plan: NegativeCasePlan | None = None
 
 
 class ModelingSessionRevisionRequest(RequestDTO):
@@ -432,12 +434,19 @@ class HandoffExportRequest(PackageRequest):
     source_grants: list[SourceExportGrant] = Field(min_length=1, max_length=1000)
     recipient: str = Field(min_length=1, max_length=500)
     data_classification: Literal["SYNTHETIC", "AUTHORIZED_DATA"]
+    negative_report_id: str | None = Field(default=None, pattern=r"^[a-f0-9]{64}$")
+
+
+class HandoffCheckRequest(PackageRequest):
+    expected_revision: int = Field(ge=1)
 
 
 class TrajectoryExportRequest(RequestDTO):
     job_id: str = Field(min_length=1, max_length=250)
     batch_id: str = Field(pattern=r"^[A-Za-z0-9._-]{1,100}$")
     profile: Literal["strict-v2", "local"] = "strict-v2"
+    target_package_id: str | None = None
+    expected_revision: int | None = Field(default=None, ge=1)
 
 
 class TrajectoryAnnotation(RequestDTO):
@@ -453,6 +462,7 @@ class TrajectoryReviewRequest(RequestDTO):
 
 
 REQUEST_MODELS = {
+    "modeling.handoff.check": HandoffCheckRequest,
     "modeling.handoff.import": SourceRegisterRequest,
     "modeling.handoff.export": HandoffExportRequest,
     "modeling.evolution.export": TrajectoryExportRequest,

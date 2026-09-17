@@ -6,7 +6,9 @@ import json
 import os
 import re
 import tempfile
+import zipfile
 from contextlib import contextmanager
+from io import BytesIO
 from pathlib import Path, PurePosixPath
 
 from zhigou_toolchain._path_security import _is_link_like
@@ -57,10 +59,12 @@ def checked_path(path):
 
 def read_bounded(path, *, limit=MAX_BYTES):
     path = checked_path(path)
-    require(path.is_file() and path.stat().st_size <= limit, "EXCHANGE_FILE_LIMIT")
+    require(path.is_file(), "EXCHANGE_FILE_LIMIT")
+    observed_size = path.stat().st_size
+    require(observed_size <= limit, "EXCHANGE_FILE_LIMIT")
     with path.open("rb") as stream:
-        raw = stream.read(limit + 1)
-    require(len(raw) <= limit, "EXCHANGE_FILE_LIMIT")
+        raw = stream.read(observed_size + 1)
+    require(len(raw) == observed_size and len(raw) <= limit, "EXCHANGE_FILE_CHANGED_OR_LIMIT")
     return raw
 
 
@@ -120,6 +124,28 @@ def read_directory(root):
             require(total <= MAX_BYTES and len(files) < 4096, "EXCHANGE_TOTAL_LIMIT")
             files[name] = raw
     require(len({n.casefold() for n in files}) == len(files), "EXCHANGE_CASE_COLLISION")
+    return files
+
+
+def read_archive(raw):
+    """Bounded in-memory extraction, never execute a member or follow a link."""
+    require(0 < len(raw) <= MAX_BYTES, "ZIP_SIZE_LIMIT")
+    files, seen, total = {}, set(), 0
+    with zipfile.ZipFile(BytesIO(raw)) as archive:
+        require(len(archive.infolist()) <= 4096, "ZIP_ENTRY_COUNT_LIMIT")
+        for entry in archive.infolist():
+            require(entry.orig_filename == entry.filename, "ZIP_FILENAME_NORMALIZATION_FORBIDDEN")
+            name = safe_name(entry.filename.rstrip("/") if entry.is_dir() else entry.filename)
+            require(name.casefold() not in seen, "DUPLICATE_ZIP_PATH")
+            seen.add(name.casefold())
+            mode = (entry.external_attr >> 16) & 0o170000
+            require(mode in {0, 0o100000, 0o040000} and not entry.flag_bits & 1, "ZIP_LINK_OR_ENCRYPTION_FORBIDDEN")
+            if entry.is_dir():
+                continue
+            total += entry.file_size
+            require(total <= MAX_BYTES and entry.file_size <= max(1, entry.compress_size) * 1000, "ZIP_EXPANSION_LIMIT")
+            files[name] = archive.read(entry)
+    require(not any(n + "/" == other[:len(n) + 1] for n in files for other in files if n != other), "ZIP_FILE_DIRECTORY_COLLISION")
     return files
 
 
