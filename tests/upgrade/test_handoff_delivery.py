@@ -87,9 +87,22 @@ def test_service_program_trace_is_private_and_strict_v2_blocked(hr_case):  # noq
     params = {"job_id": job.job_id, "batch_id": "program-only", "profile": "local"}
     exported = case["run"]("modeling.evolution.export", params, "trace-local")
     assert exported["strict_v2"] == "BLOCKED"
+    reviewed = case["run"]("modeling.evolution.review", {"job_id": job.job_id, "verdict": "pass",
+        "corrected_answer": {"synthetic": True}}, "trace-pass-review")
+    assert reviewed["nature"] == "SYNTHETIC_ENGINEERING"
+    with pytest.raises(ServiceBoundaryError):
+        case["run"]("modeling.evolution.export", {"batch_id": "synthetic-reviews-forbidden", "review_ids": [reviewed["review_id"]]}, "deny-synthetic-review")
     with pytest.raises(ServiceBoundaryError):
         case["run"]("modeling.evolution.export", {**params, "profile": "strict-v2"}, "trace-strict")
     assert "events" not in result["agent_execution"]
+    from zhigou_toolchain.modeling.delivery.trace import public_value
+    from zhigou_toolchain.services.ontology_traces import load_trace
+    trace = load_trace(service, get_project(service.root, case["project_id"]), case["principal"], job.job_id)
+    assert trace["events"][-1]["answer"] == public_value(result, set())
+    # Selecting a disabled-recording historical job may not become an empty success.
+    old = next(j for j in service.jobs.list_project(case["project_id"]) if j.operation_id == "compile.build")
+    with pytest.raises(ServiceBoundaryError):
+        case["run"]("modeling.evolution.export", {"job_id": old.job_id, "batch_id": "no-recording"}, "no-recording-not-empty")
 
 
 def test_failed_job_keeps_controlled_trace_without_result_package(hr_case, monkeypatch):  # noqa: F811

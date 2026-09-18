@@ -115,6 +115,42 @@ def test_final_zip_is_reopened_and_external_hash_is_independent(stage_archive_fi
         verify_stage_archive(path, expected_sha256="0" * 64)
 
 
+def test_stage_historical_review_injection_and_unproven_association(stage_archive_files):
+    from tests.upgrade.test_evolution_delivery import human_review
+    from zhigou_toolchain.modeling.delivery.evolution import evolution_files
+    from zhigou_toolchain.modeling.delivery.stage import (
+        compose_stage,
+        verify_stage_files,
+    )
+    original = stage_archive_files
+    cases = {key: {n.removeprefix(key + "/"): v for n, v in original.items() if n.startswith(key + "/")} for key in ("hr", "forestry")}
+    batch = evolution_files([], batch_id="synthetic-stage-reviews", reviews=[human_review()], known_run_ids={"previous-run"})
+    cases["hr"].update({"evolution/" + n: v for n, v in batch.items()})
+    evidence = {n.removeprefix("evidence/"): v for n, v in original.items() if n.startswith("evidence/")}
+    snapshot_id = json.loads(evidence["source-snapshot.json"])["snapshot_id"]
+    files = compose_stage(cases, evidence, snapshot_id, original["README.md"])
+    report = verify_stage_files(files, known_run_ids={"previous-run"})
+    assert report["cases"]["hr"]["evolution_association_status"] == "NOT_PROVEN_NO_CONTEXT"
+    with pytest.raises(ValueError, match="STAGE_EVOLUTION_INVALID"):
+        verify_stage_files(files)
+
+
+def test_extra_current_checks_cannot_be_ignored(stage_archive_files):
+    from zhigou_toolchain.modeling.delivery.exchange_io import file_rows
+    from zhigou_toolchain.modeling.delivery.stage import verify_stage_files
+    files = dict(stage_archive_files)
+    stage = json.loads(files["evidence/stage-verification.json"])
+    stage["checks"].append({**stage["checks"][0], "name": "agent-audit", "exit_code": 1})
+    files["evidence/stage-verification.json"] = json_bytes(stage)
+    manifest = json.loads(files["stage_manifest.json"])
+    fresh = {r["path"]: r for r in file_rows(files)}
+    for row in manifest["files"]:
+        row.update(fresh[row["path"]])
+    files["stage_manifest.json"] = json_bytes(manifest)
+    with pytest.raises(ValueError, match="STAGE_FALSE_MODULE_PASS"):
+        verify_stage_files(files)
+
+
 def test_context_tampering_rehashed_outer_manifest_still_rejected(stage_archive_files):
     from zhigou_toolchain.modeling.delivery.exchange_io import file_rows
     from zhigou_toolchain.modeling.delivery.stage import verify_stage_files
@@ -188,6 +224,17 @@ def test_immutable_ancestry_accepts_earlier_revision_and_rejects_tampering(stage
     changed["harness_manifest"]["resources"]["rules"] = {"altered": True}
     with pytest.raises(ValueError, match="HARNESS_START"):
         validate_trace_context(changed)
+
+
+def test_minimal_core_protocol_does_not_imply_artifact_association(stage_case):
+    from tests.upgrade.test_evolution_delivery import serial_trace
+    from zhigou_toolchain.modeling.delivery.evolution import evolution_files
+    batch = evolution_files([serial_trace()], batch_id="synthetic-core", allow_synthetic=True, include_context=False)
+    cover = compose(downstream=stage_case["files"], evolution=batch)
+    assert verify_cover(cover)["status"] == "VERIFIED"
+    status = json.loads(cover["handoff_manifest.json"])["outputs"]["evolution"]
+    assert status["status"] == "LOCAL_PROTOCOL_VALID"
+    assert status["association_status"] == "NOT_PROVEN_NO_CONTEXT" and status["associations"] == []
 
 
 def test_rehashed_manifest_does_not_authorize_swapped_plan_or_results(stage_case):

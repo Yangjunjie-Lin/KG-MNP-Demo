@@ -1,5 +1,11 @@
 # 阶段验收收口（2026-09-16）
 
+2026-09-18 复用本入口对 01–17 新增差异冻结复验，基线为干净 9f6c036。
+`--input-archive` 只接入所提供说明包的 upstream；原指定精简版缺失与补充名称更新版分别记录。
+执行范围包含新的服务评价/批次测试、双 Agent/逐步审计与两类真实浏览器用例。
+每个案例另保留 ontology-combined.zip（downstream + 有效本地诊断），不把程序轨迹塞入 executions。
+新回执写 `runtime_reports/alignment-20260918/`，下面的历史失败与原命令仍保留。
+
 本轮起点 develop@979128ee16746cd124aca29257a23910e8edcea0，工作树干净。
 Git commit 与源码文件清单 SHA-256 是不同的身份对象。旧交付、历史失败和旧摘要保持原样。
 
@@ -105,7 +111,7 @@ frozen-run-02 完整后端在中断续办后得到 2172 PASS / 2 继承 FAIL / 9
 ## 外部待确认（不阻断独立本体交付）
 
 1. 首次模型前/纯程序工具 turn 如何表示？严格 v2 出口受此影响；本地完整 journal 不受阻。
-2. 完整 verdict 枚举和本体 answer 对象是什么？当前只保留已确认 fail+annotations，其他 NOT_CONFIRMED。
+2. 2026-09-18 verdict 已确认 pass/fail，pass 可无 annotations；answer 按任务实际结果原样保存，不要求本体专用业务 Schema。该字段问题已解决，不再作为当前阻塞。
 3. 本体违规码/评分接口与真实接收器如何接入？尚无接收回执，始终 NOT_CONTACTED，不能称 COLLECTED 或可训练。
 
 原 v3、LIVE 模型、真人运行评价、外部研究效果与生产发布未被追认为完成。

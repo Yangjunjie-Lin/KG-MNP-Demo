@@ -13,12 +13,15 @@ from zhigou_toolchain.modeling.delivery.bindings import (
 )
 from zhigou_toolchain.modeling.delivery.evolution import (
     evolution_files,
+    parse_jsonl,
+    validate_events,
     validate_review,
 )
 from zhigou_toolchain.modeling.delivery.exchange_io import (
     atomic_file,
     digest,
     json_bytes,
+    read_archive,
     read_bounded,
     require,
 )
@@ -86,11 +89,11 @@ def finish_recorders(holder, *, result=None, error=None, cancelled=False):
     for recorder in holder:
         if recorder.finished:
             continue
-        answer = {"kind": "zhigou-operation-result/1.0.0", "execution": "FAILED" if error else "SUCCEEDED",
-                  "output_sha256": semantic_hash(result) if result is not None else None,
-                  "publication": "NOT_COMMITTED" if error else "COMMITTED_PROJECT_GENERATION",
-                  "review": "NOT_GRANTED_BY_TRACE", "release": "NOT_GRANTED_BY_TRACE"}
-        recorder.finish("cancelled" if cancelled else "failed" if error else "success", answer,
+        # Preserve the actual service output, including artifact references. The
+        # existing recorder filters private material and marks redacted captures.
+        recorder.bindings.update(answer_capture="OPERATION_RESULT_V1",
+            operation_result_digest=semantic_hash(result))
+        recorder.finish("cancelled" if cancelled else "failed" if error else "success", result,
                         error={"type": type(error).__name__} if error else None)
 
 
@@ -117,10 +120,96 @@ def load_trace(app, project, principal, job_id):
     frozen = trace["harness_manifest"]
     require(freeze_harness(frozen["resources"], provenance=frozen["provenance"])["hashes"] == frozen["hashes"], "TRACE_HARNESS_MISMATCH")
     validate_trace_context(trace)
+    if bound.get("answer_capture") == "OPERATION_RESULT_V1":
+        from .execution import committed_result
+        result = committed_result(app, job) if job.status == "SUCCEEDED" else None
+        require(bound["operation_result_digest"] == semantic_hash(result), "TRACE_RESULT_BINDING_MISMATCH")
+        require(trace["events"][-1]["answer"] == public_value(result, set()), "TRACE_ANSWER_MISMATCH")
     return trace
 
 
+def known_export_runs(app, project, principal, job_ids):
+    """Resolve historical references from authenticated committed snapshots only.
+
+    This is local reference evidence, NEVER a receiver collection receipt.
+    Caller-supplied run IDs or optional context cannot establish trust.
+    """
+    from .execution import committed_result
+    from .projects import load_catalog, require_access
+    actor = app._current(principal)
+    require_access(actor, project)
+    if not actor.can("source:read") or not (actor.can("trace:review") or actor.can("trace:export")):
+        raise ServiceBoundaryError("FORBIDDEN", "historical trace references require source and trace permission", status_code=403)
+    runs = {}
+    for job_id in job_ids:
+        job = app._job(job_id, actor)
+        require(job.project_id == project.project_id and job.operation_id == "modeling.evolution.export", "HISTORICAL_EXPORT_SCOPE_INVALID")
+        receipt = committed_result(app, job)
+        require(receipt and receipt.get("status") == "EXPORTED" and receipt.get("format") == "evolution-upstream/v2", "HISTORICAL_EXPORT_REQUIRED")
+        assert receipt is not None
+        generation = Path(load_catalog(app.root)["commits"][job_id]["root"])
+        raw = read_bounded(generation / "artifacts/builds/handoff" / (receipt["sha256"] + ".zip"))
+        require(digest(raw) == receipt["sha256"] and len(raw) == receipt["size_bytes"], "EXPORT_BYTES_CHANGED")
+        files = read_archive(raw)
+        for name, content in files.items():
+            if not name.startswith("executions/run-") or not name.endswith(".jsonl"):
+                continue
+            run_id = name[len("executions/run-"):-len(".jsonl")]
+            require(not validate_events(parse_jsonl(content), run_id, producer=True)["errors"], "HISTORICAL_EXECUTION_INVALID")
+            previous = runs.get(run_id)
+            require(previous is None or previous["sha256"] == digest(content), "HISTORICAL_EXECUTION_CONFLICT")
+            runs[run_id] = {"export_job_id": job_id, "sha256": digest(content),
+                "reference_status": "LOCAL_COMMITTED_EXPORT", "receiver_status": "NOT_CONTACTED"}
+    current = app._current(principal)
+    require_access(current, project)
+    if not current.can("source:read") or not (current.can("trace:review") or current.can("trace:export")):
+        raise ServiceBoundaryError("FORBIDDEN", "historical trace permission changed", status_code=403)
+    for job_id in job_ids:
+        app._job(job_id, current)
+    return runs
+
+
+def selected_reviews(app, project, principal, params, run_id=None):
+    root = Path(project.root) / "artifacts/builds/trajectory-reviews"
+    selected = set(params.get("review_ids", []))
+    require(len(selected) == len(params.get("review_ids", [])), "DUPLICATE_REVIEW_ID")
+    found, reviews, export_ids = set(), [], set(params.get("known_run_export_job_ids", []))
+    for path in sorted(root.glob("*.json")) if root.exists() else []:
+        record = json.loads(read_bounded(path))
+        row = record["review"]
+        if row["review_id"] not in selected and (run_id is None or row["exec_id"] != run_id):
+            continue
+        require(record["nature"] == "AUTHENTICATED_HUMAN", "SYNTHETIC_REVIEW_NOT_FOR_DELIVERY")
+        require(path.stem == row["review_id"], "REVIEW_ID_BINDING_MISMATCH")
+        found.add(row["review_id"])
+        reviews.append(row)
+        if record.get("execution_export_job_id"):
+            export_ids.add(record["execution_export_job_id"])
+    require(selected.issubset(found), "REVIEW_NOT_FOUND")
+    known = known_export_runs(app, project, principal, sorted(export_ids))
+    return reviews, known
+
+
+def commit_batch(project, params, files, run_ids, review_ids):
+    # Reuse the original CAS-committed project delivery ledger for both IDs.
+    root = Path(project.root) / "artifacts/builds/trajectory-deliveries"
+    receipt = {"batch_id": params["batch_id"], "files_digest": semantic_hash({n: digest(v) for n, v in files.items()})}
+    keys = [*run_ids, *("review-" + semantic_hash(i) for i in review_ids), "batch-" + semantic_hash(params["batch_id"])]
+    for key in keys:
+        ledger = root / (key + ".json")
+        if ledger.exists():
+            require(json.loads(read_bounded(ledger)) == receipt, "DUPLICATE_RUN_OR_REVIEW_DELIVERY")
+        else:
+            atomic_file(ledger, json_bytes(receipt))
+
+
 def export_trace(app, project, request, principal):
+    if not request.parameters.get("job_id"):
+        reviews, known = selected_reviews(app, project, principal, request.parameters)
+        files = evolution_files([], batch_id=request.parameters["batch_id"], deliverer="zhigou-ontology", reviews=reviews, known_run_ids=known)
+        commit_batch(project, request.parameters, files, [], [r["review_id"] for r in reviews])
+        return files, {"status": "EXPORTED", "format": "evolution-upstream/v2", "receiver_status": "NOT_CONTACTED",
+            "reference_check": "LOCAL_PRECHECK_NOT_COLLECTION", "review_ids": [r["review_id"] for r in reviews]}
     trace = load_trace(app, project, principal, request.parameters["job_id"])
     target_package = request.parameters.get("target_package_id")
     if target_package:
@@ -157,32 +246,31 @@ def export_trace(app, project, request, principal):
         raise ServiceBoundaryError("NON_LIVE_TRACE_NOT_COLLECTIBLE", "recorded/program traces are local diagnostics only", status_code=409)
     if trace["capture_status"] != "COMPLETE":
         raise ServiceBoundaryError("TRACE_REDACTED_OR_PARTIAL", "redacted or partial messages are not a complete v2 sample", status_code=409)
-    reviews = []
-    root = Path(project.root) / "artifacts" / "builds" / "trajectory-reviews"
-    for path in sorted(root.glob("*.json")) if root.exists() else []:
-        record = json.loads(read_bounded(path))
-        if record["review"]["exec_id"] == trace["bindings"]["transport_run_id"]:
-            require(record["nature"] == "AUTHENTICATED_HUMAN", "SYNTHETIC_REVIEW_NOT_FOR_DELIVERY")
-            reviews.append(record["review"])
-    files = evolution_files([trace], batch_id=request.parameters["batch_id"], deliverer="zhigou-ontology", reviews=reviews)
-    # Project-level no-duplicate ledger is committed by the same CAS transaction.
-    ledger = Path(project.root) / "artifacts/builds/trajectory-deliveries" / (trace["bindings"]["transport_run_id"] + ".json")
-    receipt = {"batch_id": request.parameters["batch_id"], "files_digest": semantic_hash({n: digest(v) for n, v in files.items()})}
-    if ledger.exists():
-        require(json.loads(read_bounded(ledger)) == receipt, "DUPLICATE_RUN_DELIVERY")
-    else:
-        atomic_file(ledger, json_bytes(receipt))
+    run_id = trace["bindings"]["transport_run_id"]
+    reviews, known = selected_reviews(app, project, principal, request.parameters, run_id)
+    files = evolution_files([trace], batch_id=request.parameters["batch_id"], deliverer="zhigou-ontology", reviews=reviews, known_run_ids=known)
+    commit_batch(project, request.parameters, files, [run_id], [r["review_id"] for r in reviews])
     return files, {"status": "EXPORTED", "format": "evolution-upstream/v2", "receiver_status": "NOT_CONTACTED"}
 
 
 def submit_review(app, project, request, principal):
+    principal = app._current(principal)
     if principal.principal_type != "HUMAN":
         raise ServiceBoundaryError("HUMAN_REVIEW_REQUIRED", "trajectory review requires an authenticated human", status_code=403)
-    trace = load_trace(app, project, principal, request.parameters["job_id"])
-    run_id = trace["bindings"]["transport_run_id"]
+    params = request.parameters
+    export_id = params.get("execution_export_job_id")
+    if params.get("job_id"):
+        trace = load_trace(app, project, principal, params["job_id"])
+        run_id = trace["bindings"]["transport_run_id"]
+    else:
+        known = known_export_runs(app, project, principal, [export_id])
+        run_id = params["exec_id"]
+        require(run_id in known, "REVIEW_EXECUTION_MISSING")
     row = {"review_id": uuid4().hex, "exec_id": run_id, "verdict": request.parameters["verdict"],
-           "annotations": request.parameters["annotations"], "reviewer": principal.principal_id, "ts": datetime.now(UTC).isoformat()}
+           "reviewer": principal.principal_id, "ts": datetime.now(UTC).isoformat()}
+    row.update({k: params[k] for k in ("annotations", "violations", "corrected_answer") if k in params})
     require(not validate_review(row, {run_id}, producer=True)["errors"], "TRAJECTORY_REVIEW_INVALID")
     nature = "SYNTHETIC_ENGINEERING" if app.configuration.review_profile == "DEVELOPMENT_SINGLE_REVIEWER" else "AUTHENTICATED_HUMAN"
-    atomic_file(Path(project.root) / "artifacts/builds/trajectory-reviews" / (row["review_id"] + ".json"), json_bytes({"nature": nature, "review": row}))
+    atomic_file(Path(project.root) / "artifacts/builds/trajectory-reviews" / (row["review_id"] + ".json"),
+        json_bytes({"nature": nature, "review": row, "execution_export_job_id": export_id}))
     return {"review_id": row["review_id"], "exec_id": run_id, "nature": nature, "status": "RECORDED_NOT_COLLECTED"}

@@ -47,7 +47,7 @@ def compose_stage(cases, evidence, snapshot_id, readme):
     return files
 
 
-def verify_stage_files(files, *, externally_pinned=False, replay_negatives=False):
+def verify_stage_files(files, *, externally_pinned=False, replay_negatives=False, known_run_ids=()):
     from .snapshot import validate_snapshot
     manifest = json.loads(files["stage_manifest.json"])
     require(manifest["format"] == FORMAT, "STAGE_FORMAT_INVALID")
@@ -103,8 +103,10 @@ def verify_stage_files(files, *, externally_pinned=False, replay_negatives=False
             require(not diagnostic and record["diagnostics"]["status"] == "NOT_INCLUDED", "STAGE_DIAGNOSTIC_STATUS_MISMATCH")
         evolution = {n[len(name + "/evolution/"):]: v for n, v in files.items() if n.startswith(name + "/evolution/")}
         if record["evolution"]["status"] == "INCLUDED":
-            require(evolution and validate_batch(evolution, producer=True)["status"] == "LOCAL_PROTOCOL_VALID", "STAGE_EVOLUTION_INVALID")
-            for trace in context_traces(evolution):
+            require(evolution and validate_batch(evolution, producer=True, known_run_ids=known_run_ids)["status"] == "LOCAL_PROTOCOL_VALID", "STAGE_EVOLUTION_INVALID")
+            traces = context_traces(evolution)
+            results[name]["evolution_association_status"] = "VERIFIED" if traces else "NOT_PROVEN_NO_CONTEXT"
+            for trace in traces:
                 associate_trace(trace, inner)
         else:
             require(not evolution and record["evolution"]["status"] in {"BLOCKED", "NOT_INCLUDED"} and record["evolution"]["reason"], "STAGE_EVOLUTION_STATUS_MISMATCH")
@@ -119,6 +121,10 @@ def verify_stage_files(files, *, externally_pinned=False, replay_negatives=False
     required_checks = {"focused", "new-stage", "ruff", "types", "ontology", "services", "frontend-lint", "frontend-types", "frontend-tests", "frontend-build", "browser"}
     indexed = {c["name"]: c for c in stage["checks"]}
     require(required_checks.issubset(indexed), "STAGE_REQUIRED_CHECK_MISSING")
+    # New scoped checks participate when present; historical frozen receipts
+    # retain their original scope. Explicit unavailable isolation is NOT_RUN.
+    required_checks.update(n for n in ("agent-audit", "agent-browser", "attachment-input", "isolation")
+                           if n in indexed and indexed[n]["exit_code"] is not None)
     actual_module = all(indexed[n]["exit_code"] == 0 and indexed[n].get("skipped", 0) == 0 for n in required_checks) and all(r["negative_acceptance"] == "PASS" for r in results.values())
     require(stage["module_acceptance"] == ("PASS" if actual_module else "FAIL"), "STAGE_FALSE_MODULE_PASS")
     module_pass = actual_module
@@ -129,16 +135,16 @@ def verify_stage_files(files, *, externally_pinned=False, replay_negatives=False
         "receiver_status": "NOT_CONTACTED", "production_release": "NOT_PERFORMED"}
 
 
-def verify_stage_archive(path, *, expected_sha256=None, replay_negatives=False):
+def verify_stage_archive(path, *, expected_sha256=None, replay_negatives=False, known_run_ids=()):
     raw = read_bounded(path)
     if expected_sha256 is not None:
         require(digest(raw) == expected_sha256, "TRUSTED_STAGE_ARCHIVE_MISMATCH")
-    result = verify_stage_files(read_archive(raw), externally_pinned=expected_sha256 is not None, replay_negatives=replay_negatives)
+    result = verify_stage_files(read_archive(raw), externally_pinned=expected_sha256 is not None, replay_negatives=replay_negatives, known_run_ids=known_run_ids)
     return {**result, "archive_sha256": digest(raw), "size_bytes": len(raw)}
 
 
-def export_stage(output, files):
+def export_stage(output, files, *, known_run_ids=()):
     raw = archive_mapping_bytes(files)
     atomic_file(output, raw)
     # Validate the on-disk ZIP, not only the precompression dictionary.
-    return verify_stage_archive(output, expected_sha256=digest(raw))
+    return verify_stage_archive(output, expected_sha256=digest(raw), known_run_ids=known_run_ids)

@@ -223,7 +223,7 @@ def execute(app, project, request, principal):
         else:
             atomic_file(path, raw)
         return {**result, "sha256": artifact_id, "size_bytes": len(raw),
-                **({"source_job_id": request.parameters["job_id"]} if request.operation_id == "modeling.evolution.export" else {})}
+                **({"source_job_id": request.parameters.get("job_id")} if request.operation_id == "modeling.evolution.export" else {})}
     except (OSError, ValueError, KeyError, TypeError) as exc:
         # Only our enumerated error labels, never a path or arbitrary provider text.
         code = str(exc) if isinstance(exc, ValueError) and str(exc).replace("_", "").isalnum() else "HANDOFF_INPUT_OR_PROTOCOL_INVALID"

@@ -19,7 +19,11 @@ def reject_client_identity_claims(value: object) -> None:
 
 
 def authorize(principal: PrincipalReference, operation: OperationDefinition, request: OperationRequest) -> None:
-    reject_client_identity_claims(request.parameters)
+    # A corrected business answer/evidence is opaque JSON, never an identity
+    # assertion or an input to approval. The closed review DTO validates its
+    # envelope; reviewer is still derived exclusively from the principal.
+    identity_parameters = {k: v for k, v in request.parameters.items() if k not in {"corrected_answer", "violations"}} if request.operation_id == "modeling.evolution.review" else request.parameters
+    reject_client_identity_claims(identity_parameters)
     if operation.blocked_reason:
         raise ServiceBoundaryError("OPERATION_BLOCKED", operation.blocked_reason, status_code=501)
     for permission in operation.required_permissions:

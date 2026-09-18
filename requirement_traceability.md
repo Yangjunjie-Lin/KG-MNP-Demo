@@ -242,6 +242,40 @@ semantic模型锁、OSKGC明确许可、论文方法复现和正式付费预算/
 完整规则与可执行命令见 docs/ontology/STAGE_CLOSEOUT.md。实际状态、计数、源码快照、成果路径与哈希
 见 runtime_reports/stage-closeout-20260916/ 下新的最终回执；本表不预先将未运行项标为通过。
 
+## 2026-09-18 01–17 统一对应表
+
+起点为干净 develop@9f6c036；详细字段只维护在 HANDOFF_CONTRACT.md，历史表不追改。
+本表“已有复验/本轮修正”描述实现范围，最终实测结论以
+`runtime_reports/alignment-20260918/frozen-run-*/stage-verification.json` 和逐节点回执为准。
+01–08 复用 input=meeting_input/handoff_input，09–14 复用 handoff/negative/bindings，
+15–17 复用 evolution/ontology_traces；下载始终为授权服务已提交 archive，不由前端拼 ZIP。
+
+| 项 | 生产者/生成时机 | API/产物路径 | 校验 | 测试 | 当前状态 |
+|---|---|---|---|---|---|
+| 01 records | 数据组/接入前 | modeling.handoff.import → Source/Batch/Run | 字符串编号/字段与原 CSV/证据 | test_meeting_handoff_input 条件记录与源摘要 | 已有复验；有记录时提供 |
+| 02 text_blocks | 数据组/接入前 | 同上 → KG-IR/Evidence | UTF-8/版本/摘要/Unicode 字符定位 | 同文件条件文本与偏移负例 | 已有复验；有文本时提供 |
+| 03 source_locator/sources | 数据持有人/接入前 | 同上来源映射 | 原字节/来源授权/定位 | 输入原件接入、test_handoff_delivery | 已有复验；随数据提供 |
+| 04 quality_report | 数据组/接入前 | 同上质量回执 | 同批摘要/严重问题与隔离阻断 | test_meeting_handoff_input 质量负例 | 已有复验 |
+| 05 goal_and_rules | 业务方/S1 前 | 输入 binding → session.open | 业务方确认/冻结，不自动审批 | 输入、test_five_stage_service | 已有复验 |
+| 06 baseline/imports/assets | 平台方/S2 前 | 锁定领域包与输入适配 | 版本/摘要/许可/缺锁拒绝 | 输入锁与许可负例 | 本轮补缺锁校验；复用时提供 |
+| 07 独立答案/负例计划 | 验收方/生成前 | 原 session.open frozen | evaluator-only/白名单/独立负例链 | test_stage_handoff、test_step_audit、真实 isolation | 已有复验；答案不进入生成修复 |
+| 08 输入 manifest | 各方汇总/接入前 | modeling.handoff.import | 集合/摘要/版本/访问分类 | 输入私有路径大小写及未分类负例 | 本轮补分类检查；每批必需 |
+| 09 三图 | 共享编译器/S5 | modeling.handoff.export → downstream/*.ttl | 同次原生图原字节/稳定 IRI | test_handoff_delivery、test_stage_handoff | 已有复验 |
+| 10 映射/证据 | S3 记录/S5 导出 | mapping.json / provenance.jsonl | 原执行依据/闭包/计划非执行 | 同上与 negative 真实检出 | 已有复验 |
+| 11 验证/本体审核 | 校验器/授权审核人 | validation.json / review.json | 受测版本/审核/验证分离 | 服务、阶段14负例/领域 | 已有复验；合成身份不是专家 |
+| 12 查询/正负例 | 独立验收方/冻结后执行 | modeling.handoff.check → queries/tests | 冻结 plan/report/native 绑定 | test_stage_handoff 真实重放 | 已有复验；无计划 NOT_RUN |
+| 13 本体 manifest | 交付服务/S5 | modeling.handoff.export 1.1 | 实際文件/摘要/来源批次/祖先/依赖 | stage、handoff、错包/STALE 拒绝 | 已有复验；原 v3 不变 |
+| 14 dependencies/native | 编译/来源持有人 | native/ontology.kgop、dependencies | 实存/授权/原字节 | HR/林业真实服务、CLI/API/浏览器一致性 | 已有复验；按实际条件提供 |
+| 15 executions | TraceRecorder/真实调用时 | modeling.evolution.export / executions | 公共字段/连续 turn/串行与并行/未知告警 | test_evolution_delivery；真实程序诊断 | 本轮修正；程序 turn 外部未决，保留 BLOCKED |
+| 16 reviews | 实际 HUMAN/运行后 | modeling.evolution.review → reviews | pass/fail/可选 JSON/可信旧运行/逐行隔离/身份 | test_evolution_handoff、前端表单、字节保存导出 | 本轮修正；无真人不造正式文件 |
+| 17 upstream_manifest | 原交付服务/最后写 | modeling.evolution.export → upstream_manifest.json | batch_id/files 必填、空/仅评价、原子/幂等 | evolution 单测/CLI 退出码/真实 API Worker | 本轮修正；NOT_CONTACTED |
+
+额外真实性检查不是新增核心类别：可选 context 无证据时关联 NOT_PROVEN，存在时检查；
+本地诊断和逐步审计使用既有独立出口。历史运行引用只证明本地已提交导出，不冒充接收回执。
+指定精简版附件未找到，补充名称更新版不同 SHA 已单独标记并真实接入；原导入需求仍待原件。
+完整后端原始结果、相对基线新增回归、模块专项分别核账。冻结后不改实现/配置/测试/文档；
+若修复必须保留失败回执并新目录重新冻结。
+
 ## 2026-09-17 双 Agent 与逐步审计
 
 | 要求 | 实现 | 验证 |

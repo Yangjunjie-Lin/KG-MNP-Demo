@@ -86,7 +86,13 @@ def associate_trace(trace, downstream):
     verify_ancestor(observed, b["session_snapshot"])
     require(bound["session_revision"] == observed["session_revision"] and bound["input_snapshot"] == target["input_snapshot"], "DELIVERY_TRACE_VERSION_MISMATCH")
     require(bound.get("output_artifacts") == [observed["session_output"]], "DELIVERY_OUTPUT_REFERENCE_MISMATCH")
-    require(trace["events"][-1]["answer"].get("output_sha256") == observed["result_digest"], "DELIVERY_RESULT_DIGEST_MISMATCH")
+    answer = trace["events"][-1]["answer"]
+    if bound.get("answer_capture") == "OPERATION_RESULT_V1":
+        require(bound.get("operation_result_digest") == observed["result_digest"], "DELIVERY_RESULT_DIGEST_MISMATCH")
+        if trace.get("capture_status") == "COMPLETE":
+            require(semantic_hash(answer) == observed["result_digest"], "DELIVERY_RESULT_DIGEST_MISMATCH")
+    else:  # Existing frozen journals are read-only; do not rewrite their answer.
+        require(isinstance(answer, dict) and answer.get("output_sha256") == observed["result_digest"], "DELIVERY_RESULT_DIGEST_MISMATCH")
     require(bound.get("committed_result_digest") == observed["result_digest"], "DELIVERY_COMMIT_DIGEST_MISMATCH")
     resources = trace["harness_manifest"]["resources"]
     require(resources["knowledge"].get("dataset_digest") == target["input_snapshot"]
@@ -98,7 +104,11 @@ def associate_trace(trace, downstream):
             "relationship": "CURRENT_NATIVE_DEPENDENCY_ANCESTOR", "target": target}
 
 
-def context_traces(files):
+def context_traces(files, *, strict=True):
+    context = {"context/run_bindings.json", "context/harness_manifest.json"}
+    if not context.intersection(files):
+        return []
+    require(context.issubset(files), "CONTEXT_PAIR_REQUIRED")
     bound = json.loads(files["context/run_bindings.json"])
     harnesses = json.loads(files["context/harness_manifest.json"])
     require(len(bound) == len(harnesses) and len({b["transport_run_id"] for b in bound}) == len(bound), "CONTEXT_RUN_SET_INVALID")
@@ -109,7 +119,7 @@ def context_traces(files):
         expected.add(name)
         require(name in files, "CONTEXT_EXECUTION_MISSING")
         trace = {"bindings": b, "harness_manifest": h, "events": parse_jsonl(files[name]), "capture_status": "COMPLETE"}
-        validate_trace_context(trace, strict=True)
+        validate_trace_context(trace, strict=strict)
         traces.append(trace)
     require(expected == {n for n in files if n.startswith("executions/")}, "CONTEXT_EXECUTION_SET_MISMATCH")
     return traces

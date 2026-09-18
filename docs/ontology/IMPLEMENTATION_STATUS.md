@@ -1,5 +1,44 @@
 # 2026-09-16 交接改造实施记录
 
+## 2026-09-18 当前增量：01–17 字段与全链路对齐
+
+从干净 develop@9f6c0368654bd72f82df1c18ef52fe74b762fd83 开始，不回退。
+已修改演进事件/评价/批次校验、DTO、Worker 服务、CLI 和工作台；保留双 Agent、负例、
+祖先关联、原生格式、权限和逐步审计。字段仅在 HANDOFF_CONTRACT.md 维护，逐项表见需求追踪。
+新评价支持 pass/fail 和可选修正；合法空批次/仅评价批次走同一提交下载路径。
+历史引用来自原已提交导出，始终与“外部已收集”分开；可选 context 缺失不取消内部真实性门。
+answer 改为实际结果（受隐私过滤），旧摘要不补造。无真人评价不生成正式 reviews。
+
+指定“字段对齐精简版”ZIP（预期 SHA bbcf5bbf…）未在下载/仓库引用目录找到。
+已读并实跑另一份“名称更新版”ZIP，SHA-256 为
+`be5d0c703a923d095e901991b0fc507049f5458471f0b8f7711f33b7417e8094`，62153 字节；
+说明、Excel 和上游样例按补充资料核对，不称已收到原指定附件。其历史 194e091/hr@0.1.0
+引用未改写；仅 upstream 进入真实 Source/Batch/Run，14 个原文件原字节核验。
+独立答案未进入生成源；新原生运行 ID 由真实服务生成，未授予审批。
+
+预检发现三个新增测试夹具的 quality checked_files 未随合成子集更新，真实质量门正确拒绝；
+原失败保留于 `runtime_reports/alignment-20260918/preflight-protocol.xml`。只修正新建测试夹具，
+未改原附件、历史质量结果或生产门槛。后续预检回执为 preflight-protocol-02.xml。
+
+frozen-run-01 在完整回归前由新增只读协议探针发现评价 bytes 解码会自动接受 UTF-16，
+已停止资格流程并保留 ABORTED.json 和原源码快照；显式 UTF-8 解码及保留同文件合法行的
+回归修复后使用新目录冻结。此失败不会改写成 PASS。
+
+frozen-run-02 在完整回归前的组合包探针发现历史引用未透传到 cover/assemble-handoff，
+已保留 ABORTED.json；补齐与 validate-evolution 相同的重新鉴权引用入口和 CLI 回归后再冻结。
+封面不能通过自己的“有效”声明授信，重读仍需包外可信引用。
+同期预检的阶段测试跨越了开发修改，被 STAGE_TRACE_SOURCE_BYTES_MISMATCH 正确拒绝；
+记录为 preflight-stage-mixed-source.json，不将其当成最终冻结结果。新增阶段检查也参与
+最终模块结论，不能忽略审计/浏览器/附件检查的实际失败。
+
+全部修改后用 `verify_stage_handoff.py` 冻结，专项、完整后端、前端、真实浏览器及 HR/林业新服务链
+写入 `runtime_reports/alignment-20260918/frozen-run-*/`。以该目录实际 source-snapshot.json、
+stage-verification.json、full-regression-summary.json、FINAL_REPORT.md 为准，不在冻结文档预填 PASS。
+已有卫生失败单独与干净 9f6c036 复现核账，绝不将全仓 FAIL 写成 PASS。
+严格 v2 程序 turn 仍受阻，真实模型/真人运行评价/外部接收未执行，NOT_CONTACTED 不阻止本体交付。
+
+以下 2026-09-16/17 的结论保持历史含义；其中 fail-only/verdict 未确认描述已由上述新字段覆盖。
+
 ## 2026-09-17 新任务：双 Agent 与处理前后审计
 
 新增规划/任务执行 Agent 界面、服务与工具前后文件、显式内容捕获和受限 ZIP 下载。

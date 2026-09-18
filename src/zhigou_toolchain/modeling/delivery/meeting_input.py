@@ -20,8 +20,12 @@ def validate_input(files):
     require(len(allowlist) == len(set(allowlist)) and all(n in files for n in allowlist), "GENERATION_ALLOWLIST_INVALID")
     for name in allowlist:
         safe_name(name)
-        require(not PRIVATE_PARTS.intersection(Path(name).parts) and Path(name).suffix.lower() not in {".zip", ".docx", ".html"}, "GENERATION_PRIVATE_INPUT_FORBIDDEN")
+        require(not PRIVATE_PARTS.intersection(p.casefold() for p in Path(name).parts) and Path(name).suffix.lower() not in {".zip", ".docx", ".html"}, "GENERATION_PRIVATE_INPUT_FORBIDDEN")
     require(not set(allowlist).intersection(manifest.get("evaluator_only_files", [])), "GENERATION_PRIVATE_INPUT_FORBIDDEN")
+    private = manifest.get("evaluator_only_files", [])
+    require(isinstance(private, list) and len(private) == len(set(private)) and all(n in files for n in private), "EVALUATOR_FILE_LIST_INVALID")
+    require(set(allowlist) | set(private) == set(files) - {"manifest.json"}, "INPUT_ACCESS_CLASSIFICATION_REQUIRED")
+    require("baseline.ttl" not in files or "imports.lock.json" in files, "INPUT_BASELINE_LOCK_REQUIRED")
     locators = json.loads(files["source_locator.json"])
     sources = {s["source_id"]: s for s in locators["sources"]}
     evidence = {e["evidence_id"]: e for e in locators["evidence"]}

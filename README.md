@@ -10,7 +10,16 @@
 原模型与多模态的追加实测、固定输入及模型能力差异见
 [原模型与多模态验收](docs/upgrade/original-models-multimodal.md)。
 
-## 本体建模与交接（2026-09-16 增量）
+## 本体建模与交接（2026-09-18 按 01–17 对齐）
+
+沿用 01–08 输入、09–14 本体成果、15–17 演进数据三组，工作台点击展开查看，
+不增加新的核心交付类别。唯一详细字段入口是[交接契约](docs/ontology/HANDOFF_CONTRACT.md)，
+逐项生产者/API/验证/测试对应见 [需求追踪](requirement_traceability.md#2026-09-18-0117-统一对应表)。
+运行评价支持 pass/fail、条件 annotations 与可选 violations/corrected_answer；
+空批次和有可信历史引用的仅评价批次复用原 Worker/CAS 和任务下载。
+可选 context 缺失不影响基础协议有效性，但不能证明运行与本体成果关联。
+人工身份由服务核定，合成测试评价不能作为正式 reviews 导出。
+本轮冻结回执与新建 HR/林业成果在 `runtime_reports/alignment-20260918/`，不借用旧回执。
 
 2026-09-17 新增[双 Agent 与逐步审计](docs/ontology/AGENT_STEP_AUDIT.md)：工作台按
 “规划 Agent（RuleAgent，S1/S2/S4）／任务执行 Agent（S3/S5）”组织现有步骤，
@@ -29,7 +38,7 @@
 保留 RuleAgent（S1/S2/S4）与 TaskExecutionAgent（S3/S5）。数据组只提供数据、
 来源和质量，业务方确认规则，验收方独立提供答案；本体模块不重建演进组训练平台。
 
-新增真实 Source/Batch/Run 输入适配、`zhigou-ontology-handoff/1.0.0` 结果出口、
+新增真实 Source/Batch/Run 输入适配、`zhigou-ontology-handoff/1.1.0` 结果出口（1.0 只读兼容）、
 受控内容轨迹、演进 v2 本地验证/原子批次和独立人工评价接口。
 新交换格式不是原 v3，也不是原诊断包改名；`.kgop`、稳定 IRI、原 v3 Schema 不变。
 第五阶段提供本体交接包和演进数据包入口，失败任务可从任务中心导出本地轨迹诊断。

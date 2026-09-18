@@ -9,12 +9,14 @@ from pathlib import Path
 from fastapi.testclient import TestClient
 
 from zhigou_toolchain.api.app import create_app
+from zhigou_toolchain.modeling.delivery.cover import compose, verify_cover
 from zhigou_toolchain.modeling.delivery.exchange_io import (
     atomic_file,
     digest,
     json_bytes,
 )
 from zhigou_toolchain.modeling.delivery.handoff import verify_handoff
+from zhigou_toolchain.semantic_kernel.packaging.archive import archive_mapping_bytes
 
 
 def retain_stage_case(case, output):
@@ -37,6 +39,10 @@ def retain_stage_case(case, output):
         service.tokens.revoke(principal.token_id)
     atomic_file(output / "ontology-handoff.zip", case["raw"])
     atomic_file(output / "ontology.kgop", case["files"]["native/ontology.kgop"])
+    combined = compose(downstream=case["files"], diagnostic=case["diagnostic"])
+    assert verify_cover(combined)["status"] == "VERIFIED"
+    combined_raw = archive_mapping_bytes(combined)
+    atomic_file(output / "ontology-combined.zip", combined_raw)
     for name, raw in case["diagnostic"].items():
         atomic_file(output / "diagnostics" / name, raw)
     verification = {"data_origin": "NEW_SYNTHETIC_SERVICE_CHAIN", "mode": "DETERMINISTIC", "live_model_calls": 0,
@@ -44,6 +50,7 @@ def retain_stage_case(case, output):
         "negative_receipt": case["negative_receipt"], "verification": verify_handoff(case["files"], trusted_receipt=case["receipt"]),
         "same_task_transport": {"api_sha256": digest(case["raw"]), "cli_sha256": digest(case["raw"]), "size_bytes": len(case["raw"])},
         "real_human_assessment": "NOT_PERFORMED", "receiver_status": "NOT_CONTACTED"}
+    verification["combined_archive"] = {"name": "ontology-combined.zip", "sha256": digest(combined_raw), "size_bytes": len(combined_raw)}
     atomic_file(output / "verification.json", json_bytes(verification))
     atomic_file(output / "workspace-reference.json", json_bytes({"workspace": str(service.root), "export_job_id": case["export_job"].job_id}))
     return verification

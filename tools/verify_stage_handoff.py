@@ -109,7 +109,7 @@ def run(output, name, command, snapshot, *, cwd=ROOT, pytest_args=None, extra_en
         report = json.loads((report_root / "verification.json").read_bytes())
         require(report["source_unchanged"] is True, "ONTOLOGY_SOURCE_CHANGED")
         record.update(junit(report_root / "ontology.xml"), nested_report_root=str(report_root))
-    if name == "browser" and completed.returncode == 0:
+    if name in {"browser", "agent-browser"} and completed.returncode == 0:
         receipt = next(r for r in reversed(json_records(directory / "command.log")) if "evidence" in r)
         report_root = ROOT / receipt["evidence"]
         record.update(junit(report_root / "junit.xml"), nested_report_root=str(report_root))
@@ -156,11 +156,32 @@ def add_full_receipts(evidence, full_root):
         evidence[key] = (Path(full_root) / name).read_bytes()
 
 
+def check_attachment(path, output):
+    """Read only the supplied upstream; preserve historical versions and bytes."""
+    from tests.upgrade.test_meeting_handoff_input import import_input_case
+    from zhigou_toolchain.modeling.delivery.exchange_io import read_archive
+    from zhigou_toolchain.modeling.delivery.meeting_input import validate_input
+    raw = read_bounded(path)
+    archive = read_archive(raw)
+    roots = [n.removesuffix("manifest.json") for n in archive if n.endswith("/upstream/manifest.json")]
+    require(len(roots) == 1, "ATTACHMENT_UPSTREAM_ROOT_REQUIRED")
+    files = {n.removeprefix(roots[0]): v for n, v in archive.items() if n.startswith(roots[0])}
+    parsed = validate_input(files)
+    result = import_input_case(output / "service", files)
+    record = {"file": path.name, "sha256": digest(raw), "size_bytes": len(raw), "status": "NATIVE_INPUT_IMPORTED",
+        "reference_domain_pack": parsed["manifest"].get("reference_domain_pack"), "upstream_file_count": len(files),
+        "native_run_id": result["run"]["run_id"], "approval": result["approval"], "runtime_model_input": "UPSTREAM_GENERATION_ALLOWLIST_ONLY",
+        "requested_attachment_status": "MATCH" if digest(raw) == "bbcf5bbf6c356018f83a2b33226a751181507176268cd0a4912795a1489b51a3" else "DIFFERENT_ATTACHMENT_NOT_A_SUBSTITUTE"}
+    atomic_file(output / "attachment-check.json", json_bytes(record))
+    print(json.dumps(record, ensure_ascii=False))
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("output", type=Path)
     parser.add_argument("--baseline", type=Path, required=True)
     parser.add_argument("--parallel-full", action="store_true", help="Run the unchanged four-worker full suite alongside independent scoped checks")
+    parser.add_argument("--input-archive", type=Path, help="Optional supplied explanation ZIP; import only its upstream subtree")
     args = parser.parse_args()
     output, baseline = args.output.resolve(), args.baseline.resolve(strict=True)
     output.mkdir(parents=True, exist_ok=False)
@@ -179,10 +200,15 @@ def main():
     full_command = [sys.executable, "tools/verify_zhigou_upgrade.py", "--backend-only", "--workers", "4", "--skip-model-probe"]
     pool = ThreadPoolExecutor(max_workers=1) if args.parallel_full else None
     full_future = pool.submit(run, output, "full-backend", full_command, snapshot) if pool else None
-    checks.append(run(output, "focused", [], snapshot, pytest_args=["tests/upgrade/test_evolution_delivery.py", "tests/upgrade/test_meeting_handoff_input.py", "tests/upgrade/test_handoff_delivery.py"]))
+    checks.append(run(output, "focused", [], snapshot, pytest_args=["tests/upgrade/test_evolution_delivery.py", "tests/upgrade/test_meeting_handoff_input.py", "tests/upgrade/test_handoff_delivery.py", "tests/services/test_evolution_handoff.py"]))
+    if args.input_archive:
+        checks.append(run(output, "attachment-input", [sys.executable, "-c",
+            "from pathlib import Path; import sys; from tools.verify_stage_handoff import check_attachment; check_attachment(Path(sys.argv[1]), Path(sys.argv[2]))",
+            str(args.input_archive.resolve()), str(output / "attachment")], snapshot))
     checks.append(run(output, "new-stage", [], snapshot, pytest_args=["tests/upgrade/test_stage_handoff.py", "tests/upgrade/test_stage_archive_safety.py"],
         extra_env={"ZHIGOU_STAGE_SNAPSHOT_FILE": str(output / "source-snapshot.json"), "ZHIGOU_STAGE_EVIDENCE_ROOT": str(output / "cases")}))
     checks.append(run(output, "services", [], snapshot, pytest_args=["tests/services/test_five_stage_service.py", "tests/services/test_forestry_workflow.py", "tests/services/test_core_fencing.py", "tests/services/test_archive_read_authorization.py", "tests/jobs/test_lease_lock_wait.py"]))
+    checks.append(run(output, "agent-audit", [], snapshot, pytest_args=["tests/upgrade/test_step_audit.py", "tests/upgrade/test_agent_roles.py"]))
     checks.append(run(output, "ontology", [sys.executable, "tools/evaluate_research.py", "--suite", "ontology"], snapshot))
     checks.append(full_future.result() if full_future else run(output, "full-backend", full_command, snapshot))
     if pool:
@@ -196,10 +222,11 @@ def main():
     browser = checks[-1]
     if browser["exit_code"] == 0:
         receipt = json.loads((Path(browser["nested_report_root"]) / "managed-receipt.json").read_bytes())
-        archives = [n for n in receipt["artifacts"] if n.endswith(".zip")]
+        archives = [n for n in receipt["artifacts"] if n.endswith("synthetic-ontology-handoff.zip")]
         require(len(archives) == 1, "BROWSER_ARCHIVE_REQUIRED")
         downloaded = read_bounded(Path(browser["nested_report_root"]) / archives[0])
         require(downloaded == read_bounded(output / "cases/hr/ontology-handoff.zip"), "BROWSER_NOT_SAME_EXPORT_TASK")
+    checks.append(run(output, "agent-browser", [sys.executable, "tools/run_browser_verification.py", "--selected-test", "agent-audit.e2e.ts", "--startup-timeout", "90"], snapshot))
     isolation_ready = isolation_available()
     if isolation_ready:
         checks.append(run(output, "isolation", [sys.executable, "tools/verify_handoff_isolation.py", str(output / "isolation")], snapshot))
@@ -218,7 +245,9 @@ def main():
         "collection": full["collection"], "new_regressions_status": "NO_NEW_FAILURES" if failures == known["failed_nodes"] else "NEW_OR_DIFFERENT_FAILURES",
         "source_snapshot_id": snapshot["snapshot_id"], "original_report": str(full_root.relative_to(ROOT)), **full_nodes}
     atomic_file(output / "full-regression-summary.json", json_bytes(summary))
-    required = {"focused", "new-stage", "ruff", "types", "ontology", "services", "frontend-lint", "frontend-types", "frontend-tests", "frontend-build", "browser"}
+    required = {"focused", "new-stage", "ruff", "types", "ontology", "services", "agent-audit", "agent-browser", "frontend-lint", "frontend-types", "frontend-tests", "frontend-build", "browser"}
+    if args.input_archive:
+        required.add("attachment-input")
     if isolation_ready:
         required.add("isolation")
     module_pass = all(c["exit_code"] == 0 and c["skipped"] == 0 for c in checks if c["name"] in required)
@@ -239,6 +268,8 @@ def main():
             if (directory / name).exists():
                 evidence["relevant-test-receipts/" + check["name"] + "-" + name] = (directory / name).read_bytes()
     add_full_receipts(evidence, full_root)
+    if (output / "attachment/attachment-check.json").exists():
+        evidence["relevant-test-receipts/attachment-check.json"] = (output / "attachment/attachment-check.json").read_bytes()
     for check in checks:
         if "nested_report_root" in check:
             nested = Path(check["nested_report_root"])

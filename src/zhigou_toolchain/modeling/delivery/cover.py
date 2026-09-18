@@ -9,17 +9,19 @@ from .exchange_io import file_rows, json_bytes, require, verify_rows
 from .handoff import verify_handoff
 
 
-def compose(*, downstream=None, evolution=None, diagnostic=None):
+def compose(*, downstream=None, evolution=None, diagnostic=None, known_run_ids=()):
     require(bool(downstream) or bool(evolution) or bool(diagnostic), "HANDOFF_CONTENT_REQUIRED")
     files, statuses = {}, {}
     if downstream:
         statuses["downstream"] = verify_handoff(downstream)
         files.update({"downstream/" + n: raw for n, raw in downstream.items()})
     if evolution:
-        statuses["evolution"] = validate_batch(evolution, producer=True)
+        statuses["evolution"] = validate_batch(evolution, producer=True, known_run_ids=known_run_ids)
         require(statuses["evolution"]["status"] == "LOCAL_PROTOCOL_VALID", "EVOLUTION_PROTOCOL_BLOCKED")
+        traces = context_traces(evolution)
         if downstream:
-            statuses["evolution"]["associations"] = [associate_trace(t, downstream) for t in context_traces(evolution)]
+            statuses["evolution"]["associations"] = [associate_trace(t, downstream) for t in traces]
+            statuses["evolution"]["association_status"] = "VERIFIED" if traces else "NOT_PROVEN_NO_CONTEXT"
         files.update({"evolution/" + n: raw for n, raw in evolution.items()})
     if diagnostic:
         require("local-trace.json" in diagnostic, "LOCAL_TRACE_REQUIRED")
@@ -39,7 +41,7 @@ def compose(*, downstream=None, evolution=None, diagnostic=None):
     return files
 
 
-def verify_cover(files):
+def verify_cover(files, *, known_run_ids=()):
     manifest = json.loads(files["handoff_manifest.json"])
     require(manifest["format"] in {"zhigou-handoff-cover/1.0.0", "zhigou-handoff-cover/1.1.0"}, "COVER_FORMAT_INVALID")
     require(verify_rows(files, manifest["files"]) == {n.casefold() for n in files if n != "handoff_manifest.json"}, "COVER_FILE_SET_MISMATCH")
@@ -49,5 +51,20 @@ def verify_cover(files):
         if parts["downstream"]:
             verify_handoff(parts["downstream"])
         return {"status": "LEGACY_FORMAT_CHECKED", "association": "NOT_ATTESTED", "receiver_status": "NOT_CONTACTED"}
-    require(compose(**parts) == files, "COVER_BINDINGS_CHANGED")
+    rebuilt = compose(**parts, known_run_ids=known_run_ids)
+    # Old 1.1 covers omitted these additive diagnostic fields. Re-run every
+    # check; only compare using their original report projection, not new truth.
+    expected = json.loads(rebuilt["handoff_manifest.json"])
+    saved_evolution = manifest["outputs"].get("evolution", {})
+    projected = expected["outputs"].get("evolution", {})
+    for key in ("reference_check", "association_status"):
+        if key not in saved_evolution:
+            projected.pop(key, None)
+    for name, report in projected.get("files", {}).items():
+        old_report = saved_evolution.get("files", {}).get(name, {})
+        for key in ("accepted", "quarantined"):
+            if key not in old_report:
+                report.pop(key, None)
+    rebuilt["handoff_manifest.json"] = json_bytes(expected)
+    require(rebuilt == files, "COVER_BINDINGS_CHANGED")
     return {"status": "VERIFIED", "receiver_status": "NOT_CONTACTED"}

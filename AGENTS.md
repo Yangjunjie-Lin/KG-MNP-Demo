@@ -1,5 +1,16 @@
 # AGENTS.md
 
+2026-09-18 按 01–17 对齐，最新字段的唯一详细入口为 `docs/ontology/HANDOFF_CONTRACT.md`，
+对应表在 `requirement_traceability.md`。本轮参考 develop@9f6c036 不是强制回退目标。
+verdict 已确认为 pass/fail；fail 必须有 annotations 数组但没有新增最少条数，pass 可省略。
+violations/corrected_answer 原样贯通；批次清单仅 batch_id/files 必填。
+空批次、仅评价批次、可信历史导出引用复用原 Worker/CAS；本地登记不是对方已收集。
+串行 call_id 可选，未知非空 event 只告警；并行生产提交必须有 ID。
+评价逐行隔离，不能吞有效行；可选 context 不成为第 18 项，也不替代内部真实性检查。
+`task_end.answer` 记录实际服务结果，隐私过滤明确标记；旧摘要日志不反推正文。
+冻结验证入口增加 `--input-archive`，只接入附件 upstream，不能将说明/答案整包送入模型。
+本轮原指定“字段对齐精简版”附件未找到，另有“名称更新版”且 SHA 不同；不得混称原件。
+
 2026-09-17 新增 `docs/ontology/AGENT_STEP_AUDIT.md`。PlanningAgent 只是 RuleAgent 别名；
 不要添加第三个计算角色。逐步审计不替代 JobStore/session/CAS，不给 Agent 审批工具。
 默认仅元数据，正文必须显式启用并按权限记录/下载；旧处理前内容缺失不可补造。

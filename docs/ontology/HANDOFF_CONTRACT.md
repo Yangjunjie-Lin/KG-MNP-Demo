@@ -1,5 +1,9 @@
 # 本体结果与演进轨迹交接契约
 
+2026-09-18 当前字段规范，按本轮完整 Prompt 与 01–17 清单维护。旧协议原件保留，
+下面已明确的字段优先于历史未决表。01–08 输入、09–14 本体成果沿用原适配/1.1 Schema；
+15–17 只有执行记录、真实人工评价、批次清单三类核心交付，无第 18 类。
+
 2026-09-17 新增项目本地 `zhigou-modeling-step-audit/1.0.0` 前后快照 ZIP，见
 [逐步审计契约](AGENT_STEP_AUDIT.md)。独立于本体交换/v2，不修改旧 Schema 或历史包。
 记录、审批、程序验收、提交和发布仍分别记账。
@@ -88,7 +92,10 @@ handoff-<batch-id>/
 
 `llm_output/tool_result.status` 使用 `ok/error`；`task_end.status` 使用 `success/failed/cancelled`。
 
-任务执行成功不等于本体语义正确、人工批准或已发布。建议本体任务的 `answer` 使用有类型的结果对象，分别包含产物引用、验证状态、审核状态与发布状态；该对象是**本项目拟议格式，仍需对方评价器适配**，不得硬塞政务许可字段。
+任务执行成功不等于本体语义正确、人工批准或已发布。`answer` 是该任务实际服务结果，
+包括原有工件引用，不在导出时补写总结或只交摘要；协议不解析其内部业务结构。
+`finish_recorders` 原样交给隐私过滤器，过滤时明确 REDACTED，严格 v2 禁止冒称完整；
+内部 result digest 继续与真实已提交结果核对。旧日志的摘要 answer 保留兼容读取，不补造正文。
 
 `model`、`temperature`、`usage`、`duration_ms` 按实际可用信息记录。将 provider 的 `prompt_tokens/completion_tokens` 对应到 `input_tokens/output_tokens`；未知用量不填 0；不把全部请求 token 与输出 token 错算为输入。未配置或未返回的参数不编造。
 
@@ -97,6 +104,10 @@ handoff-<batch-id>/
 `turn` 是模型调用轮次，不是 S1—S5 编号，也不是工具序号。按原文“从 1 开始、跳跃隔离”执行连续的 1、2、3……；每次真实模型重试开启新轮，两个 Agent 共用该真实运行的轮次分配器。
 
 每次调用分配新 `call_id`，结果复用对应调用的 ID。唯一性约束作用于**调用实例**，不应把配对结果对相同 ID 的引用误判为重复；LLM 与工具调用也不得碰撞。新生产者对所有模型/工具配对均写 call_id，满足并发场景，不依赖位置推断。
+
+上述是本模块录制策略，不是外部新增必填：合法串行缺 call_id 位置配对并告警；
+并行提交必须带 ID，兼容读取仍保留缺 ID 的原告警口径。非空未知 event 仅告警并保留，
+继续核对公共字段及任务边界；缺少/空 event 是错误，不归入“未知”。
 
 多个工具可同时未闭合，按 ID 和工具名精确配对。工具结果 turn 不小于对应调用 turn。取消时对能够确认中止的未完成调用写真实取消/中断错误，然后写 task_end；不能补成功结果。硬崩溃导致无法确认终态时保留未完成 `.tmp` 和诊断，不把截断文件包装成正常完成轨迹。
 
@@ -137,13 +148,23 @@ harness 清单绑定源 commit 与脏工作树源码指纹。开始后配置变�
 
 `downstream/review.json` 回答“谁批准了哪一版建模内容”；`evolution/reviews/*.jsonl` 回答“某一次运行哪里做得对或错”。二者可以有关联，但对象、权限和用途不同。
 
-对方人工评价字段为 `review_id / exec_id / verdict / annotations / reviewer / ts`，`corrected_answer` 和 `violations` 可选。新生产者应确保 fail 附带真实 annotations；没有真实人工评价就不生成评价记录，不用程序结果填“审核员A”。
+必填仅 `review_id / exec_id / verdict / reviewer / ts`；verdict 已确认只取 **pass/fail**。
+fail 条件必填 annotations 数组，每项 aspect/severity/comment；未定义最低数量，允许空数组。
+pass 可省略 annotations。fail 缺字段在生产提交报错，历史兼容读取告警，不拒绝其他有效行。
+aspect：引用准确性、事实正确性、格式合规、完整性、其他；兼容未知 aspect 告警。
+severity：info/minor/major/critical。
 
-原文只给出了 fail 场景，完整 verdict 枚举继承未提供的 v0；不要假定未展示的所有枚举都已确认。接入时读取接收方实际 Schema，或在协议确认记录中固定完整枚举。
+`violations` 可选数组，每项 code/evidence/suggestion，存在 severity 时仍使用上述严重性枚举；
+code 保留人工填写值，不用许可业务码封闭本体问题。`corrected_answer` 保留任意人工 JSON，
+不把内部 role/approved 等业务键当授权声明；外层身份仍禁止客户端自报，服务按授权真人核定。
+DTO、Worker 保存、界面、JSONL 导出和验证共用这些规则，没有真实人工评价不造 reviews。
 
-aspect 已列出：引用准确性、事实正确性、格式合规、完整性、其他。severity：info/minor/major/critical。对方 violations 现有码包含 `citation_unverified / bad_law_ref / bad_decision / answer_not_object / status_answer_mismatch / empty_answer / assess_error / decision_reasons_missing`。
-
-这些违规码明显含政务许可语义，不能把 SHACL、IRI 或 OWL 错误全部映射成 bad_law_ref。未匹配的本体问题先保留到自身 validation 与人工 annotations 的准确描述；新增 ontology 违规码、自动评价对象和任务 answer Schema 必须单独确认。不要伪称对方现有评价器已经支持本体建模。
+exec_id 可指本批先验证成功的执行或由可信调用方注入的历史已知运行。文件中自报的 ID/context
+不是信任锚。本项目最小历史边界读取原 JobStore 与 CAS 已提交 strict-v2 导出快照，重核项目、
+权限、原始字节与执行事件；这只证明 LOCAL_COMMITTED_EXPORT，不证明对方已收集。
+无接收器/回执始终 NOT_CONTACTED，接收端可用性仍待真实回执。
+批次验证按文件和 1-based 行号返回 accepted/quarantined，悬空、重复或坏 JSON 行不会吞掉
+同文件其他合法评价；有错误时整体报告 BLOCKED，并保留可用行，不假称整个批次已接收。
 
 ## 8. 安全、权限与数据隔离
 
@@ -159,7 +180,11 @@ aspect 已列出：引用准确性、事实正确性、格式合规、完整性�
 
 ## 9. 批次清单和原子投递
 
-对方 `upstream_manifest.json` 的字段为 `batch_id / deliverer / ts / files`；每项使用 **name、sha256、size**。这是对方字段，不是原本体包的 path/size_bytes。
+`upstream_manifest.json` 可选、默认生成；出现时必填仅 **batch_id / files**，deliverer、ts 可选；
+提供 ts 时仍需带时区。每项必填 **name、sha256、size**，不是本体包的 path/size_bytes。
+`files=[]` 合法；空 executions/reviews 或没有这些文件都不需补造占位轨迹，校验退出码 0。
+仅评价批次依赖可信历史引用，不需重投执行文件。主动不选运行与“所选运行受阻”不同：
+录制关闭、删节、程序 turn 缺口必须保留错误，绝不洗成成功空批次。
 
 清单内只列本次给其收集器的轨迹和真实评价文件；额外 context/本体结果由总交接封面绑定，除非对方另行确认这些路径也由其收集器处理。清单缺失可按原文退回目录扫描；清单存在但某个声明文件缺失/摘要或长度不符，必须拒绝该批收集。不要把“可选 manifest 不存在”与“manifest 声明的文件不存在”混为一谈。
 
@@ -179,10 +204,20 @@ aspect 已列出：引用准确性、事实正确性、格式合规、完整性�
 
 - `modeling.handoff.import` / `POST /projects/{id}/modeling/handoff-input`：上传 **upstream 子目录内容**组成的 ZIP，不接受包含下游答案/报告的整会议 ZIP。核对摘要、版本、CSV 记录/字段和 Unicode 引文，校验固定领域包基线；进入原生 Source/Batch/Plan/Run。非支持定位种类/外部 imports 明确拒绝。原独立答案不注册成来源，也不自动生成 scope 审批。
 - `modeling.handoff.export`：当前 strict session 的 package_id、expected_revision、source_grants、recipient、data_classification。经原 Worker/CAS 重新核验审核与编译绑定，导出原图、原包、执行映射收据、来源/证据闭包和冻结独立答案。`handoff.schema.json` 是单独的项目 Schema。
-- `modeling.evolution.export`：job_id、batch_id、profile（strict-v2 或 local）。关闭录制的旧任务返回 TRACE_UNAVAILABLE，不能反推 prompt。`local` 是诊断 ZIP，不含伪造 upstream_manifest。完整严格出口遇到程序轮次缺口、删节或不闭合时拒绝。
-- `modeling.evolution.review`：真实身份提交 fail 与 annotations，需 trace:review 和 source:read。只实现原附件已明确的 verdict=fail；其他 verdict 等待完整 v0/接收器 Schema。开发单人测试配置的评价标 SYNTHETIC_ENGINEERING，禁止作为正式人工样本导出。暂未增加 corrected_answer/violations 提交 UI。
+- `modeling.evolution.export`：batch_id 必填；旧 job_id、profile（strict-v2/local）兼容。省略 job_id 主动导出空批次；可传 review_ids 和 known_run_export_job_ids 导出仅评价批次并从原服务快照核验历史引用。local 或 target_package_id/expected_revision 关联必须选 job_id。所选旧任务未录制返回 TRACE_UNAVAILABLE，程序/删节/不闭合严格出口拒绝；local 是独立诊断 ZIP。运行、评价、批次重复/冲突保护在原 CAS 提交账本内，不是对方收集库。
+- `modeling.evolution.review`：需 trace:review/source:read，授权 HUMAN 提交 pass/fail、条件 annotations、可选 violations/corrected_answer。选择旧 job_id，或 exec_id+execution_export_job_id（受信任原服务导出）；客户端不能指定 reviewer。开发单人配置标 SYNTHETIC_ENGINEERING，禁止正式 reviews 导出。已录制但不能 strict-v2 表示的本地运行可留评价，不能因此变成已收集样本。
 - 下载 `GET /projects/{id}/handoffs/{export-job-id}/archive` 重新检查任务范围、当前授权和提交快照字节。CLI 的 export-handoff 下载这个同一服务快照，不提供绕过鉴权的本地业务导出入口。
 - `assemble-handoff` 可用总封面关联独立结果、已通过本地验证的演进根和诊断目录；三种 manifest 不合并成同一协议。未接收始终 NOT_CONTACTED。
+
+context/run_bindings.json 和 context/harness_manifest.json 可省略；提供时成对核验六类资源、
+原生 ID 和执行集合，组合交付还必须通过原生包、确认包、输入、编译依赖和有效祖先检查。
+没有 context 的核心批次可 LOCAL_PROTOCOL_VALID，但与本体组合时关联为 NOT_PROVEN_NO_CONTEXT；
+包格式 VERIFIED 不代表该关联通过。服务内部记录不会因省略附件而被删除。
+CLI `validate-evolution`、`assemble-handoff` 和 `validate-stage` 均可带 `--workspace WORKSPACE --project-id ID --known-run-export-job-id EXPORT_JOB`，
+使用 ZHIGOU_TOKEN 重新鉴权后注入历史引用；不接受客户端“已收集”布尔声明。
+组合包重读也必须从外部重新注入可信历史引用，不能信任封面自报引用有效。
+正式 CLI/API/浏览器下载均使用 `export-handoff`/任务 archive 的同一已提交字节。
+本地 `export-evolution` 是协议文件辅助出口，不授予服务授权或接收资格。
 
 编译后，原解析器可能在字节一致副本间选中另一条路径。新出口重新运行原输入证明，
 仅允许位置交叉表变化；工件 ID、原字节摘要、内容摘要及其他证明字段仍逐项一致。

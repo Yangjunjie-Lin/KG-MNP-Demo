@@ -2,7 +2,7 @@
 import {afterEach,expect,it,vi} from 'vitest';
 import {cleanup,fireEvent,render,screen,waitFor} from '@testing-library/react';
 import {QueryClient,QueryClientProvider} from '@tanstack/react-query';
-import {HandoffDownload,EvolutionDownload} from './handoff-download';
+import {HandoffDownload,EvolutionDownload,TrajectoryReview,EvolutionBatchDownload,DeliveryChecklist} from './handoff-download';
 
 const model=vi.hoisted(()=>({workspace:{state:{project:{project_id:'synthetic',authority_revision:1},jobs:[{job_id:'export',status:'SUCCEEDED',error:null as {code:string}|null}],results:[] as unknown[]},
   principal:{permissions:['*']},prefix:'/projects/synthetic',busy:false},post:vi.fn(),api:vi.fn()}));
@@ -45,4 +45,51 @@ it('shows the actual failed asynchronous export instead of implying success',asy
   fireEvent.click(screen.getByRole('button',{name:'演进数据包'}));
   await waitFor(()=>expect(screen.getByRole('alert')).toHaveTextContent('FAILED EVOLUTION_STRICT_V2_BLOCKED'));
   expect(screen.queryByRole('link')).not.toBeInTheDocument();
+});
+
+it('submits pass without annotations and preserves optional JSON without a client reviewer',async()=>{
+  model.post.mockResolvedValue({job_id:'review-job'});
+  mount(<TrajectoryReview jobId="source-job"/>);
+  fireEvent.change(screen.getByLabelText('violations（可选 JSON 数组）'),{target:{value:'[{"code":"domain-code","evidence":{"iri":"urn:test"},"suggestion":"check"}]'}});
+  fireEvent.change(screen.getByLabelText('corrected_answer（可选 JSON）'),{target:{value:'["opaque",{"role":"business-value"}]'}});
+  fireEvent.click(screen.getByRole('button',{name:'以当前身份提交运行评价'}));
+  await waitFor(()=>expect(model.post).toHaveBeenCalledWith('/operations/modeling.evolution.review',{
+    project_id:'synthetic',job_id:'source-job',verdict:'pass',violations:[{code:'domain-code',evidence:{iri:'urn:test'},suggestion:'check'}],corrected_answer:['opaque',{role:'business-value'}]}));
+});
+
+it('requires fail annotations and reports invalid JSON without submitting',async()=>{
+  mount(<TrajectoryReview jobId="source-job"/>);
+  fireEvent.change(screen.getByLabelText('运行评价结论'),{target:{value:'fail'}});
+  expect(screen.getByRole('button',{name:'以当前身份提交运行评价'})).toBeDisabled();
+  fireEvent.change(screen.getByLabelText('annotations（fail 必填，JSON 数组）'),{target:{value:'not json'}});
+  fireEvent.click(screen.getByRole('button',{name:'以当前身份提交运行评价'}));
+  expect(await screen.findByRole('alert')).toBeInTheDocument();
+  expect(model.post).not.toHaveBeenCalled();
+});
+
+it('uses the same review form for a trusted historical run',async()=>{
+  model.post.mockResolvedValue({job_id:'historical-review'});
+  mount(<TrajectoryReview jobId="current-job"/>);
+  fireEvent.change(screen.getByLabelText('评价对象'),{target:{value:'historical'}});
+  fireEvent.change(screen.getByLabelText('历史运行 exec_id'),{target:{value:'previous-run'}});
+  fireEvent.change(screen.getByLabelText('可信执行导出任务 ID'),{target:{value:'previous-export'}});
+  fireEvent.click(screen.getByRole('button',{name:'以当前身份提交运行评价'}));
+  await waitFor(()=>expect(model.post).toHaveBeenCalledWith('/operations/modeling.evolution.review',{
+    project_id:'synthetic',exec_id:'previous-run',execution_export_job_id:'previous-export',verdict:'pass'}));
+});
+
+it('exports an explicit empty batch through the Worker and does not show a premature download',async()=>{
+  model.post.mockResolvedValue({job_id:'empty-job'});
+  mount(<EvolutionBatchDownload/>);
+  fireEvent.change(screen.getByLabelText('演进批次编号'),{target:{value:'empty'}});
+  fireEvent.click(screen.getByRole('button',{name:'生成所选演进批次'}));
+  await waitFor(()=>expect(model.post).toHaveBeenCalledWith('/operations/modeling.evolution.export',{
+    project_id:'synthetic',batch_id:'empty',review_ids:[],known_run_export_job_ids:[]}));
+  expect(screen.queryByRole('link')).not.toBeInTheDocument();
+});
+
+it('keeps the 17-item checklist in three expandable groups',()=>{
+  mount(<DeliveryChecklist/>);
+  for(const label of ['01–08 上游输入','09–14 本体成果','15–17 演进数据'])expect(screen.getByText(label).tagName).toBe('SUMMARY');
+  expect(screen.queryByText(/^18 /)).not.toBeInTheDocument();
 });

@@ -16,6 +16,23 @@ from .native import diagnostic_bytes, inspect_native
 from .v3 import V3Delivery, read_zip
 
 
+def known_references(args, parser):
+    if not args.known_run_export_job_id:
+        return {}
+    from zhigou_toolchain.environment import get_setting
+    from zhigou_toolchain.service_runtime.configuration import load_configuration
+    from zhigou_toolchain.services.facade import ApplicationService
+    from zhigou_toolchain.services.ontology_traces import known_export_runs
+    from zhigou_toolchain.services.projects import get_project
+    if not args.workspace or not args.project_id:
+        parser.error("historical references require --workspace and --project-id")
+    app = ApplicationService(load_configuration(args.workspace))
+    principal = app.authenticate("Bearer " + get_setting("TOKEN", ""))
+    if not principal.can("trace:export") or not principal.can("source:read"):
+        parser.error("historical references require trace:export and source:read")
+    return known_export_runs(app, get_project(app.root, args.project_id), principal, args.known_run_export_job_id)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     sub = parser.add_subparsers(dest="command", required=True)
@@ -39,11 +56,17 @@ def main():
     check_stage.add_argument("archive", type=Path)
     check_stage.add_argument("--sha256", help="Trusted out-of-band digest of the complete final ZIP")
     check_stage.add_argument("--replay-negatives", action="store_true")
+    check_stage.add_argument("--workspace", type=Path)
+    check_stage.add_argument("--project-id")
+    check_stage.add_argument("--known-run-export-job-id", action="append", default=[])
     check_evolution = sub.add_parser("validate-evolution")
     check_evolution.add_argument("directory", type=Path)
     check_evolution.add_argument("--producer", action="store_true")
+    check_evolution.add_argument("--workspace", type=Path)
+    check_evolution.add_argument("--project-id")
+    check_evolution.add_argument("--known-run-export-job-id", action="append", default=[])
     export_evolution = sub.add_parser("export-evolution")
-    export_evolution.add_argument("trace", type=Path, nargs="+")
+    export_evolution.add_argument("trace", type=Path, nargs="*")
     export_evolution.add_argument("--output", type=Path, required=True)
     export_evolution.add_argument("--batch-id", required=True)
     export_evolution.add_argument("--deliverer", default="zhigou-ontology")
@@ -57,6 +80,9 @@ def main():
     cover.add_argument("--downstream", type=Path)
     cover.add_argument("--evolution", type=Path)
     cover.add_argument("--diagnostic", type=Path)
+    cover.add_argument("--workspace", type=Path)
+    cover.add_argument("--project-id")
+    cover.add_argument("--known-run-export-job-id", action="append", default=[])
     parser.add_argument("--report", type=Path)
     args = parser.parse_args()
     if args.command == "inspect":
@@ -84,20 +110,25 @@ def main():
         result = verify_handoff(read_zip(read_bounded(args.archive)), trusted_receipt=json.loads(read_bounded(args.receipt)) if args.receipt else None)
     elif args.command == "validate-stage":
         from .stage import verify_stage_archive
-        result = verify_stage_archive(args.archive, expected_sha256=args.sha256, replay_negatives=args.replay_negatives)
+        result = verify_stage_archive(args.archive, expected_sha256=args.sha256, replay_negatives=args.replay_negatives, known_run_ids=known_references(args, parser))
     elif args.command == "validate-evolution":
         from .evolution import validate_batch
-        result = validate_batch(read_directory(args.directory), producer=args.producer)
+        known = known_references(args, parser)
+        try:
+            result = validate_batch(read_directory(args.directory), producer=args.producer, known_run_ids=known)
+        except (ValueError, KeyError, TypeError):
+            result = {"status": "BLOCKED", "errors": ["BATCH_MANIFEST_OR_CONTENT_INVALID"], "receiver_status": "NOT_CONTACTED"}
     elif args.command == "export-evolution":
         from .evolution import evolution_files, export_batch
         traces = [json.loads(read_bounded(path)) for path in args.trace]
         result = export_batch(args.output, evolution_files(traces, batch_id=args.batch_id, deliverer=args.deliverer))
     elif args.command == "assemble-handoff":
         from .cover import compose, verify_cover
+        known = known_references(args, parser)
         files = compose(downstream=read_zip(read_bounded(args.downstream)) if args.downstream else None,
             evolution=read_directory(args.evolution) if args.evolution else None,
-            diagnostic=read_directory(args.diagnostic) if args.diagnostic else None)
-        result = verify_cover(files)
+            diagnostic=read_directory(args.diagnostic) if args.diagnostic else None, known_run_ids=known)
+        result = verify_cover(files, known_run_ids=known)
         write_directory(args.output, files, manifest="handoff_manifest.json")
     else:
         from .meeting_input import generation_files, validate_input

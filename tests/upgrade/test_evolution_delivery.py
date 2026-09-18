@@ -136,6 +136,8 @@ def test_original_warnings_and_stricter_producer():
     report = validate_events(trace["events"], trace["bindings"]["transport_run_id"])
     assert "CALL_ID_MISSING" in {e["code"] for e in report["warnings"]}
     row = {"review_id": "r", "exec_id": "run", "verdict": "fail", "annotations": [], "reviewer": "synthetic", "ts": "2026-09-16T00:00:00+00:00"}
+    assert validate_review(row, {"run"}, producer=True)["errors"] == []  # no invented minimum count
+    row.pop("annotations")
     assert validate_review(row, {"run"})["warnings"] == ["FAIL_ANNOTATIONS_MISSING"]
     assert validate_review(row, {"run"}, producer=True)["errors"] == ["FAIL_ANNOTATIONS_MISSING"]
     with pytest.raises(ValueError, match="JSONL"):
@@ -208,3 +210,180 @@ def test_recorded_provider_is_not_mislabeled_as_deterministic():
     assert execution_mode({}, [invocation]) == "RECORDED"
     assert execution_mode({"execution_source": "RECORDED"}, []) == "RECORDED"
     assert execution_mode({"execution_source": "LIVE"}, [invocation]) == "LIVE"
+
+
+def serial_trace():
+    r = recorder()
+    call = r.call("llm", messages=[{"role": "user", "content": "synthetic serial"}])
+    r.result(call, "public")
+    call = r.call("tool", tool="check", args={})
+    r.result(call, {})
+    return r.finish("cancelled", ["opaque", {"artifact": "synthetic"}])
+
+
+@pytest.mark.parametrize("producer", [False, True])
+def test_minimal_serial_unknown_events_and_common_fields(producer):
+    trace = serial_trace()
+    run_id = trace["bindings"]["transport_run_id"]
+    events = deepcopy(trace["events"])
+    for row in events:
+        row.pop("call_id", None)
+    events.insert(2, {"event": "future_extension", "ts": events[0]["ts"], "run_id": run_id})
+    result = validate_events(events, run_id, producer=producer)
+    assert not result["errors"]
+    assert {e["code"] for e in result["warnings"]} == {"UNKNOWN_EVENT", "CALL_ID_MISSING"}
+    events[2].pop("event")
+    assert "EVENT_REQUIRED" in {e["code"] for e in validate_events(events, run_id, producer=producer)["errors"]}
+    events[2].update(event="future_extension")
+    events[2].pop("ts")
+    assert "TIMEZONE_REQUIRED" in {e["code"] for e in validate_events(events, run_id, producer=producer)["errors"]}
+
+
+def test_parallel_missing_ids_warn_in_compatibility_but_block_submission():
+    trace = valid_trace()
+    for row in trace["events"]:
+        row.pop("call_id", None)
+    run_id = trace["bindings"]["transport_run_id"]
+    assert "PARALLEL_CALL_ID_REQUIRED" in {e["code"] for e in validate_events(trace["events"], run_id)["warnings"]}
+    assert "PARALLEL_CALL_ID_REQUIRED" in {e["code"] for e in validate_events(trace["events"], run_id, producer=True)["errors"]}
+
+
+def human_review(**updates):
+    return {"review_id": "synthetic-review", "exec_id": "previous-run", "verdict": "pass", "reviewer": "SYNTHETIC_TEST_ONLY",
+            "ts": "2026-09-18T09:00:00+08:00", **updates}
+
+
+@pytest.mark.parametrize("producer", [False, True])
+def test_pass_fail_and_optional_review_fields(producer):
+    row = human_review(violations=[{"code": "human-supplied-domain-code", "evidence": {"iri": "urn:synthetic"}, "suggestion": "check", "severity": "minor"}],
+        corrected_answer={"artifact": [1, None, True]})
+    assert validate_review(row, {"previous-run"}, producer=producer) == {"errors": [], "warnings": []}
+    row["verdict"] = "fail"
+    assert validate_review(row, {"previous-run"}, producer=producer)["errors" if producer else "warnings"] == ["FAIL_ANNOTATIONS_MISSING"]
+    row["annotations"] = [{"aspect": "future-aspect", "severity": "info", "comment": ""}]
+    assert validate_review(row, {"previous-run"}, producer=producer) == {"errors": [], "warnings": ["UNKNOWN_ASPECT"]}
+    row["verdict"] = "approved"
+    assert "VERDICT_INVALID" in validate_review(row, {"previous-run"}, producer=producer)["errors"]
+
+
+def test_minimal_empty_and_review_only_batch(tmp_path):
+    files = evolution_files([], batch_id="empty")
+    assert json.loads(files["upstream_manifest.json"]) == {"batch_id": "empty", "files": []}
+    assert validate_batch(files, producer=True)["status"] == "LOCAL_PROTOCOL_VALID"
+    assert validate_batch({}, producer=True)["status"] == "LOCAL_PROTOCOL_VALID"
+    assert export_batch(tmp_path / "empty", files)["status"] == "EXPORTED"
+    assert export_batch(tmp_path / "empty", files)["status"] == "ALREADY_EXPORTED"
+    row = human_review(corrected_answer=["raw", {"result": None}])
+    files = evolution_files([], batch_id="only-reviews", reviews=[row], known_run_ids={"previous-run"})
+    assert not any(n.startswith(("context/", "executions/")) for n in files)
+    assert parse_jsonl(files["reviews/reviews-only-reviews.jsonl"]) == [row]
+    assert validate_batch(files, known_run_ids={"previous-run"})["status"] == "LOCAL_PROTOCOL_VALID"
+    assert validate_batch(files)["status"] == "BLOCKED"
+    assert export_batch(tmp_path / "reviews", files, known_run_ids={"previous-run"})["status"] == "EXPORTED"
+    with pytest.raises(ValueError, match="DUPLICATE_REVIEW_DELIVERY"):
+        export_batch(tmp_path / "reviews-copy", files, known_run_ids={"previous-run"})
+    assert validate_batch({"upstream_manifest.json": json_bytes({"batch_id": "合法批次", "files": []})})["status"] == "LOCAL_PROTOCOL_VALID"
+
+
+def test_bad_review_reference_or_json_does_not_swallow_valid_peers():
+    from zhigou_toolchain.modeling.delivery.exchange_io import file_rows
+    rows = [human_review(review_id="valid-1"), human_review(review_id="bad", exec_id="dangling"), human_review(review_id="valid-2")]
+    files = {"reviews/mixed.jsonl": b"".join(json_bytes(r) for r in rows) + b"{bad\n"}
+    files["upstream_manifest.json"] = json_bytes({"batch_id": "mixed", "files": file_rows(files, upstream=True)})
+    report = validate_batch(files, known_run_ids={"previous-run"}, producer=True)
+    result = report["files"]["reviews/mixed.jsonl"]
+    assert report["status"] == "BLOCKED" and report["receiver_status"] == "NOT_CONTACTED"
+    assert [r["line"] for r in result["accepted"]] == [1, 3]
+    assert [r["line"] for r in result["quarantined"]] == [2, 4]
+    assert [r["review"] for r in result["accepted"]] == [rows[0], rows[2]]
+
+
+def test_scan_invalid_execution_filename_is_not_an_empty_batch():
+    with pytest.raises(ValueError, match="COLLECTOR_PATH_INVALID"):
+        validate_batch({"executions/run-非法.jsonl": b"{}\n"})
+    report = validate_batch({"reviews/人工评价.jsonl": json_bytes(human_review())}, known_run_ids={"previous-run"})
+    assert report["status"] == "LOCAL_PROTOCOL_VALID"
+
+
+def test_reviews_are_utf8_not_auto_detected_utf16_and_keep_valid_peers():
+    bad = json.dumps(human_review()).encode("utf-16")
+    report = validate_batch({"reviews/encoding.jsonl": bad + b"\n" + json_bytes(human_review(review_id="good"))}, known_run_ids={"previous-run"})
+    rows = report["files"]["reviews/encoding.jsonl"]
+    assert report["status"] == "BLOCKED"
+    assert rows["errors"] == [{"line": 1, "code": "TRUNCATED_OR_INVALID_JSONL"}]
+    assert rows["accepted"][0]["line"] == 2
+
+
+def test_invalid_execution_cannot_authorize_a_review():
+    trace = serial_trace()
+    events = trace["events"]
+    run_id = trace["bindings"]["transport_run_id"]
+    events[-1]["status"] = "not-valid"
+    files = {f"executions/run-{run_id}.jsonl": b"".join(json_bytes(r) for r in events),
+             "reviews/one.jsonl": json_bytes(human_review(exec_id=run_id))}
+    report = validate_batch(files)
+    assert report["files"]["reviews/one.jsonl"]["errors"] == [{"line": 1, "code": "REVIEW_EXECUTION_MISSING"}]
+
+
+def test_core_only_batch_and_optional_context_integrity():
+    from zhigou_toolchain.modeling.delivery.cover import compose, verify_cover
+    files = evolution_files([serial_trace()], batch_id="core", allow_synthetic=True, include_context=False)
+    assert validate_batch(files, producer=True)["status"] == "LOCAL_PROTOCOL_VALID"
+    assert verify_cover(compose(evolution=files))["status"] == "VERIFIED"
+    legacy_cover = compose(evolution=files)
+    legacy_manifest = json.loads(legacy_cover["handoff_manifest.json"])
+    legacy_manifest["outputs"]["evolution"].pop("reference_check")
+    legacy_cover["handoff_manifest.json"] = json_bytes(legacy_manifest)
+    assert verify_cover(legacy_cover)["status"] == "VERIFIED"
+    files["context/run_bindings.json"] = b"[]"
+    with pytest.raises(ValueError, match="CONTEXT_PAIR_REQUIRED"):
+        validate_batch(files)
+    files = evolution_files([serial_trace()], batch_id="bound", allow_synthetic=True)
+    harness = json.loads(files["context/harness_manifest.json"])
+    harness[0]["resources"]["rules"] = {"tampered": True}
+    files["context/harness_manifest.json"] = json_bytes(harness)
+    with pytest.raises(ValueError, match="HARNESS_START_MISMATCH"):
+        validate_batch(files)
+
+
+def test_review_only_cover_requires_out_of_band_known_runs():
+    from zhigou_toolchain.modeling.delivery.cover import compose, verify_cover
+    known = {"previous-run"}
+    batch = evolution_files([], batch_id="reviews-cover", reviews=[human_review()], known_run_ids=known)
+    cover = compose(evolution=batch, known_run_ids=known)
+    assert verify_cover(cover, known_run_ids=known)["status"] == "VERIFIED"
+    with pytest.raises(ValueError, match="EVOLUTION_PROTOCOL_BLOCKED"):
+        verify_cover(cover)  # A cover cannot confer trust upon its own references.
+
+
+def test_finish_records_actual_opaque_result_not_a_hash_summary():
+    from zhigou_toolchain.services.ontology_traces import finish_recorders
+    r = recorder()
+    result = {"package_id": "native-synthetic", "files": ["ontology.ttl"], "status": "original"}
+    finish_recorders([r], result=result)
+    assert r.events[-1]["answer"] == result
+    assert "output_sha256" not in r.events[-1]["answer"]
+    private = recorder()
+    finish_recorders([private], result={"acceptance": "NEVER_GENERATION", "package_id": "real-reference"})
+    assert private.snapshot()["capture_status"] == "REDACTED"
+    assert private.events[-1]["answer"]["package_id"] == "real-reference"
+    assert "NEVER_GENERATION" not in json.dumps(private.snapshot())
+
+
+@pytest.mark.parametrize("kind", ["empty", "missing", "hash", "path"])
+def test_batch_cli_exit_codes(kind, tmp_path):
+    import os
+    import subprocess
+    import sys
+
+    from zhigou_toolchain.modeling.delivery.exchange_io import write_directory
+    files = evolution_files([], batch_id="cli")
+    if kind != "empty":
+        name = "../outside.jsonl" if kind == "path" else "reviews/missing.jsonl"
+        files["upstream_manifest.json"] = json_bytes({"batch_id": "cli", "files": [{"name": name, "sha256": "0" * 64, "size": 0}]})
+        if kind == "hash":
+            files[name] = b"not-the-declared-bytes"
+    write_directory(tmp_path / "batch", files, manifest="upstream_manifest.json")
+    proc = subprocess.run([sys.executable, "-m", "zhigou_toolchain.modeling.delivery.cli", "validate-evolution", str(tmp_path / "batch"), "--producer"],
+        capture_output=True, env={**os.environ, "PYTHONUTF8": "1"}, check=False)
+    assert proc.returncode == (0 if kind == "empty" else 1)
