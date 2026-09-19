@@ -34,6 +34,12 @@ from zhigou_toolchain.modeling.delivery.stage import (
 )
 
 ROOT = Path(__file__).resolve().parents[1]
+# Direct script execution places tools/, not the repository root, on sys.path.
+# Both entrypoints must resolve the same repository-owned test/service helpers.
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+
+REFERENCE_RECORD = ROOT / "docs/ontology/references/handoff-17.reference.json"
 HYGIENE_NODES = ["tests/scripts/test_repo_hygiene.py::test_current_repository_passes",
                  "tests/refactor/test_repository_hygiene_refactor.py::test_refactor_hygiene_gate_passes_for_tracked_tree"]
 
@@ -162,6 +168,7 @@ def check_attachment(path, output):
     from zhigou_toolchain.modeling.delivery.exchange_io import read_archive
     from zhigou_toolchain.modeling.delivery.meeting_input import validate_input
     raw = read_bounded(path)
+    reference = attachment_reference(raw)
     archive = read_archive(raw)
     roots = [n.removesuffix("manifest.json") for n in archive if n.endswith("/upstream/manifest.json")]
     require(len(roots) == 1, "ATTACHMENT_UPSTREAM_ROOT_REQUIRED")
@@ -171,9 +178,22 @@ def check_attachment(path, output):
     record = {"file": path.name, "sha256": digest(raw), "size_bytes": len(raw), "status": "NATIVE_INPUT_IMPORTED",
         "reference_domain_pack": parsed["manifest"].get("reference_domain_pack"), "upstream_file_count": len(files),
         "native_run_id": result["run"]["run_id"], "approval": result["approval"], "runtime_model_input": "UPSTREAM_GENERATION_ALLOWLIST_ONLY",
-        "requested_attachment_status": "MATCH" if digest(raw) == "bbcf5bbf6c356018f83a2b33226a751181507176268cd0a4912795a1489b51a3" else "DIFFERENT_ATTACHMENT_NOT_A_SUBSTITUTE"}
+        **reference}
     atomic_file(output / "attachment-check.json", json_bytes(record))
     print(json.dumps(record, ensure_ascii=False))
+
+
+def attachment_reference(raw):
+    """Reference identity is pinned outside the input ZIP, never self-attested."""
+    reference = json.loads(read_bounded(REFERENCE_RECORD))
+    matches = digest(raw) == reference["sha256"] and len(raw) == reference["size_bytes"]
+    return {"requested_attachment_status": "MATCH_USER_CONFIRMED_REFERENCE" if matches else "DIFFERENT_UNCONFIRMED_REFERENCE",
+        "reference_id": reference["reference_id"] if matches else None,
+        "reference_role": reference["role"] if matches else None,
+        "reference_confirmation": reference["confirmation"] if matches else None,
+        "expected_reference_sha256": reference["sha256"],
+        "previous_prompt_archive_sha256": reference["previous_prompt_archive_sha256"],
+        "previous_prompt_identity": reference["previous_prompt_identity"]}
 
 
 def main():
@@ -200,7 +220,7 @@ def main():
     full_command = [sys.executable, "tools/verify_zhigou_upgrade.py", "--backend-only", "--workers", "4", "--skip-model-probe"]
     pool = ThreadPoolExecutor(max_workers=1) if args.parallel_full else None
     full_future = pool.submit(run, output, "full-backend", full_command, snapshot) if pool else None
-    checks.append(run(output, "focused", [], snapshot, pytest_args=["tests/upgrade/test_evolution_delivery.py", "tests/upgrade/test_meeting_handoff_input.py", "tests/upgrade/test_handoff_delivery.py", "tests/services/test_evolution_handoff.py"]))
+    checks.append(run(output, "focused", [], snapshot, pytest_args=["tests/upgrade/test_evolution_delivery.py", "tests/upgrade/test_meeting_handoff_input.py", "tests/upgrade/test_handoff_delivery.py", "tests/services/test_evolution_handoff.py", "tests/upgrade/test_handoff_reference.py"]))
     if args.input_archive:
         checks.append(run(output, "attachment-input", [sys.executable, "-c",
             "from pathlib import Path; import sys; from tools.verify_stage_handoff import check_attachment; check_attachment(Path(sys.argv[1]), Path(sys.argv[2]))",
@@ -257,6 +277,10 @@ def main():
         "stage_classification": "ENGINEERING_WITH_KNOWN_REPOSITORY_FAILURES" if module_pass and summary["new_regressions_status"] == "NO_NEW_FAILURES" else "ENGINEERING_WITH_UNRESOLVED_FAILURES",
         "checks": checks, "created_at": datetime.now(UTC).isoformat(), "paid_model_calls": 0,
         "external_receiver": "NOT_CONTACTED", "real_human_run_reviews": "NOT_PERFORMED", "production_release": "NOT_PERFORMED"}
+    attachment_receipt = output / "attachment/attachment-check.json"
+    if attachment_receipt.exists():
+        record = json.loads(read_bounded(attachment_receipt))
+        stage["handoff_reference"] = {k: record[k] for k in ("requested_attachment_status", "reference_id", "reference_role", "sha256", "size_bytes")}
     atomic_file(output / "stage-verification.json", json_bytes(stage))
     from tests.upgrade.stage_support import case_files
     cases = {name: case_files(output / "cases" / name) for name in ("hr", "forestry")}
@@ -291,7 +315,8 @@ def main():
     assert_unchanged(ROOT, snapshot)
     atomic_file(output / "final-archive-verification.json", json_bytes(replayed))
     atomic_file(output / "archive-sidecar.json", json_bytes({"archive": archive.name, "sha256": verified["archive_sha256"], "size_bytes": verified["size_bytes"], "snapshot_id": snapshot["snapshot_id"]}))
-    report = f"# 阶段验收实际结果\n\n源码快照：{snapshot['snapshot_id']}\nHEAD：{snapshot['git_head']}\nsource_unchanged=true\n\n本体交付模块：{stage['module_acceptance']}\n新增回归：{summary['new_regressions_status']}\n全仓原始结论：{summary['raw_status']}\n\n完整测试：{summary['tests']}，FAIL {summary['failed']}，SKIP {summary['skipped']}；每个节点及原因见 full-regression-summary.json。\n\n总 ZIP：{archive.name}\nSHA-256：{verified['archive_sha256']}\n字节数：{verified['size_bytes']}\n磁盘重读及负例重放：{replayed['status']}\n\n外部接收/本体评价协议未确认；未付费、未发布、未提交推送。生产 Worker 沙箱/LIVE broker 不在本轮范围。\n"
+    reference_status = stage.get("handoff_reference", {}).get("requested_attachment_status", "NOT_PROVIDED")
+    report = f"# 阶段验收实际结果\n\n源码快照：{snapshot['snapshot_id']}\nHEAD：{snapshot['git_head']}\nsource_unchanged=true\n参考附件：{reference_status}\n\n本体交付模块：{stage['module_acceptance']}\n新增回归：{summary['new_regressions_status']}\n全仓原始结论：{summary['raw_status']}\n\n完整测试：{summary['tests']}，FAIL {summary['failed']}，SKIP {summary['skipped']}；每个节点及原因见 full-regression-summary.json。\n\n总 ZIP：{archive.name}\nSHA-256：{verified['archive_sha256']}\n字节数：{verified['size_bytes']}\n磁盘重读及负例重放：{replayed['status']}\n\nverdict=pass/fail 已确认；外部接收器及本体评价器支持尚未联调。未付费、未发布、未提交推送。生产 Worker 沙箱/LIVE broker 不在本轮范围。\n"
     atomic_file(output / "FINAL_REPORT.md", report.encode("utf-8"))
     print(json.dumps({"output": str(output), "archive": str(archive), "module_acceptance": stage["module_acceptance"],
         "new_regressions": summary["new_regressions_status"], "full_raw_status": summary["raw_status"], "sha256": verified["archive_sha256"], "size_bytes": verified["size_bytes"]}), flush=True)

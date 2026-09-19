@@ -91,5 +91,7 @@ it('exports an explicit empty batch through the Worker and does not show a prema
 it('keeps the 17-item checklist in three expandable groups',()=>{
   mount(<DeliveryChecklist/>);
   for(const label of ['01–08 上游输入','09–14 本体成果','15–17 演进数据'])expect(screen.getByText(label).tagName).toBe('SUMMARY');
+  expect(screen.getByText(/精简版（名称更新版，经用户确认）/)).toBeInTheDocument();
+  expect(screen.getByText(/01 表格数据 records.json/)).toHaveTextContent('02 文本片段 text_blocks.json');
   expect(screen.queryByText(/^18 /)).not.toBeInTheDocument();
 });

@@ -244,16 +244,20 @@ semantic模型锁、OSKGC明确许可、论文方法复现和正式付费预算/
 
 ## 2026-09-18 01–17 统一对应表
 
-起点为干净 develop@9f6c036；详细字段只维护在 HANDOFF_CONTRACT.md，历史表不追改。
+最初起点为干净 develop@9f6c036；本次参考确认续办基线为 develop@d2dbd514。
+用户确认名称更新版作为精简版参考，身份锁见 references/handoff-17.reference.json；
+详细字段只维护在 HANDOFF_CONTRACT.md，历史表与旧回执不追改。
 本表“已有复验/本轮修正”描述实现范围，最终实测结论以
 `runtime_reports/alignment-20260918/frozen-run-*/stage-verification.json` 和逐节点回执为准。
+本次参考身份、原件内容/清单和直接验证入口的新增检查对应 test_handoff_reference.py，
+新源码/新产物结果另见 `runtime_reports/alignment-reference-20260918/frozen-run-01/`。
 01–08 复用 input=meeting_input/handoff_input，09–14 复用 handoff/negative/bindings，
 15–17 复用 evolution/ontology_traces；下载始终为授权服务已提交 archive，不由前端拼 ZIP。
 
 | 项 | 生产者/生成时机 | API/产物路径 | 校验 | 测试 | 当前状态 |
 |---|---|---|---|---|---|
-| 01 records | 数据组/接入前 | modeling.handoff.import → Source/Batch/Run | 字符串编号/字段与原 CSV/证据 | test_meeting_handoff_input 条件记录与源摘要 | 已有复验；有记录时提供 |
-| 02 text_blocks | 数据组/接入前 | 同上 → KG-IR/Evidence | UTF-8/版本/摘要/Unicode 字符定位 | 同文件条件文本与偏移负例 | 已有复验；有文本时提供 |
+| 01 表格数据 records | 数据组/接入前 | modeling.handoff.import → Source/Batch/Run | 字符串编号/字段与原 CSV/证据 | test_meeting_handoff_input 条件记录与源摘要 | 已有复验；有记录时提供 |
+| 02 文本片段 text_blocks | 数据组/接入前 | 同上 → KG-IR/Evidence | UTF-8/版本/摘要/Unicode 字符定位 | 同文件条件文本与偏移负例 | 已有复验；有文本时提供 |
 | 03 source_locator/sources | 数据持有人/接入前 | 同上来源映射 | 原字节/来源授权/定位 | 输入原件接入、test_handoff_delivery | 已有复验；随数据提供 |
 | 04 quality_report | 数据组/接入前 | 同上质量回执 | 同批摘要/严重问题与隔离阻断 | test_meeting_handoff_input 质量负例 | 已有复验 |
 | 05 goal_and_rules | 业务方/S1 前 | 输入 binding → session.open | 业务方确认/冻结，不自动审批 | 输入、test_five_stage_service | 已有复验 |
@@ -272,7 +276,8 @@ semantic模型锁、OSKGC明确许可、论文方法复现和正式付费预算/
 
 额外真实性检查不是新增核心类别：可选 context 无证据时关联 NOT_PROVEN，存在时检查；
 本地诊断和逐步审计使用既有独立出口。历史运行引用只证明本地已提交导出，不冒充接收回执。
-指定精简版附件未找到，补充名称更新版不同 SHA 已单独标记并真实接入；原导入需求仍待原件。
+用户已确认名称更新版作为精简版参考，不再待补原件；保留实际 be5d0c70… 摘要及原历史版本，
+不将其改成旧 Prompt 的 bbcf5bbf…，也不改写用户确认之前的不同附件回执。
 完整后端原始结果、相对基线新增回归、模块专项分别核账。冻结后不改实现/配置/测试/文档；
 若修复必须保留失败回执并新目录重新冻结。
 

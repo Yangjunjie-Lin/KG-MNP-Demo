@@ -1,10 +1,16 @@
 # 阶段验收收口（2026-09-16）
 
 2026-09-18 复用本入口对 01–17 新增差异冻结复验，基线为干净 9f6c036。
-`--input-archive` 只接入所提供说明包的 upstream；原指定精简版缺失与补充名称更新版分别记录。
+`--input-archive` 只接入所提供说明包的 upstream。用户后续确认名称更新版作为精简版参考，
+当前按包外 `handoff-17.reference.json` 的实际字节摘要报告 MATCH_USER_CONFIRMED_REFERENCE；
+旧缺件/不同附件回执保持历史原义，不改写为当时已确认。
 执行范围包含新的服务评价/批次测试、双 Agent/逐步审计与两类真实浏览器用例。
 每个案例另保留 ontology-combined.zip（downstream + 有效本地诊断），不把程序轨迹塞入 executions。
 新回执写 `runtime_reports/alignment-20260918/`，下面的历史失败与原命令仍保留。
+
+参考确认续办从 d2dbd514 重新冻结，回执写 `runtime_reports/alignment-reference-20260918/`。
+已修正直接脚本入口的仓库辅助模块搜索路径，并补充子进程回归；无需摘取脚本归档部分续办。
+当前参考原 ZIP 新增实际 OS 不可读探针；不是只验证路径名称。归档回执不再将 pass/fail 枚举列为未确认。
 
 本轮起点 develop@979128ee16746cd124aca29257a23910e8edcea0，工作树干净。
 Git commit 与源码文件清单 SHA-256 是不同的身份对象。旧交付、历史失败和旧摘要保持原样。

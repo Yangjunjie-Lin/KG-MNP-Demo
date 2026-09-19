@@ -9,7 +9,10 @@ violations/corrected_answer 原样贯通；批次清单仅 batch_id/files 必填
 评价逐行隔离，不能吞有效行；可选 context 不成为第 18 项，也不替代内部真实性检查。
 `task_end.answer` 记录实际服务结果，隐私过滤明确标记；旧摘要日志不反推正文。
 冻结验证入口增加 `--input-archive`，只接入附件 upstream，不能将说明/答案整包送入模型。
-本轮原指定“字段对齐精简版”附件未找到，另有“名称更新版”且 SHA 不同；不得混称原件。
+用户后续已明确确认“名称更新版”作为本轮“精简版”参考，不再列为待补附件。
+身份锁定在 `docs/ontology/references/handoff-17.reference.json`，原字节副本为
+`handoff-17-20260918.original.zip`；实际 SHA 为 be5d0c70…，不是旧 Prompt 的 bbcf5bbf…。
+确认参考用途不等于两个历史 ZIP 字节相同，也不追改旧回执。当前续办基线 d2dbd514；继续前仍先核实 HEAD。
 
 2026-09-17 新增 `docs/ontology/AGENT_STEP_AUDIT.md`。PlanningAgent 只是 RuleAgent 别名；
 不要添加第三个计算角色。逐步审计不替代 JobStore/session/CAS，不给 Agent 审批工具。

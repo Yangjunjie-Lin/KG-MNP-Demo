@@ -35,7 +35,8 @@ def main():
         path = output / "private" / name
         atomic_file(path, b"SYNTHETIC_PRIVATE_ACCESS_CANARY")
         forbidden.extend([wsl_path(path), "/proc/1/root" + wsl_path(path)])
-    for name in ("docs/ontology/references/meeting-handoff-v2.original.zip", "docs/ontology/evidence/attachment-check.json", "tests/upgrade/test_full_chain.py"):
+    for name in ("docs/ontology/references/meeting-handoff-v2.original.zip", "docs/ontology/references/handoff-17-20260918.original.zip",
+                 "docs/ontology/evidence/attachment-check.json", "tests/upgrade/test_full_chain.py"):
         path = root / name
         if not path.is_file():
             raise ValueError("PRIVATE_PROBE_TARGET_MISSING")

@@ -127,8 +127,9 @@ export function EvolutionBatchDownload(){
 
 export function DeliveryChecklist(){
   return <details><summary>01–17 交付清单</summary>
-    <details><summary>01–08 上游输入</summary><p>01 records.json（有记录）；02 text_blocks.json（有文本）；03 source_locator.json / sources；04 quality_report.json；05 goal_and_rules.json（业务方）；06 baseline / imports.lock / assets（复用时）；07 acceptance_private 与独立负例计划（仅验收）；08 manifest.json（每批）。提供方职责不由 Agent 代替，生成只读白名单。</p></details>
+    <p className="muted">参考版本：2026-09-18 精简版（名称更新版，经用户确认）。参考包是说明与上游样例，不是已生成成果；详细字段以项目交接契约为准。</p>
+    <details><summary>01–08 上游输入</summary><p>01 表格数据 records.json（有记录）；02 文本片段 text_blocks.json（有文本）；03 来源、定位与快照 source_locator.json / sources；04 上游质量结果 quality_report.json；05 目标与领域规则 goal_and_rules.json（业务方）；06 可复用本体与依赖 baseline.ttl / imports.lock.json / assets（复用时）；07 独立验收材料 acceptance_private 与负例计划（生成前固定，仅验收）；08 输入批次清单 manifest.json（每批）。提供方职责不由 Agent 代替，生成只读白名单。</p></details>
     <details><summary>09–14 本体成果</summary><p>09 本体、实例、约束三图；10 实际映射与来源证据；11 验证与本体审核；12 查询、独立正负例；13 本体清单；14 实际依赖与原生 .kgop。来自同次确认与编译，格式、验收、审核、导出、接收、发布分别记账。</p></details>
-    <details><summary>15–17 演进数据</summary><p>15 真实执行 JSONL；16 真实人工评价；17 推荐的批次清单。context 是可选关联附件，逐步审计不是六类事件。无真人评价不造 reviews；程序 turn 未定义时下载本地诊断，不伪造严格 v2。</p></details>
+    <details><summary>15–17 演进数据</summary><p>15 执行记录 executions/run-&lt;id&gt;.jsonl；16 运行人工评价 reviews/*.jsonl；17 推荐的演进批次清单 upstream_manifest.json。context 是可选关联附件，逐步审计不是六类事件。无真人评价不造 reviews；程序 turn 未定义时下载本地诊断，不伪造严格 v2。</p></details>
   </details>;
 }

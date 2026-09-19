@@ -21,6 +21,17 @@
 人工身份由服务核定，合成测试评价不能作为正式 reviews 导出。
 本轮冻结回执与新建 HR/林业成果在 `runtime_reports/alignment-20260918/`，不借用旧回执。
 
+用户已确认“名称更新版_20260918.zip”作为本轮“精简版”参考，缺件事项已关闭。
+[参考身份](docs/ontology/references/handoff-17.reference.json)锁定实际原字节 SHA，
+[原件副本](docs/ontology/references/handoff-17-20260918.original.zip)仅供授权开发/验收核对；
+含独立答案，不能整包提供给生成或修复模型。文件名用途确认不改写旧 ZIP、旧摘要或历史失败。
+此次在 develop@d2dbd514 上继续核对，最新回执在 `runtime_reports/alignment-reference-20260918/`。
+验证器支持直接脚本与模块入口，完成新的源码冻结后可运行：
+
+```powershell
+python -m tools.verify_stage_handoff runtime_reports/new-reference-verification --baseline PATH_TO_CLEAN_BASELINE --parallel-full --input-archive docs/ontology/references/handoff-17-20260918.original.zip
+```
+
 2026-09-17 新增[双 Agent 与逐步审计](docs/ontology/AGENT_STEP_AUDIT.md)：工作台按
 “规划 Agent（RuleAgent，S1/S2/S4）／任务执行 Agent（S3/S5）”组织现有步骤，
 真实操作和工具调用保存处理前后文件，支持失败与历史尝试审计 ZIP 下载。

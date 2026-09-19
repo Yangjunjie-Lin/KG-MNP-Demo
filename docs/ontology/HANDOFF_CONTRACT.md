@@ -4,6 +4,13 @@
 下面已明确的字段优先于历史未决表。01–08 输入、09–14 本体成果沿用原适配/1.1 Schema；
 15–17 只有执行记录、真实人工评价、批次清单三类核心交付，无第 18 类。
 
+当前“精简版”参考由用户明确指定为《本体建模_上下游数据交接文件包_名称更新版_20260918.zip》。
+原字节 SHA-256：`be5d0c703a923d095e901991b0fc507049f5458471f0b8f7711f33b7417e8094`，62,153 字节。
+身份记录与只读归档在 [references/handoff-17.reference.json](references/handoff-17.reference.json)；
+它替代前轮待补的参考用途，不声称与旧 Prompt 所列 bbcf5bbf… 原件相同。
+包内 Markdown、HTML 和 Excel 的 01–17、六事件必填字段已对应当前实现；规范仍只在本文件维护。
+原件中的历史 v2、合成样例版本/许可/摘要保持不变，整包不进入运行时模型。
+
 2026-09-17 新增项目本地 `zhigou-modeling-step-audit/1.0.0` 前后快照 ZIP，见
 [逐步审计契约](AGENT_STEP_AUDIT.md)。独立于本体交换/v2，不修改旧 Schema 或历史包。
 记录、审批、程序验收、提交和发布仍分别记账。
@@ -32,7 +39,7 @@ handoff-<batch-id>/
     tests/cq_*.json
     tests/negative_cases.json
     dependencies/                   # 必要且授权可交付的依赖
-    native/<package-id>.kgop         # 已生成原生包时保留；不伪造
+    native/ontology.kgop            # 已生成原生包时保留原字节；不伪造
   evolution/
     executions/run-<id>.jsonl
     reviews/reviews-<batch-id>.jsonl  # 没有真实人工评价时不生成
@@ -46,7 +53,9 @@ handoff-<batch-id>/
 
 `downstream/manifest.json` 描述本体交换视图；原生归档内 manifest 描述 `.kgop`；`upstream_manifest.json` 仅承担对方定义的批次核对。不能合成一个字段含义混乱的 manifest。
 
-本次拟实现的逐文件正式交换视图应使用独立、明确的项目格式标识，例如 `zhigou-ontology-handoff/1.0.0`，并标为本项目约定；不能沿用 `MEETING_REFERENCE_EXAMPLE` 假装实跑，也不能冒充原 `ontology-delivery/3.0.0`。既有生产 v3 Schema 不变。
+当前逐文件正式交换视图为 `zhigou-ontology-handoff/1.1.0`，1.0.0 保留只读兼容；
+这是本项目约定，不能沿用 `MEETING_REFERENCE_EXAMPLE` 假装实跑，也不冒充原
+`ontology-delivery/3.0.0`。既有生产 v3 Schema 不变。
 
 ## 2. 结果文件如何产生
 
@@ -129,7 +138,7 @@ handoff-<batch-id>/
 
 对方要求 `tasks / prompts / tools / rules / knowledge / ontology` 六键，值均为 64 位 SHA-256。对方仅做格式校验，本项目应做到真实可回查，不能用相同常量填满。
 
-以下摘要范围是本项目建议：
+以下是本项目当前录制器冻结的摘要范围，不增加外部协议必填附件：
 
 | 键 | 开始运行前冻结的实际内容 |
 |---|---|
