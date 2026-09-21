@@ -19,6 +19,7 @@ ROOT = Path(__file__).resolve().parents[1]
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--workers", type=int, choices=range(1, 9), default=4)
+    parser.add_argument("--skip-model-probe", action="store_true", help="No live/paid inference; report the model probe as NOT_RUN")
     scope = parser.add_mutually_exclusive_group()
     scope.add_argument("--frontend-only", action="store_true", help="explicit partial verification, never full backend acceptance")
     scope.add_argument("--backend-only", action="store_true", help="full backend without rebuilding or disturbing an active browser run")
@@ -40,7 +41,8 @@ def main():
         commands = [(name, command) for name, command in commands if not name.startswith("frontend-")]
     else:
         commands.append(("browser", [sys.executable, "tools/run_browser_verification.py"]))
-    commands.append(("model-probe", [sys.executable, "tools/probe_upgrade_models.py"]))
+    if not args.skip_model_probe:
+        commands.append(("model-probe", [sys.executable, "tools/probe_upgrade_models.py"]))
     records = []
     required_nodes = None
     for name, command in commands:
@@ -74,6 +76,7 @@ def main():
             outcome = "ERROR" if row.find("error") is not None else "FAIL" if row.find("failure") is not None else "SKIP" if row.find("skipped") is not None else "PASS"
             cases.append({"class": row.get("classname"), "test": row.get("name"), "outcome": outcome})
     report = {"commit": subprocess.check_output(["git", "rev-parse", "HEAD"], cwd=ROOT).decode().strip(),
+        "model_probe": "NOT_RUN_NO_PAID_CALL_AUTHORIZATION" if args.skip_model_probe else "SEE_CHECK_RESULT",
         "source": before, "source_unchanged": before == after, "checks": records, "test_cases": cases,
         "verification_scope": "FRONTEND_PARTIAL" if args.frontend_only else "FULL_BACKEND" if args.backend_only else "FULL_BACKEND_AND_BROWSER_ATTEMPT",
         "research_metrics": "INSUFFICIENT_EVIDENCE", "remote_rename": "NOT_EXECUTED", "formal_release_qualified": False}

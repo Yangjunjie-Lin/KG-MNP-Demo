@@ -3,11 +3,19 @@ from __future__ import annotations
 
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict, Field, ValidationError
+from pydantic import (
+    BaseModel,
+    ConfigDict,
+    Field,
+    JsonValue,
+    ValidationError,
+    model_validator,
+)
 
 from zhigou_toolchain.modeling.control_plane.providers.record_profile import (
     MixedRecordMapping,
 )
+from zhigou_toolchain.modeling.delivery.negative_plan import NegativeCasePlan
 
 from .errors import ServiceBoundaryError
 
@@ -380,6 +388,7 @@ class ModelingSessionRequest(RequestDTO):
     acceptance: list[FrozenAnswerRequest] = Field(min_length=1, max_length=100)
     configuration: dict = Field(default_factory=dict)
     expected_revision: int | None = None
+    negative_case_plan: NegativeCasePlan | None = None
 
 
 class ModelingSessionRevisionRequest(RequestDTO):
@@ -420,7 +429,82 @@ class OntologyIOReportRequest(RequestDTO):
     report: dict
 
 
+class SourceExportGrant(RequestDTO):
+    source_id: str = Field(pattern=r"^urn:kg-mnp:source:[a-f0-9]{64}$")
+    sha256: str = Field(pattern=r"^[a-f0-9]{64}$")
+    license: str = Field(min_length=1, max_length=500)
+    permission_basis: str = Field(min_length=1, max_length=2000)
+
+
+class HandoffExportRequest(PackageRequest):
+    expected_revision: int = Field(ge=1)
+    source_grants: list[SourceExportGrant] = Field(min_length=1, max_length=1000)
+    recipient: str = Field(min_length=1, max_length=500)
+    data_classification: Literal["SYNTHETIC", "AUTHORIZED_DATA"]
+    negative_report_id: str | None = Field(default=None, pattern=r"^[a-f0-9]{64}$")
+
+
+class HandoffCheckRequest(PackageRequest):
+    expected_revision: int = Field(ge=1)
+
+
+class TrajectoryExportRequest(RequestDTO):
+    job_id: str | None = Field(default=None, min_length=1, max_length=250)
+    batch_id: str = Field(pattern=r"^[A-Za-z0-9._-]{1,100}$")
+    profile: Literal["strict-v2", "local"] = "strict-v2"
+    target_package_id: str | None = None
+    expected_revision: int | None = Field(default=None, ge=1)
+    review_ids: list[str] = Field(default_factory=list, max_length=1000)
+    known_run_export_job_ids: list[str] = Field(default_factory=list, max_length=1000)
+
+    @model_validator(mode="after")
+    def selected_run_required(self):
+        if not self.job_id and (self.profile == "local" or self.target_package_id is not None or self.expected_revision is not None):
+            raise ValueError("local diagnostics and package association require a selected job")
+        if (self.target_package_id is None) != (self.expected_revision is None):
+            raise ValueError("target package and revision must be provided together")
+        if self.profile == "local" and (self.review_ids or self.known_run_export_job_ids):
+            raise ValueError("local diagnostics cannot contain selected human reviews")
+        return self
+
+
+class TrajectoryAnnotation(RequestDTO):
+    aspect: Literal["引用准确性", "事实正确性", "格式合规", "完整性", "其他"]
+    severity: Literal["info", "minor", "major", "critical"]
+    comment: str = Field(max_length=5000)
+
+
+class TrajectoryViolation(RequestDTO):
+    code: str = Field(min_length=1, max_length=500)
+    evidence: JsonValue
+    suggestion: JsonValue
+    severity: Literal["info", "minor", "major", "critical"] | None = None
+
+
+class TrajectoryReviewRequest(RequestDTO):
+    job_id: str | None = Field(default=None, min_length=1, max_length=250)
+    exec_id: str | None = Field(default=None, pattern=r"^[A-Za-z0-9._-]+$")
+    execution_export_job_id: str | None = Field(default=None, min_length=1, max_length=250)
+    verdict: Literal["pass", "fail"]
+    annotations: list[TrajectoryAnnotation] | None = Field(default=None, max_length=100)
+    violations: list[TrajectoryViolation] | None = Field(default=None, max_length=100)
+    corrected_answer: JsonValue = None
+
+    @model_validator(mode="after")
+    def review_conditions(self):
+        if self.verdict == "fail" and self.annotations is None:
+            raise ValueError("fail requires annotations")
+        if bool(self.job_id) == bool(self.exec_id) or bool(self.exec_id) != bool(self.execution_export_job_id):
+            raise ValueError("select job_id or exec_id with a trusted export job reference")
+        return self
+
+
 REQUEST_MODELS = {
+    "modeling.handoff.check": HandoffCheckRequest,
+    "modeling.handoff.import": SourceRegisterRequest,
+    "modeling.handoff.export": HandoffExportRequest,
+    "modeling.evolution.export": TrajectoryExportRequest,
+    "modeling.evolution.review": TrajectoryReviewRequest,
     "ontology.io.inspect": OntologyIOReportRequest,
     "source.sample.load": EmptyRequest,
     "module.evaluate": ModuleEvaluationRequest,

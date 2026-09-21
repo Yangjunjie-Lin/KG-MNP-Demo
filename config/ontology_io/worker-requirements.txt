@@ -1,0 +1,10 @@
+# Minimal generation runtime, no scorer embeddings or external remote code.
+rdflib==7.6.0
+jsonschema==4.23.0
+PyYAML==6.0.2
+pydantic==2.12.4
+httpx==0.27.2
+networkx==3.6.1
+pyshacl==0.28.1
+defusedxml==0.7.1
+packaging==26.3

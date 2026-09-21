@@ -1,0 +1,93 @@
+{
+  "schema_version": "1.0.0",
+  "benchmark_id": "oskgc",
+  "task_id": "schema_guided_abox",
+  "dataset_version": "b6a12ed38f131abb10ba22a785bba1d5d886aee0",
+  "split": "NOT_RUN",
+  "evaluation_scope": "LOCAL_HOLDOUT",
+  "input_manifest_sha256": null,
+  "prediction_manifest_sha256": null,
+  "scorer_commit": "b6a12ed38f131abb10ba22a785bba1d5d886aee0",
+  "scorer_config_sha256": null,
+  "system_id": "OursFull_NOT_IMPLEMENTED",
+  "model_id": "gpt-6-astra",
+  "declared_revision": "configured-alias:gpt-6-astra",
+  "observed_model_ids": [],
+  "run_id": "not-run-20260913-schema_guided_abox",
+  "source_commit": "adc2a40512f8b029b6c21420b905628c32952d00",
+  "source_fingerprint_sha256": "45688ee99f530c1fa20bb322959e4b1fdc4f7cebcf2392b16ab8310b63267eb5",
+  "metrics": [
+    {
+      "name": "Precision",
+      "source": "PLANNED_NATIVE_NOT_EXECUTED",
+      "matching": "NOT_RUN",
+      "value": null,
+      "unit": "fraction",
+      "numerator": null,
+      "denominator": null,
+      "status": "NOT_RUN"
+    },
+    {
+      "name": "Recall",
+      "source": "PLANNED_NATIVE_NOT_EXECUTED",
+      "matching": "NOT_RUN",
+      "value": null,
+      "unit": "fraction",
+      "numerator": null,
+      "denominator": null,
+      "status": "NOT_RUN"
+    },
+    {
+      "name": "micro_F1",
+      "source": "PLANNED_NATIVE_NOT_EXECUTED",
+      "matching": "NOT_RUN",
+      "value": null,
+      "unit": "fraction",
+      "numerator": null,
+      "denominator": null,
+      "status": "NOT_RUN"
+    },
+    {
+      "name": "macro_F1",
+      "source": "PLANNED_NATIVE_NOT_EXECUTED",
+      "matching": "NOT_RUN",
+      "value": null,
+      "unit": "fraction",
+      "numerator": null,
+      "denominator": null,
+      "status": "NOT_RUN"
+    },
+    {
+      "name": "SS",
+      "source": "PLANNED_NATIVE_NOT_EXECUTED",
+      "matching": "NOT_RUN",
+      "value": null,
+      "unit": "fraction",
+      "numerator": null,
+      "denominator": null,
+      "status": "NOT_RUN"
+    }
+  ],
+  "sample_count": 0,
+  "failure_count": 0,
+  "planned_sample_count": null,
+  "planned_group_count": null,
+  "status": "NOT_RUN",
+  "comparison": null,
+  "resources": [
+    {
+      "model_calls": 0,
+      "total_tokens": null,
+      "cost": null
+    }
+  ],
+  "limitations": [
+    "BLOCKED_BUDGET_UNSET",
+    "BLOCKED_OS_ISOLATION",
+    "BLOCKED_OURS_FULL_NOT_IMPLEMENTED",
+    "BLOCKED_SAMPLING_PROTOCOL_NOT_FINAL",
+    "BLOCKED_CQ4OE_FULL_NATIVE_PROFILE",
+    "BLOCKED_OSKGC_LICENSE",
+    "BLOCKED_HISTORICAL_DEVELOPMENT_OVERLAP_AUDIT"
+  ]
+}

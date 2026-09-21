@@ -1,0 +1,29 @@
+{
+  "sample_id": "typed-kernel",
+  "benchmark_id": "synthetic-kernel-engineering",
+  "task_id": "schema_guided_abox",
+  "dataset_version": "fixture-v1",
+  "split": "ENGINEERING_CHECK",
+  "evaluation_scope": "ENGINEERING_CHECK",
+  "group_id": "typed-fixture",
+  "mode": "SCHEMA_ABOX",
+  "text": "A is in B.",
+  "allowed_schema": {
+    "entity_types": [
+      {
+        "id": "City"
+      },
+      {
+        "id": "Country"
+      }
+    ],
+    "relations": [
+      {
+        "id": "country",
+        "domain": "City",
+        "range": "Country"
+      }
+    ],
+    "hierarchy": []
+  }
+}

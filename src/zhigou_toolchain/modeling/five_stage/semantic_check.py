@@ -70,3 +70,39 @@ def check_graphs(candidates: list[dict], *, baseline, namespace: str, reasoner_j
                        "shapes": shapes.effective.serialize(format="turtle")},
             "approval": "NOT_GRANTED", "formal_delivery": "NOT_CREATED",
             "graph_compilers": ["semantic_kernel.tbox.compile_tbox", "semantic_kernel.abox.compile_abox", "semantic_kernel.shacl.compile_shacl"]}
+
+
+def check_research_graphs(*, tbox, abox, shapes=None, reasoner_jar=None, timeout_seconds=30):
+    """Joint draft validation without inventing production approvals or shapes.
+
+    All graphs are already-parsed authorized inputs/predictions. Never follow
+    imports, execute SPARQL/JS, query gold, or turn RDFS domain/range inference
+    into a closed-world error. The production check_graphs contract is intact.
+    """
+    import hashlib
+
+    from rdflib import OWL
+
+    from zhigou_toolchain.semantic_kernel.rdf.serializers import research_ntriples
+    from zhigou_toolchain.semantic_kernel.reasoner import run_hermit
+    from zhigou_toolchain.semantic_kernel.snapshot import HERMIT_VERSION, ROBOT_SHA256
+    from zhigou_toolchain.semantic_kernel.validators.shacl import (
+        validate_research_shacl,
+    )
+
+    if any(any(g.triples((None, OWL.imports, None))) for g in (tbox, abox)):
+        raise ValueError("RESEARCH_REMOTE_IMPORT_FORBIDDEN")
+    combined = tbox + abox
+    raw = research_ntriples(combined)
+    executed = run_hermit(raw, reasoner_jar=reasoner_jar, timeout_seconds=timeout_seconds, max_output_bytes=65536)
+    owl = {k: v for k, v in executed.items() if k != "diagnostics"}
+    owl.update(input_sha256=hashlib.sha256(raw).hexdigest(), diagnostics_sha256=hashlib.sha256(executed["diagnostics"]).hexdigest(),
+        reasoner="HermiT", version=HERMIT_VERSION, jar_sha256=ROBOT_SHA256 if reasoner_jar else None)
+    shacl = {"status": "NOT_APPLICABLE_NO_LEGAL_SHAPES", "conforms": None}
+    coverage = {"status": "NOT_APPLICABLE_NO_LEGAL_SHAPES"}
+    if shapes is not None and len(shapes):
+        shacl = validate_research_shacl(data_graph=abox, shapes_graph=shapes, ontology_graph=tbox, max_seconds=timeout_seconds)
+        coverage = target_coverage(abox, shapes)
+    return {"owl_consistency": owl, "shacl": shacl, "target_coverage": coverage,
+        "class_satisfiability": "NOT_SEPARATELY_MEASURED", "owl_profile": "NOT_SEPARATELY_MEASURED",
+        "approval": "UNREVIEWED_EVAL_DRAFT", "release_status": "NOT_RELEASED"}

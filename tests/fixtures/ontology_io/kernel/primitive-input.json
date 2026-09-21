@@ -1,0 +1,22 @@
+{
+  "sample_id": "oak-kernel",
+  "benchmark_id": "synthetic-kernel-engineering",
+  "task_id": "reuse",
+  "dataset_version": "fixture-v1",
+  "split": "ENGINEERING_CHECK",
+  "evaluation_scope": "ENGINEERING_CHECK",
+  "group_id": "oak-fixture",
+  "mode": "TEXT_EXTEND",
+  "text": "Oak is a tree.",
+  "supplied_types": [
+    "Oak",
+    "Tree"
+  ],
+  "initial_triples": [
+    [
+      "Oak",
+      "is-a",
+      "Tree"
+    ]
+  ]
+}

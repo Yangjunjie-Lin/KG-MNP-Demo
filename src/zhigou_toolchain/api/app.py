@@ -325,6 +325,14 @@ def create_app(service: ApplicationService) -> FastAPI:
         result = service.execute(OperationRequest(operation, project_id, parameters or {}, key), service.authenticate(authorization or ""))
         return JSONResponse(result.payload, status_code=202 if result.job_id else 200)
 
+    @app.post("/api/v1/projects/{project_id}/modeling/handoff-input", operation_id="uploadOntologyHandoffInput", status_code=202)
+    async def upload_handoff_input(project_id: str, request: Request, authorization: str | None = Header(default=None),
+                                  filename: str = Header(alias="X-Filename"), idempotency_key: str | None = Header(default=None)):
+        from zhigou_toolchain.services.uploads import receive_upload
+        result = await receive_upload(service, project_id, service.authenticate(authorization or ""), request.stream(),
+            filename=unquote(filename), media_type="application/zip", idempotency_key=idempotency_key, operation="modeling.handoff.import")
+        return result.payload
+
     @app.get("/api/v1/projects/{project_id}/modeling/methods", operation_id="modelingMethods")
     def modeling_methods(project_id: str, authorization: str | None = Header(default=None)):
         return resource("modeling.methods", project_id, authorization)
@@ -338,6 +346,52 @@ def create_app(service: ApplicationService) -> FastAPI:
         from zhigou_toolchain.services.compilation import read_export_snapshot
         content = read_export_snapshot(service, service.authenticate(authorization or ""), project_id, job_id)
         return Response(content, media_type="application/zip", headers={"Content-Disposition": 'attachment; filename="ontology.kgop"', "Cache-Control": "no-store"})
+
+    @app.get("/api/v1/projects/{project_id}/handoffs/{job_id}/archive", operation_id="downloadOntologyHandoff")
+    def download_ontology_handoff(project_id: str, job_id: str, authorization: str | None = Header(default=None)):
+        from zhigou_toolchain.services.handoff import download
+        content = download(service, service.authenticate(authorization or ""), project_id, job_id)
+        return Response(content, media_type="application/zip", headers={"Content-Disposition": 'attachment; filename="ontology-handoff.zip"', "Cache-Control": "no-store"})
+
+    @app.get("/api/v1/projects/{project_id}/modeling/handoff-options", operation_id="ontologyHandoffOptions")
+    def ontology_handoff_options(project_id: str, authorization: str | None = Header(default=None)):
+        from zhigou_toolchain.ingestion.source_store import SourceStore
+        from zhigou_toolchain.services.modeling_sessions import current, read
+        from zhigou_toolchain.services.projects import get_project
+        from zhigou_toolchain.services.sources import verified_run
+        actor = service.authenticate(authorization or "")
+        service.execute(OperationRequest("source.list", project_id), actor)
+        project = get_project(service.root, project_id)
+        session = read(project.root)
+        if not session:
+            return {"status": "SESSION_REQUIRED", "sources": []}
+        run = verified_run(project.root, session["frozen"]["run_id"])
+        store = SourceStore(project.root)
+        sources = [store.verify_source(i) for i in store.load_batch(run.run["source_batch_id"])["sources"]]
+        return {"status": "READY" if current(session, "compile.build") else "BUILD_REQUIRED", "expected_revision": session["revision"],
+            "negative_plan_required": bool(session["frozen"].get("negative_case_plan")),
+            "sources": [{"source_id": s["source_id"], "sha256": s["content_sha256"], "name": s["original_name"]} for s in sources]}
+
+    @app.get("/api/v1/projects/{project_id}/modeling/audits", operation_id="listModelingStepAudits")
+    def modeling_step_audits(project_id: str, session_id: str | None = None, package_id: str | None = None,
+                            job_id: str | None = None, attempt: int | None = None, authorization: str | None = Header(default=None)):
+        from zhigou_toolchain.modeling.five_stage.agents import AGENT_PACKAGES
+        from zhigou_toolchain.services.modeling_audit import audit_index
+        return {**audit_index(service, service.authenticate(authorization or ""), project_id,
+            session_id=session_id, package_id=package_id, job_id=job_id, attempt=attempt), "agents": AGENT_PACKAGES}
+
+    @app.get("/api/v1/projects/{project_id}/modeling/audits/{job_id}", operation_id="getModelingStepAudit")
+    def modeling_step_audit_detail(project_id: str, job_id: str, attempt: int | None = None, authorization: str | None = Header(default=None)):
+        from zhigou_toolchain.services.modeling_audit import audit_detail
+        return JSONResponse(audit_detail(service, service.authenticate(authorization or ""), project_id, job_id, attempt=attempt),
+            headers={"Cache-Control": "no-store"})
+
+    @app.get("/api/v1/projects/{project_id}/modeling/audits/{job_id}/archive", operation_id="downloadModelingStepAudit")
+    def modeling_step_audit_archive(project_id: str, job_id: str, attempt: int | None = None, authorization: str | None = Header(default=None)):
+        from zhigou_toolchain.services.modeling_audit import download_audit
+        content = download_audit(service, service.authenticate(authorization or ""), project_id, job_id, attempt=attempt)
+        return Response(content, media_type="application/zip", headers={
+            "Content-Disposition": 'attachment; filename="modeling-step-audit.zip"', "Cache-Control": "no-store"})
 
     @app.post("/api/v1/projects/{project_id}/compilations/exact-plans", operation_id="createExactCompilationPlan", status_code=202)
     def compile_exact_plan(project_id: str, payload: CompileExactPlanRequest, authorization: str | None = Header(default=None), idempotency_key: str | None = Header(default=None)):

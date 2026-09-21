@@ -18,7 +18,7 @@ SUITES = {
     "safety": ["tests/upgrade/test_guards.py", "tests/services/test_browser_sessions.py", "tests/services/test_core_fencing.py"],
     "ontology-io-engineering": ["tests/upgrade/test_agent_roles.py", "tests/upgrade/test_model_assistance.py",
         "tests/upgrade/test_v3_delivery.py", "tests/upgrade/test_native_delivery.py", "tests/upgrade/test_ontology_io.py",
-        "tests/upgrade/test_ontology_io_integrity.py", "tests/upgrade/test_oskgc_native.py", "tests/upgrade/test_cq4oe_input.py", "tests/services/test_ontology_io_report.py",
+        "tests/upgrade/test_ontology_io_integrity.py", "tests/upgrade/test_ontology_io_extended.py", "tests/upgrade/test_ontology_io_kernel.py", "tests/upgrade/test_ontology_deepeval.py", "tests/upgrade/test_ontology_request_profile.py", "tests/upgrade/test_ontology_live.py", "tests/upgrade/test_oskgc_native.py", "tests/upgrade/test_cq4oe_input.py", "tests/services/test_ontology_io_report.py",
         "tests/services/test_five_stage_service.py", "tests/services/test_core_fencing.py"],
 }
 

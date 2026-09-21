@@ -1,5 +1,93 @@
 # 立项 方法 实现与独立证据
 
+## 全量实验续办（2026-09-14）
+
+`CompatibleClient.propose`在内容验证之前白名单保留usage/耗时；
+`live_broker.dispatch`将无效输出的已知成本和输出超限同样计入持久预算，
+`engine.generate_sample`保留失败调用的已知资源。未知token/成本仍为null。
+`live_inventory.snapshot`经既有finalize CLI导出全部120462个调度位置，
+检查冻结结果、响应摘要及原适配器图往返；不访问gold、不推理、不按成功子集报分。
+测试位于`test_ontology_request_profile.py`、`test_ontology_live.py`；
+交付与限制见`docs/research/full-experiment-continuation-2026-09-14.md`。
+累计真实调用仍24次、full仍0；本轮不解除上游硬token上限未执行的预算锁。
+
+## 全量授权与真实执行（2026-09-14）
+
+用户明确授权全量及过程修复后，按既有325311 calls / 10659790848 token额度激活；
+新增WSL/bubblewrap最小文件/网络namespace、单请求可终止broker进程、SQLite原子预算和任务账本。
+真正OS canary通过，不再仅凭raw_gold_access=false声明隔离；生成进程没有密钥/宿主gold/相邻答案访问。
+完成9个真实smoke job后，第1个独立pilot job出现max_completion_tokens=8192但reported completion_tokens=27832。
+自动暂停并增加持久预算latch，保留全部24次调用与85852 reported tokens；full 99501个job仍未执行。
+同网关公开源码明确剥离token-limit参数，已保存固定源码与二进制摘要，不擅改网关/换模型或放宽预算。
+详见`docs/research/full-experiment-activation-2026-09-14.md`；当前需解决API硬上限路径，不能冒称全量完成。
+
+## 正式调用参数核实与候选包（2026-09-14）
+
+已读官方Chat Completions参考和Spark官方模型说明，区分参数定义、现有网关配置和实验设计。
+新增`RequestProfile`、`formal_calls.py`和`prepare_ontology_call_pack.py`，生成4个task协议、
+合法输入副本、完整job矩阵和预算表；不访问gold，不执行推理，不伪造授权。
+当前Spark模型列表可见，但专属HTTP支持、有效默认采样和权重版本未独立核实；不套用普通Codex模型参数。
+主比较调用上界168213、包含适用消融/资源对照325311；完整前置项和候选探测预算见
+`docs/research/formal-call-parameters-2026-09-14.md`。
+
+## 2026-09-14 通用benchmark检索与DeepEval选择
+
+用户要求检索并选择评测方式后，核对15个主要来源快照，选择LLMs4OL文本任务为主、CQ4OE为OWL补充。
+DeepEval为框架而非本体benchmark；新增`ontology_io/deepeval_bridge.py`复用固定exact/fuzzy原函数，
+既有score CLI支持可选framework，未另造总分、未调用默认LLM裁判、未升级既有benchmark锁。
+无凭证worker实际验证80组同步/异步指标一致性及零网络尝试，范围仅为工程适配。
+详情/未执行范围见`docs/research/benchmark-selection-2026-09-14.md`。
+完整模型性能测试仍因总预算、OS隔离、最终协议和部分native评分缺口未完成，分数/CI仍null。
+
+## 后续本体功能实现（TwoAgentKernelV1）
+
+用户要求继续具体实现后，新增`ontology_io/kernel.py`、`compilation.py`、`replay.py`，
+复用并提取`five_stage.assistance.retrieve_cards/select_reuse`，扩展原协调器支持有界研究回退，
+实际连接共享TBox/ABox编译、同一个pySHACL worker和固定HermiT。
+产物仍是UNREVIEWED_EVAL_DRAFT；不放宽生产Schema/审批/鉴权。
+
+S4结构问题回S2、事实/引用问题回S3；原输入摘要不变，保留每个候选与修复记录。
+三个消融有真实调用/输入差异测试，同检索上下文直接控制只生成一次。
+CQs-only S3、无初始本体的复用、无合法shapes的SHACL均明确N/A，不制造数据。
+新profile不替换历史TwoAgentV3，不冒称完整生产方法或完整外部Ours结果。
+
+具体功能、输入/输出接口及重放命令见`docs/upgrade/ontology-kernel-v1.md`；
+实物回执`runtime_reports/kernel-v1-final-{primitive,cqs,typed}/replay-receipt.json`。
+实际录制边界4/2/3次，真实模型推理0次，均运行了本地固定HermiT并保存实际图。
+受测源码指纹`47238715fc3aa7b4f74091cba02e28ec05d3ce92cc00ab9dfbdbd29f56c142e7`；
+前次下面的指纹/149项结果仍仅对应其旧源码，不能在本次修改后直接继承。
+
+本次独立最终回归：ruff/types退出0；本体工程suite170项通过（13 warnings）；
+新内核与原五步模块42项独立回归通过。记录在`kernel-v1-final-verification`和
+`research-07ece920144c43aebc058dbf41be8d7e`；源码前后未变，不表示真实模型研究提升。
+
+## 前次 develop 增量审计（2026-09-13）
+
+实际起点 `develop@adc2a40512f8b029b6c21420b905628c32952d00`，本地/远端一致且工作树干净。
+最终受测实现指纹 `45688ee99f530c1fa20bb322959e4b1fdc4f7cebcf2392b16ab8310b63267eb5`；
+未提交、推送或发布。下方旧基点/实施记录按历史保留。
+
+| 本轮要求 | 实现/证据 | 状态 |
+| --- | --- | --- |
+| 现状分层审计 | `docs/research/ontology-io-2026-09-13/audit-before.md` | 已交付；不把登记/函数/工程/API烟雾当完整外部评分 |
+| source→task→metric追踪 | 同目录 `benchmark-sources.md`、`native-source-audit.json` | 固定版本+网页差异+许可证；无排行榜/发表夸大 |
+| 合法输入一致 | `ontology_io/adapters.adapt_llms4ol`、`cq4oe.adapt_cq4oe` | terms/types、CQ复合ID、gold变更请求不变测试 |
+| 无损输出 | `adapters.{task_output_schema,freeze_task_prediction,project_task_prediction}`；`engine.generate_sample` | B0/Bbudget primitive/OWL TBox/typed ABox工程可用；未证明完整Ours |
+| native metrics | `native_metrics.llms4ol_fuzzy`、`cq4oe.native_term_hard`、`cli.score`、`oskgc.score_native` | exact/fuzzy原函数、hard term等价测试；完整CQ/semantic仍阻塞 |
+| full分区/预算/台账 | `splits.py`、`matrix.py`、`full-local-holdout.yaml`；`manifests/` | 5735任务输入/51615运行单元冻结，全部NOT_RUN；预算null授权 |
+| 生成评分隔离 | `isolation.probe_isolation/require_isolation`、CLI gate | canary实际可读、Docker服务不可用，强OS隔离BLOCKED，不假装通过 |
+| 成对统计 | `statistics.paired_cluster_aggregate`、`cli.compare` | 重复分层、每次重算原聚合、精确小样本交换；无真实效应/CI/p |
+| 旧方法/消融 | `variants.yaml`、`engine`能力收据 | TwoAgentV3仍primitive PARTIAL，无检索/约束抽取/联合修复研究接入；无有效消融 |
+| 工程验证 | `runtime_reports/ontology-io-final-verification-20260913`；`research-5895dd59a83e4762bd50f339cabea8a3` | ruff/types退出0；149工程tests、26新增模块独立tests；source未变 |
+| 结果/复现/展示 | 同目录report、results.csv、comparison.json、reproduce.ps1、scorecards | 每任务BLOCKED，分数/CI=null；5份NOT_RUN卡片通过现有Schema，只读展示 |
+
+正式实验没有完成，真实外部模型调用0；不能以工程结果回答研究提升已成立。
+未完成项包括完整共享五步Ours、行为消融、最小OS生成环境、完整CQ4OE scorer、
+semantic模型锁、OSKGC明确许可、论文方法复现和正式付费预算/采样冻结。
+完整原生→v3正式出口是独立工程缺口，未放宽协议或伪造人工批准。
+
+## 前序记录
+
 本轮基点：`main@58473106efafb2e380e39577674d6968b3f62b82`，起始工作区干净；本轮不自动推送、合并、发布或提交榜单。
 
 ## 已核对资料
@@ -117,3 +205,105 @@
 ## 立项目标与研究结论边界
 
 自动识别准确率 ≥80%、专家审核后准确率 ≥90%、来源可追溯完整率 ≥90% 均保留为立项验收目标。当前没有独立专家标注与定义清楚的准确率分母，均不能宣布达标。外部任务按其原始公式分别评分，不以 F1 偷换“准确率”，不把工程检查或 v3 合规视为语义正确性。
+
+## 2026-09-16 本体交接 ZIP 增量落实
+
+用户要求实际完成附件中的代码、交接和验证；附件不新增付费/发布权限。
+固定基线 develop@194e091；原协议与会议 ZIP 原字节保留于 docs/ontology/references。
+详细结果与命令见 `docs/ontology/IMPLEMENTATION_STATUS.md`。
+
+| 需求 | 实际入口 | 实现/验证边界 |
+|---|---|---|
+| C 真实输入 | delivery/meeting_input.py；services/handoff_input.py | 会议上游 manifest/来源/记录/文本/质量进入真实 Source/Batch/Run；不把整包或原生 DTO 混用；不自动冻结未登记会议 CQ |
+| D 结果出口 | delivery/handoff.py；services/handoff.py | 原图/原生包原字节，原生审核/编译/独立答案/来源闭包、实际候选构建与 declarative mapping 分开；不是原 v3 |
+| E 受控轨迹 | delivery/trace.py；five_stage/agents.py / compatible.py / tools.py | 默认关闭，成功/公开失败/拒绝/重试均在真实边界捕获；低敏审计不变；服务内容另存且单独授权 |
+| F 严格 v2 | delivery/evolution.py | call_id、连续 turn、并行/乱序/跨轮，兼容 warning 与严格生产者分开；程序前置步骤明确阻断，不造 LLM |
+| G harness/评价 | services/ontology_traces.py | 六类实际资源摘要、commit/脏树指纹；人工运行评价与本体审核分开；完整 verdict/本体评分仍待对方确认 |
+| H 批次与入口 | exchange_io.py / cover.py / delivery CLI / operation registry / API / Worker / handoff-download.tsx | 原子不覆盖、源权限、重复投递账本、稳定外部 ID；第五阶段与失败任务下载来自服务端 |
+| I 安全与验证 | test_evolution_delivery.py / test_meeting_handoff_input.py / test_handoff_delivery.py / verify_handoff_isolation.py | HR/林业真实服务、网络边界明确 Mock；真实研究生成修复进程 OS 不可读 canary；生产 Worker 全体未沙箱化 |
+| J 文档和产物 | docs/ontology 与 runtime_reports/handoff-20260916 | 已实现、已实测、待确认、未执行分项记录；不改历史失败/外部研究结果 |
+
+补充限制：原生→原 v3 的历史预检仍保持阻塞；新项目格式不消除原 v3 限制。
+无独立负例计划的具体交接包标 NOT_RUN。无真实人工评价不输出 reviews。
+本轮无付费模型请求、无对方接收器联调、无生产发布。
+
+## 2026-09-16 阶段收口（979128e 之后）
+
+| 本轮要求 | 实现 | 验收依据 |
+|---|---|---|
+| 独立负例输入/冻结 | delivery/negative_plan.py；原 modeling.session.open.frozen | 版本化封闭计划、生成前冻结、模型/内容日志隔离 |
+| 六类实际负例 | delivery/negative.py；modeling.handoff.check | HR/林业各14例，真实 SHACL/溯源/文件/状态/权限/关联检查；日志、变异字节、校验器版本与目标绑定 |
+| 新结果格式 | handoff-1.1.schema.json；handoff.py | 1.0只读兼容；原v3不变；负例NOT_RUN/N/A/ERROR/PASS与格式状态分离 |
+| 有效祖先与不可变产物 | delivery/bindings.py；services/handoff.py / ontology_traces.py | 原CURRENT输出、已提交任务、revision依赖、输入、编译/确认包/native SHA、harness闭合；STALE旁支拒绝 |
+| 总包独立验读 | delivery/stage.py；CLI validate-stage | 有界内存解包、逐内包及负例重验、实际案例领域核对、包外可信摘要；无ZIP脚本执行 |
+| 同源码资格 | delivery/snapshot.py；tools/verify_stage_handoff.py | 全跟踪/新未忽略文件含配置测试文档依赖；逐命令及压缩后同范围指纹，变化即失去资格 |
+| 历史失败复现 | 未改原脚本和两个用例；干净979128e检出与当前分别执行 | 原件保留，原始FAIL、逐节点结果、同基线对比独立记录；不自动放行 |
+
+完整规则与可执行命令见 docs/ontology/STAGE_CLOSEOUT.md。实际状态、计数、源码快照、成果路径与哈希
+见 runtime_reports/stage-closeout-20260916/ 下新的最终回执；本表不预先将未运行项标为通过。
+
+## 2026-09-18 01–17 统一对应表
+
+最初起点为干净 develop@9f6c036；本次参考确认续办基线为 develop@d2dbd514。
+用户确认名称更新版作为精简版参考，身份锁见 references/handoff-17.reference.json；
+详细字段只维护在 HANDOFF_CONTRACT.md，历史表与旧回执不追改。
+本表“已有复验/本轮修正”描述实现范围，最终实测结论以
+`runtime_reports/alignment-20260918/frozen-run-*/stage-verification.json` 和逐节点回执为准。
+本次参考身份、原件内容/清单和直接验证入口的新增检查对应 test_handoff_reference.py，
+新源码/新产物结果另见 `runtime_reports/alignment-reference-20260918/frozen-run-01/`。
+01–08 复用 input=meeting_input/handoff_input，09–14 复用 handoff/negative/bindings，
+15–17 复用 evolution/ontology_traces；下载始终为授权服务已提交 archive，不由前端拼 ZIP。
+
+| 项 | 生产者/生成时机 | API/产物路径 | 校验 | 测试 | 当前状态 |
+|---|---|---|---|---|---|
+| 01 表格数据 records | 数据组/接入前 | modeling.handoff.import → Source/Batch/Run | 字符串编号/字段与原 CSV/证据 | test_meeting_handoff_input 条件记录与源摘要 | 已有复验；有记录时提供 |
+| 02 文本片段 text_blocks | 数据组/接入前 | 同上 → KG-IR/Evidence | UTF-8/版本/摘要/Unicode 字符定位 | 同文件条件文本与偏移负例 | 已有复验；有文本时提供 |
+| 03 source_locator/sources | 数据持有人/接入前 | 同上来源映射 | 原字节/来源授权/定位 | 输入原件接入、test_handoff_delivery | 已有复验；随数据提供 |
+| 04 quality_report | 数据组/接入前 | 同上质量回执 | 同批摘要/严重问题与隔离阻断 | test_meeting_handoff_input 质量负例 | 已有复验 |
+| 05 goal_and_rules | 业务方/S1 前 | 输入 binding → session.open | 业务方确认/冻结，不自动审批 | 输入、test_five_stage_service | 已有复验 |
+| 06 baseline/imports/assets | 平台方/S2 前 | 锁定领域包与输入适配 | 版本/摘要/许可/缺锁拒绝 | 输入锁与许可负例 | 本轮补缺锁校验；复用时提供 |
+| 07 独立答案/负例计划 | 验收方/生成前 | 原 session.open frozen | evaluator-only/白名单/独立负例链 | test_stage_handoff、test_step_audit、真实 isolation | 已有复验；答案不进入生成修复 |
+| 08 输入 manifest | 各方汇总/接入前 | modeling.handoff.import | 集合/摘要/版本/访问分类 | 输入私有路径大小写及未分类负例 | 本轮补分类检查；每批必需 |
+| 09 三图 | 共享编译器/S5 | modeling.handoff.export → downstream/*.ttl | 同次原生图原字节/稳定 IRI | test_handoff_delivery、test_stage_handoff | 已有复验 |
+| 10 映射/证据 | S3 记录/S5 导出 | mapping.json / provenance.jsonl | 原执行依据/闭包/计划非执行 | 同上与 negative 真实检出 | 已有复验 |
+| 11 验证/本体审核 | 校验器/授权审核人 | validation.json / review.json | 受测版本/审核/验证分离 | 服务、阶段14负例/领域 | 已有复验；合成身份不是专家 |
+| 12 查询/正负例 | 独立验收方/冻结后执行 | modeling.handoff.check → queries/tests | 冻结 plan/report/native 绑定 | test_stage_handoff 真实重放 | 已有复验；无计划 NOT_RUN |
+| 13 本体 manifest | 交付服务/S5 | modeling.handoff.export 1.1 | 实際文件/摘要/来源批次/祖先/依赖 | stage、handoff、错包/STALE 拒绝 | 已有复验；原 v3 不变 |
+| 14 dependencies/native | 编译/来源持有人 | native/ontology.kgop、dependencies | 实存/授权/原字节 | HR/林业真实服务、CLI/API/浏览器一致性 | 已有复验；按实际条件提供 |
+| 15 executions | TraceRecorder/真实调用时 | modeling.evolution.export / executions | 公共字段/连续 turn/串行与并行/未知告警 | test_evolution_delivery；真实程序诊断 | 本轮修正；程序 turn 外部未决，保留 BLOCKED |
+| 16 reviews | 实际 HUMAN/运行后 | modeling.evolution.review → reviews | pass/fail/可选 JSON/可信旧运行/逐行隔离/身份 | test_evolution_handoff、前端表单、字节保存导出 | 本轮修正；无真人不造正式文件 |
+| 17 upstream_manifest | 原交付服务/最后写 | modeling.evolution.export → upstream_manifest.json | batch_id/files 必填、空/仅评价、原子/幂等 | evolution 单测/CLI 退出码/真实 API Worker | 本轮修正；NOT_CONTACTED |
+
+额外真实性检查不是新增核心类别：可选 context 无证据时关联 NOT_PROVEN，存在时检查；
+本地诊断和逐步审计使用既有独立出口。历史运行引用只证明本地已提交导出，不冒充接收回执。
+用户已确认名称更新版作为精简版参考，不再待补原件；保留实际 be5d0c70… 摘要及原历史版本，
+不将其改成旧 Prompt 的 bbcf5bbf…，也不改写用户确认之前的不同附件回执。
+完整后端原始结果、相对基线新增回归、模块专项分别核账。冻结后不改实现/配置/测试/文档；
+若修复必须保留失败回执并新目录重新冻结。
+
+## 2026-09-17 双 Agent 与逐步审计
+
+| 要求 | 实现 | 验证 |
+|---|---|---|
+| 规划/任务执行封装 | five_stage/agents.py、flow.py；agent-workbench.tsx | 保留 RuleAgent/TaskExecutionAgent 与 1/2/4、3/5 分工；卡片仅导航 |
+| 每步处理前后文件 | five_stage/audit.py；services/modeling_audit.py；facade/execution | BEFORE 先落盘，AFTER 真实输出/错误；绑定 job/attempt/run/revision 与依赖 |
+| 受控捕获和下载 | 显式配置、原鉴权、审计 API | 默认摘要、内容遮蔽；失败/被替换尝试留存；无权限/跨项目拒绝；旧内容不补造 |
+| 真实核验 | test_step_audit.py、agent-workbench.test.tsx、agent-audit.e2e.ts、verify_agent_workbench.py | Worker、同任务 API/浏览器下载字节、S1—S5 合成样例；不替代全仓/专家/生产认证 |
+
+契约见 docs/ontology/AGENT_STEP_AUDIT.md，本次回执与样例在 runtime_reports/agent-step-audit-20260917/。
+
+## 2026-09-19 逐方法、实际 Prompt 与演进资格
+
+主说明为 [AGENT_STEP_AUDIT.md](docs/ontology/AGENT_STEP_AUDIT.md)，其中方法表同源生成；
+不替换上方 01–17，不追改旧证据。当前源码 Prompt 为 MODEL_CALL_PROMPTS.md/JSON；
+实际请求属于授权任务快照，旧摘要不补造。起点 develop@4e19b2ce；本轮结论以新冻结回执为准。
+
+| 本轮要求 | 复用/补齐 | 原始验证入口 |
+|---|---|---|
+| 全方法与条件 | 原 registry/StepRun；coverage.py 只读投影；scope 内画像、身份、证据、溯源/CQ/实物边界 | test_prompt_audit、test_step_audit、verify_agent_workbench |
+| 三层调用与真实提交 | 原 AgentRun/StepAudit/TraceRecorder；显式父 ID、请求见证、原 CAS 结果链头锚 | 漏内层调用负例、错方法/父/Prompt/attempt、原 fencing/STALE 回归 |
+| 实际 Prompt | 原五条任务字符串不变；AST 目录；两客户端 POST 的实际包装/Schema/公开错误 | 两客户端生成/修复、JSON Schema/参数、HTTP/超时/拒绝/重试/并发 |
+| 权限/隐私 | 双开关；发送前输入检查；嵌套 JSON/源码引文过滤；原审计授权 | canary、元数据组合、原 API 跨项目/撤权/历史尝试 |
+| 查看/下载 | 原审计 API 增量筛选/详情；服务快照 SHA 相等 | agent-workbench 单测、agent-audit 真 API/Worker 浏览器 |
+| 演进边界 | 本地步骤/Prompt/v2/接收四维；原 15–17 及程序 turn 阻塞不改 | evolution 原回归、新案例；无接收回执 NOT_CONTACTED |
+| 同源码交付 | 原 verify_stage_handoff 增量检查/附件；保留历史卫生 FAIL | frozen-run-* 原始日志、源码前后指纹、磁盘 ZIP 重读/外部 SHA |

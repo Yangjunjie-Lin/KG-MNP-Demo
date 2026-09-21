@@ -9,11 +9,15 @@ from queue import Empty
 def _worker(payload, output):
     try:
         from pyshacl import validate
-        from rdflib import Graph
+        from rdflib import RDF, SH, Graph
         graphs = {role: Graph().parse(data=raw, format="turtle") for role, raw in payload.items()}
-        conforms, _report, _text = validate(graphs["instances"], shacl_graph=graphs["shapes"], ont_graph=graphs["ontology"],
+        conforms, report, _text = validate(graphs["instances"], shacl_graph=graphs["shapes"], ont_graph=graphs["ontology"],
             inference="none", advanced=False, js=False, do_owl_imports=False, meta_shacl=True)
-        output.put({"status": "PASS" if conforms else "FAIL", "pyshacl_version": version("pyshacl"), "inference": "NONE"})
+        if not isinstance(report, Graph):
+            raise TypeError("SHACL_REPORT_NOT_GRAPH")
+        details = [{"component": str(report.value(r, SH.sourceConstraintComponent)), "focus": str(report.value(r, SH.focusNode)),
+                    "path": str(report.value(r, SH.resultPath))} for r in report.subjects(RDF.type, SH.ValidationResult)]
+        output.put({"status": "PASS" if conforms else "FAIL", "pyshacl_version": version("pyshacl"), "inference": "NONE", "violations": sorted(details, key=str)})
     except Exception as exc:  # noqa: BLE001 - bounded public diagnostics only
         output.put({"status": "ENGINE_ERROR", "error_type": type(exc).__name__})
 

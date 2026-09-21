@@ -13,6 +13,7 @@ from zhigou_toolchain.contracts.canonical import semantic_hash
 from zhigou_toolchain.modeling.control_plane.confirmation import (
     verify_confirmed_package,
 )
+from zhigou_toolchain.modeling.five_stage.agents import observed
 
 from ..artifacts import semantic_sha256
 from ..contracts import verify_artifact
@@ -23,6 +24,7 @@ from ..security import scan_prohibited_text, validate_relative_path
 from .manifest import semantic_payload_identity_digest, verify_package_manifest
 
 
+@observed(5, "archive.verify", inputs=lambda package_directory: {"package_storage_key": Path(package_directory).name})
 def verify_package(package_directory: Path | str) -> dict[str, Any]:
     root = Path(package_directory).resolve(strict=True)
     if not root.is_dir() or root.is_symlink():

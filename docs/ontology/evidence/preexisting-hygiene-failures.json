@@ -1,0 +1,38 @@
+{
+  "checked_date": "2026-09-16",
+  "baseline_commit": "194e091d13cabba5833ff1d531f814858ea968ae",
+  "test": "tests/scripts/test_repo_hygiene.py::test_current_repository_passes",
+  "finding": "Historical evidence contains machine-local absolute paths. Original files deliberately preserved; no relaxation of hygiene test.",
+  "files": [
+    {
+      "path": "docs/research/benchmark-selection-2026-09-14-evidence.json",
+      "head_blob": "92528aec58d22faeab6e86f6d101041c87fb0b7c",
+      "working_blob": "92528aec58d22faeab6e86f6d101041c87fb0b7c",
+      "unchanged": true
+    },
+    {
+      "path": "docs/research/formal-call-parameters-2026-09-14-evidence.json",
+      "head_blob": "acdbd0e3f736d96e51de9665ce6720556a03f7af",
+      "working_blob": "acdbd0e3f736d96e51de9665ce6720556a03f7af",
+      "unchanged": true
+    },
+    {
+      "path": "docs/research/full-experiment-activation-2026-09-14-evidence.json",
+      "head_blob": "c186f0f9da450760cc5663fa8f8687aab02c7ed2",
+      "working_blob": "c186f0f9da450760cc5663fa8f8687aab02c7ed2",
+      "unchanged": true
+    },
+    {
+      "path": "docs/research/ontology-io-2026-09-13/execution-evidence.json",
+      "head_blob": "571c403134968ba8f0c9b7a4281dafda7e748b98",
+      "working_blob": "571c403134968ba8f0c9b7a4281dafda7e748b98",
+      "unchanged": true
+    },
+    {
+      "path": "docs/upgrade/ontology-kernel-v1-evidence.json",
+      "head_blob": "811b651cd693c0281f9c13a4f8850c68b636e516",
+      "working_blob": "811b651cd693c0281f9c13a4f8850c68b636e516",
+      "unchanged": true
+    }
+  ]
+}

@@ -10,6 +10,80 @@
 原模型与多模态的追加实测、固定输入及模型能力差异见
 [原模型与多模态验收](docs/upgrade/original-models-multimodal.md)。
 
+## 本体建模与交接（2026-09-18 按 01–17 对齐）
+
+2026-09-19 增量以方法及物理模型请求核账：
+[审计、配置与权限](docs/ontology/AGENT_STEP_AUDIT.md)、
+[当前实际 Prompt 全文（源码生成）](docs/ontology/MODEL_CALL_PROMPTS.md)。
+沿用审计 API/Worker/CAS，支持会话、产物和尝试筛选；历史摘要不能还原请求。
+本轮验证写 `runtime_reports/ontology-audit-20260919/`，不复用旧通过结论；
+MockTransport/纯程序与 LIVE 分开，严格 v2 程序 turn 与外部接收仍分别报告。
+
+沿用 01–08 输入、09–14 本体成果、15–17 演进数据三组，工作台点击展开查看，
+不增加新的核心交付类别。唯一详细字段入口是[交接契约](docs/ontology/HANDOFF_CONTRACT.md)，
+逐项生产者/API/验证/测试对应见 [需求追踪](requirement_traceability.md#2026-09-18-0117-统一对应表)。
+运行评价支持 pass/fail、条件 annotations 与可选 violations/corrected_answer；
+空批次和有可信历史引用的仅评价批次复用原 Worker/CAS 和任务下载。
+可选 context 缺失不影响基础协议有效性，但不能证明运行与本体成果关联。
+人工身份由服务核定，合成测试评价不能作为正式 reviews 导出。
+本轮冻结回执与新建 HR/林业成果在 `runtime_reports/alignment-20260918/`，不借用旧回执。
+
+用户已确认“名称更新版_20260918.zip”作为本轮“精简版”参考，缺件事项已关闭。
+[参考身份](docs/ontology/references/handoff-17.reference.json)锁定实际原字节 SHA，
+[原件副本](docs/ontology/references/handoff-17-20260918.original.zip)仅供授权开发/验收核对；
+含独立答案，不能整包提供给生成或修复模型。文件名用途确认不改写旧 ZIP、旧摘要或历史失败。
+此次在 develop@d2dbd514 上继续核对，最新回执在 `runtime_reports/alignment-reference-20260918/`。
+验证器支持直接脚本与模块入口，完成新的源码冻结后可运行：
+
+```powershell
+python -m tools.verify_stage_handoff runtime_reports/new-reference-verification --baseline PATH_TO_CLEAN_BASELINE --parallel-full --input-archive docs/ontology/references/handoff-17-20260918.original.zip
+```
+
+2026-09-17 新增[双 Agent 与逐步审计](docs/ontology/AGENT_STEP_AUDIT.md)：工作台按
+“规划 Agent（RuleAgent，S1/S2/S4）／任务执行 Agent（S3/S5）”组织现有步骤，
+真实操作和工具调用保存处理前后文件，支持失败与历史尝试审计 ZIP 下载。
+演示启动加 `--record-step-content` 显式启用受控正文；默认仅摘要，旧内容不补造。
+
+阶段收口扩展见 [阶段验收与真实打包](docs/ontology/STAGE_CLOSEOUT.md)：新增生成前冻结的负例计划、
+真实校验结果、有效祖先与原生包绑定、1.1 交换格式，以及 `validate-stage` 独立总 ZIP 验包。
+`verify_stage_handoff.py` 完成代码/文档后冻结全文件范围，输出独立实际回执，不更新旧历史结论。
+
+模块职责见 [本体模块说明](docs/ontology/ONTOLOGY_MODULE.md)，文件与协议见
+[交接契约](docs/ontology/HANDOFF_CONTRACT.md)，本轮状态与证据见
+[实施记录](docs/ontology/IMPLEMENTATION_STATUS.md)。原方案、协议和会议样例均保留，
+会议样例不等于真实运行，历史审查也不等于当前代码状态。
+
+保留 RuleAgent（S1/S2/S4）与 TaskExecutionAgent（S3/S5）。数据组只提供数据、
+来源和质量，业务方确认规则，验收方独立提供答案；本体模块不重建演进组训练平台。
+
+新增真实 Source/Batch/Run 输入适配、`zhigou-ontology-handoff/1.1.0` 结果出口（1.0 只读兼容）、
+受控内容轨迹、演进 v2 本地验证/原子批次和独立人工评价接口。
+新交换格式不是原 v3，也不是原诊断包改名；`.kgop`、稳定 IRI、原 v3 Schema 不变。
+第五阶段提供本体交接包和演进数据包入口，失败任务可从任务中心导出本地轨迹诊断。
+
+```powershell
+python -m zhigou_toolchain.modeling.delivery.cli validate-handoff path/to/ontology-handoff.zip
+python -m zhigou_toolchain.modeling.delivery.cli validate-evolution path/to/evolution --producer
+python -m zhigou_toolchain.modeling.delivery.cli inspect-input path/to/upstream
+python -m zhigou_toolchain.modeling.delivery.cli export-generation path/to/upstream path/to/new-generation-view
+# 从已完成的服务导出任务下载同一份字节；身份沿用 ZHIGOU_TOKEN，不在命令中填写密钥。
+python -m zhigou_toolchain.modeling.delivery.cli export-handoff path/to/new-output.zip --workspace path/to/service --project-id PROJECT_ID --job-id EXPORT_JOB_ID
+```
+
+内容录制默认关闭。服务与 Worker 显式设置 `ZHIGOU_ONTOLOGY_TRACE_ENABLED=true`，
+且执行身份具有 `trace:record`、`source:read` 时才录制。导出另需 `trace:export`。
+本体交接需 `package:export`、`source:read`、`source:export`、`acceptance:export`，
+并逐来源确认摘要、许可、授权依据和接收人。许可声明不冒充法律核验。
+完整交接包含独立答案，禁止作为生成侧输入；白名单文件导出本身不是 OS 沙箱。
+
+首次模型前和纯程序工具调用无法完整表达为对方严格 v2：保留真实本地日志并明确阻断，
+不伪造模型或 turn=0。没有真实人工评价不生成 reviews；接收器与本体评价器尚未联调。
+无付费授权的完整后端验证使用：
+
+```powershell
+python tools/verify_zhigou_upgrade.py --backend-only --workers 4 --skip-model-probe
+```
+
 ## Windows 本地启动
 
 在项目根目录运行。现有环境可以直接使用；首次安装按锁文件准备依赖：

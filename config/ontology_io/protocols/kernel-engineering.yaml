@@ -1,0 +1,23 @@
+protocol_id: task-input-kernel-engineering-v1
+model_id: recorded-engineering
+declared_revision: fixture-v1
+systems: [TwoAgentKernelV1, DirectGeneralLLM, DirectBudgetControl, DirectRetrievalContext, NoRetrieval, NoConstrainedExtraction, NoValidationFeedback]
+replicates: 1
+matching: exact
+budget:
+  max_calls: 6
+  max_input_characters: 24000
+  max_output_tokens: 2048
+  max_total_tokens: 120000
+  context_window_tokens: 32768
+kernel_profile:
+  profile_id: task-input-kernel-v1
+  retrieval: TASK_INPUT_EXACT
+  constrained_extraction: true
+  validation_feedback: true
+  max_repair_cycles: 1
+  reasoner_jar: third_party/downloads/robot-1.9.7.jar
+  validation_timeout_seconds: 30
+total_run_authorization: null
+approval: NOT_GRANTED
+release_status: NOT_RELEASED

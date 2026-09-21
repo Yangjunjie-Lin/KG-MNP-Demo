@@ -2,6 +2,7 @@ import {useState} from 'react';
 import {useQuery} from '@tanstack/react-query';
 import {api, object, str, type Document} from './api';
 import {useWorkspace} from './shell';
+import {HandoffDownload} from './handoff-download';
 
 export function PreparedPackageDownload({packageId}:{packageId:string}) {
   const {state,prefix,submit,busy,principal}=useWorkspace();
@@ -20,5 +21,6 @@ export function PreparedPackageDownload({packageId}:{packageId:string}) {
     {job.error&&<p role="alert" className="error">导出快照复核失败：{String(job.error)}</p>}
     {exported&&job.isFetching&&<p role="status">正在核对导出任务与不可变版本…</p>}
     {verified&&<p><a download="ontology.kgop" href={`/api/v1${prefix}/exports/${encodeURIComponent(exported!.job_id)}/archive`}>下载已验证本体包（.kgop）</a><small> SHA-256：{str(object(job.data?.result).sha256)}</small></p>}
+    <HandoffDownload packageId={packageId}/>
   </div>;
 }

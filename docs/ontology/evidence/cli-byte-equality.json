@@ -1,0 +1,17 @@
+{
+  "checked_date": "2026-09-16",
+  "mode": "SYNTHETIC_ENGINEERING",
+  "operation": "export-handoff",
+  "source": "AUTHORIZED_COMMITTED_SERVICE_SNAPSHOT",
+  "source_job_id": "job_cbca39e113c14ec3939be5d13e996312",
+  "cli_exit_code": 0,
+  "expected_sha256": "15bfad42e665b755d4d6066508e0703e2ebdd228609c2b338abfcb709c9b864c",
+  "downloaded_sha256": "15bfad42e665b755d4d6066508e0703e2ebdd228609c2b338abfcb709c9b864c",
+  "expected_size_bytes": 237673,
+  "independent_validate_handoff": "VERIFIED",
+  "temporary_identity": "REVOKED_AFTER_CHECK",
+  "artifact": "runtime_reports/handoff-20260916/cli-equality.zip",
+  "report": "runtime_reports/handoff-20260916/cli-validation.json",
+  "live_inference_calls": 0,
+  "receiver_status": "NOT_CONTACTED"
+}

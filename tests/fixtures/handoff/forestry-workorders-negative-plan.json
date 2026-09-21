@@ -1,0 +1,240 @@
+{
+  "format": "zhigou-negative-case-plan/1.0.0",
+  "plan_id": "forestry-workorders-independent-stage-acceptance",
+  "version": "1.0.0",
+  "origin": "INDEPENDENT_SYNTHETIC_ACCEPTANCE",
+  "cases": [
+    {
+      "case_id": "NEG-01",
+      "category": "SHACL",
+      "rule_basis": {
+        "reference": "domain_packs/forestry-workorders/shapes/records.ttl",
+        "version": "forestry-workorders@0.1.1",
+        "asset_sha256": "e5a9e2dd2c4414df3c3d6e0d6c6fb91e3edee063019740e1778adc4b73121612",
+        "shape_iri": "https://example.invalid/forestry#TreeShape"
+      },
+      "target": {
+        "selector": "FIRST_TYPED_SUBJECT",
+        "class_iri": "https://example.invalid/forestry#TreeRecord",
+        "predicate_iri": "https://example.invalid/forestry#treeCode"
+      },
+      "mutation": "REMOVE_REQUIRED",
+      "expected": {
+        "stage": "SHACL",
+        "code": "MinCountConstraintComponent"
+      }
+    },
+    {
+      "case_id": "NEG-02",
+      "category": "SHACL",
+      "rule_basis": {
+        "reference": "domain_packs/forestry-workorders/shapes/records.ttl",
+        "version": "forestry-workorders@0.1.1",
+        "asset_sha256": "e5a9e2dd2c4414df3c3d6e0d6c6fb91e3edee063019740e1778adc4b73121612",
+        "shape_iri": "https://example.invalid/forestry#TreeShape"
+      },
+      "target": {
+        "selector": "FIRST_TYPED_SUBJECT",
+        "class_iri": "https://example.invalid/forestry#TreeRecord",
+        "predicate_iri": "https://example.invalid/forestry#treeCode"
+      },
+      "mutation": "WRONG_DATATYPE",
+      "expected": {
+        "stage": "SHACL",
+        "code": "DatatypeConstraintComponent"
+      }
+    },
+    {
+      "case_id": "NEG-03",
+      "category": "PROVENANCE",
+      "rule_basis": {
+        "reference": "docs/ontology/HANDOFF_CONTRACT.md#阶段验收与不可变关联",
+        "version": "stage-acceptance/1.0.0"
+      },
+      "target": {
+        "selector": "FROZEN_PACKAGE"
+      },
+      "mutation": "BROKEN_EVIDENCE",
+      "expected": {
+        "stage": "PROVENANCE",
+        "code": "HANDOFF_PROVENANCE_OPEN"
+      }
+    },
+    {
+      "case_id": "NEG-04",
+      "category": "FILE_INTEGRITY",
+      "rule_basis": {
+        "reference": "docs/ontology/HANDOFF_CONTRACT.md#阶段验收与不可变关联",
+        "version": "stage-acceptance/1.0.0"
+      },
+      "target": {
+        "selector": "FROZEN_PACKAGE"
+      },
+      "mutation": "TAMPER_BYTES",
+      "expected": {
+        "stage": "MANIFEST",
+        "code": "MANIFEST_BYTES_MISMATCH"
+      }
+    },
+    {
+      "case_id": "NEG-05",
+      "category": "FILE_INTEGRITY",
+      "rule_basis": {
+        "reference": "docs/ontology/HANDOFF_CONTRACT.md#阶段验收与不可变关联",
+        "version": "stage-acceptance/1.0.0"
+      },
+      "target": {
+        "selector": "FROZEN_PACKAGE"
+      },
+      "mutation": "MISSING_FILE",
+      "expected": {
+        "stage": "MANIFEST",
+        "code": "MANIFEST_FILE_MISSING"
+      }
+    },
+    {
+      "case_id": "NEG-06",
+      "category": "FILE_INTEGRITY",
+      "rule_basis": {
+        "reference": "docs/ontology/HANDOFF_CONTRACT.md#阶段验收与不可变关联",
+        "version": "stage-acceptance/1.0.0"
+      },
+      "target": {
+        "selector": "FROZEN_PACKAGE"
+      },
+      "mutation": "WRONG_SIZE",
+      "expected": {
+        "stage": "MANIFEST",
+        "code": "MANIFEST_BYTES_MISMATCH"
+      }
+    },
+    {
+      "case_id": "NEG-07",
+      "category": "STATE_GATE",
+      "rule_basis": {
+        "reference": "docs/ontology/HANDOFF_CONTRACT.md#阶段验收与不可变关联",
+        "version": "stage-acceptance/1.0.0"
+      },
+      "target": {
+        "selector": "FROZEN_PACKAGE"
+      },
+      "mutation": "STALE_REVIEW",
+      "expected": {
+        "stage": "REVIEW",
+        "code": "SESSION_REVIEW_STALE"
+      }
+    },
+    {
+      "case_id": "NEG-08",
+      "category": "STATE_GATE",
+      "rule_basis": {
+        "reference": "docs/ontology/HANDOFF_CONTRACT.md#阶段验收与不可变关联",
+        "version": "stage-acceptance/1.0.0"
+      },
+      "target": {
+        "selector": "FROZEN_PACKAGE"
+      },
+      "mutation": "STALE_REVISION",
+      "expected": {
+        "stage": "EXPORT",
+        "code": "HANDOFF_SESSION_REVISION_STALE"
+      }
+    },
+    {
+      "case_id": "NEG-09",
+      "category": "STATE_GATE",
+      "rule_basis": {
+        "reference": "docs/ontology/HANDOFF_CONTRACT.md#阶段验收与不可变关联",
+        "version": "stage-acceptance/1.0.0"
+      },
+      "target": {
+        "selector": "FROZEN_PACKAGE"
+      },
+      "mutation": "WRONG_COMPILATION",
+      "expected": {
+        "stage": "COMPILE",
+        "code": "SESSION_DEPENDENCY_STALE"
+      }
+    },
+    {
+      "case_id": "NEG-10",
+      "category": "AUTHORIZATION",
+      "rule_basis": {
+        "reference": "docs/ontology/HANDOFF_CONTRACT.md#阶段验收与不可变关联",
+        "version": "stage-acceptance/1.0.0"
+      },
+      "target": {
+        "selector": "FROZEN_PACKAGE"
+      },
+      "mutation": "DENIED_EXPORT",
+      "expected": {
+        "stage": "AUTHORIZATION",
+        "code": "FORBIDDEN"
+      }
+    },
+    {
+      "case_id": "NEG-11",
+      "category": "DELIVERY_BINDING",
+      "rule_basis": {
+        "reference": "docs/ontology/HANDOFF_CONTRACT.md#阶段验收与不可变关联",
+        "version": "stage-acceptance/1.0.0"
+      },
+      "target": {
+        "selector": "FROZEN_PACKAGE"
+      },
+      "mutation": "WRONG_PACKAGE",
+      "expected": {
+        "stage": "COVER",
+        "code": "DELIVERY_TARGET_MISMATCH"
+      }
+    },
+    {
+      "case_id": "NEG-12",
+      "category": "DELIVERY_BINDING",
+      "rule_basis": {
+        "reference": "docs/ontology/HANDOFF_CONTRACT.md#阶段验收与不可变关联",
+        "version": "stage-acceptance/1.0.0"
+      },
+      "target": {
+        "selector": "FROZEN_PACKAGE"
+      },
+      "mutation": "WRONG_ARCHIVE",
+      "expected": {
+        "stage": "COVER",
+        "code": "DELIVERY_TARGET_MISMATCH"
+      }
+    },
+    {
+      "case_id": "NEG-13",
+      "category": "DELIVERY_BINDING",
+      "rule_basis": {
+        "reference": "docs/ontology/HANDOFF_CONTRACT.md#阶段验收与不可变关联",
+        "version": "stage-acceptance/1.0.0"
+      },
+      "target": {
+        "selector": "FROZEN_PACKAGE"
+      },
+      "mutation": "WRONG_INPUT",
+      "expected": {
+        "stage": "COVER",
+        "code": "DELIVERY_TARGET_MISMATCH"
+      }
+    },
+    {
+      "case_id": "NEG-14",
+      "category": "DELIVERY_BINDING",
+      "rule_basis": {
+        "reference": "docs/ontology/HANDOFF_CONTRACT.md#阶段验收与不可变关联",
+        "version": "stage-acceptance/1.0.0"
+      },
+      "target": {
+        "selector": "FROZEN_PACKAGE"
+      },
+      "mutation": "STALE_ANCESTOR",
+      "expected": {
+        "stage": "COVER",
+        "code": "DELIVERY_ANCESTOR_NOT_CURRENT"
+      }
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+{
+  "conclusion": "BLOCKED",
+  "experiment_complete": false,
+  "supports_improvement": null,
+  "comparisons": [],
+  "reason": "NO_FROZEN_EXTERNAL_MODEL_PREDICTIONS_NO_EFFECT_OR_CI",
+  "blockers": [
+    "BLOCKED_BUDGET_UNSET",
+    "BLOCKED_OS_ISOLATION",
+    "BLOCKED_OURS_FULL_NOT_IMPLEMENTED",
+    "BLOCKED_SAMPLING_PROTOCOL_NOT_FINAL",
+    "BLOCKED_CQ4OE_FULL_NATIVE_PROFILE",
+    "BLOCKED_OSKGC_LICENSE",
+    "BLOCKED_HISTORICAL_DEVELOPMENT_OVERLAP_AUDIT"
+  ]
+}

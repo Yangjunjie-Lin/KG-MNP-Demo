@@ -37,3 +37,50 @@ def holm_adjust(p_values):
         previous = max(previous, min(1., value * (len(p_values) - index)))
         adjusted[name] = previous
     return adjusted
+
+
+def paired_cluster_aggregate(baseline, experiment, *, aggregate, bootstrap_samples=2000, seed=1729):
+    """Re-run the native aggregate on every paired cluster resample.
+
+    Input maps group -> replicate -> list of native payloads. The callback is
+    invoked once per replicate with the complete sampled payload list; repeat
+    estimates are averaged afterwards, never treated as independent samples.
+    Payload multiplicity is preserved; a native SET-micro callback must retain
+    its own union semantics. This function never averages sample F1 for it.
+    """
+    if set(baseline) != set(experiment) or bootstrap_samples < 100:
+        raise ValueError("INVALID_PAIRED_AGGREGATE_INPUT")
+    keys = sorted(baseline)
+    replicates = sorted(baseline[keys[0]]) if keys else []
+    if not replicates or any(sorted(side[k]) != replicates for side in (baseline, experiment) for k in keys):
+        raise ValueError("PAIRED_REPLICATES_DIFFER")
+
+    def estimate(side, sampled):
+        values = [aggregate([row for key in sampled for row in side[key][rep]]) for rep in replicates]
+        if any(not math.isfinite(v) for v in values):
+            raise ValueError("NONFINITE_NATIVE_AGGREGATE")
+        return mean(values)
+
+    delta = estimate(experiment, keys) - estimate(baseline, keys)
+    if len(keys) < 2:
+        return {"status": "INSUFFICIENT_INDEPENDENT_UNITS", "difference": delta, "confidence_interval_95": None, "p_value": None}
+    rng = random.Random(seed)
+    boot = []
+    for _ in range(bootstrap_samples):
+        sampled = rng.choices(keys, k=len(keys))
+        boot.append(estimate(experiment, sampled) - estimate(baseline, sampled))
+    # Exact paired cluster exchange for small n; MC otherwise. Repeat vectors
+    # are swapped as a unit. Non-additive metrics are recomputed, not sign-flipped.
+    exact = len(keys) <= 12
+    patterns = range(2 ** len(keys)) if exact else [rng.getrandbits(len(keys)) for _ in range(bootstrap_samples)]
+    extreme, count = 0, 0
+    for mask in patterns:
+        left = {k: (experiment if mask & (1 << i) else baseline)[k] for i, k in enumerate(keys)}
+        right = {k: (baseline if mask & (1 << i) else experiment)[k] for i, k in enumerate(keys)}
+        extreme += abs(estimate(right, keys) - estimate(left, keys)) >= abs(delta) - 1e-12
+        count += 1
+    boot.sort()
+    return {"status": "MEASURED", "difference": delta, "confidence_interval_95": [boot[int(.025 * len(boot))], boot[int(.975 * len(boot))]],
+        "p_value": extreme / count if exact else (extreme + 1) / (count + 1), "independent_groups": len(keys),
+        "replicate_count": len(replicates), "resampling_unit": "SOURCE_CLUSTER_ALL_REPLICATES", "native_aggregate_recomputed": True,
+        "test": "EXACT_PAIRED_CLUSTER_EXCHANGE" if exact else "MONTE_CARLO_PAIRED_CLUSTER_EXCHANGE", "seed": seed}

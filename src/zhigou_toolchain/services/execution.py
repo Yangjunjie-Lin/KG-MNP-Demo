@@ -125,6 +125,8 @@ def execute_fenced(service, job, request, principal, action):
         before(staged_project.root, request)
         result = action(staged_project)
         after(staged_project.root, request, result)
+        from .modeling_audit import observe_computed_state
+        observe_computed_state(staged_project)
         output_digest = tree_digest(staging)
         if inspect_project(staged_project, service.configuration.domain_packs_root).status != "VALID":
             raise ServiceBoundaryError("WORKSPACE_INVALID", "computed workspace validation failed", status_code=409)

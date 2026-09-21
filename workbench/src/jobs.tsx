@@ -2,6 +2,7 @@ import {useState} from 'react';
 import {post,queryClient,type Job} from './api';
 import {Id,Panel,Status} from './components';
 import {useWorkspace} from './shell';
+import {EvolutionDownload} from './handoff-download';
 
 export function Jobs(){
   const {state,principal,busy}=useWorkspace();const [error,setError]=useState(''),[pending,setPending]=useState(false);
@@ -16,6 +17,7 @@ export function Jobs(){
     {error&&<p role="alert" className="error">{error}</p>}
     {state.jobs.map(job=><Panel key={job.job_id} title={job.operation_id}>
       <Id value={job.job_id}/><p><Status value={job.status}/> · 尝试 {job.attempt}{job.error&&<span role="alert" className="error">{job.error.code}</span>}</p>
+      {['SUCCEEDED','FAILED','CANCELLED'].includes(job.status)&&!job.operation_id.startsWith('modeling.evolution.')&&<EvolutionDownload jobId={job.job_id}/>}
       <button disabled={busy||pending||!['QUEUED','RUNNING'].includes(job.status)} onClick={()=>act(job)}>请求取消</button>
       {job.status==='RECOVERY_REQUIRED'&&<div className="actions">
         <button disabled={busy||pending||!canRecover} onClick={()=>act(job,'RECOVER_COMMITTED')}>恢复已提交回执</button>

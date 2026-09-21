@@ -1,0 +1,471 @@
+{
+  "pack": {
+    "status": "FORMAL_CALL_PACK_PREPARED_NOT_AUTHORIZED_NOT_EXECUTED",
+    "source_commit": "adc2a40512f8b029b6c21420b905628c32952d00",
+    "source_fingerprint_sha256": "1f1e79ef26eae85bf8e2291a7e466b34fc28819463be57ee262297657a55516e",
+    "source_unchanged": true,
+    "observed_configuration": {
+      "model_id": "gpt-5.3-codex-spark",
+      "declared_revision": "configured-alias:gpt-5.3-codex-spark",
+      "reasoning_effort": null,
+      "configured_response_format": "json_object",
+      "health": {
+        "model_id": "gpt-5.3-codex-spark",
+        "configured_revision": "configured-alias:gpt-5.3-codex-spark",
+        "model_id_observed": true,
+        "revision_attestation": "DEPLOYMENT_CONFIGURATION_ONLY"
+      },
+      "post_parameter_probe": "NOT_RUN",
+      "weight_revision": "NOT_INDEPENDENTLY_ATTESTED"
+    },
+    "totals": {
+      "all_calls": 325311,
+      "all_reserved_tokens": 10659790848,
+      "eligible_run_units": 99501,
+      "na_run_units": 20934,
+      "core_calls": 168213,
+      "core_reserved_tokens": 5512003584
+    },
+    "per_system": [
+      {
+        "task": "llms4ol_2026--flagship",
+        "system": "DirectGeneralLLM",
+        "source_samples": 3471,
+        "eligible_samples": 3471,
+        "not_applicable_samples": 0,
+        "replicates": 3,
+        "call_cap": 10413,
+        "reserved_token_cap": 341213184,
+        "score": null,
+        "status": "NOT_RUN"
+      },
+      {
+        "task": "llms4ol_2026--flagship",
+        "system": "DirectBudgetControl",
+        "source_samples": 3471,
+        "eligible_samples": 3471,
+        "not_applicable_samples": 0,
+        "replicates": 3,
+        "call_cap": 41652,
+        "reserved_token_cap": 1364852736,
+        "score": null,
+        "status": "NOT_RUN"
+      },
+      {
+        "task": "llms4ol_2026--flagship",
+        "system": "TwoAgentKernelV1",
+        "source_samples": 3471,
+        "eligible_samples": 3471,
+        "not_applicable_samples": 0,
+        "replicates": 3,
+        "call_cap": 41652,
+        "reserved_token_cap": 1364852736,
+        "score": null,
+        "status": "NOT_RUN"
+      },
+      {
+        "task": "llms4ol_2026--flagship",
+        "system": "NoRetrieval",
+        "source_samples": 3471,
+        "eligible_samples": 0,
+        "not_applicable_samples": 3471,
+        "replicates": 3,
+        "call_cap": 0,
+        "reserved_token_cap": 0,
+        "score": null,
+        "status": "NOT_APPLICABLE"
+      },
+      {
+        "task": "llms4ol_2026--flagship",
+        "system": "NoConstrainedExtraction",
+        "source_samples": 3471,
+        "eligible_samples": 3471,
+        "not_applicable_samples": 0,
+        "replicates": 3,
+        "call_cap": 41652,
+        "reserved_token_cap": 1364852736,
+        "score": null,
+        "status": "NOT_RUN"
+      },
+      {
+        "task": "llms4ol_2026--flagship",
+        "system": "NoValidationFeedback",
+        "source_samples": 3471,
+        "eligible_samples": 3471,
+        "not_applicable_samples": 0,
+        "replicates": 3,
+        "call_cap": 20826,
+        "reserved_token_cap": 682426368,
+        "score": null,
+        "status": "NOT_RUN"
+      },
+      {
+        "task": "llms4ol_2026--flagship",
+        "system": "DirectRetrievalContext",
+        "source_samples": 3471,
+        "eligible_samples": 0,
+        "not_applicable_samples": 3471,
+        "replicates": 3,
+        "call_cap": 0,
+        "reserved_token_cap": 0,
+        "score": null,
+        "status": "NOT_APPLICABLE"
+      },
+      {
+        "task": "llms4ol_2026--reuse",
+        "system": "DirectGeneralLLM",
+        "source_samples": 2252,
+        "eligible_samples": 2252,
+        "not_applicable_samples": 0,
+        "replicates": 3,
+        "call_cap": 6756,
+        "reserved_token_cap": 221380608,
+        "score": null,
+        "status": "NOT_RUN"
+      },
+      {
+        "task": "llms4ol_2026--reuse",
+        "system": "DirectBudgetControl",
+        "source_samples": 2252,
+        "eligible_samples": 2252,
+        "not_applicable_samples": 0,
+        "replicates": 3,
+        "call_cap": 33780,
+        "reserved_token_cap": 1106903040,
+        "score": null,
+        "status": "NOT_RUN"
+      },
+      {
+        "task": "llms4ol_2026--reuse",
+        "system": "TwoAgentKernelV1",
+        "source_samples": 2252,
+        "eligible_samples": 2252,
+        "not_applicable_samples": 0,
+        "replicates": 3,
+        "call_cap": 33780,
+        "reserved_token_cap": 1106903040,
+        "score": null,
+        "status": "NOT_RUN"
+      },
+      {
+        "task": "llms4ol_2026--reuse",
+        "system": "NoRetrieval",
+        "source_samples": 2252,
+        "eligible_samples": 2252,
+        "not_applicable_samples": 0,
+        "replicates": 3,
+        "call_cap": 33780,
+        "reserved_token_cap": 1106903040,
+        "score": null,
+        "status": "NOT_RUN"
+      },
+      {
+        "task": "llms4ol_2026--reuse",
+        "system": "NoConstrainedExtraction",
+        "source_samples": 2252,
+        "eligible_samples": 2252,
+        "not_applicable_samples": 0,
+        "replicates": 3,
+        "call_cap": 33780,
+        "reserved_token_cap": 1106903040,
+        "score": null,
+        "status": "NOT_RUN"
+      },
+      {
+        "task": "llms4ol_2026--reuse",
+        "system": "NoValidationFeedback",
+        "source_samples": 2252,
+        "eligible_samples": 2252,
+        "not_applicable_samples": 0,
+        "replicates": 3,
+        "call_cap": 20268,
+        "reserved_token_cap": 664141824,
+        "score": null,
+        "status": "NOT_RUN"
+      },
+      {
+        "task": "llms4ol_2026--reuse",
+        "system": "DirectRetrievalContext",
+        "source_samples": 2252,
+        "eligible_samples": 2252,
+        "not_applicable_samples": 0,
+        "replicates": 3,
+        "call_cap": 6756,
+        "reserved_token_cap": 221380608,
+        "score": null,
+        "status": "NOT_RUN"
+      },
+      {
+        "task": "cq4oe_0_0_1--cq2term",
+        "system": "DirectGeneralLLM",
+        "source_samples": 6,
+        "eligible_samples": 6,
+        "not_applicable_samples": 0,
+        "replicates": 3,
+        "call_cap": 18,
+        "reserved_token_cap": 589824,
+        "score": null,
+        "status": "NOT_RUN"
+      },
+      {
+        "task": "cq4oe_0_0_1--cq2term",
+        "system": "DirectBudgetControl",
+        "source_samples": 6,
+        "eligible_samples": 6,
+        "not_applicable_samples": 0,
+        "replicates": 3,
+        "call_cap": 36,
+        "reserved_token_cap": 1179648,
+        "score": null,
+        "status": "NOT_RUN"
+      },
+      {
+        "task": "cq4oe_0_0_1--cq2term",
+        "system": "TwoAgentKernelV1",
+        "source_samples": 6,
+        "eligible_samples": 6,
+        "not_applicable_samples": 0,
+        "replicates": 3,
+        "call_cap": 36,
+        "reserved_token_cap": 1179648,
+        "score": null,
+        "status": "NOT_RUN"
+      },
+      {
+        "task": "cq4oe_0_0_1--cq2term",
+        "system": "NoRetrieval",
+        "source_samples": 6,
+        "eligible_samples": 0,
+        "not_applicable_samples": 6,
+        "replicates": 3,
+        "call_cap": 0,
+        "reserved_token_cap": 0,
+        "score": null,
+        "status": "NOT_APPLICABLE"
+      },
+      {
+        "task": "cq4oe_0_0_1--cq2term",
+        "system": "NoConstrainedExtraction",
+        "source_samples": 6,
+        "eligible_samples": 0,
+        "not_applicable_samples": 6,
+        "replicates": 3,
+        "call_cap": 0,
+        "reserved_token_cap": 0,
+        "score": null,
+        "status": "NOT_APPLICABLE"
+      },
+      {
+        "task": "cq4oe_0_0_1--cq2term",
+        "system": "NoValidationFeedback",
+        "source_samples": 6,
+        "eligible_samples": 6,
+        "not_applicable_samples": 0,
+        "replicates": 3,
+        "call_cap": 18,
+        "reserved_token_cap": 589824,
+        "score": null,
+        "status": "NOT_RUN"
+      },
+      {
+        "task": "cq4oe_0_0_1--cq2term",
+        "system": "DirectRetrievalContext",
+        "source_samples": 6,
+        "eligible_samples": 0,
+        "not_applicable_samples": 6,
+        "replicates": 3,
+        "call_cap": 0,
+        "reserved_token_cap": 0,
+        "score": null,
+        "status": "NOT_APPLICABLE"
+      },
+      {
+        "task": "cq4oe_0_0_1--cq2onto",
+        "system": "DirectGeneralLLM",
+        "source_samples": 6,
+        "eligible_samples": 6,
+        "not_applicable_samples": 0,
+        "replicates": 3,
+        "call_cap": 18,
+        "reserved_token_cap": 589824,
+        "score": null,
+        "status": "NOT_RUN"
+      },
+      {
+        "task": "cq4oe_0_0_1--cq2onto",
+        "system": "DirectBudgetControl",
+        "source_samples": 6,
+        "eligible_samples": 6,
+        "not_applicable_samples": 0,
+        "replicates": 3,
+        "call_cap": 36,
+        "reserved_token_cap": 1179648,
+        "score": null,
+        "status": "NOT_RUN"
+      },
+      {
+        "task": "cq4oe_0_0_1--cq2onto",
+        "system": "TwoAgentKernelV1",
+        "source_samples": 6,
+        "eligible_samples": 6,
+        "not_applicable_samples": 0,
+        "replicates": 3,
+        "call_cap": 36,
+        "reserved_token_cap": 1179648,
+        "score": null,
+        "status": "NOT_RUN"
+      },
+      {
+        "task": "cq4oe_0_0_1--cq2onto",
+        "system": "NoRetrieval",
+        "source_samples": 6,
+        "eligible_samples": 0,
+        "not_applicable_samples": 6,
+        "replicates": 3,
+        "call_cap": 0,
+        "reserved_token_cap": 0,
+        "score": null,
+        "status": "NOT_APPLICABLE"
+      },
+      {
+        "task": "cq4oe_0_0_1--cq2onto",
+        "system": "NoConstrainedExtraction",
+        "source_samples": 6,
+        "eligible_samples": 0,
+        "not_applicable_samples": 6,
+        "replicates": 3,
+        "call_cap": 0,
+        "reserved_token_cap": 0,
+        "score": null,
+        "status": "NOT_APPLICABLE"
+      },
+      {
+        "task": "cq4oe_0_0_1--cq2onto",
+        "system": "NoValidationFeedback",
+        "source_samples": 6,
+        "eligible_samples": 6,
+        "not_applicable_samples": 0,
+        "replicates": 3,
+        "call_cap": 18,
+        "reserved_token_cap": 589824,
+        "score": null,
+        "status": "NOT_RUN"
+      },
+      {
+        "task": "cq4oe_0_0_1--cq2onto",
+        "system": "DirectRetrievalContext",
+        "source_samples": 6,
+        "eligible_samples": 0,
+        "not_applicable_samples": 6,
+        "replicates": 3,
+        "call_cap": 0,
+        "reserved_token_cap": 0,
+        "score": null,
+        "status": "NOT_APPLICABLE"
+      }
+    ],
+    "blockers": [
+      "TOTAL_BUDGET_NOT_AUTHORIZED",
+      "GATEWAY_POST_PARAMETERS_NOT_VERIFIED",
+      "OS_GENERATION_ISOLATION_NOT_READY",
+      "HISTORICAL_HOLDOUT_CONTACT_AUDIT_PENDING",
+      "CQ4OE_COMPLETE_NATIVE_SCORER_PENDING"
+    ],
+    "proposal_not_authorization": {
+      "core_max_calls": 168213,
+      "core_max_reserved_tokens": 5512003584,
+      "all_max_calls": 325311,
+      "all_max_reserved_tokens": 10659790848,
+      "user_approval": null
+    },
+    "excluded_but_not_forgotten": {
+      "OSKGC": "BLOCKED_DATA_LICENSE_CONFLICT_FULL_SAMPLE_COUNT_UNKNOWN",
+      "Ontogenia": "BLOCKED_REQUIRED_METHOD_ASSETS_AND_TASK_ADAPTATION",
+      "MemorylessCQbyCQ": "PAPER_TASK_ADAPTATION_NOT_FROZEN",
+      "semantic_matching": "BLOCKED_SCORING_MODEL_CODE_AND_WEIGHT_LOCK"
+    }
+  },
+  "verification": {
+    "status": "ENGINEERING_CHECKS_ONLY",
+    "source_unchanged": true,
+    "commands": [
+      {
+        "command": [
+          "C:\\Users\\Yangjunjie Lin\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+          "-m",
+          "ruff",
+          "check",
+          "."
+        ],
+        "exit_code": 0,
+        "seconds": 0.4228801999997813,
+        "log": "command-0.log",
+        "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+      },
+      {
+        "command": [
+          "C:\\Users\\Yangjunjie Lin\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+          "tools/check_types.py"
+        ],
+        "exit_code": 0,
+        "seconds": 18.408031300001312,
+        "log": "command-1.log",
+        "sha256": "6d88a1b220adb7a3d62092b6e38431f0b3fe8babe9864fab90e5849766260332"
+      },
+      {
+        "command": [
+          "C:\\Users\\Yangjunjie Lin\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+          "tools/evaluate_research.py",
+          "--suite",
+          "ontology-io-engineering"
+        ],
+        "exit_code": 0,
+        "seconds": 341.10084830000415,
+        "log": "command-2.log",
+        "sha256": "fd1769dd938efbf1174b5ddf6e5722d2d0ec692fbb761e4ea735b49ae6577977"
+      },
+      {
+        "command": [
+          "C:\\Users\\Yangjunjie Lin\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+          "-m",
+          "pytest",
+          "tests/upgrade/test_ontology_io_extended.py",
+          "--tb=short",
+          "--junitxml=D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime_reports\\formal-call-final-verification\\extended.xml"
+        ],
+        "exit_code": 0,
+        "seconds": 19.37511269998504,
+        "log": "command-3.log",
+        "sha256": "17ed00179df21b8113dbf2303e0d99587528f754bd7804b868591fc8f17e223d"
+      }
+    ],
+    "runtime": {
+      "python": "3.12.6",
+      "os": "Windows",
+      "packages": {
+        "rdflib": "7.6.0",
+        "jsonschema": "4.23.0",
+        "pyshacl": "0.28.1",
+        "networkx": "3.6.1",
+        "httpx": "0.27.2",
+        "pydantic": "2.12.4",
+        "rapidfuzz": "3.14.3",
+        "numpy": "2.4.6",
+        "scipy": "1.15.2"
+      }
+    },
+    "research_score": null,
+    "experiment_complete": false
+  },
+  "module_tests": {
+    "tests": 20,
+    "failures": 0,
+    "source": "runtime_reports/formal-call-final-module-tests.xml"
+  },
+  "engineering_suite": {
+    "tests": 186,
+    "warnings": 13,
+    "source": "runtime_reports/research-80b4ae6127904ef0aa2386fa622716b8/ontology-io-engineering.xml"
+  },
+  "live_inference_calls_this_turn": 0
+}

@@ -1,0 +1,157 @@
+{
+  "audit_kind": "ATTACHMENT_STATIC_RECHECK",
+  "repository_tests_run": false,
+  "live_model_calls": 0,
+  "manifest_checks": [
+    {
+      "manifest": "upstream/manifest.json",
+      "file_count": 13,
+      "issues": []
+    },
+    {
+      "manifest": "downstream/manifest.json",
+      "file_count": 24,
+      "issues": []
+    },
+    {
+      "manifest": "downstream/dependencies/manifest.json",
+      "file_count": 13,
+      "issues": []
+    }
+  ],
+  "syntax_errors": [],
+  "rdf_files": [
+    {
+      "path": "downstream/shapes.ttl",
+      "triples": 33
+    },
+    {
+      "path": "downstream/instances.ttl",
+      "triples": 7
+    },
+    {
+      "path": "downstream/ontology.ttl",
+      "triples": 26
+    },
+    {
+      "path": "upstream/baseline.ttl",
+      "triples": 26
+    },
+    {
+      "path": "upstream/assets/baseline_shapes.ttl",
+      "triples": 33
+    },
+    {
+      "path": "downstream/dependencies/baseline.ttl",
+      "triples": 26
+    },
+    {
+      "path": "downstream/dependencies/assets/baseline_shapes.ttl",
+      "triples": 33
+    }
+  ],
+  "cq_actual_rows": [
+    [
+      "https://example.org/ontology/D-01"
+    ]
+  ],
+  "cq_expected_file": {
+    "schema_version": "2.0.0",
+    "test_id": "TEST-CQ-01",
+    "goal_id": "CQ-01",
+    "statement": "验证员工所属部门，并通过事实登记返回表格与文本两类原始依据。",
+    "query_file": "queries/cq_01.rq",
+    "query_sha256": "7eebd40714614b6ac0ba4a0452dd2f1c8b23e2cf8e3153dd8ce0434929078309",
+    "query_asset_id": null,
+    "suggested_query_asset_id": "meeting-hr-department",
+    "registration_status": "NOT_REGISTERED",
+    "input_graphs": [
+      {
+        "path": "instances.ttl",
+        "sha256": "4f1caa48ea6e9e3462454630e0a54079fe9561c1632735b97b5e2a1b400ef5be"
+      }
+    ],
+    "query_mode": "ASSERTED_ONLY",
+    "expected": {
+      "schema_version": "1.0.0",
+      "query_type": "SELECT",
+      "comparison": "SET",
+      "variables": [
+        "department"
+      ],
+      "rows": [
+        {
+          "department": {
+            "kind": "IRI",
+            "value": "https://example.org/ontology/D-01"
+          }
+        }
+      ],
+      "boolean": null
+    },
+    "baseline_file": "dependencies/acceptance_private/expected_answers.json",
+    "baseline_sha256": "3864ecc3d59eb7e875a77137cc92af15502fc964c68a6a3e91a0cb69dd489687",
+    "baseline_case_id": "EMPLOYEE-DEPARTMENT-01",
+    "trace_assertion": {
+      "provenance_file": "provenance.jsonl",
+      "evidence_index": "dependencies/source_locator.json",
+      "expected": {
+        "subject": "https://example.org/ontology/E-001",
+        "predicate": "https://example.org/ontology/belongsToDepartment",
+        "minimum_distinct_sources": 2,
+        "required_evidence_kinds": [
+          "record_field",
+          "char_range"
+        ],
+        "resolve_source_bytes": true
+      }
+    },
+    "result_location": "validation.json",
+    "note": "本文件是会议测试封装；只有 expected 子对象对齐项目 ExactAnswer。事实查询与来源回查分开执行，标准答案不进入生成/修复环境。"
+  },
+  "pyshacl_available": false,
+  "input_files": [
+    {
+      "file": "上游数据对接说明（暂定）.md",
+      "sha256": "a05062507098c4abe19f3106f715a78ad4a1604eb1ef9bd4f281482e3f7fb796",
+      "size": 14485
+    },
+    {
+      "file": "本体建模_上下游交接文件包.zip",
+      "sha256": "0535fdfaa29d4bcb4948a43cf955d93e396f17c558eed653054facbc957f27c4",
+      "size": 134636
+    }
+  ],
+  "meeting_status": {
+    "validation_status": "PARTIAL_VALIDATION",
+    "review_status": "PENDING_REVIEW",
+    "release_status": "NOT_RELEASED"
+  },
+  "cq_comparison": {
+    "status": "PASS",
+    "comparison": "SET",
+    "term_types_checked": true,
+    "variables": [
+      "department"
+    ],
+    "actual_rows": [
+      [
+        {
+          "kind": "IRI",
+          "value": "https://example.org/ontology/D-01"
+        }
+      ]
+    ],
+    "scope": "Provided synthetic CQ only. Not full source/provenance closure or production semantic acceptance."
+  },
+  "not_run": [
+    "REPOSITORY_UNIT_TESTS",
+    "REPOSITORY_END_TO_END",
+    "LIVE_MODELS",
+    "PYSHACL",
+    "HERMIT",
+    "HUMAN_APPROVAL",
+    "EVOLUTION_COLLECTOR_INTEGRATION",
+    "REMOTE_WRITE"
+  ]
+}

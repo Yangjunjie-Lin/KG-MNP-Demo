@@ -1,0 +1,200 @@
+{
+  "date": "2026-09-16",
+  "status": "LOCAL_IMPLEMENTATION_DELIVERED_WITH_EXPLICIT_LIMITATIONS",
+  "commit": "194e091d13cabba5833ff1d531f814858ea968ae",
+  "source_fingerprint_sha256": "90aa8dad6c99fe2f12a02f12da77addc3b6ec8c66c38b78cdd0cfc19f51a6228",
+  "runtime": {
+    "python": "3.12.6",
+    "os": "Windows",
+    "packages": {
+      "rdflib": "7.6.0",
+      "jsonschema": "4.23.0",
+      "pyshacl": "0.28.1",
+      "networkx": "3.6.1",
+      "httpx": "0.27.2",
+      "pydantic": "2.12.4",
+      "rapidfuzz": "3.14.3",
+      "numpy": "2.4.6",
+      "scipy": "1.15.2"
+    }
+  },
+  "full_backend_runs": [
+    {
+      "root": "runtime_reports/zhigou-verification-a0ba69b7e2be4cd0a5a873ef59a2814a",
+      "source_digest": "d478542c25f7166a6214d469dc228475deef7543437bf830fd74d432eed85482",
+      "source_unchanged": false,
+      "collection": {
+        "required": 2156,
+        "executed": 2156,
+        "missing": [],
+        "extra": [],
+        "complete": true
+      },
+      "counts": [
+        {
+          "outcome": "FAIL",
+          "count": 3
+        },
+        {
+          "outcome": "PASS",
+          "count": 2144
+        },
+        {
+          "outcome": "SKIP",
+          "count": 9
+        }
+      ],
+      "failures": [
+        {
+          "class": "tests.scripts.test_repo_hygiene",
+          "test": "test_current_repository_passes"
+        },
+        {
+          "class": "tests.test_case_evidence",
+          "test": "test_no_prefix_selection_in_source"
+        },
+        {
+          "class": "tests.refactor.test_repository_hygiene_refactor",
+          "test": "test_refactor_hygiene_gate_passes_for_tracked_tree"
+        }
+      ],
+      "model_probe": "NOT_RUN_NO_PAID_CALL_AUTHORIZATION",
+      "checks": [
+        {
+          "check": "ruff",
+          "exit_code": 0
+        },
+        {
+          "check": "types",
+          "exit_code": 0
+        },
+        {
+          "check": "collection",
+          "exit_code": 0
+        },
+        {
+          "check": "backend",
+          "exit_code": 1
+        }
+      ]
+    },
+    {
+      "root": "runtime_reports/zhigou-verification-c5fc74dd0ce241c2bd3b646479814f8f",
+      "source_digest": "72055905c0b740f0cb0507368ef766619c5e0cd0ff6b92e57b8f39af05978cb6",
+      "source_unchanged": false,
+      "collection": {
+        "required": 2158,
+        "executed": 2158,
+        "missing": [],
+        "extra": [],
+        "complete": true
+      },
+      "counts": [
+        {
+          "outcome": "FAIL",
+          "count": 2
+        },
+        {
+          "outcome": "PASS",
+          "count": 2147
+        },
+        {
+          "outcome": "SKIP",
+          "count": 9
+        }
+      ],
+      "failures": [
+        {
+          "class": "tests.scripts.test_repo_hygiene",
+          "test": "test_current_repository_passes"
+        },
+        {
+          "class": "tests.refactor.test_repository_hygiene_refactor",
+          "test": "test_refactor_hygiene_gate_passes_for_tracked_tree"
+        }
+      ],
+      "model_probe": "NOT_RUN_NO_PAID_CALL_AUTHORIZATION",
+      "checks": [
+        {
+          "check": "ruff",
+          "exit_code": 0
+        },
+        {
+          "check": "types",
+          "exit_code": 0
+        },
+        {
+          "check": "collection",
+          "exit_code": 0
+        },
+        {
+          "check": "backend",
+          "exit_code": 1
+        }
+      ]
+    }
+  ],
+  "final_increment_checks": {
+    "backend_focused": {
+      "passed": 59,
+      "failed": 0,
+      "report": "runtime_reports/handoff-20260916/final-focused.xml"
+    },
+    "frontend": {
+      "passed": 46,
+      "failed": 0,
+      "lint": "PASS",
+      "typecheck": "PASS",
+      "build": "PASS"
+    },
+    "browser": {
+      "passed": 1,
+      "report": "runtime_logs/p09/browser-runs/managed-3a78a9b022844bbdb4d42dcbb125fcdf/managed-receipt.json"
+    },
+    "ruff": "PASS",
+    "python_types": "PASS",
+    "git_diff_check": "PASS"
+  },
+  "regression_scope_note": "Full runs completed all collected nodes. Source changed during these long runs (final recorded-mode label and UI task-state changes); therefore this is not a same-final-source full-regression certificate. Final increments were checked by backend focused tests, frontend checks and actual API/Worker browser download.",
+  "original_v3_schema_sha256": "21519fcac6c85fe1e2b3d2c3bd080e0576a135c2882d9d01326b8dc0cbf8fd80",
+  "source_attachments": {
+    "evolution_sha256": "a05062507098c4abe19f3106f715a78ad4a1604eb1ef9bd4f281482e3f7fb796",
+    "meeting_zip_sha256": "0535fdfaa29d4bcb4948a43cf955d93e396f17c558eed653054facbc957f27c4"
+  },
+  "delivered_artifacts": [
+    "runtime_reports/handoff-20260916/final-artifacts-v2/hr_case/ontology-handoff.zip",
+    "runtime_reports/handoff-20260916/final-artifacts-v2/forestry_case/ontology-handoff.zip",
+    "runtime_reports/handoff-20260916/cli-equality.zip",
+    "runtime_reports/handoff-20260916/synthetic-v2-contract-fixture"
+  ],
+  "protocol_fixture_nature": "MANUALLY_SYNTHETIC_EVENTS_NOT_PRODUCTION_NOT_FOR_COLLECTION_OR_TRAINING",
+  "isolation": {
+    "status": "PASS",
+    "scope": "ACTUAL_RESEARCH_GENERATION_AND_REPAIR_PROCESS_NOT_ENTIRE_PRODUCTION_WORKER",
+    "recorded_calls": 4,
+    "repair_cycles": 1,
+    "denied_paths": 11,
+    "report": "runtime_reports/handoff-20260916/isolation-run-1/receipt.json"
+  },
+  "known_baseline_failures": "Two hygiene tests fail on 5 unchanged historical evidence files containing absolute paths; evidence/preexisting-hygiene-failures.json records matching baseline/worktree Git blobs.",
+  "not_completed": [
+    "External agreement for pre-model/program-only turn in strict v2",
+    "External receiver collection and ontology evaluator integration",
+    "Complete inherited verdict enum and ontology-specific violation/answer schema",
+    "Whole production Worker OS sandbox (trusted control plane remains)",
+    "End-to-end LIVE research cross-process broker trace consolidation",
+    "Same-final-source full repository rerun after the final small increments"
+  ],
+  "live_inference_calls": 0,
+  "paid_model_calls": 0,
+  "real_human_evaluation": "NOT_PERFORMED",
+  "receiver_status": "NOT_CONTACTED",
+  "production_release": "NOT_PERFORMED",
+  "git_commit_push_merge": "NOT_PERFORMED",
+  "local_environment": {
+    "python": "3.12.6",
+    "pytest": "8.4.2",
+    "fastapi": "0.115.0",
+    "note": "Reused existing local dependencies; did not reinstall the declared release lock environment."
+  }
+}

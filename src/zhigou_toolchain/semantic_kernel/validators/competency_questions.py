@@ -11,6 +11,7 @@ from typing import Any
 from rdflib import Dataset, Graph, URIRef
 
 from zhigou_toolchain.contracts.canonical import semantic_hash, stable_urn
+from zhigou_toolchain.modeling.five_stage.agents import observed
 
 from ..contracts import finalize_artifact, verify_artifact
 from ..rdf.canonical import canonical_nquads, canonical_ntriples
@@ -183,6 +184,12 @@ def _assertions(operation: str, result: dict[str, Any], assertions: list[dict[st
     return outputs, count, digest
 
 
+@observed(5, "query.check", inputs=lambda plan, **k: {
+    "test_plan_id": plan["test_plan_id"], "test_plan_sha256": semantic_hash(plan),
+    "dataset_sha256": hashlib.sha256(k["dataset_nquads"]).hexdigest(),
+    "graph_iris": k.get("graph_iris"), "answer_content": "RESTRICTED_ACCEPTANCE_CHANNEL"},
+    output=lambda result: {"report_id": result["report_id"], "report_sha256": semantic_hash(result),
+        "required_passed": result["required_passed"], "answer_content": "RESTRICTED_ACCEPTANCE_CHANNEL"})
 def execute_cq_test_plan(
     plan: dict[str, Any],
     *,

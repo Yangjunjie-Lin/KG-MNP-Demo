@@ -71,6 +71,15 @@ class TokenStore:
             raise ServiceBoundaryError("AUTH_TOKEN_EXPIRED", "credential has expired", status_code=401)
         return PrincipalReference(record["principal_id"], record["principal_type"], frozenset(record.get("permissions", [])), frozenset(record.get("project_ids", [])), token_id)
 
+    def audit_identity(self, token_id: str) -> dict[str, str]:
+        """Historical attribution only, including revoked tokens; NEVER a grant.
+
+        Callers must authorize the current reader separately. No token digest,
+        credential, permission, or resolvable PrincipalReference is returned.
+        """
+        record = self._read().get("tokens", {}).get(token_id, {})
+        return {k: record[k] for k in ("principal_id", "principal_type") if k in record}
+
     def authenticate(self, token: str) -> PrincipalReference:
         if not token or not token.startswith("kgmnp_"):
             raise ServiceBoundaryError("AUTH_REQUIRED", "Bearer credential required", status_code=401)

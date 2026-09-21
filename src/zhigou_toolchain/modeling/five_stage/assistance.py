@@ -72,6 +72,41 @@ def _draft(row, index, items, *, prefix="model"):
         score_basis="LIVE model proposal, uncalibrated and subject to independent validation and human review")
 
 
+def retrieve_cards(terms, cards, *, mode, model_locks=None):
+    """Shared retrieval kernel; callers supply already-authorized local cards."""
+    model_locks = model_locks or {}
+    retrieval = []
+    if mode == "BGE_FAISS":
+        for term in terms:
+            if not cards:
+                break
+            recall = invoke(2, "structure.retrieve", lambda term=term: vector_recall(term, cards, model_locks["embedding"]),
+                inputs={"query": term, "cards": cards}, model={"model_id": model_locks["embedding"].model_id, "revision": model_locks["embedding"].revision})
+            ranking = invoke(2, "structure.rerank", lambda term=term, recall=recall: rerank(term, recall["candidates"], model_locks["reranker"], expected_kind="CLASS"),
+                inputs={"query": term, "recall": recall}, model={"model_id": model_locks["reranker"].model_id, "revision": model_locks["reranker"].revision})
+            retrieval.append({"term": term, "recall": recall, "ranking": ranking, "method": "BGE_FAISS_RERANKER"})
+    elif mode == "LLM_SUBSTITUTE":
+        for term in terms:
+            exact = invoke(2, "structure.retrieve", lambda term=term: merge_recall(term, cards, []),
+                inputs={"query": term, "cards": cards, "algorithm": "EXACT_ALIAS_NO_VECTOR"})
+            retrieval.append({"term": term, "exact": exact, "method": "EXACT_PLUS_LLM_RANKING_SUBSTITUTE"})
+    else:
+        raise ToolBlocked("UNKNOWN_RETRIEVAL_MODE")
+    return retrieval
+
+
+def select_reuse(ask, *, terms, cards, retrieval, business_rules):
+    """Same first-round selection for production and research task adapters."""
+    allowed = {c["iri"] for c in cards}
+    return ask("Round 1: rank supplied ontology cards for each object family; choose REUSE, GAP or UNRESOLVED. "
+        "Inspect the complete supplied, verified locked baseline. This local baseline is the reuse source; no external search proof is required. "
+        "A retrieval miss is not proof of absence. Give brief evidence-based reasons; "
+        "never approve a new term. No vector scores are available in LLM substitute mode.",
+        {"object_families": terms, "cards": cards, "retrieval": retrieval, "business_rules": business_rules},
+        obj({"decisions": array(obj({"term": STRING, "decision": {"enum": ["REUSE", "GAP", "UNRESOLVED"]},
+            "existing_iri": {"enum": [None, *sorted(allowed)]}, "reason": STRING})), "unresolved": array(STRING)}))
+
+
 def generate(client, *, context, initial_drafts, configuration, model_locks=None, record_builder=None):
     """Only server-verified modeling context enters generation, never oracles."""
     items = {i["item_id"]: i for i in context["kg_ir_items"]}
@@ -85,33 +120,16 @@ def generate(client, *, context, initial_drafts, configuration, model_locks=None
     cards = [{**e, "label": next((l["value"] for l in e.get("labels", [])), e["iri"]),
               "definition": e.get("definition") or "", "aliases": []} for e in baseline]
     allowed = {c["iri"] for c in cards}
-    def ask(stage, task, data, schema, iris=None):
+    def ask(stage, task, data, schema, iris=None, method_id=None):
         result = invoke(stage, "structure.design" if stage == 2 else "text.extract",
             lambda: client.propose(task, data, schema, allowed_iris=allowed if iris is None else iris, evidence_ids=evidence),
-            inputs={"task": task, "data": data, "schema": schema})
+            inputs={"task": task, "data": data, "schema": schema}, method_id=method_id)
         calls.append(result)
         return result["proposal"]
     terms = context["object_families"]
-    retrieval = []
-    if configuration["retrieval"] == "BGE_FAISS":
-        for term in terms:
-            if not cards:
-                break
-            recall = invoke(2, "structure.retrieve", lambda term=term: vector_recall(term, cards, model_locks["embedding"]),
-                inputs={"query": term, "cards": cards}, model={"model_id": model_locks["embedding"].model_id, "revision": model_locks["embedding"].revision})
-            ranking = invoke(2, "structure.rerank", lambda term=term, recall=recall: rerank(term, recall["candidates"], model_locks["reranker"], expected_kind="CLASS"),
-                inputs={"query": term, "recall": recall}, model={"model_id": model_locks["reranker"].model_id, "revision": model_locks["reranker"].revision})
-            retrieval.append({"term": term, "recall": recall, "ranking": ranking, "method": "BGE_FAISS_RERANKER"})
-    else:
-        for term in terms:
-            retrieval.append({"term": term, "exact": merge_recall(term, cards, []), "method": "EXACT_PLUS_LLM_RANKING_SUBSTITUTE"})
-    reuse = ask(2, "Round 1: rank supplied ontology cards for each object family; choose REUSE, GAP or UNRESOLVED. "
-        "Inspect the complete supplied, verified locked baseline. This local baseline is the reuse source; no external search proof is required. "
-        "A retrieval miss is not proof of absence. Give brief evidence-based reasons; "
-        "never approve a new term. No vector scores are available in LLM substitute mode.",
-        {"object_families": terms, "cards": cards, "retrieval": retrieval, "business_rules": context["business_rules"]},
-        obj({"decisions": array(obj({"term": STRING, "decision": {"enum": ["REUSE", "GAP", "UNRESOLVED"]},
-            "existing_iri": {"enum": [None, *sorted(allowed)]}, "reason": STRING})), "unresolved": array(STRING)}))
+    retrieval = retrieve_cards(terms, cards, mode=configuration["retrieval"], model_locks=model_locks)
+    reuse = select_reuse(lambda task, data, schema: ask(2, task, data, schema, method_id="2.4"), terms=terms, cards=cards,
+        retrieval=retrieval, business_rules=context["business_rules"])
     # Empty gaps from a model cannot authorize namespace growth. Only explicit
     # user configuration from the request supplies this closed list.
     approved = set(configuration.get("approved_new_iris", []))
@@ -173,7 +191,9 @@ def generate(client, *, context, initial_drafts, configuration, model_locks=None
         chunk_args = {"text_id": item["item_id"], "text_version": semantic_hash(item)}
         chunks = invoke(3, "text.chunk", lambda text=text, chunk_args=chunk_args: text_chunks(text, lock=model_locks["tokenizer"], **chunk_args)
             if configuration["chunking"] == "LOCAL_TOKENIZER" else character_chunks(text, **chunk_args),
-            inputs={"text": text, **chunk_args, "method": configuration["chunking"]})
+            inputs={"text": text, **chunk_args, "method": configuration["chunking"]},
+            model={"model_id": model_locks["tokenizer"].model_id, "revision": model_locks["tokenizer"].revision}
+                if configuration["chunking"] == "LOCAL_TOKENIZER" else None)
         chunks_report.append(chunks)
         if sum(len(c["chunks"]) for c in chunks_report) > 32:
             raise ToolBlocked("MODEL_CHUNK_BUDGET_EXCEEDED")
@@ -247,7 +267,8 @@ def repair(client, *, original_drafts, context, issues, configuration):
         if not text:
             raise ToolBlocked("REPAIR_TEXT_SOURCE_REQUIRED")
         chunk = {"text_id": item["item_id"], "text_version": semantic_hash(item), "start": 0, "end": len(text), "text": text, "text_hash": semantic_hash(text)}
-        binding = bind_quote(text, chunk, patch["quote"], expected_start=patch["quote_start"])
+        binding = invoke(3, "evidence.bind", lambda text=text, chunk=chunk, patch=patch: bind_quote(text, chunk, patch["quote"], expected_start=patch["quote_start"]),
+            inputs={"text_id": chunk["text_id"], "text_hash": chunk["text_hash"], "quote": patch["quote"], "start": patch["quote_start"]})
         before = deepcopy(draft)
         if patch["field"] == "literal":
             if draft["body"]["candidate_type"] != "DATA_PROPERTY_ASSERTION" or not patch["value"] or patch["value"] not in patch["quote"]:

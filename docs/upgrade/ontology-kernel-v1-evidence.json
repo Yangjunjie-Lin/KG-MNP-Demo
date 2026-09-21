@@ -1,0 +1,146 @@
+{
+  "purpose": "ENGINEERING_IMPLEMENTATION_NOT_RESEARCH_IMPROVEMENT",
+  "receipts": [
+    {
+      "path": "runtime_reports/kernel-v1-final-primitive/replay-receipt.json",
+      "receipt": {
+        "status": "GENERATED",
+        "execution_mode": "RECORDED_ENGINEERING_ONLY",
+        "live_inference_calls": 0,
+        "logical_provider_calls": 4,
+        "recorded_replies_consumed": 4,
+        "unused_recorded_replies": 0,
+        "research_score": null,
+        "recording_sha256": "70a7a2cbb0aeae37e046e16e078ca7d1fc59a18d8213c3c60fee247f927ed0e0",
+        "result_sha256": "7c9ef8c143d248ed2cb9f921d5b6e1af1a459015e40d889a4cd97d2ca7d0bb0b",
+        "input_sha256": "db758890f0feaf94e7ea8c4250e15c0eddbc8b010195e1362959dbabaa463a2e",
+        "protocol_sha256": "09a6bdeb74ead019b9a1b3d419ff0bb4ac8379ed426653cc706cea19229a711a",
+        "source_commit": "adc2a40512f8b029b6c21420b905628c32952d00",
+        "source_fingerprint_sha256": "47238715fc3aa7b4f74091cba02e28ec05d3ce92cc00ab9dfbdbd29f56c142e7",
+        "source_unchanged": true,
+        "output": "runtime_reports\\kernel-v1-final-primitive",
+        "approval": "NOT_GRANTED",
+        "release_status": "NOT_RELEASED"
+      }
+    },
+    {
+      "path": "runtime_reports/kernel-v1-final-cqs/replay-receipt.json",
+      "receipt": {
+        "status": "GENERATED",
+        "execution_mode": "RECORDED_ENGINEERING_ONLY",
+        "live_inference_calls": 0,
+        "logical_provider_calls": 2,
+        "recorded_replies_consumed": 2,
+        "unused_recorded_replies": 0,
+        "research_score": null,
+        "recording_sha256": "d2968711b2fa051414dc69885f073bc6f169820045caaad94720a4235c8a8403",
+        "result_sha256": "54c07149681762abbbeb20dfe1bec6b250fc1bac664ccc32cf29abbd6018b3e7",
+        "input_sha256": "3f80707aac839cc90ab67c239ded35986543d800ee9d407aae9d0a61981bebb6",
+        "protocol_sha256": "09a6bdeb74ead019b9a1b3d419ff0bb4ac8379ed426653cc706cea19229a711a",
+        "source_commit": "adc2a40512f8b029b6c21420b905628c32952d00",
+        "source_fingerprint_sha256": "47238715fc3aa7b4f74091cba02e28ec05d3ce92cc00ab9dfbdbd29f56c142e7",
+        "source_unchanged": true,
+        "output": "runtime_reports\\kernel-v1-final-cqs",
+        "approval": "NOT_GRANTED",
+        "release_status": "NOT_RELEASED"
+      }
+    },
+    {
+      "path": "runtime_reports/kernel-v1-final-typed/replay-receipt.json",
+      "receipt": {
+        "status": "GENERATED",
+        "execution_mode": "RECORDED_ENGINEERING_ONLY",
+        "live_inference_calls": 0,
+        "logical_provider_calls": 3,
+        "recorded_replies_consumed": 3,
+        "unused_recorded_replies": 0,
+        "research_score": null,
+        "recording_sha256": "23ee85a7321d47b2fc9ce53bd17b868db8d2fabda3966d4a5b2b4765478640e7",
+        "result_sha256": "ee09b100ab50b0011f20e6fa526b7da501f75a2719abfb53a76213a68fec27db",
+        "input_sha256": "ed2e5d3d4f8b8919adc9c8875a1ce9c5d8af104bc90dcb2a62453f85c2a07ed6",
+        "protocol_sha256": "09a6bdeb74ead019b9a1b3d419ff0bb4ac8379ed426653cc706cea19229a711a",
+        "source_commit": "adc2a40512f8b029b6c21420b905628c32952d00",
+        "source_fingerprint_sha256": "47238715fc3aa7b4f74091cba02e28ec05d3ce92cc00ab9dfbdbd29f56c142e7",
+        "source_unchanged": true,
+        "output": "runtime_reports\\kernel-v1-final-typed",
+        "approval": "NOT_GRANTED",
+        "release_status": "NOT_RELEASED"
+      }
+    },
+    {
+      "path": "runtime_reports/kernel-v1-final-verification/verification.json",
+      "receipt": {
+        "status": "ENGINEERING_CHECKS_ONLY",
+        "source_unchanged": true,
+        "commands": [
+          {
+            "command": [
+              "C:\\Users\\Yangjunjie Lin\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+              "-m",
+              "ruff",
+              "check",
+              "."
+            ],
+            "exit_code": 0,
+            "seconds": 0.39241800000309013,
+            "log": "command-0.log",
+            "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+          },
+          {
+            "command": [
+              "C:\\Users\\Yangjunjie Lin\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+              "tools/check_types.py"
+            ],
+            "exit_code": 0,
+            "seconds": 13.907702500000596,
+            "log": "command-1.log",
+            "sha256": "6d88a1b220adb7a3d62092b6e38431f0b3fe8babe9864fab90e5849766260332"
+          },
+          {
+            "command": [
+              "C:\\Users\\Yangjunjie Lin\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+              "tools/evaluate_research.py",
+              "--suite",
+              "ontology-io-engineering"
+            ],
+            "exit_code": 0,
+            "seconds": 224.3234242000035,
+            "log": "command-2.log",
+            "sha256": "d2a897a62a2f2960a5183181a555b3885129a00d6393856b9ce12f59312d6e63"
+          },
+          {
+            "command": [
+              "C:\\Users\\Yangjunjie Lin\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+              "-m",
+              "pytest",
+              "tests/upgrade/test_ontology_io_extended.py",
+              "--tb=short",
+              "--junitxml=D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime_reports\\kernel-v1-final-verification\\extended.xml"
+            ],
+            "exit_code": 0,
+            "seconds": 14.643858099996578,
+            "log": "command-3.log",
+            "sha256": "22b286b52f8ddc5a3cec25fcaf92e4aba3147c0abe07ea7808332c82aede27e2"
+          }
+        ],
+        "runtime": {
+          "python": "3.12.6",
+          "os": "Windows",
+          "packages": {
+            "rdflib": "7.6.0",
+            "jsonschema": "4.23.0",
+            "pyshacl": "0.28.1",
+            "networkx": "3.6.1",
+            "httpx": "0.27.2",
+            "pydantic": "2.12.4",
+            "rapidfuzz": "3.14.3",
+            "numpy": "2.4.6",
+            "scipy": "1.15.2"
+          }
+        },
+        "research_score": null,
+        "experiment_complete": false
+      }
+    }
+  ]
+}

@@ -1,0 +1,16 @@
+benchmark,task,scope,system,model,profile,sample_count,group_count,metric,matching,score,paired_delta,ci95,completion,calls,tokens,time,planned_runs,successful,failed,not_run,status
+llms4ol_2026,flagship,FULL_LOCAL_HOLDOUT,DirectGeneralLLM,gpt-6-astra,DIRECT_TASK_ADAPTER,3471,3471,graph_similarity,NATIVE_PLANNED,null,null,null,0,0,null,null,10413,0,0,10413,BLOCKED
+llms4ol_2026,flagship,FULL_LOCAL_HOLDOUT,DirectBudgetControl,gpt-6-astra,DIRECT_TASK_ADAPTER,3471,3471,graph_similarity,NATIVE_PLANNED,null,null,null,0,0,null,null,10413,0,0,10413,BLOCKED
+llms4ol_2026,flagship,FULL_LOCAL_HOLDOUT,OursFull,gpt-6-astra,NOT_IMPLEMENTED_FULL,3471,3471,graph_similarity,NATIVE_PLANNED,null,null,null,0,0,null,null,10413,0,0,10413,BLOCKED
+llms4ol_2026,reuse,FULL_LOCAL_HOLDOUT,DirectGeneralLLM,gpt-6-astra,DIRECT_TASK_ADAPTER,2252,2252,graph_similarity,NATIVE_PLANNED,null,null,null,0,0,null,null,6756,0,0,6756,BLOCKED
+llms4ol_2026,reuse,FULL_LOCAL_HOLDOUT,DirectBudgetControl,gpt-6-astra,DIRECT_TASK_ADAPTER,2252,2252,graph_similarity,NATIVE_PLANNED,null,null,null,0,0,null,null,6756,0,0,6756,BLOCKED
+llms4ol_2026,reuse,FULL_LOCAL_HOLDOUT,OursFull,gpt-6-astra,NOT_IMPLEMENTED_FULL,2252,2252,graph_similarity,NATIVE_PLANNED,null,null,null,0,0,null,null,6756,0,0,6756,BLOCKED
+cq4oe_0_0_1,cq2term,ALL_PUBLIC_ONTOLOGIES_NOT_OFFICIAL_TEST,DirectGeneralLLM,gpt-6-astra,DIRECT_TASK_ADAPTER,6,6,ClassProperty,NATIVE_PLANNED,null,null,null,0,0,null,null,18,0,0,18,BLOCKED
+cq4oe_0_0_1,cq2term,ALL_PUBLIC_ONTOLOGIES_NOT_OFFICIAL_TEST,DirectBudgetControl,gpt-6-astra,DIRECT_TASK_ADAPTER,6,6,ClassProperty,NATIVE_PLANNED,null,null,null,0,0,null,null,18,0,0,18,BLOCKED
+cq4oe_0_0_1,cq2term,ALL_PUBLIC_ONTOLOGIES_NOT_OFFICIAL_TEST,OursFull,gpt-6-astra,NOT_IMPLEMENTED_FULL,6,6,ClassProperty,NATIVE_PLANNED,null,null,null,0,0,null,null,18,0,0,18,BLOCKED
+cq4oe_0_0_1,cq2onto,ALL_PUBLIC_ONTOLOGIES_NOT_OFFICIAL_TEST,DirectGeneralLLM,gpt-6-astra,DIRECT_TASK_ADAPTER,6,6,Axiom,NATIVE_PLANNED,null,null,null,0,0,null,null,18,0,0,18,BLOCKED
+cq4oe_0_0_1,cq2onto,ALL_PUBLIC_ONTOLOGIES_NOT_OFFICIAL_TEST,DirectBudgetControl,gpt-6-astra,DIRECT_TASK_ADAPTER,6,6,Axiom,NATIVE_PLANNED,null,null,null,0,0,null,null,18,0,0,18,BLOCKED
+cq4oe_0_0_1,cq2onto,ALL_PUBLIC_ONTOLOGIES_NOT_OFFICIAL_TEST,OursFull,gpt-6-astra,NOT_IMPLEMENTED_FULL,6,6,Axiom,NATIVE_PLANNED,null,null,null,0,0,null,null,18,0,0,18,BLOCKED
+oskgc,schema_guided_abox,OFFICIAL_TEST_ALL_CATEGORIES_NOT_FETCHED,DirectGeneralLLM,gpt-6-astra,DIRECT_TASK_ADAPTER,null,null,micro_F1,NATIVE_PLANNED,null,null,null,0,0,null,null,null,0,0,null,BLOCKED
+oskgc,schema_guided_abox,OFFICIAL_TEST_ALL_CATEGORIES_NOT_FETCHED,DirectBudgetControl,gpt-6-astra,DIRECT_TASK_ADAPTER,null,null,micro_F1,NATIVE_PLANNED,null,null,null,0,0,null,null,null,0,0,null,BLOCKED
+oskgc,schema_guided_abox,OFFICIAL_TEST_ALL_CATEGORIES_NOT_FETCHED,OursFull,gpt-6-astra,NOT_IMPLEMENTED_FULL,null,null,micro_F1,NATIVE_PLANNED,null,null,null,0,0,null,null,null,0,0,null,BLOCKED

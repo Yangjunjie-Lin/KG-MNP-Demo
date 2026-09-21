@@ -1,0 +1,50 @@
+{
+  "model_id": "recorded-engineering",
+  "declared_revision": "fixture-v1",
+  "input_sha256": "ed2e5d3d4f8b8919adc9c8875a1ce9c5d8af104bc90dcb2a62453f85c2a07ed6",
+  "replies": [
+    {
+      "decisions": [],
+      "unresolved": []
+    },
+    {
+      "classes": [
+        "City",
+        "Country"
+      ],
+      "entities": [
+        "A",
+        "B"
+      ],
+      "relations": [
+        "country"
+      ],
+      "unresolved": []
+    },
+    {
+      "prediction": {
+        "triples": [
+          [
+            "A",
+            "country",
+            "B"
+          ]
+        ],
+        "schemas": [
+          {
+            "sub": "City",
+            "rel": "country",
+            "obj": "Country"
+          }
+        ]
+      },
+      "evidence": [
+        {
+          "triple_index": 0,
+          "quote": "A is in B.",
+          "start": 0
+        }
+      ]
+    }
+  ]
+}

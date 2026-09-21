@@ -1,0 +1,83 @@
+{
+  "schema_version": "1.0.0",
+  "benchmark_id": "llms4ol_2026",
+  "task_id": "flagship",
+  "dataset_version": "315a9a5d883eada26e00fef1356a05802936c584",
+  "split": "NOT_RUN",
+  "evaluation_scope": "LOCAL_HOLDOUT",
+  "input_manifest_sha256": null,
+  "prediction_manifest_sha256": null,
+  "scorer_commit": "315a9a5d883eada26e00fef1356a05802936c584",
+  "scorer_config_sha256": null,
+  "system_id": "OursFull_NOT_IMPLEMENTED",
+  "model_id": "gpt-6-astra",
+  "declared_revision": "configured-alias:gpt-6-astra",
+  "observed_model_ids": [],
+  "run_id": "not-run-20260913-flagship",
+  "source_commit": "adc2a40512f8b029b6c21420b905628c32952d00",
+  "source_fingerprint_sha256": "45688ee99f530c1fa20bb322959e4b1fdc4f7cebcf2392b16ab8310b63267eb5",
+  "metrics": [
+    {
+      "name": "edge_f1",
+      "source": "PLANNED_NATIVE_NOT_EXECUTED",
+      "matching": "NOT_RUN",
+      "value": null,
+      "unit": "fraction",
+      "numerator": null,
+      "denominator": null,
+      "status": "NOT_RUN"
+    },
+    {
+      "name": "neighborhood_similarity",
+      "source": "PLANNED_NATIVE_NOT_EXECUTED",
+      "matching": "NOT_RUN",
+      "value": null,
+      "unit": "fraction",
+      "numerator": null,
+      "denominator": null,
+      "status": "NOT_RUN"
+    },
+    {
+      "name": "taxonomy_similarity",
+      "source": "PLANNED_NATIVE_NOT_EXECUTED",
+      "matching": "NOT_RUN",
+      "value": null,
+      "unit": "fraction",
+      "numerator": null,
+      "denominator": null,
+      "status": "NOT_RUN"
+    },
+    {
+      "name": "graph_similarity",
+      "source": "PLANNED_NATIVE_NOT_EXECUTED",
+      "matching": "NOT_RUN",
+      "value": null,
+      "unit": "fraction",
+      "numerator": null,
+      "denominator": null,
+      "status": "NOT_RUN"
+    }
+  ],
+  "sample_count": 0,
+  "failure_count": 0,
+  "planned_sample_count": 3471,
+  "planned_group_count": 3471,
+  "status": "NOT_RUN",
+  "comparison": null,
+  "resources": [
+    {
+      "model_calls": 0,
+      "total_tokens": null,
+      "cost": null
+    }
+  ],
+  "limitations": [
+    "BLOCKED_BUDGET_UNSET",
+    "BLOCKED_OS_ISOLATION",
+    "BLOCKED_OURS_FULL_NOT_IMPLEMENTED",
+    "BLOCKED_SAMPLING_PROTOCOL_NOT_FINAL",
+    "BLOCKED_CQ4OE_FULL_NATIVE_PROFILE",
+    "BLOCKED_OSKGC_LICENSE",
+    "BLOCKED_HISTORICAL_DEVELOPMENT_OVERLAP_AUDIT"
+  ]
+}

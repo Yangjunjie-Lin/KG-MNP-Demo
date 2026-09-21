@@ -1,5 +1,72 @@
 # 双 Agent、v3 与本体 I/O 评测：当前可复现实行范围
 
+## 续办：失败计费与离线全量状态导出
+
+补齐JSON/Schema拒绝等失败回复的token/耗时保留和超限停机检查；
+既有finalize入口新增`--mode snapshot`，无生成凭证即可核对9份冻结产物，
+导出包含120462个调度位置（含pending/N/A）的完整台账及null分数表。
+现有网关仍不执行输出硬上限，本轮未新增推理，full仍为0个已执行。
+具体修复、测试、准确限制与重跑命令见[续办记录](../research/full-experiment-continuation-2026-09-14.md)。
+
+## 全量授权后的真实启动与暂停
+
+用户已授权按前述总上限启动。现已接通真实WSL/bubblewrap隔离worker、JSON-only模型broker、
+持久全局预算及完整队列，完成9个真实smoke job。
+独立pilot触发网关输出token超限，预算保护自动停止；累计24次推理、85852 reported tokens，
+full仍为0个已运行，不能称“全量正在运行”或“实验完成”。
+具体证据、已修复项及外部路由限制见
+[真实启动记录](../research/full-experiment-activation-2026-09-14.md)。
+
+## 正式调用参数与完整候选包
+
+已按官方API定义、当前网关配置和实际内核路径生成4任务/7系统/3重复的完整候选清单。
+新增`RequestProfile`把token字段、JSON模式、单返回、非流式、store=false及网络超时实际接入transport；
+按任务将调用上界收紧为4/5/2，保留N/A和预算未授权状态。
+详见 [参数、预算与执行前置项](../research/formal-call-parameters-2026-09-14.md)。
+网关POST参数尚待有限探测，不把本地Mock验证当成真实模型调用成功。
+
+## 2026-09-14 benchmark与DeepEval选型
+
+已检索官方任务、公开代码/论文和DeepEval/Ragas/Promptfoo文档；选择LLMs4OL主测、
+CQ4OE结构补充、DeepEval自定义metric包装原生分数，**不以G-Eval裁判总分替代本体准确率**。
+新增可选`ontology-io score --framework deepeval`及无凭证离线适配检查入口。
+完整范围、来源、版本差异、预算及实际执行状态见
+[选型与测试报告](../research/benchmark-selection-2026-09-14.md)。
+公开基准真实模型对照仍未执行；不能把适配检查、历史工程回归或旧Astra烟雾当作新成绩。
+
+## 后续功能实现：TwoAgentKernelV1
+
+新增实际调用共享检索/复用、引文绑定、TBox/ABox编译、pySHACL/HermiT与有界S4回退的新profile，
+并接入行为消融和同检索上下文直接对照。可通过`ontology-io replay`无凭证执行三类工程链。
+实现、命令与实际回执见 [内核功能说明](ontology-kernel-v1.md)。
+旧TwoAgentV3与下方前次评测记录保持原样；新profile不自动取得完整Ours/外部研究实验资格。
+录制重放不是LIVE结果，预算/OS隔离门未放宽。
+
+## 前次记录：2026-09-13 develop 复核与增量评测交付
+
+最新审计基于 `develop@adc2a40512f8b029b6c21420b905628c32952d00` 的实际工作树，
+完整证据见 [本轮报告](../research/ontology-io-2026-09-13/report.md)、
+[来源/指标差异](../research/ontology-io-2026-09-13/benchmark-sources.md)和
+[PowerShell复现](../research/ontology-io-2026-09-13/reproduce.ps1)。下方旧执行说明保留为历史，不追认未运行项。
+
+本次补上官方Reuse terms/types、CQ复合ID、B0/Bbudget的OWL/typed输出、
+LLMs4OL fuzzy原函数、CQ2Term hard-per-method评分、OSKGC原生聚合CLI分支及非可加统计工具。
+新增 `tools/run_ontology_benchmark_matrix.py --protocol ... --phase smoke|pilot|full|score --workspace ... --resume`。
+该矩阵目前只完成输入/协议/预算冻结与资格审计，**未实现完整LIVE矩阵执行**。
+full候选输入：3471 Flagship、2252 Reuse、CQ2Term/CQ2Onto各6套本体；
+计划51615个运行单元全部NOT_RUN；真实外部调用/评分0，结论BLOCKED。
+
+最终本体工程suite 149项通过、新增模块26项独立重跑、ruff和types退出0；
+这些不是质量提升结果。原TwoAgentV3仍PARTIAL；完整共享五步研究内核和行为消融未完成。
+OSKGC冲突许可证现在阻止新数据使用。真实canary证明普通独立进程仍可读取相邻scoring，
+因此旧 `ontology-io run` 在预算/OS隔离不足时明确拒绝，不能用旧命令绕过限制。
+
+现有只读报告页可导入 `docs/research/ontology-io-2026-09-13/scorecards/*.json` 的
+五份task级NOT_RUN卡片；全部经过原报告Schema检查。CSV台账不是UI报告格式。
+不新增跨任务总分，不修改UI审批、生产v3 Schema或版本控制。
+
+## 历史实施记录
+
 本轮是增量实现，**尚未完成用户要求的完整 TwoAgentV3、原生→v3 正式导出和所有外部实测**。
 本页区分已执行的工程检查、可执行的原型，以及尚未集成的研究能力。不能据此宣布 80% / 90% / 90% 立项目标达标。
 

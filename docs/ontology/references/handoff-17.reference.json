@@ -1,0 +1,15 @@
+{
+  "reference_id": "ontology-handoff-17-20260918",
+  "role": "SIMPLIFIED_HANDOFF_REFERENCE",
+  "confirmation": "USER_CONFIRMED_ALIAS",
+  "original_filename": "本体建模_上下游数据交接文件包_名称更新版_20260918.zip",
+  "archive": "handoff-17-20260918.original.zip",
+  "sha256": "be5d0c703a923d095e901991b0fc507049f5458471f0b8f7711f33b7417e8094",
+  "size_bytes": 62153,
+  "previous_prompt_archive_sha256": "bbcf5bbf6c356018f83a2b33226a751181507176268cd0a4912795a1489b51a3",
+  "previous_prompt_identity": "DIFFERENT_BYTES_NOT_REWRITTEN",
+  "runtime_use": "UPSTREAM_GENERATION_ALLOWLIST_ONLY",
+  "contains_independent_acceptance": true,
+  "runtime_artifacts_included": false,
+  "note": "用户明确确认本名称更新版作为本轮精简版参考；确认用途不等于两个历史 ZIP 原字节相同，也不是对运行、审核或接收状态的批准。字段规范维护在 HANDOFF_CONTRACT.md，原包只读保留。"
+}

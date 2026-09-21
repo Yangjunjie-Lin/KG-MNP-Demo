@@ -16,9 +16,10 @@ def test_new_ontology_without_business_baseline(tmp_path):
     run_new_ontology(tmp_path)
 
 
-def run_new_ontology(tmp_path, *, live_repair=False):
+def run_new_ontology(tmp_path, *, live_repair=False, record_audit=False, return_runtime=False):
     root = Path(__file__).resolve().parents[2]
-    app = ApplicationService(ServiceConfiguration(str(tmp_path), review_profile="DEVELOPMENT_SINGLE_REVIEWER", reasoner_jar=str(root / "third_party/downloads/robot-1.9.7.jar")))
+    app = ApplicationService(ServiceConfiguration(str(tmp_path), review_profile="DEVELOPMENT_SINGLE_REVIEWER", reasoner_jar=str(root / "third_party/downloads/robot-1.9.7.jar"),
+        modeling_audit_content_enabled=record_audit, ontology_trace_enabled=record_audit))
     _, human = app.tokens.create(principal_id="synthetic-new-ontology", principal_type="HUMAN", permissions={"*"}, project_ids=set(), created_by="test")
     project = app.execute(OperationRequest("project.create", parameters={"name": "new-ontology", "domain_pack": "empty", "domain_pack_version": "0.1.0"}), human).payload["project_id"]
     def run(operation, parameters, key):
@@ -74,4 +75,8 @@ def run_new_ontology(tmp_path, *, live_repair=False):
     plan = run("compile.plan.exact", {"confirmed_package_id": confirmed["package_id"], "package_name": "new-ontology", "package_version": "0.1.0", "ontology_iri": "urn:new:ontology", "version_iri": "urn:new:ontology:0.1.0", "oracles": [{"question_id": question, **acceptance[0]}]}, "plan")["plan"]
     built = run("compile.build", {"plan_id": plan["plan_id"]}, "build")
     assert built["reports"]["competency-question-test-report.json"]["required_passed"] is True
+    if return_runtime:
+        from zhigou_toolchain.services.modeling_sessions import read
+        return {"service": app, "principal": human, "project_id": project, "built": built,
+            "session": read(get_project(app.root, project).root), "proposed": proposal}
     return {"project_id": project, "package_id": built["package_id"], "proposal": proposal, "reports": built["reports"]}

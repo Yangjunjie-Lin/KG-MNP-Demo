@@ -1,0 +1,57 @@
+{
+  "kind": "OFFLINE_CONTINUATION_NOT_FULL_BENCHMARK_RESULT",
+  "research_status": "BLOCKED",
+  "research_score": null,
+  "paired_delta": null,
+  "ci95": null,
+  "additional_live_model_calls": 0,
+  "cumulative_live_model_calls": 24,
+  "cumulative_known_tokens": 85852,
+  "cost": null,
+  "all_job_slots": 120462,
+  "generated_smoke_jobs": 9,
+  "failed_pilot_jobs": 1,
+  "pending_pilot_jobs": 17,
+  "pending_full_jobs": 99501,
+  "not_applicable_full_slots": 20934,
+  "full_executed_jobs": 0,
+  "verified_generated_artifacts": 9,
+  "verified_evidence_files": 60,
+  "remaining_call_bound_audit": {
+    "remaining_authorized_calls": 325287,
+    "pending_full_maximum_calls": 325311,
+    "pending_pilot_maximum_calls": 56,
+    "pending_maximum_calls": 325367,
+    "worst_case_gap_before_any_new_preflight": 80,
+    "automatic_budget_increase": false,
+    "actual_future_usage": null
+  },
+  "offline_replay": {
+    "generation_configuration_removed_from_child_process": true,
+    "python_hash_seeds": [17, 43],
+    "primary": "runtime_reports/full-ontology-experiment-20260914/offline-inventory-final",
+    "replay": "runtime_reports/full-ontology-experiment-20260914/offline-inventory-final-replay",
+    "byte_identical": true,
+    "files_sha256": {
+      "report.json": "9a48f19ca59956ddb176856e54cc3fd887afbaf4d9956afccf4590a6e60e1175",
+      "comparison.json": "5b462122df9e31b32225f135811642a4a283658f43dbda1860fbea48516ed4a1",
+      "jobs.jsonl": "4fa7c7e81a9eed9e7c8f2e15bbb918e8b90c553455f41beb8c8463cc48441e46",
+      "results.csv": "5247ad55e1722eb72b671e8f74a0c4bf44e1023c840c4ba2090ed4553411649b",
+      "evidence-lock.json": "85b65db7f57dbe8dd3e51cb9c715331b0422068faa27f6f70fb840e62ce7f9cb"
+    }
+  },
+  "verification": {
+    "targeted_tests": "runtime_reports/full-ontology-experiment-20260914/continuation-accounting-tests.xml",
+    "targeted_tests_passed": 37,
+    "engineering_tests_passed": 210,
+    "engineering_warnings": 13,
+    "final_command_exit_codes": [0, 0, 0, 0],
+    "source_unchanged": true,
+    "source_fingerprint_sha256": "78ca300ea0dcd474ec17d29383c4d1939c5d50b378bc1ab6ee7d9a4787ce762b",
+    "final_commands_receipt": "runtime_reports/full-ontology-experiment-20260914/continuation-final-verification-20260915/verification.json"
+  },
+  "blocker": "CONFIGURED_GATEWAY_DOES_NOT_ENFORCE_OUTPUT_TOKEN_LIMIT_AND_NO_VERIFIED_REPLACEMENT_ROUTE_CONFIGURED",
+  "safety_latch_cleared": false,
+  "original_revision_modified": false,
+  "original_revision_code_files_verified": 628
+}

@@ -1,0 +1,182 @@
+{
+  "kind": "REAL_ACTIVATION_PAUSED_NOT_FULL_BENCHMARK_RESULT",
+  "artifacts": [
+    {
+      "path": "runtime_reports/full-ontology-experiment-20260914/state.json",
+      "data": {
+        "status": "PAUSED_PROVIDER_OUTPUT_LIMIT_UNENFORCED",
+        "active_revision": "r1",
+        "user_authorized_full_scope": true,
+        "full_started": false,
+        "experiment_complete": false,
+        "smoke_generated_jobs": 9,
+        "pilot_failed_jobs": 1,
+        "pilot_pending_jobs": 17,
+        "full_pending_jobs": 99501,
+        "full_not_applicable_slots": 20934,
+        "live_model_calls": 24,
+        "known_reported_tokens": 85852,
+        "requested_completion_limit": 8192,
+        "observed_violating_completion_tokens": 27832,
+        "safety_action": "STOP_FILE_AND_DURABLE_BUDGET_LATCH_NO_FURTHER_INFERENCE",
+        "required_resolution": "A route that enforces hard output-token limits, or a separately authorized alternative budget/protocol. Do not silently switch the model or weaken the guard.",
+        "research_scores": null
+      }
+    },
+    {
+      "path": "runtime_reports/full-ontology-experiment-20260914/revisions/r1/isolation.json",
+      "data": {
+        "op": "canary",
+        "inaccessible": {
+          "/mnt/d/UoM_CS/Research Evidence Portfolio/CUHK-Shenzhen RA/KG-MNP-Demo/runtime_reports/full-ontology-experiment-20260914/revisions/r1/scoring-canary/gold.txt": true,
+          "/input/../scoring-canary/gold.txt": true,
+          "/home/yangjunjie/.bashrc": true,
+          "/mnt/c/Windows/System32/config/SYSTEM": true,
+          "/proc/1/root/mnt/d/UoM_CS/Research Evidence Portfolio/CUHK-Shenzhen RA/KG-MNP-Demo/runtime_reports/full-ontology-experiment-20260914/revisions/r1/scoring-canary/gold.txt": true
+        },
+        "network_denied": [
+          true,
+          true
+        ],
+        "credential_env_empty": true,
+        "public_input_readable": true,
+        "own_output_writable": true,
+        "source_readonly": true,
+        "network_namespace": "net:[4026532426]",
+        "cwd": "/out",
+        "runtime": {
+          "python": "3.12.3",
+          "os": "Linux",
+          "packages": {
+            "rdflib": "7.6.0",
+            "jsonschema": "4.23.0",
+            "pyshacl": "0.28.1",
+            "networkx": "3.6.1",
+            "httpx": "0.27.2",
+            "pydantic": "2.12.4",
+            "rapidfuzz": null,
+            "numpy": null,
+            "scipy": null
+          }
+        },
+        "passed": true,
+        "host_network_namespace": "net:[4026531833]",
+        "network_namespace_distinct": true,
+        "policy": "WSL_BWRAP_UNSHARE_ALL_MINIMAL_READONLY_MOUNTS_IPC_BROKER",
+        "forbidden_host_file_exists": true
+      }
+    },
+    {
+      "path": "runtime_reports/full-ontology-experiment-20260914/gateway-audit/audit.json",
+      "data": {
+        "repository": "jlcodes99/cockpit-tools",
+        "commit": "c4c05a8e1ba590237340919142aad3d82e0dc52d",
+        "files": [
+          {
+            "path": "sidecars/cockpit-cliproxy/third_party/CLIProxyAPI/internal/translator/codex/openai/responses/codex_openai-responses_request.go",
+            "url": "https://raw.githubusercontent.com/jlcodes99/cockpit-tools/c4c05a8e1ba590237340919142aad3d82e0dc52d/sidecars/cockpit-cliproxy/third_party/CLIProxyAPI/internal/translator/codex/openai/responses/codex_openai-responses_request.go",
+            "file": "0-codex_openai-responses_request.go",
+            "sha256": "074221f19e40038f59a999969c41124bd9361d0fefe6e910d19b1d1776cbfc04"
+          },
+          {
+            "path": "sidecars/cockpit-cliproxy/third_party/CLIProxyAPI/internal/translator/codex/openai/chat-completions/codex_openai_request.go",
+            "url": "https://raw.githubusercontent.com/jlcodes99/cockpit-tools/c4c05a8e1ba590237340919142aad3d82e0dc52d/sidecars/cockpit-cliproxy/third_party/CLIProxyAPI/internal/translator/codex/openai/chat-completions/codex_openai_request.go",
+            "file": "1-codex_openai_request.go",
+            "sha256": "3d439098b2eab9e779c0e4341228d7261a05a91d81d7d1e3595e98dd32f2731d"
+          },
+          {
+            "path": "sidecars/cockpit-cliproxy/third_party/CLIProxyAPI/internal/registry/models/codex_client_models.json",
+            "url": "https://raw.githubusercontent.com/jlcodes99/cockpit-tools/c4c05a8e1ba590237340919142aad3d82e0dc52d/sidecars/cockpit-cliproxy/third_party/CLIProxyAPI/internal/registry/models/codex_client_models.json",
+            "file": "2-codex_client_models.json",
+            "sha256": "4a65da73a86d7d8e81388bfeccc0bc60a26e8a2f1fa96b925ec2bef9534d4925"
+          }
+        ],
+        "installed_executable_sha256": "424f786f3002010d19b77caff65f8f29e2d2e419128b16a9788cfc0033e78974",
+        "binary_to_source_revision_attestation": "NOT_AVAILABLE_PUBLIC_SOURCE_CONSISTENT_WITH_OBSERVED_BEHAVIOR",
+        "finding": "CODEX_TRANSLATOR_STRIPS_OUTPUT_TOKEN_LIMIT_FIELDS",
+        "live_observation": {
+          "requested_max_completion_tokens": 8192,
+          "reported_completion_tokens": 27832,
+          "reported_prompt_tokens": 1312,
+          "reported_total_tokens": 29144
+        },
+        "research_action": "PAUSE_ALL_FURTHER_INFERENCE_DO_NOT_WEAKEN_BUDGET_GUARD"
+      }
+    },
+    {
+      "path": "runtime_reports/full-ontology-experiment-20260914/final-engineering-verification/verification.json",
+      "data": {
+        "status": "ENGINEERING_CHECKS_ONLY",
+        "source_unchanged": true,
+        "commands": [
+          {
+            "command": [
+              "C:\\Users\\Yangjunjie Lin\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+              "-m",
+              "ruff",
+              "check",
+              "."
+            ],
+            "exit_code": 0,
+            "seconds": 0.3654339999775402,
+            "log": "command-0.log",
+            "sha256": "82b3e6a6c090a57601d22943bd23fca9218d1031dbe5a7b754092f9a156b4f18"
+          },
+          {
+            "command": [
+              "C:\\Users\\Yangjunjie Lin\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+              "tools/check_types.py"
+            ],
+            "exit_code": 0,
+            "seconds": 15.913123700011056,
+            "log": "command-1.log",
+            "sha256": "6d88a1b220adb7a3d62092b6e38431f0b3fe8babe9864fab90e5849766260332"
+          },
+          {
+            "command": [
+              "C:\\Users\\Yangjunjie Lin\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+              "tools/evaluate_research.py",
+              "--suite",
+              "ontology-io-engineering"
+            ],
+            "exit_code": 0,
+            "seconds": 346.92374830000335,
+            "log": "command-2.log",
+            "sha256": "f54273b4d2837f210ce971e8de817a3650149d006f18cfcbab1c40de0e3e6c37"
+          },
+          {
+            "command": [
+              "C:\\Users\\Yangjunjie Lin\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+              "-m",
+              "pytest",
+              "tests/upgrade/test_ontology_io_extended.py",
+              "--tb=short",
+              "--junitxml=D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime_reports\\full-ontology-experiment-20260914\\final-engineering-verification\\extended.xml"
+            ],
+            "exit_code": 0,
+            "seconds": 20.907244800007902,
+            "log": "command-3.log",
+            "sha256": "5466325f7d202e48a250bf204a656cd5948cff3caf9670b5bd78b78f5c96d9a4"
+          }
+        ],
+        "runtime": {
+          "python": "3.12.6",
+          "os": "Windows",
+          "packages": {
+            "rdflib": "7.6.0",
+            "jsonschema": "4.23.0",
+            "pyshacl": "0.28.1",
+            "networkx": "3.6.1",
+            "httpx": "0.27.2",
+            "pydantic": "2.12.4",
+            "rapidfuzz": "3.14.3",
+            "numpy": "2.4.6",
+            "scipy": "1.15.2"
+          }
+        },
+        "research_score": null,
+        "experiment_complete": false
+      }
+    }
+  ]
+}
