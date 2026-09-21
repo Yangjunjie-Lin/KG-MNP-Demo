@@ -373,10 +373,18 @@ def create_app(service: ApplicationService) -> FastAPI:
             "sources": [{"source_id": s["source_id"], "sha256": s["content_sha256"], "name": s["original_name"]} for s in sources]}
 
     @app.get("/api/v1/projects/{project_id}/modeling/audits", operation_id="listModelingStepAudits")
-    def modeling_step_audits(project_id: str, authorization: str | None = Header(default=None)):
+    def modeling_step_audits(project_id: str, session_id: str | None = None, package_id: str | None = None,
+                            job_id: str | None = None, attempt: int | None = None, authorization: str | None = Header(default=None)):
         from zhigou_toolchain.modeling.five_stage.agents import AGENT_PACKAGES
         from zhigou_toolchain.services.modeling_audit import audit_index
-        return {**audit_index(service, service.authenticate(authorization or ""), project_id), "agents": AGENT_PACKAGES}
+        return {**audit_index(service, service.authenticate(authorization or ""), project_id,
+            session_id=session_id, package_id=package_id, job_id=job_id, attempt=attempt), "agents": AGENT_PACKAGES}
+
+    @app.get("/api/v1/projects/{project_id}/modeling/audits/{job_id}", operation_id="getModelingStepAudit")
+    def modeling_step_audit_detail(project_id: str, job_id: str, attempt: int | None = None, authorization: str | None = Header(default=None)):
+        from zhigou_toolchain.services.modeling_audit import audit_detail
+        return JSONResponse(audit_detail(service, service.authenticate(authorization or ""), project_id, job_id, attempt=attempt),
+            headers={"Cache-Control": "no-store"})
 
     @app.get("/api/v1/projects/{project_id}/modeling/audits/{job_id}/archive", operation_id="downloadModelingStepAudit")
     def modeling_step_audit_archive(project_id: str, job_id: str, attempt: int | None = None, authorization: str | None = Header(default=None)):

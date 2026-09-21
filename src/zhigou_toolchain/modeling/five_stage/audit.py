@@ -23,7 +23,7 @@ class StepAudit:
 
     def __init__(self, directory, binding, *, content=False):
         self.directory = directory
-        self.binding = binding
+        self.binding = json.loads(json_bytes(binding))
         self.content = content
         self.sequence = 0
         self.previous = None
@@ -82,5 +82,5 @@ class StepAudit:
     def close_index(self):
         atomic_file(self.directory / "summary.json", json_bytes({"binding": self.binding,
             "event_count": self.sequence, "final_event_sha256": self.previous,
-            "stages": sorted({c["stage_id"] for c in self.calls.values()}),
+            "stages": sorted({c["stage_id"] for c in self.calls.values() if c.get("stage_id") is not None}),
             "content_mode": "REDACTED_CONTENT" if self.content else "METADATA_ONLY"}))

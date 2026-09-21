@@ -87,7 +87,9 @@ def retrieve_cards(terms, cards, *, mode, model_locks=None):
             retrieval.append({"term": term, "recall": recall, "ranking": ranking, "method": "BGE_FAISS_RERANKER"})
     elif mode == "LLM_SUBSTITUTE":
         for term in terms:
-            retrieval.append({"term": term, "exact": merge_recall(term, cards, []), "method": "EXACT_PLUS_LLM_RANKING_SUBSTITUTE"})
+            exact = invoke(2, "structure.retrieve", lambda term=term: merge_recall(term, cards, []),
+                inputs={"query": term, "cards": cards, "algorithm": "EXACT_ALIAS_NO_VECTOR"})
+            retrieval.append({"term": term, "exact": exact, "method": "EXACT_PLUS_LLM_RANKING_SUBSTITUTE"})
     else:
         raise ToolBlocked("UNKNOWN_RETRIEVAL_MODE")
     return retrieval
@@ -118,15 +120,15 @@ def generate(client, *, context, initial_drafts, configuration, model_locks=None
     cards = [{**e, "label": next((l["value"] for l in e.get("labels", [])), e["iri"]),
               "definition": e.get("definition") or "", "aliases": []} for e in baseline]
     allowed = {c["iri"] for c in cards}
-    def ask(stage, task, data, schema, iris=None):
+    def ask(stage, task, data, schema, iris=None, method_id=None):
         result = invoke(stage, "structure.design" if stage == 2 else "text.extract",
             lambda: client.propose(task, data, schema, allowed_iris=allowed if iris is None else iris, evidence_ids=evidence),
-            inputs={"task": task, "data": data, "schema": schema})
+            inputs={"task": task, "data": data, "schema": schema}, method_id=method_id)
         calls.append(result)
         return result["proposal"]
     terms = context["object_families"]
     retrieval = retrieve_cards(terms, cards, mode=configuration["retrieval"], model_locks=model_locks)
-    reuse = select_reuse(lambda task, data, schema: ask(2, task, data, schema), terms=terms, cards=cards,
+    reuse = select_reuse(lambda task, data, schema: ask(2, task, data, schema, method_id="2.4"), terms=terms, cards=cards,
         retrieval=retrieval, business_rules=context["business_rules"])
     # Empty gaps from a model cannot authorize namespace growth. Only explicit
     # user configuration from the request supplies this closed list.
@@ -189,7 +191,9 @@ def generate(client, *, context, initial_drafts, configuration, model_locks=None
         chunk_args = {"text_id": item["item_id"], "text_version": semantic_hash(item)}
         chunks = invoke(3, "text.chunk", lambda text=text, chunk_args=chunk_args: text_chunks(text, lock=model_locks["tokenizer"], **chunk_args)
             if configuration["chunking"] == "LOCAL_TOKENIZER" else character_chunks(text, **chunk_args),
-            inputs={"text": text, **chunk_args, "method": configuration["chunking"]})
+            inputs={"text": text, **chunk_args, "method": configuration["chunking"]},
+            model={"model_id": model_locks["tokenizer"].model_id, "revision": model_locks["tokenizer"].revision}
+                if configuration["chunking"] == "LOCAL_TOKENIZER" else None)
         chunks_report.append(chunks)
         if sum(len(c["chunks"]) for c in chunks_report) > 32:
             raise ToolBlocked("MODEL_CHUNK_BUDGET_EXCEEDED")
@@ -263,7 +267,8 @@ def repair(client, *, original_drafts, context, issues, configuration):
         if not text:
             raise ToolBlocked("REPAIR_TEXT_SOURCE_REQUIRED")
         chunk = {"text_id": item["item_id"], "text_version": semantic_hash(item), "start": 0, "end": len(text), "text": text, "text_hash": semantic_hash(text)}
-        binding = bind_quote(text, chunk, patch["quote"], expected_start=patch["quote_start"])
+        binding = invoke(3, "evidence.bind", lambda text=text, chunk=chunk, patch=patch: bind_quote(text, chunk, patch["quote"], expected_start=patch["quote_start"]),
+            inputs={"text_id": chunk["text_id"], "text_hash": chunk["text_hash"], "quote": patch["quote"], "start": patch["quote_start"]})
         before = deepcopy(draft)
         if patch["field"] == "literal":
             if draft["body"]["candidate_type"] != "DATA_PROPERTY_ASSERTION" or not patch["value"] or patch["value"] not in patch["quote"]:

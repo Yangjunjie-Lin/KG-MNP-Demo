@@ -3,6 +3,8 @@ from __future__ import annotations
 
 import re
 
+from zhigou_toolchain.modeling.five_stage.agents import observed
+
 from ..errors import ModelingControlError
 from ..mappings import table_identity
 from .models import candidate_body, candidate_draft
@@ -24,6 +26,15 @@ def record_mapping_drafts(*,rules:dict,datasets:list[dict],source_names:dict[str
                 for source in item["source_ids"]:
                     cells.setdefault(source,[]).append(item)
     records={}; tables={}; drafts=[]
+    @observed(3, "identity.resolve", inputs=lambda key, table, fields: {
+        "identity_space": key, "identity_field": table["id_field"], "fields": fields,
+        "existing_keys": [list(k) for k in sorted(records)], "namespace": namespace})
+    def resolve_identity(key, table, fields):
+        identifier=fields.get(table["id_field"],{}).get("payload",{}).get("value",{}).get("normalized_lexical_value")
+        if not isinstance(identifier,str) or not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_-]{0,100}",identifier):
+            raise ModelingControlError("MAPPING_IDENTIFIER_REQUIRED: portable nonempty identifier required")
+        if (key,identifier) in records:raise ModelingControlError("MAPPING_IDENTITY_CONFLICT: duplicate record identifier")
+        return identifier
     for table in rules["tables"]:
         if set(table)!={"table_id","source_name","class_iri","id_field","literals","references"}:
             raise ModelingControlError("closed record mapping fields required")
@@ -50,10 +61,7 @@ def record_mapping_drafts(*,rules:dict,datasets:list[dict],source_names:dict[str
         for ordinal,row in sorted(by_row.items()):
             if ordinal==1:continue
             fields={headers[column]:item for column,item in row.items() if column in headers}
-            identifier=fields.get(table["id_field"],{}).get("payload",{}).get("value",{}).get("normalized_lexical_value")
-            if not isinstance(identifier,str) or not re.fullmatch(r"[A-Za-z0-9][A-Za-z0-9_-]{0,100}",identifier):
-                raise ModelingControlError("MAPPING_IDENTIFIER_REQUIRED: portable nonempty identifier required")
-            if (key,identifier) in records:raise ModelingControlError("MAPPING_IDENTITY_CONFLICT: duplicate record identifier")
+            identifier=resolve_identity(key,table,fields)
             records[key,identifier]={"fields":fields,"iri":namespace+key+"-"+identifier,"ref":"record-"+key+"-"+identifier,"id_cell":fields[table["id_field"]]}
     def draft(record,ref,kind,body,cell,dependencies=(),baseline_refs=()):
         return candidate_draft(draft_ref=ref,draft_kind=kind,candidate_action="ALIGN_TO_EXISTING" if kind=="MAPPING" else "ASSERT",

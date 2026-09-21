@@ -29,6 +29,11 @@ test('two agents expose actual Worker before/after audit download',async({page},
   const href=await link.getAttribute('href');expect(href).toBeTruthy();
   const response=await page.request.get(href!);expect(response.status()).toBe(200);
   const apiBytes=await response.body();
+  await page.getByRole('button',{name:'查看步骤与实际 Prompt',exact:true}).first().click();
+  await expect(page.getByText('本次实际发送快照 / 公开结果',{exact:true})).toBeVisible();
+  await page.getByText('本次实际发送快照 / 公开结果',{exact:true}).click();
+  await expect(page.getByText('本次没有模型调用，不生成空 Prompt；程序步骤仍保留前后记录。',{exact:true})).toBeVisible();
+  await expect(page.getByText('已验证服务归档 SHA-256：'+crypto.createHash('sha256').update(apiBytes).digest('hex'),{exact:true})).toBeVisible();
   const [download]=await Promise.all([page.waitForEvent('download'),link.click()]);
   const destination=info.outputPath('modeling-step-audit.zip');await download.saveAs(destination);
   expect(fs.readFileSync(destination)).toEqual(apiBytes);

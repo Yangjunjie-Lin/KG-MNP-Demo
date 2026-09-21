@@ -1,5 +1,14 @@
 # 2026-09-16 交接改造实施记录
 
+## 2026-09-19 方法、Prompt 与调用关联（当前）
+
+已核实本轮起点为干净 develop@4e19b2ce。范围、实现差异、权限和复验入口统一见
+[AGENT_STEP_AUDIT.md](AGENT_STEP_AUDIT.md)，实际任务全文见同源生成的
+[MODEL_CALL_PROMPTS.md](MODEL_CALL_PROMPTS.md)。以下旧结论保留历史含义。
+本地确有上一轮 FINAL_REPORT.md，其绑定旧快照并报告全仓 FAIL；远端 404 不表示本地未运行。
+本轮原始 canary/漏记复现与后续测试写 runtime_reports/ontology-audit-20260919/；
+新的 frozen-run 目录才是最终同源码回执，本文不预填验收状态。
+
 ## 2026-09-18 参考版本确认续办（当前）
 
 用户明确要求以“名称更新版”作为本轮“精简版”进行内容对齐，原附件待补事项已关闭。

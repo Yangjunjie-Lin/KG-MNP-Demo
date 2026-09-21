@@ -15,6 +15,7 @@ from urllib.parse import quote
 from pydantic import ValidationError
 
 from zhigou_toolchain.contracts.canonical import semantic_hash
+from zhigou_toolchain.modeling.five_stage.agents import observed
 
 from ..errors import ModelingControlError
 from ..limits import ModelingLimits
@@ -178,6 +179,8 @@ def mixed_mapping_drafts(*, rules, datasets, namespace, baseline, question_ids, 
     if any((space, target) in aliases and aliases[space, target] != target for (space, _), target in aliases.items()):
         fail("MAPPING_ALIAS_CONFLICT", "aliases must point directly to canonical keys, not chains or cycles")
 
+    @observed(3, "identity.resolve", inputs=lambda space, value: {"identity_space": space, "value": value,
+        "namespace": namespace, "aliases": [{"space": s, "value": v, "canonical": c} for (s, v), c in sorted(aliases.items())]})
     def identity(space, value):
         value = aliases.get((space, value), value)
         if not isinstance(value, str) or not value or value != value.strip() or len(value) > 200 or any(ord(c) < 32 for c in value):
@@ -221,6 +224,10 @@ def mixed_mapping_drafts(*, rules, datasets, namespace, baseline, question_ids, 
         for row, fields in sorted(rows.items()):
             add_record(definition, fields, [definition["source_id"], locator, row], sparse_table=True)
 
+    @observed(3, "evidence.bind", inputs=lambda definition, values, origin: {
+        "definition": definition, "spans": values, "origin": origin,
+        "source_items": {s["item_id"]: items.get(s["item_id"]) for s in values}},
+        output=lambda _: {"bound_spans": list(spans), "identity_refs": [r["iri"] for r in occurrences]})
     def bind_spans(definition, values, origin):
         fields = {}
         for span in values:

@@ -204,7 +204,7 @@ class ApplicationService:
             handler = execute_integration
         from zhigou_toolchain.modeling.five_stage.agents import execute_routed
 
-        from .modeling_audit import execute_audited
+        from .modeling_audit import execute_audited, recording_failure
         from .ontology_traces import finish_recorders, recorder_factory
         agent_receipt = None
         recorders = []
@@ -217,7 +217,10 @@ class ApplicationService:
         try:
             result = execute_audited(self, job, request, principal,
                 lambda: execute_fenced(self, job, request, principal, routed))
-            finish_recorders(recorders, result=result)
+            try:
+                finish_recorders(recorders, result=result)
+            except Exception as exc:  # noqa: BLE001 - post-commit recorder must not mask committed result
+                recording_failure(self, job, principal, exc, "TRACE_AFTER_COMMIT")
             return result
         except Exception as exc:
             # A computation receipt may exist even if publication subsequently
@@ -225,7 +228,10 @@ class ApplicationService:
             # persist it; a stale worker still cannot overwrite a replacement.
             if agent_receipt is not None and not getattr(exc, "agent_execution", None):
                 setattr(exc, "agent_execution", {**agent_receipt, "publication_status": "NOT_CONFIRMED"})  # noqa: B010 - arbitrary handler exception types
-            finish_recorders(recorders, error=exc, cancelled=self.jobs.get(job.job_id).status in {"CANCELLED", "CANCEL_REQUESTED"})
+            try:
+                finish_recorders(recorders, error=exc, cancelled=self.jobs.get(job.job_id).status in {"CANCELLED", "CANCEL_REQUESTED"})
+            except Exception as trace_error:  # noqa: BLE001 - retain original execution failure
+                recording_failure(self, job, principal, trace_error, "TRACE_FAILURE")
             raise
 
     def recover_job(self, job):

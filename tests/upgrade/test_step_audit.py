@@ -94,6 +94,8 @@ def test_worker_api_download_is_bound_private_and_keeps_failures(service_case):
         assert client.get(path, headers=headers).json()["agents"][0]["display_name"] == "规划 Agent"
         response = client.get(path + f"/{job.job_id}/archive", headers=headers)
         assert response.status_code == 200 and response.content == raw
+        detail = client.get(path + f"/{job.job_id}?attempt=1", headers=headers)
+        assert detail.status_code == 200 and detail.json()["archive_sha256"] == __import__("hashlib").sha256(raw).hexdigest()
         _, other = service.tokens.create(principal_id="other", principal_type="HUMAN", permissions={"project:read", "job:read", "trace:export", "source:export", "source:read", "package:read"}, project_ids=set(), created_by="test")
         with pytest.raises(ServiceBoundaryError):
             download_audit(service, other, project, job.job_id)
@@ -102,6 +104,7 @@ def test_worker_api_download_is_bound_private_and_keeps_failures(service_case):
             principal_type="HUMAN",
             permissions={"project:read", "job:read", "source:read"}, project_ids={project}, created_by="test")
         assert client.get(path + f"/{job.job_id}/archive", headers={"Authorization": "Bearer " + restricted_token}).status_code == 403
+        assert client.get(path + f"/{job.job_id}", headers={"Authorization": "Bearer " + restricted_token}).status_code == 403
         assert client.get(path + f"/{job.job_id}/archive").status_code == 401
     service.execute(OperationRequest("modeling.profile", project, {"run_id": "urn:kg-mnp:ingestion-run:" + "0" * 64}, "fail"), principal)
     failed = JobWorker(service.jobs, service).run_once("failure-worker")
@@ -139,6 +142,19 @@ def test_human_scope_decision_is_not_an_agent_approval(service_case):
     assert len(events) == 2
     assert all(e["metadata"]["actor"] == "AUTHORIZED_REVIEWER" for e in events)
     assert events[-1]["payload"]["value"]["result"]["approval"] == decision["approval"]
+
+
+def test_current_source_templates_cannot_change_an_old_archive(service_case, monkeypatch):
+    from zhigou_toolchain.services.modeling_audit import audit_detail
+    service, principal, _, project, seeded = service_case
+    call(service, principal, project, "modeling.profile", {"run_id": seeded["run"]["run_id"]}, "frozen-catalogue")
+    job = service.jobs.list_project(project)[0]
+    before = download_audit(service, principal, project, job.job_id)
+    monkeypatch.setattr("zhigou_toolchain.services.modeling_audit.source_catalogue", lambda: {"scope": "NEW_CURRENT_SOURCE"})
+    assert download_audit(service, principal, project, job.job_id) == before
+    detail = audit_detail(service, principal, project, job.job_id)
+    assert detail["current_templates"]["scope"] == "NEW_CURRENT_SOURCE"
+    assert detail["run_templates"]["scope"] != "NEW_CURRENT_SOURCE"
 
 
 def test_expired_partial_attempt_is_retained_after_real_worker_retry(service_case):

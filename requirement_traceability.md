@@ -291,3 +291,19 @@ semantic模型锁、OSKGC明确许可、论文方法复现和正式付费预算/
 | 真实核验 | test_step_audit.py、agent-workbench.test.tsx、agent-audit.e2e.ts、verify_agent_workbench.py | Worker、同任务 API/浏览器下载字节、S1—S5 合成样例；不替代全仓/专家/生产认证 |
 
 契约见 docs/ontology/AGENT_STEP_AUDIT.md，本次回执与样例在 runtime_reports/agent-step-audit-20260917/。
+
+## 2026-09-19 逐方法、实际 Prompt 与演进资格
+
+主说明为 [AGENT_STEP_AUDIT.md](docs/ontology/AGENT_STEP_AUDIT.md)，其中方法表同源生成；
+不替换上方 01–17，不追改旧证据。当前源码 Prompt 为 MODEL_CALL_PROMPTS.md/JSON；
+实际请求属于授权任务快照，旧摘要不补造。起点 develop@4e19b2ce；本轮结论以新冻结回执为准。
+
+| 本轮要求 | 复用/补齐 | 原始验证入口 |
+|---|---|---|
+| 全方法与条件 | 原 registry/StepRun；coverage.py 只读投影；scope 内画像、身份、证据、溯源/CQ/实物边界 | test_prompt_audit、test_step_audit、verify_agent_workbench |
+| 三层调用与真实提交 | 原 AgentRun/StepAudit/TraceRecorder；显式父 ID、请求见证、原 CAS 结果链头锚 | 漏内层调用负例、错方法/父/Prompt/attempt、原 fencing/STALE 回归 |
+| 实际 Prompt | 原五条任务字符串不变；AST 目录；两客户端 POST 的实际包装/Schema/公开错误 | 两客户端生成/修复、JSON Schema/参数、HTTP/超时/拒绝/重试/并发 |
+| 权限/隐私 | 双开关；发送前输入检查；嵌套 JSON/源码引文过滤；原审计授权 | canary、元数据组合、原 API 跨项目/撤权/历史尝试 |
+| 查看/下载 | 原审计 API 增量筛选/详情；服务快照 SHA 相等 | agent-workbench 单测、agent-audit 真 API/Worker 浏览器 |
+| 演进边界 | 本地步骤/Prompt/v2/接收四维；原 15–17 及程序 turn 阻塞不改 | evolution 原回归、新案例；无接收回执 NOT_CONTACTED |
+| 同源码交付 | 原 verify_stage_handoff 增量检查/附件；保留历史卫生 FAIL | frozen-run-* 原始日志、源码前后指纹、磁盘 ZIP 重读/外部 SHA |

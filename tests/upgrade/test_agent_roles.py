@@ -66,8 +66,10 @@ def test_real_generation_defers_record_mapping_until_structure_is_complete():
     finally:
         ACTIVE.reset(token)
     assert result == drafts and receipt["record_mapping"]["status"] == "MAPPED"
-    assert [r["tool_id"] for r in run.records] == ["structure.design", "structure.design", "records.map", "text.chunk", "text.extract"]
-    assert [r["stage_id"] for r in run.records] == [2, 2, 3, 3, 3]
+    # Exact/alias recall is an actual program call even in substitute mode.
+    assert [r["tool_id"] for r in run.records] == ["structure.retrieve", "structure.design", "structure.design", "records.map", "text.chunk", "text.extract"]
+    assert [r["stage_id"] for r in run.records] == [2, 2, 2, 3, 3, 3]
+    assert [r["method_id"] for r in run.records] == ["2.2", "2.4", "2.5", "3.1", "3.2", "3.3"]
     assert boundary.contexts[2]["subjects"] == ["urn:new:A"]
 
 

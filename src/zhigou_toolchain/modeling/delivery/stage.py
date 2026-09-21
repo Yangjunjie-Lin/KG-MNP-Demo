@@ -123,7 +123,7 @@ def verify_stage_files(files, *, externally_pinned=False, replay_negatives=False
     require(required_checks.issubset(indexed), "STAGE_REQUIRED_CHECK_MISSING")
     # New scoped checks participate when present; historical frozen receipts
     # retain their original scope. Explicit unavailable isolation is NOT_RUN.
-    required_checks.update(n for n in ("agent-audit", "agent-browser", "attachment-input", "isolation")
+    required_checks.update(n for n in ("agent-audit", "agent-model-cases", "agent-browser", "attachment-input", "isolation")
                            if n in indexed and indexed[n]["exit_code"] is not None)
     actual_module = all(indexed[n]["exit_code"] == 0 and indexed[n].get("skipped", 0) == 0 for n in required_checks) and all(r["negative_acceptance"] == "PASS" for r in results.values())
     require(stage["module_acceptance"] == ("PASS" if actual_module else "FAIL"), "STAGE_FALSE_MODULE_PASS")

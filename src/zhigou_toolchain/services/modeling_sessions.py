@@ -57,8 +57,10 @@ def execute(app, project, request, principal):
         raise ServiceBoundaryError("SESSION_HEAD_CONFLICT", "Reload the modeling session before changing dependencies", status_code=409)
     if request.operation_id == "modeling.session.open":
         verified = verified_run(project.root, params["run_id"])
+        from zhigou_toolchain.modeling.five_stage.agents import invoke
         from zhigou_toolchain.modeling.five_stage.profiling import check_input
-        quality = check_input(verified.dataset, verified.quality_report)
+        quality = invoke(1, "input.check", lambda: check_input(verified.dataset, verified.quality_report),
+            inputs={"dataset": verified.dataset, "quality": verified.quality_report})
         if quality["quarantined"] or not quality["usable"]:
             raise ServiceBoundaryError("INPUT_QUALITY_REVIEW_REQUIRED", "Repair quarantined or empty input before freezing a strict session", status_code=422)
         frozen = {"run_id": params["run_id"], "dataset_digest": semantic_hash(verified.dataset),

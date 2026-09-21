@@ -12,6 +12,13 @@
 
 ## 本体建模与交接（2026-09-18 按 01–17 对齐）
 
+2026-09-19 增量以方法及物理模型请求核账：
+[审计、配置与权限](docs/ontology/AGENT_STEP_AUDIT.md)、
+[当前实际 Prompt 全文（源码生成）](docs/ontology/MODEL_CALL_PROMPTS.md)。
+沿用审计 API/Worker/CAS，支持会话、产物和尝试筛选；历史摘要不能还原请求。
+本轮验证写 `runtime_reports/ontology-audit-20260919/`，不复用旧通过结论；
+MockTransport/纯程序与 LIVE 分开，严格 v2 程序 turn 与外部接收仍分别报告。
+
 沿用 01–08 输入、09–14 本体成果、15–17 演进数据三组，工作台点击展开查看，
 不增加新的核心交付类别。唯一详细字段入口是[交接契约](docs/ontology/HANDOFF_CONTRACT.md)，
 逐项生产者/API/验证/测试对应见 [需求追踪](requirement_traceability.md#2026-09-18-0117-统一对应表)。

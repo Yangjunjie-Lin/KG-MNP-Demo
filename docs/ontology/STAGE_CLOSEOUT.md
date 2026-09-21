@@ -1,5 +1,10 @@
 # 阶段验收收口（2026-09-16）
 
+2026-09-19 新冻结运行沿用本入口，增加 method/Prompt 专项与原
+verify_agent_workbench 的 HR/林业/无基线修复 MockTransport 核账，审计附件收入 evidence。
+历史包兼容读取；新检查存在时必须参与模块结论。正文开关仅在合成验证工作区显式开启。
+本轮根目录 runtime_reports/ontology-audit-20260919/；详细说明见 [逐步审计](AGENT_STEP_AUDIT.md)。
+
 2026-09-18 复用本入口对 01–17 新增差异冻结复验，基线为干净 9f6c036。
 `--input-archive` 只接入所提供说明包的 upstream。用户后续确认名称更新版作为精简版参考，
 当前按包外 `handoff-17.reference.json` 的实际字节摘要报告 MATCH_USER_CONFIRMED_REFERENCE；

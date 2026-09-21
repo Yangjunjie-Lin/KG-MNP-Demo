@@ -9,16 +9,19 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from contextvars import ContextVar
+from copy import deepcopy
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
+from functools import wraps
 from time import perf_counter
 from typing import Any
 from uuid import uuid4
 
 from zhigou_toolchain import __version__
 from zhigou_toolchain.contracts.canonical import semantic_hash
-from zhigou_toolchain.modeling.delivery.trace import ACTIVE_TRACE
+from zhigou_toolchain.modeling.delivery.trace import ACTIVE_TRACE, CALL_LINK
 from zhigou_toolchain.modeling.five_stage.audit import ACTIVE_AUDIT
+from zhigou_toolchain.modeling.five_stage.coverage import TOOL_METHOD
 
 OWNERS = {1: "RuleAgent", 2: "RuleAgent", 3: "TaskExecutionAgent", 4: "RuleAgent", 5: "TaskExecutionAgent"}
 AGENT_PACKAGES = (
@@ -30,9 +33,9 @@ AGENT_PACKAGES = (
 TOOLS = {
     1: frozenset({"input.profile", "input.check", "data.profile", "scope.suggest", "scope.validate"}),
     2: frozenset({"baseline.prepare", "baseline.load", "terminology.build", "cq.define", "alignment.match", "mapping.plan", "structure.retrieve", "structure.rerank", "structure.design"}),
-    3: frozenset({"records.map", "text.chunk", "text.extract", "evidence.bind", "facts.normalize", "facts.repair"}),
+    3: frozenset({"records.map", "identity.resolve", "text.chunk", "text.extract", "evidence.bind", "facts.normalize", "facts.repair"}),
     4: frozenset({"integrity.check", "semantic.check", "semantic.graphs", "repair.route"}),
-    5: frozenset({"compile.plan", "compile.build", "archive.verify", "archive.export", "delivery.v3", "handoff.export"}),
+    5: frozenset({"compile.plan", "compile.build", "provenance.compile", "query.check", "archive.verify", "archive.export", "delivery.v3", "handoff.export"}),
 }
 ACTIVE: ContextVar[AgentRun | None] = ContextVar("ontology_agent_run", default=None)
 
@@ -51,37 +54,57 @@ class AgentRun:
     run_id: str = field(default_factory=lambda: "agent-run:" + uuid4().hex)
     records: list[dict] = field(default_factory=list)
     trace: Any = field(default=None, repr=False)
+    trace_factory: Any = field(default=None, repr=False)
 
     def call(self, agent_id: str, stage_id: int, tool_id: str, action: Callable[[], Any],
-             *, inputs: Any, model: dict | None = None, versions: dict | None = None):
+             *, inputs: Any, model: dict | None = None, versions: dict | None = None, method_id=None):
         # Never serialize source values, prompts, credentials or answer content
         # into this audit. Model transports retain only their own permitted logs.
         started = datetime.now(UTC).isoformat()
         clock = perf_counter()
         record = {"schema_version": "1.0.0", "session_id": self.session_id, "run_id": self.run_id,
             "task_id": self.task_id, "stage_id": stage_id, "agent_id": agent_id, "tool_id": tool_id,
-            "parent_version": self.parent_version, "dependencies": self.dependencies,
+            "parent_version": self.parent_version, "dependencies": deepcopy(self.dependencies),
             "input_sha256": semantic_hash(inputs), "output_sha256": None,
             "tool_versions": {"zhigou_toolchain": __version__, **(versions or {})}, "model": model,
-            "started_at": started, "status": "RUNNING", "mode": self.mode, "authority": "OBSERVATION_ONLY"}
+            "started_at": started, "status": "RUNNING", "mode": self.mode, "authority": "OBSERVATION_ONLY",
+            "method_id": method_id or TOOL_METHOD.get(tool_id), "model_calls": []}
         self.records.append(record)
         audit, audit_call = ACTIVE_AUDIT.get(), None
         trace, call_id = self.trace or ACTIVE_TRACE.get(), None
+        if trace is None and self.trace_factory is not None:
+            trace = self.trace_factory()
+            self.trace_factory = None
         if trace is not None:
             self.trace = trace
         trace_context = ACTIVE_TRACE.set(trace)
+        parent = CALL_LINK.get() or {}
+        link_token = None
         try:
             if audit is not None:
                 audit_call = audit.before({"kind": "TOOL", "stage_id": stage_id, "actor": agent_id,
                     "tool_id": tool_id, "native_agent_run_id": self.run_id, "session_id": self.session_id,
                     "session_revision": self.parent_version, "dependencies": self.dependencies,
-                    "tool_versions": record["tool_versions"], "authority": "OBSERVATION_ONLY"}, inputs)
+                    "tool_versions": record["tool_versions"], "method_id": record["method_id"],
+                    "model": model, "model_kind": "NON_CHAT_LOCAL_MODEL" if model and tool_id in {"structure.retrieve", "structure.rerank", "text.chunk"} else None,
+                    "parent_audit_call_id": parent.get("parent_audit_call_id"),
+                    "authority": "OBSERVATION_ONLY"}, inputs)
+                record["audit_call_id"] = audit_call
                 record["audit_before_sha256"] = audit.calls[audit_call]["before_event_sha256"]
             if OWNERS.get(stage_id) != agent_id or tool_id not in TOOLS.get(stage_id, ()):
                 record.update(status="DENIED", reason="AGENT_TOOL_OR_STAGE_FORBIDDEN")
                 raise AgentToolDenied("AGENT_TOOL_OR_STAGE_FORBIDDEN")
+            if method_id is not None and method_id not in ({"2.4", "2.5"} if tool_id == "structure.design" else {TOOL_METHOD.get(tool_id)}):
+                record.update(status="DENIED", reason="AGENT_TOOL_METHOD_MISMATCH")
+                raise AgentToolDenied("AGENT_TOOL_METHOD_MISMATCH")
             if trace is not None:
-                call_id = trace.call("tool", tool=tool_id, args=inputs, stage_id=stage_id, agent_id=agent_id)
+                call_id = trace.call("tool", tool=tool_id, args=inputs, stage_id=stage_id, agent_id=agent_id,
+                    method_id=record["method_id"], audit_call_id=audit_call,
+                    parent_transport_call_id=parent.get("parent_transport_call_id"))
+                record.update(transport_call_id=call_id, transport_run_id=trace.bindings["transport_run_id"])
+            link_token = CALL_LINK.set({"native_agent_run_id": self.run_id, "parent_audit_call_id": audit_call,
+                "parent_transport_call_id": call_id, "method_id": record["method_id"], "stage_id": stage_id,
+                "actor": agent_id, "tool_id": tool_id, "model_calls": record["model_calls"]})
             value = action()
             if trace is not None and call_id:
                 trace.result(call_id, value)
@@ -106,6 +129,8 @@ class AgentRun:
                 record["audit_after_sha256"] = audit.after(audit_call, status=record["status"], error=exc)
             raise
         finally:
+            if link_token is not None:
+                CALL_LINK.reset(link_token)
             ACTIVE_TRACE.reset(trace_context)
             record.update(ended_at=datetime.now(UTC).isoformat(), duration_seconds=perf_counter() - clock)
 
@@ -121,8 +146,8 @@ class RuleAgent:
     def __init__(self, run: AgentRun):
         self.run = run
 
-    def execute(self, stage: int, tool: str, action, *, inputs, model=None, versions=None):
-        return self.run.call(self.agent_id, stage, tool, action, inputs=inputs, model=model, versions=versions)
+    def execute(self, stage: int, tool: str, action, *, inputs, model=None, versions=None, method_id=None):
+        return self.run.call(self.agent_id, stage, tool, action, inputs=inputs, model=model, versions=versions, method_id=method_id)
 
 
 class TaskExecutionAgent(RuleAgent):
@@ -167,13 +192,35 @@ class FiveStageCoordinator:
         return route
 
 
-def invoke(stage: int, tool: str, action, *, inputs, model=None, versions=None):
+def invoke(stage: int, tool: str, action, *, inputs, model=None, versions=None, method_id=None):
     run = ACTIVE.get()
     if run is None:
         # Direct library use is not relabelled as an Agent execution.
         return action()
     actor = RuleAgent(run) if OWNERS.get(stage) == "RuleAgent" else TaskExecutionAgent(run)
-    return actor.execute(stage, tool, action, inputs=inputs, model=model, versions=versions)
+    return actor.execute(stage, tool, action, inputs=inputs, model=model, versions=versions, method_id=method_id)
+
+
+def observed(stage, tool, *, inputs, output=lambda value: value):
+    """Observe a real library function only in the existing production context.
+
+    Projections identify non-JSON graph inputs/outputs or restrict acceptance
+    content. They never replace the actual value returned to the caller.
+    """
+    def decorate(function):
+        @wraps(function)
+        def wrapped(*args, **kwargs):
+            if ACTIVE.get() is None:
+                return function(*args, **kwargs)
+            result = None
+            def calculate():
+                nonlocal result
+                result = function(*args, **kwargs)
+                return output(result)
+            invoke(stage, tool, calculate, inputs=inputs(*args, **kwargs))
+            return result
+        return wrapped
+    return decorate
 
 
 OPERATION_TO_TOOL = {
@@ -197,13 +244,26 @@ Human scope/review decisions deliberately do not appear as Agent tool calls.
 The proposal handler records fine-grained S2/S3/S4 calls itself.
 """
     from zhigou_toolchain.services.modeling_sessions import read
-    if request.operation_id not in OPERATION_TO_TOOL and request.operation_id not in {"modeling.proposal", "modeling.candidate"}:
-        return action()
+    def sealed(result):
+        audit = ACTIVE_AUDIT.get()
+        if audit is None:
+            return result
+        # The original fenced commit anchors observations already written. No
+        # new store/approval and no post-commit mutation of the result.
+        return {**result, "step_audit_anchor": {"event_count": audit.sequence,
+            "event_sha256": audit.previous, "job_id": audit.binding["job_id"], "attempt": audit.binding["attempt"]}}
+    routed = request.operation_id in OPERATION_TO_TOOL or request.operation_id in {"modeling.proposal", "modeling.candidate", "modeling.session.open", "modeling.tutorial.seed"}
+    if not routed and ACTIVE_AUDIT.get() is None:
+        return sealed(action())
     session = read(project.root)
     run = AgentRun(session_id=session["session_id"] if session else "legacy-session:" + project.project_id,
         task_id=request.idempotency_key, parent_version=str(session["revision"]) if session else None,
         dependencies=[{k: o[k] for k in ("identifier", "digest", "status")} for o in (session or {}).get("outputs", []) if o["status"] != "STALE"])
-    trace = trace_factory(run, session) if trace_factory else None
+    trace = trace_factory(run, session) if trace_factory and routed else None
+    if trace_factory and not routed:
+        # Human operations retain their authenticated outer receipt. Only an
+        # actual nested computation creates a computational trace/run report.
+        run.trace_factory = lambda: trace_factory(run, session)
     run.trace = trace
     token = ACTIVE.set(run)
     trace_token = ACTIVE_TRACE.set(trace) if trace else None
@@ -213,9 +273,10 @@ The proposal handler records fine-grained S2/S3/S4 calls itself.
             result = invoke(stage, tool, action, inputs=request.parameters)
         else:
             result = action()
-        return {**result, "agent_execution": run.report()}
+        return sealed({**result, **({"agent_execution": run.report()} if run.records else {})})
     except Exception as exc:
-        setattr(exc, "agent_execution", run.report())  # noqa: B010 - arbitrary tool exception types
+        if run.records:
+            setattr(exc, "agent_execution", run.report())  # noqa: B010 - arbitrary tool exception types
         raise
     finally:
         if trace_token is not None:

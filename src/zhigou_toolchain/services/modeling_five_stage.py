@@ -31,9 +31,9 @@ def execute(app, project, request, principal):
     checked = make(invoke(1, "input.check", lambda: check_input(run.dataset, run.quality_report),
         inputs={"dataset": run.dataset, "quality": run.quality_report}), "1.1")
     receipts, artifacts = [], [source, checked]
+    receipts.append(receipt("1.1", [source], [checked], configuration={"policy": "EVIDENCE_REQUIRED_V1"},
+                            tools={"pydantic": version("pydantic")}, scope="Verified KG-IR contract/evidence and per-item quality routing; not raw document cleaning."))
     if request.operation_id == "modeling.profile":
-        receipts.append(receipt("1.1", [source], [checked], configuration={"policy": "EVIDENCE_REQUIRED_V1"},
-                                tools={"pydantic": version("pydantic")}, scope="Verified KG-IR contract/evidence and per-item quality routing; not raw document cleaning."))
         try:
             profile, versions = invoke(1, "data.profile", lambda: profile_data(run.dataset, checked["content"]),
                 inputs={"dataset": run.dataset, "input_check": checked["content"]})
@@ -50,7 +50,12 @@ def execute(app, project, request, principal):
         model = None
         try:
             model = configured_client()
-            profile, _ = profile_data(run.dataset, checked["content"])
+            profile, versions = invoke(1, "data.profile", lambda: profile_data(run.dataset, checked["content"]),
+                inputs={"dataset": run.dataset, "input_check": checked["content"]})
+            profiled = make(profile, "1.2")
+            artifacts.append(profiled)
+            receipts.append(receipt("1.2", [source, checked], [profiled], configuration={"rule_inference": "NONE"},
+                tools=versions, scope="Actual profile used by scope drafting; not reconstructed."))
             context = {"profile": profile, "business_goal": request.parameters["business_goal"],
                        "business_rules": request.parameters["business_rules"]}
             value = model.propose("Draft scope objects, acceptance targets, exclusions and unresolved ambiguities. Do not infer hard rules from samples.", context, schema)

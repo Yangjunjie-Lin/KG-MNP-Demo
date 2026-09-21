@@ -144,6 +144,7 @@ class CompatibleClient(QwenClient):
             "message": {"role": "assistant", "content": choice["message"]["content"]}}], "usage": self.last_public_response["usage"],
             "system_fingerprint": fingerprint}
         return {"proposal": value, "execution_source": "LIVE", "approval": "NOT_GRANTED",
+                "transport_mode": "MOCK_TRANSPORT" if self.is_mock_transport else "LIVE",
                 "provider": "OPENAI_COMPATIBLE", "tool_versions": {"httpx": version("httpx")},
                 "model": {"model_id": self.lock.model_id, "configured_revision": self.lock.revision,
                           "observed_model_id": response["model"], "revision_attestation": "PROVIDER_ALIAS_NOT_WEIGHT_ATTESTED",

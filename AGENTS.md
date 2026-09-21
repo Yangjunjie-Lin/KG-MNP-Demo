@@ -1,5 +1,13 @@
 # AGENTS.md
 
+2026-09-19 方法/Prompt 审计从 develop@4e19b2ce 增量实施，继续前仍核实 HEAD。
+主说明只在 `docs/ontology/AGENT_STEP_AUDIT.md`；Prompt MD/JSON 用
+`python -m tools.generate_model_prompts` 从执行源码生成，不手改、不反填历史请求。
+保留 native/audit/transport 三层 ID、原提交中的 step_audit_anchor、双开关和现有权限。
+新增审计附件不是第 18 项。物理请求核账使用独立 MockTransport spy，不从日志自证完整。
+`verify_agent_workbench --mock-model --pack both` 仅新建合成服务工作区，不调用付费模型。
+本轮失败预检与冻结回执分别留在 runtime_reports/ontology-audit-20260919/，不得覆盖或借用旧 PASS。
+
 2026-09-18 按 01–17 对齐，最新字段的唯一详细入口为 `docs/ontology/HANDOFF_CONTRACT.md`，
 对应表在 `requirement_traceability.md`。本轮参考 develop@9f6c036 不是强制回退目标。
 verdict 已确认为 pass/fail；fail 必须有 annotations 数组但没有新增最少条数，pass 可省略。

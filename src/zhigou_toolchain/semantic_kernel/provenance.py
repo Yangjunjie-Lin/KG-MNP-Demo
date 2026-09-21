@@ -7,12 +7,22 @@ from typing import Any
 
 from rdflib import PROV, RDF, Graph, Literal, URIRef
 
+from zhigou_toolchain.modeling.five_stage.agents import observed
+
 from .contracts import finalize_artifact
 from .identifiers import semantic_id, statement_id
 from .namespaces import KGP
 from .rdf.canonical import canonical_term, graph_semantic_digest
 
 
+@observed(5, "provenance.compile", inputs=lambda **k: {
+    "plan_id": k["plan_id"], "compiler_snapshot_id": k["compiler_snapshot_id"],
+    "review_decision_id": k["review_decision_id"], "review_semantic_hash": k["review_semantic_hash"],
+    "candidates": k["candidates"], "item_graph_iris": k["item_graph_iris"],
+    "statement_inputs": {key: [[canonical_term(t) for t in triple] for triple in triples] for key, triples in k["item_triples"].items()},
+    "resolved_artifact_ids": sorted(k["resolved_artifacts"])},
+    output=lambda value: {"provenance_graph_sha256": graph_semantic_digest(value[0]),
+        "mapping_graph_sha256": graph_semantic_digest(value[1]), "manifest": value[2]})
 def compile_statement_provenance(
     *,
     candidates: Mapping[str, dict[str, Any]],

@@ -30,6 +30,7 @@ from zhigou_toolchain.modeling.delivery.trace import (
     freeze_harness,
     public_value,
 )
+from zhigou_toolchain.modeling.five_stage.prompts import catalogue_identity
 from zhigou_toolchain.ontology_io.provenance import runtime_versions, source_identity
 from zhigou_toolchain.workspace.locking import load_project_lock
 
@@ -60,6 +61,7 @@ def recorder_factory(app, project, request, principal, job, holder):
         resources = {
             "tasks": {"operation": request.operation_id, "parameters": params, "session_id": run.session_id},
             "prompts": {"template_source_files": {n: h for n, h in implementation.items() if n.startswith("modeling/five_stage/")},
+                        "catalogue": catalogue_identity(),
                         "configuration": public_value(frozen.get("configuration", {}), changes)},
             "tools": {"source_files": implementation, "runtime": runtime_versions()},
             "rules": {"business_rules": frozen.get("business_rules", []), "policy": "EXISTING_SERVICE_AUTHORITY_AND_STAGE_ALLOWLIST"},

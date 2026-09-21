@@ -284,7 +284,8 @@ def _propose(app,modeling, params):
             response = invoke(2 if provider == "baseline-reuse-provider" else 3,
                 "structure.design" if provider == "baseline-reuse-provider" else "records.map",
                 lambda provider=provider, request=request: execute_provider(registry, provider, request),
-                inputs={"provider": provider, "request": request.artifact, "context": provider_context})
+                inputs={"provider": provider, "request": request.artifact, "context": provider_context},
+                method_id="2.4" if provider == "baseline-reuse-provider" else "3.1")
         responses.append(response)
         snapshots.append(snapshot)
         requests.append(request.artifact)

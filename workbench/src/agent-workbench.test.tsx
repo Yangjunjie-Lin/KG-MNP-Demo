@@ -27,3 +27,12 @@ it('does not expose the download to a source reader without export permissions',
   model.permissions=['project:read','job:read','source:read'];model.api.mockResolvedValue({agents,records:[{job_id:'j',stages:[2],availability:'AVAILABLE',job_status:'SUCCEEDED'}]});mount();
   await screen.findByRole('heading',{name:'规划 Agent'});expect(screen.queryByRole('link')).not.toBeInTheDocument();
 });
+it('separates current templates from missing historical messages and uses the selected attempt',async()=>{
+  model.api.mockImplementation((url:string)=>Promise.resolve(url.includes('/audits/j?')?{archive_sha256:'bound-sha',coverage:{dimensions:{v2:'BLOCKED',receiver:'NOT_CONTACTED'}},actual_model_trace:null,current_templates:{scope:'CURRENT_SOURCE_NOT_HISTORICAL_CAPTURE'},events:[]}:{agents,content_capture_enabled:true,model_trace_enabled:false,records:[{job_id:'j',attempt:2,stages:[2],availability:'AVAILABLE',job_status:'FAILED'}]}));
+  mount();await screen.findByRole('heading',{name:'规划 Agent'});fireEvent.click(screen.getByText('逐步审计文件 · 处理前 / 处理后'));
+  fireEvent.click(screen.getByRole('button',{name:'查看步骤与实际 Prompt'}));
+  await screen.findByText('已验证服务归档 SHA-256：bound-sha');
+  expect(model.api).toHaveBeenCalledWith('/projects/p/modeling/audits/j?attempt=2');
+  expect(screen.getByText('未录制或历史不可获得；不能使用当前模板补造本次消息。')).toBeInTheDocument();
+  expect(screen.getByText('当前源码模板（不是历史请求）')).toBeInTheDocument();
+});
