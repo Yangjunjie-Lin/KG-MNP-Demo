@@ -157,7 +157,7 @@ schema
 ## ontology_io/engine.py::generate_sample.prediction
 
 分组：RESEARCH_ADAPTER；源码 `ontology_io/engine.py::generate_sample`。
-模板版本 `980189db7ba299ca136416283b225e4df00ba684e2049b00af8d42212dea900b`；来源 UTF-8/LF 摘要 `e62a588c34c08ff6aae28322e5c956634efabed080a8fdbfc5363e003f6ab65f`。
+模板版本 `980189db7ba299ca136416283b225e4df00ba684e2049b00af8d42212dea900b`；来源 UTF-8/LF 摘要 `854aa1de660d37ab0ad2708dea16c317113a8afee7442057f17fadf07dc6757b`。
 
 动态任务表达式（全文只在本次调用时确定）：
 
@@ -177,7 +177,7 @@ output_schema
 ## ontology_io/engine.py::generate_sample.ask.receipt
 
 分组：RESEARCH_ADAPTER；源码 `ontology_io/engine.py::generate_sample.ask`。
-模板版本 `0fc977cc11fa7a28d41c854504b49663e38d0b7015e1cf71f0ec039457b0e714`；来源 UTF-8/LF 摘要 `e62a588c34c08ff6aae28322e5c956634efabed080a8fdbfc5363e003f6ab65f`。
+模板版本 `0fc977cc11fa7a28d41c854504b49663e38d0b7015e1cf71f0ec039457b0e714`；来源 UTF-8/LF 摘要 `854aa1de660d37ab0ad2708dea16c317113a8afee7442057f17fadf07dc6757b`。
 
 动态任务表达式（全文只在本次调用时确定）：
 
@@ -197,7 +197,7 @@ schema
 ## ontology_io/engine.py::generate_sample.prediction
 
 分组：RESEARCH_ADAPTER；源码 `ontology_io/engine.py::generate_sample`。
-模板版本 `fdaf8a5a42d29c140af14f9d8249e0f5830fe5b8a5a38583e0ead383af141cb5`；来源 UTF-8/LF 摘要 `e62a588c34c08ff6aae28322e5c956634efabed080a8fdbfc5363e003f6ab65f`。
+模板版本 `fdaf8a5a42d29c140af14f9d8249e0f5830fe5b8a5a38583e0ead383af141cb5`；来源 UTF-8/LF 摘要 `854aa1de660d37ab0ad2708dea16c317113a8afee7442057f17fadf07dc6757b`。
 
 动态任务表达式（全文只在本次调用时确定）：
 
@@ -217,7 +217,7 @@ output_schema
 ## ontology_io/engine.py::generate_sample.ask
 
 分组：RESEARCH_ADAPTER；源码 `ontology_io/engine.py::generate_sample`。
-模板版本 `ce757fa5c0b287d6c5977bbdeb1744c4274ba4324dec21d461405fa4f426499d`；来源 UTF-8/LF 摘要 `e62a588c34c08ff6aae28322e5c956634efabed080a8fdbfc5363e003f6ab65f`。
+模板版本 `ce757fa5c0b287d6c5977bbdeb1744c4274ba4324dec21d461405fa4f426499d`；来源 UTF-8/LF 摘要 `854aa1de660d37ab0ad2708dea16c317113a8afee7442057f17fadf07dc6757b`。
 
 实际任务全文：
 
@@ -237,7 +237,7 @@ design_schema
 ## ontology_io/engine.py::generate_sample.ask
 
 分组：RESEARCH_ADAPTER；源码 `ontology_io/engine.py::generate_sample`。
-模板版本 `4ec1356d92ae56f321dc5669a4b24106fec71a039098c9edbd114a214bd86921`；来源 UTF-8/LF 摘要 `e62a588c34c08ff6aae28322e5c956634efabed080a8fdbfc5363e003f6ab65f`。
+模板版本 `4ec1356d92ae56f321dc5669a4b24106fec71a039098c9edbd114a214bd86921`；来源 UTF-8/LF 摘要 `854aa1de660d37ab0ad2708dea16c317113a8afee7442057f17fadf07dc6757b`。
 
 动态任务表达式（全文只在本次调用时确定）：
 
@@ -254,10 +254,30 @@ instruction
 OUTPUT_SCHEMA
 ```
 
+## ontology_io/kernel.py::generate_kernel.contextual_ask.ask
+
+分组：RESEARCH_ADAPTER；源码 `ontology_io/kernel.py::generate_kernel.contextual_ask`。
+模板版本 `5d9aeede670b2c7672338f8d5a9829491d9f2039a5be0a2f8771979f289b434a`；来源 UTF-8/LF 摘要 `0d8e5d1b36736ecba245797308dd1c0390223eeefd76013d3e9fda842c9e95c1`。
+
+动态任务表达式（全文只在本次调用时确定）：
+
+```text
+task + (GUIDE if changed else "")
+```
+
+输入变量/构造入口：
+```python
+view
+```
+动态 Schema 构造：
+```python
+schema
+```
+
 ## ontology_io/kernel.py::generate_kernel.prediction
 
 分组：RESEARCH_ADAPTER；源码 `ontology_io/kernel.py::generate_kernel`。
-模板版本 `00f74db1e13d50c6efbb02d4ad7b4d744d9c91688069ff42d1926cda24dfc500`；来源 UTF-8/LF 摘要 `ddc9f97c559548765d159ce882645926dbf4ae9982c0c02246f82f209858bd26`。
+模板版本 `00f74db1e13d50c6efbb02d4ad7b4d744d9c91688069ff42d1926cda24dfc500`；来源 UTF-8/LF 摘要 `0d8e5d1b36736ecba245797308dd1c0390223eeefd76013d3e9fda842c9e95c1`。
 
 动态任务表达式（全文只在本次调用时确定）：
 
@@ -274,10 +294,10 @@ instruction
 output_schema
 ```
 
-## ontology_io/kernel.py::generate_kernel.ask
+## ontology_io/kernel.py::generate_kernel.contextual_ask
 
 分组：RESEARCH_ADAPTER；源码 `ontology_io/kernel.py::generate_kernel`。
-模板版本 `bed42b8848ef8962acdd0acdf5312b4abbb6b1504c96066bba078103b7e80fb8`；来源 UTF-8/LF 摘要 `ddc9f97c559548765d159ce882645926dbf4ae9982c0c02246f82f209858bd26`。
+模板版本 `bed42b8848ef8962acdd0acdf5312b4abbb6b1504c96066bba078103b7e80fb8`；来源 UTF-8/LF 摘要 `0d8e5d1b36736ecba245797308dd1c0390223eeefd76013d3e9fda842c9e95c1`。
 
 动态任务表达式（全文只在本次调用时确定）：
 
@@ -294,10 +314,10 @@ content
 schema
 ```
 
-## ontology_io/kernel.py::generate_kernel.ask
+## ontology_io/kernel.py::generate_kernel.contextual_ask
 
 分组：RESEARCH_ADAPTER；源码 `ontology_io/kernel.py::generate_kernel`。
-模板版本 `c4830eedd91154b750b20a6343c31c0f7c7d8e7f244f6abf154e447525b675aa`；来源 UTF-8/LF 摘要 `ddc9f97c559548765d159ce882645926dbf4ae9982c0c02246f82f209858bd26`。
+模板版本 `c4830eedd91154b750b20a6343c31c0f7c7d8e7f244f6abf154e447525b675aa`；来源 UTF-8/LF 摘要 `0d8e5d1b36736ecba245797308dd1c0390223eeefd76013d3e9fda842c9e95c1`。
 
 动态任务表达式（全文只在本次调用时确定）：
 
@@ -314,15 +334,20 @@ design_context
 output_schema
 ```
 
-## ontology_io/kernel.py::generate_kernel.ask
+## ontology_io/kernel.py::generate_kernel.contextual_ask
 
 分组：RESEARCH_ADAPTER；源码 `ontology_io/kernel.py::generate_kernel`。
-模板版本 `8aa1ea9cdd43134d862efbafa86489893fa6d4ea11f91fac6442eeeb4563317b`；来源 UTF-8/LF 摘要 `ddc9f97c559548765d159ce882645926dbf4ae9982c0c02246f82f209858bd26`。
+模板版本 `a7901a7e6e8baa849a81251edae394d5b893cbb812f70292b63a11af650f3da1`；来源 UTF-8/LF 摘要 `0d8e5d1b36736ecba245797308dd1c0390223eeefd76013d3e9fda842c9e95c1`。
 
-实际任务全文：
+动态任务表达式（全文只在本次调用时确定）：
 
 ```text
-Design the source-supported class, entity and relation vocabulary needed for the complete task. Reuse supplied terms/types/schema when applicable. Distinguish classes from instances; no approvals. This is a candidate vocabulary, not a reference answer.
+"Design the source-supported class, entity and relation vocabulary needed for the complete task. "
+                    "Reuse supplied terms/types/schema when applicable. Distinguish classes from instances; no approvals. This is a candidate vocabulary, not a reference answer. "
+                    "Additions-only concerns predicted triples, not the set of labels allowed for extraction. The program retains all task-supplied vocabulary. "
+                    "When feedback lists vocabulary_gap_candidates, inspect them against the allowed input before revising the vocabulary; do not assume they are correct answers. "
+                    + ("For primitive ontology tasks use exactly is-a for class taxonomy and instance-of for instance typing; do not substitute subclass_of or instance_of. "
+                       if sample.mode in {"TEXT_NEW", "TEXT_EXTEND"} else "")
 ```
 
 输入变量/构造入口：
@@ -337,14 +362,41 @@ VOCABULARY
 ## ontology_io/kernel.py::generate_kernel.ask
 
 分组：RESEARCH_ADAPTER；源码 `ontology_io/kernel.py::generate_kernel`。
-模板版本 `9fe5d923b4116a69597aa6854c5af5c8eea00f841340701ce7c4673278b7f99a`；来源 UTF-8/LF 摘要 `ddc9f97c559548765d159ce882645926dbf4ae9982c0c02246f82f209858bd26`。
+模板版本 `da388d4e7999ab52acabd82bacc25951d96f36c71baee97306d94daf5babcae0`；来源 UTF-8/LF 摘要 `0d8e5d1b36736ecba245797308dd1c0390223eeefd76013d3e9fda842c9e95c1`。
 
 动态任务表达式（全文只在本次调用时确定）：
 
 ```text
 instruction +
-                    " Return the complete prediction with a verbatim source quote and absolute Unicode start for every triple_index. "
-                    "Do not invent support; quotation locates evidence, it does not prove entailment. Never replace a nonempty prediction with an empty result to hide validation errors."
+                        " Return facts as an array; each item couples its actual triple with one verbatim quote from the supplied text. "
+                        "For typed tasks include the corresponding schema in the same item. Do not supply offsets or separate evidence indexes. "
+                        "The program will accept a citation only if its quote has exactly one literal occurrence in the frozen source and fits a source window. "
+                        "Extend an ambiguous quote with its original surrounding text; do not invent support. "
+                        "A located quote does not prove entailment. Never clear a nonempty prediction just to hide validation errors."
+```
+
+输入变量/构造入口：
+```python
+context
+```
+动态 Schema 构造：
+```python
+schema
+```
+
+## ontology_io/kernel.py::generate_kernel.ask
+
+分组：RESEARCH_ADAPTER；源码 `ontology_io/kernel.py::generate_kernel`。
+模板版本 `dcadf9366c072b6f24108bd4dff9808f88a34114fb39088dfcb825366304c338`；来源 UTF-8/LF 摘要 `0d8e5d1b36736ecba245797308dd1c0390223eeefd76013d3e9fda842c9e95c1`。
+
+动态任务表达式（全文只在本次调用时确定）：
+
+```text
+instruction +
+                        " Return the complete prediction with a verbatim source quote and absolute Unicode start for every triple_index. "
+                        "Do not invent support; quotation locates evidence, it does not prove entailment. Never replace a nonempty prediction with an empty result to hide validation errors. "
+                        "When feedback supplies quote_location_hints, these are exact locations computed from the same source, not reference facts. "
+                        "A wrong offset alone is not evidence that the fact is absent: repair its citation, retain supported triples, and return the complete prediction."
 ```
 
 输入变量/构造入口：
@@ -481,7 +533,22 @@ task_output_schema(sample)
 ## 动态构造 ontology_io/kernel.py::generate_kernel.schema
 
 ```python
+coupled_schema(output_schema)
+```
+
+## 动态构造 ontology_io/kernel.py::generate_kernel.schema
+
+```python
 assistance.obj({"prediction": output_schema, "evidence": EVIDENCE})
+```
+
+## 动态构造 ontology_io/prompt_views.py::.GUIDE
+
+```python
+" Context encoding: cards with COLUMNAR_CARDS_V1 represent complete cards: combine shared_fields with columns/rows for each card. "
+    "card_index and existing_card_index are zero-based references to those card rows. "
+    "Apply shared_row_fields to each retrieval row and shared_candidate_fields to each exact hit. "
+    "An existing_card_index represents cards[index].iri; all original terms, scores and reasons remain supplied."
 ```
 
 ## 参数与请求拼装 modeling/five_stage/tools.py::QwenClient.__init__

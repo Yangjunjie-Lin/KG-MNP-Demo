@@ -18,6 +18,21 @@ from .live_budget import BudgetLedger
 from .live_runner import supervisor_lock
 
 
+def call_response_path(revision, job_id, request_id):
+    prefix, separator, number = request_id.rpartition(":call-")
+    if not separator or not number.isdigit():
+        raise ValueError("UNKNOWN_JOB_CALL_ID")
+    root = Path(revision) / "runs" / job_id
+    if ":attempt-" in prefix:
+        owner, attempt_number = prefix.rsplit(":attempt-", 1)
+        if owner != job_id or not attempt_number.isdigit() or not 1 <= int(attempt_number) <= 3:
+            raise ValueError("UNKNOWN_JOB_ATTEMPT_ID")
+        root = root / ("attempt-" + attempt_number)
+    elif prefix != job_id:
+        raise ValueError("UNKNOWN_JOB_CALL_OWNER")
+    return root / "calls" / number / "response.json"
+
+
 def snapshot(workspace, revision, output):
     """Verify retained artifacts and include every pending/failed/N/A slot.
 
@@ -55,6 +70,9 @@ def snapshot(workspace, revision, output):
         budget = BudgetLedger(workspace / "budget.sqlite").snapshot()
         attempts = read_db("budget.sqlite", "SELECT * FROM attempts ORDER BY request_id")
         manifest = read_locked(rev / "manifest.json")
+        if manifest.get("budget_monitor"):
+            from .budget_monitor import snapshot as monitoring_snapshot
+            budget["monitoring"] = monitoring_snapshot(BudgetLedger(workspace / "budget.sqlite"), manifest["budget_monitor"])
         protocols = {key: read_locked(rev / "protocols" / (key + ".json")) for key in {r["task"] for r in jobs}}
         by_job = defaultdict(list)
         for attempt in attempts:
@@ -90,10 +108,7 @@ def snapshot(workspace, revision, output):
                 raise ValueError("GENERATED_WITHOUT_FROZEN_PREDICTION")
             durations = []
             for call in calls:
-                number = call["request_id"].rsplit(":call-", 1)[-1]
-                if not number.isdigit():
-                    raise ValueError("UNKNOWN_JOB_CALL_ID")
-                response = read_locked(rev / "runs" / row["job_id"] / "calls" / number / "response.json")
+                response = read_locked(call_response_path(rev, row["job_id"], call["request_id"]))
                 if semantic_hash(response) != call["result_hash"]:
                     raise ValueError("FROZEN_CALL_RESPONSE_CHANGED")
                 metadata = response.get("receipt") or response.get("public_response") or {}

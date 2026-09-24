@@ -1,0 +1,38 @@
+{
+  "revision": "token-audit-20260924v1",
+  "frozen_at_utc": "2026-09-24T11:25:00.3134722+00:00",
+  "scope": "READ_ONLY_BENCHMARK_CALLER_USAGE_JSON_OBSERVER",
+  "generation_source_fingerprint_unchanged": "23cb49bf415fff4999597aec27cbec4dc40c1a39eee03455c8a63d6d7646ae75",
+  "files": {
+    "audit_tokens.py": "8924cc529623f6b8c40df4ed7b486a1245f18684064a0d66bbf831ac5da5839e",
+    "test_audit_tokens.py": "e533305eb2fd8c5417dd7b6848a156086d2a3d99f022aa1027ca8a04cfc9f0b8",
+    "README.md": "ddc6d81eab143bf1a443dfa53a52bb4c93c72a09afb4492edfe082f2f386d560"
+  },
+  "helper": {
+    "path": "../token-report-20260923/export_usage.py",
+    "sha256": "4ddee4c08aaf0b325964157268be2e6a0c74db30e7848d3fea17170989800916"
+  },
+  "core_validation": {
+    "skipped": 0,
+    "errors": 0,
+    "failures": 0,
+    "receipt_sha256": "7412fed807a10022bfe6dad250310a316f129ddc23a7683f6a94983640f34f8b",
+    "tests": 72
+  },
+  "extended_validation": {
+    "limitation": "UNMODIFIED_FROZEN_V4_SYNTHETIC_CLOCK_EQUALITY_FAILURES_PRESERVED_NOT_ALL_GREEN",
+    "first": {
+      "receipt": "evidence/regression-final.xml",
+      "tests": 97,
+      "passed": 96,
+      "failed": 1
+    },
+    "second": {
+      "receipt": "evidence/regression-rerun-02.xml",
+      "tests": 97,
+      "passed": 95,
+      "failed": 2
+    }
+  },
+  "new_model_calls": 0
+}

@@ -8,9 +8,11 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import shutil
 import sqlite3
 import subprocess
 import sys
+import time
 from contextlib import contextmanager
 from datetime import UTC, datetime
 from pathlib import Path
@@ -70,7 +72,7 @@ def smoke_inputs():
     return [("llms4ol_2026--flagship", a), ("cq4oe_0_0_1--cq2onto", b), ("llms4ol_2026--reuse", c)]
 
 
-def initialize(workspace, revision):
+def initialize(workspace, revision, *, monitor_ref=None, include_unscorable=False, program_quote_locators=False):
     workspace = Path(workspace).resolve()
     ledger = BudgetLedger(workspace / "budget.sqlite")
     ledger.snapshot()  # Refuse initialization without the existing explicit authorization.
@@ -84,6 +86,12 @@ def initialize(workspace, revision):
             "reasoning_effort": getattr(client, "reasoning_effort", None), "endpoint_sha256": semantic_hash(client.lock.location)}
     finally:
         client.close()
+    if monitor_ref:
+        from . import budget_monitor
+        with ledger.connection() as conn:
+            authorized = budget_monitor.require_ready(conn, monitor_ref)
+        if any(binding[k] != authorized[k] for k in ("model_id", "endpoint_sha256", "reasoning_effort")):
+            raise ValueError("MONITOR_INITIALIZATION_BINDING_CHANGED")
     source = source_identity(ROOT)
     code_lock = stage_code(ROOT, directory / "code")
     isolation = verify_canary(directory / "code", directory, ROOT / "third_party/downloads/robot-1.9.7.jar")
@@ -97,11 +105,29 @@ def initialize(workspace, revision):
         "failure_policy": "RETAIN_ALL_NO_AUTOMATIC_RETRY_NO_SUCCESS_SUBSET_PRIMARY", "source_qualification": "LOCAL_HOLDOUT_POSSIBLE_PUBLIC_CONTAMINATION",
         "full_quality_scores_visible_to_generator": False, "framework": "EXISTING_NATIVE_SCORER_AFTER_FREEZE", "inference_concurrency": 1}
     manifest["launcher_sha256"] = {name: hashlib.sha256((ROOT / "src/zhigou_toolchain/ontology_io" / name).read_bytes()).hexdigest()
-        for name in ("live_runner.py", "os_sandbox.py", "live_broker.py", "live_budget.py")}
+        for name in ("live_runner.py", "os_sandbox.py", "live_broker.py", "live_budget.py", "budget_monitor.py")}
+    if monitor_ref:
+        manifest["budget_monitor"] = monitor_ref
+        if authorized.get("transport_recovery"):
+            manifest["transport_recovery"] = authorized["transport_recovery"]
+    manifest["full_generation_includes_unscorable_tasks"] = include_unscorable
+    if program_quote_locators:
+        manifest["evidence_locator_mode"] = "PROGRAM_UNIQUE_QUOTE_V1"
     save(directory / "manifest.json", manifest)
     models = {k: binding[k] for k in ("model_id", "declared_revision", "reasoning_effort")}
     protocols = {key: task_protocol(key, **models) for key in TASKS}
+    if monitor_ref:
+        protocols = {key: p.model_copy(update={"total_run_authorization": {"budget_monitor": monitor_ref}}) for key, p in protocols.items()}
+        if authorized.get("transport_recovery"):
+            for key, p in protocols.items():
+                if p.request_profile is None:
+                    raise ValueError("EXPLICIT_REQUEST_PROFILE_REQUIRED")
+                protocols[key] = p.model_copy(update={"request_profile": p.request_profile.model_copy(update={"timeout_seconds": 300})})
     for key, protocol in protocols.items():
+        if program_quote_locators:
+            protocol = protocol.model_copy(update={"total_run_authorization": {**(protocol.total_run_authorization or {}),
+                "evidence_locator_mode": "PROGRAM_UNIQUE_QUOTE_V1"}})
+            protocols[key] = protocol
         save(directory / "protocols" / (key + ".json"), protocol.model_dump(mode="json"))
     phases = {"smoke": smoke_inputs(), "pilot": [], "full": []}
     old = ROOT / "runtime_reports/ontology-io-final-matrix-20260913"
@@ -135,6 +161,8 @@ def initialize(workspace, revision):
                 system TEXT, replicate INTEGER, max_calls INTEGER, state TEXT, order_key TEXT, started TEXT, ended TEXT,
                 result_path TEXT, result_hash TEXT, error TEXT);
             CREATE INDEX IF NOT EXISTS jobs_pending ON jobs(revision,phase,state,order_key);
+            CREATE TABLE IF NOT EXISTS execution_attempts (job_id TEXT, attempt INTEGER, snapshot TEXT NOT NULL,
+                PRIMARY KEY(job_id,attempt));
         """)
         for phase, samples in phases.items():
             for key, sample in samples:
@@ -162,13 +190,28 @@ def initialize(workspace, revision):
 def status(workspace, revision):
     with connect(workspace) as conn:
         rows = [dict(r) for r in conn.execute("SELECT phase,state,COUNT(*) AS count FROM jobs WHERE revision=? GROUP BY phase,state", (revision,))]
-    return {"revision": revision, "jobs": rows, "budget": BudgetLedger(Path(workspace) / "budget.sqlite").snapshot(), "research_score": None}
+    ledger = BudgetLedger(Path(workspace) / "budget.sqlite")
+    result = {"revision": revision, "jobs": rows, "budget": ledger.snapshot(), "research_score": None}
+    manifest_path = Path(workspace) / "revisions" / revision / "manifest.json"
+    if manifest_path.is_file() and (monitor_ref := load(manifest_path).get("budget_monitor")):
+        from .budget_monitor import snapshot
+        result["budget_monitor"] = snapshot(ledger, monitor_ref)
+    return result
 
 
-def execute(workspace, revision, phase, *, max_jobs=None):
+def execute(workspace, revision, phase, *, max_jobs=None, tasks=None):
     workspace = Path(workspace).resolve()
     rev = workspace / "revisions" / revision
     manifest = load(rev / "manifest.json")
+    monitor_ref = manifest.get("budget_monitor")
+    recovery = manifest.get("transport_recovery")
+    if tasks and (phase != "full" or not set(tasks) <= set(TASKS)):
+        raise ValueError("INVALID_FULL_TASK_SELECTION")
+    blocked_tasks = ["cq4oe_0_0_1--cq2onto"] if phase == "full" else []
+    allow_unscorable = manifest.get("full_generation_includes_unscorable_tasks", False)
+    if tasks and set(tasks) & set(blocked_tasks) and not allow_unscorable:
+        raise ValueError("CQ2ONTO_NATIVE_SCORER_NOT_READY_DO_NOT_SPEND_ON_UNSCORABLE_TASK")
+    selected_tasks = sorted(tasks or (set(TASKS) if allow_unscorable else set(TASKS) - set(blocked_tasks)))
     if not manifest["isolation"]["passed"]:
         raise ValueError("OS_ISOLATION_PRECHECK_REQUIRED")
     for name, digest in manifest["launcher_sha256"].items():
@@ -178,7 +221,7 @@ def execute(workspace, revision, phase, *, max_jobs=None):
         previous = "smoke" if phase == "pilot" else "pilot"
         with connect(workspace) as conn:
             pending = conn.execute("SELECT COUNT(*) FROM jobs WHERE revision=? AND phase=? AND state IN ('PENDING','RUNNING')", (revision, previous)).fetchone()[0]
-            failed_runtime = conn.execute("SELECT COUNT(*) FROM jobs WHERE revision=? AND phase=? AND error IS NOT NULL", (revision, previous)).fetchone()[0]
+            failed_runtime = conn.execute("SELECT COUNT(*) FROM jobs WHERE revision=? AND phase=? AND (error IS NOT NULL OR state='FAILED')", (revision, previous)).fetchone()[0]
         if pending or failed_runtime:
             raise ValueError("PREVIOUS_PHASE_NOT_COMPLETE_OR_RUNTIME_FAILED")
     lock = load(rev / "code-lock.json")
@@ -186,29 +229,51 @@ def execute(workspace, revision, phase, *, max_jobs=None):
         if hashlib.sha256((rev / "code" / name).read_bytes()).hexdigest() != digest:
             raise ValueError("FROZEN_WORKER_CODE_CHANGED")
     ledger = BudgetLedger(workspace / "budget.sqlite")
+    if monitor_ref:
+        from . import budget_monitor
+        with ledger.connection() as conn:
+            monitor_document = budget_monitor.require_ready(conn, monitor_ref)
     completed = 0
     with connect(workspace) as conn:
         # An interrupted job is not silently retried and its calls stay charged.
         conn.execute("UPDATE jobs SET state='FAILED', error='INTERRUPTED_UNKNOWN_OUTCOME' WHERE revision=? AND phase=? AND state='RUNNING'", (revision, phase))
     while max_jobs is None or completed < max_jobs:
-        if (workspace / "STOP").exists():
+        if shutil.disk_usage(workspace).free < 5 * 1024 ** 3:
+            save(rev / "disk-space-stop.json", {"status": "PAUSED_DISK_SPACE", "minimum_free_bytes": 5 * 1024 ** 3})
+            break
+        if (workspace / "RUN_STOP").exists() or (rev / "STOP").exists():
+            break
+        if (workspace / "STOP").exists() and (not monitor_ref or hashlib.sha256((workspace / "STOP").read_bytes()).hexdigest() != monitor_document["acknowledged_stop_sha256"]):
             break
         with connect(workspace) as conn:
             conn.execute("BEGIN IMMEDIATE")
-            row = conn.execute("SELECT * FROM jobs WHERE revision=? AND phase=? AND state='PENDING' ORDER BY order_key LIMIT 1", (revision, phase)).fetchone()
+            placeholders = ",".join("?" for _ in selected_tasks)
+            row = conn.execute("SELECT * FROM jobs WHERE revision=? AND phase=? AND state='PENDING' AND task IN (" + placeholders + ") ORDER BY order_key LIMIT 1",
+                (revision, phase, *selected_tasks)).fetchone()
             if row is None:
                 break
             row = dict(row)
             sample = json.loads(conn.execute("SELECT payload FROM inputs WHERE revision=? AND phase=? AND task=? AND sample=?",
                 (revision, phase, row["task"], row["sample"])).fetchone()[0])
-            conn.execute("UPDATE jobs SET state='RUNNING', started=? WHERE job_id=?", (datetime.now(UTC).isoformat(), row["job_id"]))
+            row["started"] = datetime.now(UTC).isoformat()
+            conn.execute("UPDATE jobs SET state='RUNNING', started=? WHERE job_id=?", (row["started"], row["job_id"]))
+            attempt = (conn.execute("SELECT COALESCE(MAX(attempt),0)+1 FROM execution_attempts WHERE job_id=?", (row["job_id"],)).fetchone()[0] if recovery else None)
+            if attempt is not None and attempt > recovery["max_attempts"]:
+                raise ValueError("JOB_ATTEMPT_LIMIT_EXHAUSTED")
+            if attempt is not None:
+                conn.execute("INSERT INTO execution_attempts VALUES (?,?,?)", (row["job_id"], attempt,
+                    json.dumps({**row, "attempt": attempt, "state": "RUNNING", "result_path": None, "result_hash": None})))
         protocol = load(rev / "protocols" / (row["task"] + ".json"))
+        if (protocol.get("total_run_authorization") or {}).get("budget_monitor") != monitor_ref:
+            raise ValueError("REVISION_MONITOR_REFERENCE_CHANGED")
         job = {"sample": sample, "protocol": protocol, "system": row["system"], "replicate_id": row["replicate"], "max_calls": row["max_calls"]}
         directory = rev / "runs" / row["job_id"]
+        if attempt is not None:
+            directory = directory / f"attempt-{attempt:02d}"
         result_hash, result_path, error = None, None, None
         try:
             receipt = run_job(job, code=rev / "code", directory=directory, reasoner=ROOT / "third_party/downloads/robot-1.9.7.jar",
-                ledger=ledger, job_id=row["job_id"], endpoint_sha256=manifest["binding"]["endpoint_sha256"])
+                ledger=ledger, job_id=row["job_id"], endpoint_sha256=manifest["binding"]["endpoint_sha256"], attempt=attempt)
             result_path = Path(receipt["result_path"])
             if result_path.is_symlink() or not result_path.resolve().is_relative_to(directory.resolve()):
                 raise ValueError("WORKER_RESULT_PATH_INVALID")
@@ -227,16 +292,35 @@ def execute(workspace, revision, phase, *, max_jobs=None):
             directory.mkdir(parents=True, exist_ok=True)
             save(directory / "execution-error.json", {"type": error, "state": state, "budget": ledger.snapshot()})
         with connect(workspace) as conn:
+            if attempt is not None:
+                attempt_record = {**row, "attempt": attempt, "state": state, "error": error, "directory": str(directory),
+                    "result_path": str(result_path) if result_path else None, "result_hash": result_hash, "ended": datetime.now(UTC).isoformat()}
+                conn.execute("UPDATE execution_attempts SET snapshot=? WHERE job_id=? AND attempt=?", (json.dumps(attempt_record), row["job_id"], attempt))
             conn.execute("UPDATE jobs SET state=?, ended=?, result_path=?, result_hash=?, error=? WHERE job_id=?",
                 (state, datetime.now(UTC).isoformat(), str(result_path) if result_path else None, result_hash, error, row["job_id"]))
         completed += 1
         progress = status(workspace, revision)
         save(workspace / "progress.json", {**progress, "last_job": row["job_id"], "last_status": state, "last_error": error})
         print(json.dumps({"phase": phase, "job": row["job_id"], "state": state, "error": error, "calls": progress["budget"]["calls"]}), flush=True)
+        if state == "FAILED" and recovery and attempt < recovery["max_attempts"] and monitor_ref:
+            failed_responses = {}
+            for response_path in (directory / "calls").glob("*/response.json"):
+                response = load(response_path)
+                if not response.get("ok"):
+                    failed_responses[f"{row['job_id']}:attempt-{attempt:02d}:call-{response_path.parent.name}"] = response
+            if failed_responses and all(budget_monitor.transient_response(r) for r in failed_responses.values()):
+                budget_monitor.acknowledge_transport_retry(ledger, monitor_ref, row["job_id"], attempt, failed_responses)
+                save(directory / "retry-receipt.json", {"retry_authorized": True, "reason": "TRANSIENT_TRANSPORT_ONLY",
+                    "attempt": attempt, "original_failure_retained": True, "reserved_tokens_refunded": False})
+                with connect(workspace) as conn:
+                    conn.execute("UPDATE jobs SET state='PENDING',error=NULL,result_path=NULL,result_hash=NULL WHERE job_id=?", (row["job_id"],))
+                time.sleep(recovery["backoff_seconds"])
+                continue
         # Environment failures pause, rather than consuming the entire corpus.
-        if error is not None or ledger.snapshot()["states"].get("USAGE_BOUND_VIOLATION"):
+        budget_halted = not budget_monitor.snapshot(ledger, monitor_ref)["ready"] if monitor_ref else bool(ledger.snapshot()["states"].get("USAGE_BOUND_VIOLATION"))
+        if error is not None or budget_halted:
             break
-    return status(workspace, revision)
+    return {**status(workspace, revision), "dispatch_tasks": selected_tasks, "scorer_blocked_tasks": blocked_tasks}
 
 
 def main(argv=None):
@@ -246,13 +330,18 @@ def main(argv=None):
     parser.add_argument("--revision", required=True)
     parser.add_argument("--phase", choices=["smoke", "pilot", "full"], default="smoke")
     parser.add_argument("--max-jobs", type=int)
+    parser.add_argument("--monitor-reference", type=Path, help="Explicitly authorized monitor reference for a new revision only")
+    parser.add_argument("--task", action="append", choices=list(TASKS), help="Explicit full-task dispatch scope; pending other tasks remain in the inventory")
+    parser.add_argument("--include-unscorable-generation", action="store_true", help="New freeze only: explicit full-generation scope, scoring blockers remain separately reported")
+    parser.add_argument("--program-quote-locators", action="store_true", help="New freeze only: paired fact/quote output and program-derived unique source locations")
     args = parser.parse_args(argv)
     if args.command == "init":
         with supervisor_lock(args.workspace):
-            result = initialize(args.workspace, args.revision)
+            result = initialize(args.workspace, args.revision, monitor_ref=load(args.monitor_reference) if args.monitor_reference else None,
+                include_unscorable=args.include_unscorable_generation, program_quote_locators=args.program_quote_locators)
     elif args.command == "run":
         with supervisor_lock(args.workspace):
-            result = execute(args.workspace, args.revision, args.phase, max_jobs=args.max_jobs)
+            result = execute(args.workspace, args.revision, args.phase, max_jobs=args.max_jobs, tasks=args.task)
     else:
         result = status(args.workspace, args.revision)
     print(json.dumps(result))

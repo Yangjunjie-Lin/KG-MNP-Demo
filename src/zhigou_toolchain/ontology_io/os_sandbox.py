@@ -50,8 +50,10 @@ def stage_code(root, output):
     return {"files": files, "sha256": semantic_hash(files), "policy": "SOURCE_AND_CONTRACTS_NO_TESTS_NO_TUTORIAL_ANSWERS_NO_DATASETS"}
 
 
-def command(code, job_input, job_output, reasoner, *, extra=()):
-    return ["wsl", "-d", DISTRO, "--exec", "/usr/bin/timeout", "--kill-after=5s", "900s", "bwrap", "--unshare-all", "--unshare-user", "--die-with-parent", "--new-session",
+def command(code, job_input, job_output, reasoner, *, extra=(), wall_timeout=900):
+    if type(wall_timeout) is not int or not 1 <= wall_timeout <= 3600:
+        raise ValueError("SANDBOX_WALLTIME_OUTSIDE_HARD_BOUND")
+    return ["wsl", "-d", DISTRO, "--exec", "/usr/bin/timeout", "--kill-after=5s", str(wall_timeout) + "s", "bwrap", "--unshare-all", "--unshare-user", "--die-with-parent", "--new-session",
         "--cap-drop", "ALL", "--disable-userns", "--ro-bind", "/usr", "/usr", "--symlink", "usr/bin", "/bin",
         "--symlink", "usr/lib", "/lib", "--symlink", "usr/lib64", "/lib64", "--proc", "/proc", "--dev", "/dev",
         "--tmpfs", "/tmp", "--dir", "/home", "--dir", "/etc", "--dir", "/opt",
@@ -90,7 +92,7 @@ def verify_canary(code, root, reasoner):
     return report
 
 
-def run_job(job, *, code, directory, reasoner, ledger, job_id, endpoint_sha256, model_timeout=150, wall_timeout=900):
+def run_job(job, *, code, directory, reasoner, ledger, job_id, endpoint_sha256, model_timeout=None, wall_timeout=None, attempt=None):
     directory = Path(directory)
     public, output = directory / "input", directory / "output"
     public.mkdir(parents=True, exist_ok=False)
@@ -98,11 +100,16 @@ def run_job(job, *, code, directory, reasoner, ledger, job_id, endpoint_sha256, 
     # The protocol's path is a task-independent runtime substitution with a
     # separately verified, fixed JAR digest. Every system gets this same path.
     protocol = Protocol.model_validate(job["protocol"])
+    model_timeout = model_timeout or ((protocol.request_profile.timeout_seconds if protocol.request_profile else 120) + 30)
+    wall_timeout = wall_timeout or min(3600, max(900, protocol.budget.max_calls * model_timeout + 180))
+    if attempt is not None and (type(attempt) is not int or not 1 <= attempt <= 3):
+        raise ValueError("INVALID_JOB_ATTEMPT")
+    request_prefix = f"{job_id}:attempt-{attempt:02d}" if attempt is not None else job_id
     if protocol.kernel_profile:
         protocol = protocol.model_copy(update={"kernel_profile": protocol.kernel_profile.model_copy(update={"reasoner_jar": "/opt/robot.jar"})})
     job = {**job, "protocol": protocol.model_dump(mode="json")}
     (public / "job.json").write_text(json.dumps(job, ensure_ascii=False), encoding="utf-8")
-    process = subprocess.Popen(command(code, public, output, reasoner), stdin=subprocess.PIPE, stdout=subprocess.PIPE,
+    process = subprocess.Popen(command(code, public, output, reasoner, wall_timeout=wall_timeout), stdin=subprocess.PIPE, stdout=subprocess.PIPE,
         stderr=subprocess.PIPE, text=True, encoding="utf-8", bufsize=1)
     stdout, stdin, error_stream = process.stdout, process.stdin, process.stderr
     assert stdout is not None and stdin is not None and error_stream is not None
@@ -146,7 +153,7 @@ def run_job(job, *, code, directory, reasoner, ledger, job_id, endpoint_sha256, 
                 raise ValueError("SANDBOX_BROKER_OPERATION_OR_CALL_LIMIT")
             index += 1
             reply = dispatch(message["request"], protocol=protocol, ledger=ledger, job_id=job_id,
-                request_id=f"{job_id}:call-{index}", directory=directory / "calls" / str(index),
+                request_id=f"{request_prefix}:call-{index}", directory=directory / "calls" / str(index),
                 endpoint_sha256=endpoint_sha256, timeout=min(model_timeout, int(wall_timeout - (monotonic() - started))), code=code)
             stdin.write(json.dumps(reply, ensure_ascii=False) + "\n")
             stdin.flush()

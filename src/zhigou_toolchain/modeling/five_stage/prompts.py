@@ -15,7 +15,7 @@ PACKAGE = Path(__file__).parents[2]
 PROMPT_SOURCES = (
     "services/modeling_five_stage.py", "modeling/five_stage/assistance.py",
     "modeling/five_stage/tools.py", "modeling/five_stage/compatible.py",
-    "ontology_io/engine.py", "ontology_io/kernel.py", "ontology_io/transport_worker.py",
+    "ontology_io/engine.py", "ontology_io/kernel.py", "ontology_io/transport_worker.py", "ontology_io/prompt_views.py", "ontology_io/source_quotes.py", "ontology_io/vocabulary.py",
 )
 
 
@@ -50,7 +50,7 @@ def source_catalogue():
                     post = next(c for c in ast.walk(node) if isinstance(c, ast.Call) and isinstance(c.func, ast.Attribute) and c.func.attr == "_request")
                     policies.append({"source": relative, "function": owner(node) + ".propose.request_builder",
                         "code": "\n".join(source.splitlines()[node.lineno - 1:post.lineno]), "source_sha256": sources[relative]})
-            if isinstance(node, ast.Assign) and any(isinstance(t, ast.Name) and t.id in {"instruction", "schema", "body", "output_schema"} for t in node.targets):
+            if isinstance(node, ast.Assign) and any(isinstance(t, ast.Name) and t.id in {"instruction", "schema", "body", "output_schema", "GUIDE"} for t in node.targets):
                 builders.append({"source": relative, "function": owner(node), "line": node.lineno,
                     "target": ast.unparse(node.targets[0]), "expression": ast.get_source_segment(source, node.value),
                     "source_sha256": sources[relative]})
@@ -63,7 +63,7 @@ def source_catalogue():
             if not isinstance(node, ast.Call):
                 continue
             name = node.func.attr if isinstance(node.func, ast.Attribute) else node.func.id if isinstance(node.func, ast.Name) else ""
-            if name not in {"propose", "ask"} or not node.args:
+            if name not in {"propose", "ask", "contextual_ask"} or not node.args:
                 continue
             offset = 1 if isinstance(node.args[0], ast.Constant) and type(node.args[0].value) is int else 0
             args = node.args[offset:]

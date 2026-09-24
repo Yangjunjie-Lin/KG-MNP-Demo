@@ -54,3 +54,7 @@ examples/publication/expected/** -text
 examples/publication/fixtures/owl2vowl-0.3.7-raw.json -text
 config/webvowl/webvowl-runtime-1.0.0.yaml -text
 config/graphdb/graphdb-runtime-1.0.0.yaml -text
+# Standalone audit distribution bundles keep their self/dependency SHA256.
+# Only source/docs/freeze metadata live here; runtime ledgers stay untracked.
+tools/ontology_usage_audit/token-audit-portable-v1/** -text
+tools/ontology_usage_audit/token-report-portable-v1/** -text

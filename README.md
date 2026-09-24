@@ -1,5 +1,27 @@
 # 知构工具链 · ZhiGou Toolchain
 
+本轮功能源码上传包含 benchmark 运行/预算/评分与 Prompt、Token 审计。
+可直接使用 `python tools/audit_ontology_tokens.py`，详见
+[独立审计程序](tools/ontology_usage_audit/README.md)及
+[本次上传范围](docs/research/functional-source-upload-2026-09-24.md)。
+不分发真实账本、凭据、授权回执或全量输出；运行中的冻结工作区不切换到本分支。
+
+2026-09-24 新增[逐运行 Token JSON 审计器](docs/research/token-audit-json-2026-09-24.md)：
+独立只读观察原账本，自动输出每次调用、每一步与全程用量，分开标注建模/测试用途和 benchmark 场景。
+未知值保留 null，预算预留不算实际用量；不修改当前冻结生成器、原报告或生产权限。
+
+2026-09-24 用户确认后已[恢复主机重启中断的全量队列](docs/research/host-reboot-continuation-2026-09-24.md)。
+独立冻结控制v4将指定调用保留为中断/远端未知，不重试、不退款，不伪造响应或用量；
+原r8生成器和预算不变。114项相关检查及重启后的新隔离复验通过，后续新作业已实际生成。
+
+同日后续：[样本本地隐私拒绝隔离](docs/research/local-private-veto-isolation-2026-09-23.md)
+以新冻结控制v3保留被拒样本为FAILED，仅继续其他样本；原隐私门和生成器不变，
+独立离线HTTP spy证明不用于回填历史usage或退款。89项相关工程检查通过，非正式研究成绩。
+
+2026-09-23 用户明确授权后已[恢复原本体全量队列](docs/research/terminal-transport-continuation-2026-09-23.md)。
+独立冻结的续跑控制保留原 r8 生成器、失败、三次尝试上限与总预算；终态临时传输失败
+留档后继续其他作业，不增加第四次重试。实际新作业已生成，正式全量质量统计尚未完成。
+
 可组合、可验证、可追溯的本体工程工具链（Ontology Toolchain）。以独立领域包提供业务语义，
 将资料接入、五步本体建模、服务与版本管理、任务执行和反馈演进连接到同一个授权服务和 Worker。
 
@@ -230,6 +252,40 @@ ZHIGOU_ 与 KG_MNP_ 环境变量冲突会明确报错，不回显秘密。
 该授权不改变功能缺口或研究结论；当前提交的 CI 状态以 GitHub Actions 检查为准。
 
 ## 双 Agent、v3 与独立本体 I/O 评测（增量实现）
+
+2026-09-21 按用户指定对 GPT-5.6 Luna 完成一次真实恢复诊断：模型可调用，但当前网关
+仍未执行输出硬上限（请求128、返回1026 completion tokens）。仅新增一次合成诊断，
+不属于 benchmark 成绩；原预算、历史调用与 STOP 保留，full 未恢复。
+实现、回执与继续条件见 [Luna 恢复诊断](docs/research/luna-recovery-2026-09-21.md)。
+随后经授权在隔离临时 Cockpit 实例补回限额字段，上游返回HTTP400、
+`Unsupported parameter: max_output_tokens`。临时实例已停止，正式网关原样保留；
+这是当前OAuth路由的能力阻塞，不能用客户端裁剪冒充硬预算。
+见 [网关修复尝试与上游实测](docs/research/cockpit-gateway-repair-2026-09-21.md)。
+随后按用户要求对localhost:51900的Luna/Astra及Chat Completions/Responses完成8次新实测：
+全部HTTP200、四项中文JSON通过，但四项128-token限额均未被执行。接口可用不等于原预算协议合格。
+原finalize新增质量分、绝对/相对变化及配对95%CI导出，跨任务/基线统一Holm校正；
+没有完整预测仍拒绝正式评分。详细结果见 [接口复测与质量报告补齐](docs/research/endpoint-recheck-2026-09-21.md)。
+用户随后确认继续当前接口并调整原预算协议；新 [本地用量监控协议](docs/research/monitored-budget-2026-09-21.md)
+使用同一总账本，保留旧失败和STOP，按新授权/新冻结revision运行Luna。
+单次上限为请求建议而非网关保证，未知用量/新超额停机；不能把协议恢复写成完整质量实验已完成。
+随后用户授权启动并完成所有全量。r2 pilot的一次120秒ReadTimeout已保留；
+新 [全量运行方案](docs/research/full-launch-2026-09-21.md) 使用300秒请求超时、最多三次
+仅网络故障尝试、完整尝试/费用台账及自动阶段推进。所有冻结全量位置保留，
+生成与评分完成分开判断；CQ2Onto评分缺口不被伪称已解决。
+r3随后在pilot的Reuse上下文构造处停止（17成功、1次零模型调用预算拒绝）。
+新研究请求视图用可逆卡片索引/列式目录去除重复载荷，不裁剪来源或扩大预算；
+原始检索/复用结果仍保留。详见[上下文修复回执](docs/research/context-repair-2026-09-21.md)。
+r4遇到上游HTTP408后保留未知用量并停机；新冻结版本将408补入已有有限传输恢复名单，
+不增加尝试次数或预算、不重试语义/鉴权/额度错误。状态见[408恢复记录](docs/research/http408-recovery-2026-09-21.md)。
+r5有一个合成smoke在引用修复中清空了原预测，被原空修复防护拒绝。
+新版本仅增强[原文定位反馈](docs/research/evidence-repair-2026-09-22.md)，提供来源精确位置候选，
+不自动改事实、引用或评分答案，原空修复/歧义/预算门均保留。
+r6 pilot的53条事实/54条引用暴露了两套索引和模型偏移的脆弱性；新冻结研究模式
+[事实与引用耦合](docs/research/quote-coupling-2026-09-22.md)让每条事实携带原文quote，
+由原程序严格唯一匹配计算位置，缺失/歧义仍失败；旧模式与旧失败不改写。
+r7 Reuse预检揭示“新增词汇提案”未与任务已提供词汇闭包，导致复用项被错挡。
+新[词表衔接修复](docs/research/vocabulary-repair-2026-09-22.md)保留输入词汇与原模型提案，
+真正未知词仍拒绝并交回S2，不自动放行S3新词、不删除旧失败或扩预算。
 
 已接入后端角色/工具审计、只读 v3 检查、原生包兼容预检、固定外部资源输入适配、
 原生评分函数回归及研究报告页面。完整原生→v3 正式导出、全部 TwoAgentV3 研究内核、

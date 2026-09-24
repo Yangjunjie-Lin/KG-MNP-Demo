@@ -340,7 +340,13 @@ def score(run_dir, prepared, upstream, output, *, framework="native"):
             "input_sha256": semantic_hash(frozen_input_rows[sample.sample_id]), "status": entry["status"],
         }.items()):
             raise ValueError("FROZEN_RESULT_CONTEXT_CHANGED")
-        resources.append(result["resources"])
+        resource = dict(result["resources"])
+        if entry["path"] in manifest.get("execution_accounting", {}):
+            accounted = manifest["execution_accounting"][entry["path"]]
+            resource.update(final_attempt_model_calls=resource.get("model_calls"), final_attempt_reported_total_tokens=resource.get("reported_total_tokens"),
+                model_calls=accounted["model_calls_all_attempts"], reported_total_tokens=accounted["reported_total_tokens_all_attempts"],
+                **accounted, time_scope="MODEL_AND_TOOL_SECONDS_FINAL_ATTEMPT_ONLY_ALL_ATTEMPT_TIMESTAMPS_IN_HISTORY")
+        resources.append(resource)
         models.update(c.get("model", {}).get("observed_model_id", c.get("model", {}).get("model_id", "UNKNOWN")) for c in result["calls"])
         row = {"sample_id": sample.sample_id, "group_id": sample.group_id, "replicate_id": entry["replicate_id"], "status": "UNSCORABLE", "metrics": None,
             "generation_status": result["status"], "failure_type": result.get("failure_type"), "failure_code": result.get("failure_code"),
@@ -475,6 +481,7 @@ def compare(left, right, output):
     comparison = {"baseline_run": a["run_id"], "experiment_run": b["run_id"], "metrics": metrics,
         "baseline_report_sha256": semantic_hash(a), "experiment_report_sha256": semantic_hash(b),
         "primary_metrics": protocol.primary_metrics, "primary_test_correction": protocol.primary_test_correction,
+        "primary_test_correction_scope": "WITHIN_THIS_PAIR_ONLY_USE_FINAL_QUALITY_EXPORT_FOR_GLOBAL_FAMILY",
         "conclusion": "EXPLORATORY_SMOKE_NOT_EVIDENCE_OF_GENERAL_SUPERIORITY", "project_goals": "INSUFFICIENT_EVIDENCE"}
     result = {**b, "comparison": comparison}
     Draft202012Validator(REPORT_SCHEMA).validate(result)

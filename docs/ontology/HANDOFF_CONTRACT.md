@@ -1,5 +1,50 @@
 # 本体结果与演进轨迹交接契约
 
+审计程序分发入口为 `tools/audit_ontology_tokens.py`，JSON 契约和原权限不变。
+源码副本/依赖的字节摘要通过 Git 属性保持；随源码发布不等于分发运行授权、私有输入、
+原始调用内容、历史回执或已完成的 benchmark 结果。
+
+2026-09-24 新增独立研究[Token JSON 视图](../research/token-audit-json-2026-09-24.md)，
+schema_version 为 ontology-token-usage/1.0，不冒充演进 v2 或第18项交付。
+保留原 job/request ID、失败/重试、中断未知；input/output/total 任一未知相应合计为 null，
+已知部分与预算占用分别给出。只有原 job 终态且全部用量已知才给 final_total_tokens。
+无正文、密钥或私有 reasoning；该本地观察附件不改变 native/audit/transport、step_audit_anchor、
+双开关、原日志下载权限、人工审核或外部接收状态，亦不证明物理 HTTP 调用数。
+
+2026-09-24 [有授权的主机中断观察](../research/host-reboot-continuation-2026-09-24.md)是原研究
+job/预算账本的从属操作者收据，不是供应商response、模型成功、业务审批或第18项交付。
+原CALL身份及未知usage/response hash保留；缺失历史内容不补造，严格业务出口不因此放宽。
+
+2026-09-23[隔离本地隐私拒绝](../research/local-private-veto-isolation-2026-09-23.md)的操作者收据
+明确区分本地拒绝与耗尽的传输失败；独立spy复现不是历史调用/用量的替代证据。
+原FAILED、usage=null、费用预留、三层ID和15–17保持，不产生隐私门放行或新审批事件。
+
+2026-09-23 [研究续跑控制](../research/terminal-transport-continuation-2026-09-23.md)只向原研究预算账本
+追加绑定真实用户授权的终态传输续跑收据，并保留原FAILED/请求ID/费用与三次尝试记录。
+该操作者事件不是模型调用、自动重试、本体审批或新增核心交付项；15–17和原业务接口不变。
+
+2026-09-21 的 [Luna 评测恢复诊断](../research/luna-recovery-2026-09-21.md) 是独立研究运行证据，
+不是新的交付类别或正式人工评价；不改变本契约、原生 ID、审计权限与历史交接。
+其真实模型调用不代表本体 benchmark 或外部接收完成。
+后续 [网关参数透传诊断](../research/cockpit-gateway-repair-2026-09-21.md) 收到HTTP400；
+错误响应仅留安全白名单及原响应摘要，明确不是完整原字节轨迹，也不新增正式交接类型。
+后续接口复测和quality/effects研究报告仍是独立研究附件，沿用原审批、轨迹权限和交接类别。
+配对质量差值与置信区间只来自完整冻结预测，不以合成接口响应或统计单测冒充正式结果。
+本地预算监控授权仅供研究broker核账与新revision调度，不属于运行时Agent审批工具，
+不改15–17演进事件、双开关、正文权限及native/audit/transport调用身份。
+研究全量的execution_attempts及transport_recovery_ack仅是原研究任务/预算账本的从属尝试记录；
+失败请求ID/响应摘要/未知用量保留，不改写为成功、不作为新的业务事实或审核真相。
+研究模型上下文的card_index是本次请求内可逆引用，不是native/audit/transport ID；
+实际消息记录压缩后的真实请求，旧消息不能用新编码回填，业务交接格式不变。
+研究HTTP408重试继续记录独立真实请求ID、原失败与未知用量；仅更新错误分类，
+不把失败输出改为成功，也不改变演进协议、审批或完整轨迹资格。
+研究修复中的quote_location_hints只描述同一冻结原文的Unicode定位候选，非标准答案；
+旧模型提案和失败保持原样，最终引用仍须由实际新提案通过原验证，不新增交付类别或审批权。
+PROGRAM_UNIQUE_QUOTE_V1只改变显式新研究版本的模型响应契约，canonical triples/schemas、
+native/audit/transport ID和业务交接Schema不变。程序派生位置须标明非模型提供，不伪称旧offset正确。
+研究候选词表的输入闭包不构成人工批准或新词授权；新增来源说明记录输入词与模型提案的区别，
+不修改既有原生IRI、评价或交接Schema，不用S3预测/标准答案自行扩大词表。
+
 2026-09-18 当前字段规范，按本轮完整 Prompt 与 01–17 清单维护。旧协议原件保留，
 下面已明确的字段优先于历史未决表。01–08 输入、09–14 本体成果沿用原适配/1.1 Schema；
 15–17 只有执行记录、真实人工评价、批次清单三类核心交付，无第 18 类。

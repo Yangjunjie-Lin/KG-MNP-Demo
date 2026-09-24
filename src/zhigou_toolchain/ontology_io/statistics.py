@@ -61,14 +61,27 @@ def paired_cluster_aggregate(baseline, experiment, *, aggregate, bootstrap_sampl
             raise ValueError("NONFINITE_NATIVE_AGGREGATE")
         return mean(values)
 
-    delta = estimate(experiment, keys) - estimate(baseline, keys)
+    baseline_score, experiment_score = estimate(baseline, keys), estimate(experiment, keys)
+    delta = experiment_score - baseline_score
+    estimates = {"baseline_score": baseline_score, "experiment_score": experiment_score,
+        "difference_unit": "FRACTION_NOT_RELATIVE_PERCENT", "absolute_change_percentage_points": 100 * delta,
+        "relative_change_percent": 100 * delta / baseline_score if baseline_score > 0 else None,
+        "relative_change_status": "DEFINED" if baseline_score > 0 else "UNDEFINED_NONPOSITIVE_BASELINE"}
     if len(keys) < 2:
-        return {"status": "INSUFFICIENT_INDEPENDENT_UNITS", "difference": delta, "confidence_interval_95": None, "p_value": None}
+        return {**estimates, "status": "INSUFFICIENT_INDEPENDENT_UNITS", "difference": delta, "confidence_interval_95": None,
+            "p_value": None, "independent_groups": len(keys), "replicate_count": len(replicates),
+            "baseline_confidence_interval_95": None, "experiment_confidence_interval_95": None,
+            "absolute_change_percentage_points_ci95": None, "relative_change_percent_ci95": None}
     rng = random.Random(seed)
-    boot = []
+    boot, baseline_boot, experiment_boot, relative_boot = [], [], [], []
     for _ in range(bootstrap_samples):
         sampled = rng.choices(keys, k=len(keys))
-        boot.append(estimate(experiment, sampled) - estimate(baseline, sampled))
+        left_value, right_value = estimate(baseline, sampled), estimate(experiment, sampled)
+        boot.append(right_value - left_value)
+        baseline_boot.append(left_value)
+        experiment_boot.append(right_value)
+        if left_value > 0:
+            relative_boot.append(100 * (right_value - left_value) / left_value)
     # Exact paired cluster exchange for small n; MC otherwise. Repeat vectors
     # are swapped as a unit. Non-additive metrics are recomputed, not sign-flipped.
     exact = len(keys) <= 12
@@ -79,8 +92,19 @@ def paired_cluster_aggregate(baseline, experiment, *, aggregate, bootstrap_sampl
         right = {k: (baseline if mask & (1 << i) else experiment)[k] for i, k in enumerate(keys)}
         extreme += abs(estimate(right, keys) - estimate(left, keys)) >= abs(delta) - 1e-12
         count += 1
-    boot.sort()
-    return {"status": "MEASURED", "difference": delta, "confidence_interval_95": [boot[int(.025 * len(boot))], boot[int(.975 * len(boot))]],
+    def interval(values):
+        ordered = sorted(values)
+        return [ordered[int(.025 * len(ordered))], ordered[int(.975 * len(ordered))]]
+
+    delta_ci = interval(boot)
+    relative_defined = baseline_score > 0 and len(relative_boot) == bootstrap_samples
+    return {**estimates, "status": "MEASURED", "difference": delta, "confidence_interval_95": delta_ci,
+        "baseline_confidence_interval_95": interval(baseline_boot), "experiment_confidence_interval_95": interval(experiment_boot),
+        "absolute_change_percentage_points_ci95": [100 * value for value in delta_ci],
+        "relative_change_percent_ci95": interval(relative_boot) if relative_defined else None,
+        "relative_change_ci_status": "DEFINED" if relative_defined else "UNDEFINED_BOOTSTRAP_NONPOSITIVE_BASELINE",
+        "confidence_interval_method": "PAIRED_SOURCE_CLUSTER_PERCENTILE_BOOTSTRAP_ALL_REPLICATES",
+        "bootstrap_samples": bootstrap_samples,
         "p_value": extreme / count if exact else (extreme + 1) / (count + 1), "independent_groups": len(keys),
         "replicate_count": len(replicates), "resampling_unit": "SOURCE_CLUSTER_ALL_REPLICATES", "native_aggregate_recomputed": True,
         "test": "EXACT_PAIRED_CLUSTER_EXCHANGE" if exact else "MONTE_CARLO_PAIRED_CLUSTER_EXCHANGE", "seed": seed}

@@ -1,5 +1,159 @@
 # 立项 方法 实现与独立证据
 
+## 功能源码上传（2026-09-24）
+
+benchmark 运行/评分、预算/有限恢复、Prompt 同源目录及 Token 计量代码共同分发。
+新增仓库入口 `tools/audit_ontology_tokens.py` 只加载审计分发版本，不另写用量逻辑。
+依赖与入口离线验证见 `test_ontology_token_audit_entrypoint.py`，
+统一专项入口为 `python tools/evaluate_research.py --suite ontology-token-audit`。
+上传隔离在独立 worktree 分支，原运行源码、HEAD、预算、历史失败与观察器保持不变；
+不上传运行数据库、密钥或大体量产物。范围见
+[功能源码上传](docs/research/functional-source-upload-2026-09-24.md)。
+
+## 自动逐运行 Token JSON 审计（2026-09-24）
+
+独立程序 `runtime_reports/full-luna-20260921/token-audit-20260924v1/audit_tokens.py` 提供 snapshot/watch，
+复用原预算/job账本及锁定的旧报告提取函数；不修改冻结 r8 生成或控制 v4。
+原 request_id 逐次保留，按实际请求/冻结源码分步；modeling/testing/unclassified 为互斥用途，
+benchmark/diagnostic 为另一维度，不能叠加两轴。已知、未知、预算预留、运行中和终态分开。
+合成单测覆盖只读数据库、失败重试、中断/在途 null、步骤映射、隐私、哈希不符、重复观察器、
+原子 JSON 投影和恢复去重；真实账本快照另行核对。不将 caller 登记数冒充独立物理 HTTP 见证。
+命令、字段、测试及实际启用回执见[审计程序说明](docs/research/token-audit-json-2026-09-24.md)。
+
+## 指定主机重启中断的原子关闭与续跑（2026-09-24）
+
+用户确认指定孤立caller保留未知、不重试不退款后，控制v4核对主机/文件/四类CAS前像，
+在原budget/jobs附加数据库事务中保存前像和授权，再标本地中断；无供应商响应或用量补造。
+最终核账导出只识别已验证本地观察，原评分/CI/分母代码经AST核对不变。
+25项新增测试+89项相关回归通过，重启后的新隔离复验通过；首个新full作业实际GENERATED。
+范围、回执和仍未完成的质量统计见[重启恢复](docs/research/host-reboot-continuation-2026-09-24.md)。
+
+## 样本隐私拒绝不扩散为其他样本停机（2026-09-23）
+
+原冻结输入门保持；用原冻结客户端和独立MockTransport spy离线复现本地拒绝，
+被拒请求不重发、样本保留FAILED、未知usage/预留不改，仅派发其他原已授权作业。
+新冻结控制v3追加明确failure_class与独立证明的操作者收据，未证明错误仍保护。
+35项控制/集成检查+54项原相关回归通过，证据及限制见
+[本地拒绝隔离](docs/research/local-private-veto-isolation-2026-09-23.md)，不冒充正式质量成绩。
+
+## 原全量队列的终态传输授权续跑（2026-09-23）
+
+用户明确确认继续全量、不再因同类传输暂停反复索取授权。独立冻结控制v2复用原r8
+Worker/作业/预算，追加操作者授权收据后继续其他PENDING；旧FAILED、原ID、三次尝试
+与未知预留不变，没有第四次重试、审批或新业务真相。详见
+[范围与实现](docs/research/terminal-transport-continuation-2026-09-23.md)。
+v1清单摘要口径错误的前置失败保留；v2分别验证文件/内容摘要及真实只读preflight。
+28项新控制测试+54项原相关回归全部通过，首个续跑TwoAgentKernelV1 full作业已实际GENERATED。
+证据位于runtime_reports/full-luna-20260921/resume-control-20260923v2/与RESUME_20260923.md。
+预算/鉴权/完整性/用户STOP保护及正式评分未完成的限制保持，不以此宣称全量质量达标。
+
+## Reuse输入词表闭包与S2修复责任（2026-09-22）
+
+r7 smoke9成功、pilot16成功/2空修复失败。两例初始词表漏项中分别8/8、6/7已在任务输入cards，
+不应因模型只提出新增词而从可用基线消失。`vocabulary.close_vocabulary`仅合并输入已提供标签与
+实际S2提案，原提案/IRI/大小写不改，闭包是明确程序动作并记录来源/hash，不读S3预测或gold。
+仍未知的FROZEN_VOCABULARY_VIOLATION交回S2，候选缺口标MODEL_LABELS_NOT_APPROVED；
+保持原修复轮数、5-call Reuse预算及全部语义/空修复门。相关测试新增test_ontology_vocabulary.py，
+旧r7失败和费用保留。详见[词表修复](docs/research/vocabulary-repair-2026-09-22.md)。
+
+## 事实—引用耦合与严格程序定位（2026-09-22）
+
+r6 pilot17成功/1空修复失败，原53条事实/54条引用中54个quote均唯一精确存在，只有1个模型start正确。
+`source_quotes.py`提供显式PROGRAM_UNIQUE_QUOTE_V1模式：同一facts行耦合实际triple/quote/可选typed schema，
+只保真投影，不增删/纠正事实。位置由全源唯一精确匹配后复用bind_quote产生，源漂移、歧义、
+跨窗口、虚构quote仍拒绝，且声明位置为程序派生、不证明事实蕴含。
+旧模式默认行为及其错offset/空修复回归保持。--program-quote-locators只对新冻结版本生效，
+模式写入Protocol/manifest/capabilities。生产select_reuse/交接/审批权限不变。
+测试test_ontology_source_quotes.py覆盖保真、重复、typed耦合、严格位置和原guard；详见
+[耦合引用模式](docs/research/quote-coupling-2026-09-22.md)。
+
+## r5空修复拒绝与来源定位反馈（2026-09-22）
+
+r5 smoke8成功/1失败；失败是模型修复错误引用位置时输出空triples，原REPAIR_EMPTY_OUTPUT_REJECTED
+正确阻断，不作为网络重试或成功处理。`evidence_hints.py`仅从原public text及原提案quote计算
+精确Unicode位置候选；歧义、未匹配和诊断省略明确标注，不写回模型提案或消除原验证错误。
+`kernel`把有界提示交给原修复调用，并强调offset错误不等于事实不存在；规划提示重申任务已有
+is-a/instance-of记法，不在评分前改写模型谓词。预算、调用次数、空修复和引用门不变。
+`test_ontology_evidence_hints.py`及原kernel空修复回归验证，实际结果见[定位反馈](docs/research/evidence-repair-2026-09-22.md)。
+
+## r4 HTTP408传输分类补齐（2026-09-21）
+
+r4 smoke9成功；pilot2成功后，上游408无usage触发原保护，135244预留未退款。
+`budget_monitor.transient_response`将408加入既有timeout/5xx有限恢复类；仍最多3次，
+FAILED记录及SHA绑定不改，401/403/429、Schema/语义和预算违规均不放行。
+`test_ontology_transport_recovery`同时覆盖ReadTimeout与408的账目保留和调度重试，
+新版本重新冻结，历史r4输出不覆盖。见[恢复记录](docs/research/http408-recovery-2026-09-21.md)。
+
+## r3 pilot上下文拒绝与无损编码（2026-09-21）
+
+r3 smoke9成功、pilot17成功/1失败；Reuse失败在首个POST之前触发CONTEXT_TOKEN_UPPER_BOUND_EXCEEDED，
+没有因此新增模型费用。原字节及26个生成产物快照留存，不将失败改成成功。
+`ontology_io/prompt_views.py`仅去掉cards/retrieval/reuse之间的重复元数据，用完整目录+索引可逆表示；
+解码逐项等于原卡片、次序、打分、理由和IRI，NoRetrieval仍为空，不裁剪任何输入。
+原24000字符/32768保守上下文/总调用与token预算不变；所有2252 full Reuse首轮请求无模型预检均合规。
+`kernel.contextual_ask`采用此视图；当前GUIDE及构造器加入同源Prompt目录生成，不反填历史。
+`test_ontology_prompt_views.py`及原kernel/Prompt审计回归验证；详见 [上下文修复](docs/research/context-repair-2026-09-21.md)。
+
+## 全量启动与有限网络恢复（2026-09-21）
+
+用户授权“完整启动运行，并完成所有的全量”。r2 pilot为4 GENERATED / 1 ReadTimeout失败 / 13 pending，
+旧响应及未知135840 token预留保留于after-pilot-timeout，未重写。新授权允许max_attempts=3且仅传输故障，
+300秒请求/330秒父进程上限，job壁钟仍有最大3600秒硬界。原预算总额、语义门、反例及gold隔离不变。
+`execution_attempts`保存每次实际尝试；新请求ID含attempt编号，`transport_recovery_ack`仅追加
+已哈希核验的失败传输承接，不退款、不重试低分/Schema错误/认证/额度错误。
+`continue_ontology_full.py`串行推进smoke/pilot/full并独立评分，有失败/资源不足停止；
+用户显式全量生成范围可包含仍待评分适配的CQ2Onto，但评分状态仍BLOCKED。
+`verify_full_inventory`对照全部冻结public inputs及系统×重复拒绝缺行/重复/成功子集；
+最终导出重核全部失败/成功调用响应摘要并计算包含重试的调用/token成本。
+对应测试`test_ontology_transport_recovery.py`、`test_ontology_full_inventory.py`，进入原工程suite。
+实际运行及持续检查入口见 [全量启动](docs/research/full-launch-2026-09-21.md)。
+
+## 当前接口的修订预算协议（2026-09-21）
+
+用户在预算方案确认后回复“继续使用当前接口需要改变原预算协议”。
+`budget_monitor.py`在原budget.sqlite追加不可变policy/monitored_attempts，保留旧attempts、
+旧授权和原始预留；只有绑定Luna/端点/low的显式policy可承接旧违规，普通reserve仍拒绝。
+新成功请求按已知实际用量结算，失败/未知保留预留；原总calls/token上限不变，
+新违规、用量缺失/不一致停机。broker将max_completion_tokens标为advisory，不冒称服务端硬预算。
+`live_runner`新revision重新冻结/OS canary；检查授权原STOP摘要，新增RUN_STOP/新revision STOP。
+smoke/pilot有失败不能进入后续阶段。CQ2Onto原生scorer未就绪的full作业仍保留pending、不得付费派发；
+--task可明确先运行已准备任务，不能据此宣称其余任务完成。详见 [监控协议](docs/research/monitored-budget-2026-09-21.md)。
+测试`test_ontology_budget_monitor.py`进入原ontology-io-engineering，实际执行另写新runtime回执。
+
+## 指定本机接口重测与质量统计导出（2026-09-21）
+
+用户再次指定localhost:51900/v1并授权换模型/核对官网。`endpoint_recheck.py`通过同一账本的
+固定八项授权入口调用Luna/Astra、Chat Completions/Responses的正常中文JSON/限额测试；
+密钥仅来自进程环境，未写入授权摘要。8次HTTP200、正常JSON4/4通过，四项限额均违规。
+`statistics.paired_cluster_aggregate`新增双方质量分/区间、百分点差值、相对变化及其区间；
+基线为零或bootstrap重采样出现零时相对区间保持null，不丢这些重采样。
+`quality_exports.py`由原`live_exports.finalize`调用，输出JSON/CSV/Markdown，跨全部预登记
+任务×基线×主指标统一Holm；缺任何主比较则不缩减检验族，不声明显著提升。
+测试位于`test_ontology_endpoint_recheck.py`、`test_ontology_quality_exports.py`，进入原工程suite。
+实测/限制见 [接口复测报告](docs/research/endpoint-recheck-2026-09-21.md)。没有正式benchmark分数。
+
+## 经授权的Cockpit网关修复尝试（2026-09-21）
+
+`ontology_io/gateway_repair.py` 对固定1.3.57二进制使用原生payload override，在独立
+loopback sidecar中补回Luna的max_output_tokens=128；配置及凭据备份只放在应用旁
+ACL限制目录，不写入仓库、不改账号范围、不重启正式服务。禁重试、图像生成和自动刷新。
+真实请求返回HTTP400 Unsupported parameter: max_output_tokens，证明该配置路径可将字段
+送达当前OAuth上游，但不能让上游支持该能力。临时进程已停，原安装/配置和历史25条账目不变。
+`reserve_recovery_probe`增加可选gateway_change_sha256唯一键，不能靠换本地端口重试同一修改；
+原全局额度和普通生成latch保持。新增`test_ontology_gateway_repair.py`加入原工程suite。
+实测、失败预检和恢复前置条件见 [网关尝试](docs/research/cockpit-gateway-repair-2026-09-21.md)。
+
+## GPT-5.6 Luna 恢复诊断（2026-09-21）
+
+用户明确要求从 Spark 迁移到 Luna 并恢复 e2e。`ontology_io/model_recovery.py` 与
+`tools/probe_ontology_model_recovery.py` 仅执行一次无 gold 的合成限额探测；
+`BudgetLedger.reserve_recovery_probe` 使用同一全局预算、事务预留和唯一模型/端点约束，
+不清空失败、不解除普通生成 latch、不重启旧冻结版本、不扩大额度。
+实测 requested max_completion_tokens=128，reported completion_tokens=1026，状态 BLOCKED；
+25次历史累计调用含本次1次，不能把这条诊断或工程测试当正式质量分数。
+独立测试：`tests/upgrade/test_ontology_model_recovery.py`；
+回执与限制：[Luna 恢复诊断](docs/research/luna-recovery-2026-09-21.md)。
+
 ## 全量实验续办（2026-09-14）
 
 `CompatibleClient.propose`在内容验证之前白名单保留usage/耗时；

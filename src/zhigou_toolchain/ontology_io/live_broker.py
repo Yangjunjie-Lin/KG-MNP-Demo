@@ -13,6 +13,7 @@ from zhigou_toolchain.modeling.five_stage.compatible import (
     configured_client,
 )
 
+from .budget_monitor import protocol_monitor
 from .live_budget import BudgetLedger
 
 
@@ -52,7 +53,14 @@ def dispatch(request, *, protocol, ledger: BudgetLedger, job_id, request_id, dir
             raise ValueError("BROKER_FROZEN_REQUEST_PROFILE_REQUIRED")
         client.configure_request_profile(**protocol.request_profile.model_dump(mode="json"))
         client.max_output_tokens = protocol.budget.max_output_tokens
-        ledger.reserve(request_id, job_id, reserve)
+        monitor = protocol_monitor(protocol)
+        if monitor:
+            from . import budget_monitor
+            monitored_reservation = reserve - protocol.budget.max_output_tokens + monitor["output_reservation_tokens"]
+            budget_monitor.reserve(ledger, monitor, request_id, job_id, monitored_reservation,
+                model_id=client.lock.model_id, endpoint_sha256=actual_endpoint, reasoning_effort=client.reasoning_effort)
+        else:
+            ledger.reserve(request_id, job_id, reserve)
         path = Path(directory)
         path.mkdir(parents=True, exist_ok=False)
         (path / "request.json").write_text(json.dumps(request, ensure_ascii=False, indent=2), encoding="utf-8")
@@ -76,14 +84,26 @@ def dispatch(request, *, protocol, ledger: BudgetLedger, job_id, request_id, dir
         counters = metadata.get("usage") or {}
         usage = counters.get("total_tokens")
         completion = counters.get("completion_tokens")
-        if completion is not None and (type(completion) is not int or completion < 0 or completion > protocol.budget.max_output_tokens):
+        completion_bound = monitor["output_reservation_tokens"] if monitor else protocol.budget.max_output_tokens
+        if completion is not None and (type(completion) is not int or completion < 0 or completion > completion_bound):
             status = "USAGE_BOUND_VIOLATION"
         if metadata.get("invalid_usage_fields") or any(type(v) is not int or v < 0 for v in counters.values()):
             status = "USAGE_BOUND_VIOLATION"
         if usage is not None and (type(usage) is not int or usage < 0):
             usage = None  # Invalid counts are not known usage (and never zero).
-        (path / "response.json").write_text(json.dumps(response, ensure_ascii=False, indent=2), encoding="utf-8")
-        ledger.finish(request_id, status=status, usage=usage, result_hash=semantic_hash(response))
+        if monitor:
+            advisory_exceeded = type(completion) is int and completion > protocol.budget.max_output_tokens
+            complete_usage = all(type(counters.get(k)) is int and counters[k] >= 0 for k in ("prompt_tokens", "completion_tokens", "total_tokens"))
+            complete_usage = complete_usage and counters["prompt_tokens"] + counters["completion_tokens"] == counters["total_tokens"]
+            response["budget_monitor"] = {"policy_id": monitor["policy_id"], "requested_output_cap_is_advisory": True,
+                "advisory_limit_exceeded": advisory_exceeded, "pre_dispatch_reservation": monitored_reservation,
+                "provider_hard_cap_guaranteed": False}
+            (path / "response.json").write_text(json.dumps(response, ensure_ascii=False, indent=2), encoding="utf-8")
+            budget_monitor.finish(ledger, monitor, request_id, status=status, usage=usage, result_hash=semantic_hash(response),
+                advisory_exceeded=advisory_exceeded, halt_reason=None if complete_usage else "PROVIDER_USAGE_INCOMPLETE_OR_INCONSISTENT")
+        else:
+            (path / "response.json").write_text(json.dumps(response, ensure_ascii=False, indent=2), encoding="utf-8")
+            ledger.finish(request_id, status=status, usage=usage, result_hash=semantic_hash(response))
         return response
     finally:
         client.close()

@@ -6,6 +6,7 @@ resume cannot refund them, erase them or reissue an identical request ID.
 from __future__ import annotations
 
 import json
+import re
 import sqlite3
 from datetime import UTC, datetime
 from pathlib import Path
@@ -56,11 +57,56 @@ class BudgetLedger:
             auth = json.loads(conn.execute("SELECT document FROM authorization WHERE id=1").fetchone()[0])
             if conn.execute("SELECT COUNT(*) FROM attempts WHERE state='USAGE_BOUND_VIOLATION'").fetchone()[0]:
                 raise ValueError("GLOBAL_BUDGET_LATCHED_PROVIDER_LIMIT_NOT_ENFORCED")
-            row = conn.execute("SELECT COUNT(*) AS calls, COALESCE(SUM(reserved),0) AS tokens FROM attempts").fetchone()
-            if row["calls"] + 1 > auth["max_calls"] or row["tokens"] + tokens > auth["max_reserved_tokens"]:
-                raise ValueError("GLOBAL_EXPERIMENT_BUDGET_EXHAUSTED")
-            conn.execute("INSERT INTO attempts (request_id,job_id,reserved,reserved_at_dispatch,state,started_at) VALUES (?,?,?,?,'RESERVED',?)",
-                (request_id, job_id, tokens, tokens, datetime.now(UTC).isoformat()))
+            self._reserve(conn, auth, request_id, job_id, tokens)
+
+    @staticmethod
+    def _reserve(conn, auth, request_id, job_id, tokens):
+        row = conn.execute("SELECT COUNT(*) AS calls, COALESCE(SUM(reserved),0) AS tokens FROM attempts").fetchone()
+        if row["calls"] + 1 > auth["max_calls"] or row["tokens"] + tokens > auth["max_reserved_tokens"]:
+            raise ValueError("GLOBAL_EXPERIMENT_BUDGET_EXHAUSTED")
+        conn.execute("INSERT INTO attempts (request_id,job_id,reserved,reserved_at_dispatch,state,started_at) VALUES (?,?,?,?,'RESERVED',?)",
+            (request_id, job_id, tokens, tokens, datetime.now(UTC).isoformat()))
+
+    def reserve_recovery_probe(self, request_id, tokens, *, authorization):
+        """One explicitly authorized synthetic Luna diagnostic, NOT an unlock.
+
+        Charge the existing global ledger, retaining its violation latch. Reserve
+        the documented model output ceiling, not the small limit being tested.
+        The closed recovery caller binds the exact synthetic request and endpoint;
+        ordinary generation cannot consume this reservation through reserve().
+        """
+        required = {"user_request", "model_id", "endpoint_sha256", "request_sha256", "prior_violation_ids",
+            "max_calls", "documented_output_ceiling", "purpose"}
+        change_key = "gateway_change_sha256"
+        if (set(authorization) not in (required, required | {change_key}) or not isinstance(authorization["user_request"], str)
+                or not authorization["user_request"].strip() or authorization["model_id"] != "gpt-5.6-luna"
+                or type(authorization["max_calls"]) is not int or authorization["max_calls"] != 1
+                or authorization["purpose"] != "SYNTHETIC_LIMIT_DIAGNOSTIC_NOT_RESUME"
+                or type(authorization["documented_output_ceiling"]) is not int
+                or authorization["documented_output_ceiling"] != 128000
+                or any(not isinstance(authorization[k], str) or re.fullmatch(r"[0-9a-f]{64}", authorization[k]) is None
+                    for k in ("endpoint_sha256", "request_sha256"))
+                or type(tokens) is not int or not 128000 < tokens <= 132096):
+            raise ValueError("INVALID_RECOVERY_PROBE_AUTHORIZATION")
+        if change_key in authorization and (not isinstance(authorization[change_key], str)
+                or re.fullmatch(r"[0-9a-f]{64}", authorization[change_key]) is None):
+            raise ValueError("INVALID_GATEWAY_CHANGE_DIGEST")
+        with self.connection() as conn:
+            conn.execute("BEGIN IMMEDIATE")
+            auth = json.loads(conn.execute("SELECT document FROM authorization WHERE id=1").fetchone()[0])
+            violations = sorted(r[0] for r in conn.execute("SELECT request_id FROM attempts WHERE state='USAGE_BOUND_VIOLATION'"))
+            if not violations or authorization["prior_violation_ids"] != violations:
+                raise ValueError("RECOVERY_PRIOR_VIOLATIONS_CHANGED")
+            conn.execute("""CREATE TABLE IF NOT EXISTS recovery_probe_requests (
+                request_id TEXT PRIMARY KEY, model_id TEXT NOT NULL, endpoint_sha256 TEXT NOT NULL,
+                authorization TEXT NOT NULL, UNIQUE(model_id, endpoint_sha256))""")
+            conn.execute("INSERT INTO recovery_probe_requests VALUES (?,?,?,?)", (request_id, authorization["model_id"],
+                authorization["endpoint_sha256"], json.dumps(authorization, ensure_ascii=False, sort_keys=True)))
+            if change_key in authorization:
+                # A new local test port is not permission to retry the same fix.
+                conn.execute("CREATE TABLE IF NOT EXISTS gateway_probe_changes (change_sha256 TEXT PRIMARY KEY, request_id TEXT NOT NULL)")
+                conn.execute("INSERT INTO gateway_probe_changes VALUES (?,?)", (authorization[change_key], request_id))
+            self._reserve(conn, auth, request_id, "model-recovery-synthetic-probe", tokens)
 
     def finish(self, request_id, *, status, usage, result_hash):
         if status not in {"SUCCEEDED", "FAILED", "USAGE_BOUND_VIOLATION"}:
@@ -78,6 +124,37 @@ class BudgetLedger:
                 (status, datetime.now(UTC).isoformat(), usage, max(row["reserved"], usage or 0), result_hash, request_id))
         if status == "USAGE_BOUND_VIOLATION":
             raise ValueError("PROVIDER_EXCEEDED_RESERVED_TOKEN_BOUND")
+
+    def reserve_endpoint_recheck(self, request_id, tokens, *, authorization):
+        """Explicit recheck of two user-named models, never a full-run unlock.
+
+        Eight fixed synthetic cases at most. Historical usage/violations and the
+        original experiment ceilings remain intact. A repeated case cannot be
+        resent by changing its request id or relaunching the tool.
+        """
+        expected = {"plan_id", "user_authorization", "endpoint", "model", "route", "case", "request_sha256", "max_cases"}
+        if (set(authorization) != expected or authorization["plan_id"] != "localhost51900-model-recheck-20260921-v1"
+                or not authorization["user_authorization"] or authorization["endpoint"] != "http://localhost:51900/v1/"
+                or authorization["model"] not in {"gpt-5.6-luna", "gpt-6-astra"}
+                or authorization["route"] not in {"chat/completions", "responses"}
+                or authorization["case"] not in {"normal_utf8_json", "output_limit_128"}
+                or type(authorization["max_cases"]) is not int or authorization["max_cases"] != 8
+                or not isinstance(authorization["request_sha256"], str)
+                or re.fullmatch(r"[0-9a-f]{64}", authorization["request_sha256"]) is None
+                or type(tokens) is not int or not 128000 < tokens <= 132096):
+            raise ValueError("INVALID_FIXED_ENDPOINT_RECHECK_AUTHORIZATION")
+        with self.connection() as conn:
+            conn.execute("BEGIN IMMEDIATE")
+            auth = json.loads(conn.execute("SELECT document FROM authorization WHERE id=1").fetchone()[0])
+            conn.execute("""CREATE TABLE IF NOT EXISTS endpoint_rechecks (
+                request_id TEXT PRIMARY KEY, plan_id TEXT NOT NULL, model TEXT NOT NULL, route TEXT NOT NULL,
+                case_name TEXT NOT NULL, authorization TEXT NOT NULL, UNIQUE(plan_id,model,route,case_name))""")
+            count = conn.execute("SELECT COUNT(*) FROM endpoint_rechecks WHERE plan_id=?", (authorization["plan_id"],)).fetchone()[0]
+            if count >= 8:
+                raise ValueError("ENDPOINT_RECHECK_PLAN_EXHAUSTED")
+            conn.execute("INSERT INTO endpoint_rechecks VALUES (?,?,?,?,?,?)", (request_id, authorization["plan_id"],
+                authorization["model"], authorization["route"], authorization["case"], json.dumps(authorization, ensure_ascii=False, sort_keys=True)))
+            self._reserve(conn, auth, request_id, "explicit-local-endpoint-recheck", tokens)
 
     def snapshot(self):
         with self.connection() as conn:

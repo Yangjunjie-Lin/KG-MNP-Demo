@@ -1,0 +1,19 @@
+{
+  "scope": "READ_ONLY_DISTRIBUTION_NO_LIVE_GENERATOR_CHANGE",
+  "helper": {
+    "sha256": "51a02667a44580e734c27f986efaf83c1e18b8fdb0195a13d9aacaebae775cab",
+    "path": "../token-report-portable-v1/export_usage.py"
+  },
+  "validation": "SEPARATE_NEW_DISTRIBUTION_TEST_RECEIPTS_NOT_HISTORICAL_PASS",
+  "revision": "token-audit-portable-v1",
+  "files": {
+    "audit_tokens.py": "e63f6ab8c51fb073a256a5a4e5c4be6bb8caec841822708213289f66c8bae50d",
+    "test_audit_tokens.py": "13873d7605cc60a13cb46b4a1a750c32599d8439963816dc8381b43da37eb670",
+    "README.md": "c984fe0c63334b32bf47a066a663afa0afa16d27146e2b952874951817412ba8"
+  },
+  "source_origin": {
+    "sha256": "a606fb836a94d6fe84e37e817052ac7f4c8e83bc9b9bffea9c9860241b725617",
+    "path": "source-origin.json"
+  },
+  "created_at_utc": "2026-09-24T12:19:36.1185250+00:00"
+}

@@ -1,0 +1,96 @@
+{
+  "scope": "FUNCTIONAL_SOURCE_UPLOAD_NOT_BENCHMARK_COMPLETION",
+  "base_commit": "84522072be25e1304daf9b6ae22fef181b11f195",
+  "suites": [
+    {
+      "suite": "token-audit",
+      "tests": 38,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "skips": [],
+      "passed": 38
+    },
+    {
+      "suite": "prompt-audit",
+      "tests": 33,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "skips": [],
+      "passed": 33
+    },
+    {
+      "suite": "benchmark-engineering",
+      "tests": 350,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 9,
+      "skips": [
+        {
+          "name": "test_cq4oe_native_hard_term_boundary_with_locked_resource[pred0-gold0-1]",
+          "reason": "Prepare pinned CQ4OE scorer assets for native integration test"
+        },
+        {
+          "name": "test_cq4oe_native_hard_term_boundary_with_locked_resource[pred1-gold1-0]",
+          "reason": "Prepare pinned CQ4OE scorer assets for native integration test"
+        },
+        {
+          "name": "test_cq4oe_native_hard_term_boundary_with_locked_resource[pred2-gold2-0.6666666666666666]",
+          "reason": "Prepare pinned CQ4OE scorer assets for native integration test"
+        },
+        {
+          "name": "test_cq4oe_native_hard_term_boundary_with_locked_resource[pred3-gold3-0.6666666666666666]",
+          "reason": "Prepare pinned CQ4OE scorer assets for native integration test"
+        },
+        {
+          "name": "test_cq4oe_native_hard_term_boundary_with_locked_resource[pred4-gold4-1]",
+          "reason": "Prepare pinned CQ4OE scorer assets for native integration test"
+        },
+        {
+          "name": "test_cq_native_scoring_cli_reads_frozen_artifact_without_credentials[False]",
+          "reason": "Prepare fixed upstream scorer assets"
+        },
+        {
+          "name": "test_cq_native_scoring_cli_reads_frozen_artifact_without_credentials[True]",
+          "reason": "Prepare fixed upstream scorer assets"
+        },
+        {
+          "name": "test_cq_hard_equivalence_to_all_native_function_defs",
+          "reason": "Prepare pinned CQ4OE scorer"
+        },
+        {
+          "name": "test_native_sync_async_equivalence_in_credential_free_worker",
+          "reason": "Pinned native scorer assets not prepared"
+        }
+      ],
+      "passed": 341
+    }
+  ],
+  "total_passed": 412,
+  "total_not_run": 9,
+  "source_unchanged_during_benchmark_regression": true,
+  "source_fingerprint": "e4141366342821e4ae02c270b40a2e20a68b36300d9b0f42e10210a59951ce8f",
+  "lint": "PASS",
+  "typecheck": {
+    "errors": 0,
+    "warnings": 0
+  },
+  "changed_files_hygiene": "PASS_NO_NEW_FAILURES",
+  "whole_repository_hygiene": {
+    "status": "FAIL_PREEXISTING",
+    "unchanged_historical_absolute_path_files": 5
+  },
+  "initial_regression": {
+    "passed": 339,
+    "failed": 1,
+    "skipped": 10,
+    "cause": "MISSING_EXISTING_PINNED_ROBOT_JAR_IN_ISOLATED_WORKTREE",
+    "retained": true
+  },
+  "live_workspace": {
+    "head_preserved": true,
+    "generator_and_audit_processes_not_restarted": true
+  },
+  "new_paid_model_calls": 0
+}
