@@ -168,7 +168,8 @@ def test_same_retrieval_context_control_is_one_call(tmp_path):
     client = Boundary([{"triples": TRIPLES}])
     result = generate_sample(sample(True), protocol(), "DirectRetrievalContext", tmp_path / "direct", client=client)
     assert result["status"] == "GENERATED" and result["resources"]["model_calls"] == 1
-    assert client.requests[0]["content"]["retrieval_context"] == result["kernel"]["retrieval"]
+    from zhigou_toolchain.ontology_io.prompt_views import expand_retrieval
+    assert expand_retrieval(client.requests[0]["content"]["cards"], client.requests[0]["content"]["retrieval_context"]) == result["kernel"]["retrieval"]
 
 
 def test_repair_budget_and_wipe_to_empty_cannot_fake_validation_success(tmp_path):

@@ -1,5 +1,121 @@
 # 双 Agent 与逐步审计（2026-09-17）
 
+## 场景 Prompt 预设审计（2026-09-30）
+
+主说明在 ONTOLOGY_MODULE“场景 Prompt 预设”，接口在 HANDOFF_CONTRACT。
+仍只有原 ExpertRuntime 一个有界循环；三场景资源和五阶段生成/审核补充 Prompt 冻结在原 session 场景版本中。
+prepare_prompt 使生成/审核/修订使用同一 scenario_id/version/resource/effective/stage digest，
+两客户端保持原 POST 和 StepAudit/TraceRecorder 捕获，不把选择/预检/保存伪装成模型调用。
+
+scenario.project 是对真实原生结果的可验证程序投影，无 method_id，不冒充注册表中的方法执行；
+投影在同阶段真实 method 的审核上下文中逐次引用。原25方法身份、原子提交锚及 HUMAN 门控不变。
+新增结构词汇通过原候选依赖；确认冻结时再次用同一规则重查映射，不凭可变 sidecar 宣称已批准。
+受限修订列表在提交前按原 Provider 的 draft_ref 顺序规范化，使快照和实际响应摘要逐字匹配；
+后续精确摘要核验不放宽。整操作/自动重验显式失败也否决技术 PASS，不能只看部分方法成功。
+配置改变后原 CURRENT/STALE 与逐方法专家版本共同门控；在途修改仍由每请求 guard 和提交 CAS 拒绝。
+
+Token 增加 scenario_configuration_groups，仍按物理请求 ID 去重；失败、取消、重试及未知用量规则
+沿用。原 audits 下可回查场景阶段投影；动态配置在本轮授权实际消息与 harness 中，不反填旧 Prompt。
+source catalogue 同源增加三个场景 Prompt 资源、固定输出构造器与三个共用附加片段，不复制30套长文本。
+
+新验证目录 runtime_reports/scenario-prompts-20260930（旧粒度回执保留历史含义）；两个客户端独立Mock spy和真实服务案例，
+以及浏览器实际选择/模板预览/确认/运行/同字节下载。所有身份、输入与模型响应明确为合成/Mock。
+完整例子的测试专家明确确认600000预算；生产默认200000未变，预算不足的历史拒绝保留。
+独立质量标签及报告不进入任何模型上下文；没有真人不写 HUMAN reviews，没有外部接收不记已收集。
+
+## 2026-09-28 专家闭环
+
+本轮核实 HEAD 为 `develop@84522072be25e1304daf9b6ae22fef181b11f195`，工作树有先前研究改动；
+没有回退、覆盖那些实现、推送、合并、发布或授权付费实验。以下能力是本次增量，后文保留历史说明。
+
+### 执行与版本
+
+`five_stage/expert.py` 保存完整十份默认文本、共用修订文本及闭合 Schema。
+`python -m tools.generate_model_prompts` 生成原 MODEL_CALL_PROMPTS.md/JSON，执行侧唯一来源不手填历史。
+专家配置在原 `modeling-session.json` 的 `expert.stages/history` 中保存，不建立第二个会话或审批库。
+阶段默认加 method 明确覆盖；每次保存新版本/摘要、认证作者/确认人/时间和项目会话范围。
+默认 DRAFT，没有假专家姓名；确认文本不等于批准任何候选。
+自然语言编辑必须明确确认结构化检查点覆盖，否则闭环受阻。服务保留独立硬检查，不由模型删减。
+
+`expert_runtime.ExpertRuntime.run` 是唯一业务修订循环，服务 `modeling_expert.coordinate` 在原
+Worker staging/租约/CAS 内调用。已启用会话的原 API 也进入它，不能绕过审核直接批准、编译或下载。
+原程序和模型先生成候选，收集真实 method 调用结果；逐 method/输入/产物审核，不以一个总评分
+代替不同 chunk、分支及重试。确定性计算只接收已冻结配置与原输入，不改标成模型生成。
+原 1.4/4.4/4.5 为人类门控，不递归 AI 批准人类动作；其先决产物必须已技术通过。
+完整逐方法清单仍由下方原注册表同源生成，`coverage.implementation_view()` 增加专家继承/人类边界。
+
+内部结论仅 PASS / REVISE / ESCALATE。模型检查点结果缺失、重复、UNKNOWN、伪造引用、未解决
+阻断问题或程序硬检查失败均不能技术 PASS。审核记录由服务补 AI 主体、方法、真实候选/输入摘要、
+配置/检查点版本、程序收据及物理调用。模型自报身份不授信。
+补丁绑定基摘要、已核验 issue_id、来源及精确 Unicode 引文，只有阶段白名单字段可由程序应用。
+补丁目标/字段还必须匹配问题 location；不能借同一问题和来源改另一个对象或字段。
+business_digest 单独标识实际候选/范围/计划，不让程序报告耗时变化掩盖同一业务候选的反复震荡；
+candidate_digest 仍绑定本轮完整受审业务结果，两个摘要不混为同一对象。
+无变化、重复摘要/震荡、无证据、越权、未知用量及预算耗尽均停止，保留历史与未解决问题。
+每次修订重建原候选/队列或计划，执行受影响检查，然后重新审核；新版本不能继承旧 PASS 或人审。
+
+默认最多三次修订（v0 + v1/v2/v3）、64 次模型物理请求、300 秒、200000 Token 预算；
+服务端上限分别为 3/128/600/1000000，输出限额单列，网络重试最多 2 次且与修订轮次分开。
+未知供应商用量不当零，停止后续请求；UTF-8 字节预留仅是保守上界，不冒充实测 Token。
+对大而重复的程序工件使用请求内无损引用表，所有值可展开，不静默截断、删证据或提高预算。
+
+### 失效、恢复和授权
+
+专家配置更新从实际阶段失效；S1 修改会使 S1 范围/旧批准及下游失效，不能统一从 S2 开始。
+原 `session.revise` 对不透明配置采取保守 S1 失效。旧结果留存但不能放行。
+审核条件更新可以对完全相同的已提交候选重新审核；必须有可验证原提交锚及完整授权步骤正文。
+前指导或方法前指导变更要求重新生成，不用“仅重审”掩盖未使用的新指导。
+只有重新技术通过的同一输入/候选可恢复为 CURRENT，原人审及下游仍按原版本门控。
+
+每个计算检查点和物理请求前重新检查认证权限、项目、Job 租约、取消与 authority revision；
+提交再次由原 CAS/凭证锁/lease fence 检查。计算后失权不会提交半版本。
+已提交丢响应走原 committed_result；未提交且已有模型尝试的恢复阻止自动重发，返回
+EXPERT_REMOTE_RECONCILIATION_REQUIRED，不能声称跨远端 exactly-once。
+纯重审优先读取原服务提交与已录制响应；正文未录制、删节或目标过期时不补造。
+原生包、原生导出快照和本体交接下载前后均核对请求的精确 package_id 与当前通过的版本；
+不能借另一个包或新条件下的 PASS 下载一个未通过/已过期的旧包。原受控历史审计仍可读。
+
+### Prompt、审计与 Token
+
+原客户端的 `traced_proposal` 组合业务任务、可信冻结专家版本、执行用途和检查点；
+Qwen/Compatible 请求包装差异保持。没有另接 HTTP 客户端。
+生成输入、审核安全视图、补丁/反馈均在发送前检查私有资料/秘密；独立答案和测试计划不送给审核模型。
+审核无文件执行工具，不能读取 acceptance_private、gold、纠正答案库或整包 references。
+生产 Worker 仍是可信控制面，不把已有研究 canary 扩大为整个生产 Worker 的 OS 沙箱证明。
+
+native/audit/transport 三层 ID、CALL_LINK、原 step_audit_anchor 和双录制开关不变。
+工具与模型记录增加 expert_binding（loop_id、revision_round、purpose、配置摘要）。
+revision_round 从 0 开始但不写成外部 turn；只有真实 POST 才产生 llm_call。
+AI 意见/补丁正文留原授权 StepAudit/TraceRecorder；session/UI 默认保存摘要和问题定位引用。
+原审计 ZIP 扩展 `audits/expert-loop.json`、`audits/token_usage.json`；不写 HUMAN reviews。
+Token 从物理请求 scope 的供应商 usage 采集，包括有用量的失败，按实际 call_id 去重，
+分阶段/method/用途/循环；未知总计为 null 并保留已知小计。工具副本/Prompt 副本不重复计量。
+审计 ZIP 的 Token 汇总直接投影原 MODEL 事件，即使首个候选之前失败、取消或硬中断也不依赖成功提交。
+未发送的本地拒绝不计物理调用；缺少 dispatch 回执单列待协调。有已录制响应用量时保留已知小计，
+仍不把缺失记录补写成成功，历史捕获能力不明时总计保持未知。
+不使用新审核调用洗白它之前无模型 turn 的程序步骤；严格 v2 和外部接收限制保持。
+
+### 操作与验证
+
+工作台每阶段折叠显示两份文本、版本/确认状态、高级检查点/覆盖/预算，运行区展示轮次、问题引用、
+差异摘要、停止原因与实际用量。详细正文通过原受权限控制的步骤审计查看；不能把元数据称为完整历史。
+运行/继续沿用本阶段原按钮，补充意见用新重审操作，停止/取消沿用任务中心；均不触发审批/发布。
+旧模式明确标记。接口字段及权限在 HANDOFF_CONTRACT.md 维护。
+
+```powershell
+python -m tools.generate_model_prompts
+python -m pytest tests/upgrade/test_expert_loop.py tests/services/test_expert_authority.py tests/services/test_expert_service.py -q
+python -m tools.verify_expert_workbench runtime_reports/new-expert-cases --pack both
+python tools/verify_zhigou_upgrade.py --backend-only --workers 4 --skip-model-probe
+python -m tools.verify_expert_freeze runtime_reports/expert-loop-20260928/new-frozen-run --full-backend
+```
+
+`verify_expert_workbench` 仅新建 HR/林业合成服务空间，HTTP 仅独立 MockTransport spy；
+核心服务/Worker/编译及 API 下载不 Mock。输出原服务 ontology-handoff.zip、原生 .kgop 和受控审计 ZIP，
+记录精确 SHA/字节数、逐轮汇总以及模型物理核账；不是 LIVE、真人专家试用或下游接收。
+这些原服务导出物不恢复第四类根目录或第18项；中间候选留原版本/审计引用，不混充最终成果。
+最终结果只写新的冻结输出目录；开发预检（含预算阻止、非法测试夹具和旧目录预期失败）永久保留。
+
 ## 2026-09-19 方法与实际 Prompt 增量（当前）
 
 起点已核实为干净 `develop@4e19b2ce5f8a98b3534fbcaa34b8439b5472ef50`。保留下面历史说明。
@@ -31,7 +147,7 @@ NOT_APPLICABLE 只来自选定操作和真实配置条件，附源 BEFORE 引用
 | 2.2 术语候选联合召回 | `five_stage/assistance.py:retrieve_cards; control_plane/alignment.py:align_terms` | modeling.prepare, modeling.proposal；BGE_FAISS or explicit exact substitute |
 | 2.3 候选重排与兼容性检查 | `five_stage/tools.py:rerank` | modeling.proposal；BGE_FAISS + nonempty cards; substitute is not reranker |
 | 2.4 复用判断与结构补全 | `five_stage/assistance.py:select_reuse` | modeling.proposal；model assistance or baseline-reuse-provider |
-| 2.5 结构与约束候选规范化 | `five_stage/assistance.py:generate` | modeling.proposal；model assistance round two |
+| 2.5 结构与约束候选规范化 | `five_stage/assistance.py:generate; services/modeling.py:_propose.check_structure_drafts` | modeling.proposal；model assistance round two, or expert-enabled explicit/revised structure safe-JSON check before original normalization |
 | 3.1 声明式映射配置与试运行 | `services/modeling.py:_propose` | modeling.proposal；record mapping or selected provider |
 | 3.2 文本分块与位置保留 | `five_stage/tools.py:text_chunks; five_stage/assistance.py:character_chunks` | modeling.proposal；nonempty text, local tokenizer or Unicode substitute |
 | 3.3 受约束的对象与事实抽取 | `five_stage/assistance.py:generate` | modeling.proposal；one physical request per chunk |

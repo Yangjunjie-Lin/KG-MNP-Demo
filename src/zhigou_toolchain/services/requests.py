@@ -16,6 +16,9 @@ from zhigou_toolchain.modeling.control_plane.providers.record_profile import (
     MixedRecordMapping,
 )
 from zhigou_toolchain.modeling.delivery.negative_plan import NegativeCasePlan
+from zhigou_toolchain.modeling.five_stage.expert import ExpertConfiguration
+from zhigou_toolchain.modeling.five_stage.scenario_quality import ScenarioGold
+from zhigou_toolchain.modeling.five_stage.scenarios import ScenarioSelection
 
 from .errors import ServiceBoundaryError
 
@@ -389,6 +392,37 @@ class ModelingSessionRequest(RequestDTO):
     configuration: dict = Field(default_factory=dict)
     expected_revision: int | None = None
     negative_case_plan: NegativeCasePlan | None = None
+    expert_loop_enabled: bool = False
+    scenario: ScenarioSelection | None = None
+    scenario_acceptance: ScenarioGold | None = None
+
+
+class ScenarioPreviewRequest(RequestDTO):
+    selection: ScenarioSelection
+    run_id: str | None = None
+
+
+class ScenarioSaveRequest(RequestDTO):
+    selection: ScenarioSelection
+    expected_revision: int = Field(ge=1)
+
+
+class ScenarioQualityRequest(PackageRequest):
+    expected_revision: int = Field(ge=1)
+
+
+class ExpertConfigurationRequest(RequestDTO):
+    expected_revision: int = Field(ge=1)
+    expected_configuration_digest: str
+    configuration: ExpertConfiguration
+    confirm: bool = False
+
+
+class ExpertReauditRequest(RequestDTO):
+    expected_revision: int = Field(ge=1)
+    job_id: str = Field(min_length=1, max_length=250)
+    candidate_digest: str = Field(pattern=r"^[a-f0-9]{64}$")
+    feedback: str | None = Field(default=None, min_length=1, max_length=4000)
 
 
 class ModelingSessionRevisionRequest(RequestDTO):
@@ -514,6 +548,11 @@ REQUEST_MODELS = {
     "evolution.rollback": EvolutionRollbackRequest,
     "modeling.session.open": ModelingSessionRequest,
     "modeling.session.revise": ModelingSessionRevisionRequest,
+    "modeling.scenario.preview": ScenarioPreviewRequest,
+    "modeling.scenario.save": ScenarioSaveRequest,
+    "modeling.scenario.quality": ScenarioQualityRequest,
+    "modeling.expert.save": ExpertConfigurationRequest,
+    "modeling.expert.reaudit": ExpertReauditRequest,
     "modeling.semantic.check": SemanticCheckRequest,
     "compile.plan.exact": CompileExactPlanRequest,
     "modeling.profile": ModelingProfileRequest, "modeling.scope.draft": ModelingScopeDraftRequest,

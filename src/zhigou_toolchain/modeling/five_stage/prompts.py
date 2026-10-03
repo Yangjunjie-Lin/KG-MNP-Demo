@@ -15,7 +15,9 @@ PACKAGE = Path(__file__).parents[2]
 PROMPT_SOURCES = (
     "services/modeling_five_stage.py", "modeling/five_stage/assistance.py",
     "modeling/five_stage/tools.py", "modeling/five_stage/compatible.py",
-    "ontology_io/engine.py", "ontology_io/kernel.py", "ontology_io/transport_worker.py",
+    "modeling/five_stage/expert.py", "modeling/five_stage/expert_runtime.py",
+    "modeling/five_stage/scenarios.py", "modeling/five_stage/scenario_outputs.py", "services/modeling_scenarios.py",
+    "ontology_io/engine.py", "ontology_io/kernel.py", "ontology_io/transport_worker.py", "ontology_io/prompt_views.py", "ontology_io/source_quotes.py", "ontology_io/vocabulary.py",
 )
 
 
@@ -41,6 +43,27 @@ def source_catalogue():
                     names.append(node.name)
             return ".".join(reversed(names))
         for node in ast.walk(tree):
+            if relative == "modeling/five_stage/scenarios.py" and isinstance(node, ast.Assign) and ast.unparse(node.targets[0]) in {
+                    "SCENARIO_GENERATE_PROMPT", "SCENARIO_REVIEW_PROMPT", "SCENARIO_REVISE_PROMPT"}:
+                text = ast.literal_eval(node.value)
+                templates.append({"template_id": relative + "::" + ast.unparse(node.targets[0]), "source": relative, "function": ast.unparse(node.targets[0]),
+                    "line": node.lineno, "source_sha256": sources[relative], "group": "SCENARIO_FROZEN_CONFIGURATION",
+                    "task_text": text, "task_expression": repr(text), "context_expression": "Server resolved frozen scene and stage policy",
+                    "schema_expression": "Original generation, ReviewResult or RevisionPatch schema", "task_sha256": semantic_hash(text),
+                    "template_version": semantic_hash(text), "scope": "CURRENT_SOURCE_NOT_HISTORICAL_CAPTURE"})
+            if relative == "modeling/five_stage/expert.py" and isinstance(node, ast.Assign):
+                name = ast.unparse(node.targets[0])
+                if name in {"DEFAULT_PROMPTS", "REVISION_PROMPT"}:
+                    value = ast.literal_eval(node.value)
+                    texts = [(f"S{stage}.{purpose}", text) for stage, pair in value.items()
+                        for purpose, text in zip(("pre_guidance_prompt", "post_review_prompt"), pair, strict=True)] if isinstance(value, dict) else [("revision", value)]
+                    for label, text in texts:
+                        templates.append({"template_id": relative + "::" + label, "source": relative, "function": name,
+                            "line": node.lineno, "source_sha256": sources[relative], "group": "EXPERT_DEFAULT_DRAFT_NOT_HUMAN_CONFIRMATION",
+                            "task_text": text, "task_expression": repr(text), "context_expression": "Frozen session configuration + authorized method artifact",
+                            "schema_expression": "ReviewResult / RevisionPatch (generation retains original schema)",
+                            "task_sha256": semantic_hash(text), "template_version": semantic_hash(text),
+                            "scope": "CURRENT_SOURCE_NOT_HISTORICAL_CAPTURE"})
             if (relative in {"modeling/five_stage/tools.py", "modeling/five_stage/compatible.py"}
                     and isinstance(node, ast.FunctionDef) and owner(node) in {"QwenClient", "CompatibleClient"}):
                 if node.name in {"__init__", "configure_request_profile"}:
@@ -50,7 +73,7 @@ def source_catalogue():
                     post = next(c for c in ast.walk(node) if isinstance(c, ast.Call) and isinstance(c.func, ast.Attribute) and c.func.attr == "_request")
                     policies.append({"source": relative, "function": owner(node) + ".propose.request_builder",
                         "code": "\n".join(source.splitlines()[node.lineno - 1:post.lineno]), "source_sha256": sources[relative]})
-            if isinstance(node, ast.Assign) and any(isinstance(t, ast.Name) and t.id in {"instruction", "schema", "body", "output_schema"} for t in node.targets):
+            if isinstance(node, ast.Assign) and any(isinstance(t, ast.Name) and t.id in {"instruction", "schema", "body", "output_schema", "GUIDE"} for t in node.targets):
                 builders.append({"source": relative, "function": owner(node), "line": node.lineno,
                     "target": ast.unparse(node.targets[0]), "expression": ast.get_source_segment(source, node.value),
                     "source_sha256": sources[relative]})
@@ -63,7 +86,7 @@ def source_catalogue():
             if not isinstance(node, ast.Call):
                 continue
             name = node.func.attr if isinstance(node.func, ast.Attribute) else node.func.id if isinstance(node.func, ast.Name) else ""
-            if name not in {"propose", "ask"} or not node.args:
+            if name not in {"propose", "ask", "contextual_ask"} or not node.args:
                 continue
             offset = 1 if isinstance(node.args[0], ast.Constant) and type(node.args[0].value) is int else 0
             args = node.args[offset:]
@@ -74,7 +97,7 @@ def source_catalogue():
             text = task.value if isinstance(task, ast.Constant) and isinstance(task.value, str) else None
             row = {"template_id": identifier, "source": relative, "function": owner(node),
                 "line": node.lineno, "source_sha256": sources[relative],
-                "group": "RESEARCH_ADAPTER" if relative.startswith("ontology_io/") else "PRODUCTION",
+                "group": "RESEARCH_ADAPTER" if relative.startswith("ontology_io/") else "EXPERT_RUNTIME" if relative.endswith("expert_runtime.py") else "PRODUCTION",
                 "task_text": text, "task_expression": ast.get_source_segment(source, task),
                 "context_expression": ast.get_source_segment(source, args[1]) if len(args) > 1 else None,
                 "schema_expression": ast.get_source_segment(source, args[2]) if len(args) > 2 else None,
@@ -82,7 +105,12 @@ def source_catalogue():
                 "scope": "CURRENT_SOURCE_NOT_HISTORICAL_CAPTURE"}
             row["template_version"] = semantic_hash({k: row[k] for k in ("task_expression", "context_expression", "schema_expression")})
             templates.append(row)
-    return {"format": "zhigou-prompt-catalogue/1.0.0", "templates": templates, "wrappers": wrappers,
+    from .scenarios import catalogue
+    scene_resources = catalogue()
+    for scene in scene_resources:
+        relative = "modeling/five_stage/resources/scenarios/" + scene["scenario_id"] + ".json"
+        sources[relative] = digest((PACKAGE / relative).read_bytes().decode("utf-8").replace("\r\n", "\n").encode("utf-8"))
+    return {"format": "zhigou-prompt-catalogue/1.0.0", "templates": templates, "wrappers": wrappers, "scenario_resources": scene_resources,
         "source_hash_profile": "SHA256_UTF8_LF_NORMALIZED_SOURCE",
         "source_files": sources, "dynamic_builders": builders, "request_policies": policies,
         "scope": "CLIENT_TASK_WRAPPER_AND_SCHEMA_SOURCE_NOT_SERVER_TOKEN_TEMPLATE",
@@ -125,6 +153,15 @@ def markdown(catalogue):
         "system/user、动态 Schema、参数及公开响应以授权的物理 POST 快照为准；未发送参数不补默认值。",
         "Qwen 使用 structured_outputs.json；Compatible 将 Schema 拼入 system，json_schema 模式同时传 response_format。",
         "研究适配器单列；录制 provider 不推理，tests/tools 的探针不是生产 Prompt。服务端 token 模板和私有推理不可得。", ""]
+    lines += ["## 场景 Prompt 预设（同源）", "", "三场景各提供五阶段生成/审核补充模板；没有逐步档位。这些是工程草案，不是专家确认。", "",
+        "| 场景 / 固定版本 | 锁定领域包 | 阶段模板 |", "|---|---|---|"]
+    for scene in catalogue.get("scenario_resources", []):
+        pack = scene["domain_pack"]
+        lines.append("| " + scene["scenario_id"] + "@" + scene["scenario_version"] + " | " + pack["pack_id"] + "@" + pack["pack_version"] + " | " + "S1–S5 生成指导与审核要求" + " |")
+    lines += ["", "场景的字段、规则、能力前提与逐阶段增补全文来自下列执行资源；独立标注不在资源内。", ""]
+    for scene in catalogue.get("scenario_resources", []):
+        import json
+        lines += ["### " + scene["scenario_id"], "", "```json", json.dumps(scene, ensure_ascii=False, indent=2), "```", ""]
     for row in catalogue["templates"]:
         lines += ["## " + row["template_id"], "", f"分组：{row['group']}；源码 `{row['source']}::{row['function']}`。",
             f"模板版本 `{row['template_version']}`；来源 UTF-8/LF 摘要 `{row['source_sha256']}`。", "",

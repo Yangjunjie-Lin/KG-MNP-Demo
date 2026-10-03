@@ -130,13 +130,21 @@ def input_inventory(datasets):
     return {"tables": list(tables.values()), "text_items": text_items, "data_item_ids": sorted(data_ids)}
 
 
-def mixed_mapping_drafts(*, rules, datasets, namespace, baseline, question_ids, asset_id=None):
+def mixed_mapping_drafts(*, rules, datasets, namespace, baseline, question_ids, asset_id=None, proposed_terms=()):
     try:
         rules = MixedRecordMapping.model_validate(rules).model_dump()
     except ValidationError as exc:
         raise ModelingControlError("MAPPING_PROFILE_INVALID: invalid closed v2 profile") from exc
     digest = semantic_hash(rules)
     elements = {e["iri"]: e for e in baseline["elements"]}
+    # Explicit structure proposals are dependencies, never fake baseline IDs.
+    # They enter the original normalizer/prevalidator and human review together
+    # with these facts. The caller cannot mark them as approved by supplying them.
+    proposed = {d["body"]["target_iri"]: d for d in proposed_terms}
+    if len(proposed) != len(proposed_terms) or any(d["draft_kind"] != "TBOX" or d["candidate_action"] != "CREATE_NEW"
+            or d["body"]["candidate_type"] not in {"CLASS", "DATA_PROPERTY", "OBJECT_PROPERTY"} or iri in elements
+            for iri, d in proposed.items()):
+        fail("MAPPING_PROPOSED_TERM_INVALID", "new terms must be explicit unique, non-baseline, review-required structure proposals")
     items = {i["item_id"]: i for d in datasets for i in d["items"]}
     evidence = {e["evidence_id"]: e for d in datasets for e in d["evidence_records"]}
     inventory = input_inventory(datasets)
@@ -153,6 +161,8 @@ def mixed_mapping_drafts(*, rules, datasets, namespace, baseline, question_ids, 
 
     def element(iri, kind):
         value = elements.get(iri)
+        if value is None and iri in proposed and proposed[iri]["body"]["candidate_type"] == kind:
+            return None
         if not value or value["element_kind"] != kind:
             fail("MAPPING_BASELINE_INVALID", "mapping targets must be a locked baseline element of the declared kind")
         return value["element_id"]
@@ -271,13 +281,15 @@ def mixed_mapping_drafts(*, rules, datasets, namespace, baseline, question_ids, 
     drafts = []
 
     def draft(occurrence, suffix, kind, body, bindings, dependencies=(), baseline_refs=()):
+        dependencies = sorted(set(dependencies) | {proposed[iri]["draft_ref"] for key in ("object_iri", "predicate_iri", "target_iri")
+            if (iri := body.get(key)) in proposed})
         drafts.append(candidate_draft(draft_ref=occurrence["ref"] + suffix, draft_kind=kind,
             candidate_action="ALIGN_TO_EXISTING" if kind == "MAPPING" else "ASSERT", body=body,
             rationale=f"Explicit mixed-source mapping; human review required; mapping-sha256:{digest}",
             kg_ir_item_refs=[cell[1]["item_id"] for cell in bindings],
             evidence_refs=[e for cell in bindings for e in cell[1]["evidence_refs"]],
             domain_asset_refs=[asset_id] if asset_id else [], competency_question_refs=question_ids,
-            baseline_element_refs=baseline_refs, dependency_draft_refs=dependencies))
+            baseline_element_refs=[ref for ref in baseline_refs if ref is not None], dependency_draft_refs=dependencies))
         if len(drafts) > ModelingLimits().max_total_candidates:
             fail("MAPPING_LIMIT_EXCEEDED", "expanded candidates exceed proposal limit")
 

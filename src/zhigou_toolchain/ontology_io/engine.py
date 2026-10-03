@@ -20,6 +20,7 @@ from zhigou_toolchain.modeling.five_stage.agents import (
 from zhigou_toolchain.modeling.five_stage.compatible import configured_client
 
 from .adapters import freeze_prediction, freeze_task_prediction, task_output_schema
+from .budget_monitor import protocol_monitor
 from .contracts import ModelingInput, Protocol
 
 OUTPUT_SCHEMA = {"type": "object", "additionalProperties": False, "required": ["triples"], "properties": {
@@ -75,6 +76,11 @@ def generate_sample(sample: ModelingInput, protocol: Protocol, system: str, dire
         "retrieval": False, "shared_constrained_extraction": False, "shared_semantic_feedback": False,
         "s3": "NOT_APPLICABLE_CQS_ONLY" if sample.mode == "CQS_TBOX" else "DIRECT_MODEL_PREDICTION",
         "formal_v3_export": False, "graph_roundtrip": True, "os_isolation": False}
+    monitor_ref = protocol_monitor(protocol)
+    if monitor_ref:
+        result["budget_policy"] = {**monitor_ref, "requested_output_cap_is_advisory": True,
+            "job_context_reservations": "PLANNING_ESTIMATE_NOT_PROVIDER_HARD_BOUND",
+            "global_reservations": "BROKER_128000_OUTPUT_PLUS_INPUT_BOUND", "provider_hard_cap_guaranteed": False}
     owns_client = client is None
     used_tokens, reserved_tokens = 0, 0
     try:

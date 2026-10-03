@@ -198,6 +198,7 @@ def validate_batch(files, *, producer=False, known_run_ids=()):
     from .exchange_io import safe_name
     require(len({safe_name(n).casefold() for n in files}) == len(files), "EXCHANGE_CASE_COLLISION")
     manifest = json.loads(files["upstream_manifest.json"]) if "upstream_manifest.json" in files else None
+    require(not producer or manifest is not None, "UPSTREAM_MANIFEST_REQUIRED")
     declared = None
     if "upstream_manifest.json" in files:
         require(isinstance(manifest, dict) and isinstance(manifest.get("batch_id"), str)

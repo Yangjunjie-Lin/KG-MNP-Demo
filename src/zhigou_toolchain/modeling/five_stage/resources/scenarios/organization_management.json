@@ -1,0 +1,149 @@
+{
+  "scenario_id": "organization_management",
+  "name": "企业组织与人员",
+  "purpose": "员工、部门、岗位状态和有来源的任职记录；区分当前归属与历史关系",
+  "domain_pack": {
+    "pack_id": "hr",
+    "pack_version": "0.1.0"
+  },
+  "capabilities": {
+    "core": {
+      "description": "员工、部门与当前归属"
+    },
+    "profile": {
+      "description": "有来源的岗位与状态"
+    },
+    "history": {
+      "description": "独立任职记录及原始有效期"
+    }
+  },
+  "tables": [
+    {
+      "record_id": "departments",
+      "source_name": "departments.csv",
+      "class_iri": "https://example.org/ontology/Department",
+      "id_field": "department_id",
+      "literals": {
+        "department_id": {
+          "predicate_iri": "https://example.org/ontology/departmentId",
+          "datatype": "string",
+          "capability": "core"
+        },
+        "department_name": {
+          "predicate_iri": "https://example.org/ontology/departmentName",
+          "datatype": "string",
+          "capability": "core"
+        }
+      },
+      "references": [],
+      "capability": "core"
+    },
+    {
+      "record_id": "employees",
+      "source_name": "employees.csv",
+      "class_iri": "https://example.org/ontology/Employee",
+      "id_field": "employee_id",
+      "literals": {
+        "employee_id": {
+          "predicate_iri": "https://example.org/ontology/employeeId",
+          "datatype": "string",
+          "capability": "core"
+        },
+        "employee_name": {
+          "predicate_iri": "https://example.org/ontology/employeeName",
+          "datatype": "string",
+          "capability": "core"
+        },
+        "job_title": {
+          "predicate_iri": "urn:scenario:organization_management:jobTitle",
+          "datatype": "string",
+          "capability": "profile"
+        },
+        "status": {
+          "predicate_iri": "urn:scenario:organization_management:status",
+          "datatype": "string",
+          "capability": "profile"
+        }
+      },
+      "references": [
+        {
+          "field": "department_id",
+          "target_space": "departments",
+          "predicate_iri": "https://example.org/ontology/belongsToDepartment"
+        }
+      ],
+      "capability": "core"
+    },
+    {
+      "record_id": "assignments",
+      "source_name": "assignments.csv",
+      "class_iri": "urn:scenario:organization_management:Assignment",
+      "id_field": "assignment_id",
+      "literals": {
+        "assignment_id": {
+          "predicate_iri": "urn:scenario:organization_management:assignmentId",
+          "datatype": "string",
+          "capability": "history"
+        },
+        "valid_from": {
+          "predicate_iri": "urn:scenario:organization_management:validFrom",
+          "datatype": "string",
+          "capability": "history"
+        },
+        "valid_to": {
+          "predicate_iri": "urn:scenario:organization_management:validTo",
+          "datatype": "string",
+          "capability": "history"
+        }
+      },
+      "references": [
+        {
+          "field": "employee_id",
+          "target_space": "employees",
+          "predicate_iri": "urn:scenario:organization_management:assignedEmployee"
+        },
+        {
+          "field": "department_id",
+          "target_space": "departments",
+          "predicate_iri": "urn:scenario:organization_management:assignedDepartment"
+        }
+      ],
+      "capability": "history"
+    }
+  ],
+  "query_asset_id": "hr-query-employees",
+  "additions": [
+    [
+      "确认员工与部门的身份、当前归属和任职记录的来源范围",
+      "检查姓名误作主键、当前与历史口径混用及无来源的岗位信息"
+    ],
+    [
+      "复用组织词汇，依据实际来源和批准范围设计任职结构",
+      "检查重复类、关系方向、事件化任职的范围与规则依据"
+    ],
+    [
+      "映射员工部门编码，按原始来源提取岗位、状态和任职记录",
+      "检查跨员工混同、失效部门关联、历史关系误作当前关系"
+    ],
+    [
+      "汇总身份、归属、证据及时间相关真实问题",
+      "检查问题是否引用当前版本和真实记录，修订是否保留必要约束"
+    ],
+    [
+      "交付对象读取、所属部门及任职记录的已登记查询契约",
+      "检查核心归属查询正确、历史查询不冒充当前快照查询"
+    ]
+  ],
+  "scenario_version": "2.0.0",
+  "nature": "SYNTHETIC_ENGINEERING_TEMPLATE_NOT_EXPERT_APPROVAL",
+  "namespace": "urn:scenario:organization_management:",
+  "output_contract": "zhigou-scenario-stage/2.0.0",
+  "rules": {
+    "identity": "Exact source identifier in its declared table identity space; never merge by name/model.",
+    "time": "Preserve original lexical precision and timezone; no invented dates or missing endpoints.",
+    "units": "Preserve declared unit and original value. No conversion or rounding is enabled.",
+    "codes": "Preserve source codes; no inferred state transition or action.",
+    "authority_boundary": "Templates grant no permissions. Original approval and hard checks remain mandatory."
+  },
+  "fixture_ref": "tests/fixtures/scenarios/organization_management"
+}

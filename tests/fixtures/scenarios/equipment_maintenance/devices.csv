@@ -1,0 +1,2 @@
+device_id,name,organization_id,location_id,status
+EQ-001,Synthetic pump,ORG-001,LOC-001,IN_SERVICE

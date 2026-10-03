@@ -16,6 +16,14 @@ test('authorized fifth-stage handoff downloads the actual Worker snapshot',async
   const prefix=href.split('/').slice(0,3).join('/');
   await page.goto(prefix+'/modeling?stage=5');
   await expect(page.getByRole('button',{name:'本体交接包',exact:true})).toBeVisible({timeout:120000});
+  const projectState=await (await page.request.get(`/api/v1${prefix}/state`)).json();
+  if(projectState.modeling_session?.expert?.enabled){
+    await page.locator('summary').filter({hasText:'专家指导 · S5'}).click();
+    await expect(page.getByLabel('生成前专家指导',{exact:true})).not.toHaveValue('');
+    await expect(page.getByLabel('生成后审核要求',{exact:true})).not.toHaveValue('');
+    await expect(page.getByRole('region',{name:'专家闭环结果'})).toBeVisible();
+    await expect(page.getByText(/真实请求/).last()).toBeVisible();
+  }
   let jobId=process.env.ZHIGOU_HANDOFF_EXPORT_JOB_ID;
   if(!jobId){
     await page.getByRole('button',{name:'本体交接包',exact:true}).click();

@@ -37,6 +37,7 @@ TOOLS = {
     4: frozenset({"integrity.check", "semantic.check", "semantic.graphs", "repair.route"}),
     5: frozenset({"compile.plan", "compile.build", "provenance.compile", "query.check", "archive.verify", "archive.export", "delivery.v3", "handoff.export"}),
 }
+TOOLS = {stage: allowed | {"expert.review", "expert.revise", "scenario.project"} for stage, allowed in TOOLS.items()}
 ACTIVE: ContextVar[AgentRun | None] = ContextVar("ontology_agent_run", default=None)
 
 
@@ -81,12 +82,20 @@ class AgentRun:
         parent = CALL_LINK.get() or {}
         link_token = None
         try:
+            from .expert_runtime import ACTIVE_EXPERT
+            expert = ACTIVE_EXPERT.get()
+            if expert is not None:
+                expert.before_method(record["method_id"])
+                record["expert_binding"] = {"loop_id": expert.loop_id, "revision_round": expert.round,
+                    "purpose": expert.purpose,
+                    "configuration_digest": expert.configuration(record["method_id"])["digest"] if record["method_id"] else None}
             if audit is not None:
                 audit_call = audit.before({"kind": "TOOL", "stage_id": stage_id, "actor": agent_id,
                     "tool_id": tool_id, "native_agent_run_id": self.run_id, "session_id": self.session_id,
                     "session_revision": self.parent_version, "dependencies": self.dependencies,
                     "tool_versions": record["tool_versions"], "method_id": record["method_id"],
                     "model": model, "model_kind": "NON_CHAT_LOCAL_MODEL" if model and tool_id in {"structure.retrieve", "structure.rerank", "text.chunk"} else None,
+                    **({"expert_binding": record["expert_binding"]} if expert is not None else {}),
                     "parent_audit_call_id": parent.get("parent_audit_call_id"),
                     "authority": "OBSERVATION_ONLY"}, inputs)
                 record["audit_call_id"] = audit_call
@@ -94,7 +103,13 @@ class AgentRun:
             if OWNERS.get(stage_id) != agent_id or tool_id not in TOOLS.get(stage_id, ()):
                 record.update(status="DENIED", reason="AGENT_TOOL_OR_STAGE_FORBIDDEN")
                 raise AgentToolDenied("AGENT_TOOL_OR_STAGE_FORBIDDEN")
-            if method_id is not None and method_id not in ({"2.4", "2.5"} if tool_id == "structure.design" else {TOOL_METHOD.get(tool_id)}):
+            if tool_id in {"expert.review", "expert.revise"} and expert is None:
+                raise AgentToolDenied("EXPERT_SERVICE_CONTEXT_REQUIRED")
+            expert_method = tool_id in {"expert.review", "expert.revise"} and expert is not None and method_id and int(method_id[0]) == stage_id
+            scenario_method = tool_id == "scenario.project" and expert is not None and expert.scenario is not None and method_id is None
+            if tool_id == "scenario.project" and not scenario_method:
+                raise AgentToolDenied("SCENARIO_SERVICE_CONTEXT_REQUIRED")
+            if method_id is not None and not expert_method and not scenario_method and method_id not in ({"2.4", "2.5"} if tool_id == "structure.design" else {TOOL_METHOD.get(tool_id)}):
                 record.update(status="DENIED", reason="AGENT_TOOL_METHOD_MISMATCH")
                 raise AgentToolDenied("AGENT_TOOL_METHOD_MISMATCH")
             if trace is not None:
@@ -106,6 +121,8 @@ class AgentRun:
                 "parent_transport_call_id": call_id, "method_id": record["method_id"], "stage_id": stage_id,
                 "actor": agent_id, "tool_id": tool_id, "model_calls": record["model_calls"]})
             value = action()
+            if expert is not None:
+                expert.observe(record, inputs, value)
             if trace is not None and call_id:
                 trace.result(call_id, value)
                 call_id = None
@@ -237,7 +254,7 @@ OPERATION_TO_TOOL = {
 }
 
 
-def execute_routed(project, request, action, *, trace_factory=None):
+def execute_routed(project, request, action, *, trace_factory=None, computational_wrapper=None):
     """Called inside the existing Worker generation/CAS transaction.
 
 Human scope/review decisions deliberately do not appear as Agent tool calls.
@@ -252,7 +269,7 @@ The proposal handler records fine-grained S2/S3/S4 calls itself.
         # new store/approval and no post-commit mutation of the result.
         return {**result, "step_audit_anchor": {"event_count": audit.sequence,
             "event_sha256": audit.previous, "job_id": audit.binding["job_id"], "attempt": audit.binding["attempt"]}}
-    routed = request.operation_id in OPERATION_TO_TOOL or request.operation_id in {"modeling.proposal", "modeling.candidate", "modeling.session.open", "modeling.tutorial.seed"}
+    routed = request.operation_id in OPERATION_TO_TOOL or request.operation_id in {"modeling.proposal", "modeling.candidate", "modeling.session.open", "modeling.tutorial.seed", "modeling.expert.reaudit"}
     if not routed and ACTIVE_AUDIT.get() is None:
         return sealed(action())
     session = read(project.root)
@@ -268,11 +285,12 @@ The proposal handler records fine-grained S2/S3/S4 calls itself.
     token = ACTIVE.set(run)
     trace_token = ACTIVE_TRACE.set(trace) if trace else None
     try:
-        if request.operation_id in OPERATION_TO_TOOL:
-            stage, tool = OPERATION_TO_TOOL[request.operation_id]
-            result = invoke(stage, tool, action, inputs=request.parameters)
-        else:
-            result = action()
+        def compute():
+            if request.operation_id in OPERATION_TO_TOOL:
+                stage, tool = OPERATION_TO_TOOL[request.operation_id]
+                return invoke(stage, tool, action, inputs=request.parameters)
+            return action()
+        result = computational_wrapper(compute) if computational_wrapper else compute()
         return sealed({**result, **({"agent_execution": run.report()} if run.records else {})})
     except Exception as exc:
         if run.records:

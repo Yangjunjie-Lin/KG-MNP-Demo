@@ -21,6 +21,7 @@ from zhigou_toolchain.modeling.five_stage.coverage import (
     HUMAN_METHOD,
     implementation_view,
     runtime_view,
+    token_view,
 )
 from zhigou_toolchain.modeling.five_stage.prompts import source_catalogue
 from zhigou_toolchain.semantic_kernel.packaging.archive import archive_mapping_bytes
@@ -31,6 +32,10 @@ from .projects import get_project, load_catalog, require_access
 
 # Human decisions and independent acceptance are observed, never Agent tools.
 SPECIAL_OPERATIONS = {
+    "modeling.scenario.save": (1, "AUTHORIZED_SCENARIO_CONFIGURATION"),
+    "modeling.scenario.quality": (5, "INDEPENDENT_ACCEPTANCE_SERVICE"),
+    "modeling.expert.save": (1, "AUTHORIZED_EXPERT_CONFIGURATION"),
+    "modeling.expert.reaudit": (1, "TWO_AGENT_REVIEW_OPERATION"),
     "modeling.session.open": (1, "AUTHORIZED_INPUT_OWNER"),
     "modeling.session.revise": (1, "AUTHORIZED_INPUT_OWNER"),
     "modeling.scope.approve": (1, "AUTHORIZED_REVIEWER"),
@@ -87,6 +92,8 @@ def recording_failure(service, job, principal, error, channel):
 
 def execute_audited(service, job, request, principal, action):
     role = operation_role(request.operation_id)
+    if request.operation_id == "modeling.expert.save":
+        role = (request.parameters["configuration"]["stage"], "AUTHORIZED_EXPERT_CONFIGURATION")
     if role is None:
         return action()
     # Recovery reuses the exact original receipt; it is not a new execution.
@@ -331,6 +338,7 @@ def download_audit(service, principal, project_id, job_id, *, attempt=None):
     result = committed or {}
     step_runs = result.get("five_stage", {}).get("step_runs", []) + result.get("automatic_validation", {}).get("five_stage", {}).get("step_runs", [])
     files["coverage.json"] = json_bytes(runtime_view(events, native=native, trace=trace, parameters=params, step_runs=step_runs))
+    files["audits/token_usage.json"] = json_bytes(token_view(events, trace))
     catalogue_path = audit_root(service, project_id, job.job_id, job.attempt) / "prompts" / "catalogue.json"
     if catalogue_path.exists():
         catalogue_raw = read_bounded(catalogue_path)
@@ -338,6 +346,10 @@ def download_audit(service, principal, project_id, job_id, *, attempt=None):
         files["prompts/run-source-catalogue.json"] = catalogue_raw
     if trace is not None:
         files["model-trace.json"] = json_bytes(trace)
+    if result.get("expert_loop"):
+        files["audits/expert-loop.json"] = json_bytes(result["expert_loop"])
+    if result.get("scenario_outputs"):
+        files["audits/scenario-outputs.json"] = json_bytes(result["scenario_outputs"])
     files["README.md"] = (b"# Modeling step audit\n\nBefore/after observations for one real job attempt.\n"
         b"RuleAgent = planning agent (S1/S2/S4); TaskExecutionAgent = execution agent (S3/S5).\n"
         b"Human review and independent acceptance remain separate authorities.\n"
@@ -415,6 +427,7 @@ def audit_detail(service, principal, project_id, job_id, *, attempt=None):
     files = read_archive(raw)
     return {"archive_sha256": digest(raw), "size_bytes": len(raw),
         "manifest": json.loads(files["manifest.json"]), "coverage": json.loads(files["coverage.json"]),
+        "token_usage": json.loads(files["audits/token_usage.json"]),
         "events": [json.loads(line) for line in files["journal.jsonl"].splitlines()],
         "current_templates": public_value(source_catalogue(), set()),
         "run_templates": json.loads(files["prompts/run-source-catalogue.json"]) if "prompts/run-source-catalogue.json" in files else None,

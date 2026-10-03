@@ -16,7 +16,7 @@ def test_domain_baseline_check_reads_original_history_and_never_rewrites_assets(
     paths += [path for path in (ROOT / "domain_packs").rglob("*") if path.is_file()]
     before = {path: hashlib.sha256(path.read_bytes()).hexdigest() for path in paths}
     assert check() == {"status": "PRESERVED", "mnp_original_assets": 84, "read_only": True,
-        "verified_pack_versions": ["empty@0.1.0", "forestry@0.2.0", "forestry-workorders@0.1.0",
+        "verified_pack_versions": ["empty@0.1.0", "equipment-maintenance@0.1.0", "forestry@0.2.0", "forestry-workorders@0.1.0",
             "forestry-workorders@0.1.1", "hr@0.1.0", "minimal@0.1.0", "mnp@1.0.0"]}
     assert {path: hashlib.sha256(path.read_bytes()).hexdigest() for path in paths} == before
 

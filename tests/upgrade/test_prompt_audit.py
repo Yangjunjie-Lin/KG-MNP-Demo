@@ -129,7 +129,20 @@ def test_registry_and_catalogue_are_complete_source_views():
     main = [t for t in catalogue["templates"] if t["group"] == "PRODUCTION" and t["task_text"] is not None]
     assert len(main) == 5
     assert "services/modeling_five_stage.py" in catalogue["source_files"]
-    assert {t["group"] for t in catalogue["templates"]} == {"PRODUCTION", "RESEARCH_ADAPTER"}
+    assert {t["group"] for t in catalogue["templates"]} == {"PRODUCTION", "RESEARCH_ADAPTER", "EXPERT_RUNTIME", "EXPERT_DEFAULT_DRAFT_NOT_HUMAN_CONFIRMATION", "SCENARIO_FROZEN_CONFIGURATION"}
+    assert len([t for t in catalogue["templates"] if t["group"] == "EXPERT_DEFAULT_DRAFT_NOT_HUMAN_CONFIRMATION"]) == 11
+    from zhigou_toolchain.modeling.five_stage.scenarios import (
+        SCENARIO_GENERATE_PROMPT,
+        SCENARIO_REVIEW_PROMPT,
+        SCENARIO_REVISE_PROMPT,
+    )
+    scene_templates = [t for t in catalogue["templates"] if t["group"] == "SCENARIO_FROZEN_CONFIGURATION"]
+    assert len(scene_templates) == 3
+    assert {t["task_text"] for t in scene_templates} == {SCENARIO_GENERATE_PROMPT, SCENARIO_REVIEW_PROMPT, SCENARIO_REVISE_PROMPT}
+    scene_ids = {s["scenario_id"] for s in catalogue["scenario_resources"]}
+    assert scene_ids == {"organization_management", "ancient_tree_inspection", "equipment_maintenance"}
+    assert all("modeling/five_stage/resources/scenarios/" + identifier + ".json" in catalogue["source_files"] for identifier in scene_ids)
+    assert "scenario_acceptance" not in json.dumps(catalogue["scenario_resources"])
     assert all(t["context_expression"] and t["schema_expression"] for t in main)
 
 

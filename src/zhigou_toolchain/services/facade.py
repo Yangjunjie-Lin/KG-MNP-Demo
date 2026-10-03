@@ -31,6 +31,7 @@ from .projects import (
     inspect_project,
     list_projects,
     lock_project,
+    project_listing,
     require_access,
 )
 
@@ -210,8 +211,10 @@ class ApplicationService:
         recorders = []
         def routed(project):
             nonlocal agent_receipt
+            from .modeling_expert import coordinate
             result = execute_routed(project, request, lambda: handler(self, project, request, principal),
-                trace_factory=recorder_factory(self, project, request, principal, job, recorders))
+                trace_factory=recorder_factory(self, project, request, principal, job, recorders),
+                computational_wrapper=lambda compute: coordinate(self, project, request, principal, job, compute))
             agent_receipt = result.get("agent_execution")
             return result
         try:
@@ -267,6 +270,13 @@ class ApplicationService:
         if job.operation_id not in sources | modeling | compilation | lifecycle | business | handoff:
             raise ServiceBoundaryError("RECOVERY_REQUIRED", "external or unknown operation requires explicit reconciliation", status_code=409)
         parameters = self.jobs.parameters(job_id)
+        from .modeling_expert import COMPUTATIONS, enabled
+        from .modeling_sessions import read as read_session
+        if job.project_id and job.operation_id in COMPUTATIONS | {"modeling.expert.reaudit"} and enabled(read_session(get_project(self.root, job.project_id).root)):
+            from .modeling_audit import read_events
+            events = read_events(self, job)
+            if any(e["metadata"].get("kind") == "MODEL" for e in events):
+                raise ServiceBoundaryError("EXPERT_REMOTE_RECONCILIATION_REQUIRED", "Uncommitted model attempt requires reconciliation, not automatic replay or repeated billing", status_code=409)
         identity = parameters.get("__principal", {})
         original = self.tokens.resolve(identity.get("token_id", ""))
         if original.principal_id != identity.get("principal_id"):
@@ -329,7 +339,7 @@ class ApplicationService:
             return create_project(self.root, params["name"], principal, domain_pack=params["domain_pack"],
                                   domain_pack_version=params["domain_pack_version"], packs_root=packs_root).public_dict()
         if name == "project.list":
-            return {"projects": [inspect_project(item, packs_root).public_dict() for item in list_projects(self.root) if can_access(principal, item)]}
+            return {"projects": [project_listing(item) for item in list_projects(self.root) if can_access(principal, item)]}
         if name == "project.open":
             return inspect_project(get_project(self.root, params.get("project_id", request.project_id or "")), packs_root).public_dict()
         if name == "job.get":
@@ -348,6 +358,9 @@ class ApplicationService:
                 return row
             return result
         project = self._project(request)
+        if name == "modeling.scenario.preview":
+            from .modeling_scenarios import execute as execute_scenario
+            return execute_scenario(self, project, request, principal)
         if name == "ontology.io.inspect":
             from jsonschema.exceptions import ValidationError as SchemaValidationError
 

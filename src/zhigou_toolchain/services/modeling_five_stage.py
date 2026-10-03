@@ -17,7 +17,7 @@ from .errors import ServiceBoundaryError
 from .sources import verified_run
 
 
-def execute(app, project, request, principal):
+def execute(app, project, request, principal, *, expert_draft=None):
     """A real verified source run is mandatory. No client file paths or roles."""
     if request.operation_id == "modeling.tutorial.seed":
         return seed_tutorial(app, project, request, principal)
@@ -49,7 +49,7 @@ def execute(app, project, request, principal):
                                  for name in ("objects", "targets", "exclusions", "unresolved")}}
         model = None
         try:
-            model = configured_client()
+            model = configured_client() if expert_draft is None else None
             profile, versions = invoke(1, "data.profile", lambda: profile_data(run.dataset, checked["content"]),
                 inputs={"dataset": run.dataset, "input_check": checked["content"]})
             profiled = make(profile, "1.2")
@@ -58,7 +58,14 @@ def execute(app, project, request, principal):
                 tools=versions, scope="Actual profile used by scope drafting; not reconstructed."))
             context = {"profile": profile, "business_goal": request.parameters["business_goal"],
                        "business_rules": request.parameters["business_rules"]}
-            value = model.propose("Draft scope objects, acceptance targets, exclusions and unresolved ambiguities. Do not infer hard rules from samples.", context, schema)
+            if expert_draft is None:
+                assert model is not None
+                value = model.propose("Draft scope objects, acceptance targets, exclusions and unresolved ambiguities. Do not infer hard rules from samples.", context, schema)
+            else:
+                from jsonschema import Draft202012Validator
+                Draft202012Validator(schema).validate(expert_draft)
+                value = {"proposal": expert_draft, "tool_versions": {"jsonschema": version("jsonschema")},
+                         "execution_source": "PROGRAM_APPLIED_AI_PATCH", "approval": "NOT_GRANTED"}
         except (ToolBlocked, ImportError):
             raise ServiceBoundaryError("BLOCKED_BY_PROVIDER", "Configured model or analysis dependency unavailable, or model output rejected; no silent fallback was executed", status_code=422) from None
         finally:
@@ -68,7 +75,8 @@ def execute(app, project, request, principal):
         artifacts.append(draft)
         receipts.append(receipt("1.3", [source, checked], [draft], configuration={"context_hash": semantic_hash(context)},
                                 tools=value["tool_versions"], scope="Structured scope suggestion only. Identity policy still requires explicit human scope input.",
-                                execution_kind="LIVE", model_revision=value["model"]["configured_revision"]))
+                                execution_kind="LIVE" if expert_draft is None else "DETERMINISTIC",
+                                model_revision=value.get("model", {}).get("configured_revision")))
     result = {"schema_version": "1.0.0", "session_id": session, "source_run_id": run_id,
               "artifacts": artifacts, "step_runs": bind_job(receipts, request.idempotency_key), "authority": "PROPOSAL_OR_OBSERVATION_ONLY"}
     identifier = stable_urn("five-stage-run", {"source": run_id, "operation": request.operation_id,

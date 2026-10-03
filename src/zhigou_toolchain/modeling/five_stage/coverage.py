@@ -27,7 +27,7 @@ IMPLEMENTATIONS = {
     "2.2": ("five_stage/assistance.py:retrieve_cards; control_plane/alignment.py:align_terms", "modeling.prepare, modeling.proposal", "BGE_FAISS or explicit exact substitute"),
     "2.3": ("five_stage/tools.py:rerank", "modeling.proposal", "BGE_FAISS + nonempty cards; substitute is not reranker"),
     "2.4": ("five_stage/assistance.py:select_reuse", "modeling.proposal", "model assistance or baseline-reuse-provider"),
-    "2.5": ("five_stage/assistance.py:generate", "modeling.proposal", "model assistance round two"),
+    "2.5": ("five_stage/assistance.py:generate; services/modeling.py:_propose.check_structure_drafts", "modeling.proposal", "model assistance round two, or expert-enabled explicit/revised structure safe-JSON check before original normalization"),
     "3.1": ("services/modeling.py:_propose", "modeling.proposal", "record mapping or selected provider"),
     "3.2": ("five_stage/tools.py:text_chunks; five_stage/assistance.py:character_chunks", "modeling.proposal", "nonempty text, local tokenizer or Unicode substitute"),
     "3.3": ("five_stage/assistance.py:generate", "modeling.proposal", "one physical request per chunk"),
@@ -54,6 +54,8 @@ def implementation_view():
         "audit_tools": [t for t, mid in TOOL_METHOD.items() if mid == m["method_id"]],
         "implementation_status": "BOUNDARY_INSTRUMENTED",
         "verification_status": "REQUIRES_SELECTED_RUN_EVIDENCE",
+        "expert_configuration": "STAGE_DEFAULT_OR_EXPLICIT_METHOD_OVERRIDE",
+        "expert_review": "HUMAN_GATE_NOT_RECURSIVE" if m["method_id"] in {"1.4", "4.4", "4.5"} else "ACTUAL_METHOD_ARTIFACT_EACH_VERSION_WHEN_ENABLED",
         "tests": ["tests/upgrade/test_prompt_audit.py", "tests/upgrade/test_step_audit.py"]}
         for m in registry()["methods"]]
 
@@ -82,7 +84,8 @@ def runtime_view(events, *, native=None, trace=None, parameters=None, step_runs=
                 "content_status": start["payload"]["capture"],
                 "model_calls": [c for r in (native or {}).get("records", []) if r.get("audit_call_id") == cid for c in r.get("model_calls", [])],
                 "validation": "SEE_RESULT_NOT_IMPLIED_BY_TOOL_SUCCESS"})
-        recorded = [c for c in calls if c["kind"] != "MODEL"]
+        review_only = {e["call_id"] for e in starts.values() if e["metadata"].get("tool_id") in {"expert.review", "expert.revise"}}
+        recorded = [c for c in calls if c["kind"] != "MODEL" and c["audit_call_id"] not in review_only]
         outer = definition["method_id"] in {"3.5", "5.2"} and any(
             s["metadata"].get("tool_id") == ("records.map" if definition["method_id"] == "3.5" else "compile.build") for s in starts.values())
         not_applicable = not recorded and operation is not None and operation not in definition["operations"].split(", ") and operation not in {"modeling.candidate", "modeling.tutorial.seed"}
@@ -127,3 +130,41 @@ def reconcile_physical_requests(observed, events, trace):
     require(sorted(semantic_hash(p) for p in observed) == sorted(e["metadata"]["request_sha256"] for e in model_starts)
         == sorted(e["request_sha256"] for e in requests), "PHYSICAL_REQUEST_MISMATCH")
     return {"status": "PASS", "physical_requests": len(observed), "nature": "MOCK_TRANSPORT_INDEPENDENT_SPY"}
+
+
+def token_view(events, trace=None):
+    """Read-only failed/cancelled/interrupted attempt view, not a second ledger."""
+    from .expert_runtime import usage_summary
+    starts = {e["call_id"]: e for e in events if e["phase"] == "BEFORE" and e["metadata"]["kind"] == "MODEL"}
+    ends = {e["call_id"]: e for e in events if e["phase"] == "AFTER"}
+    calls, unconfirmed, not_sent = [], [], []
+    outputs = {e["call_id"]: e for e in (trace or {}).get("events", []) if e["event"] == "llm_output"}
+    trace_usage = {e.get("audit_call_id"): outputs.get(e["call_id"], {}).get("usage", {})
+                   for e in (trace or {}).get("events", []) if e["event"] == "llm_call"}
+    for cid, event in starts.items():
+        meta = event["metadata"]
+        end = ends.get(cid, {}).get("metadata", {})
+        dispatch = end.get("dispatch_status")
+        if dispatch == "NOT_SENT_LOCAL_FAILURE":
+            not_sent.append(cid)
+            continue
+        if dispatch != "TRANSPORT_ATTEMPTED":
+            unconfirmed.append(cid)
+            # A captured provider response can carry known usage even when
+            # the later step-log write failed. Retain that subtotal without
+            # claiming the missing dispatch receipt or a complete total.
+            if not trace_usage.get(cid):
+                continue
+        binding = meta.get("expert_binding") or {}
+        usage = end.get("usage") or trace_usage.get(cid) or {}
+        calls.append({"physical_call_id": cid, "stage_id": meta.get("stage_id"), "method_id": meta.get("method_id"),
+            "purpose": binding.get("purpose", "LEGACY_UNSPECIFIED"), "loop_id": binding.get("loop_id"),
+            "revision_round": binding.get("revision_round"), "network_retry": binding.get("network_retry"),
+            **({k: binding[k] for k in ("scenario_id", "scenario_version", "effective_configuration_digest", "scenario_stage_digest") if k in binding}),
+            "status": end.get("status"), "usage": {k: v for k, v in usage.items() if type(v) is int and v >= 0}})
+    summary = usage_summary(calls)
+    historical = bool(events and "capture_configuration" not in events[0]["binding"] and not starts)
+    if unconfirmed or historical:
+        summary["totals"] = {"input_tokens": None, "output_tokens": None}
+    return {**summary, "calls": calls, "unconfirmed_dispatch_call_ids": unconfirmed, "not_sent_call_ids": not_sent,
+        "scope": "UNKNOWN_HISTORICAL_CAPTURE" if historical else "OBSERVED_CLIENT_BOUNDARIES_NOT_INDEPENDENT_EXHAUSTIVENESS_PROOF"}

@@ -1,0 +1,169 @@
+{
+  "scenario_id": "ancient_tree_inspection",
+  "name": "古树档案与巡查",
+  "purpose": "树木档案与地点；明确已有巡查和观察，不推断健康诊断",
+  "domain_pack": {
+    "pack_id": "forestry",
+    "pack_version": "0.2.0"
+  },
+  "capabilities": {
+    "core": {
+      "description": "Tree/Location映射既有TreeRecord/Site"
+    },
+    "inspections": {
+      "required": true,
+      "description": "所选forestry@0.2.0的InspectionShape要求真实巡查覆盖：编号、原记录说明及树木关联，各档均保留"
+    },
+    "inspection_details": {
+      "description": "来源明确的巡查时间，保留原始年/月分辨率"
+    },
+    "observations": {
+      "description": "按来源展开观察项、单位和测量"
+    }
+  },
+  "tables": [
+    {
+      "record_id": "sites",
+      "source_name": "sites.csv",
+      "class_iri": "https://example.invalid/forestry#Site",
+      "id_field": "siteCode",
+      "literals": {
+        "siteCode": {
+          "predicate_iri": "https://example.invalid/forestry#siteCode",
+          "datatype": "string",
+          "capability": "core"
+        },
+        "label": {
+          "predicate_iri": "https://example.invalid/forestry#label",
+          "datatype": "string",
+          "capability": "core"
+        }
+      },
+      "references": [],
+      "capability": "core"
+    },
+    {
+      "record_id": "trees",
+      "source_name": "trees.csv",
+      "class_iri": "https://example.invalid/forestry#TreeRecord",
+      "id_field": "treeCode",
+      "literals": {
+        "treeCode": {
+          "predicate_iri": "https://example.invalid/forestry#treeCode",
+          "datatype": "string",
+          "capability": "core"
+        },
+        "label": {
+          "predicate_iri": "https://example.invalid/forestry#label",
+          "datatype": "string",
+          "capability": "core"
+        }
+      },
+      "references": [
+        {
+          "field": "siteCode",
+          "target_space": "sites",
+          "predicate_iri": "https://example.invalid/forestry#locatedAt"
+        }
+      ],
+      "capability": "core"
+    },
+    {
+      "record_id": "inspections",
+      "source_name": "inspections.csv",
+      "class_iri": "https://example.invalid/forestry#InspectionRecord",
+      "id_field": "inspectionCode",
+      "literals": {
+        "inspectionCode": {
+          "predicate_iri": "https://example.invalid/forestry#inspectionCode",
+          "datatype": "string",
+          "capability": "inspections"
+        },
+        "inspectionNote": {
+          "predicate_iri": "https://example.invalid/forestry#inspectionNote",
+          "datatype": "string",
+          "capability": "inspections"
+        },
+        "observed_at": {
+          "predicate_iri": "urn:scenario:ancient_tree_inspection:observedAt",
+          "datatype": "string",
+          "capability": "inspection_details"
+        }
+      },
+      "references": [
+        {
+          "field": "treeCode",
+          "target_space": "trees",
+          "predicate_iri": "https://example.invalid/forestry#inspectedTree"
+        }
+      ],
+      "capability": "inspections"
+    },
+    {
+      "record_id": "observations",
+      "source_name": "observations.csv",
+      "class_iri": "urn:scenario:ancient_tree_inspection:Observation",
+      "id_field": "observation_id",
+      "literals": {
+        "observation_id": {
+          "predicate_iri": "urn:scenario:ancient_tree_inspection:observationId",
+          "datatype": "string",
+          "capability": "observations"
+        },
+        "value": {
+          "predicate_iri": "urn:scenario:ancient_tree_inspection:observedValue",
+          "datatype": "string",
+          "capability": "observations"
+        },
+        "unit": {
+          "predicate_iri": "urn:scenario:ancient_tree_inspection:unit",
+          "datatype": "string",
+          "capability": "observations"
+        }
+      },
+      "references": [
+        {
+          "field": "inspectionCode",
+          "target_space": "inspections",
+          "predicate_iri": "urn:scenario:ancient_tree_inspection:inInspection"
+        }
+      ],
+      "capability": "observations"
+    }
+  ],
+  "query_asset_id": "forestry-query-tree-inspections",
+  "additions": [
+    [
+      "确认树木、地点、巡查范围，检查事件资料是否齐备",
+      "区分树木身份、巡查身份、源记录缺失与不存在巡查"
+    ],
+    [
+      "按范围定义树木-地点、树木-巡查、观察项及时间结构",
+      "检查一个树被拆成多棵、巡查事件被建成树种、无依据分类/阈值"
+    ],
+    [
+      "按来源提取每次巡查及观察值，保留单位和原始时间精度",
+      "检查重复/覆盖事件、单位误换、猜测健康诊断或补造日期"
+    ],
+    [
+      "根据真实报告定位身份、事件、时间及单位问题",
+      "检查必要验证完整保留，违规事实、缺失资料和证据问题不可隐藏"
+    ],
+    [
+      "交付树木档案、巡查与观察记录的已登记查询契约",
+      "检查服务能力与产物一致，不把离线例子宣称为在线巡检系统"
+    ]
+  ],
+  "scenario_version": "2.0.0",
+  "nature": "SYNTHETIC_ENGINEERING_TEMPLATE_NOT_EXPERT_APPROVAL",
+  "namespace": "urn:scenario:ancient_tree_inspection:",
+  "output_contract": "zhigou-scenario-stage/2.0.0",
+  "rules": {
+    "identity": "Exact source identifier in its declared table identity space; never merge by name/model.",
+    "time": "Preserve original lexical precision and timezone; no invented dates or missing endpoints.",
+    "units": "Preserve declared unit and original value. No conversion or rounding is enabled.",
+    "codes": "Preserve source codes; no inferred state transition or action.",
+    "authority_boundary": "Templates grant no permissions. Original approval and hard checks remain mandatory."
+  },
+  "fixture_ref": "tests/fixtures/scenarios/ancient_tree_inspection"
+}

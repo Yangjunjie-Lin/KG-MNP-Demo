@@ -24,7 +24,7 @@ MODEL_SCOPE: ContextVar[dict | None] = ContextVar("ontology_model_trace_scope", 
 CALL_LINK: ContextVar[dict | None] = ContextVar("ontology_call_link", default=None)
 PRIVATE_KEYS = {"negative_case_plan", "negative_case_results", "authorization", "cookie", "set-cookie", "api_key", "apikey", "access_token", "password",
                 "reasoning_content", "reasoning", "analysis", "acceptance", "expected", "expected_answers",
-                "independent_expected_answers", "corrected_answer", "gold", "oracles"}
+                "independent_expected_answers", "corrected_answer", "gold", "oracles", "scenario_acceptance", "scenario_quality"}
 
 
 def public_value(value, changes, path="$", _depth=0):
@@ -183,9 +183,22 @@ def traced_proposal(function):
     @wraps(function)
     def wrapped(*args: Any, **kwargs: Any):
         from zhigou_toolchain.modeling.five_stage.audit import ACTIVE_AUDIT
+        from zhigou_toolchain.modeling.five_stage.expert_runtime import ACTIVE_EXPERT
         from zhigou_toolchain.modeling.five_stage.prompts import prompt_reference
         from zhigou_toolchain.modeling.five_stage.tools import ToolBlocked
         context = args[2] if len(args) > 2 else kwargs["context"]
+        expert = ACTIVE_EXPERT.get()
+        expert_binding = None
+        original_task = args[1] if len(args) > 1 else kwargs["task"]
+        if expert is not None:
+            task, context, expert_binding = expert.prepare_prompt(original_task, context, (CALL_LINK.get() or {}).get("method_id"))
+            positional: list[Any] = list(args)
+            for index, key, value in ((1, "task", task), (2, "context", context)):
+                if len(positional) > index:
+                    positional[index] = value
+                else:
+                    kwargs[key] = value
+            args = tuple(positional)
         input_changes = set()
         public_value(context, input_changes)
         if input_changes:
@@ -194,15 +207,27 @@ def traced_proposal(function):
             raise ToolBlocked("MODEL_PRIVATE_INPUT_FORBIDDEN")
         recorder = ACTIVE_TRACE.get()
         audit = ACTIVE_AUDIT.get()
-        if recorder is None and audit is None:
+        if recorder is None and audit is None and expert is None:
             return function(*args, **kwargs)
         client = args[0] if args else kwargs["self"]
+        if expert is not None:
+            from time import monotonic
+
+            import httpx
+            client.max_output_tokens = min(client.max_output_tokens, expert.budget["max_output_tokens"])
+            remaining = max(0.001, expert.budget["max_seconds"] - (monotonic() - expert.started))
+            client.client.timeout = httpx.Timeout(min(45, remaining))
         task, schema = args[1] if len(args) > 1 else kwargs["task"], args[3] if len(args) > 3 else kwargs["schema"]
         scope = {"recorder": recorder, "audit": audit, "call_id": None, "audit_call_id": None,
             "content": "", "usage": {}, "prompt": prompt_reference(task, client, schema),
             "schema": deepcopy(schema), "task": task, "link": CALL_LINK.get() or {},
             "execution_mode": "MOCK_TRANSPORT" if getattr(client, "is_mock_transport", False) else "LIVE",
             "clock": perf_counter()}
+        scope["physical_call_id"] = uuid4().hex
+        scope["expert_binding"] = expert_binding
+        if expert_binding is not None:
+            scope["prompt"]["base_task_reference"] = prompt_reference(original_task, client, schema)
+            scope["prompt"]["expert_binding"] = expert_binding
         token = MODEL_SCOPE.set(scope)
         error = None
         try:
@@ -232,13 +257,20 @@ def traced_proposal(function):
                             "local_validation": scope.get("validation", "REJECTED_OR_TRANSPORT_FAILED"),
                             "dispatch_status": witness["dispatch_status"],
                             "duration_ms": (perf_counter() - scope.get("dispatch_clock", scope["clock"])) * 1000,
+                            "usage": scope["usage"], "expert_binding": expert_binding,
                             "error": error, "transport_error": scope.get("transport_error")})
             finally:
+                if expert is not None:
+                    expert.physical_result(scope, error)
                 MODEL_SCOPE.reset(token)
     return wrapped
 
 
 def model_request(payload):
+    from zhigou_toolchain.modeling.five_stage.expert_runtime import ACTIVE_EXPERT
+    expert = ACTIVE_EXPERT.get()
+    if expert is not None:
+        expert.before_request(payload)
     scope = MODEL_SCOPE.get()
     if scope is not None:
         require(scope["call_id"] is None and scope["audit_call_id"] is None, "MODEL_RETRY_REQUIRES_NEW_PROPOSAL_SCOPE")
@@ -247,6 +279,8 @@ def model_request(payload):
         identities = {"request_sha256": semantic_hash(payload), "messages_sha256": semantic_hash(payload["messages"]),
             "schema_sha256": semantic_hash(scope["schema"]), "prompt": scope["prompt"],
             "execution_mode": scope["execution_mode"], **association}
+        if scope.get("expert_binding"):
+            identities["expert_binding"] = scope["expert_binding"]
         audit = scope["audit"]
         if audit is not None:
             configured = audit.binding.get("capture_configuration", {})
@@ -307,7 +341,8 @@ def model_response(response, *, http_status=None, request_id=None):
             scope["content"] = {"public_error": response["error"]}
         usage = response.get("usage") or {}
         if isinstance(usage, dict):
-            scope["usage"] = {dst: usage[src] for src, dst in (("prompt_tokens", "input_tokens"), ("completion_tokens", "output_tokens")) if src in usage}
+            scope["usage"] = {dst: usage[src] for src, dst in (("prompt_tokens", "input_tokens"), ("completion_tokens", "output_tokens"))
+                              if type(usage.get(src)) is int and usage[src] >= 0}
     else:
         scope["content"] = response
     if http_status is not None and http_status >= 400:

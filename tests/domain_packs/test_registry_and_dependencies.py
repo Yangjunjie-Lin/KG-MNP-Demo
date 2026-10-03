@@ -29,6 +29,7 @@ def test_registry_lists_and_resolves_exact_repository_versions() -> None:
     registry = DomainPackRegistry(ROOT / "domain_packs")
     assert [(item[0], item[1]) for item in registry.list()] == [
         ("empty", "0.1.0"),
+        ("equipment-maintenance", "0.1.0"),
         ("forestry", "0.2.0"),
         ("forestry-workorders", "0.1.0"),
         ("forestry-workorders", "0.1.1"),

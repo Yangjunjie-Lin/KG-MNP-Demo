@@ -1,0 +1,145 @@
+{
+  "scenario_id": "ancient_tree_inspection",
+  "label_set_id": "synthetic-independent-ancient_tree_inspection",
+  "version": "1.1.0",
+  "matching": "EXACT_TYPED_KEY_SET_V1",
+  "projection": "PREDECLARED_CAPABILITY_MEMBERSHIP_V1",
+  "labels": [
+    {
+      "kind": "objects",
+      "key": "[\"urn:scenario:ancient_tree_inspection:sites:LOC-001\",\"https://example.invalid/forestry#Site\"]",
+      "capability": "core"
+    },
+    {
+      "kind": "attributes",
+      "key": "[\"urn:scenario:ancient_tree_inspection:sites:LOC-001\",\"https://example.invalid/forestry#siteCode\",\"LOC-001\",\"http://www.w3.org/2001/XMLSchema#string\",null]",
+      "capability": "core"
+    },
+    {
+      "kind": "attributes",
+      "key": "[\"urn:scenario:ancient_tree_inspection:sites:LOC-001\",\"https://example.invalid/forestry#label\",\"Synthetic site\",\"http://www.w3.org/2001/XMLSchema#string\",null]",
+      "capability": "core"
+    },
+    {
+      "kind": "objects",
+      "key": "[\"urn:scenario:ancient_tree_inspection:trees:GT-001\",\"https://example.invalid/forestry#TreeRecord\"]",
+      "capability": "core"
+    },
+    {
+      "kind": "attributes",
+      "key": "[\"urn:scenario:ancient_tree_inspection:trees:GT-001\",\"https://example.invalid/forestry#treeCode\",\"GT-001\",\"http://www.w3.org/2001/XMLSchema#string\",null]",
+      "capability": "core"
+    },
+    {
+      "kind": "attributes",
+      "key": "[\"urn:scenario:ancient_tree_inspection:trees:GT-001\",\"https://example.invalid/forestry#label\",\"Synthetic tree\",\"http://www.w3.org/2001/XMLSchema#string\",null]",
+      "capability": "core"
+    },
+    {
+      "kind": "relations",
+      "key": "[\"urn:scenario:ancient_tree_inspection:trees:GT-001\",\"https://example.invalid/forestry#locatedAt\",\"urn:scenario:ancient_tree_inspection:sites:LOC-001\"]",
+      "capability": "core"
+    },
+    {
+      "kind": "objects",
+      "key": "[\"urn:scenario:ancient_tree_inspection:inspections:INSP-001\",\"https://example.invalid/forestry#InspectionRecord\"]",
+      "capability": "inspections"
+    },
+    {
+      "kind": "attributes",
+      "key": "[\"urn:scenario:ancient_tree_inspection:inspections:INSP-001\",\"https://example.invalid/forestry#inspectionCode\",\"INSP-001\",\"http://www.w3.org/2001/XMLSchema#string\",null]",
+      "capability": "inspections"
+    },
+    {
+      "kind": "attributes",
+      "key": "[\"urn:scenario:ancient_tree_inspection:inspections:INSP-001\",\"https://example.invalid/forestry#inspectionNote\",\"Recorded intact\",\"http://www.w3.org/2001/XMLSchema#string\",null]",
+      "capability": "inspections"
+    },
+    {
+      "kind": "attributes",
+      "key": "[\"urn:scenario:ancient_tree_inspection:inspections:INSP-001\",\"urn:scenario:ancient_tree_inspection:observedAt\",\"2025\",\"http://www.w3.org/2001/XMLSchema#string\",null]",
+      "capability": "inspection_details"
+    },
+    {
+      "kind": "relations",
+      "key": "[\"urn:scenario:ancient_tree_inspection:inspections:INSP-001\",\"https://example.invalid/forestry#inspectedTree\",\"urn:scenario:ancient_tree_inspection:trees:GT-001\"]",
+      "capability": "inspections"
+    },
+    {
+      "kind": "objects",
+      "key": "[\"urn:scenario:ancient_tree_inspection:observations:OBS-001\",\"urn:scenario:ancient_tree_inspection:Observation\"]",
+      "capability": "observations"
+    },
+    {
+      "kind": "attributes",
+      "key": "[\"urn:scenario:ancient_tree_inspection:observations:OBS-001\",\"urn:scenario:ancient_tree_inspection:observationId\",\"OBS-001\",\"http://www.w3.org/2001/XMLSchema#string\",null]",
+      "capability": "observations"
+    },
+    {
+      "kind": "attributes",
+      "key": "[\"urn:scenario:ancient_tree_inspection:observations:OBS-001\",\"urn:scenario:ancient_tree_inspection:observedValue\",\"12\",\"http://www.w3.org/2001/XMLSchema#string\",null]",
+      "capability": "observations"
+    },
+    {
+      "kind": "attributes",
+      "key": "[\"urn:scenario:ancient_tree_inspection:observations:OBS-001\",\"urn:scenario:ancient_tree_inspection:unit\",\"cm\",\"http://www.w3.org/2001/XMLSchema#string\",null]",
+      "capability": "observations"
+    },
+    {
+      "kind": "relations",
+      "key": "[\"urn:scenario:ancient_tree_inspection:observations:OBS-001\",\"urn:scenario:ancient_tree_inspection:inInspection\",\"urn:scenario:ancient_tree_inspection:inspections:INSP-001\"]",
+      "capability": "observations"
+    },
+    {
+      "kind": "objects",
+      "key": "[\"urn:scenario:ancient_tree_inspection:inspections:INSP-002\",\"https://example.invalid/forestry#InspectionRecord\"]",
+      "capability": "inspections"
+    },
+    {
+      "kind": "attributes",
+      "key": "[\"urn:scenario:ancient_tree_inspection:inspections:INSP-002\",\"https://example.invalid/forestry#inspectionCode\",\"INSP-002\",\"http://www.w3.org/2001/XMLSchema#string\",null]",
+      "capability": "inspections"
+    },
+    {
+      "kind": "attributes",
+      "key": "[\"urn:scenario:ancient_tree_inspection:inspections:INSP-002\",\"https://example.invalid/forestry#inspectionNote\",\"Recorded leaf loss\",\"http://www.w3.org/2001/XMLSchema#string\",null]",
+      "capability": "inspections"
+    },
+    {
+      "kind": "attributes",
+      "key": "[\"urn:scenario:ancient_tree_inspection:inspections:INSP-002\",\"urn:scenario:ancient_tree_inspection:observedAt\",\"2026-09\",\"http://www.w3.org/2001/XMLSchema#string\",null]",
+      "capability": "inspection_details"
+    },
+    {
+      "kind": "relations",
+      "key": "[\"urn:scenario:ancient_tree_inspection:inspections:INSP-002\",\"https://example.invalid/forestry#inspectedTree\",\"urn:scenario:ancient_tree_inspection:trees:GT-001\"]",
+      "capability": "inspections"
+    },
+    {
+      "kind": "objects",
+      "key": "[\"urn:scenario:ancient_tree_inspection:observations:OBS-002\",\"urn:scenario:ancient_tree_inspection:Observation\"]",
+      "capability": "observations"
+    },
+    {
+      "kind": "attributes",
+      "key": "[\"urn:scenario:ancient_tree_inspection:observations:OBS-002\",\"urn:scenario:ancient_tree_inspection:observationId\",\"OBS-002\",\"http://www.w3.org/2001/XMLSchema#string\",null]",
+      "capability": "observations"
+    },
+    {
+      "kind": "attributes",
+      "key": "[\"urn:scenario:ancient_tree_inspection:observations:OBS-002\",\"urn:scenario:ancient_tree_inspection:observedValue\",\"13\",\"http://www.w3.org/2001/XMLSchema#string\",null]",
+      "capability": "observations"
+    },
+    {
+      "kind": "attributes",
+      "key": "[\"urn:scenario:ancient_tree_inspection:observations:OBS-002\",\"urn:scenario:ancient_tree_inspection:unit\",\"cm\",\"http://www.w3.org/2001/XMLSchema#string\",null]",
+      "capability": "observations"
+    },
+    {
+      "kind": "relations",
+      "key": "[\"urn:scenario:ancient_tree_inspection:observations:OBS-002\",\"urn:scenario:ancient_tree_inspection:inInspection\",\"urn:scenario:ancient_tree_inspection:inspections:INSP-002\"]",
+      "capability": "observations"
+    }
+  ],
+  "nature": "INDEPENDENT_SYNTHETIC_LABELS_NOT_LIVE_QUALITY"
+}

@@ -41,6 +41,7 @@ export function AgentWorkbench({stage,navigate,titles}:{stage:number;navigate:(s
       {selected&&<section aria-label="审计详情"><h3>{str(selected.job_id)} · 尝试 {str(selected.attempt)}</h3>
         {detail.error?<p role="alert">审计详情不可用或权限已撤销：{String(detail.error)}</p>:detail.data&&<>
           <p>已验证服务归档 SHA-256：{str(detail.data.archive_sha256)}</p>
+          <details><summary>实际请求 Token（含失败/取消；未知不填零）</summary><pre>{JSON.stringify(detail.data.token_usage,null,2)}</pre></details>
           <details><summary>逐方法覆盖与四项交接结论</summary><pre>{JSON.stringify(detail.data.coverage,null,2)}</pre></details>
           <details><summary>本次实际发送快照 / 公开结果</summary>{(detail.data.coverage as {dimensions?:{prompts?:string}}|undefined)?.dimensions?.prompts==='NOT_APPLICABLE_NO_MODEL_CALL'?<p>本次没有模型调用，不生成空 Prompt；程序步骤仍保留前后记录。</p>:detail.data.actual_model_trace?<pre>{JSON.stringify(detail.data.actual_model_trace,null,2)}</pre>:<p>未录制或历史不可获得；不能使用当前模板补造本次消息。</p>}</details>
           <details><summary>当前源码模板（不是历史请求）</summary><pre>{JSON.stringify(detail.data.current_templates,null,2)}</pre></details>

@@ -29,6 +29,11 @@ def build_operation_catalog() -> dict[str, OperationDefinition]:
         OperationDefinition("evolution.rollback", "EvolutionRollbackRequest", "EvolutionReceipt", ("evolution:rollback",), True, "JOB", "WRITE", "REQUIRED"),
         OperationDefinition("modeling.session.open", "ModelingSessionRequest", "ModelingSession", ("model:propose", "source:read"), True, "JOB", "WRITE", "REQUIRED"),
         OperationDefinition("modeling.session.revise", "ModelingSessionRevisionRequest", "ModelingSession", ("model:propose",), True, "JOB", "WRITE", "REQUIRED"),
+        OperationDefinition("modeling.scenario.preview", "ScenarioPreviewRequest", "ScenarioPreview", ("project:read", "source:read"), True),
+        OperationDefinition("modeling.scenario.save", "ScenarioSaveRequest", "ModelingSession", ("model:propose", "source:read", "scope:approve"), True, "JOB", "WRITE", "REQUIRED"),
+        OperationDefinition("modeling.scenario.quality", "ScenarioQualityRequest", "ScenarioQuality", ("acceptance:run", "package:read", "source:read"), True, "JOB", "WRITE", "REQUIRED"),
+        OperationDefinition("modeling.expert.save", "ExpertConfigurationRequest", "ModelingSession", ("model:propose", "source:read"), True, "JOB", "WRITE", "REQUIRED"),
+        OperationDefinition("modeling.expert.reaudit", "ExpertReauditRequest", "ExpertReview", ("model:propose", "source:read", "source:export", "package:read", "trace:export"), True, "JOB", "WRITE", "REQUIRED"),
         OperationDefinition("modeling.semantic.check", "SemanticCheckRequest", "FiveStageRunV1", ("model:propose", "source:read"), True, "JOB", "WRITE", "REQUIRED"),
         OperationDefinition("modeling.tutorial.seed", "EmptyRequest", "FiveStageRunV1", ("project:write", "source:write", "source:read", "model:propose"), True, "JOB", "WRITE", "REQUIRED"),
         OperationDefinition("compile.plan.exact", "CompileExactPlanRequest", "CompilationPlan", ("compile:run",), True, "JOB", "WRITE", "REQUIRED"),
@@ -125,6 +130,7 @@ def coverage_matrix() -> list[dict[str, str | None]]:
 # Deliberately explicit executable coverage, not a reflection-based dispatcher.
 # A catalogue declaration is not proof of a handler or a passing workflow.
 HANDLERS = {
+    "modeling.scenario.preview": "zhigou_toolchain.services.modeling_scenarios.execute",
     "modeling.handoff.check": "zhigou_toolchain.services.handoff.execute",
     "modeling.handoff.import": "zhigou_toolchain.services.handoff.execute",
     "modeling.handoff.export": "zhigou_toolchain.services.handoff.execute",

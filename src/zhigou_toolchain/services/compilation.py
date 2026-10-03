@@ -51,6 +51,11 @@ def read_export_snapshot(service, principal, project_id: str, job_id: str) -> by
     result = committed_result(service, job)
     if result is None:
         raise ServiceBoundaryError("EXPORT_NOT_READY", "export has no verified commit", status_code=409)
+    if result.get("expert_loop", {}).get("decision", "PASS") != "PASS":
+        raise ServiceBoundaryError("EXPERT_REVIEW_REQUIRED", "Export snapshot did not pass expert-configured review", status_code=409)
+    from .modeling_expert import require_package
+    from .modeling_sessions import read
+    require_package(read(get_project(service.root, project_id).root), result["package_id"], export_result=result)
     record = load_catalog(service.root).get("commits", {}).get(job_id)
     if not record or record["result"] != result:
         raise ServiceBoundaryError("EXPORT_INTEGRITY_FAILED", "export commit changed", status_code=409)
@@ -67,6 +72,7 @@ def read_export_snapshot(service, principal, project_id: str, job_id: str) -> by
     except (OSError, ValueError, KeyError) as exc:
         raise ServiceBoundaryError("EXPORT_INTEGRITY_FAILED", "export snapshot bytes failed verification", status_code=409) from exc
     authorized(service._current(principal))
+    require_package(read(get_project(service.root, project_id).root), result["package_id"], export_result=result)
     return content
 
 
@@ -88,6 +94,9 @@ def read_archive(service, principal, project_id: str, package_id: str) -> bytes:
     validate_parameters(request)
     project = get_project(service.root, project_id)
     require_access(principal, project)
+    from .modeling_expert import require_package
+    from .modeling_sessions import read
+    require_package(read(project.root), package_id)
     try:
         # Location is not a cached verdict. archive_bytes verifies the exact
         # captured file set, including manifest, lock, source and RDF semantics.
@@ -97,6 +106,7 @@ def read_archive(service, principal, project_id: str, package_id: str) -> bytes:
         if not principal.can("package:export"):
             raise ServiceBoundaryError("FORBIDDEN", "package:export revoked", status_code=403)
         require_access(principal, get_project(service.root, project_id))
+        require_package(read(get_project(service.root, project_id).root), package_id)
         service.audit.append(principal_id=principal.principal_id, operation_id="package.export", project_id=project_id,
             request_id=request.request_id, outcome="SUCCEEDED", details={"transport": "authorized-download"})
         return content

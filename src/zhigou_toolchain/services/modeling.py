@@ -81,6 +81,8 @@ from .sources import verified_run
 
 PREPARE_OPERATIONS = {"modeling.prepare", "modeling.cq", "modeling.baseline", "modeling.alignment"}
 OPERATIONS = frozenset({"modeling.scope", "modeling.scope.approve", *PREPARE_OPERATIONS,
+                        "modeling.scenario.save", "modeling.scenario.quality",
+                        "modeling.expert.save", "modeling.expert.reaudit",
                         "modeling.session.open", "modeling.session.revise", "source.sample.load",
                         "modeling.profile", "modeling.scope.draft", "modeling.tutorial.seed", "modeling.semantic.check",
                         "modeling.candidate", "modeling.proposal", "review.action", "review.replay", "review.finalize"})
@@ -166,7 +168,11 @@ def _prepare(app, modeling, params):
             "record_mapping":(_record_rules(packs) or (None,None))[1]}
 
 
-def _propose(app,modeling, params):
+def _propose(app,modeling, params, *, expert_drafts=None):
+    if expert_drafts is not None:
+        # Bind the same canonical ordering that the existing provider emits;
+        # do not weaken the later exact snapshot/draft digest verification.
+        expert_drafts = sorted(expert_drafts, key=lambda draft: draft["draft_ref"])
     bundle = modeling.find_artifact(params["bundle_id"])
     verify_input_bundle(bundle)
     context = _bundle_context(modeling, bundle)
@@ -185,6 +191,19 @@ def _propose(app,modeling, params):
     registry, responses, snapshots, requests = PluginRegistry(), [], [], []
     invocations=[];invocation_refs={}
     declared=_record_rules(_packs(app,modeling))
+    from .modeling_scenarios import mapping_for
+    scenario_mapping = mapping_for(modeling.root, datasets, baseline, provider_context["competency_question_ids"])
+    if scenario_mapping:
+        if params.get("manual_drafts") or params.get("model_assistance") or (params.get("record_mapping") and expert_drafts is None):
+            raise ServiceBoundaryError("SCENARIO_MAPPING_OVERRIDE_FORBIDDEN", "Scene mappings are resolved from confirmed fields; change the configuration first", status_code=422)
+        allowed = {"manual-candidate-provider", "baseline-reuse-provider"}
+        if "manual-candidate-provider" not in params["providers"] or not set(params["providers"]).issubset(allowed) or (expert_drafts is None and set(params["providers"]) != allowed):
+            raise ServiceBoundaryError("SCENARIO_PROVIDER_POLICY", "Scene pipeline uses the original manual mapping and baseline providers", status_code=422)
+        if params.get("record_mapping") and MixedRecordMapping.model_validate(params["record_mapping"]).model_dump() != MixedRecordMapping.model_validate(scenario_mapping["rules"]).model_dump():
+            raise ServiceBoundaryError("SCENARIO_MAPPING_STALE", "Routed repairs must retain the frozen scene mapping", status_code=409)
+        declared = (None, scenario_mapping["rules"])
+        provider_context["alignments"] = [a for a in provider_context["alignments"] if a.get("target_element_id") in
+            {e["element_id"] for e in baseline["elements"] if e["iri"] in scenario_mapping["selected_terms"]}]
     if (params.get("model_assistance") or {}).get("action") == "REPAIR":
         from .modeling_sessions import current, read
         active = read(modeling.root)
@@ -213,7 +232,10 @@ def _propose(app,modeling, params):
             if declared[1]["profile"] == "evidence-record-mapping-v2":
                 drafts, report = mixed_mapping_drafts(rules=declared[1], datasets=datasets,
                     namespace=scope["namespace_policy"]["default_namespace"], baseline=baseline,
-                    question_ids=provider_context["competency_question_ids"], asset_id=declared[0])
+                    question_ids=provider_context["competency_question_ids"], asset_id=declared[0],
+                    proposed_terms=scenario_mapping["declarations"] if scenario_mapping else ())
+                if scenario_mapping:
+                    drafts = [*scenario_mapping["declarations"], *drafts]
                 return {"drafts": drafts, "report": report}
             drafts = record_mapping_drafts(rules=declared[1], datasets=datasets,
                 source_names={identifier: source_store.verify_source(identifier)["original_name"] for identifier in source_ids},
@@ -222,18 +244,34 @@ def _propose(app,modeling, params):
             return {"drafts": drafts, "report": None}
         record_builder = build_records
         provider_context["planned_record_mapping"] = declared[1]
-        if not params.get("model_assistance"):
+        if not params.get("model_assistance") and expert_drafts is None:
             mapped = invoke(3, "records.map", record_builder, inputs={"mapping": declared[1], "source_ids": sorted(source_ids)})
             provider_context["manual_drafts"], extraction = mapped["drafts"], mapped["report"]
             record_builder = None
     elif "rule-mapping-provider" in params["providers"] and len([e for e in baseline["elements"] if e["element_kind"] == "CLASS"]) > 1:
         raise ServiceBoundaryError("MAPPING_CLASS_REQUIRED", "Multiple baseline classes require explicit record mappings", status_code=422)
     assistance = None
-    if params.get("model_assistance"):
+    if params.get("model_assistance") and expert_drafts is None:
         from .modeling_assistance import assist
         provider_context["manual_drafts"], assistance = assist(app, modeling, bundle, scope, provider_context, params, record_builder=record_builder)
         extraction = assistance.get("record_mapping", extraction)
+    if expert_drafts is not None:
+        provider_context["manual_drafts"] = expert_drafts
+    from zhigou_toolchain.modeling.five_stage.expert_runtime import ACTIVE_EXPERT
+    if ACTIVE_EXPERT.get() is not None and provider_context.get("manual_drafts"):
+        structure = [d for d in provider_context["manual_drafts"] if d["draft_kind"] in {"TBOX", "SHACL"}]
+        if structure:
+            def check_structure_drafts():
+                from zhigou_toolchain.modeling.control_plane.security import (
+                    assert_safe_json,
+                )
+                assert_safe_json(structure)
+                return {"structure_drafts": structure, "validation": "SAFE_JSON_ONLY; NORMALIZATION_AND_SEMANTIC_CHECKS_FOLLOW"}
+            invoke(2, "structure.design", check_structure_drafts,
+                inputs={"baseline_snapshot_id": baseline["baseline_snapshot_id"], "drafts": structure}, method_id="2.5")
     for provider in sorted(set(params["providers"])):
+        if expert_drafts is not None and provider != "manual-candidate-provider":
+            continue  # Original baseline drafts are already retained verbatim in this closed revision.
         if provider not in bundle["provider_policy"]["allowed_provider_ids"]:
             raise ServiceBoundaryError("PROVIDER_FORBIDDEN", "provider not allowed by input bundle", status_code=403)
         configuration = {"record_mapping": declared[1]} if declared and declared[1]["profile"] == "evidence-record-mapping-v2" and provider == "manual-candidate-provider" else None
@@ -241,6 +279,9 @@ def _propose(app,modeling, params):
             configuration = {"manual_drafts": params["manual_drafts"]}
         if assistance and provider == "manual-candidate-provider":
             configuration = {"model_assistance_digest": semantic_hash(assistance), "drafts": sorted(provider_context["manual_drafts"], key=lambda d: d["draft_ref"])}
+        if expert_drafts is not None:
+            configuration = {"expert_revision_drafts_digest": semantic_hash(expert_drafts),
+                             "record_mapping": declared[1] if declared else None}
         snapshot = build_snapshot(registry.get(provider), configuration=configuration)
         request = build_provider_request(modeling_input_bundle_id=bundle["modeling_input_bundle_id"],
             provider_snapshot_id=snapshot["snapshot_id"], capability={"baseline-reuse-provider": "baseline-reuse", "rule-mapping-provider": "field-mapping-proposal","manual-candidate-provider":"tbox-proposal","recorded-model-output-provider":"tbox-proposal"}[provider],
@@ -302,6 +343,7 @@ def _propose(app,modeling, params):
     queue = build_review_queue(proposal, report, policy)
     modeling.write_proposal(proposal["proposal_id"], {"ontology-modeling-proposal.json": proposal,
         **({"live-model-assistance.json": assistance} if assistance else {}),
+        **({"expert-revision.json": {"drafts_digest": semantic_hash(expert_drafts), "authority": "AI_PROPOSAL_ONLY"}} if expert_drafts is not None else {}),
         **({"manual-draft-proposal.json": {"drafts": params["manual_drafts"], "authority": "PROPOSAL_ONLY"}} if params.get("manual_drafts") is not None else {}),
         "record-mapping-proposal.json":{"mapping":declared[1] if declared else None,"source_asset_id":declared[0] if declared else None},
         "source-extraction-report.json": extraction or {},
@@ -392,11 +434,23 @@ def _review(modeling, request, principal):
             live_drafts = next(r["candidate_drafts"] for r in provider_responses if r["provider_snapshot_id"] == selected_snapshots[0]["snapshot_id"])
             live_configuration = {"model_assistance_digest": semantic_hash(live_receipt), "drafts": sorted(live_drafts, key=lambda d: d["draft_ref"])}
             verify_snapshot(PluginRegistry().get("manual-candidate-provider"), selected_snapshots[0], configuration=live_configuration)
+        elif (modeling.proposal_directory(proposal["proposal_id"]) / "expert-revision.json").exists():
+            record = read_document(modeling.proposal_directory(proposal["proposal_id"]) / "expert-revision.json")
+            responses = read_document(modeling.proposal_directory(proposal["proposal_id"]) / "provider-responses.json")
+            drafts = [d for r in responses for d in r["candidate_drafts"]]
+            if semantic_hash(drafts) != record["drafts_digest"]:
+                raise ServiceBoundaryError("EXPERT_REVISION_INTEGRITY_FAILED", "Revision drafts changed", status_code=409)
+            verify_snapshot(PluginRegistry().get("manual-candidate-provider"), selected_snapshots[0],
+                configuration={"expert_revision_drafts_digest": record["drafts_digest"], "record_mapping": rules})
         else:
             verify_snapshot(PluginRegistry().get("manual-candidate-provider"), selected_snapshots[0], configuration={"record_mapping": rules})
+        from .modeling_scenarios import mapping_for
+        scenario_mapping = mapping_for(modeling.root, datasets, context["baseline"],
+            [q["question_id"] for q in context["question_set"]["questions"]])
         _, extraction = mixed_mapping_drafts(rules=rules, datasets=datasets,
             namespace=scope["namespace_policy"]["default_namespace"], baseline=context["baseline"],
-            question_ids=[q["question_id"] for q in context["question_set"]["questions"]], asset_id=mapping_record["source_asset_id"])
+            question_ids=[q["question_id"] for q in context["question_set"]["questions"]], asset_id=mapping_record["source_asset_id"],
+            proposed_terms=scenario_mapping["declarations"] if scenario_mapping else ())
         if extraction["unmapped_item_ids"]:
             raise ServiceBoundaryError("MAPPING_COVERAGE_INCOMPLETE", "Unmapped input items require mapping or explicit reasoned exclusion in a new proposal", status_code=422)
     approval = _approval(modeling, scope)
@@ -414,6 +468,12 @@ def _review(modeling, request, principal):
 
 
 def execute(app, project, request, principal):
+    if request.operation_id in {"modeling.scenario.save", "modeling.scenario.quality"}:
+        from .modeling_scenarios import execute as execute_scenario
+        return execute_scenario(app, project, request, principal)
+    if request.operation_id == "modeling.expert.save":
+        from .modeling_expert import execute as execute_expert
+        return execute_expert(app, project, request, principal)
     if request.operation_id in {"modeling.candidate", "modeling.proposal"} and request.parameters.get("model_assistance") and not principal.can("source:read"):
         raise ServiceBoundaryError("SOURCE_READ_REQUIRED", "LIVE modeling requires source-read permission before sending source content to a provider", status_code=403)
     if request.operation_id == "source.sample.load":
@@ -426,11 +486,18 @@ def execute(app, project, request, principal):
         from .modeling_semantic import execute as execute_semantic
         return execute_semantic(app, project, request, principal)
     if request.operation_id in {"modeling.profile", "modeling.scope.draft", "modeling.tutorial.seed"}:
+        if request.operation_id == "modeling.scope.draft":
+            from .modeling_scenarios import effective
+            from .modeling_sessions import read
+            if effective(read(project.root)):
+                raise ServiceBoundaryError("SCENARIO_USE_CONFIGURED_SCOPE", "Use the configured scene scope; free-form AI scope drafts are not a supported scene extension", status_code=422)
         from .modeling_five_stage import execute as execute_five_stage
         return execute_five_stage(app, project, request, principal)
     modeling, params, name = ModelingWorkspaceService(project.root), request.parameters, request.operation_id
     try:
         if name == "modeling.scope":
+            from .modeling_scenarios import scope_parameters
+            params = scope_parameters(modeling.root, params)
             dataset = verified_run(modeling.root, params["run_id"]).dataset
             scope = build_scope(project_id=modeling.project["project_id"], project_lock_id=modeling.project_lock["lock_id"],
                 domain_pack_lock_ids=[p["pack_lock_id"] for p in modeling.project_lock["resolved_domain_packs"]],

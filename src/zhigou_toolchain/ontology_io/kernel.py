@@ -24,6 +24,17 @@ from .adapters import (
     project_task_prediction,
 )
 from .compilation import compile_task_graphs, freeze_compilation, parse_draft
+from .evidence_hints import quote_location_hints
+from .prompt_views import GUIDE, context_view
+from .source_quotes import (
+    LEGACY,
+    PROGRAM,
+    bind_unique_source_quote,
+    coupled_schema,
+    decode_coupled_facts,
+    locator_mode,
+)
+from .vocabulary import close_vocabulary
 
 SYSTEMS = {"TwoAgentKernelV1", "NoRetrieval", "NoConstrainedExtraction", "NoValidationFeedback", "DirectRetrievalContext"}
 TEXT = {"type": "string", "minLength": 1, "maxLength": 500}
@@ -63,10 +74,13 @@ def components(sample, protocol, system):
     if system == "DirectRetrievalContext" and not parent["retrieval"]:
         raise ValueError("ABLATION_COMPONENT_NOT_ACTIVE_IN_PARENT_PROFILE")
     enabled = {**parent, **({disabled: False} if disabled else {})}
+    location = locator_mode(protocol)
     return {"parent": parent, "enabled": enabled, "ablated_component": disabled,
-        "configuration_sha256": semantic_hash({"profile": profile.model_dump(mode="json"), "enabled": enabled}),
+        "configuration_sha256": semantic_hash({"profile": profile.model_dump(mode="json"), "enabled": enabled,
+            **({"evidence_locator_mode": location} if location != LEGACY else {})}),
+        "evidence_locator_mode": "NOT_APPLICABLE_DIRECT_CONTROL" if system == "DirectRetrievalContext" else location,
         "retrieval_scope": "ONLY_SUPPLIED_INPUT_EXACT_LOOKUP_NO_EXTRA_CORPUS", "additional_external_material": False,
-        "quote_binding": "ALWAYS_ON_TEXT_EVIDENCE_INTEGRITY_NOT_ABLATED", "formal_v3_export": False,
+        "quote_binding": "NOT_APPLICABLE_DIRECT_CONTROL" if system == "DirectRetrievalContext" else "ALWAYS_ON_TEXT_EVIDENCE_INTEGRITY_NOT_ABLATED", "formal_v3_export": False,
         "scope": "TASK_ADAPTED_KERNEL_NOT_FULL_PRODUCTION_TOOLCHAIN",
         "full_ours_claim": False, "native_benchmark_scoring": "SEPARATE_NOT_RUN"}
 
@@ -75,7 +89,9 @@ def _issue(code, target, **extra):
     return {"code": code, "target_stage": target, **extra}
 
 
-def check_prediction(sample, prediction, vocabulary, evidence, chunks, *, constrained):
+def check_prediction(sample, prediction, vocabulary, evidence, chunks, *, constrained, evidence_locator_mode=LEGACY):
+    if evidence_locator_mode not in {LEGACY, PROGRAM}:
+        raise ValueError("UNKNOWN_EVIDENCE_LOCATOR_PROFILE")
     issues, bindings = [], []
     if sample.task_id == "cq2term":
         ids = [row["id"] for row in prediction["cq_terms"]]
@@ -95,12 +111,31 @@ def check_prediction(sample, prediction, vocabulary, evidence, chunks, *, constr
     triples = prediction["triples"]
     nodes = set(vocabulary["classes"]) | set(vocabulary["entities"])
     relations = set(vocabulary["relations"]) | {"is-a", "instance-of"}
+    gaps = {"subjects": set(), "objects": set(), "relations": set()}
     for index, triple in enumerate(triples):
         if constrained and (triple[0] not in nodes or triple[2] not in nodes or triple[1] not in relations):
-            issues.append(_issue("FROZEN_VOCABULARY_VIOLATION", 3, triple_index=index))
+            # A closed-vocabulary deficiency belongs to its S2 owner, not to
+            # an S3 instruction to delete facts that cannot fit the old list.
+            issues.append(_issue("FROZEN_VOCABULARY_VIOLATION", 2, triple_index=index))
+            if triple[0] not in nodes:
+                gaps["subjects"].add(triple[0])
+            if triple[2] not in nodes:
+                gaps["objects"].add(triple[2])
+            if triple[1] not in relations:
+                gaps["relations"].add(triple[1])
         candidates = [row for row in evidence if row["triple_index"] == index]
         found = False
         for row in candidates:
+            if evidence_locator_mode == PROGRAM:
+                try:
+                    if "start" in row:
+                        raise ValueError("MODEL_OFFSET_FORBIDDEN_IN_PROGRAM_PROFILE")
+                    binding = bind_unique_source_quote(sample.text, chunks, row["quote"])
+                    bindings.append({"triple_index": index, "triple_sha256": semantic_hash(triple), **binding})
+                    found = True
+                except ValueError:
+                    pass
+                continue
             for chunk in chunks:
                 if not chunk["start"] <= row["start"] < chunk["end"]:
                     continue
@@ -125,11 +160,12 @@ def check_prediction(sample, prediction, vocabulary, evidence, chunks, *, constr
                 issues.append(_issue("LEGAL_CATEGORY_SCHEMA_VIOLATION", 3, schema_index=index))
             if index < len(triples) and row["rel"] != triples[index][1]:
                 issues.append(_issue("TYPED_FACT_SCHEMA_RELATION_MISMATCH", 3, schema_index=index))
-    return {"issues": issues, "bindings": bindings, "entailment": "NOT_PROVEN_BY_QUOTE_LOCATION"}
+    return {"issues": issues, "bindings": bindings, "entailment": "NOT_PROVEN_BY_QUOTE_LOCATION",
+        "vocabulary_gap_candidates": {"origin": "ACTUAL_MODEL_LABELS_NOT_APPROVED_OR_GOLD", **{k: sorted(v) for k, v in gaps.items()}}}
 
 
-def validate_task(sample, prediction, vocabulary, evidence, chunks, *, constrained, config) -> dict:
-    checks = check_prediction(sample, prediction, vocabulary, evidence, chunks, constrained=constrained)
+def validate_task(sample, prediction, vocabulary, evidence, chunks, *, constrained, config, evidence_locator_mode=LEGACY) -> dict:
+    checks = check_prediction(sample, prediction, vocabulary, evidence, chunks, constrained=constrained, evidence_locator_mode=evidence_locator_mode)
     compilation, semantic = None, None
     blockers = []
     try:
@@ -160,6 +196,7 @@ def generate_kernel(sample, protocol, system, directory, *, run, ask, instructio
     if config is None:
         raise ValueError("KERNEL_PROFILE_CONFIGURATION_REQUIRED")
     active = components(sample, protocol, system)
+    location = locator_mode(protocol)
     audit.update(capabilities=active, history=[], repair_cycles=0)
     data = deepcopy(sample.model_dump(mode="json"))
     input_digest = semantic_hash(data)
@@ -182,11 +219,19 @@ def generate_kernel(sample, protocol, system, directory, *, run, ask, instructio
     retrieval = execute(2, "structure.retrieve", lambda: assistance.retrieve_cards([c["label"] for c in cards], cards, mode="LLM_SUBSTITUTE")
         if active["enabled"]["retrieval"] else [], {"cards": cards, "enabled": active["enabled"]["retrieval"]}, finish=False)
     audit["retrieval"] = retrieval
+
+    def contextual_ask(task, content, schema, *, allowed_iris=()):
+        view, changed = context_view(cards, content)
+        if changed:
+            audit.setdefault("context_views", []).append({"encoding": "LOSSLESS_CARD_INDEX_V1",
+                "original_sha256": semantic_hash(content), "view_sha256": semantic_hash(view), "truncated": False})
+        return ask(task + (GUIDE if changed else ""), view, schema, allowed_iris=allowed_iris)
+
     if system == "DirectRetrievalContext":
         # This system is a direct control, not relabelled as a five-stage run.
-        prediction = ask(instruction, {"input": data, "retrieval_context": retrieval}, output_schema)
+        prediction = contextual_ask(instruction, {"input": data, "retrieval_context": retrieval}, output_schema)
         return freeze_task_prediction(directory / "artifacts", sample, prediction)
-    reuse_ask = lambda task, content, schema: ask(task, content, schema, allowed_iris={c["iri"] for c in cards})
+    reuse_ask = lambda task, content, schema: contextual_ask(task, content, schema, allowed_iris={c["iri"] for c in cards})
     reuse = execute(2, "structure.design", lambda: assistance.select_reuse(reuse_ask, terms=[c["label"] for c in cards], cards=cards,
         retrieval=retrieval, business_rules=sample.requirements) if cards else
         {"decisions": [], "unresolved": [], "status": "NOT_APPLICABLE_NO_SUPPLIED_ONTOLOGY"},
@@ -200,13 +245,27 @@ def generate_kernel(sample, protocol, system, directory, *, run, ask, instructio
             if feedback is not None:
                 design_context.update(feedback=feedback, previous=prediction)
             if sample.mode == "CQS_TBOX":
-                prediction = execute(2, "structure.design", lambda design_context=design_context: ask(instruction + " Revise only against the supplied task and deterministic feedback, never a reference answer.",
+                prediction = execute(2, "structure.design", lambda design_context=design_context: contextual_ask(instruction + " Revise only against the supplied task and deterministic feedback, never a reference answer.",
                     design_context, output_schema), design_context)
                 audit["design"] = {"mode": "NATIVE_CQ_OUTPUT", "sha256": semantic_hash(prediction)}
             else:
-                vocabulary = execute(2, "structure.design", lambda design_context=design_context: ask("Design the source-supported class, entity and relation vocabulary needed for the complete task. "
-                    "Reuse supplied terms/types/schema when applicable. Distinguish classes from instances; no approvals. This is a candidate vocabulary, not a reference answer.",
-                    design_context, VOCABULARY), design_context)
+                proposed_vocabulary = execute(2, "structure.design", lambda design_context=design_context: contextual_ask("Design the source-supported class, entity and relation vocabulary needed for the complete task. "
+                    "Reuse supplied terms/types/schema when applicable. Distinguish classes from instances; no approvals. This is a candidate vocabulary, not a reference answer. "
+                    "Additions-only concerns predicted triples, not the set of labels allowed for extraction. The program retains all task-supplied vocabulary. "
+                    "When feedback lists vocabulary_gap_candidates, inspect them against the allowed input before revising the vocabulary; do not assume they are correct answers. "
+                    + ("For primitive ontology tasks use exactly is-a for class taxonomy and instance-of for instance typing; do not substitute subclass_of or instance_of. "
+                       if sample.mode in {"TEXT_NEW", "TEXT_EXTEND"} else ""),
+                    design_context, VOCABULARY), design_context, finish=False)
+
+                def close_proposal(proposal=proposed_vocabulary):
+                    effective, closure = close_vocabulary(proposal, cards)
+                    return {"vocabulary": effective, "closure": closure}
+
+                closed = execute(2, "structure.design", close_proposal,
+                    {"model_proposal": proposed_vocabulary, "task_supplied_cards": cards})
+                vocabulary, vocabulary_closure = closed["vocabulary"], closed["closure"]
+                audit.setdefault("vocabulary_history", []).append({"cycle": flow.repairs, "model_proposal": deepcopy(proposed_vocabulary),
+                    "effective_vocabulary": deepcopy(vocabulary), "closure": vocabulary_closure})
                 audit["design"] = vocabulary
         if flow.next_stage == 3:
             if sample.mode == "CQS_TBOX":
@@ -220,20 +279,34 @@ def generate_kernel(sample, protocol, system, directory, *, run, ask, instructio
                     "quote_window_limit": 8192}
                 if feedback is not None:
                     context.update(feedback=feedback, previous=prediction)
-                schema = assistance.obj({"prediction": output_schema, "evidence": EVIDENCE})
-                extracted = execute(3, "facts.repair" if feedback else "text.extract", lambda context=context, schema=schema: ask(instruction +
-                    " Return the complete prediction with a verbatim source quote and absolute Unicode start for every triple_index. "
-                    "Do not invent support; quotation locates evidence, it does not prove entailment. Never replace a nonempty prediction with an empty result to hide validation errors.", context, schema), context, finish=False)
-                prediction, evidence = extracted["prediction"], extracted["evidence"]
+                if location == PROGRAM:
+                    schema = coupled_schema(output_schema)
+                    extracted = execute(3, "facts.repair" if feedback else "text.extract", lambda context=context, schema=schema: ask(instruction +
+                        " Return facts as an array; each item couples its actual triple with one verbatim quote from the supplied text. "
+                        "For typed tasks include the corresponding schema in the same item. Do not supply offsets or separate evidence indexes. "
+                        "The program will accept a citation only if its quote has exactly one literal occurrence in the frozen source and fits a source window. "
+                        "Extend an ambiguous quote with its original surrounding text; do not invent support. "
+                        "A located quote does not prove entailment. Never clear a nonempty prediction just to hide validation errors.", context, schema), context, finish=False)
+                    prediction, evidence = decode_coupled_facts(extracted, typed=sample.mode == "SCHEMA_ABOX")
+                    audit["evidence_representation"] = {"profile": PROGRAM, "index_origin": "ACTUAL_RETURNED_FACT_ORDER",
+                        "offset_origin": "PROGRAM_SOURCE_LOOKUP", "facts_rewritten": False}
+                else:
+                    schema = assistance.obj({"prediction": output_schema, "evidence": EVIDENCE})
+                    extracted = execute(3, "facts.repair" if feedback else "text.extract", lambda context=context, schema=schema: ask(instruction +
+                        " Return the complete prediction with a verbatim source quote and absolute Unicode start for every triple_index. "
+                        "Do not invent support; quotation locates evidence, it does not prove entailment. Never replace a nonempty prediction with an empty result to hide validation errors. "
+                        "When feedback supplies quote_location_hints, these are exact locations computed from the same source, not reference facts. "
+                        "A wrong offset alone is not evidence that the fact is absent: repair its citation, retain supported triples, and return the complete prediction.", context, schema), context, finish=False)
+                    prediction, evidence = extracted["prediction"], extracted["evidence"]
                 checked = execute(3, "evidence.bind", lambda prediction=prediction, vocabulary=vocabulary, evidence=evidence, chunks=chunks: check_prediction(sample, prediction, vocabulary, evidence, chunks,
-                    constrained=active["enabled"]["constrained_extraction"]), {"prediction": prediction, "evidence": evidence})
+                    constrained=active["enabled"]["constrained_extraction"], evidence_locator_mode=location), {"prediction": prediction, "evidence": evidence})
                 audit["evidence"] = checked
 
         if prediction is None:
             raise ValueError("KERNEL_PREDICTION_MISSING")
 
         validation = execute(4, "semantic.check", partial(validate_task, sample, prediction, vocabulary, evidence, chunks,
-            constrained=active["enabled"]["constrained_extraction"], config=config), prediction)
+            constrained=active["enabled"]["constrained_extraction"], config=config, evidence_locator_mode=location), prediction)
         count = len(prediction.get("triples", prediction.get("cq_terms", []))) if sample.task_id != "cq2onto" else len(prediction["turtle"].strip())
         if previous_count and count == 0:
             raise ValueError("REPAIR_EMPTY_OUTPUT_REJECTED")
@@ -248,6 +321,10 @@ def generate_kernel(sample, protocol, system, directory, *, run, ask, instructio
         feedback = {"issues": validation["issues"], "source": "DETERMINISTIC_PUBLIC_INPUT_CHECKS_ONLY",
             "owl_status": semantic["owl_consistency"]["status"] if semantic else None,
             "shacl_results": sorted(semantic["shacl"].get("results", []), key=semantic_hash) if semantic else []}
+        if any(issue["code"] == "FROZEN_VOCABULARY_VIOLATION" for issue in validation["issues"]):
+            feedback["vocabulary_gap_candidates"] = validation["vocabulary_gap_candidates"]
+        if any(issue["code"] == "EVIDENCE_QUOTE_UNBOUND" for issue in validation["issues"]):
+            feedback["quote_location_hints"] = quote_location_hints(sample.text, evidence, chunks, validation["issues"])
         previous_count = count
         audit["repair_cycles"] = flow.repairs
     compilation = validation["compilation"]

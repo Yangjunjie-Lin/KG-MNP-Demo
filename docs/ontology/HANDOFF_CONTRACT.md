@@ -1,5 +1,87 @@
 # 本体结果与演进轨迹交接契约
 
+## 场景 Prompt 预设内部契约（2026-09-30）
+
+主说明见 ONTOLOGY_MODULE“场景 Prompt 预设”；不改原 native/v3/v2 Schema、六类事件或六个 harness 顶层键。
+
+| 原 operation / 项目 toolchain API | 闭合字段 | 服务端权限和含义 |
+|---|---|---|
+| modeling.session.open | 原字段 + scenario: ScenarioSelection；可选 scenario_acceptance | 场景需 HUMAN/scope:approve，独立标签需 acceptance:run；输入/标签在生成前冻结；无场景旧入口仍准确显示旧模式，不能降级已启用会话 |
+| modeling.scenario.preview | selection、可选 run_id | project:read/source:read；只读、0模型调用；返回冻结模板、来源适配契约、领域包兼容及缺数据/不支持情况，不授权执行 |
+| modeling.scenario.save | selection、expected_revision | 原 model:propose/source:read/scope:approve、HUMAN、Worker/CAS；保存新版本，保留专家文本、使受影响指导与审核待重确认 |
+| modeling.expert.save | 原闭合配置与版本字段 | 必须保留服务生成的 scene.* 必需检查点；确认绑定 scenario_stage_digest，不接受客户端自报签认摘要 |
+| modeling.scenario.quality | package_id、expected_revision | acceptance:run/package:read/source:read；原Worker重新验证当前包与配置，以冻结合成标签计算独立指标，不调用模型、不批准、不修图 |
+
+ScenarioSelection 仅为 scenario_id、scenario_version；当前资源为 v2.0.0。旧 manual_overrides、
+excluded_capabilities、required_capabilities 与任意自报审批字段拒绝，不再提供逐阶段档位。
+旧 v1 会话需显式预检/保存当前模板，从 S1 重确认、生成、审核；不原地改写旧冻结条件或复用旧 PASS。
+资源加载地址固定，不读取客户端路径或脚本。历史 ZIP 的只读 v1 重构不参与当前生产。
+
+同阶段输出 `zhigou-scenario-stage/2.0.0`（无 level 等档位字段） 只投影实际原生结果和引用，保留注册字段、类型、状态、
+配置摘要与原方法审计关联。新词通过原 candidates→review→confirmation→compiler；候选依赖不是
+伪造基线 ID。全部登记来源字段通过原映射保留，源数据原字节不改；缺失/未知字段明确报告，不能自动排除失败。
+
+新记录融合进原审计 ZIP 的 audits/scenario-outputs.json、既有 Token 分组及 prompts 捕获。
+原本体服务交接 ZIP 可附 services/scenario-contracts.json、audits/scenario-configuration.json、
+匹配当前包与配置时的 audits/scenario-quality.json，全部由原 manifest 哈希/重构校验覆盖。
+原 `.kgop`、TTL、签名、查询/负例/独立答案和五板块不由模型编辑，不增加第四根目录或第18项。
+
+scenario_acceptance 是独立受限通道，包含标签集ID/版本、预先声明的 capability 投影、
+EXACT_TYPED_KEY_SET_V1 匹配单位和显式合成性质；不能从生成图反造标签。领域类型、关系、属性分别
+报告 TP/FP/FN 和分母；零分母为 null，无标签 NOT_EVALUATED。它及 scenario_quality 在发送前被
+原隐私过滤排除，不能通过专家意见或模型审核泄漏给生成/修订。实测合成指标不证明 LIVE/行业精度。
+
+场景摘要进入原 harness.tasks/rules/prompts，不添加顶层键。每次物理调用仍保留原三层ID、
+revision_round/真实turn区分，按场景/配置、阶段/method/用途去重。只读预检、保存、纯程序和独立
+评测没有模型调用时不造 llm_call。批次 upstream_manifest.json 仍是本项目每批必须项。
+
+工作台在建模前显示三场景、五步骤生成/审核 Prompt 预览、只读输入预检；保存后的受影响专家阶段需确认。运行页显示
+实际产物/诊断/契约和独立质量缺失状态，沿用原开始/继续/取消。场景中未实现的表外自由抽取、数值
+推断、通用过滤/组合查询、设备/工单业务动作均明确不支持，不借模板名称宣称已部署。
+投影显示还核对原 CURRENT 输出/逐方法当前审计任务；独立指标另核对当前 package_id 和配置摘要，
+不能仅因配置相同就显示旧候选或旧包的指标为当前结果。旧报告仍在原历史审计中保留。
+
+2026-09-24 新增独立研究[Token JSON 视图](../research/token-audit-json-2026-09-24.md)，
+schema_version 为 ontology-token-usage/1.0，不冒充演进 v2 或第18项交付。
+保留原 job/request ID、失败/重试、中断未知；input/output/total 任一未知相应合计为 null，
+已知部分与预算占用分别给出。只有原 job 终态且全部用量已知才给 final_total_tokens。
+无正文、密钥或私有 reasoning；该本地观察附件不改变 native/audit/transport、step_audit_anchor、
+双开关、原日志下载权限、人工审核或外部接收状态，亦不证明物理 HTTP 调用数。
+
+2026-09-24 [有授权的主机中断观察](../research/host-reboot-continuation-2026-09-24.md)是原研究
+job/预算账本的从属操作者收据，不是供应商response、模型成功、业务审批或第18项交付。
+原CALL身份及未知usage/response hash保留；缺失历史内容不补造，严格业务出口不因此放宽。
+
+2026-09-23[隔离本地隐私拒绝](../research/local-private-veto-isolation-2026-09-23.md)的操作者收据
+明确区分本地拒绝与耗尽的传输失败；独立spy复现不是历史调用/用量的替代证据。
+原FAILED、usage=null、费用预留、三层ID和15–17保持，不产生隐私门放行或新审批事件。
+
+2026-09-23 [研究续跑控制](../research/terminal-transport-continuation-2026-09-23.md)只向原研究预算账本
+追加绑定真实用户授权的终态传输续跑收据，并保留原FAILED/请求ID/费用与三次尝试记录。
+该操作者事件不是模型调用、自动重试、本体审批或新增核心交付项；15–17和原业务接口不变。
+
+2026-09-21 的 [Luna 评测恢复诊断](../research/luna-recovery-2026-09-21.md) 是独立研究运行证据，
+不是新的交付类别或正式人工评价；不改变本契约、原生 ID、审计权限与历史交接。
+其真实模型调用不代表本体 benchmark 或外部接收完成。
+后续 [网关参数透传诊断](../research/cockpit-gateway-repair-2026-09-21.md) 收到HTTP400；
+错误响应仅留安全白名单及原响应摘要，明确不是完整原字节轨迹，也不新增正式交接类型。
+后续接口复测和quality/effects研究报告仍是独立研究附件，沿用原审批、轨迹权限和交接类别。
+配对质量差值与置信区间只来自完整冻结预测，不以合成接口响应或统计单测冒充正式结果。
+本地预算监控授权仅供研究broker核账与新revision调度，不属于运行时Agent审批工具，
+不改15–17演进事件、双开关、正文权限及native/audit/transport调用身份。
+研究全量的execution_attempts及transport_recovery_ack仅是原研究任务/预算账本的从属尝试记录；
+失败请求ID/响应摘要/未知用量保留，不改写为成功、不作为新的业务事实或审核真相。
+研究模型上下文的card_index是本次请求内可逆引用，不是native/audit/transport ID；
+实际消息记录压缩后的真实请求，旧消息不能用新编码回填，业务交接格式不变。
+研究HTTP408重试继续记录独立真实请求ID、原失败与未知用量；仅更新错误分类，
+不把失败输出改为成功，也不改变演进协议、审批或完整轨迹资格。
+研究修复中的quote_location_hints只描述同一冻结原文的Unicode定位候选，非标准答案；
+旧模型提案和失败保持原样，最终引用仍须由实际新提案通过原验证，不新增交付类别或审批权。
+PROGRAM_UNIQUE_QUOTE_V1只改变显式新研究版本的模型响应契约，canonical triples/schemas、
+native/audit/transport ID和业务交接Schema不变。程序派生位置须标明非模型提供，不伪称旧offset正确。
+研究候选词表的输入闭包不构成人工批准或新词授权；新增来源说明记录输入词与模型提案的区别，
+不修改既有原生IRI、评价或交接Schema，不用S3预测/标准答案自行扩大词表。
+
 2026-09-18 当前字段规范，按本轮完整 Prompt 与 01–17 清单维护。旧协议原件保留，
 下面已明确的字段优先于历史未决表。01–08 输入、09–14 本体成果沿用原适配/1.1 Schema；
 15–17 只有执行记录、真实人工评价、批次清单三类核心交付，无第 18 类。
@@ -195,7 +277,7 @@ exec_id 可指本批先验证成功的执行或由可信调用方注入的历史
 
 ## 9. 批次清单和原子投递
 
-`upstream_manifest.json` 可选、默认生成；出现时必填仅 **batch_id / files**，deliverer、ts 可选；
+`upstream_manifest.json` 在本项目每批必须；历史外部读取仍兼容缺省。清单必填仅 **batch_id / files**，deliverer、ts 可选；
 提供 ts 时仍需带时区。每项必填 **name、sha256、size**，不是本体包的 path/size_bytes。
 `files=[]` 合法；空 executions/reviews 或没有这些文件都不需补造占位轨迹，校验退出码 0。
 仅评价批次依赖可信历史引用，不需重投执行文件。主动不选运行与“所选运行受阻”不同：
@@ -260,3 +342,45 @@ export 通过显式 report_id 取结果，不从图猜测试期望，不将缺�
 新 cover 与 stage 验证当前有效祖先、输入快照、最终 native package/archive、harness 和真实服务结果引用。
 无外部授权回执/可信总 ZIP 摘要的自洽包不授予阶段授权资格。
 完整 DTO、摘要算法、版本兼容、同源码验证、总 ZIP 入口和最小协议待确认问题见 [STAGE_CLOSEOUT.md](STAGE_CLOSEOUT.md)。
+
+## 2026-09-29 项目导航响应澄清
+
+`GET /api/v1/projects` / `project.list` 保留项目身份、领域包、权限与路径约束，
+但只提供导航元数据。正常项目返回 `status=OPEN` 和
+`validation_status=NOT_RUN_BY_LIST_PROJECTION`；旧不完整映射仍返回 `LEGACY_INCOMPLETE`。
+这与 `/state` 的运营投影边界一致，不将列表成功当成校验/审批/发布成功。
+需要当前完整校验时使用原 `project.open` 或 `project.validate`，所有写入与 Worker 硬门控不变。
+三组交付目录、五类成果及原生包 Schema 不受影响。
+
+## 13. 专家闭环内部接口（2026-09-28）
+
+这是原项目/会话/operation registry 的增量，不是演进 v2 第七种事件或第18类交付。
+流程/审计主说明在 [AGENT_STEP_AUDIT.md](AGENT_STEP_AUDIT.md#2026-09-28-专家闭环)。
+
+| 原服务入口（项目 toolchain/operation API） | 请求字段 | 权限与绑定 |
+|---|---|---|
+| modeling.session.open | 原字段 + expert_loop_enabled: boolean | 新工作台设 true；旧 API 兼容旧模式；启用后再 open 不允许 false 降级 |
+| modeling.expert.save | expected_revision、expected_configuration_digest、configuration、confirm | 原 model:propose/source:read；认证 HUMAN，S1 另需 scope:approve，其余需 review:decide；全部走 Job/Worker/CAS |
+| modeling.expert.reaudit | expected_revision、job_id、candidate_digest、可选 feedback | model:propose/source:read/source:export/package:read/trace:export；意见另需 HUMAN/review:decide；读取原授权审计及提交锚，不能对旧摘要补造正文 |
+| 原各阶段计算入口 | 原闭合 DTO 不变 | 已启用 session 自动生成后审核/受限修订；直接 API 同样门控；执行时额外需要现行 model:propose/source:read |
+| 原 job.cancel / job recovery | 原字段 | 停止沿用原权限和租约；已提交读原结果；远端未协调模型尝试禁止自动重放 |
+
+configuration 包含 stage、pre_guidance_prompt、post_review_prompt、criteria、method_overrides、budget、
+coverage_confirmed。criteria 每项有稳定 criterion_id、description、required、source；方法覆盖仅可覆盖
+两份文本，不能借覆盖项删除检查点。作者、确认人、配置摘要、版本和项目范围由服务产生，不接受客户端自报。
+budget 中修订轮次、物理请求数、时间、实测 Token 与网络重试分别限定；取涉及配置的保守上限。
+反馈绑定认证主体、候选摘要和时间，并经过同一发送前隐私门；合成身份保持 SYNTHETIC_ENGINEERING。
+
+闭环元数据附于结果 expert_loop 和原 session.expert.loops，包括逐 method 的输入/候选摘要、
+配置/检查点版本、程序收据、AI 技术结论、patch/diff 摘要、物理调用与 token_usage。
+审核/补丁正文仍经原受控通道；默认 METADATA_ONLY 不因此变完整。下载继续检查原权限。
+原审计附件新增 audits/expert-loop.json、audits/token_usage.json，源码/动态专家版本放 prompts；
+AI 不写 reviews/*.jsonl，不把配置确认当成人工运行评价。
+批次 upstream_manifest.json 是本项目生产者每批必须，最后写；batch_id/files 必填结构不扩展。
+旧接收兼容读取允许缺 manifest，但不能作为本项目生产者出口验收通过依据。
+
+审计目标为本次业务产物/程序结果，不含本次审核报告、外层 ZIP 或最终批次清单自身，避免自引用。
+S4→S2/S3、S5→计划重编译的同作业子结果继续由原提交保存，祖先选择明确 operation+job；
+不以同一个 job_id 错配不同子产物，也不新造原生 ID。
+三目录组织及本体五类成果不变；可交原服务导出物和独立审计附件，严格 v2 受阻仍明示，
+不得以合法空批次声称该受阻运行已完整导出。未接收始终 NOT_CONTACTED。

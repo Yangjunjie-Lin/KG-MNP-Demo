@@ -1,0 +1,14 @@
+@prefix e: <urn:scenario:equipment_maintenance:> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+e:ontology a owl:Ontology ; owl:versionIRI <urn:scenario:equipment_maintenance:ontology:0.1.0> .
+e:Device a owl:Class ; rdfs:label "Device" .
+e:Organization a owl:Class ; rdfs:label "Organization" .
+e:Location a owl:Class ; rdfs:label "Location" .
+e:deviceId a owl:DatatypeProperty ; rdfs:range xsd:string .
+e:organizationId a owl:DatatypeProperty ; rdfs:range xsd:string .
+e:locationId a owl:DatatypeProperty ; rdfs:range xsd:string .
+e:label a owl:DatatypeProperty ; rdfs:range xsd:string .
+e:ownedBy a owl:ObjectProperty ; rdfs:domain e:Device ; rdfs:range e:Organization .
+e:locatedAt a owl:ObjectProperty ; rdfs:domain e:Device ; rdfs:range e:Location .

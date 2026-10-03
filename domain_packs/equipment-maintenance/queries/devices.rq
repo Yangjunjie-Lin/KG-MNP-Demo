@@ -1,0 +1,5 @@
+PREFIX e: <urn:scenario:equipment_maintenance:>
+SELECT ?device_id ?organization_id ?location_id WHERE {
+ ?device a e:Device ; e:deviceId ?device_id ; e:ownedBy ?organization ; e:locatedAt ?location .
+ ?organization e:organizationId ?organization_id . ?location e:locationId ?location_id .
+} ORDER BY ?device_id

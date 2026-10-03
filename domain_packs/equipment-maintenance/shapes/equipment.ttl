@@ -1,0 +1,9 @@
+@prefix e: <urn:scenario:equipment_maintenance:> .
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+e:DeviceShape a sh:NodeShape ; sh:targetClass e:Device ;
+ sh:property [ sh:path e:deviceId ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ] ;
+ sh:property [ sh:path e:ownedBy ; sh:minCount 1 ; sh:maxCount 1 ; sh:class e:Organization ] ;
+ sh:property [ sh:path e:locatedAt ; sh:minCount 1 ; sh:maxCount 1 ; sh:class e:Location ] .
+e:OrganizationShape a sh:NodeShape ; sh:targetClass e:Organization ; sh:property [ sh:path e:organizationId ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ] .
+e:LocationShape a sh:NodeShape ; sh:targetClass e:Location ; sh:property [ sh:path e:locationId ; sh:minCount 1 ; sh:maxCount 1 ; sh:datatype xsd:string ] .

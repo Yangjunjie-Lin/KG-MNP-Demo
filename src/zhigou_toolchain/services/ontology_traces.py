@@ -69,6 +69,9 @@ def recorder_factory(app, project, request, principal, job, holder):
                           "applicability": "FROZEN_INPUT" if frozen else "NOT_APPLICABLE_NO_SESSION_INPUT"},
             "ontology": {"initial_project_lock": lock, "parent_version": run.parent_version},
         }
+        if (session or {}).get("scenario"):
+            resources["tasks"]["scenario"] = session["scenario"]["effective"]
+            resources["rules"]["scenario_digest"] = session["scenario"]["effective"]["digest"]
         harness = freeze_harness(resources, provenance={"source": identity, "runtime": runtime_versions()})
         assistance = request.parameters.get("model_assistance") or {}
         mode = assistance.get("execution_mode", "LIVE" if request.operation_id == "modeling.scope.draft" else

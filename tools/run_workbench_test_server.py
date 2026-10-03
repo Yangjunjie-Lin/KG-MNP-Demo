@@ -29,6 +29,7 @@ def main():
     parser.add_argument("--stop-file", type=Path, help="owned local test-control marker; never a public API")
     parser.add_argument("--probe-subprocess", action="store_true", help="exercise actual isolated validation before browser readiness")
     parser.add_argument("--record-step-content", action="store_true", help="explicitly retain redacted before/after modeling content in this synthetic workspace")
+    parser.add_argument("--mock-scenario-model", action="store_true", help="explicit synthetic scene browser only: original clients with independent MockTransport")
     args = parser.parse_args()
     root = Path(__file__).resolve().parents[1]
     runtime = root / "runtime"
@@ -65,7 +66,19 @@ def main():
         domain_packs_root=str(packs), workbench_root=str(root / "workbench/dist"),
         allow_insecure_loopback_session=True, review_profile="DEVELOPMENT_SINGLE_REVIEWER",
         modeling_audit_content_enabled=args.record_step_content,
+        ontology_trace_enabled=args.mock_scenario_model,
         reasoner_jar=str(root / "third_party/downloads/robot-1.9.7.jar")))
+    scenario_spy, scenario_patch = None, None
+    if args.mock_scenario_model:
+        from importlib.util import module_from_spec, spec_from_file_location
+        from unittest.mock import patch
+        spec = spec_from_file_location("scenario_transport_witness", root / "tests/upgrade/expert_spy.py")
+        assert spec is not None and spec.loader is not None
+        witness_module = module_from_spec(spec)
+        spec.loader.exec_module(witness_module)
+        scenario_spy = witness_module.ExpertSpy(revise_scope=True)
+        scenario_patch = patch("zhigou_toolchain.services.modeling_expert.configured_client", scenario_spy.client)
+        scenario_patch.start()
     token, human = service.tokens.create(principal_id="synthetic-browser-human", principal_type="HUMAN",
                                     permissions={"*"}, project_ids=set(), created_by="explicit-synthetic-browser-test")
     viewer_token, viewer = service.tokens.create(principal_id="synthetic-isolated-viewer", principal_type="HUMAN",
@@ -112,6 +125,16 @@ def main():
         service.tokens.revoke(human.token_id)
         service.tokens.revoke(viewer.token_id)
         worker.join(35)
+        if scenario_spy is not None:
+            from zhigou_toolchain.services.modeling_audit import read_events
+            from zhigou_toolchain.services.projects import list_projects
+            recorded = sum(1 for project in list_projects(service.root) for job in service.jobs.list_project(project.project_id)
+                for event in read_events(service, job) if event["phase"] == "AFTER" and event["metadata"].get("kind") == "MODEL"
+                and event["metadata"].get("dispatch_status") == "TRANSPORT_ATTEMPTED")
+            atomic_write_json(workspace / "browser-scenario-http-witness.json", {"nature": "MOCK_TRANSPORT_NOT_LIVE",
+                "physical_requests": len(scenario_spy.requests), "recorded_requests": recorded, "requests": scenario_spy.requests,
+                "counts_match": recorded == len(scenario_spy.requests)})
+            scenario_patch.stop()
         sock.close()
         credentials.unlink(missing_ok=True)
         atomic_write_json(workspace / "browser-server-shutdown.json", {

@@ -152,7 +152,24 @@ def project_from_catalog(root: Path, catalog: dict, project_id: str) -> ProjectH
 
 
 def list_projects(root: Path) -> list[ProjectHandle]:
-    return [get_project(root, key) for key in sorted(load_catalog(root)["projects"])]
+    # Read once: commits share this catalog, so reloading it per project both
+    # scales with all historical results and mixes generations within one list.
+    catalog = load_catalog(root)
+    return [project_from_catalog(root, catalog, key) for key in sorted(catalog["projects"])]
+
+
+def project_listing(handle: ProjectHandle) -> dict:
+    """Navigation metadata, never a cached or implicit validation verdict.
+
+    Replaying confirmed authority for every listed project would make opening
+    an unrelated project wait on all historical semantic work. The explicit
+    project.open/validate and Worker admission/commit checks remain unchanged.
+    """
+    if not handle.manifest_project_id or not handle.owner_id:
+        handle = replace(handle, status="LEGACY_INCOMPLETE", migration_status="NEW_WORKSPACE_REQUIRED")
+    else:
+        handle = replace(handle, status="OPEN")
+    return {**handle.public_dict(), "validation_status": "NOT_RUN_BY_LIST_PROJECTION"}
 
 
 def lock_project(handle: ProjectHandle, packs_root: str | None) -> ProjectHandle:

@@ -42,7 +42,7 @@ def hr_mapping(prepared, sources):
         "references": [{"field": "department_id", "target_space": "departments", "predicate_iri": vocab + "belongsToDepartment"}]}]}
 
 
-def build_case(workspace, pack, *, model_assistance=False, negative_case_plan=None, record_trace=False, configuration=None, record_step_content=False):
+def build_case(workspace, pack, *, model_assistance=False, negative_case_plan=None, record_trace=False, configuration=None, record_step_content=False, expert_mode=False):
     service = ApplicationService(ServiceConfiguration(str(workspace), review_profile="DEVELOPMENT_SINGLE_REVIEWER",
         ontology_trace_enabled=record_trace,
         modeling_audit_content_enabled=record_step_content,
@@ -69,8 +69,15 @@ def build_case(workspace, pack, *, model_assistance=False, negative_case_plan=No
     acceptance = [{"query_asset_id": query, "expected": expected}]
     session = run("modeling.session.open", {"run_id": ingestion["run_id"], "business_rules": ["Preserve exact identifiers, explicit negatives, unknown values and all source evidence"],
         "acceptance": acceptance, "expected_revision": None,
+        **({"expert_loop_enabled": True} if expert_mode else {}),
         **({"configuration": configuration} if configuration is not None else {}),
         **({"negative_case_plan": negative_case_plan} if negative_case_plan is not None else {})}, "session")["session"]
+    if expert_mode:
+        for stage in range(1, 6):
+            version = session["expert"]["stages"][str(stage)]
+            session = run("modeling.expert.save", {"expected_revision": session["revision"],
+                "expected_configuration_digest": version["digest"], "confirm": True,
+                "configuration": {**version["configuration"], "coverage_confirmed": True}}, f"expert-{stage}")["session"]
     run("modeling.profile", {"run_id": ingestion["run_id"]}, "profile")
     concepts = ["Employee", "Department"] if pack == "hr" else ["TreeRecord", "InspectionRecord", "Site"]
     scope = run("modeling.scope", {"run_id": ingestion["run_id"], "description": "Synthetic engineering regression",
@@ -98,6 +105,9 @@ def finish_case(service, principal, project_id, run, pack, proposed, prepared, a
     candidates = [c for key in ["tbox_candidates", "mapping_candidates", "abox_candidates", "shacl_candidates"] for c in proposed["proposal"][key]]
     checked = run("modeling.semantic.check", {"review_id": review_id, "candidate_ids": [c["candidate_id"] for c in candidates]}, "check")
     assert all(r["validation_status"] == "PASS" for r in checked["five_stage"]["step_runs"])
+    if checked.get("expert_routed_proposal"):
+        proposed = checked
+        review_id = proposed["queue"]["review_queue_id"]
     head = None
     for index, item in enumerate(proposed["queue"]["items"]):
         if item["candidate_id"]:

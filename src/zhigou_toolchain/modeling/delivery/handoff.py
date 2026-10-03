@@ -24,7 +24,7 @@ FORMAT = "zhigou-ontology-handoff/1.0.0"
 STAGE_FORMAT = "zhigou-ontology-handoff/1.1.0"
 
 
-def handoff_files(native_raw, native_files, bindings, dependencies):
+def handoff_files(native_raw, native_files, bindings, dependencies, *, historical_verification=False):
     confirmed = json.loads(native_files["source/confirmed-modeling-package.json"])
     native_manifest = json.loads(native_files["ontology-package.json"])
     plan = json.loads(native_files["source/semantic-compilation-plan.json"])
@@ -54,6 +54,18 @@ def handoff_files(native_raw, native_files, bindings, dependencies):
     files["validation.json"] = json_bytes({"execution": "COMPILED_AND_NATIVE_VERIFIED", "native_reports": reports,
         "graph_bytes": file_rows({k: v for k, v in files.items() if k.endswith(".ttl") and "/" not in k}),
         "new_validation_run": False, "release_status": "NOT_GRANTED_BY_EXPORT"})
+    scene = bindings.get("session_snapshot", {}).get("scenario", {}).get("effective")
+    if scene:
+        from zhigou_toolchain.modeling.five_stage.scenario_outputs import contracts
+        if historical_verification and scene.get("output_contract") == "zhigou-scenario-stage/1.0.0":
+            from .legacy_scene_view import contracts
+        files["services/scenario-contracts.json"] = json_bytes({"format": "zhigou-scene-service-contract/1.0.0",
+            "scenario_configuration_digest": scene["digest"], "contracts": contracts(scene, native_manifest["package_id"]),
+            "deployment": "NOT_ASSERTED", "actions_executed": False})
+        files["audits/scenario-configuration.json"] = json_bytes(scene)
+        quality = bindings["session_snapshot"].get("scenario_quality")
+        if quality and quality["package_id"] == native_manifest["package_id"] and quality["configuration_digest"] == scene["digest"]:
+            files["audits/scenario-quality.json"] = json_bytes(quality)
     answers = {a["query_asset_id"]: a["expected"] for a in bindings["independent_acceptance"]}
     require(len(answers) == len(bindings["independent_acceptance"]), "DUPLICATE_ACCEPTANCE_QUERY")
     require(set(answers) == {t["query_artifact_ref"] for t in cq_plan["tests"]}, "INDEPENDENT_ACCEPTANCE_REQUIRED")
@@ -109,7 +121,7 @@ def verify_handoff(files, *, trusted_receipt=None):
         row = attested.get(doc[id_key])
         require(row and digest(deterministic_json_bytes(doc)) == row["byte_sha256"], "HANDOFF_ATTESTED_AUTHORITY_CHANGED")
     dependencies = {n[len("dependencies/"):]: raw for n, raw in files.items() if n.startswith("dependencies/") and n != "dependencies/run_bindings.json"}
-    reconstructed = handoff_files(native_raw, native, bindings, dependencies)
+    reconstructed = handoff_files(native_raw, native, bindings, dependencies, historical_verification=True)
     require(reconstructed == files, "HANDOFF_VIEW_NOT_REPRODUCIBLE")
     dataset = bindings["dataset"]
     sources = {s["source_id"]: s for s in bindings["sources"]}

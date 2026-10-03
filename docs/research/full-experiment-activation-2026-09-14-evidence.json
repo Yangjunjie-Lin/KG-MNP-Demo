@@ -30,7 +30,7 @@
         "inaccessible": {
           "/mnt/d/UoM_CS/Research Evidence Portfolio/CUHK-Shenzhen RA/KG-MNP-Demo/runtime_reports/full-ontology-experiment-20260914/revisions/r1/scoring-canary/gold.txt": true,
           "/input/../scoring-canary/gold.txt": true,
-          "/home/yangjunjie/.bashrc": true,
+          "<USER_HOME>/.bashrc": true,
           "/mnt/c/Windows/System32/config/SYSTEM": true,
           "/proc/1/root/mnt/d/UoM_CS/Research Evidence Portfolio/CUHK-Shenzhen RA/KG-MNP-Demo/runtime_reports/full-ontology-experiment-20260914/revisions/r1/scoring-canary/gold.txt": true
         },
@@ -111,7 +111,7 @@
         "commands": [
           {
             "command": [
-              "C:\\Users\\Yangjunjie Lin\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+              "<PYTHON_EXECUTABLE>",
               "-m",
               "ruff",
               "check",
@@ -124,7 +124,7 @@
           },
           {
             "command": [
-              "C:\\Users\\Yangjunjie Lin\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+              "<PYTHON_EXECUTABLE>",
               "tools/check_types.py"
             ],
             "exit_code": 0,
@@ -134,7 +134,7 @@
           },
           {
             "command": [
-              "C:\\Users\\Yangjunjie Lin\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+              "<PYTHON_EXECUTABLE>",
               "tools/evaluate_research.py",
               "--suite",
               "ontology-io-engineering"
@@ -146,12 +146,12 @@
           },
           {
             "command": [
-              "C:\\Users\\Yangjunjie Lin\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+              "<PYTHON_EXECUTABLE>",
               "-m",
               "pytest",
               "tests/upgrade/test_ontology_io_extended.py",
               "--tb=short",
-              "--junitxml=D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime_reports\\full-ontology-experiment-20260914\\final-engineering-verification\\extended.xml"
+              "--junitxml=<REPOSITORY>/runtime_reports/full-ontology-experiment-20260914/final-engineering-verification/extended.xml"
             ],
             "exit_code": 0,
             "seconds": 20.907244800007902,
@@ -178,5 +178,13 @@
         "experiment_complete": false
       }
     }
-  ]
+  ],
+  "publication_provenance": {
+    "kind": "PATH_REDACTED_HISTORICAL_VIEW_NOT_ORIGINAL_BYTES",
+    "original_archive": "docs/research/historical-evidence-originals-20260929.zip",
+    "original_member": "docs/research/full-experiment-activation-2026-09-14-evidence.json",
+    "original_sha256": "fe51634651e3123d96a2502f205ab56cc03f77e55f32a69602b401ebb062a7c4",
+    "transformation": "Local repository, interpreter and home paths replaced with explicit placeholders; historical outcomes unchanged.",
+    "current_source_validation": "NOT_CLAIMED_BY_HISTORICAL_EVIDENCE"
+  }
 }

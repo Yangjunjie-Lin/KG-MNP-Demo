@@ -40,6 +40,8 @@ def save(root, session):
 
 
 def invalidate(session, stage, reason):
+    from .modeling_expert import invalidate as invalidate_expert
+    invalidate_expert(session, stage)
     for item in session["outputs"]:
         if item["stage"] >= stage and item["status"] != "STALE":
             item.update(status="STALE", stale_reason=reason)
@@ -56,6 +58,15 @@ def execute(app, project, request, principal):
     if expected != (previous["revision"] if previous else None):
         raise ServiceBoundaryError("SESSION_HEAD_CONFLICT", "Reload the modeling session before changing dependencies", status_code=409)
     if request.operation_id == "modeling.session.open":
+        from .modeling_expert import enabled
+        use_expert_loop = params.get("expert_loop_enabled", False) or enabled(previous) or bool(params.get("scenario"))
+        from .modeling_scenarios import effective, install, preview
+        selection = params.get("scenario")
+        if effective(previous) and selection is None:
+            selection = effective(previous)["selection"]
+        scenario_preview = preview(app, project, selection, params["run_id"]) if selection else None
+        if scenario_preview and scenario_preview["status"] != "AVAILABLE":
+            raise ServiceBoundaryError("SCENARIO_CONFIGURATION_BLOCKED", "Preview missing data, dependency conflicts and exact Domain Pack before opening", status_code=422)
         verified = verified_run(project.root, params["run_id"])
         from zhigou_toolchain.modeling.five_stage.agents import invoke
         from zhigou_toolchain.modeling.five_stage.profiling import check_input
@@ -66,6 +77,22 @@ def execute(app, project, request, principal):
         frozen = {"run_id": params["run_id"], "dataset_digest": semantic_hash(verified.dataset),
                   "business_rules": params["business_rules"], "acceptance": params["acceptance"],
                   "configuration": params.get("configuration", {}), "quality_digest": semantic_hash(quality)}
+        if use_expert_loop:
+            frozen["expert_loop_enabled"] = True
+        if scenario_preview:
+            frozen["initial_scenario_digest"] = scenario_preview["effective"]["digest"]
+        if params.get("scenario_acceptance") is not None:
+            if not scenario_preview or not principal.can("acceptance:run") or principal.principal_type != "HUMAN":
+                raise ServiceBoundaryError("INDEPENDENT_ACCEPTANCE_PERMISSION_REQUIRED", "Frozen scene labels require independent acceptance authority", status_code=403)
+            from zhigou_toolchain.modeling.five_stage.scenario_quality import (
+                ScenarioGold,
+                validate_projection,
+            )
+            validate_projection(ScenarioGold.model_validate(params["scenario_acceptance"]), scenario_preview["effective"])
+            gold = ScenarioGold.model_validate(params["scenario_acceptance"]).model_dump()
+            if gold["scenario_id"] != scenario_preview["effective"]["scenario_id"]:
+                raise ServiceBoundaryError("SCENARIO_LABEL_SCOPE_MISMATCH", "Independent labels belong to another scene", status_code=422)
+            frozen["scenario_acceptance"] = gold
         if params.get("negative_case_plan") is not None:
             from zhigou_toolchain.modeling.delivery.negative_plan import normalize_plan
             frozen["negative_case_plan"] = normalize_plan(params["negative_case_plan"])
@@ -76,6 +103,13 @@ def execute(app, project, request, principal):
                    "revision": (previous["revision"] + 1) if previous else 1, "frozen": frozen,
                    "required_checks": list(REQUIRED), "outputs": [], "checks": [], "events": [],
                    "execution_mode": "DETERMINISTIC", "opened_by": principal.principal_id}
+        if use_expert_loop:
+            from .modeling_expert import initial_state
+            session["expert"] = initial_state()
+        if scenario_preview:
+            if principal.principal_type != "HUMAN" or not principal.can("scope:approve"):
+                raise ServiceBoundaryError("HUMAN_CONFIGURATION_REQUIRED", "Scene configuration requires scope authority", status_code=403)
+            install(session, scenario_preview["effective"], principal)
         if previous:
             history = deepcopy(previous)
             invalidate(history, 1, "New input/rules/acceptance/configuration session")
@@ -86,9 +120,11 @@ def execute(app, project, request, principal):
             raise ServiceBoundaryError("SESSION_REQUIRED", "Open a modeling session first", status_code=409)
         session = previous
         revised = params["configuration"]
+        if session.get("scenario"):
+            raise ServiceBoundaryError("SCENARIO_USE_VERSIONED_SELECTION", "Use scenario.save for scene changes or open a new explicitly scoped session", status_code=409)
         if revised == session["frozen"]["configuration"]:
             return {"session": session}
-        invalidate(session, 2, "Tool/model/mapping configuration changed")
+        invalidate(session, 1, "Configuration changed; scope-dependent settings require S1 revalidation")
         session["frozen"]["configuration"] = revised
     save(project.root, session)
     return {"session": session}
@@ -103,6 +139,8 @@ def before(root, request):
     if not session or request.operation_id in OPERATIONS:
         return
     name, params = canonical_operation(request.operation_id), request.parameters
+    from .modeling_expert import before as expert_before
+    expert_before(session, request)
     if name in {"modeling.scope", "modeling.profile", "modeling.scope.draft"} and params["run_id"] != session["frozen"]["run_id"]:
         raise ServiceBoundaryError("SESSION_INPUT_STALE", "Open a new session for changed input", status_code=409)
     bindings = {
@@ -142,7 +180,10 @@ def before(root, request):
 def after(root, request, result):
     session = read(root)
     operation = canonical_operation(request.operation_id)
+    from .modeling_expert import after as expert_after
     if session and operation == "review.action":
+        from .modeling_expert import invalidate as invalidate_expert
+        invalidate_expert(session, 5)
         for output in session["outputs"]:
             if output["operation"] == "review.finalize" or output["stage"] == 5:
                 output.update(status="STALE", stale_reason="Review head changed after freezing")
@@ -154,6 +195,9 @@ def after(root, request, result):
         save(root, session)
         return
     if not session or operation not in STAGES:
+        if session and "expert_loop" in result:
+            expert_after(session, request, result)
+            save(root, session)
         return
     stage, key, id_key = STAGES[operation]
     content = result.get(key, {})
@@ -187,11 +231,12 @@ def after(root, request, result):
         session["checks"] = [{"name": name, "required": True,
             "status": check_status(name),
             "candidate_digest": semantic_hash(sorted(source, key=lambda c: c["candidate_id"])), "dependency_digest": semantic_hash(session["frozen"]),
-            "review_id": request.parameters["review_id"], "job_id": request.idempotency_key} for name in REQUIRED]
+            "review_id": result.get("expert_routed_review_id", request.parameters["review_id"]), "job_id": request.idempotency_key} for name in REQUIRED]
+    expert_after(session, request, result)
     save(root, session)
 
 
-def canonical_operation(name):
+def canonical_operation(name: str) -> str:
     return {"modeling.candidate": "modeling.proposal", "modeling.cq": "modeling.prepare",
             "modeling.baseline": "modeling.prepare", "modeling.alignment": "modeling.prepare"}.get(name, name)
 

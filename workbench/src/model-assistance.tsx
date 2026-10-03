@@ -9,7 +9,7 @@ export function ModelAssistance({repair=false}:{repair?:boolean}){
   const session=object(state.modeling_session);
   const current=state.results.filter(r=>rows(session.outputs).some(o=>o.job_id===r.job_id&&o.status==='CURRENT'));
   const prepared=current.filter(r=>r.operation==='modeling.prepare').at(-1)?.result;
-  const proposal=current.filter(r=>r.operation==='modeling.proposal').at(-1)?.result;
+  const proposal=current.filter(r=>r.operation==='modeling.proposal'||r.result.expert_routed_proposal).at(-1)?.result;
   const receipts=state.results.filter(r=>r.operation==='modeling.proposal'&&r.result.model_assistance);
   function run(){
     setError('');

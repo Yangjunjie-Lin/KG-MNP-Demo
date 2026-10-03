@@ -1,0 +1,100 @@
+{
+  "scenario_id": "organization_management",
+  "label_set_id": "synthetic-independent-organization_management",
+  "version": "1.0.0",
+  "matching": "EXACT_TYPED_KEY_SET_V1",
+  "projection": "PREDECLARED_CAPABILITY_MEMBERSHIP_V1",
+  "labels": [
+    {
+      "kind": "objects",
+      "key": "[\"urn:scenario:organization_management:departments:D-01\",\"https://example.org/ontology/Department\"]",
+      "capability": "core"
+    },
+    {
+      "kind": "attributes",
+      "key": "[\"urn:scenario:organization_management:departments:D-01\",\"https://example.org/ontology/departmentId\",\"D-01\",\"http://www.w3.org/2001/XMLSchema#string\",null]",
+      "capability": "core"
+    },
+    {
+      "kind": "attributes",
+      "key": "[\"urn:scenario:organization_management:departments:D-01\",\"https://example.org/ontology/departmentName\",\"Engineering\",\"http://www.w3.org/2001/XMLSchema#string\",null]",
+      "capability": "core"
+    },
+    {
+      "kind": "objects",
+      "key": "[\"urn:scenario:organization_management:departments:D-02\",\"https://example.org/ontology/Department\"]",
+      "capability": "core"
+    },
+    {
+      "kind": "attributes",
+      "key": "[\"urn:scenario:organization_management:departments:D-02\",\"https://example.org/ontology/departmentId\",\"D-02\",\"http://www.w3.org/2001/XMLSchema#string\",null]",
+      "capability": "core"
+    },
+    {
+      "kind": "attributes",
+      "key": "[\"urn:scenario:organization_management:departments:D-02\",\"https://example.org/ontology/departmentName\",\"Operations\",\"http://www.w3.org/2001/XMLSchema#string\",null]",
+      "capability": "core"
+    },
+    {
+      "kind": "objects",
+      "key": "[\"urn:scenario:organization_management:employees:E-001\",\"https://example.org/ontology/Employee\"]",
+      "capability": "core"
+    },
+    {
+      "kind": "attributes",
+      "key": "[\"urn:scenario:organization_management:employees:E-001\",\"https://example.org/ontology/employeeId\",\"E-001\",\"http://www.w3.org/2001/XMLSchema#string\",null]",
+      "capability": "core"
+    },
+    {
+      "kind": "attributes",
+      "key": "[\"urn:scenario:organization_management:employees:E-001\",\"https://example.org/ontology/employeeName\",\"Synthetic Ada\",\"http://www.w3.org/2001/XMLSchema#string\",null]",
+      "capability": "core"
+    },
+    {
+      "kind": "relations",
+      "key": "[\"urn:scenario:organization_management:employees:E-001\",\"https://example.org/ontology/belongsToDepartment\",\"urn:scenario:organization_management:departments:D-01\"]",
+      "capability": "core"
+    },
+    {
+      "kind": "attributes",
+      "key": "[\"urn:scenario:organization_management:employees:E-001\",\"urn:scenario:organization_management:jobTitle\",\"Engineer\",\"http://www.w3.org/2001/XMLSchema#string\",null]",
+      "capability": "profile"
+    },
+    {
+      "kind": "attributes",
+      "key": "[\"urn:scenario:organization_management:employees:E-001\",\"urn:scenario:organization_management:status\",\"ACTIVE\",\"http://www.w3.org/2001/XMLSchema#string\",null]",
+      "capability": "profile"
+    },
+    {
+      "kind": "objects",
+      "key": "[\"urn:scenario:organization_management:assignments:A-001\",\"urn:scenario:organization_management:Assignment\"]",
+      "capability": "history"
+    },
+    {
+      "kind": "attributes",
+      "key": "[\"urn:scenario:organization_management:assignments:A-001\",\"urn:scenario:organization_management:assignmentId\",\"A-001\",\"http://www.w3.org/2001/XMLSchema#string\",null]",
+      "capability": "history"
+    },
+    {
+      "kind": "attributes",
+      "key": "[\"urn:scenario:organization_management:assignments:A-001\",\"urn:scenario:organization_management:validFrom\",\"2024\",\"http://www.w3.org/2001/XMLSchema#string\",null]",
+      "capability": "history"
+    },
+    {
+      "kind": "attributes",
+      "key": "[\"urn:scenario:organization_management:assignments:A-001\",\"urn:scenario:organization_management:validTo\",\"2025\",\"http://www.w3.org/2001/XMLSchema#string\",null]",
+      "capability": "history"
+    },
+    {
+      "kind": "relations",
+      "key": "[\"urn:scenario:organization_management:assignments:A-001\",\"urn:scenario:organization_management:assignedEmployee\",\"urn:scenario:organization_management:employees:E-001\"]",
+      "capability": "history"
+    },
+    {
+      "kind": "relations",
+      "key": "[\"urn:scenario:organization_management:assignments:A-001\",\"urn:scenario:organization_management:assignedDepartment\",\"urn:scenario:organization_management:departments:D-02\"]",
+      "capability": "history"
+    }
+  ],
+  "nature": "INDEPENDENT_SYNTHETIC_LABELS_NOT_LIVE_QUALITY"
+}

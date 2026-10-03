@@ -270,7 +270,9 @@ def test_minimal_empty_and_review_only_batch(tmp_path):
     files = evolution_files([], batch_id="empty")
     assert json.loads(files["upstream_manifest.json"]) == {"batch_id": "empty", "files": []}
     assert validate_batch(files, producer=True)["status"] == "LOCAL_PROTOCOL_VALID"
-    assert validate_batch({}, producer=True)["status"] == "LOCAL_PROTOCOL_VALID"
+    assert validate_batch({})["status"] == "LOCAL_PROTOCOL_VALID"  # Historical external reader compatibility only.
+    with pytest.raises(ValueError, match="UPSTREAM_MANIFEST_REQUIRED"):
+        validate_batch({}, producer=True)
     assert export_batch(tmp_path / "empty", files)["status"] == "EXPORTED"
     assert export_batch(tmp_path / "empty", files)["status"] == "ALREADY_EXPORTED"
     row = human_review(corrected_answer=["raw", {"result": None}])

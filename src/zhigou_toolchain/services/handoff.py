@@ -283,8 +283,15 @@ def download(app, principal, project_id, job_id):
     result = committed_result(app, job)
     if result is None:
         raise ServiceBoundaryError("EXPORT_NOT_READY", "export has no verified commit", status_code=409)
+    if result.get("expert_loop", {}).get("decision", "PASS") != "PASS":
+        raise ServiceBoundaryError("EXPERT_REVIEW_REQUIRED", "Export snapshot did not pass AI review", status_code=409)
+    from .modeling_expert import require_package
+    if job.operation_id == "modeling.handoff.export":
+        require_package(read(get_project(app.root, project_id).root), result["package_id"], export_result=result)
     generation = Path(load_catalog(app.root)["commits"][job_id]["root"])
     raw = read_bounded(generation / "artifacts/builds/handoff" / (result["sha256"] + ".zip"))
     require(digest(raw) == result["sha256"] and len(raw) == result["size_bytes"], "EXPORT_BYTES_CHANGED")
     check()
+    if job.operation_id == "modeling.handoff.export":
+        require_package(read(get_project(app.root, project_id).root), result["package_id"], export_result=result)
     return raw

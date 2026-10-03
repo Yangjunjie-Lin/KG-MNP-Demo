@@ -1,0 +1,35 @@
+{
+  "assets": [
+    {
+      "asset_id": "equipment-ontology",
+      "media_type": "text/turtle",
+      "path": "ontology/equipment.ttl",
+      "sha256": "bb9d241778d667a8a4967158d74514837a726d594aa58a2173952fb8314a5d5d",
+      "size_bytes": 865
+    },
+    {
+      "asset_id": "equipment-query-devices",
+      "media_type": "application/sparql-query",
+      "path": "queries/devices.rq",
+      "sha256": "43cf3531e99638ec8d9634bfff4ce280897dbd395244d122c1f186e6d7f35fff",
+      "size_bytes": 311
+    },
+    {
+      "asset_id": "equipment-shapes",
+      "media_type": "text/turtle",
+      "path": "shapes/equipment.ttl",
+      "sha256": "adf4b82fbf8c1586dd19e9e03c960ffeced3c537669f7bda87cd48efbf35043f",
+      "size_bytes": 812
+    }
+  ],
+  "canonicalization_profile": "KG-MNP Canonical JSON v1",
+  "content_digest": "21c97dff1ef2a207aea2fec84f237632cb291d5d4c0bbe61029ea954e309b7b2",
+  "dependencies": [],
+  "lock_id": "urn:kg-mnp:domain-pack-lock:b0e4d0d650936e380ee17247ab79cd7e9196594a7ab359eaf48078b1e32f2766",
+  "manifest_file_sha256": "afdcd182fc44325594a35fe4385e4c0afc0b470884d11beb8e2b86cdb255e939",
+  "manifest_kind": "KG_MNP_DOMAIN_PACK_LOCK",
+  "manifest_semantic_sha256": "26edf219714a3b9c373caeecf61b4502352c09cb9965b3ecb82d5c2cc206f324",
+  "pack_id": "equipment-maintenance",
+  "pack_version": "0.1.0",
+  "schema_version": "1.0.0"
+}

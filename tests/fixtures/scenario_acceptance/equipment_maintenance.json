@@ -1,0 +1,135 @@
+{
+  "scenario_id": "equipment_maintenance",
+  "label_set_id": "synthetic-independent-equipment_maintenance",
+  "version": "1.0.0",
+  "matching": "EXACT_TYPED_KEY_SET_V1",
+  "projection": "PREDECLARED_CAPABILITY_MEMBERSHIP_V1",
+  "labels": [
+    {
+      "kind": "objects",
+      "key": "[\"urn:scenario:equipment_maintenance:organizations:ORG-001\",\"urn:scenario:equipment_maintenance:Organization\"]",
+      "capability": "core"
+    },
+    {
+      "kind": "attributes",
+      "key": "[\"urn:scenario:equipment_maintenance:organizations:ORG-001\",\"urn:scenario:equipment_maintenance:organizationId\",\"ORG-001\",\"http://www.w3.org/2001/XMLSchema#string\",null]",
+      "capability": "core"
+    },
+    {
+      "kind": "attributes",
+      "key": "[\"urn:scenario:equipment_maintenance:organizations:ORG-001\",\"urn:scenario:equipment_maintenance:label\",\"Synthetic organization\",\"http://www.w3.org/2001/XMLSchema#string\",null]",
+      "capability": "core"
+    },
+    {
+      "kind": "objects",
+      "key": "[\"urn:scenario:equipment_maintenance:locations:LOC-001\",\"urn:scenario:equipment_maintenance:Location\"]",
+      "capability": "core"
+    },
+    {
+      "kind": "attributes",
+      "key": "[\"urn:scenario:equipment_maintenance:locations:LOC-001\",\"urn:scenario:equipment_maintenance:locationId\",\"LOC-001\",\"http://www.w3.org/2001/XMLSchema#string\",null]",
+      "capability": "core"
+    },
+    {
+      "kind": "attributes",
+      "key": "[\"urn:scenario:equipment_maintenance:locations:LOC-001\",\"urn:scenario:equipment_maintenance:label\",\"Synthetic workshop\",\"http://www.w3.org/2001/XMLSchema#string\",null]",
+      "capability": "core"
+    },
+    {
+      "kind": "objects",
+      "key": "[\"urn:scenario:equipment_maintenance:devices:EQ-001\",\"urn:scenario:equipment_maintenance:Device\"]",
+      "capability": "core"
+    },
+    {
+      "kind": "attributes",
+      "key": "[\"urn:scenario:equipment_maintenance:devices:EQ-001\",\"urn:scenario:equipment_maintenance:deviceId\",\"EQ-001\",\"http://www.w3.org/2001/XMLSchema#string\",null]",
+      "capability": "core"
+    },
+    {
+      "kind": "attributes",
+      "key": "[\"urn:scenario:equipment_maintenance:devices:EQ-001\",\"urn:scenario:equipment_maintenance:label\",\"Synthetic pump\",\"http://www.w3.org/2001/XMLSchema#string\",null]",
+      "capability": "core"
+    },
+    {
+      "kind": "objects",
+      "key": "[\"urn:scenario:equipment_maintenance:components:CMP-001\",\"urn:scenario:equipment_maintenance:Component\"]",
+      "capability": "components"
+    },
+    {
+      "kind": "attributes",
+      "key": "[\"urn:scenario:equipment_maintenance:components:CMP-001\",\"urn:scenario:equipment_maintenance:componentId\",\"CMP-001\",\"http://www.w3.org/2001/XMLSchema#string\",null]",
+      "capability": "components"
+    },
+    {
+      "kind": "attributes",
+      "key": "[\"urn:scenario:equipment_maintenance:components:CMP-001\",\"urn:scenario:equipment_maintenance:label\",\"Synthetic valve\",\"http://www.w3.org/2001/XMLSchema#string\",null]",
+      "capability": "components"
+    },
+    {
+      "kind": "objects",
+      "key": "[\"urn:scenario:equipment_maintenance:workorders:WO-001\",\"urn:scenario:equipment_maintenance:WorkOrder\"]",
+      "capability": "maintenance"
+    },
+    {
+      "kind": "attributes",
+      "key": "[\"urn:scenario:equipment_maintenance:workorders:WO-001\",\"urn:scenario:equipment_maintenance:workOrderId\",\"WO-001\",\"http://www.w3.org/2001/XMLSchema#string\",null]",
+      "capability": "maintenance"
+    },
+    {
+      "kind": "attributes",
+      "key": "[\"urn:scenario:equipment_maintenance:workorders:WO-001\",\"urn:scenario:equipment_maintenance:orderStatus\",\"RECORDED\",\"http://www.w3.org/2001/XMLSchema#string\",null]",
+      "capability": "maintenance"
+    },
+    {
+      "kind": "objects",
+      "key": "[\"urn:scenario:equipment_maintenance:maintenance:ME-001\",\"urn:scenario:equipment_maintenance:MaintenanceEvent\"]",
+      "capability": "maintenance"
+    },
+    {
+      "kind": "attributes",
+      "key": "[\"urn:scenario:equipment_maintenance:maintenance:ME-001\",\"urn:scenario:equipment_maintenance:eventId\",\"ME-001\",\"http://www.w3.org/2001/XMLSchema#string\",null]",
+      "capability": "maintenance"
+    },
+    {
+      "kind": "attributes",
+      "key": "[\"urn:scenario:equipment_maintenance:maintenance:ME-001\",\"urn:scenario:equipment_maintenance:recordedAt\",\"2026-09\",\"http://www.w3.org/2001/XMLSchema#string\",null]",
+      "capability": "maintenance"
+    },
+    {
+      "kind": "attributes",
+      "key": "[\"urn:scenario:equipment_maintenance:maintenance:ME-001\",\"urn:scenario:equipment_maintenance:recordedResult\",\"Inspection recorded only\",\"http://www.w3.org/2001/XMLSchema#string\",null]",
+      "capability": "maintenance"
+    },
+    {
+      "kind": "attributes",
+      "key": "[\"urn:scenario:equipment_maintenance:devices:EQ-001\",\"urn:scenario:equipment_maintenance:status\",\"IN_SERVICE\",\"http://www.w3.org/2001/XMLSchema#string\",null]",
+      "capability": "components"
+    },
+    {
+      "kind": "relations",
+      "key": "[\"urn:scenario:equipment_maintenance:devices:EQ-001\",\"urn:scenario:equipment_maintenance:ownedBy\",\"urn:scenario:equipment_maintenance:organizations:ORG-001\"]",
+      "capability": "core"
+    },
+    {
+      "kind": "relations",
+      "key": "[\"urn:scenario:equipment_maintenance:devices:EQ-001\",\"urn:scenario:equipment_maintenance:locatedAt\",\"urn:scenario:equipment_maintenance:locations:LOC-001\"]",
+      "capability": "core"
+    },
+    {
+      "kind": "relations",
+      "key": "[\"urn:scenario:equipment_maintenance:components:CMP-001\",\"urn:scenario:equipment_maintenance:partOf\",\"urn:scenario:equipment_maintenance:devices:EQ-001\"]",
+      "capability": "components"
+    },
+    {
+      "kind": "relations",
+      "key": "[\"urn:scenario:equipment_maintenance:workorders:WO-001\",\"urn:scenario:equipment_maintenance:forDevice\",\"urn:scenario:equipment_maintenance:devices:EQ-001\"]",
+      "capability": "maintenance"
+    },
+    {
+      "kind": "relations",
+      "key": "[\"urn:scenario:equipment_maintenance:maintenance:ME-001\",\"urn:scenario:equipment_maintenance:forWorkOrder\",\"urn:scenario:equipment_maintenance:workorders:WO-001\"]",
+      "capability": "maintenance"
+    }
+  ],
+  "nature": "INDEPENDENT_SYNTHETIC_LABELS_NOT_LIVE_QUALITY"
+}

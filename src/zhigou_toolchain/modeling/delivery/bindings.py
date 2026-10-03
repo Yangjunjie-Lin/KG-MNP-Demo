@@ -35,7 +35,8 @@ def verify_provenance_refs(statements, sources, evidence):
 
 
 def verify_ancestor(observation, session):
-    matches = [o for o in session["outputs"] if o["job_id"] == observation["job_id"] and o["status"] == "CURRENT"]
+    matches = [o for o in session["outputs"] if o["job_id"] == observation["job_id"] and o["status"] == "CURRENT"
+               and o["operation"] == observation["operation_id"]]
     require(len(matches) == 1, "DELIVERY_ANCESTOR_NOT_CURRENT")
     output = matches[0]
     require(output == observation["session_output"], "DELIVERY_ANCESTOR_OUTPUT_MISMATCH")

@@ -1,5 +1,23 @@
 # AGENTS.md
 
+2026-09-30 用户取消五步粗细度：当前三场景仅选择版本化 Prompt 预设，不再接受逐步档位或能力覆盖。
+说明集中在 ONTOLOGY_MODULE“场景 Prompt 预设”；scenarios.py 解析固定资源，
+modeling_scenarios.py 复用原 session/CAS/映射，scenario_outputs.py 仅投影，ExpertRuntime 仍唯一。
+新词保持真实候选依赖，不伪造 baseline element ID；注册字段不按档位裁剪，缺来源不补造。
+scenario_acceptance/quality 独立，禁止进入生成/审核/修订；无标注不造精确率。
+旧 v1 配置保留历史，必须显式选 v2 模板并从 S1 重确认/生成/审核；只读旧包重构器不参与业务执行。
+三场景验证入口 verify_scenario_workbench；冻结入口 verify_scenario_freeze，完整后端可加 --full-backend。
+本轮回执写 runtime_reports/scenario-prompts-20260930/；旧 scenario-granularity-20260928 回执保持历史含义。
+最终冻结后只写独立输出；保留历史失败。
+
+2026-09-28 专家闭环从 develop@84522072 增量接入；保留开始时已有脏树。
+主说明见 docs/ontology/AGENT_STEP_AUDIT.md 的“2026-09-28 专家闭环”。
+expert.py 为十份默认文本与共用修订模板的执行来源；配置/历史/技术结论复用原 session。
+expert_runtime.py 是唯一业务修订循环；modeling_expert.py 仅提供授权、候选适配和门控。
+AI PASS/REVISE/ESCALATE 不是人类审批；缺用量、未知请求、无可用正文的恢复要如实受阻。
+新回执写 runtime_reports/expert-loop-20260928/；最终冻结后不得继续改源码再借用同一回执。
+本项目生产者每批必须有 upstream_manifest.json；旧外部可选读取只保留兼容含义。
+
 2026-09-19 方法/Prompt 审计从 develop@4e19b2ce 增量实施，继续前仍核实 HEAD。
 主说明只在 `docs/ontology/AGENT_STEP_AUDIT.md`；Prompt MD/JSON 用
 `python -m tools.generate_model_prompts` 从执行源码生成，不手改、不反填历史请求。

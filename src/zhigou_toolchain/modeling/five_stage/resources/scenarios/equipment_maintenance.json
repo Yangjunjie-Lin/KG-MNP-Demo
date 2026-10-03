@@ -1,0 +1,216 @@
+{
+  "scenario_id": "equipment_maintenance",
+  "name": "设备资产与维护",
+  "purpose": "企业设备及地点；可选部件、工单和明确维护事件；不执行维修动作",
+  "domain_pack": {
+    "pack_id": "equipment-maintenance",
+    "pack_version": "0.1.0"
+  },
+  "capabilities": {
+    "core": {
+      "description": "Organization/Device/Location及资产归属"
+    },
+    "components": {
+      "description": "部件隶属与已声明状态"
+    },
+    "maintenance": {
+      "description": "工单和独立维护事件，不代表执行动作"
+    }
+  },
+  "tables": [
+    {
+      "record_id": "organizations",
+      "source_name": "organizations.csv",
+      "class_iri": "urn:scenario:equipment_maintenance:Organization",
+      "id_field": "organization_id",
+      "literals": {
+        "organization_id": {
+          "predicate_iri": "urn:scenario:equipment_maintenance:organizationId",
+          "datatype": "string",
+          "capability": "core"
+        },
+        "name": {
+          "predicate_iri": "urn:scenario:equipment_maintenance:label",
+          "datatype": "string",
+          "capability": "core"
+        }
+      },
+      "references": [],
+      "capability": "core"
+    },
+    {
+      "record_id": "locations",
+      "source_name": "locations.csv",
+      "class_iri": "urn:scenario:equipment_maintenance:Location",
+      "id_field": "location_id",
+      "literals": {
+        "location_id": {
+          "predicate_iri": "urn:scenario:equipment_maintenance:locationId",
+          "datatype": "string",
+          "capability": "core"
+        },
+        "name": {
+          "predicate_iri": "urn:scenario:equipment_maintenance:label",
+          "datatype": "string",
+          "capability": "core"
+        }
+      },
+      "references": [],
+      "capability": "core"
+    },
+    {
+      "record_id": "devices",
+      "source_name": "devices.csv",
+      "class_iri": "urn:scenario:equipment_maintenance:Device",
+      "id_field": "device_id",
+      "literals": {
+        "device_id": {
+          "predicate_iri": "urn:scenario:equipment_maintenance:deviceId",
+          "datatype": "string",
+          "capability": "core"
+        },
+        "name": {
+          "predicate_iri": "urn:scenario:equipment_maintenance:label",
+          "datatype": "string",
+          "capability": "core"
+        },
+        "status": {
+          "predicate_iri": "urn:scenario:equipment_maintenance:status",
+          "datatype": "string",
+          "capability": "components"
+        }
+      },
+      "references": [
+        {
+          "field": "organization_id",
+          "target_space": "organizations",
+          "predicate_iri": "urn:scenario:equipment_maintenance:ownedBy"
+        },
+        {
+          "field": "location_id",
+          "target_space": "locations",
+          "predicate_iri": "urn:scenario:equipment_maintenance:locatedAt"
+        }
+      ],
+      "capability": "core"
+    },
+    {
+      "record_id": "components",
+      "source_name": "components.csv",
+      "class_iri": "urn:scenario:equipment_maintenance:Component",
+      "id_field": "component_id",
+      "literals": {
+        "component_id": {
+          "predicate_iri": "urn:scenario:equipment_maintenance:componentId",
+          "datatype": "string",
+          "capability": "components"
+        },
+        "name": {
+          "predicate_iri": "urn:scenario:equipment_maintenance:label",
+          "datatype": "string",
+          "capability": "components"
+        }
+      },
+      "references": [
+        {
+          "field": "device_id",
+          "target_space": "devices",
+          "predicate_iri": "urn:scenario:equipment_maintenance:partOf"
+        }
+      ],
+      "capability": "components"
+    },
+    {
+      "record_id": "workorders",
+      "source_name": "workorders.csv",
+      "class_iri": "urn:scenario:equipment_maintenance:WorkOrder",
+      "id_field": "work_order_id",
+      "literals": {
+        "work_order_id": {
+          "predicate_iri": "urn:scenario:equipment_maintenance:workOrderId",
+          "datatype": "string",
+          "capability": "maintenance"
+        },
+        "status": {
+          "predicate_iri": "urn:scenario:equipment_maintenance:orderStatus",
+          "datatype": "string",
+          "capability": "maintenance"
+        }
+      },
+      "references": [
+        {
+          "field": "device_id",
+          "target_space": "devices",
+          "predicate_iri": "urn:scenario:equipment_maintenance:forDevice"
+        }
+      ],
+      "capability": "maintenance"
+    },
+    {
+      "record_id": "maintenance",
+      "source_name": "maintenance.csv",
+      "class_iri": "urn:scenario:equipment_maintenance:MaintenanceEvent",
+      "id_field": "event_id",
+      "literals": {
+        "event_id": {
+          "predicate_iri": "urn:scenario:equipment_maintenance:eventId",
+          "datatype": "string",
+          "capability": "maintenance"
+        },
+        "recorded_at": {
+          "predicate_iri": "urn:scenario:equipment_maintenance:recordedAt",
+          "datatype": "string",
+          "capability": "maintenance"
+        },
+        "result": {
+          "predicate_iri": "urn:scenario:equipment_maintenance:recordedResult",
+          "datatype": "string",
+          "capability": "maintenance"
+        }
+      },
+      "references": [
+        {
+          "field": "work_order_id",
+          "target_space": "workorders",
+          "predicate_iri": "urn:scenario:equipment_maintenance:forWorkOrder"
+        }
+      ],
+      "capability": "maintenance"
+    }
+  ],
+  "query_asset_id": "equipment-query-devices",
+  "additions": [
+    [
+      "确认设备、企业、地点、部件、工单和维护事件的实际资料及批准范围",
+      "检查型号误作主键、事件或部件缺资料时被隐式纳入"
+    ],
+    [
+      "分别表示设备、部件、工单及维护事件；状态规则来自声明",
+      "检查结构与动作契约的对象类型、关系方向、状态依据"
+    ],
+    [
+      "保留资产与事件编号，映射已有状态、单位与时间值",
+      "检查合并不同资产、补造维修结果、虚假工单时间或跨单位关系"
+    ],
+    [
+      "根据真实问题组织影响范围与受限修订",
+      "检查没有绕过硬约束、权限或人审来关闭工单或消除错误"
+    ],
+    [
+      "交付已登记读取和查询契约，未实现动作须标明不支持，不执行真实操作",
+      "检查操作前置条件、权限与实现状态，不承诺未部署的能力"
+    ]
+  ],
+  "scenario_version": "2.0.0",
+  "nature": "SYNTHETIC_ENGINEERING_TEMPLATE_NOT_EXPERT_APPROVAL",
+  "namespace": "urn:scenario:equipment_maintenance:",
+  "output_contract": "zhigou-scenario-stage/2.0.0",
+  "rules": {
+    "identity": "Exact source identifier in its declared table identity space; never merge by name/model.",
+    "time": "Preserve original lexical precision and timezone; no invented dates or missing endpoints.",
+    "units": "Preserve declared unit and original value. No conversion or rounding is enabled.",
+    "codes": "Preserve source codes; no inferred state transition or action.",
+    "authority_boundary": "Templates grant no permissions. Original approval and hard checks remain mandatory."
+  },
+  "fixture_ref": "tests/fixtures/scenarios/equipment_maintenance"
+}

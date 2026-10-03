@@ -7,8 +7,8 @@ export function StageRunControls({stage,runId,navigate}:{stage:number;runId:stri
   const continuous=useRef(false),consumed=useRef(''),startRef=useRef<(n:number)=>Promise<void>>(async()=>{});
   const scope=outputs(state,'modeling.scope','scope').at(-1),approval=outputs(state,'modeling.scope.approve','approval').at(-1);
   const prepared=state.results.filter(r=>r.operation==='modeling.prepare').at(-1)?.result;
-  const proposed=state.results.filter(r=>r.operation==='modeling.proposal').at(-1)?.result;
-  const plan=state.results.filter(r=>['compile.plan','compile.plan.exact'].includes(r.operation)).at(-1)?.result.plan;
+  const proposed=state.results.filter(r=>r.operation==='modeling.proposal'||r.result.expert_routed_proposal).at(-1)?.result;
+  const plan=state.results.filter(r=>['compile.plan','compile.plan.exact'].includes(r.operation)||r.result.expert_routed_plan).at(-1)?.result.plan;
   async function start(n:number){
     let path='',body:Document={};
     if(n===1&&runId){path='/modeling/profiles';body={run_id:runId};}
@@ -28,8 +28,9 @@ export function StageRunControls({stage,runId,navigate}:{stage:number;runId:stri
     if(!job||consumed.current===jobId||['QUEUED','RUNNING','CANCEL_REQUESTED'].includes(job.status))return;
     if(job.status==='SUCCEEDED'&&!result)return;
     consumed.current=jobId;
-    const failedCheck=result&&(rows(object(result.five_stage).step_runs).some(r=>r.validation_status==='FAIL')||object(result.prevalidation).status==='FAIL');
-    if(job.status!=='SUCCEEDED'||failedCheck){continuous.current=false;setMessage(`已暂停：${job.error?.code||job.status}，请核对检查结果。`);return;}
+    const expertBlocked=result?.expert_loop&&object(result.expert_loop).decision!=='PASS';
+    const failedCheck=result&&(rows(object(result.five_stage).step_runs).some(r=>r.validation_status==='FAIL')||object(result.prevalidation).status==='FAIL'||expertBlocked);
+    if(job.status!=='SUCCEEDED'||failedCheck){continuous.current=false;setMessage(`已暂停：${expertBlocked?str(object(result?.expert_loop).stop_reason):job.error?.code||job.status}，请核对检查结果。`);return;}
     if(stage===4||stage===5){continuous.current=false;setMessage(stage===4?'检查已运行。等待真实人工逐项审核，不自动批准或冻结。':'阶段操作完成，请核对实际验证与交付结果。');return;}
     if(continuous.current){navigate(stage+1);void startRef.current(stage+1);}else setMessage('阶段操作完成。可查看真实前后变化。');
   },[job,result,jobId,stage,navigate]);

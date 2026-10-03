@@ -23,11 +23,13 @@ export type Pack = {pack_id: string; pack_version: string; display_name: string;
 export type Document = {[key: string]: unknown};
 export type Result = {job_id: string; operation: string; revision: number; result: Document};
 export type Job = {job_id: string; operation_id: string; status: string; attempt: number; error: {code: string} | null};
-export type ProjectState = {project: Project; results: Result[]; jobs: Job[]; registry_head: string; modeling_flow?: Document; modeling_session?: Document};
+export type ProjectState = {project: Project; results: Result[]; jobs: Job[]; registry_head: string; modeling_flow?: Document; modeling_session?: Document; expert_defaults?: Document; scenario_catalogue?: Document[]};
 export function object(value: unknown): Document { return value !== null && typeof value === 'object' && !Array.isArray(value) ? value as Document : {}; }
 export function rows(value: unknown): Document[] { return Array.isArray(value) ? value.map(object) : []; }
 export function str(value: unknown) { return typeof value === 'string' ? value : value === null || value === undefined ? '' : JSON.stringify(value); }
 export function outputs(state: ProjectState, operation: string, key: string): Document[] { return state.results.flatMap(r => {
+  if(operation==='modeling.proposal'&&r.result.expert_routed_proposal&&r.result[key])return [object(r.result[key])];
+  if(operation==='compile.plan.exact'&&r.result.expert_routed_plan&&r.result[key])return [object(r.result[key])];
   if(r.operation==='source.sample.load') {
     if(operation==='source.register'&&key==='source')return rows(r.result.sources);
     if(['source.batch','source.register','ingestion.plan','ingestion.run'].includes(operation)&&r.result[key])return [object(r.result[key])];

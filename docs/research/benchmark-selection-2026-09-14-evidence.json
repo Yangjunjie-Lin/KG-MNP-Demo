@@ -56,7 +56,7 @@
         "commands": [
           {
             "command": [
-              "C:\\Users\\Yangjunjie Lin\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+              "<PYTHON_EXECUTABLE>",
               "-m",
               "ruff",
               "check",
@@ -69,7 +69,7 @@
           },
           {
             "command": [
-              "C:\\Users\\Yangjunjie Lin\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+              "<PYTHON_EXECUTABLE>",
               "tools/check_types.py"
             ],
             "exit_code": 0,
@@ -79,7 +79,7 @@
           },
           {
             "command": [
-              "C:\\Users\\Yangjunjie Lin\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+              "<PYTHON_EXECUTABLE>",
               "tools/evaluate_research.py",
               "--suite",
               "ontology-io-engineering"
@@ -91,12 +91,12 @@
           },
           {
             "command": [
-              "C:\\Users\\Yangjunjie Lin\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+              "<PYTHON_EXECUTABLE>",
               "-m",
               "pytest",
               "tests/upgrade/test_ontology_io_extended.py",
               "--tb=short",
-              "--junitxml=D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime_reports\\deepeval-selection-final-verification\\extended.xml"
+              "--junitxml=<REPOSITORY>/runtime_reports/deepeval-selection-final-verification/extended.xml"
             ],
             "exit_code": 0,
             "seconds": 6.268088399985572,
@@ -270,5 +270,13 @@
         "model_calls": 0
       }
     }
-  ]
+  ],
+  "publication_provenance": {
+    "kind": "PATH_REDACTED_HISTORICAL_VIEW_NOT_ORIGINAL_BYTES",
+    "original_archive": "docs/research/historical-evidence-originals-20260929.zip",
+    "original_member": "docs/research/benchmark-selection-2026-09-14-evidence.json",
+    "original_sha256": "493daee01dc6d3c2a540fbdb6a492445cc5d6e842524a446b062a28e26c34e54",
+    "transformation": "Local repository, interpreter and home paths replaced with explicit placeholders; historical outcomes unchanged.",
+    "current_source_validation": "NOT_CLAIMED_BY_HISTORICAL_EVIDENCE"
+  }
 }

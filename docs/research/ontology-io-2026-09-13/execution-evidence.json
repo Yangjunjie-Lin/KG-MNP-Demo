@@ -5,7 +5,7 @@
     "commands": [
       {
         "command": [
-          "C:\\Users\\Yangjunjie Lin\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+          "<PYTHON_EXECUTABLE>",
           "-m",
           "ruff",
           "check",
@@ -18,7 +18,7 @@
       },
       {
         "command": [
-          "C:\\Users\\Yangjunjie Lin\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+          "<PYTHON_EXECUTABLE>",
           "tools/check_types.py"
         ],
         "exit_code": 0,
@@ -28,7 +28,7 @@
       },
       {
         "command": [
-          "C:\\Users\\Yangjunjie Lin\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+          "<PYTHON_EXECUTABLE>",
           "tools/evaluate_research.py",
           "--suite",
           "ontology-io-engineering"
@@ -40,12 +40,12 @@
       },
       {
         "command": [
-          "C:\\Users\\Yangjunjie Lin\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+          "<PYTHON_EXECUTABLE>",
           "-m",
           "pytest",
           "tests/upgrade/test_ontology_io_extended.py",
           "--tb=short",
-          "--junitxml=D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime_reports\\ontology-io-final-verification-20260913\\extended.xml"
+          "--junitxml=<REPOSITORY>/runtime_reports/ontology-io-final-verification-20260913/extended.xml"
         ],
         "exit_code": 0,
         "seconds": 5.958032700000331,
@@ -293,5 +293,13 @@
         "BEHAVIOUR_PROVEN_ABLATIONS"
       ]
     }
+  },
+  "publication_provenance": {
+    "kind": "PATH_REDACTED_HISTORICAL_VIEW_NOT_ORIGINAL_BYTES",
+    "original_archive": "docs/research/historical-evidence-originals-20260929.zip",
+    "original_member": "docs/research/ontology-io-2026-09-13/execution-evidence.json",
+    "original_sha256": "b9aec510e2f55c30b9924eeb0112487b708c5e1259c4a09bc610914199561e45",
+    "transformation": "Local repository, interpreter and home paths replaced with explicit placeholders; historical outcomes unchanged.",
+    "current_source_validation": "NOT_CLAIMED_BY_HISTORICAL_EVIDENCE"
   }
 }

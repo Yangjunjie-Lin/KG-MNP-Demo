@@ -280,8 +280,14 @@ def create_app(service: ApplicationService) -> FastAPI:
             read as read_modeling_session,
         )
         results = sorted(results, key=lambda row: row["revision"])
+        from zhigou_toolchain.modeling.five_stage.expert import default_configuration
+        from zhigou_toolchain.modeling.five_stage.scenarios import (
+            catalogue as scenario_catalogue,
+        )
         return {"project": opened, "results": results, "jobs": jobs,
                 "modeling_session": read_modeling_session(project_handle.root),
+                "expert_defaults": {str(s): default_configuration(s) for s in range(1, 6)},
+                "scenario_catalogue": scenario_catalogue(),
                 "modeling_flow": project_flow(project_id, results, jobs),
                 "registry_head": read_head(project_handle.registry_root)["head_hash"]}
 
@@ -628,7 +634,7 @@ def create_app(service: ApplicationService) -> FastAPI:
         from zhigou_toolchain.services.modeling_sessions import (
             OPERATIONS as session_operations,
         )
-        if operation not in business_operations | session_operations | {"module.evaluate", "source.sample.load"}:
+        if operation not in business_operations | session_operations | {"module.evaluate", "source.sample.load", "modeling.expert.save", "modeling.expert.reaudit", "modeling.scenario.preview", "modeling.scenario.save", "modeling.scenario.quality"}:
             raise ServiceBoundaryError("OPERATION_NOT_FOUND", "Unknown toolchain module operation", status_code=404)
         return resource(operation, project_id, authorization, payload, idempotency_key)
 

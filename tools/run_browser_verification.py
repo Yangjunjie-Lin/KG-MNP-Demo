@@ -82,7 +82,7 @@ def main() -> int:
     parser.add_argument("--smoke-only", action="store_true", help="verify startup/shutdown only, never claim Browser E2E")
     parser.add_argument("--startup-timeout", type=float, default=45)
     parser.add_argument("--probe-subprocess", action="store_true", help="include actual SHACL subprocess startup in smoke verification")
-    parser.add_argument("--selected-test", choices=("agent-audit.e2e.ts", "security.e2e.ts", "arbitrary-pack.e2e.ts", "five-stage.e2e.ts", "ontology-io.e2e.ts", "zhigou-console.e2e.ts", "saved-evidence.e2e.ts", "handoff.e2e.ts", "mnp-readback.e2e.ts", "mixed", "minimal", "forestry", "mnp"), help="bounded incremental check only, never full browser acceptance")
+    parser.add_argument("--selected-test", choices=("scenario.e2e.ts", "agent-audit.e2e.ts", "security.e2e.ts", "arbitrary-pack.e2e.ts", "five-stage.e2e.ts", "ontology-io.e2e.ts", "zhigou-console.e2e.ts", "saved-evidence.e2e.ts", "handoff.e2e.ts", "mnp-readback.e2e.ts", "mixed", "minimal", "forestry", "mnp"), help="bounded incremental check only, never full browser acceptance")
     parser.add_argument("--existing-upgrade-workspace", type=Path)
     parser.add_argument("--existing-export-job-id", help="Handoff E2E verifies the very same already committed task as CLI/API")
     args = parser.parse_args()
@@ -98,6 +98,8 @@ def main() -> int:
             command = [sys.executable, str(ROOT / "tools/run_workbench_test_server.py"), "--stop-file", str(stop_file)]
             if args.selected_test == "agent-audit.e2e.ts":
                 command.append("--record-step-content")
+            if args.selected_test in {None, "scenario.e2e.ts"}:
+                command.extend(["--record-step-content", "--mock-scenario-model"])
             if args.existing_upgrade_workspace:
                 if args.selected_test not in {"saved-evidence.e2e.ts", "handoff.e2e.ts", "mnp-readback.e2e.ts"}:
                     raise ValueError("Existing synthetic workspace is only for read-only saved evidence inspection")
@@ -114,10 +116,13 @@ def main() -> int:
             try:
                 start = time.monotonic()
                 ready = read_ready(server, args.startup_timeout, args.existing_upgrade_workspace)
+                receipt["workspace"] = ready["workspace"]
                 wait_healthy(server, ready["url"], args.startup_timeout)
                 receipt["startup_seconds"] = time.monotonic() - start
                 environment = {**os.environ, "KG_MNP_BROWSER_URL": ready["url"], "KG_MNP_BROWSER_CREDENTIAL": ready["credential_path"],
                     "KG_MNP_BROWSER_EVIDENCE": str(directory), "KG_MNP_TEST_PYTHON": sys.executable}
+                if args.selected_test in {None, "scenario.e2e.ts"}:
+                    environment["ZHIGOU_SCENARIO_MOCK"] = "1"
                 if args.existing_upgrade_workspace:
                     environment["ZHIGOU_SAVED_EVIDENCE"] = "1"
                     environment["ZHIGOU_SAVED_WORKSPACE"] = str(args.existing_upgrade_workspace.resolve())
@@ -145,6 +150,13 @@ def main() -> int:
                 receipt["subprocess_probe"] = json.loads((Path(ready["workspace"]) / "subprocess-probe.json").read_bytes())
             shutdown = json.loads((Path(ready["workspace"]) / "browser-server-shutdown.json").read_bytes())
             receipt["shutdown"] = shutdown
+            if args.selected_test in {None, "scenario.e2e.ts"} and not args.smoke_only:
+                witness_path = Path(ready["workspace"]) / "browser-scenario-http-witness.json"
+                witness = json.loads(witness_path.read_bytes())
+                receipt["scenario_http_witness"] = {k: witness[k] for k in ("nature", "physical_requests", "recorded_requests", "counts_match")}
+                (directory / "scenario-http-witness.json").write_bytes(witness_path.read_bytes())
+                if not witness["counts_match"] or not witness["physical_requests"]:
+                    receipt["status"] = "FAIL"
             if not all(shutdown.get(key) is True for key in ("worker_stopped", "credentials_revoked", "credentials_removed")):
                 receipt["status"] = "FAIL"
     except (OSError, ValueError, RuntimeError, TimeoutError) as exc:
