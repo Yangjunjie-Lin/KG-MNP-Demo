@@ -97,6 +97,11 @@ def _segments(path: str) -> list[str]:
     return [part for part in path.replace("\\", "/").split("/") if part]
 
 
+def _component_relative_path(path: str) -> str:
+    """Apply repository path rules relative to the standalone workbench as well."""
+    return path.replace("\\", "/").removeprefix("ontology-workbench/")
+
+
 def _matches_forbidden_path(path: str) -> bool:
     parts = _segments(path)
     if not parts:
@@ -159,7 +164,7 @@ def check_tracked_paths(paths: list[str] | None = None) -> list[str]:
         if _matches_forbidden_path(path)
     ]
     for path in tracked:
-        normalized = path.replace("\\", "/")
+        normalized = _component_relative_path(path)
         if normalized.startswith(FORBIDDEN_TRACKED_PREFIXES):
             failures.append(f"tracked runtime/build artifact: {path}")
         if normalized.startswith(FORBIDDEN_TOP_LEVEL_AUTHORITY_PREFIXES):
@@ -213,7 +218,7 @@ def check_golden_locations(paths: list[str] | None = None) -> list[str]:
     tracked = paths if paths is not None else _git_ls_files()
     failures: list[str] = []
     for path in tracked:
-        normalized = path.replace("\\", "/")
+        normalized = _component_relative_path(path)
         parts = _segments(normalized)
         has_golden_marker = any(
             part in {"fixtures", "golden", "goldens", "expected"}

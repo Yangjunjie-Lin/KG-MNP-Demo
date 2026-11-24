@@ -91,3 +91,18 @@ def test_local_gateway_credentials_are_rejected_without_echoing_the_value(tmp_pa
     (tmp_path / "accidental-token.txt").write_text(credential, encoding="utf-8")
     failures = mod.check_sensitive_content(["accidental-token.txt"], root=tmp_path)
     assert failures and all(credential not in message for message in failures)
+
+
+def test_standalone_workbench_uses_the_same_hygiene_rules():
+    mod = _load_module()
+    fixture = "ontology-workbench/tests/fixtures/synthetic.json"
+    misplaced_fixture = "ontology-workbench/src/fixtures/expected.json"
+    jar = "ontology-workbench/third_party/downloads/robot-1.9.7.jar"
+    assert mod.check_golden_locations([fixture, misplaced_fixture]) == [
+        f"golden fixture outside allowed roots: {misplaced_fixture}"
+    ]
+    assert mod.check_tracked_paths([fixture]) == []
+    assert mod.check_tracked_paths([jar]) == [
+        f"tracked runtime/build artifact: {jar}",
+        f"tracked third-party JAR: {jar}",
+    ]

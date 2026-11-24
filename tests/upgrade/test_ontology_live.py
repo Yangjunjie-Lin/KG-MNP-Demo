@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import socket
 import sqlite3
 from concurrent.futures import ThreadPoolExecutor
@@ -79,7 +80,10 @@ def test_broker_forbids_file_or_url_schema_oracle_before_credentials(tmp_path, m
         dispatch(request, protocol=None, ledger=ledger(tmp_path), job_id="job", request_id="id", directory=tmp_path / "call")
 
 
-def test_os_mount_policy_has_no_host_drive_home_or_network_access(tmp_path):
+def test_os_mount_policy_has_no_host_drive_home_or_network_access(tmp_path, monkeypatch):
+    if os.name != "nt":
+        # Model only the Windows-to-WSL conversion on non-Windows test runners.
+        monkeypatch.setattr("zhigou_toolchain.ontology_io.os_sandbox.wsl_path", lambda path: "/mnt/c/test/" + path.name)
     args = command(tmp_path / "code", tmp_path / "input", tmp_path / "output", tmp_path / "robot.jar")
     assert "--unshare-all" in args and "--unshare-user" in args and "--disable-userns" in args
     assert "--clearenv" in args and "--share-net" not in args

@@ -56,7 +56,7 @@
         "commands": [
           {
             "command": [
-              "C:\\Users\\Yangjunjie Lin\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+              "python",
               "-m",
               "ruff",
               "check",
@@ -69,7 +69,7 @@
           },
           {
             "command": [
-              "C:\\Users\\Yangjunjie Lin\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+              "python",
               "tools/check_types.py"
             ],
             "exit_code": 0,
@@ -79,7 +79,7 @@
           },
           {
             "command": [
-              "C:\\Users\\Yangjunjie Lin\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+              "python",
               "tools/evaluate_research.py",
               "--suite",
               "ontology-io-engineering"
@@ -91,12 +91,12 @@
           },
           {
             "command": [
-              "C:\\Users\\Yangjunjie Lin\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+              "python",
               "-m",
               "pytest",
               "tests/upgrade/test_ontology_io_extended.py",
               "--tb=short",
-              "--junitxml=D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime_reports\\deepeval-selection-final-verification\\extended.xml"
+              "--junitxml=./runtime_reports/deepeval-selection-final-verification/extended.xml"
             ],
             "exit_code": 0,
             "seconds": 6.268088399985572,

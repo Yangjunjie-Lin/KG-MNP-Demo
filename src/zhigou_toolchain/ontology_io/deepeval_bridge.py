@@ -11,6 +11,7 @@ import json
 import math
 import os
 import sys
+from importlib import import_module
 from importlib.metadata import version
 from pathlib import Path
 from time import perf_counter
@@ -38,7 +39,7 @@ def require_offline_settings():
 def native_metric_class():
     """Import through the real public API only after offline preconditions."""
     require_offline_settings()
-    from deepeval.metrics import BaseMetric
+    BaseMetric = import_module("deepeval.metrics").BaseMetric
 
     class NativeOntologyMetric(BaseMetric):
         def __init__(self, upstream, *, name="edge_f1", matching="exact"):
@@ -95,7 +96,7 @@ def native_metric_class():
 def native_llms4ol_scorer(upstream, *, matching):
     """Reusable callable for the existing score CLI; only independent scoring."""
     metric_type = native_metric_class()
-    from deepeval.test_case import LLMTestCase
+    LLMTestCase = import_module("deepeval.test_case").LLMTestCase
     metrics = {name: metric_type(upstream, name=name, matching=matching) for name in METRICS}
 
     def score(gold, prediction):
@@ -132,7 +133,7 @@ def offline_equivalence(upstream):
 def _equivalence_cases(upstream, attempts, runner):
     started = perf_counter()
     metric_type = native_metric_class()
-    from deepeval.test_case import LLMTestCase
+    LLMTestCase = import_module("deepeval.test_case").LLMTestCase
     import_seconds = perf_counter() - started
     cases = [([], []), ([["Oak", "is-a", "Tree"]], [["Oak", "is-a", "Tree"]]),
         ([["a", "p", "b"]], [["a", "p", "b"]]), ([["a", "p", "b"]], []), ([], [["a", "p", "b"]]),

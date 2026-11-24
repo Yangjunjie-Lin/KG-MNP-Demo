@@ -36,7 +36,7 @@ def test_refactor_hygiene_gate_passes_for_tracked_tree() -> None:
 
 
 def test_reviewed_golden_locations_are_explicit() -> None:
-    tracked = _tracked_paths()
+    tracked = [path.removeprefix("ontology-workbench/") for path in _tracked_paths()]
     golden_paths = [
         path
         for path in tracked

@@ -5,7 +5,7 @@
     "commands": [
       {
         "command": [
-          "C:\\Users\\Yangjunjie Lin\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+          "python",
           "-m",
           "ruff",
           "check",
@@ -18,7 +18,7 @@
       },
       {
         "command": [
-          "C:\\Users\\Yangjunjie Lin\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+          "python",
           "tools/check_types.py"
         ],
         "exit_code": 0,
@@ -28,7 +28,7 @@
       },
       {
         "command": [
-          "C:\\Users\\Yangjunjie Lin\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+          "python",
           "tools/evaluate_research.py",
           "--suite",
           "ontology-io-engineering"
@@ -40,12 +40,12 @@
       },
       {
         "command": [
-          "C:\\Users\\Yangjunjie Lin\\AppData\\Local\\Programs\\Python\\Python312\\python.exe",
+          "python",
           "-m",
           "pytest",
           "tests/upgrade/test_ontology_io_extended.py",
           "--tb=short",
-          "--junitxml=D:\\UoM_CS\\Research Evidence Portfolio\\CUHK-Shenzhen RA\\KG-MNP-Demo\\runtime_reports\\ontology-io-final-verification-20260913\\extended.xml"
+          "--junitxml=./runtime_reports/ontology-io-final-verification-20260913/extended.xml"
         ],
         "exit_code": 0,
         "seconds": 5.958032700000331,
